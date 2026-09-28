@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 
+from app.database import engine
 from app.routers import auth
 
 app = FastAPI(
@@ -15,6 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Rutas de autenticación (HU-001)
 app.include_router(auth.router)
 
 
@@ -22,4 +25,19 @@ app.include_router(auth.router)
 def inicio():
     return {
         "mensaje": "Backend del optimizador de vidrio funcionando"
+    }
+
+
+@app.get("/db-test")
+def probar_base_datos():
+    with engine.connect() as conexion:
+        resultado = conexion.execute(
+            text("SELECT version();")
+        )
+
+        version = resultado.scalar()
+
+    return {
+        "conexion": "correcta",
+        "postgresql": version
     }
