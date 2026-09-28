@@ -31,7 +31,7 @@
 
 .login-body-wrapper h1 {
 	font-weight: 800;
-	margin-bottom: 25px; /* Margen ajustado ya que no hay iconos abajo */
+	margin-bottom: 25px; /* Margen ajustado */
 	color: #000000;
 	line-height: 1.2; 
 	font-size: 32px;
@@ -131,7 +131,7 @@
 }
 
 
-/* RESPONSIVE: Adaptación para celulares */
+/* RESPONSIVE */
 @media (max-width: 768px) {
     .form-container {
         width: 100%;
@@ -143,7 +143,6 @@
 
 .overlay-container {
 	width: 50%;
-	/* Haces referencia al nombre de tu archivo */
 	background-image: url('/fondoLogin.jpeg'); 
 	background-size: cover;
 	background-position: center;
