@@ -9,7 +9,7 @@ export const Login = () => {
           <form onSubmit={(e) => e.preventDefault()}>
             <h1>Iniciar sesión</h1>
             
-            <input type="email" placeholder="Email" />
+            <input type="text" placeholder="Nombre de usuario" />
             <input type="password" placeholder="Contraseña" />
             
             <a href="#">¿Olvidaste tu contraseña?</a>
