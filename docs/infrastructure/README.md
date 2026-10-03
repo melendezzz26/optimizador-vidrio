@@ -9,5 +9,18 @@ comandos y forma de validación, distinguiendo lo propuesto de lo ejecutado.
 Referenciar variables por nombre y usar ejemplos ficticios; no incluir `.env`,
 credenciales ni secretos.
 
-Esta fase no configura CI ni despliegues. Este índice conserva la ubicación
-documental sin declarar servicios o pipelines implementados.
+## Integración continua
+
+El workflow [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml) se activa
+en Pull Requests y en push a `main`. Ejecuta dos jobs independientes:
+
+- Backend: Python 3.11, instalación de dependencias y `python -m pytest -q`.
+- Frontend: Node 22, `npm ci`, `npm run lint` y `npm run build`.
+
+No usa secretos ni una base de datos externa, ni ejecuta migraciones o despliegues.
+La configuración fue validada estáticamente y las comprobaciones de pytest,
+lint y build se ejecutaron localmente.
+
+Todavía no se ha observado una ejecución real exitosa en GitHub Actions.
+Esa comprobación se realizará al abrir el Pull Request; la validación local
+no acredita el resultado del runner remoto.

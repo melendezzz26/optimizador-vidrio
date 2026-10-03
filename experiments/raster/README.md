@@ -17,13 +17,13 @@ Los marcadores no son resultados ni evidencia de ejecución.
 
 ## Resultados y evidencia
 
-Esta fase no modifica `.gitignore`: `results/` todavía no tiene exclusión
-automática. Revisar los archivos antes de añadir cambios a Git y no incluir
-salidas generadas de forma indiscriminada. La política de exclusión se completará
-en la fase siguiente.
+La regla `experiments/raster/results/*` de `.gitignore` excluye los resultados
+generados. `experiments/raster/results/.gitkeep` permanece versionable para
+conservar la carpeta. Las entradas de `cases/` y los scripts de `scripts/`
+también permanecen versionables.
 
-Los resultados seleccionados que sustenten una conclusión se guardan en
-`docs/evidence/sprint-01/<ID>/`. Para el trabajo de rasterización está reservado
+Los resultados seleccionados que sustenten una conclusión deben copiarse o
+documentarse en `docs/evidence/sprint-01/<ID>/`. Para rasterización está reservado
 `docs/evidence/sprint-01/SP-001-raster/`. Registrar comando, versión del código,
 entradas, parámetros y resultado observado; no declarar métricas sin ejecución.
 Las conclusiones de investigación se documentan en `docs/spikes/`.
