@@ -21,6 +21,11 @@ No usa secretos ni una base de datos externa, ni ejecuta migraciones o despliegu
 La configuración fue validada estáticamente y las comprobaciones de pytest,
 lint y build se ejecutaron localmente.
 
-Todavía no se ha observado una ejecución real exitosa en GitHub Actions.
-Esa comprobación se realizará al abrir el Pull Request; la validación local
-no acredita el resultado del runner remoto.
+Posteriormente, el workflow se ejecutó en GitHub Actions mediante el Pull
+Request #8. Los jobs `backend` y `frontend` finalizaron correctamente y el
+Pull Request mostró el estado **Ready to merge** después de completar los
+checks.
+
+Esta validación remota se registra por separado de las comprobaciones locales
+anteriores en la
+[evidencia final de EN-001](../evidence/sprint-01/EN-001/en-001-final-validation.md).

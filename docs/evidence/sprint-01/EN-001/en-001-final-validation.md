@@ -64,7 +64,7 @@ No se ejecutó ninguna operación contra PostgreSQL/Supabase, ningún seed ni
 `/db-test`. No se ejecutaron migraciones Alembic ni `upgrade`, `downgrade`,
 `stamp` o `revision`; no hubo cambios de esquema.
 
-## Entorno, comandos y resultados observados
+## Validación local: entorno, comandos y resultados observados
 
 Entorno local: Python **3.11.9**, Node **22.16.0** y npm **10.9.2**.
 
@@ -98,15 +98,23 @@ la exclusión de resultados en `experiments/raster/README.md` y la configuració
 de CI en `docs/infrastructure/README.md`. Se corrigen en este cierre documental,
 sin modificar código, configuración ni estructura.
 
-## Limitación de CI
+## Validación remota de GitHub Actions
 
 La existencia y configuración del workflow se verificaron estáticamente:
 Python 3.11 con pytest; Node 22 con `npm ci`, lint y build; sin secretos,
 BD externa, migraciones ni deployment.
 
-Todavía no se ha observado una ejecución real exitosa en GitHub Actions.
-Esa comprobación se realizará al abrir el Pull Request. Los resultados locales
-no acreditan una ejecución remota ni una instalación limpia en el runner.
+El workflow CI se ejecutó en GitHub Actions mediante el Pull Request #8,
+**EN-001: reestructurar repositorio y establecer base arquitectónica**:
+
+- Job `backend`: finalizó correctamente.
+- Job `frontend`: finalizó correctamente.
+- Después de completar los checks, el Pull Request mostró el estado
+  **Ready to merge**.
+
+Estos resultados remotos son posteriores y distintos de las validaciones
+locales registradas arriba. No se dispone de duración de los jobs, ID interno
+de ejecución, URL ni timestamps; no se atribuyen al runner las métricas locales.
 
 ## Pendientes fuera de EN-001
 
@@ -124,5 +132,5 @@ no acreditan una ejecución remota ni una instalación limpia en el runner.
 
 EN-001 cumple la preparación estructural y las validaciones locales previstas.
 Este cierre documental corrige las dos notas pendientes y registra la evidencia
-sin ampliar el alcance funcional. La ejecución real de CI queda por comprobar
-al abrir el Pull Request.
+sin ampliar el alcance funcional. La validación remota reportada del PR #8
+confirma ambos jobs de CI correctos y el estado **Ready to merge** tras los checks.
