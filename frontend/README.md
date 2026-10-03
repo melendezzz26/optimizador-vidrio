@@ -1,16 +1,68 @@
-# React + Vite
+# Frontend de NewGlass
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interfaz web con React y Vite, organizada progresivamente por funcionalidades.
+El entorno local revisado utiliza Node.js **22.16.0**, compatible con los
+requisitos del lockfile actual. Los comandos se ejecutan desde `frontend/`.
 
-Currently, two official plugins are available:
+## Instalación
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm ci
+```
 
-## React Compiler
+`npm ci` instala las versiones registradas en `package-lock.json`. Conservar ese
+archivo en Git; los cambios de dependencias corresponden a tareas específicas.
+Si PowerShell bloquea `npm.ps1`, usar `npm.cmd` con los mismos argumentos.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Desarrollo y validación
 
-## Expanding the ESLint configuration
+```bash
+npm run dev
+npm run lint
+npm run build
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- `dev`: inicia Vite; consultar la URL indicada por la terminal.
+- `lint`: ejecuta ESLint sobre el proyecto.
+- `build`: genera el sitio en `dist/`, directorio ya ignorado por Git.
+
+Para revisar localmente el build:
+
+```bash
+npm run preview
+```
+
+Todavía no hay un script `npm test`. Lint y build no sustituyen las pruebas
+funcionales que se incorporen con cada feature.
+
+## Organización por features
+
+```text
+src/
+    features/
+        authentication/
+        users/
+        inventory/
+        orders/
+        optimization/
+        results/
+        configuration/
+    shared/
+    components/       Código actual conservado temporalmente
+    pages/            Código actual conservado temporalmente
+    assets/
+```
+
+La funcionalidad nueva se desarrolla en `src/features/<feature>/`.
+El frontend no replica las capas Clean Architecture del backend: componentes,
+hooks, estado y acceso a API se organizan dentro de cada feature según necesidad.
+`src/shared/` se reserva para código reutilizable por varias features.
+
+`src/components/Login.jsx` y `src/pages/NuevoPedido.jsx`, sus estilos y sus imports
+permanecen temporalmente en las rutas actuales hasta que los responsables los
+migren con validación. Esta fase únicamente reserva carpetas; no incorpora
+implementaciones ni modifica `App.jsx`.
+
+Consultar la [guía de desarrollo](../CONTRIBUTING.md), las
+[convenciones de features](src/features/README.md) y los
+[límites de shared](src/shared/README.md).
