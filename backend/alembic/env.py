@@ -7,7 +7,7 @@ from sqlalchemy import pool
 from alembic import context
 from dotenv import load_dotenv
 
-from app.database import Base
+from app.shared.database import Base
 from app import models
 
 

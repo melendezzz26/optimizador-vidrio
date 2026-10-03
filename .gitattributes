@@ -1,0 +1,25 @@
+* text=auto
+
+*.py text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+
+/.gitignore text eol=lf
+/.editorconfig text eol=lf
+/.gitattributes text eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.pdf binary
+*.docx binary
+
+# XML de diagrams.net: conservar los diffs sin transformar finales de línea.
+*.drawio -text
