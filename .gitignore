@@ -4,6 +4,7 @@ frontend/dist/
 
 # Python
 backend/venv/
+backend/.venv/
 __pycache__/
 .pytest_cache/
 *.py[cod]
@@ -11,6 +12,11 @@ __pycache__/
 # Variables de entorno
 .env
 *.env
+.env.*
+*.env.*
+!.env.example
+!*.env.example
+!backend/.env.example
 
 # IDE
 .vscode/
@@ -19,3 +25,7 @@ __pycache__/
 # Sistema
 .DS_Store
 Thumbs.db
+
+# Resultados generados de rasterización
+experiments/raster/results/*
+!experiments/raster/results/.gitkeep
