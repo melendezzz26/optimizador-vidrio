@@ -1,11 +1,12 @@
-# React
+﻿# React
 frontend/node_modules/
 frontend/dist/
 
 # Python
 backend/venv/
-backend/__pycache__/
-*.pyc
+__pycache__/
+.pytest_cache/
+*.py[cod]
 
 # Variables de entorno
 .env
