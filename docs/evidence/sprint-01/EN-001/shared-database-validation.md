@@ -34,14 +34,14 @@ Desde la raíz del repositorio:
 
 ```powershell
 git branch --show-current
-git rev-parse HEAD
-git show --format=fuller --stat --find-renames HEAD
+git rev-parse c489133036d3ed70ca07fa35491f8ccd7677a0aa
+git show --format=fuller --stat --find-renames c489133036d3ed70ca07fa35491f8ccd7677a0aa
 git grep -n -F 'app.database' -- '*.py'
 git diff --check
 git status --short
 ```
 
-- Rama y HEAD: los indicados al inicio de este documento.
+- Rama y commit del refactor: los indicados al inicio de este documento.
 - Búsqueda de `app.database` en archivos Python versionados: sin coincidencias;
   código de salida `1`, esperado cuando `git grep` no encuentra resultados.
 - `git diff --check`: sin errores de espacios en blanco; código de salida `0`.
