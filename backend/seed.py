@@ -1,4 +1,4 @@
-from app.database import SessionLocal
+from app.shared.database import SessionLocal
 from app.models import Rol
 
 
