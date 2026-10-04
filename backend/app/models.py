@@ -165,18 +165,33 @@ class Pieza(Base):
 
 class Configuracion(Base):
     __tablename__ = "configuraciones"
+    __table_args__ = (
+        UniqueConstraint("version", name="configuraciones_version_key"),
+        CheckConstraint("version > 0", name="ck_configuraciones_version"),
+        CheckConstraint("separacion_mm >= 0", name="ck_configuraciones_separacion"),
+        CheckConstraint("margen_mm >= 0", name="ck_configuraciones_margen"),
+        CheckConstraint("resolucion_raster_mm > 0", name="ck_configuraciones_resolucion"),
+        CheckConstraint(
+            "paso_angular_grados > 0 AND paso_angular_grados <= 360",
+            name="ck_configuraciones_paso_angular",
+        ),
+        CheckConstraint("ancho_min_retazo_mm >= 0", name="ck_configuraciones_ancho_retazo"),
+        CheckConstraint("alto_min_retazo_mm >= 0", name="ck_configuraciones_alto_retazo"),
+    )
 
     id_configuracion: Mapped[int] = mapped_column(Integer, primary_key=True)
-    separacion_mm: Mapped[float] = mapped_column(Float, nullable=False)
-    margen_mm: Mapped[float] = mapped_column(Float, nullable=False)
-    resolucion_raster: Mapped[float] = mapped_column(Float, nullable=False)
-    paso_angular: Mapped[float] = mapped_column(Float, nullable=False)
-    area_minima_retazo: Mapped[float] = mapped_column(Float, nullable=False)
-    dimension_minima_retazo: Mapped[float] = mapped_column(Float, nullable=False)
-    fecha_actualizacion: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.now
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
+    separacion_mm: Mapped[Decimal] = mapped_column(Numeric(8, 2), nullable=False)
+    margen_mm: Mapped[Decimal] = mapped_column(Numeric(8, 2), nullable=False)
+    resolucion_raster_mm: Mapped[Decimal] = mapped_column(Numeric(8, 3), nullable=False)
+    paso_angular_grados: Mapped[Decimal | None] = mapped_column(Numeric(6, 2), nullable=True)
+    ancho_min_retazo_mm: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
+    alto_min_retazo_mm: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
+    vigente: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=true())
+    id_usuario_creacion: Mapped[int] = mapped_column(
+        ForeignKey("usuarios.id_usuario"), nullable=False
     )
+    fecha_creacion: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
 
 class EjecucionOptimizacion(Base):

@@ -153,7 +153,7 @@ La revisión no ofrece downgrade automático: los correos/códigos retirados no
 pueden reconstruirse. Su función `downgrade()` aborta expresamente; cualquier
 recuperación requiere un procedimiento revisado y respaldo externo.
 
-### Validación de R1
+### Validación de R1 anterior a R2
 
 Las pruebas de metadata no abren conexiones. Las de integración crean su propio
 clúster PostgreSQL temporal, escuchando únicamente en `127.0.0.1` y con puerto
@@ -222,3 +222,143 @@ la revisión registrada para eludirla.
 No hubo conexiones ni modificaciones de datos remotos durante la preparación
 de R1. La revisión remota reportada anteriormente sigue siendo un antecedente,
 no una nueva observación ni una afirmación de que R1 esté aplicada allí.
+
+## R2: CONFIGURACION como snapshot versionado
+
+La revisión
+[`f2b3c4d5e6a7`](../../backend/alembic/versions/f2b3c4d5e6a7_r2_configuracion_versionada.py)
+desciende de `e1a2b3c4d5f6`. Las tres revisiones anteriores no se modifican.
+R2 cambia exclusivamente la estructura de CONFIGURACION; mantiene su PK,
+secuencia de identificación y la FK entrante desde
+`ejecuciones_optimizacion.id_configuracion`.
+
+### Precondición obligatoria: tabla vacía
+
+Antes de cualquier DDL, la revisión bloquea `configuraciones` mediante
+`LOCK TABLE ... IN ACCESS EXCLUSIVE MODE` y ejecuta
+`SELECT COUNT(*) FROM configuraciones`. Si existe cualquier fila, lanza un
+`RuntimeError` descriptivo y no modifica columnas ni datos. El bloqueo se
+mantiene hasta terminar la transacción Alembic para evitar inserciones entre
+la comprobación y los cambios. La migración es atómica.
+
+No se interpretan unidades históricas, no se transforma área en dimensiones,
+no se copia una dimensión a ambos mínimos ni se reutiliza una fecha histórica.
+No se inventan versiones, creador, vigencia o fechas. Los renombres y cambios
+de tipos solo se realizan sobre una tabla vacía. No se insertan configuraciones.
+
+### Estructura final de CONFIGURACION
+
+| Columna | Tipo | Restricciones |
+| --- | --- | --- |
+| id_configuracion | INTEGER | PK, NOT NULL; conserva generación existente |
+| version | INTEGER | UNIQUE, NOT NULL, CHECK > 0 |
+| separacion_mm | NUMERIC(8,2) | NOT NULL, CHECK >= 0 |
+| margen_mm | NUMERIC(8,2) | NOT NULL, CHECK >= 0 |
+| resolucion_raster_mm | NUMERIC(8,3) | NOT NULL, CHECK > 0 |
+| paso_angular_grados | NUMERIC(6,2) | NULL, CHECK > 0 AND <= 360 |
+| ancho_min_retazo_mm | NUMERIC(10,2) | NOT NULL, CHECK >= 0 |
+| alto_min_retazo_mm | NUMERIC(10,2) | NOT NULL, CHECK >= 0 |
+| vigente | BOOLEAN | NOT NULL, DEFAULT TRUE |
+| id_usuario_creacion | INTEGER | NOT NULL, FK usuarios.id_usuario |
+| fecha_creacion | TIMESTAMPTZ | NOT NULL |
+
+Se ratificó expresamente que `paso_angular_grados` admite NULL: v1.1 no prescribe
+NOT NULL para ese campo. Su CHECK combinado constituye una de las siete
+restricciones CHECK de CONFIGURACION.
+
+Los renombres son `resolucion_raster` a `resolucion_raster_mm`, `paso_angular` a
+`paso_angular_grados` y `fecha_actualizacion` a `fecha_creacion`. Se eliminan
+`area_minima_retazo` y `dimension_minima_retazo`. Los cinco nombres anteriores
+ya no forman parte del ORM vigente.
+
+`vigente` es el único nuevo default de servidor. No hay defaults Python en
+CONFIGURACION: se retira `datetime.now` del campo temporal anterior y las
+creaciones futuras deberán proporcionar fecha, responsable, versión y
+parámetros. No se agregan índices adicionales a los que respaldan PK/UNIQUE,
+ni cascadas para las FK.
+
+Después de R2, la metadata contiene **10 tablas y 71 columnas**; CONFIGURACION
+tiene **11 columnas**. El total 68 registrado anteriormente corresponde a R1.
+
+### Semántica y alcance diferido
+
+La estructura permite snapshots versionados. Cambiar parámetros debe crear
+una nueva versión; una configuración utilizada no debe modificarse. La
+asignación secuencial, la coordinación concurrente y la inmutabilidad serán
+responsabilidad de la futura capa de aplicación/persistencia. El esquema R2
+por sí solo no garantiza esas reglas.
+
+No se implementan triggers de inmutabilidad, secuencias adicionales,
+`MAX(version)+1`, lógica de versionado ni UNIQUE parcial de `vigente`.
+Varias configuraciones pueden tener `vigente = TRUE`.
+
+Los siete modelos alineados por R1, EJECUCION_OPTIMIZACION y METRICA_EJECUCION
+permanecen estructuralmente intactos. OPTIMIZACION y MATERIAL_UTILIZADO no se
+crean; `Retazo.id_ejecucion_origen` continúa diferido. No se modifican endpoints
+ni se implementan heurísticas.
+
+El `downgrade()` de R2 falla explícitamente con `RuntimeError`: no puede
+reconstruir de forma segura los campos retirados ni su semántica. No ofrece una
+reversión aparente mediante un `pass` ni rellena campos históricos. Cualquier
+recuperación exige un procedimiento revisado.
+
+### Pruebas y validación de R2
+
+- [`test_r2_models.py`](../../backend/tests/unit/test_r2_models.py) valida las
+  once columnas, tipos, nulabilidad, defaults, PK/FK/UNIQUE, siete CHECK,
+  ausencia de índices adicionales, conteo 10/71 y cadena lineal. También
+  comprueba, mediante una llamada Python sin conexión, que `downgrade()` falla.
+- [`test_r2_migration.py`](../../backend/tests/integration/test_r2_migration.py)
+  prueba el recorrido desde vacío hasta head, R1 a R2, rechazo de una fila
+  heredada, rollback ante una vista dependiente, invariancia de las otras nueve
+  tablas/secuencias y comparación del esquema final con el ORM vigente.
+  Verifica restricciones, límites NUMERIC, paso angular NULL y varias filas
+  vigentes en PostgreSQL real.
+- Las pruebas específicas de R1 apuntan ahora a `e1a2b3c4d5f6`, no a `head`.
+  Su contrato histórico de CONFIGURACION se verifica explícitamente con ocho
+  columnas, los nombres anteriores y el total de 68 columnas. Las siete
+  entidades R1 conservan sus pruebas. La comparación completa del ORM vigente
+  con head se realiza en R2.
+- Las utilidades PostgreSQL se comparten mediante
+  [`postgres_support.py`](../../backend/tests/integration/postgres_support.py)
+  y su fixture en `conftest.py`: clúster temporal, puerto propio en loopback,
+  datos sintéticos y parada al terminar. No se usa el servicio existente ni
+  la URL remota como destino. Sin binarios locales, la integración se omite
+  explícitamente; una omisión no constituye evidencia de migración aprobada.
+
+Los comandos de validación siguen siendo `python -m pytest -q`,
+`alembic history`, `alembic heads` y `git diff --check`. Los upgrades de las
+pruebas se ejecutan únicamente en el clúster aislado. No se ejecuta el comando
+Alembic downgrade, stamp ni seed. R2 no se aplica a Supabase.
+
+Resultado local de esta fase, en PostgreSQL **18.6** temporal y aislado:
+
+```text
+113 passed in 101.91s (0:01:41)
+```
+
+Sin omisiones ni errores: las 78 pruebas anteriores adaptadas y 35 nuevas
+(4 unitarias y 31 de integración R2). La comparación del esquema migrado con
+el ORM no produjo diferencias. El clúster de pruebas se detuvo al finalizar.
+La comparación de las clases ORM con el commit R1 confirma que solo cambió
+CONFIGURACION. `git diff --check` finaliza sin incidencias.
+
+`alembic history` (lectura local, código 0):
+
+```text
+e1a2b3c4d5f6 -> f2b3c4d5e6a7 (head), R2: alinear CONFIGURACION con snapshots del modelo v1.1.
+c4e8a1f2b3d5 -> e1a2b3c4d5f6, R1: alinear identidad, inventario y pedidos con el modelo v1.1.
+9b9f04eb67f6 -> c4e8a1f2b3d5, HU-003: agregar dni y usuario a usuarios; correo pasa a opcional
+<base> -> 9b9f04eb67f6, crear esquema inicial
+```
+
+`alembic heads` (lectura local, código 0):
+
+```text
+f2b3c4d5e6a7 (head)
+```
+
+No se ha consultado ni modificado Supabase durante R2. Esta evidencia local no
+afirma que las revisiones R1/R2 estén aplicadas en el entorno remoto, ni acredita
+que CONFIGURACION siga vacía allí. Su futura aplicación requerirá coordinación
+con los consumidores y cumplimiento efectivo de la precondición aprobada.
