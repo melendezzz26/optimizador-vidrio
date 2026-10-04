@@ -35,7 +35,7 @@ la incorporación de DNI/usuario. No se hizo cherry-pick del commit completo
 La migración no se vuelve a ejecutar sobre Supabase: su revisión ya estaba
 registrada y sus cambios estructurales estaban presentes en la inspección.
 
-## Validación local
+## Validación local de la restauración (anterior a R1)
 
 Desde `backend/`, usando el Python del entorno virtual en PowerShell:
 
@@ -57,21 +57,161 @@ Salida de `alembic heads` (código 0):
 c4e8a1f2b3d5 (head)
 ```
 
-Existe un único head local. Estos comandos, con la configuración y opciones
+En esa fase existía un único head local. Estos comandos, con la configuración y opciones
 utilizadas, leen los scripts locales sin ejecutar `env.py` ni conectarse a la BD.
 No se ejecutaron `current`, `upgrade`, `downgrade`, `stamp` ni `revision`.
 
-## Continuidad hacia v1.1
+## R1: identidad, inventario y pedidos
 
-La primera nueva revisión v1.1 tendrá `down_revision = c4e8a1f2b3d5`.
-Las siguientes continuarán esa cadena; todas descenderán de la revisión
-recuperada. No se repetirán sus operaciones sobre DNI/usuario.
+La revisión preparada manualmente es
+[`e1a2b3c4d5f6`](../../backend/alembic/versions/e1a2b3c4d5f6_r1_identidad_inventario_pedidos.py),
+con `down_revision = c4e8a1f2b3d5`. Conserva ambos archivos históricos sin
+alterarlos y no repite la creación de DNI/usuario. Las siguientes revisiones
+continuarán esta cadena.
 
-Esta fase no modifica `models.py`, no elimina correo, no añade fecha de creación
-ni crea OPTIMIZACION o MATERIAL_UTILIZADO. El ORM aún conserva el estado anterior
-a HU-003; restaurar el historial no equivale a alinear su metadata con el remoto
-o con v1.1. Antes de generar futuras migraciones deberá alinearse el modelo
-con la línea base y revisarse explícitamente la transformación de datos.
+R1 alinea únicamente los siete modelos en
+[`models.py`](../../backend/app/models.py) y su migración correspondiente:
+
+| Entidad | Cambio R1 |
+| --- | --- |
+| ROL | `nombre VARCHAR(30)`, `descripcion VARCHAR(150) NULL`; conserva PK y UNIQUE de nombre. |
+| USUARIO | Incorpora DNI/usuario al ORM; DNI `CHAR(8)`, patrones, fecha de creación `TIMESTAMPTZ NOT NULL`, estado con default de servidor `TRUE`; retira correo y su UNIQUE. |
+| TIPO_VIDRIO | UNIQUE de nombre y default de servidor `TRUE` para estado. |
+| PLANCHA | Stock agregado sin código; dimensiones `NUMERIC(10,2)`, espesor `NUMERIC(4,1)`, CHECK de dimensiones positivas, espesor admitido y cantidad no negativa; fecha de registro con zona e índice de stock compatible. |
+| RETAZO | Código `VARCHAR(40)`, espesor `NUMERIC(4,1)`, área `NUMERIC(18,2)` positiva, fecha de registro con zona e índice de stock compatible. |
+| PEDIDO | Fecha con zona, estado `VARCHAR(20)` y dominio exacto; espesor `NUMERIC(4,1)`; renombra `id_usuario` a `id_usuario_registro` conservando la FK; índice de estado/fecha. |
+| PIEZA | Forma `VARCHAR(30)` con dominio exacto, cantidad positiva, geometría obligatoria y área `NUMERIC(18,2) NOT NULL` positiva; dimensiones JSONB opcionales. |
+
+Los espesores admitidos son `3, 4, 5.5, 6, 8` mm. Los estados de pedido son
+`PENDIENTE`, `EN_OPTIMIZACION`, `OPTIMIZADO`, `CONFIRMADO`, `CANCELADO`; las formas
+son `RECTANGULO`, `CIRCUNFERENCIA`, `POLIGONO_CONVEXO`.
+Los cuatro estados booleanos de usuario/tipo/plancha/retazo tienen default de
+servidor `TRUE`. Ninguna fecha tiene default de servidor ni se deduce su zona
+histórica. El ORM requiere fechas explícitas con zona; se retira el anterior
+`datetime.now` sin zona de Pedido. Se conserva su default Python preexistente
+`PENDIENTE`, sin convertirlo en default de servidor.
+
+Las PK y FK existentes se conservan; no se añaden cascadas. Los UNIQUE de DNI
+y usuario se reutilizan, sin índices duplicados. No se deduplican planchas ni
+se impone una nueva clave compuesta para stock.
+
+### Políticas aprobadas y precondiciones
+
+1. **Correo:** respaldo seguro fuera del repositorio antes de aplicar R1 a la
+   base compartida. La migración elimina columna y UNIQUE; no crea archivos,
+   columnas alternativas ni historial de datos personales. El respaldo es una
+   precondición operativa, no una acción automática de la migración.
+2. **Fecha del usuario heredado:** el timestamp de ejecución de la sentencia
+   de incorporación es una fecha técnica de ingreso al esquema v1.1. No
+   representa necesariamente su alta histórica. Se rellena una sola vez y
+   luego se exige NOT NULL, sin default permanente. Las altas posteriores
+   deben proporcionar su fecha real.
+3. **Plancha/retazo:** deben seguir vacíos. Si hay filas, se aborta; no se
+   inventan fechas históricas. Si están vacíos, se añade directamente la
+   fecha de registro obligatoria.
+4. **Pedido:** debe seguir vacío. Si tiene filas, se aborta antes del DDL;
+   no se interpreta como UTC ni como America/Lima ningún timestamp heredado.
+5. **Pieza:** se aborta ante geometría o área SQL NULL; no se generan geometrías,
+   no se rellena con cero ni se borran filas. La presencia de pedidos también
+   impide ejecutar R1 según la política anterior.
+6. **Conversiones:** se comprueban longitudes, finitud, dominios, rango, escala
+   y conservación del valor al convertir FLOAT a NUMERIC y volver a FLOAT.
+   Se aborta ante truncamiento, redondeo o pérdida de precisión; no hay
+   normalizaciones automáticas. Se comprueban duplicados de tipos de vidrio.
+7. **Identificador de acceso:** CHECK de una letra ASCII, sin imponer su caso,
+   seguida de ocho dígitos; DNI con ocho dígitos. No se compara el identificador
+   permanentemente con nombres ni se cambia al renombrar al trabajador.
+   La normalización inicial pertenece a la aplicación.
+
+Las siete tablas se bloquean durante la transacción antes del preflight para
+evitar escrituras entre comprobaciones y transformaciones. Todas las
+precondiciones se verifican antes del primer cambio de esquema/datos. Un fallo
+posterior también debe revertir la transacción completa y conservar la revisión.
+Estos bloqueos requieren una ventana coordinada antes de cualquier aplicación
+compartida. No se usa CASCADE para eliminar dependencias imprevistas.
+
+### Alcance diferido y compatibilidad
+
+R1 mantiene **10 tablas y 68 columnas** en la metadata, todavía no las 12
+entidades/90 columnas del objetivo completo. Los siete modelos R1 suman 45
+columnas. `Retazo.id_ejecucion_origen` y su FK nullable se incorporarán en una
+revisión posterior al alinear EJECUCION_OPTIMIZACION; no se enlazan ahora a la
+estructura histórica de ejecuciones ni se sustituye esa relación por otro campo.
+
+CONFIGURACION, EJECUCION_OPTIMIZACION y METRICA_EJECUCION conservan sus estructuras
+actuales. OPTIMIZACION y MATERIAL_UTILIZADO no se crean. No se implementan
+heurísticas, confirmación de inventario ni validadores geométricos: el contrato
+JSONB deberá validarse en la SPEC/aplicación correspondiente.
+
+El ORM R1 deja de ser compatible con el esquema remoto todavía observado en
+HU-003. No debe desplegarse contra él sin coordinar la migración. Los futuros
+consumidores deben usar `usuario`, `id_usuario_registro`, fechas explícitas con
+zona y valores Decimal. El CRUD de HU-003 que usa correo debe adaptarse antes
+de integrarse; no se ha importado en este cambio.
+
+La revisión no ofrece downgrade automático: los correos/códigos retirados no
+pueden reconstruirse. Su función `downgrade()` aborta expresamente; cualquier
+recuperación requiere un procedimiento revisado y respaldo externo.
+
+### Validación de R1
+
+Las pruebas de metadata no abren conexiones. Las de integración crean su propio
+clúster PostgreSQL temporal, escuchando únicamente en `127.0.0.1` y con puerto
+efímero; utilizan datos sintéticos. No leen la URL remota para elegir destino y
+no utilizan el servicio PostgreSQL existente. No se usa SQLite como sustituto
+de estas pruebas de migración.
+
+Los binarios se buscan en PATH, en `NEWGLASS_TEST_PG_BIN` o en la instalación
+Windows de PostgreSQL 18. Sin binarios las pruebas de integración se marcan
+como omitidas; ese resultado no demuestra que la migración funcione.
+
+Desde `backend/`:
+
+```powershell
+& ./venv/Scripts/python.exe -B -m pytest -q
+& ./venv/Scripts/python.exe -B -m alembic history
+& ./venv/Scripts/python.exe -B -m alembic heads
+```
+
+Desde la raíz: `git diff --check`.
+
+La suite aplica `upgrade` exclusivamente a sus bases temporales. Comprueba el
+recorrido desde una BD limpia, transformación de una cuenta sintética heredada,
+metadata frente al esquema migrado, constraints y conservación del estado ante
+errores. No ejecuta downgrade, stamp, seed ni operaciones contra Supabase.
+
+Resultado local obtenido con PostgreSQL **18.6** aislado:
+
+- `pytest -q`: **78 passed in 39.86s**, sin omisiones (20 pruebas previas,
+  8 pruebas nuevas de metadata y 50 de integración).
+- [`test_r1_models.py`](../../backend/tests/unit/test_r1_models.py): tipos,
+  nulabilidad, PK/FK/UNIQUE/CHECK, defaults, índices, campos retirados/diferidos
+  y conservación de las entidades excluidas.
+- [`test_r1_migration.py`](../../backend/tests/integration/test_r1_migration.py):
+  migración desde vacío y desde HU-003 con cuenta sintética; comparación
+  esquema/ORM sin diferencias; preflight de datos inválidos; constraints;
+  rollback de DDL y fecha técnica ante una vista dependiente de correo.
+- `git diff --check`: sin incidencias.
+
+`alembic history` (lectura local, código 0):
+
+```text
+c4e8a1f2b3d5 -> e1a2b3c4d5f6 (head), R1: alinear identidad, inventario y pedidos con el modelo v1.1.
+9b9f04eb67f6 -> c4e8a1f2b3d5, HU-003: agregar dni y usuario a usuarios; correo pasa a opcional
+<base> -> 9b9f04eb67f6, crear esquema inicial
+```
+
+`alembic heads` (lectura local, código 0):
+
+```text
+e1a2b3c4d5f6 (head)
+```
+
+La prueba en PostgreSQL 18.6 no sustituye la revisión de compatibilidad con la
+versión/configuración del entorno de destino ni autoriza aplicar R1 allí.
+Antes de hacerlo siguen siendo necesarios el respaldo externo, la coordinación
+de consumidores y la verificación de las precondiciones/demás dependencias del
+esquema compartido. No se ha ejecutado ninguna migración sobre Supabase.
 
 Se conserva una limitación histórica de `c4e8a1f2b3d5`: su `upgrade()` aborta
 si `usuarios` contiene cualquier registro. Completar DNI no evita esa condición.
@@ -79,6 +219,6 @@ Esto debe contemplarse al probar otros entornos que todavía estén en la revisi
 inicial; no justifica borrar usuarios, repetir la migración remota ni alterar
 la revisión registrada para eludirla.
 
-Los consumidores de correo y los imports antiguos de HU-003 se adaptarán en
-fases posteriores coordinadas. No hubo conexiones ni modificaciones de datos
-remotos durante esta fase.
+No hubo conexiones ni modificaciones de datos remotos durante la preparación
+de R1. La revisión remota reportada anteriormente sigue siendo un antecedente,
+no una nueva observación ni una afirmación de que R1 esté aplicada allí.
