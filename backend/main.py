@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
 from app.shared.database import engine
-from app.routers import auth
+from app.modules.authentication.presentation.router import router as authentication_router
 
 app = FastAPI(
     title="Optimizador de Corte de Vidrio",
@@ -12,13 +12,13 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 # Rutas de autenticación (HU-001)
-app.include_router(auth.router)
+app.include_router(authentication_router)
 
 
 @app.get("/")
