@@ -5,7 +5,7 @@ import jwt
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.core.security import ALGORITHM, SECRET_KEY
+from app.shared.security.tokens import ALGORITHM, SECRET_KEY
 from app.routers.auth import router
 
 app = FastAPI()

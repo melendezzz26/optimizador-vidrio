@@ -8,7 +8,8 @@ pruebas no cambian.
 from dataclasses import dataclass
 from typing import Optional
 
-from app.core.security import hashear_password
+# Alias temporal: este archivo se elimina al conectar el login a la base (HU-001).
+from app.shared.security import hash_password as hashear_password
 
 
 @dataclass

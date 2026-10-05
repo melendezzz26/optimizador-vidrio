@@ -3,7 +3,7 @@ import jwt
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from app.core.security import crear_token, decodificar_token, verificar_password
+from app.shared.security import create_access_token, decode_access_token, verify_password
 from app.schemas.auth import LoginRequest, LoginResponse, UsuarioPublico
 from app.services.usuarios import obtener_usuario_por_username
 
@@ -17,14 +17,14 @@ CREDENCIALES_INVALIDAS = "Usuario o contraseña incorrectos."
 @router.post("/login", response_model=LoginResponse)
 def login(datos: LoginRequest):
     usuario = obtener_usuario_por_username(datos.username)
-    if usuario is None or not verificar_password(datos.password, usuario.password_hash):
+    if usuario is None or not verify_password(datos.password, usuario.password_hash):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, CREDENCIALES_INVALIDAS)
     if not usuario.activo:
         raise HTTPException(
             status.HTTP_403_FORBIDDEN,
             "Tu cuenta está desactivada. Pide al administrador que la active.",
         )
-    token = crear_token(usuario.id_usuario, usuario.username, usuario.rol)
+    token = create_access_token(usuario.id_usuario, usuario.username, usuario.rol)
     return LoginResponse(
         access_token=token,
         usuario=UsuarioPublico(
@@ -41,7 +41,7 @@ def usuario_actual(cred: HTTPAuthorizationCredentials = Depends(bearer)) -> dict
     if cred is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Debes iniciar sesión.")
     try:
-        return decodificar_token(cred.credentials)
+        return decode_access_token(cred.credentials)
     except jwt.ExpiredSignatureError:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Tu sesión expiró. Inicia sesión otra vez.")
     except jwt.InvalidTokenError:
