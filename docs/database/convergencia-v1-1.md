@@ -712,3 +712,96 @@ Las pruebas combinadas de R3 y R4 obtuvieron:
 
 ```text
 83 passed in 30.46s
+```
+
+## Aplicación controlada del modelo v1.1 en Supabase
+
+### Estado previo
+
+Antes de aplicar las revisiones de convergencia se realizó una inspección
+de solo lectura sobre la base PostgreSQL alojada en Supabase.
+
+La revisión registrada era:
+
+`c4e8a1f2b3d5`
+
+Las tablas operativas afectadas por las migraciones se encontraban vacías:
+
+- `planchas`: 0
+- `retazos`: 0
+- `pedidos`: 0
+- `piezas`: 0
+- `configuraciones`: 0
+- `ejecuciones_optimizacion`: 0
+- `metricas_ejecucion`: 0
+
+La tabla `usuarios` contenía un registro existente.
+
+Las precondiciones de R1, R2, R3 y R4 fueron verificadas como cumplidas.
+
+### Respaldo previo
+
+Antes de ejecutar R1 se realizó un respaldo externo del campo `correo`
+del usuario existente, debido a que dicho atributo se elimina del modelo
+de identidad v1.1.
+
+El respaldo no se almacenó en el repositorio Git y no contiene credenciales
+ni contraseñas.
+
+### Ejecución de migraciones
+
+La actualización se ejecutó mediante Alembic sobre PostgreSQL/Supabase:
+
+```text
+c4e8a1f2b3d5
+→ e1a2b3c4d5f6  R1
+→ f2b3c4d5e6a7  R2
+→ a3c4d5e6f7b8  R3
+→ b4d5e6f7a8c9  R4
+```
+
+Comando utilizado:
+
+```powershell
+.\venv\Scripts\python.exe -B -m alembic upgrade head
+```
+
+Alembic completó las cuatro revisiones sin errores.
+
+### Validación posterior
+
+La verificación posterior confirmó:
+
+- revisión Alembic: `b4d5e6f7a8c9 (head)`;
+- 12 tablas funcionales;
+- 90 columnas funcionales;
+- existencia de `optimizaciones`;
+- existencia de `materiales_utilizados`;
+- `configuraciones` con 11 columnas;
+- `ejecuciones_optimizacion` con 8 columnas;
+- `metricas_ejecucion` con 11 columnas;
+- `retazos` con `id_ejecucion_origen`;
+- eliminación de `usuarios.correo`;
+- eliminación de `planchas.codigo`;
+- sustitución de `pedidos.id_usuario` por `id_usuario_registro`;
+- usuario preexistente preservado;
+- `fecha_creacion` del usuario no nula;
+- ninguna vista inesperada;
+- ningún trigger de usuario inesperado;
+- ninguna columna obsoleta detectada;
+- las tablas operativas previamente vacías permanecieron sin datos artificiales.
+
+El conteo final fue:
+
+```text
+12 tablas funcionales
+90 columnas funcionales
+Alembic head: b4d5e6f7a8c9
+```
+
+### Resultado
+
+**Migración controlada a NewGlass v1.1 completada correctamente.**
+
+La base PostgreSQL/Supabase y el modelo SQLAlchemy del repositorio quedaron
+alineados con el diseño de datos v1.1.
