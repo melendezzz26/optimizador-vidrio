@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
-from app.shared.database import engine
 from app.modules.authentication.presentation.router import router as authentication_router
+from app.modules.inventory.presentation.router import router as inventory_router
 
 app = FastAPI(
     title="Optimizador de Corte de Vidrio",
@@ -13,12 +13,14 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
-    allow_methods=["GET", "POST"],
+    allow_methods=["GET", "POST", "PATCH"],
     allow_headers=["Authorization", "Content-Type"],
 )
 
 # Rutas de autenticación (HU-001)
 app.include_router(authentication_router)
+# Rutas de inventario (TA-003)
+app.include_router(inventory_router)
 
 
 @app.get("/")
@@ -30,6 +32,7 @@ def inicio():
 
 @app.get("/db-test")
 def probar_base_datos():
+    from app.shared.database import engine
     with engine.connect() as conexion:
         resultado = conexion.execute(
             text("SELECT version();")

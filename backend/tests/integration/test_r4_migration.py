@@ -5,7 +5,7 @@ from alembic.migration import MigrationContext
 import pytest
 import sqlalchemy as sa
 
-from tests.model_contracts import current_metadata
+from tests.model_contracts import historical_metadata
 from .postgres_support import new_database, schema_snapshot, upgrade
 
 
@@ -13,7 +13,7 @@ R3 = "a3c4d5e6f7b8"
 R4 = "b4d5e6f7a8c9"
 
 
-def insert_r3_context(connection):
+def insert_r3_context(connection, *, with_catalog=False):
     """Contexto sintético válido para crear una ejecución R3."""
 
     statements = [
@@ -77,6 +77,9 @@ def insert_r3_context(connection):
         )
         """,
     ]
+
+    if with_catalog:
+        statements.insert(3, "INSERT INTO tipos_vidrio_espesores VALUES (1,3),(1,4)")
 
     for statement in statements:
         connection.exec_driver_sql(statement)
@@ -144,7 +147,7 @@ def test_clean_chain_matches_r4_orm_and_v11_counts(r4_db):
 
         assert compare_metadata(
             context,
-            current_metadata(),
+            historical_metadata(R4),
         ) == []
 
     inspector = sa.inspect(r4_db)

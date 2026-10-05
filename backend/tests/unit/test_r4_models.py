@@ -1,4 +1,4 @@
-"""Contrato vigente R4 de METRICA_EJECUCION y modelo v1.1 completo."""
+"""Contrato histórico R4 de METRICA_EJECUCION y modelo v1.1 completo."""
 
 import importlib.util
 
@@ -8,7 +8,7 @@ import pytest
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
-from tests.model_contracts import BACKEND, current_metadata, historical_metadata
+from tests.model_contracts import BACKEND, historical_metadata
 
 
 R3 = "a3c4d5e6f7b8"
@@ -43,7 +43,7 @@ EXPECTED_CHECKS = {
 
 @pytest.fixture(scope="module")
 def metadata():
-    return current_metadata()
+    return historical_metadata(R4)
 
 
 def _default(column):
@@ -204,19 +204,17 @@ def test_r4_has_no_float_metrics(metadata):
     )
 
 
-def test_r4_is_linear_head_and_downgrade_fails_explicitly():
+def test_r4_is_linear_and_downgrade_fails_explicitly():
     config = Config()
     config.set_main_option("script_location", str(BACKEND / "alembic"))
     scripts = ScriptDirectory.from_config(config)
-
-    assert scripts.get_heads() == [R4]
 
     revision = scripts.get_revision(R4)
 
     assert revision is not None
     assert revision.down_revision == R3
 
-    assert [item.revision for item in scripts.walk_revisions()] == [
+    assert [item.revision for item in scripts.iterate_revisions(R4, "base")] == [
         R4,
         R3,
         "f2b3c4d5e6a7",
