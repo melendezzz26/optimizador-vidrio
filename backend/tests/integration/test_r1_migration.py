@@ -6,16 +6,12 @@ NEWGLASS_TEST_PG_BIN). Si no existen, las pruebas se omiten explícitamente.
 
 import importlib.util
 from pathlib import Path
-import runpy
-import sys
-from types import ModuleType
-from unittest.mock import patch
 
 from alembic.autogenerate import compare_metadata
 from alembic.migration import MigrationContext
 import pytest
 import sqlalchemy as sa
-from sqlalchemy.orm import declarative_base
+from tests.model_contracts import historical_metadata
 
 from .postgres_support import new_database, schema_snapshot, upgrade
 
@@ -55,20 +51,13 @@ def r1_db(isolated_postgres):
 
 
 def test_clean_database_reaches_r1_historical_contract(r1_db):
-    module = ModuleType("app.shared.database")
-    module.Base = declarative_base()
-    with patch.dict(sys.modules, {"app.shared.database": module}):
-        runpy.run_path(str(BACKEND / "app/models.py"))
+    metadata = historical_metadata(R1)
     with r1_db.connect() as connection:
         assert connection.scalar(sa.text("SELECT version_num FROM alembic_version")) == R1
-        # Las siete entidades R1 y las tablas de ejecución siguen vigentes.
-        # CONFIGURACION se contrasta abajo con su contrato histórico, no con R2.
         context = MigrationContext.configure(connection, opts={
             "compare_type": True, "compare_server_default": True,
-            "include_object": lambda obj, name, type_, reflected, compare_to:
-                not (type_ == "table" and name == "configuraciones"),
         })
-        assert compare_metadata(context, module.Base.metadata) == []
+        assert compare_metadata(context, metadata) == []
     inspector = sa.inspect(r1_db)
     tables = set(inspector.get_table_names()) - {"alembic_version"}
     assert len(tables) == 10

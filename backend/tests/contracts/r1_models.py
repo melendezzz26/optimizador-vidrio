@@ -1,3 +1,5 @@
+"""Snapshot ORM R1 de 9c8c3fb, solo para pruebas históricas; no es código de aplicación."""
+
 from datetime import datetime
 from decimal import Decimal
 
@@ -103,9 +105,6 @@ class Retazo(Base):
     area_mm2: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False)
     estado: Mapped[bool] = mapped_column(Boolean, default=True, server_default=true())
     fecha_registro: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    id_ejecucion_origen: Mapped[int | None] = mapped_column(
-        ForeignKey("ejecuciones_optimizacion.id_ejecucion"), nullable=True
-    )
 
     id_tipo_vidrio: Mapped[int] = mapped_column(
         ForeignKey("tipos_vidrio.id_tipo_vidrio"),
@@ -168,109 +167,42 @@ class Pieza(Base):
 
 class Configuracion(Base):
     __tablename__ = "configuraciones"
-    __table_args__ = (
-        UniqueConstraint("version", name="configuraciones_version_key"),
-        CheckConstraint("version > 0", name="ck_configuraciones_version"),
-        CheckConstraint("separacion_mm >= 0", name="ck_configuraciones_separacion"),
-        CheckConstraint("margen_mm >= 0", name="ck_configuraciones_margen"),
-        CheckConstraint("resolucion_raster_mm > 0", name="ck_configuraciones_resolucion"),
-        CheckConstraint(
-            "paso_angular_grados > 0 AND paso_angular_grados <= 360",
-            name="ck_configuraciones_paso_angular",
-        ),
-        CheckConstraint("ancho_min_retazo_mm >= 0", name="ck_configuraciones_ancho_retazo"),
-        CheckConstraint("alto_min_retazo_mm >= 0", name="ck_configuraciones_alto_retazo"),
-    )
 
     id_configuracion: Mapped[int] = mapped_column(Integer, primary_key=True)
-    version: Mapped[int] = mapped_column(Integer, nullable=False)
-    separacion_mm: Mapped[Decimal] = mapped_column(Numeric(8, 2), nullable=False)
-    margen_mm: Mapped[Decimal] = mapped_column(Numeric(8, 2), nullable=False)
-    resolucion_raster_mm: Mapped[Decimal] = mapped_column(Numeric(8, 3), nullable=False)
-    paso_angular_grados: Mapped[Decimal | None] = mapped_column(Numeric(6, 2), nullable=True)
-    ancho_min_retazo_mm: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
-    alto_min_retazo_mm: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
-    vigente: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=true())
-    id_usuario_creacion: Mapped[int] = mapped_column(
-        ForeignKey("usuarios.id_usuario"), nullable=False
-    )
-    fecha_creacion: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-
-
-class Optimizacion(Base):
-    __tablename__ = "optimizaciones"
-    __table_args__ = (
-        CheckConstraint(
-            "estado IN ('EN_EJECUCION', 'COMPLETADA', 'SIN_SOLUCION', 'FALLIDA')",
-            name="ck_optimizaciones_estado",
-        ),
-        Index("ix_optimizaciones_pedido_fecha", "id_pedido", "fecha_inicio"),
-    )
-
-    id_optimizacion: Mapped[int] = mapped_column(Integer, primary_key=True)
-    fecha_inicio: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    fecha_fin: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    estado: Mapped[str] = mapped_column(String(20), nullable=False)
-    id_pedido: Mapped[int] = mapped_column(ForeignKey("pedidos.id_pedido"), nullable=False)
-    id_configuracion: Mapped[int] = mapped_column(
-        ForeignKey("configuraciones.id_configuracion"), nullable=False
-    )
-    id_usuario_ejecutor: Mapped[int] = mapped_column(ForeignKey("usuarios.id_usuario"), nullable=False)
-    criterio_seleccion_version: Mapped[str] = mapped_column(String(20), nullable=False)
-    id_ejecucion_seleccionada: Mapped[int | None] = mapped_column(
-        ForeignKey(
-            "ejecuciones_optimizacion.id_ejecucion",
-            name="fk_optimizaciones_ejecucion_seleccionada",
-            use_alter=True,
-        ),
-        nullable=True,
+    separacion_mm: Mapped[float] = mapped_column(Float, nullable=False)
+    margen_mm: Mapped[float] = mapped_column(Float, nullable=False)
+    resolucion_raster: Mapped[float] = mapped_column(Float, nullable=False)
+    paso_angular: Mapped[float] = mapped_column(Float, nullable=False)
+    area_minima_retazo: Mapped[float] = mapped_column(Float, nullable=False)
+    dimension_minima_retazo: Mapped[float] = mapped_column(Float, nullable=False)
+    fecha_actualizacion: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.now
     )
 
 
 class EjecucionOptimizacion(Base):
     __tablename__ = "ejecuciones_optimizacion"
-    __table_args__ = (
-        CheckConstraint("metodo IN ('FF', 'BF', 'WF')", name="ck_ejecuciones_metodo"),
-        CheckConstraint(
-            "estado IN ('EN_EJECUCION', 'COMPLETADA', 'FALLIDA')",
-            name="ck_ejecuciones_estado",
-        ),
-        UniqueConstraint("id_optimizacion", "metodo", name="ejecuciones_optimizacion_metodo_key"),
-    )
 
     id_ejecucion: Mapped[int] = mapped_column(Integer, primary_key=True)
-    id_optimizacion: Mapped[int] = mapped_column(
-        ForeignKey(
-            "optimizaciones.id_optimizacion",
-            name="ejecuciones_optimizacion_id_optimizacion_fkey",
-        ), nullable=False
+    metodo: Mapped[str] = mapped_column(String(30), nullable=False)
+    fecha_ejecucion: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.now
     )
-    metodo: Mapped[str] = mapped_column(String(10), nullable=False)
-    fecha_inicio: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    fecha_fin: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    estado: Mapped[str] = mapped_column(String(20), nullable=False)
-    completo: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    tiempo_computacional: Mapped[float | None] = mapped_column(Float)
+    seleccionada: Mapped[bool] = mapped_column(Boolean, default=False)
     patron_resultado: Mapped[dict | None] = mapped_column(JSONB)
 
-
-class MaterialUtilizado(Base):
-    __tablename__ = "materiales_utilizados"
-    __table_args__ = (
-        CheckConstraint("cantidad_utilizada > 0", name="ck_materiales_cantidad"),
-        CheckConstraint(
-            "(id_plancha IS NOT NULL) <> (id_retazo IS NOT NULL)",
-            name="ck_materiales_fuente",
-        ),
-        Index("ix_materiales_ejecucion", "id_ejecucion"),
+    id_pedido: Mapped[int] = mapped_column(
+        ForeignKey("pedidos.id_pedido"),
+        nullable=False
     )
 
-    id_material_utilizado: Mapped[int] = mapped_column(Integer, primary_key=True)
-    id_ejecucion: Mapped[int] = mapped_column(
-        ForeignKey("ejecuciones_optimizacion.id_ejecucion"), nullable=False
+    id_configuracion: Mapped[int] = mapped_column(
+        ForeignKey("configuraciones.id_configuracion"),
+        nullable=False
     )
-    id_plancha: Mapped[int | None] = mapped_column(ForeignKey("planchas.id_plancha"), nullable=True)
-    id_retazo: Mapped[int | None] = mapped_column(ForeignKey("retazos.id_retazo"), nullable=True)
-    cantidad_utilizada: Mapped[int] = mapped_column(Integer, nullable=False, server_default="1")
 
 
 class MetricaEjecucion(Base):

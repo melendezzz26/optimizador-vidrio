@@ -1,18 +1,14 @@
 """R2 en PostgreSQL temporal, exclusivamente con datos sintéticos."""
 
 from decimal import Decimal
-import runpy
-import sys
-from types import ModuleType
-from unittest.mock import patch
 
 from alembic.autogenerate import compare_metadata
 from alembic.migration import MigrationContext
 import pytest
 import sqlalchemy as sa
-from sqlalchemy.orm import declarative_base
+from tests.model_contracts import historical_metadata
 
-from .postgres_support import BACKEND, new_database, schema_snapshot, upgrade
+from .postgres_support import new_database, schema_snapshot, upgrade
 
 R1 = "e1a2b3c4d5f6"
 R2 = "f2b3c4d5e6a7"
@@ -29,20 +25,16 @@ def previous_db(isolated_postgres):
 @pytest.fixture(scope="module")
 def r2_db(isolated_postgres):
     with new_database(isolated_postgres) as engine:
-        result = upgrade(engine, "head")
+        result = upgrade(engine, R2)
         assert result.returncode == 0, result.stderr
         yield engine
 
 
-def test_clean_chain_reaches_r2_and_matches_current_orm(r2_db):
-    database = ModuleType("app.shared.database")
-    database.Base = declarative_base()
-    with patch.dict(sys.modules, {"app.shared.database": database}):
-        runpy.run_path(str(BACKEND / "app/models.py"))
+def test_clean_chain_reaches_r2_and_matches_historical_contract(r2_db):
     with r2_db.connect() as connection:
         assert connection.scalar(sa.text("SELECT version_num FROM alembic_version")) == R2
         context = MigrationContext.configure(connection, opts={"compare_type": True, "compare_server_default": True})
-        assert compare_metadata(context, database.Base.metadata) == []
+        assert compare_metadata(context, historical_metadata(R2)) == []
     inspector = sa.inspect(r2_db)
     tables = set(inspector.get_table_names()) - {"alembic_version"}
     assert len(tables) == 10

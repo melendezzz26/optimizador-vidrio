@@ -2,17 +2,13 @@
 
 import importlib.util
 from pathlib import Path
-import runpy
-import sys
-from types import ModuleType
-from unittest.mock import patch
 
 from alembic.config import Config
 from alembic.script import ScriptDirectory
 import pytest
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
-from sqlalchemy.orm import declarative_base
+from tests.model_contracts import historical_metadata
 
 BACKEND = Path(__file__).resolve().parents[2]
 R2 = "f2b3c4d5e6a7"
@@ -20,11 +16,7 @@ R2 = "f2b3c4d5e6a7"
 
 @pytest.fixture(scope="module")
 def metadata():
-    database = ModuleType("app.shared.database")
-    database.Base = declarative_base()
-    with patch.dict(sys.modules, {"app.shared.database": database}):
-        runpy.run_path(str(BACKEND / "app/models.py"))
-    return database.Base.metadata
+    return historical_metadata(R2)
 
 
 def test_r2_exact_columns_types_nullability_and_defaults(metadata):
@@ -71,12 +63,11 @@ def test_r2_metadata_scope_and_incoming_reference(metadata):
     assert "id_ejecucion_origen" not in metadata.tables["retazos"].c
 
 
-def test_r2_has_one_linear_head_and_explicit_irreversible_downgrade():
+def test_r2_historical_chain_and_explicit_irreversible_downgrade():
     config = Config()
     config.set_main_option("script_location", str(BACKEND / "alembic"))
     scripts = ScriptDirectory.from_config(config)
-    assert scripts.get_heads() == [R2]
-    assert [r.revision for r in scripts.walk_revisions()] == [
+    assert [r.revision for r in scripts.iterate_revisions(R2, "base")] == [
         R2, "e1a2b3c4d5f6", "c4e8a1f2b3d5", "9b9f04eb67f6",
     ]
     spec = importlib.util.spec_from_file_location(

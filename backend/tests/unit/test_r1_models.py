@@ -1,24 +1,14 @@
 """Contrato R1 contra v1.1: metadata PostgreSQL, sin abrir conexiones."""
 
-from pathlib import Path
-import runpy
-import sys
-from types import ModuleType
-from unittest.mock import patch
-
 import pytest
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
-from sqlalchemy.orm import declarative_base
+from tests.model_contracts import historical_metadata
 
 
 @pytest.fixture(scope="module")
 def metadata():
-    database = ModuleType("app.shared.database")
-    database.Base = declarative_base()
-    with patch.dict(sys.modules, {"app.shared.database": database}):
-        runpy.run_path(str(Path(__file__).resolve().parents[2] / "app/models.py"))
-    return database.Base.metadata
+    return historical_metadata("e1a2b3c4d5f6")
 
 
 # Tipo SQL exacto; solo estos campos admiten NULL en las siete entidades.
@@ -98,14 +88,14 @@ def test_exact_r1_columns_types_nullability_defaults_and_keys(metadata, name):
     assert str(sa.schema.CreateTable(table).compile(dialect=dialect))
 
 
-def test_entities_still_deferred_after_r2_remain_at_the_previous_schema(metadata):
+def test_excluded_entities_remain_at_the_previous_schema(metadata):
     expected = {
+        "configuraciones": "id_configuracion separacion_mm margen_mm resolucion_raster paso_angular area_minima_retazo dimension_minima_retazo fecha_actualizacion",
         "ejecuciones_optimizacion": "id_ejecucion metodo fecha_ejecucion tiempo_computacional seleccionada patron_resultado id_pedido id_configuracion",
         "metricas_ejecucion": "id_metrica aprovechamiento_pct merma_mm2 planchas_utilizadas area_recuperable_mm2 tiempo_computacional_ms id_ejecucion",
     }
-    # CONFIGURACION ya pertenece a R2; su estado R1 se verifica sobre la BD
-    # migrada explícitamente a e1a2b3c4d5f6 en test_r1_migration.py.
-    assert set(metadata.tables) == set(EXPECTED) | set(expected) | {"configuraciones"}
+    assert set(metadata.tables) == set(EXPECTED) | set(expected)
+    assert sum(len(t.c) for t in metadata.tables.values()) == 68
     for name, fields in expected.items():
         table = metadata.tables[name]
         assert list(table.c.keys()) == fields.split()
@@ -113,11 +103,13 @@ def test_entities_still_deferred_after_r2_remain_at_the_previous_schema(metadata
         assert not any(isinstance(c, sa.CheckConstraint) for c in table.constraints)
         assert all(c.server_default is None for c in table.c)
         nullable = {
+            "configuraciones": set(),
             "ejecuciones_optimizacion": {"tiempo_computacional", "patron_resultado"},
             "metricas_ejecucion": {"aprovechamiento_pct", "merma_mm2", "planchas_utilizadas", "area_recuperable_mm2", "tiempo_computacional_ms"},
         }
         assert {c.name for c in table.c if c.nullable} == nullable[name]
         expected_fks = {
+            "configuraciones": set(),
             "ejecuciones_optimizacion": {("id_pedido", "pedidos.id_pedido"), ("id_configuracion", "configuraciones.id_configuracion")},
             "metricas_ejecucion": {("id_ejecucion", "ejecuciones_optimizacion.id_ejecucion")},
         }

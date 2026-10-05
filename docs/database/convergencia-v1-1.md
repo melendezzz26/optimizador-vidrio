@@ -362,3 +362,158 @@ No se ha consultado ni modificado Supabase durante R2. Esta evidencia local no
 afirma que las revisiones R1/R2 estén aplicadas en el entorno remoto, ni acredita
 que CONFIGURACION siga vacía allí. Su futura aplicación requerirá coordinación
 con los consumidores y cumplimiento efectivo de la precondición aprobada.
+
+## R3: trazabilidad de optimización y material propuesto
+
+La revisión
+[`a3c4d5e6f7b8`](../../backend/alembic/versions/a3c4d5e6f7b8_r3_trazabilidad_optimizacion.py)
+tiene `down_revision = f2b3c4d5e6a7`. No se modifican revisiones anteriores.
+Introduce OPTIMIZACION y MATERIAL_UTILIZADO, alinea EJECUCION_OPTIMIZACION y
+añade exclusivamente `Retazo.id_ejecucion_origen` al contrato de inventario.
+
+### Datos heredados y atomicidad
+
+Antes del primer DDL se bloquean conjuntamente `ejecuciones_optimizacion` y
+`metricas_ejecucion` con `ACCESS EXCLUSIVE` y se consulta `COUNT(*)` de ambas.
+Si cualquiera contiene filas, se lanza `RuntimeError` sin ejecutar DDL ni
+modificar datos o `alembic_version`. El bloqueo se conserva hasta finalizar
+la transacción, evitando escrituras entre la comprobación y los cambios.
+
+No se inventan corridas, responsables, estados, completitud o fechas; no se
+agrupa por pedido/configuración ni se interpreta `seleccionada`. No se asume
+que una ejecución heredada usó LEX-V1 ni se traslada `tiempo_computacional`
+a métricas sin conocer su unidad. La ausencia de filas es una precondición
+comprobada en cada ejecución, no una suposición basada en inspecciones previas.
+
+RETAZO puede contener datos: sus filas se conservan y la nueva columna nullable
+queda NULL, sin atribuirles un origen histórico. La transacción también revierte
+los cambios si una dependencia inesperada impide un DDL posterior. No se usa
+CASCADE para eliminar dependencias.
+
+### Contrato estructural
+
+| Tabla | Columnas y reglas R3 |
+| --- | --- |
+| optimizaciones | 9: PK `id_optimizacion`; fechas inicio/fin TIMESTAMPTZ, fin nullable; estado VARCHAR(20); FK obligatorias a pedido, configuración y usuario ejecutor; `criterio_seleccion_version VARCHAR(20) NOT NULL`; selección nullable con FK a ejecución. |
+| ejecuciones_optimizacion | 8: PK `id_ejecucion` conservada; FK obligatoria `id_optimizacion`; método VARCHAR(10); inicio TIMESTAMPTZ obligatorio y fin nullable; estado VARCHAR(20); completo BOOLEAN obligatorio sin default; patrón JSONB nullable. |
+| materiales_utilizados | 5: PK `id_material_utilizado`; ejecución obligatoria; plancha/retazo nullable con XOR; cantidad INTEGER NOT NULL DEFAULT 1, CHECK > 0. |
+| retazos | 9: las ocho columnas anteriores intactas más `id_ejecucion_origen INTEGER NULL`, FK a ejecución. |
+| metricas_ejecucion | Sus siete columnas, tipos, nulabilidad, PK, UNIQUE y FK permanecen exactamente como en R2. |
+
+OPTIMIZACION admite `EN_EJECUCION`, `COMPLETADA`, `SIN_SOLUCION` y `FALLIDA`.
+EJECUCION admite `EN_EJECUCION`, `COMPLETADA` y `FALLIDA`; sus métodos son
+`FF`, `BF`, `WF`, con `UNIQUE(id_optimizacion, metodo)`. No se añaden defaults
+para fechas, estado, completitud, criterio, usuario o selección.
+
+De EJECUCION se retiran `id_pedido`, `id_configuracion`, `tiempo_computacional`
+y `seleccionada`, incluidas sus dos FK salientes antiguas. `fecha_ejecucion`
+se renombra a `fecha_inicio` y cambia a TIMESTAMPTZ sobre tabla vacía. No se
+interpreta ninguna zona histórica. `metodo` pasa de VARCHAR(30) a VARCHAR(10).
+Se conservan `id_ejecucion` y `patron_resultado`, y se retiran los defaults
+Python antiguos de fecha/selección.
+
+El XOR de MATERIAL_UTILIZADO es:
+
+```sql
+CHECK ((id_plancha IS NOT NULL) <> (id_retazo IS NOT NULL))
+```
+
+Rechaza ambas fuentes o ninguna. `regla_fuente` no es una columna. Los únicos
+índices explícitos nuevos son OPTIMIZACION `(id_pedido, fecha_inicio)` y
+MATERIAL_UTILIZADO `(id_ejecucion)`; no se duplica el índice del UNIQUE compuesto.
+
+La metadata vigente contiene **12 tablas y 86 columnas**, excluyendo la tabla
+de control de Alembic. METRICA se alineará en R4, pasando de siete a once
+columnas para completar las 90 columnas de v1.1.
+
+### Resolución del ciclo y preservación de METRICA
+
+1. Crear OPTIMIZACION con la columna de selección nullable, sin su FK todavía.
+2. Adaptar EJECUCION mediante ALTER, conservando la tabla física y su PK.
+3. Crear la FK de `EJECUCION.id_optimizacion` hacia OPTIMIZACION.
+4. Crear CHECK y UNIQUE de EJECUCION.
+5. Crear mediante `op.create_foreign_key` la FK de selección hacia EJECUCION.
+
+Ambas FK terminan activas en la misma transacción. En SQLAlchemy la FK de
+selección tiene nombre explícito y `use_alter=True`; la FK inversa también
+tiene nombre. No se usan FK diferibles, cascadas ni FK compuestas adicionales.
+No se hace DROP/CREATE de EJECUCION ni de METRICA: su referencia entrante a
+`id_ejecucion` sigue siendo la misma FK y continúa operativa.
+
+### Semántica que R3 no implementa
+
+LEX-V1 es la versión inicial de selección y debe suministrarla la aplicación;
+no es un default SQL. La FK de selección garantiza existencia, no pertenencia
+a la misma corrida ni `completo = TRUE`: esas validaciones siguen en la capa
+de aplicación según v1.1. El dominio de métodos y UNIQUE permiten como máximo
+una ejecución FF, BF y WF por corrida; coordinar las tres pertenece al flujo
+posterior, no a un trigger.
+
+MATERIAL_UTILIZADO representa propuestas de cada ejecución. Insertarlo no
+descuenta planchas, no cambia el estado de retazos y no crea sobrantes. No se
+añaden triggers ni lógica de consumo, confirmación, selección o heurísticas.
+La confirmación transaccional del inventario sigue pendiente.
+
+El `downgrade()` falla explícitamente con `RuntimeError`: no es posible
+reconstruir de forma segura el significado de los campos retirados. Cualquier
+recuperación requiere un procedimiento revisado; no existe un `pass` silencioso.
+
+### Pruebas históricas y validación de R3
+
+Las pruebas R1/R2 migran a sus revisiones explícitas y conservan sus contratos
+10/68 y 10/71. Para evitar compararlos contra el ORM que sigue evolucionando,
+[`model_contracts.py`](../../backend/tests/model_contracts.py) carga un
+[snapshot R1](../../backend/tests/contracts/r1_models.py) obtenido del commit
+`9c8c3fb`; el contrato R2 incorpora únicamente la configuración aprobada en
+`e1edde3`. Son fixtures de pruebas, no código importado por la aplicación, y
+no requieren consultar Git durante pytest. Las pruebas anteriores se conservan.
+
+- [`test_r3_models.py`](../../backend/tests/unit/test_r3_models.py): columnas,
+  tipos, nulabilidad, defaults, PK/FK/UNIQUE/CHECK, índices, ciclo, cadena lineal,
+  12/86 y preservación de las entidades fuera de alcance. La prueba de downgrade
+  es una llamada Python sin conexión que verifica el RuntimeError.
+- [`test_r3_migration.py`](../../backend/tests/integration/test_r3_migration.py):
+  recorrido desde vacío y R2 a R3; aborto con ejecuciones o con ejecuciones y
+  métricas relacionadas; rollback ante una vista dependiente; retazos existentes
+  conservados; constraints; ambas FK del ciclo; material propuesto sin consumo.
+  Compara esquema y datos de las tablas preservadas y los OID de EJECUCION,
+  METRICA, sus PK y la FK/UNIQUE de METRICA para detectar recreaciones.
+- La comparación completa del ORM vigente con el esquema migrado corresponde
+  ahora a R3. `test_database_structure.py` espera las doce tablas actuales.
+
+La integración utiliza PostgreSQL 18.6 temporal y aislado, con datos sintéticos.
+No se consulta Supabase ni se aplica allí ninguna revisión. Los upgrades de
+pytest solo afectan a las bases temporales del clúster propio. No se ejecutan
+los comandos Alembic downgrade/stamp ni seed.
+
+Resultado local R3 con PostgreSQL **18.6**:
+
+```text
+159 passed in 70.87s (0:01:10)
+```
+
+Sin errores ni omisiones: 113 pruebas anteriores adaptadas y 46 nuevas
+(9 unitarias y 37 de integración R3). El esquema migrado coincide con el ORM.
+El clúster propio se detuvo al terminar. Se comprobó además que las ocho clases
+fuera del cambio permanecen idénticas a R2 y que el snapshot R1 conserva el
+contenido del commit de origen. `git diff --check` no presenta incidencias.
+
+`alembic history` (lectura local, código 0):
+
+```text
+f2b3c4d5e6a7 -> a3c4d5e6f7b8 (head), R3: trazabilidad de optimizaciones, ejecuciones y material propuesto.
+e1a2b3c4d5f6 -> f2b3c4d5e6a7, R2: alinear CONFIGURACION con snapshots del modelo v1.1.
+c4e8a1f2b3d5 -> e1a2b3c4d5f6, R1: alinear identidad, inventario y pedidos con el modelo v1.1.
+9b9f04eb67f6 -> c4e8a1f2b3d5, HU-003: agregar dni y usuario a usuarios; correo pasa a opcional
+<base> -> 9b9f04eb67f6, crear esquema inicial
+```
+
+`alembic heads` (lectura local, código 0):
+
+```text
+a3c4d5e6f7b8 (head)
+```
+
+Esta evidencia acredita la ejecución local aislada; no afirma que Supabase esté
+en R3 ni que sus tablas continúen vacías. La aplicación remota queda fuera de
+esta fase y requiere cumplir las precondiciones y coordinar el despliegue.
