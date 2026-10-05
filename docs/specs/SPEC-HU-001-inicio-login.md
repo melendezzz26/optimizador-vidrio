@@ -25,8 +25,8 @@ Se parte del trabajo ya hecho en la rama `fix/integracion-login` (commit
 
 - `POST /api/auth/login` y `GET /api/auth/me` contra las tablas reales
   `usuarios` y `roles`.
-- Validaciones de entrada en el backend, porque la base compartida no tiene
-  restricciones sobre el formato del usuario.
+- Validaciones de entrada en el backend, porque la base compartida acepta el
+  usuario con la letra en mayúscula o en minúscula.
 - Eliminación de los usuarios en memoria y de la clave JWT por defecto.
 - Sesión de base de datos por petición (`get_db`).
 - Dependencia reutilizable que entrega el usuario autenticado a otras rutas.
@@ -97,8 +97,9 @@ Se parte del trabajo ya hecho en la rama `fix/integracion-login` (commit
 - RN-13: Esta especificación solo lee `usuarios` y `roles`. No modifica el
   esquema ni requiere migraciones.
 
-Las reglas RN-02, RN-03, RN-05 y RN-08 se aplican en el backend porque la base
-compartida no las garantiza con restricciones propias.
+Las reglas RN-02, RN-03, RN-05 y RN-08 se aplican en el backend. La base
+compartida solo comprueba que el usuario tenga una letra y 8 dígitos, sin
+distinguir mayúscula de minúscula.
 
 ## 6. Flujo principal
 
@@ -271,8 +272,9 @@ En `docs/evidence/sprint-01/HU-001/`:
   Decisión del equipo tomada en la revisión de esta SPEC. El ejemplo del
   Documento de Diseño de Base de Datos (`w75811779`) está en minúscula y debe
   corregirse para que no se contradigan.
-- D-02: Las validaciones de formato se hacen en el backend porque la base
-  compartida no tiene restricciones CHECK sobre `usuario`.
+- D-02: La restricción CHECK de la base (`^[A-Za-z][0-9]{8}$`, migración R1
+  de EN-002) admite la letra en mayúscula o en minúscula. La mayúscula la fija
+  el backend al normalizar y validar.
 - D-03: Un usuario con formato inválido responde 422 y no 401, porque no
   revela si una cuenta existe y permite al formulario explicar el formato.
 - D-04: `get_db` se ubica en `shared/database`. Ese bloque figura como cerrado
