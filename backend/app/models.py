@@ -8,9 +8,11 @@ from sqlalchemy import (
     DateTime,
     Float,
     ForeignKey,
+    ForeignKeyConstraint,
     Integer,
     Index,
     Numeric,
+    PrimaryKeyConstraint,
     String,
     Text,
     UniqueConstraint,
@@ -65,12 +67,30 @@ class TipoVidrio(Base):
     estado: Mapped[bool] = mapped_column(Boolean, default=True, server_default=true())
 
 
+class TipoVidrioEspesor(Base):
+    __tablename__ = "tipos_vidrio_espesores"
+    __table_args__ = (
+        PrimaryKeyConstraint("id_tipo_vidrio", "espesor_mm", name="pk_tipos_vidrio_espesores"),
+        CheckConstraint("espesor_mm > 0", name="ck_tipos_vidrio_espesores_espesor_positivo"),
+    )
+
+    id_tipo_vidrio: Mapped[int] = mapped_column(
+        ForeignKey("tipos_vidrio.id_tipo_vidrio", name="fk_tipos_vidrio_espesores_tipo_vidrio"),
+        nullable=False,
+    )
+    espesor_mm: Mapped[Decimal] = mapped_column(Numeric(4, 1), nullable=False)
+
+
 class Plancha(Base):
     __tablename__ = "planchas"
     __table_args__ = (
         CheckConstraint("ancho_mm > 0", name="ck_planchas_ancho_positivo"),
         CheckConstraint("alto_mm > 0", name="ck_planchas_alto_positivo"),
-        CheckConstraint("espesor_mm IN (3, 4, 5.5, 6, 8)", name="ck_planchas_espesor"),
+        ForeignKeyConstraint(
+            ["id_tipo_vidrio", "espesor_mm"],
+            ["tipos_vidrio_espesores.id_tipo_vidrio", "tipos_vidrio_espesores.espesor_mm"],
+            name="fk_planchas_tipo_espesor",
+        ),
         CheckConstraint("cantidad >= 0", name="ck_planchas_cantidad"),
         Index("ix_planchas_stock_compatible", "id_tipo_vidrio", "espesor_mm", "estado"),
     )
@@ -92,7 +112,11 @@ class Plancha(Base):
 class Retazo(Base):
     __tablename__ = "retazos"
     __table_args__ = (
-        CheckConstraint("espesor_mm IN (3, 4, 5.5, 6, 8)", name="ck_retazos_espesor"),
+        ForeignKeyConstraint(
+            ["id_tipo_vidrio", "espesor_mm"],
+            ["tipos_vidrio_espesores.id_tipo_vidrio", "tipos_vidrio_espesores.espesor_mm"],
+            name="fk_retazos_tipo_espesor",
+        ),
         CheckConstraint("area_mm2 > 0", name="ck_retazos_area_positiva"),
         Index("ix_retazos_stock_compatible", "id_tipo_vidrio", "espesor_mm", "estado"),
     )
@@ -121,7 +145,11 @@ class Pedido(Base):
             "estado IN ('PENDIENTE', 'EN_OPTIMIZACION', 'OPTIMIZADO', 'CONFIRMADO', 'CANCELADO')",
             name="ck_pedidos_estado",
         ),
-        CheckConstraint("espesor_mm IN (3, 4, 5.5, 6, 8)", name="ck_pedidos_espesor"),
+        ForeignKeyConstraint(
+            ["id_tipo_vidrio", "espesor_mm"],
+            ["tipos_vidrio_espesores.id_tipo_vidrio", "tipos_vidrio_espesores.espesor_mm"],
+            name="fk_pedidos_tipo_espesor",
+        ),
         Index("ix_pedidos_estado_fecha", "estado", "fecha_registro"),
     )
 

@@ -8,7 +8,17 @@ from typing import Protocol
 from .dto import PlanchaData, RetazoData, TipoVidrioData
 
 
-class InventoryRepository(Protocol):
+class GlassCatalog(Protocol):
+    """Lectura pública del catálogo para Inventory y futuros consumidores.
+
+    El caso de uso llamador controla la transacción. El DTO incluye únicamente
+    los espesores persistidos; un tipo sin combinaciones devuelve una tupla vacía.
+    """
+
+    def get_tipo_vidrio(self, id_tipo_vidrio: int) -> TipoVidrioData | None: ...
+
+
+class InventoryRepository(GlassCatalog, Protocol):
     """Cada caso de uso se ejecuta dentro de transaction(), sin anidación.
 
     El adaptador abre/cierra la unidad transaccional: confirma al salir con éxito
@@ -28,8 +38,6 @@ class InventoryRepository(Protocol):
     """
 
     def transaction(self) -> AbstractContextManager[None]: ...
-
-    def get_tipo_vidrio(self, id_tipo_vidrio: int) -> TipoVidrioData | None: ...
 
     def tipo_nombre_exists(self, nombre: str) -> bool: ...
 

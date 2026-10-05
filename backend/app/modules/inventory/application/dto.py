@@ -22,6 +22,7 @@ class TipoVidrioData:
     nombre: str
     descripcion: str | None
     estado: bool
+    espesores_mm: tuple[Decimal, ...] = ()
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
