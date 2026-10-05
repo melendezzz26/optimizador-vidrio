@@ -104,16 +104,16 @@ def client(session_factory):
     """Cliente HTTP de la aplicación conectado a la base de prueba."""
     from fastapi.testclient import TestClient
 
-    from app.shared.database import get_db
+    from app.modules.authentication.presentation.dependencies import get_database_session
     from main import app
 
-    def override_get_db():
+    def override_database_session():
         with session_factory() as db:
             yield db
 
-    app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_database_session] = override_database_session
     try:
         with TestClient(app, raise_server_exceptions=False) as test_client:
             yield test_client
     finally:
-        app.dependency_overrides.pop(get_db, None)
+        app.dependency_overrides.pop(get_database_session, None)

@@ -16,11 +16,11 @@ import sqlalchemy as sa
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.core.security import crear_token
 from app.modules.inventory.application.dto import CreatePlancha, CreateRetazo, UpdatePlancha, UpdateRetazo
 from app.modules.inventory.application.service import InventoryService
 from app.modules.inventory.domain.exceptions import InventoryValidationError
 from app.modules.inventory.presentation.dependencies import get_inventory_service
+from tests.auth_support import token_for, use_in_memory_accounts
 from tests.catalog_contract import EXPECTED_CATALOG
 from tests.integration.inventory.test_repository import SqlAlchemyInventoryRepository
 from tests.integration.postgres_support import BACKEND, _run, new_database, upgrade
@@ -171,7 +171,8 @@ def test_api_returns_persisted_catalog_and_controlled_compatibility_errors(servi
 
     old_overrides = dict(app.dependency_overrides)
     app.dependency_overrides[get_inventory_service] = lambda: service
-    headers = {"Authorization": f"Bearer {crear_token(1, 'testuser', 'Administrador')}"}
+    use_in_memory_accounts(app)
+    headers = {"Authorization": f"Bearer {token_for('Administrador')}"}
     try:
         with TestClient(app) as client:
             response = client.get("/api/inventory/tipos-vidrio", headers=headers)

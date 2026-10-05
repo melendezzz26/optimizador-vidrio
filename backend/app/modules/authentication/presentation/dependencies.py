@@ -8,15 +8,28 @@ from app.modules.authentication.application.ports import UserReader
 from app.modules.authentication.application.use_cases import get_active_user
 from app.modules.authentication.domain.errors import SessionNotValidError
 from app.modules.authentication.domain.user import AuthenticatedUser
-from app.modules.authentication.infrastructure.sqlalchemy_user_reader import SqlAlchemyUserReader
-from app.shared.database import get_db
 from app.shared.security import decode_access_token
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
-def get_user_reader(db: Session = Depends(get_db)) -> UserReader:
+def get_database_session():
+    """Sesión de base de datos de la petición.
+
+    La base se importa aquí y no al cargar el módulo, para que la API pueda
+    arrancar sin abrir la conexión (regla que comprueba test_lazy_db_import).
+    """
+    from app.shared.database import get_db
+
+    yield from get_db()
+
+
+def get_user_reader(db: Session = Depends(get_database_session)) -> UserReader:
     """Único punto donde se elige la implementación real del lector de cuentas."""
+    from app.modules.authentication.infrastructure.sqlalchemy_user_reader import (
+        SqlAlchemyUserReader,
+    )
+
     return SqlAlchemyUserReader(db)
 
 
