@@ -1,0 +1,57 @@
+/* Barra de sesión. Tokens del Documento de UI/UX v1.0. */
+.session-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+  padding: 12px 24px;
+  background: var(--ng-surface);
+  border-bottom: 1px solid var(--ng-border-strong);
+  color: var(--ng-text-900);
+}
+
+.session-bar-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.session-bar-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  margin-right: auto;
+  font-size: 14px;
+}
+
+.session-bar-details div {
+  display: flex;
+  gap: 4px;
+}
+
+.session-bar-details dt {
+  color: var(--ng-text-600);
+}
+
+.session-bar-details dt::after {
+  content: ':';
+}
+
+.session-bar-details dd {
+  font-weight: 600;
+}
+
+.session-bar-sign-out {
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--ng-primary-action);
+  border-radius: 8px;
+  background: var(--ng-surface);
+  color: var(--ng-primary-action);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.session-bar-sign-out:focus-visible {
+  outline: 2px solid var(--ng-primary-focus);
+  outline-offset: 2px;
+}

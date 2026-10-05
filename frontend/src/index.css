@@ -2,6 +2,18 @@
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
 
+  /* Tokens de color del Documento de UI/UX y Accesibilidad v1.0 (sección 5). */
+  --ng-brand-blue: #61a3e7;
+  --ng-primary-action: #2563eb;
+  --ng-primary-focus: #1d4ed8;
+  --ng-text-900: #1f2937;
+  --ng-text-600: #64748b;
+  --ng-border-strong: #64748b;
+  --ng-surface: #ffffff;
+  --ng-background: #f5f7fa;
+  --ng-success: #166534;
+  --ng-error: #b91c1c;
+
   color: #172033;
   background: #f5f7fb;
 
@@ -11,8 +23,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* El reinicio de márgenes estaba en Login.css y afectaba a toda la aplicación;
+   se conserva aquí, donde corresponde, para no alterar las pantallas existentes. */
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
