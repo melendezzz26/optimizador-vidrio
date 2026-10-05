@@ -4,6 +4,7 @@ from sqlalchemy import text
 
 from app.shared.database import engine
 from app.routers import auth
+from app.modules.inventory.presentation.router import router as inventory_router
 
 app = FastAPI(
     title="Optimizador de Corte de Vidrio",
@@ -19,6 +20,7 @@ app.add_middleware(
 
 # Rutas de autenticación (HU-001)
 app.include_router(auth.router)
+app.include_router(inventory_router)
 
 
 @app.get("/")
