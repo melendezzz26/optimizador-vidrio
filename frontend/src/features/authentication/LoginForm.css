@@ -1,0 +1,165 @@
+/* Inicio de sesión. Colores, radios y alturas: tokens del Documento de UI/UX v1.0. */
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--ng-background);
+  color: var(--ng-text-900);
+}
+
+.login-card {
+  display: flex;
+  width: 800px;
+  max-width: 100%;
+  min-height: 500px;
+  overflow: hidden;
+  background: var(--ng-surface);
+  border-radius: 12px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-form {
+  flex: 1 1 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  padding: 48px;
+}
+
+.login-title {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.login-intro {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ng-text-600);
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.login-field label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.login-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--ng-border-strong);
+  border-radius: 8px;
+  background: var(--ng-surface);
+  color: var(--ng-text-900);
+  font-size: 16px;
+}
+
+/* Se muestra en mayúsculas mientras se escribe; el valor se normaliza al enviar. */
+.login-input-username {
+  text-transform: uppercase;
+}
+
+.login-input[aria-invalid='true'] {
+  border: 2px solid var(--ng-error);
+}
+
+.login-hint {
+  font-size: 14px;
+  color: var(--ng-text-600);
+}
+
+.login-field-error {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ng-error);
+}
+
+.login-password {
+  position: relative;
+}
+
+.login-password .login-input {
+  padding-right: 48px;
+}
+
+.login-password-toggle {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ng-text-600);
+}
+
+.login-alert {
+  padding: 12px;
+  border-left: 4px solid var(--ng-error);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--ng-error);
+}
+
+.login-notice {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ng-text-600);
+}
+
+.login-submit {
+  height: 44px;
+  margin-top: 8px;
+  border: none;
+  border-radius: 8px;
+  background: var(--ng-primary-action);
+  color: var(--ng-surface);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.login-submit:hover:not(:disabled) {
+  background: var(--ng-primary-focus);
+}
+
+.login-submit:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.login-input:focus-visible,
+.login-password-toggle:focus-visible,
+.login-submit:focus-visible {
+  outline: 2px solid var(--ng-primary-focus);
+  outline-offset: 2px;
+}
+
+/* Imagen de vidrio de la marca: decorativa, por eso no lleva texto alternativo. */
+.login-image {
+  flex: 1 1 50%;
+  background: url('/fondoLogin.jpeg') center / cover no-repeat;
+}
+
+@media (max-width: 768px) {
+  .login-form {
+    padding: 32px 24px;
+  }
+
+  .login-image {
+    display: none;
+  }
+}

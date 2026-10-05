@@ -1,14 +1,22 @@
-import { Login } from './components/Login';
-import NuevoPedido from "./pages/NuevoPedido";
-import './App.css'; // Mantenemos los estilos globales por defecto si existen
+import { LoginForm, SessionBar, useSession } from './features/authentication';
+import NuevoPedido from './pages/NuevoPedido';
+import './App.css';
 
 function App() {
+  const { session, isChecking, notice, signIn, signOut } = useSession();
+
+  if (isChecking) {
+    return <p className="app-status" role="status">Comprobando la sesión…</p>;
+  }
+
+  if (!session) {
+    return <LoginForm onSignIn={signIn} notice={notice} />;
+  }
+
   return (
     <div className="app-container">
-      <Login />
-        
+      <SessionBar user={session.usuario} onSignOut={signOut} />
       <NuevoPedido />
-    
     </div>
   );
 }

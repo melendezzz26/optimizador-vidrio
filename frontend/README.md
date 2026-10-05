@@ -48,7 +48,6 @@ src/
         results/
         configuration/
     shared/
-    components/       Código actual conservado temporalmente
     pages/            Código actual conservado temporalmente
     assets/
 ```
@@ -58,10 +57,15 @@ El frontend no replica las capas Clean Architecture del backend: componentes,
 hooks, estado y acceso a API se organizan dentro de cada feature según necesidad.
 `src/shared/` se reserva para código reutilizable por varias features.
 
-`src/components/Login.jsx` y `src/pages/NuevoPedido.jsx`, sus estilos y sus imports
-permanecen temporalmente en las rutas actuales hasta que los responsables los
-migren con validación. Esta fase únicamente reserva carpetas; no incorpora
-implementaciones ni modifica `App.jsx`.
+El inicio de sesión ya se migró a `src/features/authentication/` (HU-001).
+`src/pages/NuevoPedido.jsx`, sus estilos y sus imports permanecen en la ruta
+actual hasta que su responsable los migre con validación.
+
+## Conexión con el backend
+
+El frontend llama a la API en `http://127.0.0.1:8000`. Para usar otra dirección,
+copiar `.env.example` como `.env.local` y ajustar `VITE_API_URL`. El backend
+solo acepta peticiones desde `http://localhost:5173` y `http://127.0.0.1:5173`.
 
 Consultar la [guía de desarrollo](../CONTRIBUTING.md), las
 [convenciones de features](src/features/README.md) y los
