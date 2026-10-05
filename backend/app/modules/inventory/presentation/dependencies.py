@@ -2,9 +2,7 @@ from fastapi import Depends, HTTPException, status
 
 from app.core.permissions import tiene_permiso
 from app.routers.auth import usuario_actual
-from app.shared.database.session import SessionLocal
 from app.modules.inventory.application.service import InventoryService
-from app.modules.inventory.infrastructure.repository import SqlAlchemyInventoryRepository
 
 def require_permission(permiso: str):
     def checker(payload: dict = Depends(usuario_actual)) -> dict:
@@ -15,5 +13,7 @@ def require_permission(permiso: str):
     return checker
 
 def get_inventory_service() -> InventoryService:
+    from app.shared.database.session import SessionLocal
+    from app.modules.inventory.infrastructure.repository import SqlAlchemyInventoryRepository
     repository = SqlAlchemyInventoryRepository(SessionLocal)
     return InventoryService(repository)

@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
-from app.shared.database import engine
 from app.routers import auth
 from app.modules.inventory.presentation.router import router as inventory_router
 
@@ -32,6 +31,7 @@ def inicio():
 
 @app.get("/db-test")
 def probar_base_datos():
+    from app.shared.database import engine
     with engine.connect() as conexion:
         resultado = conexion.execute(
             text("SELECT version();")
