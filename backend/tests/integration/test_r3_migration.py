@@ -5,7 +5,7 @@ from alembic.migration import MigrationContext
 import pytest
 import sqlalchemy as sa
 
-from tests.model_contracts import current_metadata
+from tests.model_contracts import historical_metadata
 from .postgres_support import new_database, schema_snapshot, upgrade
 
 R2 = "f2b3c4d5e6a7"
@@ -40,7 +40,7 @@ def previous_db(isolated_postgres):
 @pytest.fixture(scope="module")
 def r3_db(isolated_postgres):
     with new_database(isolated_postgres) as engine:
-        result = upgrade(engine, "head")
+        result = upgrade(engine, R3)
         assert result.returncode == 0, result.stderr
         yield engine
 
@@ -49,7 +49,7 @@ def test_clean_chain_matches_r3_orm_and_expected_counts(r3_db):
     with r3_db.connect() as connection:
         assert connection.scalar(sa.text("SELECT version_num FROM alembic_version")) == R3
         context = MigrationContext.configure(connection, opts={"compare_type": True, "compare_server_default": True})
-        assert compare_metadata(context, current_metadata()) == []
+        assert compare_metadata(context, historical_metadata(R3)) == []
         assert connection.scalar(sa.text("""SELECT count(*) FROM pg_trigger t
             JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace
             WHERE n.nspname='public' AND NOT t.tgisinternal""")) == 0

@@ -25,14 +25,22 @@ def current_metadata():
 
 
 def historical_metadata(revision):
-    if revision not in {"e1a2b3c4d5f6", "f2b3c4d5e6a7"}:
+    if revision not in {
+        "e1a2b3c4d5f6",
+        "f2b3c4d5e6a7",
+        "a3c4d5e6f7b8",
+    }:
         raise ValueError("No hay contrato histórico para esta revisión")
+
+    if revision == "a3c4d5e6f7b8":
+        return _load(BACKEND / "tests/contracts/r3_models.py")
+
     r1 = _load(BACKEND / "tests/contracts/r1_models.py")
+
     if revision == "e1a2b3c4d5f6":
         return r1
 
-    # Contrato CONFIGURACION R2 del commit e1edde3. Las otras nueve tablas
-    # permanecían iguales a R1. No se consulta Git durante las pruebas.
+    # Contrato CONFIGURACION R2 del commit e1edde3.
     r2 = sa.MetaData()
     sa.Table(
         "configuraciones", r2,
@@ -45,18 +53,37 @@ def historical_metadata(revision):
         sa.Column("ancho_min_retazo_mm", sa.Numeric(10, 2), nullable=False),
         sa.Column("alto_min_retazo_mm", sa.Numeric(10, 2), nullable=False),
         sa.Column("vigente", sa.Boolean(), nullable=False, server_default=sa.true()),
-        sa.Column("id_usuario_creacion", sa.Integer(), sa.ForeignKey("usuarios.id_usuario"), nullable=False),
+        sa.Column(
+            "id_usuario_creacion",
+            sa.Integer(),
+            sa.ForeignKey("usuarios.id_usuario"),
+            nullable=False,
+        ),
         sa.Column("fecha_creacion", sa.DateTime(timezone=True), nullable=False),
         sa.UniqueConstraint("version", name="configuraciones_version_key"),
         sa.CheckConstraint("version > 0", name="ck_configuraciones_version"),
         sa.CheckConstraint("separacion_mm >= 0", name="ck_configuraciones_separacion"),
         sa.CheckConstraint("margen_mm >= 0", name="ck_configuraciones_margen"),
-        sa.CheckConstraint("resolucion_raster_mm > 0", name="ck_configuraciones_resolucion"),
-        sa.CheckConstraint("paso_angular_grados > 0 AND paso_angular_grados <= 360", name="ck_configuraciones_paso_angular"),
-        sa.CheckConstraint("ancho_min_retazo_mm >= 0", name="ck_configuraciones_ancho_retazo"),
-        sa.CheckConstraint("alto_min_retazo_mm >= 0", name="ck_configuraciones_alto_retazo"),
+        sa.CheckConstraint(
+            "resolucion_raster_mm > 0",
+            name="ck_configuraciones_resolucion",
+        ),
+        sa.CheckConstraint(
+            "paso_angular_grados > 0 AND paso_angular_grados <= 360",
+            name="ck_configuraciones_paso_angular",
+        ),
+        sa.CheckConstraint(
+            "ancho_min_retazo_mm >= 0",
+            name="ck_configuraciones_ancho_retazo",
+        ),
+        sa.CheckConstraint(
+            "alto_min_retazo_mm >= 0",
+            name="ck_configuraciones_alto_retazo",
+        ),
     )
+
     for table in r1.tables.values():
         if table.name != "configuraciones":
             table.to_metadata(r2)
+
     return r2

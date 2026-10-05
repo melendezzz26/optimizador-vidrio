@@ -14,7 +14,6 @@ from sqlalchemy import (
     String,
     Text,
     UniqueConstraint,
-    BigInteger,
     true,
 )
 from sqlalchemy.dialects.postgresql import JSONB
@@ -276,94 +275,16 @@ class MaterialUtilizado(Base):
 
 class MetricaEjecucion(Base):
     __tablename__ = "metricas_ejecucion"
-    __table_args__ = (
-        CheckConstraint(
-            "area_material_total_mm2 > 0",
-            name="ck_metricas_area_material_total",
-        ),
-        CheckConstraint(
-            "area_piezas_colocadas_mm2 >= 0",
-            name="ck_metricas_area_piezas_colocadas",
-        ),
-        CheckConstraint(
-            "aprovechamiento_pct >= 0 AND aprovechamiento_pct <= 100",
-            name="ck_metricas_aprovechamiento",
-        ),
-        CheckConstraint(
-            "merma_mm2 >= 0",
-            name="ck_metricas_merma",
-        ),
-        CheckConstraint(
-            "retazo_recuperable_mm2 >= 0",
-            name="ck_metricas_retazo_recuperable",
-        ),
-        CheckConstraint(
-            "planchas_nuevas_usadas >= 0",
-            name="ck_metricas_planchas_nuevas",
-        ),
-        CheckConstraint(
-            "tiempo_computacional_ms >= 0",
-            name="ck_metricas_tiempo_computacional",
-        ),
-        CheckConstraint(
-            "memoria_pico_mb >= 0",
-            name="ck_metricas_memoria_pico",
-        ),
-        CheckConstraint(
-            "tiempo_cpu_ms >= 0",
-            name="ck_metricas_tiempo_cpu",
-        ),
-    )
 
     id_metrica: Mapped[int] = mapped_column(Integer, primary_key=True)
+    aprovechamiento_pct: Mapped[float | None] = mapped_column(Float)
+    merma_mm2: Mapped[float | None] = mapped_column(Float)
+    planchas_utilizadas: Mapped[int | None] = mapped_column(Integer)
+    area_recuperable_mm2: Mapped[float | None] = mapped_column(Float)
+    tiempo_computacional_ms: Mapped[float | None] = mapped_column(Float)
 
     id_ejecucion: Mapped[int] = mapped_column(
         ForeignKey("ejecuciones_optimizacion.id_ejecucion"),
         unique=True,
-        nullable=False,
-    )
-
-    area_material_total_mm2: Mapped[Decimal] = mapped_column(
-        Numeric(18, 2),
-        nullable=False,
-    )
-
-    area_piezas_colocadas_mm2: Mapped[Decimal] = mapped_column(
-        Numeric(18, 2),
-        nullable=False,
-    )
-
-    aprovechamiento_pct: Mapped[Decimal] = mapped_column(
-        Numeric(6, 3),
-        nullable=False,
-    )
-
-    merma_mm2: Mapped[Decimal] = mapped_column(
-        Numeric(18, 2),
-        nullable=False,
-    )
-
-    retazo_recuperable_mm2: Mapped[Decimal] = mapped_column(
-        Numeric(18, 2),
-        nullable=False,
-    )
-
-    planchas_nuevas_usadas: Mapped[int] = mapped_column(
-        Integer,
-        nullable=False,
-    )
-
-    tiempo_computacional_ms: Mapped[int] = mapped_column(
-        BigInteger,
-        nullable=False,
-    )
-
-    memoria_pico_mb: Mapped[Decimal | None] = mapped_column(
-        Numeric(12, 3),
-        nullable=True,
-    )
-
-    tiempo_cpu_ms: Mapped[int | None] = mapped_column(
-        BigInteger,
-        nullable=True,
+        nullable=False
     )

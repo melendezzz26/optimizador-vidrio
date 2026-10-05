@@ -8,7 +8,7 @@ import pytest
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
-from tests.model_contracts import BACKEND, current_metadata, historical_metadata
+from tests.model_contracts import BACKEND, historical_metadata
 
 R3 = "a3c4d5e6f7b8"
 EXPECTED = {
@@ -32,7 +32,7 @@ EXPECTED = {
 
 @pytest.fixture(scope="module")
 def metadata():
-    return current_metadata()
+    return historical_metadata(R3)
 
 
 @pytest.mark.parametrize("name", EXPECTED)
@@ -126,17 +126,36 @@ def test_r3_preserves_other_entities_and_only_adds_retazo_origin(metadata):
     assert {f.target_fullname for f in origin.foreign_keys} == {"ejecuciones_optimizacion.id_ejecucion"}
 
 
-def test_r3_linear_head_and_explicit_downgrade_failure():
+def test_r3_revision_chain_and_explicit_downgrade_failure():
     config = Config()
     config.set_main_option("script_location", str(BACKEND / "alembic"))
     scripts = ScriptDirectory.from_config(config)
-    assert scripts.get_heads() == [R3]
-    assert [r.revision for r in scripts.walk_revisions()] == [
-        R3, "f2b3c4d5e6a7", "e1a2b3c4d5f6", "c4e8a1f2b3d5", "9b9f04eb67f6",
+
+    revision = scripts.get_revision(R3)
+
+    assert revision is not None
+    assert revision.down_revision == "f2b3c4d5e6a7"
+
+    assert [
+        item.revision
+        for item in scripts.iterate_revisions(R3, "base")
+    ] == [
+        R3,
+        "f2b3c4d5e6a7",
+        "e1a2b3c4d5f6",
+        "c4e8a1f2b3d5",
+        "9b9f04eb67f6",
     ]
-    spec = importlib.util.spec_from_file_location("r3_revision", scripts.get_revision(R3).path)
+
+    spec = importlib.util.spec_from_file_location(
+        "r3_revision",
+        revision.path,
+    )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    # Sin contexto Alembic ni conexión: únicamente se comprueba el fallo explícito.
-    with pytest.raises(RuntimeError, match="no admite reversión automática"):
+
+    with pytest.raises(
+        RuntimeError,
+        match="no admite reversión automática",
+    ):
         module.downgrade()

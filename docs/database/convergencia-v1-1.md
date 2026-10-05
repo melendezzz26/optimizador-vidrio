@@ -517,3 +517,198 @@ a3c4d5e6f7b8 (head)
 Esta evidencia acredita la ejecución local aislada; no afirma que Supabase esté
 en R3 ni que sus tablas continúen vacías. La aplicación remota queda fuera de
 esta fase y requiere cumplir las precondiciones y coordinar el despliegue.
+
+
+## R4: alineación final de METRICA_EJECUCION
+
+La revisión
+[`b4d5e6f7a8c9`](../../backend/alembic/versions/b4d5e6f7a8c9_r4_metricas_ejecucion.py)
+desciende de `a3c4d5e6f7b8`.
+
+R4 modifica exclusivamente `METRICA_EJECUCION` y completa la convergencia
+estructural del modelo de datos aprobado v1.1. Las otras once entidades
+mantienen el contrato alcanzado en R3.
+
+Después de esta revisión, la metadata contiene **12 tablas y 90 columnas**,
+excluyendo `alembic_version`.
+
+### Precondición de datos heredados
+
+Antes del primer DDL, R4 bloquea `metricas_ejecucion` mediante
+`ACCESS EXCLUSIVE` y comprueba su cantidad de filas.
+
+Si existe al menos una métrica heredada, la migración aborta antes de modificar
+el esquema.
+
+Esta política evita reinterpretar automáticamente datos del contrato anterior.
+En particular, R4 no supone que:
+
+- `planchas_utilizadas` represente necesariamente planchas nuevas;
+- `area_recuperable_mm2` tenga exactamente la semántica de retazo recuperable;
+- un valor `FLOAT` de tiempo pueda convertirse a `BIGINT` sin pérdida;
+- valores `NULL` puedan sustituirse por cero;
+- las nuevas áreas puedan reconstruirse a partir de otras métricas;
+- las métricas históricas cumplan los dominios definidos en v1.1.
+
+No se eliminan, corrigen, redondean ni completan métricas históricas.
+
+La ausencia de registros es una precondición comprobada por la migración y no
+una inferencia basada en inspecciones anteriores.
+
+### Estructura final de METRICA_EJECUCION
+
+| Columna | Tipo | Restricciones |
+| --- | --- | --- |
+| `id_metrica` | INTEGER | PK, NOT NULL |
+| `id_ejecucion` | INTEGER | FK a `ejecuciones_optimizacion.id_ejecucion`, UNIQUE, NOT NULL |
+| `area_material_total_mm2` | NUMERIC(18,2) | NOT NULL, CHECK > 0 |
+| `area_piezas_colocadas_mm2` | NUMERIC(18,2) | NOT NULL, CHECK >= 0 |
+| `aprovechamiento_pct` | NUMERIC(6,3) | NOT NULL, CHECK entre 0 y 100 |
+| `merma_mm2` | NUMERIC(18,2) | NOT NULL, CHECK >= 0 |
+| `retazo_recuperable_mm2` | NUMERIC(18,2) | NOT NULL, CHECK >= 0 |
+| `planchas_nuevas_usadas` | INTEGER | NOT NULL, CHECK >= 0 |
+| `tiempo_computacional_ms` | BIGINT | NOT NULL, CHECK >= 0 |
+| `memoria_pico_mb` | NUMERIC(12,3) | NULL, CHECK >= 0 |
+| `tiempo_cpu_ms` | BIGINT | NULL, CHECK >= 0 |
+
+La relación entre EJECUCION_OPTIMIZACION y METRICA_EJECUCION continúa siendo
+**1 : 0..1** mediante `UNIQUE(id_ejecucion)`.
+
+La FK existente hacia `ejecuciones_optimizacion.id_ejecucion` se conserva.
+No se introducen cascadas.
+
+### Cambios respecto de R3
+
+R3 conservaba siete columnas en `metricas_ejecucion`. R4 lleva esta entidad
+a once columnas.
+
+Se incorporan:
+
+- `area_material_total_mm2`;
+- `area_piezas_colocadas_mm2`;
+- `memoria_pico_mb`;
+- `tiempo_cpu_ms`.
+
+Se sustituyen los nombres anteriores:
+
+- `planchas_utilizadas` por `planchas_nuevas_usadas`;
+- `area_recuperable_mm2` por `retazo_recuperable_mm2`.
+
+Los campos numéricos dejan de utilizar `FLOAT` en el contrato final y pasan a
+los tipos `NUMERIC`, `INTEGER` o `BIGINT` definidos por v1.1.
+
+`aprovechamiento_pct`, `merma_mm2`, `retazo_recuperable_mm2`,
+`planchas_nuevas_usadas` y `tiempo_computacional_ms` pasan a ser obligatorios.
+
+`memoria_pico_mb` y `tiempo_cpu_ms` permanecen opcionales.
+
+### Restricciones y semántica
+
+R4 incorpora nueve restricciones CHECK:
+
+- `area_material_total_mm2 > 0`;
+- `area_piezas_colocadas_mm2 >= 0`;
+- `aprovechamiento_pct >= 0 AND aprovechamiento_pct <= 100`;
+- `merma_mm2 >= 0`;
+- `retazo_recuperable_mm2 >= 0`;
+- `planchas_nuevas_usadas >= 0`;
+- `tiempo_computacional_ms >= 0`;
+- `memoria_pico_mb >= 0`;
+- `tiempo_cpu_ms >= 0`.
+
+Los CHECK de campos opcionales permiten `NULL` conforme a la semántica de SQL.
+
+No se añaden restricciones que relacionen matemáticamente las distintas
+métricas. Por ejemplo, el esquema no obliga a que
+`aprovechamiento_pct = area_piezas_colocadas_mm2 / area_material_total_mm2`,
+porque v1.1 no prescribe esa fórmula como restricción de base de datos.
+
+El cálculo de las métricas corresponde al motor de optimización y su contrato
+de aplicación.
+
+### Modelo completo v1.1
+
+Con R4 se completa el objetivo estructural aprobado:
+
+| Revisión | Tablas | Columnas |
+| --- | ---: | ---: |
+| R1 | 10 | 68 |
+| R2 | 10 | 71 |
+| R3 | 12 | 86 |
+| R4 | **12** | **90** |
+
+Esto completa las doce entidades normativas:
+
+1. ROL
+2. USUARIO
+3. TIPO_VIDRIO
+4. PLANCHA
+5. RETAZO
+6. PEDIDO
+7. PIEZA
+8. CONFIGURACION
+9. OPTIMIZACION
+10. EJECUCION_OPTIMIZACION
+11. METRICA_EJECUCION
+12. MATERIAL_UTILIZADO
+
+Completar la estructura de datos no significa que estén implementados todavía
+todos los casos de uso, heurísticas, versionado de configuración, confirmación
+transaccional de inventario o validaciones de aplicación.
+
+### Preservación de contratos históricos
+
+Se añadió
+[`r3_models.py`](../../backend/tests/contracts/r3_models.py)
+como snapshot del contrato ORM correspondiente a la revisión
+`a3c4d5e6f7b8`.
+
+Las pruebas históricas continúan apuntando explícitamente a su revisión:
+
+- R1 → `e1a2b3c4d5f6`;
+- R2 → `f2b3c4d5e6a7`;
+- R3 → `a3c4d5e6f7b8`;
+- R4 → `b4d5e6f7a8c9`, head vigente.
+
+R3 ya no se interpreta como `head`: sus pruebas utilizan su contrato histórico
+de 12 tablas y 86 columnas. R4 representa el ORM vigente de 12 tablas y
+90 columnas.
+
+### Pruebas y validación de R4
+
+[`test_r4_models.py`](../../backend/tests/unit/test_r4_models.py) valida:
+
+- once columnas de METRICA_EJECUCION;
+- tipos exactos;
+- nulabilidad;
+- PK;
+- FK;
+- UNIQUE;
+- nueve CHECK;
+- ausencia de FLOAT;
+- ausencia de los nombres retirados;
+- invariancia estructural de las otras once tablas;
+- conteo total de 12 tablas y 90 columnas;
+- cadena lineal de Alembic;
+- fallo explícito de `downgrade()`.
+
+[`test_r4_migration.py`](../../backend/tests/integration/test_r4_migration.py)
+utiliza PostgreSQL temporal y aislado para validar:
+
+- recorrido completo desde una base limpia hasta R4;
+- transición explícita R3 → R4;
+- coincidencia entre esquema migrado y ORM vigente;
+- conservación de las otras entidades;
+- conservación de FK y UNIQUE de `id_ejecucion`;
+- aborto ante métricas heredadas;
+- rollback transaccional ante errores;
+- dominios numéricos;
+- nulabilidad;
+- referencia a ejecución;
+- unicidad de una métrica por ejecución;
+- ausencia de fórmulas derivadas no prescritas.
+
+Las pruebas combinadas de R3 y R4 obtuvieron:
+
+```text
+83 passed in 30.46s
