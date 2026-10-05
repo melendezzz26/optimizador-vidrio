@@ -141,7 +141,7 @@ Ejemplo válido:
 
 ## 7. Migración Alembic
 
-Se creará una nueva revisión Alembic posterior al HEAD actual.
+La revisión manual `1c8754481a08`, posterior a `b4d5e6f7a8c9`, implementa este cambio. No se reemplazan ni modifican las migraciones históricas.
 
 La migración deberá:
 
@@ -172,6 +172,8 @@ Ejecutar nuevamente la lógica de inicialización no debe producir:
 
 `tipos_vidrio_espesores` tendrá unicidad garantizada mediante su clave primaria compuesta.
 
+Si un nombre ya existe, la carga preserva su ID, descripción (incluso NULL) y estado, sin reactivar tipos inactivos. La coincidencia utiliza la unicidad existente de `nombre`; no renombra ni fusiona variantes del nombre.
+
 ---
 
 ## 9. Capa de aplicación
@@ -190,6 +192,12 @@ La operación deberá comprobar:
 4. que la combinación `(id_tipo_vidrio, espesor_mm)` exista en el catálogo.
 
 Esta regla debe poder reutilizarse posteriormente desde el módulo de Pedidos.
+
+El contrato público es `GlassCatalog.get_tipo_vidrio`, que devuelve `TipoVidrioData` con `espesores_mm` persistidos. La función `validate_tipo_espesor(catalog, id_tipo_vidrio, espesor_mm, *, require_active=True)` reside en Application y no depende de SQLAlchemy ni FastAPI. El consumidor controla la transacción; Pedidos podrá utilizar este puerto sin duplicar reglas ni implementar ahora su flujo funcional.
+
+Crear material o cambiar su combinación exige un tipo activo. Un PATCH calcula la pareja efectiva: tipo nuevo y espesor actual, espesor nuevo y tipo actual, o ambos nuevos. Si la pareja no cambia, se conserva la posibilidad de actualizar otros atributos de material cuyo tipo haya sido desactivado.
+
+Los tipos creados manualmente sin combinaciones registradas devuelven `espesores_mm: []`; no reciben espesores implícitos y no permiten crear material hasta disponer de una combinación persistida.
 
 La base de datos seguirá siendo la última barrera de integridad mediante las restricciones correspondientes.
 
@@ -222,7 +230,7 @@ Formato conceptual:
 ]
 ```
 
-El contrato final podrá implementarse ampliando la consulta actual de tipos de vidrio o mediante un endpoint específico de catálogo, siempre que exista una única fuente de datos reutilizable por Inventario y Pedidos.
+El contrato amplía `GET /api/inventory/tipos-vidrio`. Conserva los campos existentes e incorpora `espesores_mm` como números JSON en orden ascendente, consultados desde PostgreSQL. Los IDs no son constantes del catálogo. Se conservan los tipos inactivos en la consulta, identificados por `estado: false`.
 
 El frontend no mantendrá una lista independiente de tipos o espesores.
 
@@ -381,3 +389,5 @@ TA-013 materializa esa decisión como catálogo compartido.
 HU-004 y HU-005 utilizan dicho catálogo en las funciones de inventario.
 
 TA-011 integra posteriormente las interfaces React con la API y PostgreSQL.
+
+La evolución documental del modelo se detalla en [Evolución v1.2 por TA-013](../database/evolucion-v1-2-ta013.md). La documentación v1.1 y los documentos DOCX se conservan como línea base histórica.
