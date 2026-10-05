@@ -10,7 +10,12 @@ PI = Decimal("3.14159265358979323846264338327950288419716939937510")
 AREA_QUANTUM = Decimal("0.01")
 # Rango aprobado para el área de NewGlass v1.1 (NUMERIC(18,2)).
 MAX_AREA_MM2 = Decimal("9999999999999999.99")
-SUPPORTED_TYPES = ("RECTANGULO", "CIRCUNFERENCIA", "POLIGONO_CONVEXO")
+GEOMETRY_FIELDS = {
+    "RECTANGULO": frozenset({"type", "width_mm", "height_mm"}),
+    "CIRCUNFERENCIA": frozenset({"type", "radius_mm"}),
+    "POLIGONO_CONVEXO": frozenset({"type", "vertices_mm"}),
+}
+SUPPORTED_TYPES = tuple(GEOMETRY_FIELDS)
 Point = tuple[Decimal, Decimal]
 
 
@@ -96,7 +101,8 @@ def calculate_area_mm2(geometry: Mapping[str, object]) -> Decimal:
     Acepta int, float finitos y Decimal; rechaza bool y cadenas numéricas.
     Los polígonos usan vértices ordenados, sin repetir el primero al final,
     en cualquiera de los dos sentidos y con convexidad estricta.
-    Los campos adicionales (incluido area_mm2) no intervienen en el cálculo.
+    Cada tipo exige sus claves exactas; se rechazan campos adicionales,
+    incluido area_mm2, que solo pertenece al resultado calculado por backend.
     El área debe ser positiva antes y después de cuantizar a dos decimales:
     si redondea a Decimal('0.00'), la geometría es inválida.
     El resultado cuantizado no puede superar MAX_AREA_MM2.
@@ -107,6 +113,10 @@ def calculate_area_mm2(geometry: Mapping[str, object]) -> Decimal:
     kind = geometry.get("type")
     if not isinstance(kind, str) or kind not in SUPPORTED_TYPES:
         raise InvalidGeometryError("Tipo de geometría no soportado.")
+    if set(geometry) != GEOMETRY_FIELDS[kind]:
+        raise InvalidGeometryError(
+            "La geometría debe contener exactamente las propiedades de su tipo, sin campos adicionales."
+        )
 
     if kind == "RECTANGULO":
         numbers = [_positive_dimension(geometry, field) for field in ("width_mm", "height_mm")]

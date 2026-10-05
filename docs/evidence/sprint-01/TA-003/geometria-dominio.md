@@ -27,8 +27,10 @@ Solo se retorna un `Decimal` con exactamente dos decimales en el intervalo
 de NewGlass v1.1. El máximo inclusivo se define en el dominio mediante
 `MAX_AREA_MM2 = Decimal("9999999999999999.99")`, sin consultar infraestructura;
 si el área cuantizada lo supera se lanza `InvalidGeometryError`. Un área matemática
-de `0.005 mm²` produce `0.01` y se acepta. Los campos adicionales se ignoran y `area_mm2`
-aportado por el cliente nunca se usa. No se modifica la entrada.
+de `0.005 mm²` produce `0.01` y se acepta. El objeto geometria usa un contrato
+cerrado: se rechazan propiedades adicionales con `InvalidGeometryError`.
+`area_mm2` no pertenece a geometria; es una columna calculada por backend.
+No se modifica la entrada.
 
 ## TDD: pruebas específicas
 
@@ -180,3 +182,43 @@ M  docs/specs/SPEC-TA-003-api-inventario.md
 ```
 
 No se modificó `exceptions.py` en esta corrección ni se creó ningún commit.
+
+## Corrección del contrato cerrado de geometria (2026-10-05)
+
+Se sustituyó la aceptación de `area_mm2` dentro del JSON por su rechazo.
+`calculate_area_mm2` conserva su API y comprueba las claves exactas según el tipo
+antes de calcular: RECTANGULO (`type`, `width_mm`, `height_mm`), CIRCUNFERENCIA
+(`type`, `radius_mm`) y POLIGONO_CONVEXO (`type`, `vertices_mm`). No usa Pydantic.
+
+Se añadieron seis casos de dominio: un campo desconocido y `area_mm2` para cada
+tipo. Los casos válidos y la comprobación de no mutar la entrada se conservan.
+En Application se prueba el rechazo sin escrituras en alta y edición; el área
+oficial sigue calculándose por el dominio y la geometría válida se copia.
+
+Paso rojo, antes de modificar el dominio, desde `backend/`:
+
+```text
+.\venv\Scripts\python.exe -B -m pytest -q tests/unit/inventory/test_geometry.py tests/unit/inventory/test_service.py --tb=short
+8 failed, 273 passed in 0.53s
+```
+
+Los ocho fallos fueron `DID NOT RAISE InvalidGeometryError`: seis de dominio
+y dos de Application.
+
+Resultados finales, desde `backend/`:
+
+```text
+.\venv\Scripts\python.exe -B -m pytest -q tests/unit/inventory/test_geometry.py
+169 passed in 0.14s
+
+.\venv\Scripts\python.exe -B -m pytest -q tests/unit/inventory/test_service.py
+112 passed in 0.32s
+
+.\venv\Scripts\python.exe -B -m pytest -q
+477 passed in 79.32s (0:01:19)
+```
+
+El incremento frente a 469 es de seis casos de dominio y dos de Application.
+Desde la raíz se ejecutaron `git diff --check` (sin salida, código 0),
+`git status --short` y `git diff --stat`. El índice staged previo se conserva;
+esta corrección queda sin añadir al índice. No se hizo commit.

@@ -157,14 +157,27 @@ def test_polygon_with_large_coordinates_keeps_small_area():
     assert_area({"type": "POLIGONO_CONVEXO", "vertices_mm": vertices}, "12.00")
 
 
-def test_area_is_computed_without_mutating_or_trusting_client_area():
+def test_area_is_computed_without_mutating_valid_geometry():
     geometry = {
         "type": "POLIGONO_CONVEXO",
         "vertices_mm": [[0, 0], [4, 0], [0, 3]],
-        "area_mm2": 999999,
     }
     original = deepcopy(geometry)
     assert_area(geometry, "6.00")
+    assert geometry == original
+
+
+@pytest.mark.parametrize("geometry", [
+    {"type": "RECTANGULO", "width_mm": 10, "height_mm": 20},
+    {"type": "CIRCUNFERENCIA", "radius_mm": 2},
+    {"type": "POLIGONO_CONVEXO", "vertices_mm": [[0, 0], [4, 0], [0, 3]]},
+], ids=["rectangle", "circle", "polygon"])
+@pytest.mark.parametrize("extra_field", ["extra", "area_mm2"])
+def test_geometry_rejects_additional_properties(geometry, extra_field):
+    geometry = {**geometry, extra_field: 99999}
+    original = deepcopy(geometry)
+    with pytest.raises(InvalidGeometryError):
+        calculate_area_mm2(geometry)
     assert geometry == original
 
 

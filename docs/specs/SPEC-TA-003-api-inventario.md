@@ -112,6 +112,19 @@ ser definidos libremente por el cliente durante el registro manual.
 
 ### 4.4 Contrato geométrico de retazos v1
 
+El objeto geometria usa un contrato cerrado en TA-003 v1; no admite
+propiedades adicionales. area_mm2 no forma parte de geometria.
+
+Las claves obligatorias y únicas admitidas son:
+
+- RECTANGULO: `type`, `width_mm`, `height_mm`.
+- CIRCUNFERENCIA: `type`, `radius_mm`.
+- POLIGONO_CONVEXO: `type`, `vertices_mm`.
+
+Cualquier propiedad desconocida, incluido `area_mm2`, provoca
+`InvalidGeometryError` en el dominio, también al invocar Application directamente.
+`area_mm2` es exclusivamente una columna calculada por backend.
+
 El backend calcula `area_mm2` con `Decimal` a partir de la geometría validada;
 no utiliza el área proporcionada por el cliente. El área matemática debe ser
 mayor que cero y se cuantiza a `Decimal("0.01")` (dos decimales) usando
@@ -276,6 +289,8 @@ backend/app/modules/inventory/
 │   ├── exceptions.py
 │   └── geometry.py
 ├── application/
+│   ├── dto.py
+│   ├── ports.py
 │   └── service.py
 ├── infrastructure/
 │   └── repository.py
@@ -294,6 +309,29 @@ capa de aplicación.
 
 Los modelos SQLAlchemy existentes permanecerán en `app/models.py` durante
 TA-003. Su traslado a módulos no forma parte de esta tarea.
+
+### Contratos de Application
+
+- Los comandos y resultados son dataclasses, sin modelos ORM ni schemas HTTP.
+  Las salidas incluyen únicamente los campos de la entidad v1.1; tipo de vidrio
+  no tiene fecha de registro. IDs se asignan en el repositorio; las fechas de
+  planchas y retazos se asignan en Application mediante reloj inyectable en UTC.
+- `UpdatePlancha` y `UpdateRetazo` usan `None` como omisión, puesto que ningún
+  campo editable admite NULL. Presentation deberá rechazar NULL explícito antes
+  de construir el comando. `False` y `0` se conservan como cambios válidos.
+- Las medidas y espesores aceptan `Decimal` o enteros y se normalizan a `Decimal`;
+  se rechazan booleanos, float, cadenas y no finitos. La geometría conserva el
+  contrato de su dominio. No se cuantizan medidas de planchas en Application.
+- Nombre y código se recortan en los extremos antes de validar longitud y
+  duplicados; la comparación de unicidad es exacta y distingue mayúsculas.
+- Los listados incluyen activos e inactivos, sin orden implícito. En edición,
+  se valida existencia y actividad del tipo cuando cambia su identificador.
+- `InventoryRepository` define consultas, altas, guardado de cambios y
+  `transaction()`. Cada caso de uso coordina una unidad transaccional; el
+  adaptador controla flush, commit y rollback, también si falla el commit.
+  No se necesita un UnitOfWork separado. El adaptador devuelve snapshots DTO y
+  garantiza unicidad y referencias ante concurrencia; las comprobaciones de
+  Application no sustituyen esas garantías. Las excepciones no contienen HTTP.
 
 ### API
 
