@@ -15,9 +15,7 @@ from .dto import (
     TipoVidrioData, UpdatePlancha, UpdateRetazo,
 )
 from .ports import InventoryRepository
-
-
-ALLOWED_THICKNESSES = frozenset(Decimal(value) for value in ("3", "4", "5.5", "6", "8"))
+from .catalog import validate_tipo_espesor
 
 
 def _utc_now() -> datetime:
@@ -40,10 +38,7 @@ def _positive_decimal(value: object, field: str) -> Decimal:
 
 
 def _thickness(value: object) -> Decimal:
-    thickness = _positive_decimal(value, "espesor_mm")
-    if thickness not in ALLOWED_THICKNESSES:
-        raise InventoryValidationError("El espesor debe ser 3, 4, 5.5, 6 u 8 mm.")
-    return thickness
+    return _positive_decimal(value, "espesor_mm")
 
 
 def _integer(value: object, field: str, minimum: int = 1) -> int:
@@ -77,13 +72,6 @@ class InventoryService:
             raise InventoryValidationError("El reloj debe devolver una fecha con zona horaria.")
         return value.astimezone(timezone.utc)
 
-    def _require_active_tipo(self, id_tipo_vidrio: int) -> None:
-        tipo = self._repository.get_tipo_vidrio(id_tipo_vidrio)
-        if tipo is None:
-            raise InventoryNotFoundError("Tipo de vidrio inexistente.")
-        if not tipo.estado:
-            raise InventoryValidationError("El tipo de vidrio debe estar activo.")
-
     def create_tipo_vidrio(self, command: CreateTipoVidrio) -> TipoVidrioData:
         nombre = _text(command.nombre, "nombre", 100)
         if command.descripcion is not None and not isinstance(command.descripcion, str):
@@ -106,7 +94,7 @@ class InventoryService:
         tipo = _integer(command.id_tipo_vidrio, "id_tipo_vidrio")
         fecha = self._registration_time()
         with self._repository.transaction():
-            self._require_active_tipo(tipo)
+            validate_tipo_espesor(self._repository, tipo, espesor)
             return self._repository.create_plancha(
                 ancho_mm=ancho, alto_mm=alto, espesor_mm=espesor, cantidad=cantidad,
                 id_tipo_vidrio=tipo, estado=True, fecha_registro=fecha)
@@ -127,8 +115,10 @@ class InventoryService:
             current = self._repository.get_plancha(identifier)
             if current is None:
                 raise InventoryNotFoundError("Plancha inexistente.")
-            if "id_tipo_vidrio" in changes and changes["id_tipo_vidrio"] != current.id_tipo_vidrio:
-                self._require_active_tipo(changes["id_tipo_vidrio"])
+            tipo = changes.get("id_tipo_vidrio", current.id_tipo_vidrio)
+            espesor = changes.get("espesor_mm", current.espesor_mm)
+            if (tipo, espesor) != (current.id_tipo_vidrio, current.espesor_mm):
+                validate_tipo_espesor(self._repository, tipo, espesor)
             return self._repository.save_plancha(replace(current, **changes))
 
     def create_retazo(self, command: CreateRetazo) -> RetazoData:
@@ -139,7 +129,7 @@ class InventoryService:
         area = calculate_area_mm2(geometria)
         fecha = self._registration_time()
         with self._repository.transaction():
-            self._require_active_tipo(tipo)
+            validate_tipo_espesor(self._repository, tipo, espesor)
             if self._repository.retazo_codigo_exists(codigo):
                 raise InventoryConflictError("El código de retazo ya existe.")
             return self._repository.create_retazo(
@@ -162,8 +152,10 @@ class InventoryService:
             current = self._repository.get_retazo(identifier)
             if current is None:
                 raise InventoryNotFoundError("Retazo inexistente.")
-            if "id_tipo_vidrio" in changes and changes["id_tipo_vidrio"] != current.id_tipo_vidrio:
-                self._require_active_tipo(changes["id_tipo_vidrio"])
+            tipo = changes.get("id_tipo_vidrio", current.id_tipo_vidrio)
+            espesor = changes.get("espesor_mm", current.espesor_mm)
+            if (tipo, espesor) != (current.id_tipo_vidrio, current.espesor_mm):
+                validate_tipo_espesor(self._repository, tipo, espesor)
             if "codigo" in changes and self._repository.retazo_codigo_exists(changes["codigo"], exclude_id=identifier):
                 raise InventoryConflictError("El código de retazo ya existe.")
             return self._repository.save_retazo(replace(current, **changes))

@@ -9,7 +9,7 @@ from decimal import Decimal
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.models import Plancha, Retazo, TipoVidrio
+from app.models import Plancha, Retazo, TipoVidrio, TipoVidrioEspesor
 from app.modules.inventory.application.dto import PlanchaData, RetazoData, TipoVidrioData
 from app.modules.inventory.domain.exceptions import InventoryConflictError, InventoryNotFoundError
 
@@ -71,12 +71,13 @@ class SqlAlchemyInventoryRepository:
     # ------------------------------------------------------------------ #
 
     @staticmethod
-    def _to_tipo_vidrio(row: TipoVidrio) -> TipoVidrioData:
+    def _to_tipo_vidrio(row: TipoVidrio, espesores: tuple[Decimal, ...] = ()) -> TipoVidrioData:
         return TipoVidrioData(
             id_tipo_vidrio=row.id_tipo_vidrio,
             nombre=row.nombre,
             descripcion=row.descripcion,
             estado=row.estado,
+            espesores_mm=espesores,
         )
 
     @staticmethod
@@ -125,7 +126,21 @@ class SqlAlchemyInventoryRepository:
     def get_tipo_vidrio(self, id_tipo_vidrio: int) -> TipoVidrioData | None:
         session = self._require_session()
         row = session.get(TipoVidrio, id_tipo_vidrio)
-        return self._to_tipo_vidrio(row) if row is not None else None
+        if row is None:
+            return None
+        return self._to_tipo_vidrio(row, self._catalog_thicknesses([id_tipo_vidrio]).get(id_tipo_vidrio, ()))
+
+    def _catalog_thicknesses(self, identifiers: list[int]) -> dict[int, tuple[Decimal, ...]]:
+        session = self._require_session()
+        if not identifiers:
+            return {}
+        rows = session.query(TipoVidrioEspesor).filter(
+            TipoVidrioEspesor.id_tipo_vidrio.in_(identifiers)
+        ).order_by(TipoVidrioEspesor.espesor_mm).all()
+        grouped: dict[int, list[Decimal]] = {}
+        for row in rows:
+            grouped.setdefault(row.id_tipo_vidrio, []).append(row.espesor_mm)
+        return {identifier: tuple(values) for identifier, values in grouped.items()}
 
     def tipo_nombre_exists(self, nombre: str) -> bool:
         session = self._require_session()
@@ -143,7 +158,9 @@ class SqlAlchemyInventoryRepository:
 
     def list_tipos_vidrio(self) -> list[TipoVidrioData]:
         session = self._require_session()
-        return [self._to_tipo_vidrio(row) for row in session.query(TipoVidrio).all()]
+        rows = session.query(TipoVidrio).all()
+        thicknesses = self._catalog_thicknesses([row.id_tipo_vidrio for row in rows])
+        return [self._to_tipo_vidrio(row, thicknesses.get(row.id_tipo_vidrio, ())) for row in rows]
 
     # ------------------------------------------------------------------ #
     # Plancha                                                             #

@@ -2,7 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Annotated, Literal, Union
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_serializer
 
 class BaseSchema(BaseModel):
     model_config = {"extra": "forbid"}
@@ -18,6 +18,12 @@ class TipoVidrioResponse(BaseSchema):
     nombre: str
     descripcion: str | None
     estado: bool
+    espesores_mm: list[Decimal]
+
+    @field_serializer("espesores_mm", when_used="json")
+    def serialize_thicknesses(self, values: list[Decimal]) -> list[int | float]:
+        # Conversión exclusiva de transporte: dominio/aplicación conservan Decimal.
+        return [int(value) if value == value.to_integral_value() else float(value) for value in values]
 
 # --- Geometría ---
 

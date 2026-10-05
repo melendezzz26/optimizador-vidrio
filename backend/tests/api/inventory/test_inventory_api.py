@@ -10,7 +10,8 @@ from app.modules.inventory.presentation.dependencies import get_inventory_servic
 
 class FakeInventoryService:
     def list_tipos_vidrio(self):
-        return [TipoVidrioData(id_tipo_vidrio=1, nombre="Claro", descripcion=None, estado=True)]
+        return [TipoVidrioData(id_tipo_vidrio=1, nombre="Claro", descripcion=None, estado=True,
+                              espesores_mm=(Decimal("3"), Decimal("5.5"), Decimal("12")))]
 
     def create_tipo_vidrio(self, data):
         from app.modules.inventory.domain.exceptions import InventoryConflictError
@@ -93,6 +94,7 @@ def test_auth_sin_token():
 def test_operario_get_permitido():
     response = client.get("/api/inventory/tipos-vidrio", headers={"Authorization": f"Bearer {make_token('Operario')}"})
     assert response.status_code == 200
+    assert response.json()[0]["espesores_mm"] == [3, 5.5, 12]
 
 def test_operario_post_prohibido():
     response = client.post("/api/inventory/tipos-vidrio", json={"nombre": "Nuevo"}, headers={"Authorization": f"Bearer {make_token('Operario')}"})

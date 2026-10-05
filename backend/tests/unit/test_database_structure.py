@@ -72,5 +72,6 @@ def test_importing_models_registers_all_current_tables(database_structure):
         "retazos",
         "roles",
         "tipos_vidrio",
+        "tipos_vidrio_espesores",
         "usuarios",
     }

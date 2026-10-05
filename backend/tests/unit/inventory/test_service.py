@@ -25,6 +25,7 @@ from app.modules.inventory.domain.geometry import calculate_area_mm2
 
 
 NOW = datetime(2026, 10, 4, 15, 30, tzinfo=timezone.utc)
+TEST_THICKNESSES = tuple(Decimal(value) for value in ("3", "4", "5.5", "6", "8"))
 
 
 class FakeInventoryRepository(InventoryRepository):
@@ -32,8 +33,8 @@ class FakeInventoryRepository(InventoryRepository):
 
     def __init__(self):
         self.tipos = {
-            1: TipoVidrioData(id_tipo_vidrio=1, nombre="Claro", descripcion=None, estado=True),
-            2: TipoVidrioData(id_tipo_vidrio=2, nombre="Inactivo", descripcion=None, estado=False),
+            1: TipoVidrioData(id_tipo_vidrio=1, nombre="Claro", descripcion=None, estado=True, espesores_mm=TEST_THICKNESSES),
+            2: TipoVidrioData(id_tipo_vidrio=2, nombre="Inactivo", descripcion=None, estado=False, espesores_mm=TEST_THICKNESSES),
         }
         self.planchas = {}
         self.retazos = {}
@@ -219,7 +220,7 @@ def test_create_with_missing_or_inactive_tipo_does_not_write(inventory, kind, ti
 def test_update_plancha_preserves_id_date_and_accepts_zero_false(inventory):
     service, repo = inventory
     original = service.create_plancha(plancha_command())
-    repo.tipos[3] = TipoVidrioData(id_tipo_vidrio=3, nombre="Otro", descripcion=None, estado=True)
+    repo.tipos[3] = TipoVidrioData(id_tipo_vidrio=3, nombre="Otro", descripcion=None, estado=True, espesores_mm=TEST_THICKNESSES)
     result = service.update_plancha(original.id_plancha, UpdatePlancha(
         ancho_mm=1200, alto_mm=600, espesor_mm=Decimal("6"), cantidad=0, estado=False, id_tipo_vidrio=3))
     assert result == replace(original, ancho_mm=Decimal("1200"), alto_mm=Decimal("600"),
@@ -325,7 +326,7 @@ def test_update_retazo_recalculates_area_and_preserves_identity_date_origin(inve
     service, repo = inventory
     original = service.create_retazo(retazo_command())
     repo.retazos[1] = replace(original, id_ejecucion_origen=17)
-    repo.tipos[3] = TipoVidrioData(id_tipo_vidrio=3, nombre="Otro", descripcion=None, estado=True)
+    repo.tipos[3] = TipoVidrioData(id_tipo_vidrio=3, nombre="Otro", descripcion=None, estado=True, espesores_mm=TEST_THICKNESSES)
     geometry = {"type": "CIRCUNFERENCIA", "radius_mm": 2}
     result = service.update_retazo(1, UpdateRetazo(codigo=" R-002 ", geometria=geometry,
         espesor_mm=Decimal("8"), estado=False, id_tipo_vidrio=3))
@@ -384,7 +385,7 @@ def test_commands_do_not_accept_protected_fields(command, protected):
 
 
 def test_output_dtos_match_inventory_model_fields_without_orm():
-    assert {f.name for f in fields(TipoVidrioData)} == {"id_tipo_vidrio", "nombre", "descripcion", "estado"}
+    assert {f.name for f in fields(TipoVidrioData)} == {"id_tipo_vidrio", "nombre", "descripcion", "estado", "espesores_mm"}
     assert {f.name for f in fields(PlanchaData)} == {
         "id_plancha", "ancho_mm", "alto_mm", "espesor_mm", "cantidad", "estado", "fecha_registro", "id_tipo_vidrio"}
     assert {f.name for f in fields(RetazoData)} == {
