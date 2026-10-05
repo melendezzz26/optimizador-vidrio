@@ -32,7 +32,7 @@ with patch.dict(sys.modules, {"app.shared.database": isolated_base}):
 
 
 NOW = datetime(2026, 10, 5, 12, 30, tzinfo=timezone.utc)
-HEAD = "b4d5e6f7a8c9"
+HEAD = "1c8754481a08"
 
 
 @pytest.fixture(scope="module")
@@ -79,7 +79,17 @@ def repository(engine):
 
 
 def create_tipo(repo, nombre="Claro", estado=True):
-    return repo.create_tipo_vidrio(nombre=nombre, descripcion=None, estado=estado)
+    tipo = repo.create_tipo_vidrio(nombre=nombre, descripcion=None, estado=estado)
+    seed_test_thicknesses(repo, tipo.id_tipo_vidrio)
+    return repo.get_tipo_vidrio(tipo.id_tipo_vidrio)
+
+
+def seed_test_thicknesses(repo, identifier):
+    # Combinaciones sintéticas explícitas para probar el adaptador, no datos base.
+    repo._require_session().execute(sa.text(
+        "INSERT INTO tipos_vidrio_espesores(id_tipo_vidrio, espesor_mm) "
+        "VALUES (:id, :espesor)"
+    ), [{"id": identifier, "espesor": Decimal(value)} for value in ("3", "4", "5.5", "6", "8")])
 
 
 def plancha_values(tipo, **changes):
@@ -208,7 +218,7 @@ def test_retazo_roundtrip_defensive_copy_exact_code_and_update(repository, engin
 def test_retazo_preserves_existing_nonnull_origin(repository, engine):
     repo, _ = repository
     with engine.begin() as connection:
-        insert_r3_context(connection)
+        insert_r3_context(connection, with_catalog=True)
     with repo.transaction():
         original = repo.create_retazo(**retazo_values(1, id_ejecucion_origen=1))
     with repo.transaction():
@@ -346,6 +356,9 @@ def test_service_complete_flow_with_decimal_geometry_and_fresh_repository(reposi
     repo, _ = repository
     service = InventoryService(repo, now=lambda: NOW)
     tipo = service.create_tipo_vidrio(CreateTipoVidrio(nombre="Claro"))
+    with repo.transaction():
+        seed_test_thicknesses(repo, tipo.id_tipo_vidrio)
+        tipo = repo.get_tipo_vidrio(tipo.id_tipo_vidrio)
     plancha = service.create_plancha(CreatePlancha(ancho_mm=Decimal("1000.25"), alto_mm=500,
         espesor_mm=Decimal("5.5"), cantidad=2, id_tipo_vidrio=tipo.id_tipo_vidrio))
 
