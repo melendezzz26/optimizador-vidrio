@@ -112,6 +112,15 @@ ser definidos libremente por el cliente durante el registro manual.
 
 ### 4.4 Contrato geométrico de retazos v1
 
+El backend calcula `area_mm2` con `Decimal` a partir de la geometría validada;
+no utiliza el área proporcionada por el cliente. El área matemática debe ser
+mayor que cero y se cuantiza a `Decimal("0.01")` (dos decimales) usando
+`ROUND_HALF_UP`. Después de cuantizar, `area_mm2` debe ser representable como
+`NUMERIC(18,2)` y estar entre `0.01` y `9999999999999999.99`, inclusive, conforme
+al rango aprobado y a `CHECK area_mm2 > 0` del modelo v1.1. Una geometría cuyo
+resultado almacenado sería `0.00` o superaría ese máximo se considera inválida
+y debe rechazarse en el dominio antes de llegar a persistencia.
+
 Los retazos registrados manualmente en TA-003 admiten únicamente las
 siguientes geometrías.
 
@@ -181,6 +190,10 @@ TA-003 v1.
   POLIGONO_CONVEXO en TA-003 v1.
 - RN-08: El área del retazo se calcula en el backend a partir de su geometría
   y no se acepta como un valor confiable proporcionado por el cliente.
+  Se calcula con `Decimal`, debe ser positiva y se cuantiza a dos decimales
+  usando `ROUND_HALF_UP`. El resultado cuantizado debe estar entre `0.01` y
+  `9999999999999999.99`, inclusive, y ser representable como `NUMERIC(18,2)`;
+  fuera de ese rango, la geometría es inválida y el dominio la rechaza.
 - RN-09: Para RECTANGULO, el área es `width_mm * height_mm`.
 - RN-10: Para CIRCUNFERENCIA, el área es `pi * radius_mm^2`.
 - RN-11: Para POLIGONO_CONVEXO, el área se calcula a partir de sus vértices.
