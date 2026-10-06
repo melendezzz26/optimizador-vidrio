@@ -7,8 +7,8 @@
 | Estado | Draft |
 | PBI relacionado | HU-007 |
 | Tarea relacionada | T02 — Asociar medidas reales al dibujo |
-| Responsable | Andro Q. |
-| Reviewer | Pendiente |
+| Responsable | Andro Quispe Cesias |
+| Reviewer | Andro Joseph Quispe Cesias |
 
 ## 1. Objetivo
 
