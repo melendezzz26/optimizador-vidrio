@@ -14,6 +14,8 @@ feature; acordar contratos explícitos cuando exista una necesidad de integraci�
 
 El inicio de sesión vive en `authentication/` y expone su contrato en
 `authentication/index.js` (formulario, barra de sesión, `useSession` y
-`getAccessToken`). NuevoPedido continúa en `src/pages/`.
+`getAccessToken`). La gestión de usuarios vive en `users/`, expone
+`UsersPage` y se compone con `shared/components`. NuevoPedido continúa en
+`src/pages/`.
 Cada migración futura debe revisar consumidores y preservar contratos y pruebas.
 Consultar [CONTRIBUTING.md](../../../CONTRIBUTING.md).
