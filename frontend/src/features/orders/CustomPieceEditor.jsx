@@ -31,7 +31,7 @@ function PolygonCanvas() {
     });
   };
 
-  const closeFigure = () => {
+  const closePolygon = () => {
     setDrawing((current) => current.vertices.length < 3 || current.isClosed
       ? current
       : { ...current, isClosed: true });
@@ -51,14 +51,14 @@ function PolygonCanvas() {
   return (
     <div className="custom-piece-editor__content">
       <div className="custom-piece-editor__status" role="status">
-        <strong>{isClosed ? "Figura cerrada" : "Figura abierta"}</strong>
+        <strong>{isClosed ? "Polígono cerrado" : "Polígono abierto"}</strong>
         <span>{vertices.length} {vertices.length === 1 ? "vértice" : "vértices"}</span>
       </div>
 
       <p id={instructionsId} className="custom-piece-editor__instructions">
         {isClosed
           ? "Para seguir dibujando, deshaz el último vértice o reinicia el dibujo."
-          : "Haz clic dentro del lienzo para agregar vértices. Necesitas al menos 3 para cerrar la figura."}
+          : "Haz clic dentro del lienzo para agregar vértices. Necesitas al menos 3 para cerrar el polígono."}
       </p>
 
       <div className="custom-piece-editor__surface">
@@ -113,20 +113,25 @@ function PolygonCanvas() {
           type="button"
           className="custom-piece-editor__button custom-piece-editor__button--primary"
           disabled={vertices.length < 3 || isClosed}
-          onClick={closeFigure}
+          onClick={closePolygon}
         >
-          Cerrar figura
+          Cerrar polígono
         </button>
         <button
           type="button"
           className="custom-piece-editor__button"
           disabled={vertices.length === 0}
           onClick={undoVertex}
-          title="Eliminar el último vértice y reabrir la figura"
+          title="Eliminar el último vértice y reabrir el polígono"
         >
           Deshacer último vértice
         </button>
-        <button type="button" className="custom-piece-editor__button" onClick={resetDrawing}>
+        <button
+          type="button"
+          className="custom-piece-editor__button"
+          disabled={vertices.length === 0}
+          onClick={resetDrawing}
+        >
           Reiniciar dibujo
         </button>
       </div>
@@ -135,29 +140,16 @@ function PolygonCanvas() {
 }
 
 export default function CustomPieceEditor() {
-  const panelId = useId();
   const headingId = useId();
-  const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   return (
     <section className="custom-piece-editor" aria-labelledby={headingId}>
       <h2 id={headingId}>Pieza personalizada</h2>
       <p className="custom-piece-editor__description">
         Dibuja el contorno uniendo vértices con clics.
-        {" "}El borrador es temporal: se pierde al ocultar el editor o salir de la página.
+        {" "}El borrador es temporal: se pierde al abandonar o recargar la página.
       </p>
-      <button
-        type="button"
-        className="custom-piece-editor__button"
-        aria-expanded={isEditorOpen}
-        aria-controls={panelId}
-        onClick={() => setIsEditorOpen((current) => !current)}
-      >
-        {isEditorOpen ? "Ocultar editor de pieza personalizada" : "Abrir editor de pieza personalizada"}
-      </button>
-      <div id={panelId} hidden={!isEditorOpen}>
-        {isEditorOpen && <PolygonCanvas />}
-      </div>
+      <PolygonCanvas />
     </section>
   );
 }
