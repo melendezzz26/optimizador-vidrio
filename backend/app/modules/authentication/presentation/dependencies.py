@@ -4,6 +4,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
+from app.core.permissions import tiene_permiso
 from app.modules.authentication.application.ports import UserReader
 from app.modules.authentication.application.use_cases import get_active_user
 from app.modules.authentication.domain.errors import SessionNotValidError
@@ -61,3 +62,21 @@ def get_current_user(
         return get_active_user(int(payload["sub"]), user_reader=user_reader)
     except SessionNotValidError:
         raise _unauthorized("La cuenta no existe o está desactivada.")
+
+
+def require_permission(permission: str):
+    """Protege una ruta: exige que el rol del usuario tenga el permiso indicado.
+
+    Se usa con ``Depends(require_permission("GESTIONAR_USUARIOS"))``. Sin
+    sesión responde 401 (lo decide get_current_user) y sin permiso, 403.
+    """
+
+    def checker(user: AuthenticatedUser = Depends(get_current_user)) -> AuthenticatedUser:
+        # El rol es el vigente en la base, no el que traía el token.
+        if not tiene_permiso(user.role, permission):
+            raise HTTPException(
+                status.HTTP_403_FORBIDDEN, f"No tienes el permiso: {permission}"
+            )
+        return user
+
+    return checker
