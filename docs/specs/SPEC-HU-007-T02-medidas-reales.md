@@ -1,10 +1,38 @@
 # SPEC — HU-007 T02: medidas reales por segmento
 
+## Información general
+
+| Campo | Valor |
+|---|---|
+| Estado | Verified |
+| PBI relacionado | HU-007 |
+| Tarea relacionada | T02 — Asociar medidas reales al dibujo |
+| Implementación | Dimensionamiento mediante longitudes individuales S1…Sn |
+| Responsable | Andro Quispe Cesias |
+| Reviewer | Andro Quispe Cesias |
+| Rama | `feature/HU-007-lienzo-pieza-personalizada` |
+| Commit de redefinición | `b4a9fbd` |
+| Commit de implementación | `d01bb26` |
+
 ## 1. Objetivo y alcance
 
-Permitir al Operario dimensionar una pieza irregular mediante la **longitud real de cada lado**, en milímetros, a partir del boceto cerrado de HU-007 T01. El boceto actúa como referencia de forma y orientación; sus coordenadas gráficas no son medidas físicas.
+Permitir al Operario dimensionar una pieza irregular mediante la **longitud real de cada lado**, en milímetros, a partir del boceto cerrado de HU-007 T01.
 
-El flujo es: dibujar → cerrar → identificar S1…Sn → seleccionar y medir lados → revisar la vista dimensional progresiva → completar el cierre dimensional → esperar la validación de T03.
+El boceto actúa como referencia de forma y orientación. Sus coordenadas gráficas no representan directamente medidas físicas.
+
+El flujo funcional de T02 es:
+
+```text
+dibujar
+→ cerrar polígono
+→ identificar S1…Sn
+→ seleccionar segmentos
+→ ingresar longitudes reales
+→ revisar la vista dimensional progresiva
+→ completar las medidas
+→ reconstruir la geometría cerrada
+→ preparar vertices_mm
+→ esperar la validación de T03
 
 Esta decisión sustituye el modelo de escalamiento independiente de ejes. No existen entradas de ancho exterior ni alto exterior. Las restricciones dimensionales son las longitudes individuales.
 
@@ -205,12 +233,11 @@ Ejemplo conceptual de geometría dimensional completa, pendiente de T03:
 - `geometryScaling.js`: bounding box y transformación visual uniforme.
 - `geometryScaling.test.js`: cobertura de longitudes gráficas, orden, mediana, estimaciones, cierre, longitudes reales reconstruidas, entradas inválidas, desigualdad, edición, inmutabilidad, orientación, figuras de 3/4/5+ lados, concavidad sin validación T03 y preview responsive.
 
-Ejecutar desde `frontend`:
+### Verificación técnica realizada
+
+Desde `frontend` se ejecutaron:
 
 ```text
 node --test tests/unit/geometryScaling.test.js
 npm.cmd run lint
 npm.cmd run build
-```
-
-Verificar además en navegador: cierre, selección sincronizada, edición, borrado de una medida, errores con foco, Deshacer/Reiniciar, ausencia de overflow, legibilidad móvil y bloqueo permanente de Agregar pieza. Finalmente ejecutar `git diff --check`, `git status --short` y `git diff --stat`. No hacer commit ni stash.
