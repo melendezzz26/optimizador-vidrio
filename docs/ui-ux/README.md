@@ -9,3 +9,6 @@ artefactos fuente o la evidencia disponible, sin declarar validaciones inexisten
 
 El código nuevo de interfaz se organiza en `frontend/src/features/`; la política
 temporal del código actual se describe en [CONTRIBUTING.md](../../CONTRIBUTING.md).
+
+- [Base visual de Inventario (HU-004)](inventario-base-visual.md): componentes,
+  contrato conservado y montaje posterior, sin implementar TA-011 ni HU-005.
