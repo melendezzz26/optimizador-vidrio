@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Specified |
+| Estado | Verified |
 | PBI relacionado | HU-005 - Registrar retazo |
 | Responsable | Equipo de desarrollo |
 | Reviewer | Pendiente |
@@ -68,23 +68,28 @@ Formas admitidas para `geometria`:
 ## 9. Criterios de aceptación
 - **T01:** El formulario muestra exclusivamente campos para código, tipo, espesor y geometría. Expone una arquitectura de componente controlada usando props: `catalogo`, `onSubmit`, `isSubmitting`, y opcionalmente `onCancel`. (No invoca axios/fetch directamente).
 - **T02:** Persistencia verificable directamente contra el API: Realizar un `POST /api/inventory/retazos` válido, comprobar su guardado efectivo en PostgreSQL, y efectuar un `GET` posterior demostrando que devuelve la idéntica geometría y propiedades (no se exige integración desde React para este criterio).
-- **T03:** Pruebas funcionales cubriendo 1 caso válido y al menos 2 inválidos (ej. enviar un polígono cóncavo para comprobar el rechazo del dominio por convexidad, y envío de código duplicado).
+- **T03:** Pruebas funcionales cubriendo 1 caso válido y al menos 2 casos inválidos, comprobando además que los registros rechazados no queden persistidos.
 
 ## 10. Impacto técnico
 ### Frontend
 - Creación de `RegistrarRetazoForm` puro, apoyado en `HU-004` (RegistrarPlanchaForm) como base arquitectónica.
 - Interfaz gráfica para la carga de vértices de polígonos que no requiere un `<canvas>`, simplemente un arreglo manejable de inputs numéricos (x,y).
 
-## 11. Pruebas planificadas
-- Pruebas unitarias de renderizado del componente.
-- **Caso Inválido de Dominio (API):** Verificación explícita de que un polígono cóncavo (ej. en forma de estrella) retorna 422 y no se guarda.
-- **Caso Inválido (API):** Verificación de código omitido o tipo de vidrio/espesor inexistentes retornan error correspondiente (422).
+## 11. Pruebas realizadas
+- Revisión visual/manual aprobada del formulario, incluyendo las tres formas soportadas y sus validaciones.
+- **Caso válido (API):** `RET-HU005-002` retornó HTTP 201, calculó el área `180000.00` y quedó persistido y recuperable.
+- **Caso inválido de dimensión (API):** `RET-HU005-INV-DIM` retornó HTTP 422 con `width_mm = 0` y no quedó persistido.
+- **Caso inválido de catálogo (API):** `RET-HU005-INV-ESP` retornó HTTP 422 por espesor incompatible y no quedó persistido.
+- `npm.cmd run lint` y `npm.cmd run build` finalizaron con PASS.
 
-## 12. Evidencias esperadas
-- T01: Captura de pantalla del formulario desacoplado y código del componente.
-- T02: Evidencia (Logs/Screenshots) del Payload HTTP enviado directamente al API, respuesta 201 y salida de DB/GET.
-- T03: Logs de respuesta 422 para polígono cóncavo y código duplicado.
+## 12. Evidencias
+Directorio: `docs/evidence/sprint-01/HU-005/`.
+
+- `formulario-retazo.md`: implementación, contrato desacoplado, formas, validaciones y resultados de lint/build.
+- `registro-api-bd.md`: catálogo consultado, payload oficial, respuesta 201, cálculo de área y persistencia.
+- `prueba-funcional.md`: caso válido, dos casos inválidos y comprobación posterior sin persistencia inválida.
 
 ## 13. Historial de estado
 - **Draft:** Análisis inicial de factibilidad, endpoints actuales. Descarte de bug JSONB y documentación de discrepancia sobre `tipos_vidrio_espesores`.
 - **Specified:** Revisión ajustando el alcance al desarrollo de un formulario React desacoplado. Pruebas de API deslindadas de la integración UI completa (TA-011).
+- **Verified — 06/10/2026:** T01, T02 y T03 verificadas según los resultados reportados: revisión visual/manual aprobada del formulario, lint/build, alta válida mediante API con persistencia confirmada, y dos casos HTTP 422 sin persistencia. La integración React → API permanece fuera del alcance y corresponde a TA-011. Evidencias en [HU-005](../evidence/sprint-01/HU-005/formulario-retazo.md).
