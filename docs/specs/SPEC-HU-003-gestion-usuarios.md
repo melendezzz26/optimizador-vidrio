@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Draft |
+| Estado | Implemented |
 | PBI relacionado | HU-003 (T01, T02, T03) · HU-002 T02 · EN-003 Seguridad y acceso |
 | Responsable | Fabricio A. |
 | Reviewer | Por definir |
@@ -312,10 +312,11 @@ En `docs/evidence/sprint-01/HU-003/`:
   prueba que dejaron casos bloqueados en la evidencia de HU-001.
 - N-02: En el backlog la HU-003 y la HU-002 T02 aún figuran a nombre de
   Fabricio M. Falta actualizar el responsable.
+- N-03: La pantalla se compone con la base visual compartida (`AppShell`, `PageCard`) que entró a `main` después de la revisión. El cambio de sección de D-09 se muestra dentro de esa base y es provisional hasta que la barra lateral tenga navegación. Los casos manuales se ejecutaron sobre una base SQLite local.
 
 ## Historial de estado
 
 - Draft: 05/10/2026, redacción sobre el modelo de datos v1.1 y HU-001.
 - Reviewed
-- Implemented
+- Implemented: 06/10/2026, Pull Request de feature/HU-003-modulo-usuarios.
 - Verified
