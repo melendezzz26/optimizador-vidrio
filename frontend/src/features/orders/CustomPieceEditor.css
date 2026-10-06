@@ -1,0 +1,129 @@
+.custom-piece-editor {
+  padding-top: 28px;
+  margin-bottom: 36px;
+  border-top: 1px solid rgba(203, 213, 225, 0.65);
+  color: #0f223d;
+}
+
+.custom-piece-editor h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+}
+
+.custom-piece-editor__description,
+.custom-piece-editor__instructions {
+  margin: 0 0 16px;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.custom-piece-editor__content {
+  margin-top: 24px;
+}
+
+.custom-piece-editor__status {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.custom-piece-editor__surface {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #94a3b8;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.custom-piece-editor__canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 8 / 5;
+  cursor: crosshair;
+  user-select: none;
+}
+
+.custom-piece-editor__canvas[data-closed="true"] {
+  cursor: default;
+}
+
+.custom-piece-editor__drawing,
+.custom-piece-editor__empty {
+  pointer-events: none;
+}
+
+.custom-piece-editor__drawing line {
+  stroke: #2563eb;
+  stroke-width: 2;
+}
+
+.custom-piece-editor__drawing circle {
+  fill: #123764;
+  stroke: #fff;
+  stroke-width: 1.5;
+}
+
+.custom-piece-editor__empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  text-align: center;
+  color: #64748b;
+}
+
+.custom-piece-editor__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.custom-piece-editor__button {
+  min-height: 44px;
+  max-width: 100%;
+  padding: 10px 16px;
+  border: 1px solid #94a3b8;
+  border-radius: 10px;
+  background: #fff;
+  color: #123764;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.custom-piece-editor__button:hover:not(:disabled) {
+  background: #eff6ff;
+}
+
+.custom-piece-editor__button--primary {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.custom-piece-editor__button--primary:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.custom-piece-editor__button:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}
+
+.custom-piece-editor__button:disabled {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+@media (max-width: 700px) {
+  .custom-piece-editor__toolbar {
+    flex-direction: column;
+  }
+}
