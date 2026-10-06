@@ -1,0 +1,17 @@
+/* Styles loaded only by the HU-007 T01 manual test entry. */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #f5f7fb;
+  font-family: system-ui, sans-serif;
+}
+
+#manual-test-root {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
