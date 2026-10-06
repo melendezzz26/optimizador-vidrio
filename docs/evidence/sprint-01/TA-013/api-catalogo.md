@@ -24,3 +24,23 @@ La respuesta es una lista. Los espesores de cada objeto están ordenados ascende
 - La persistencia y Application comprueban también las variantes PATCH solo tipo, solo espesor y ambos para planchas y retazos.
 
 No se agregó otro endpoint ni una lista de espesores en el router/schema. La integración HTTP usa TestClient y restaura las dependencias al terminar. Resultados: [pruebas-ta013.md](pruebas-ta013.md).
+
+## Verificación funcional final
+
+Fecha: 05/10/2026
+
+Se ejecutó el endpoint:
+
+GET /api/inventory/tipos-vidrio
+
+contra el backend conectado a la base de datos compartida en Supabase.
+
+Resultado:
+
+- HTTP 200.
+- Se recuperaron los 6 tipos de vidrio definidos por SP-005.
+- Cada tipo devolvió sus espesores permitidos mediante `espesores_mm`.
+- Se verificaron las 28 combinaciones tipo–espesor.
+- Los valores devueltos por la API coinciden con los datos almacenados en PostgreSQL.
+
+Conclusión: TA-013 cumple satisfactoriamente el criterio de aceptación relacionado con la carga, consulta y reutilización del catálogo.

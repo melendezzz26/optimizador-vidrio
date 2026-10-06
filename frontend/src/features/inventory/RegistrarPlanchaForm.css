@@ -1,0 +1,21 @@
+.plancha-form__required,
+.plancha-form__hint,
+.plancha-form__error {
+  margin: var(--ng-space-2) 0 0;
+  font-size: 14px;
+}
+
+.plancha-form__required,
+.plancha-form__hint { color: var(--ng-text-600); }
+
+.plancha-form__error { color: var(--ng-error); font-weight: 600; }
+
+.plancha-form__notice {
+  margin-bottom: var(--ng-space-6);
+  padding: var(--ng-space-3) var(--ng-space-4);
+  border-left: 4px solid var(--ng-brand-blue);
+  border-radius: var(--ng-radius-control);
+  background: var(--ng-background);
+}
+
+.plancha-form__cancel-hint { margin-top: var(--ng-space-6); }

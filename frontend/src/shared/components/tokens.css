@@ -1,0 +1,31 @@
+/* Línea base NewGlass v1.0. Alcance local: no altera :root ni otras features. */
+.ng-ui {
+  --ng-brand-blue: #61a3e7;
+  --ng-primary-action: #2563eb;
+  --ng-primary-focus: #1d4ed8;
+  --ng-text-900: #1f2937;
+  --ng-text-600: #64748b;
+  --ng-border-strong: #64748b;
+  --ng-surface: #ffffff;
+  --ng-background: #f5f7fa;
+  --ng-error: #b91c1c;
+  --ng-border-subtle: #e2e8f0;
+  --ng-action-tint: #eff6ff;
+  --ng-font-family: Inter, system-ui, Arial, sans-serif;
+  --ng-radius-control: 8px;
+  --ng-radius-card: 12px;
+  --ng-control-height: 44px;
+  --ng-space-1: 4px;
+  --ng-space-2: 8px;
+  --ng-space-3: 12px;
+  --ng-space-4: 16px;
+  --ng-space-6: 24px;
+  --ng-space-8: 32px;
+  --ng-space-12: 48px;
+  --ng-sidebar-width: 240px;
+  --ng-content-width: 1040px;
+  color: var(--ng-text-900);
+  font-family: var(--ng-font-family);
+  font-size: 16px;
+  line-height: 1.5;
+}
