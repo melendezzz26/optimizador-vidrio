@@ -1,5 +1,6 @@
 // Acceso a la API de autenticación y manejo de la sesión en el navegador.
-const API_URL = (import.meta.env?.VITE_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '');
+import { API_URL } from '../../shared/apiUrl';
+
 const SESSION_KEY = 'optimizador.auth';
 
 const CONNECTION_ERROR = 'No se pudo conectar con el servidor. Comprueba que el backend esté en ejecución.';

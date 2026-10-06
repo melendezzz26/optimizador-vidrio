@@ -6,3 +6,49 @@
   font-size: 16px;
   color: var(--ng-text-600);
 }
+
+/* Cambio de sección provisional, visible solo para el Administrador, hasta
+   que la barra lateral tenga navegación propia. */
+.app-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 24px;
+  background: var(--ng-surface);
+  border-bottom: 1px solid var(--ng-border-strong);
+}
+
+.app-nav-button {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ng-text-900);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.app-nav-button[aria-current='page'] {
+  border-color: var(--ng-primary-action);
+  color: var(--ng-primary-focus);
+}
+
+.app-nav-button:focus-visible {
+  outline: 2px solid var(--ng-primary-focus);
+  outline-offset: 2px;
+}
+
+/* Dentro de la base visual con barra lateral, la barra superior pasa a ser una
+   tarjeta más del contenido, para no quedar debajo de la barra lateral fija. */
+.ng-app-shell__content > .app-toolbar {
+  margin-bottom: 24px;
+  overflow: hidden;
+  border: 1px solid var(--ng-border-subtle);
+  border-radius: 12px;
+}
+
+.ng-app-shell__content > .app-toolbar > .app-nav {
+  border-bottom: 0;
+}
