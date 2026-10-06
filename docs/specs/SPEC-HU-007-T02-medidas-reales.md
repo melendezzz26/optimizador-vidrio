@@ -20,6 +20,10 @@ La finalidad de esta tarea es obtener una representación geométrica dimensiona
 
 T02 no determina si el polígono es convexo ni si es geométricamente válido para corte. Esa responsabilidad corresponde a HU-007 T03.
 
+Las dimensiones `Ancho total` y `Alto total` representan las dimensiones exteriores máximas de la pieza respecto al bounding box del polígono y no la longitud de un segmento particular.
+
+Cuando ambas dimensiones sean válidas, la interfaz debe proporcionar una previsualización proporcional de la pieza para que el Operario pueda identificar visualmente relaciones dimensionales extremas o posibles errores de digitación.
+
 ## 2. Alcance
 
 ### Incluye
@@ -37,6 +41,12 @@ T02 no determina si el polígono es convexo ni si es geométricamente válido pa
 - Recalcular las coordenadas dimensionales cuando el Operario modifique el ancho o el alto.
 - Verificar la transformación con al menos un caso conocido cuyo resultado pueda comprobarse manualmente.
 - Preparar la geometría dimensional para su posterior utilización por T03 y por la integración del pedido.
+- Mostrar las dimensiones como `Ancho total` y `Alto total`.
+- Representar visualmente el ancho total mediante una cota horizontal.
+- Representar visualmente el alto total mediante una cota vertical.
+- Adaptar la previsualización del polígono a la proporción real `widthMm : heightMm` cuando ambas dimensiones sean válidas.
+- Ajustar la previsualización proporcional dentro del lienzo sin deformar la relación entre ancho y alto.
+- Mostrar el siguiente paso del flujo mediante una acción `Agregar pieza al pedido` deshabilitada mientras la validación geométrica de T03 no haya sido ejecutada.
 
 ### Fuera de alcance
 
@@ -58,6 +68,11 @@ T02 no determina si el polígono es convexo ni si es geométricamente válido pa
 - Recomendaciones automáticas de tipo de figura.
 - Implementación de circunferencias o rectángulos mediante este editor.
 - Conversión del polígono a `POLIGONO_CONVEXO` validado antes de ejecutar T03.
+- Habilitar funcionalmente `Agregar pieza al pedido` antes de completar T03.
+- Asignar automáticamente una dimensión física predeterminada al dibujo.
+- Utilizar `100 mm` u otro valor como medida real asumida sin intervención del Operario.
+- Dimensionar individualmente cada segmento del polígono.
+- Resolver restricciones geométricas tipo CAD basadas en longitudes y ángulos.
 
 ## 3. Actor y precondiciones
 
@@ -79,8 +94,8 @@ T02 no determina si el polígono es convexo ni si es geométricamente válido pa
 |---|---|---|
 | `vertices` | Arreglo de objetos `{x, y}` | Coordenadas gráficas obtenidas en T01 y conservadas en el orden de dibujo |
 | `isClosed` | Boolean | Debe ser `true` antes de asociar dimensiones reales |
-| `widthMm` | Número | Obligatorio, mayor que 0 y expresado en mm |
-| `heightMm` | Número | Obligatorio, mayor que 0 y expresado en mm |
+| `widthMm` | Número | Ancho exterior total del bounding box, obligatorio, mayor que 0 y expresado en mm |
+| `heightMm` | Número | Alto exterior total del bounding box, obligatorio, mayor que 0 y expresado en mm |
 | `minX` | Número calculado | Menor coordenada X de los vértices |
 | `maxX` | Número calculado | Mayor coordenada X de los vértices |
 | `minY` | Número calculado | Menor coordenada Y de los vértices |
@@ -88,6 +103,8 @@ T02 no determina si el polígono es convexo ni si es geométricamente válido pa
 | `drawingWidth` | Número calculado | `maxX - minX`; debe ser mayor que 0 |
 | `drawingHeight` | Número calculado | `maxY - minY`; debe ser mayor que 0 |
 | `scaledVertices` | Arreglo de pares o puntos dimensionales | Coordenadas resultantes expresadas en milímetros |
+| `previewWidth` | Número calculado | Ancho usado únicamente para representar proporcionalmente la pieza en pantalla |
+| `previewHeight` | Número calculado | Alto usado únicamente para representar proporcionalmente la pieza en pantalla |
 
 La unidad dimensional utilizada por T02 es exclusivamente **milímetros (mm)**.
 
@@ -114,6 +131,22 @@ El origen dimensional resultante se establece en la esquina superior izquierda d
 
 T02 aplica escalamiento independiente en los ejes X e Y para hacer coincidir el dibujo realizado por el Operario con el ancho y alto reales indicados.
 
+### Previsualización proporcional
+
+La previsualización dimensional debe representar visualmente la relación:
+
+`widthMm : heightMm`
+
+La pieza debe escalarse únicamente para caber dentro del área disponible de visualización, manteniendo la relación entre ancho y alto.
+
+Por ejemplo:
+
+- una pieza `1200 × 700 mm` debe verse proporcionalmente más ancha que alta;
+- una pieza `200 × 5000 mm` debe verse notablemente alta y estrecha;
+- una pieza `5000 × 200 mm` debe verse notablemente ancha y baja.
+
+La adaptación al espacio disponible es únicamente visual y no debe modificar los valores de `scaledVertices`.
+
 ## 5. Reglas de negocio
 
 - RN-01: Las dimensiones reales solo pueden asociarse cuando el polígono se encuentra gráficamente cerrado.
@@ -129,13 +162,21 @@ T02 aplica escalamiento independiente en los ejes X e Y para hacer coincidir el 
 - RN-11: El vértice ubicado en `maxY` debe corresponder dimensionalmente a `y = heightMm`.
 - RN-12: La transformación debe conservar el orden original de los vértices.
 - RN-13: Si el Operario modifica el ancho o alto, las coordenadas dimensionales deben recalcularse utilizando los nuevos valores.
-- RN-14: Las coordenadas gráficas originales utilizadas por el lienzo no deben ser reemplazadas por las coordenadas en milímetros, debido a que el editor debe conservar su representación visual.
+- RN-14: Las coordenadas gráficas originales utilizadas por el lienzo no deben ser reemplazadas por las coordenadas en milímetros.
 - RN-15: Las coordenadas dimensionales generadas por T02 deben mantenerse separadas de las coordenadas gráficas de T01.
 - RN-16: T02 no debe declarar que el polígono es convexo o válido para optimización.
 - RN-17: La validación de convexidad corresponde exclusivamente a HU-007 T03.
 - RN-18: Las dimensiones deben utilizar una única unidad consistente: milímetros.
 - RN-19: El sistema debe poder verificar la conversión mediante al menos un caso de prueba con valores conocidos.
 - RN-20: T02 no realiza persistencia definitiva de la pieza en base de datos.
+- RN-21: `widthMm` representa el ancho exterior máximo de la pieza y no la longitud de uno de sus lados.
+- RN-22: `heightMm` representa el alto exterior máximo de la pieza y no la longitud de uno de sus lados.
+- RN-23: El sistema no debe asignar automáticamente una medida física predeterminada al polígono.
+- RN-24: Los campos pueden utilizar ejemplos o placeholders, pero estos no deben considerarse dimensiones ingresadas.
+- RN-25: Cuando ancho y alto sean válidos, la previsualización debe conservar la relación proporcional `widthMm : heightMm`.
+- RN-26: La previsualización proporcional debe ajustarse al área disponible del lienzo sin deformarse.
+- RN-27: Las cotas visuales deben mostrar claramente qué medida corresponde al ancho total y cuál al alto total.
+- RN-28: La acción `Agregar pieza al pedido` permanecerá deshabilitada durante T02 y deberá informar que requiere la validación geométrica de T03.
 
 ## 6. Flujo principal
 
@@ -144,23 +185,29 @@ T02 aplica escalamiento independiente en los ejes X e Y para hacer coincidir el 
 3. El Operario selecciona `Cerrar polígono`.
 4. El sistema cierra gráficamente el polígono.
 5. El sistema habilita o muestra la sección `Dimensiones reales`.
-6. El Operario ingresa el ancho real de la pieza en milímetros.
-7. El Operario ingresa el alto real de la pieza en milímetros.
+6. El Operario ingresa el ancho exterior total de la pieza en milímetros.
+7. El Operario ingresa el alto exterior total de la pieza en milímetros.
 8. El sistema valida que ambos valores sean números mayores que cero.
 9. El sistema calcula `minX`, `maxX`, `minY` y `maxY` utilizando los vértices gráficos.
 10. El sistema calcula el ancho y alto gráficos del bounding box.
 11. El sistema normaliza cada vértice respecto al bounding box.
 12. El sistema escala las coordenadas normalizadas según el ancho y alto reales indicados.
 13. El sistema obtiene los vértices equivalentes expresados en milímetros.
-14. El sistema mantiene las coordenadas gráficas originales para continuar representando el dibujo en el SVG.
+14. El sistema mantiene las coordenadas gráficas originales para conservar el borrador realizado por el Operario.
 15. El sistema conserva temporalmente la geometría dimensional para su posterior validación en T03.
-16. La interfaz informa al Operario las dimensiones reales asociadas, por ejemplo: `1200 × 700 mm`.
+16. El sistema genera una previsualización proporcional utilizando la relación entre ancho total y alto total.
+17. El sistema ajusta la previsualización dentro del área disponible conservando la proporción dimensional.
+18. El sistema muestra una cota horizontal correspondiente al ancho total.
+19. El sistema muestra una cota vertical correspondiente al alto total.
+20. La interfaz informa al Operario las dimensiones reales asociadas, por ejemplo: `1200 × 700 mm`.
+21. La interfaz muestra la acción `Agregar pieza al pedido` como siguiente paso.
+22. La acción `Agregar pieza al pedido` permanece deshabilitada hasta que HU-007 T03 valide geométricamente el polígono.
 
 ## 7. Flujos alternativos y errores
 
 - Si el polígono todavía se encuentra abierto, la sección de dimensiones reales no debe permitir la conversión.
-- Si el ancho está vacío, el sistema debe indicar que el ancho real es obligatorio.
-- Si el alto está vacío, el sistema debe indicar que el alto real es obligatorio.
+- Si el ancho está vacío, no debe generarse geometría dimensional.
+- Si el alto está vacío, no debe generarse geometría dimensional.
 - Si el ancho es igual o menor que cero, debe considerarse inválido.
 - Si el alto es igual o menor que cero, debe considerarse inválido.
 - Si el usuario ingresa un valor no numérico, no debe generarse la geometría dimensional.
@@ -168,16 +215,20 @@ T02 aplica escalamiento independiente en los ejes X e Y para hacer coincidir el 
 - Si `maxY - minY = 0`, no debe ejecutarse la transformación para evitar una división entre cero.
 - Si el Operario cambia el ancho después de una conversión válida, el sistema debe recalcular las coordenadas X en milímetros.
 - Si el Operario cambia el alto después de una conversión válida, el sistema debe recalcular las coordenadas Y en milímetros.
+- Si el Operario cambia cualquiera de las dimensiones, la previsualización proporcional debe actualizarse automáticamente.
+- Si el Operario introduce una relación dimensional extrema, la pieza debe ajustarse al espacio disponible sin perder la proporción real.
 - Si el Operario utiliza `Deshacer` y el polígono vuelve al estado abierto, las dimensiones asociadas no deben considerarse una geometría confirmada.
 - Si el Operario utiliza `Reiniciar dibujo`, deben eliminarse los vértices y las dimensiones reales asociadas al borrador actual.
 - Un polígono cóncavo puede llegar a esta etapa y recibir dimensiones reales; su rechazo corresponde a T03.
 - El sistema no debe presentar mensajes que indiquen `polígono válido`, `polígono convexo` o equivalentes durante T02.
+- La acción `Agregar pieza al pedido` no debe habilitarse aunque las dimensiones sean válidas mientras no se haya ejecutado T03.
+- El sistema debe informar de forma comprensible que la pieza requiere validación geométrica antes de poder agregarse al pedido.
 
 ## 8. Criterios de aceptación
 
 - CA-01: La sección de dimensiones reales solo permite asociar medidas cuando el polígono se encuentra gráficamente cerrado.
 - CA-02: El Operario puede ingresar ancho y alto reales expresados en milímetros sin ingresar manualmente coordenadas de vértices.
-- CA-03: El sistema rechaza ancho o alto vacíos, no numéricos o menores o iguales que cero.
+- CA-03: El sistema rechaza ancho o alto no numéricos o menores o iguales que cero y no genera geometría dimensional mientras falte alguna dimensión requerida.
 - CA-04: El sistema calcula el bounding box utilizando exclusivamente los vértices dibujados.
 - CA-05: El sistema normaliza automáticamente los vértices respecto a `minX`, `maxX`, `minY` y `maxY`.
 - CA-06: El sistema transforma automáticamente los vértices gráficos a coordenadas equivalentes expresadas en milímetros.
@@ -189,6 +240,12 @@ T02 aplica escalamiento independiente en los ejes X e Y para hacer coincidir el 
 - CA-12: Reiniciar el dibujo elimina también las dimensiones asociadas al borrador.
 - CA-13: T02 no ejecuta validación de convexidad ni declara la geometría como válida para corte.
 - CA-14: Al menos un caso de prueba conocido demuestra que la conversión gráfica a milímetros produce el resultado esperado.
+- CA-15: La interfaz identifica las dimensiones como `Ancho total` y `Alto total`, entendidas como las dimensiones exteriores máximas del bounding box.
+- CA-16: Cuando ancho y alto son válidos, la previsualización conserva la relación proporcional entre ambas dimensiones.
+- CA-17: Una relación extrema, por ejemplo `200 × 5000 mm`, se visualiza como una pieza proporcionalmente alta y estrecha, ajustada al espacio disponible sin deformación.
+- CA-18: La interfaz muestra cotas visuales para identificar el ancho total y el alto total.
+- CA-19: Los campos no contienen una medida real predeterminada; cualquier ejemplo se presenta únicamente como placeholder.
+- CA-20: `Agregar pieza al pedido` permanece deshabilitado durante T02 e informa que requiere la validación geométrica de T03.
 
 ### Caso de aceptación conocido
 
@@ -220,7 +277,28 @@ El resultado dimensional esperado será:
 - C = `(1000, 500)`
 - D = `(0, 500)`
 
+La relación proporcional de la previsualización será:
+
+`1000 : 500 = 2 : 1`
+
+Por tanto, la pieza debe visualizarse proporcionalmente con un ancho aproximado al doble de su alto, independientemente del tamaño de píxel utilizado para ajustarla al lienzo.
+
 Este caso debe utilizarse como prueba verificable de la transformación implementada en T02.
+
+### Caso de aceptación de relación extrema
+
+Cuando el Operario indique:
+
+- ancho total = `200 mm`
+- alto total = `5000 mm`
+
+la relación dimensional será:
+
+`200 : 5000 = 1 : 25`
+
+La previsualización debe representar una pieza claramente alta y estrecha, ajustada al área disponible sin alterar la relación dimensional.
+
+Este caso no debe considerarse inválido únicamente por presentar una proporción extrema.
 
 ## 9. Impacto técnico
 
@@ -230,10 +308,14 @@ Frontend:
 
 - `frontend/src/features/orders/`
 - Extensión del editor de pieza personalizada desarrollado en T01.
+- Lógica dimensional separada en `geometryScaling.js`.
+- Pruebas unitarias de transformación dimensional dentro de `frontend/tests/unit/`.
 
-La lógica de transformación dimensional debe mantenerse dentro del feature `orders` y separarse de la lógica puramente visual cuando resulte conveniente para facilitar sus pruebas.
+La lógica de transformación dimensional debe mantenerse dentro del feature `orders` y separarse de la lógica puramente visual para facilitar sus pruebas.
 
 No se debe introducir lógica de optimización ni rasterización dentro del componente del editor.
+
+La previsualización proporcional debe utilizar las dimensiones reales únicamente para ajustar la representación visual, sin modificar las coordenadas originales almacenadas como borrador de T01.
 
 ### API
 
