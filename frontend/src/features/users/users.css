@@ -1,0 +1,101 @@
+/* Gestión de usuarios. Usa los tokens y las clases de shared/components;
+   aquí solo va lo propio de esta pantalla. */
+.users-hint,
+.users-error,
+.users-notice {
+  margin: var(--ng-space-2) 0 0;
+  font-size: 14px;
+}
+
+.users-hint { color: var(--ng-text-600); }
+
+.users-error { color: var(--ng-error); font-weight: 600; }
+
+.users-notice {
+  margin: 0 0 var(--ng-space-4);
+  padding: var(--ng-space-3) var(--ng-space-4);
+  border-left: 4px solid var(--ng-brand-blue);
+  border-radius: var(--ng-radius-control);
+  background: var(--ng-background);
+}
+
+.users-list { margin-top: var(--ng-space-6); }
+
+.users-list > h2 {
+  margin: 0 0 var(--ng-space-4);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.users-list > .users-error { margin: 0 0 var(--ng-space-4); }
+
+/* DNI y usuario de acceso en la edición: datos de solo lectura. */
+.users-readonly {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ng-space-4);
+  margin: 0;
+}
+
+.users-readonly dt { font-size: 14px; font-weight: 600; }
+
+.users-readonly dd { margin: var(--ng-space-2) 0 0; color: var(--ng-text-600); }
+
+/* La tabla ancha se desplaza dentro de su contenedor, no la página entera. */
+.users-table-scroll { overflow-x: auto; }
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  text-align: left;
+}
+
+.users-table th,
+.users-table td {
+  padding: var(--ng-space-3) var(--ng-space-2);
+  border-bottom: 1px solid var(--ng-border-subtle);
+  vertical-align: middle;
+}
+
+.users-table thead th { font-weight: 600; white-space: nowrap; }
+
+.users-table tbody th { font-weight: 600; }
+
+.users-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ng-space-2);
+}
+
+.users-row-button {
+  padding: var(--ng-space-2) var(--ng-space-4);
+  font-size: 14px;
+}
+
+/* El estado se distingue por el texto; el color solo lo refuerza. */
+.users-badge {
+  display: inline-block;
+  padding: var(--ng-space-1) var(--ng-space-2);
+  border: 1px solid var(--ng-border-strong);
+  border-radius: var(--ng-radius-control);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ng-text-600);
+}
+
+.users-badge--active {
+  border-color: var(--ng-primary-action);
+  background: var(--ng-action-tint);
+  color: var(--ng-primary-focus);
+}
+
+.users-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

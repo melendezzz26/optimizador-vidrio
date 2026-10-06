@@ -4,6 +4,7 @@ from sqlalchemy import text
 
 from app.modules.authentication.presentation.router import router as authentication_router
 from app.modules.inventory.presentation.router import router as inventory_router
+from app.modules.users.presentation.router import router as users_router
 
 app = FastAPI(
     title="Optimizador de Corte de Vidrio",
@@ -21,6 +22,8 @@ app.add_middleware(
 app.include_router(authentication_router)
 # Rutas de inventario (TA-003)
 app.include_router(inventory_router)
+# Rutas de gestión de usuarios (HU-003)
+app.include_router(users_router)
 
 
 @app.get("/")
