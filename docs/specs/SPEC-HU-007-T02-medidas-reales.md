@@ -1,336 +1,216 @@
-﻿# SPEC-HU-007-T02 — Asociar medidas reales al dibujo
+# SPEC — HU-007 T02: medidas reales por segmento
 
-## Información general
+## 1. Objetivo y alcance
 
-| Campo | Valor |
-|---|---|
-| Estado | Draft |
-| PBI relacionado | HU-007 |
-| Tarea relacionada | T02 — Asociar medidas reales al dibujo |
-| Responsable | Andro Quispe Cesias |
-| Reviewer | Andro Joseph Quispe Cesias |
+Permitir al Operario dimensionar una pieza irregular mediante la **longitud real de cada lado**, en milímetros, a partir del boceto cerrado de HU-007 T01. El boceto actúa como referencia de forma y orientación; sus coordenadas gráficas no son medidas físicas.
 
-## 1. Objetivo
+El flujo es: dibujar → cerrar → identificar S1…Sn → seleccionar y medir lados → revisar la vista dimensional progresiva → completar el cierre dimensional → esperar la validación de T03.
 
-Permitir que el Operario asocie dimensiones reales, expresadas en milímetros, al polígono dibujado mediante el editor implementado en HU-007 T01.
+Esta decisión sustituye el modelo de escalamiento independiente de ejes. No existen entradas de ancho exterior ni alto exterior. Las restricciones dimensionales son las longitudes individuales.
 
-El sistema debe utilizar el ancho y alto reales ingresados por el Operario para transformar automáticamente las coordenadas gráficas de los vértices del lienzo a coordenadas equivalentes en milímetros, sin requerir el ingreso manual de coordenadas.
+T02 incluye segmentación, selección, edición, estimaciones provisionales, reconstrucción cerrada y comprobación de consistencia dimensional. **T02 no valida convexidad**, concavidad, autointersecciones ni aptitud para corte. Completar las dimensiones no equivale a aprobar una pieza.
 
-La finalidad de esta tarea es obtener una representación geométrica dimensionalmente consistente que pueda ser utilizada posteriormente por la validación geométrica de HU-007 T03 y por el flujo de registro de piezas.
+Fuera de alcance: T03, rechazo de concavidad, arrastre de vértices, ingreso de ángulos o coordenadas, solver CAD genérico, rasterización, optimización, persistencia, backend, base de datos, migraciones y registro de piezas en el pedido. No se agregan dependencias.
 
-T02 no determina si el polígono es convexo ni si es geométricamente válido para corte. Esa responsabilidad corresponde a HU-007 T03.
+## 2. Actor y precondiciones
 
-Las dimensiones `Ancho total` y `Alto total` representan las dimensiones exteriores máximas de la pieza respecto al bounding box del polígono y no la longitud de un segmento particular.
+- Actor: Operario.
+- Se conserva T01: creación de vértices mediante clic, segmentos, cierre con al menos tres vértices, Deshacer y Reiniciar.
+- Las medidas se habilitan después del cierre gráfico.
+- Se conserva el orden de creación de los vértices.
+- Para usar un lado como referencia de dirección y escala, sus extremos deben ser finitos y distintos. Los vértices consecutivos coincidentes requieren corregir el boceto; esto no constituye validación de convexidad.
+- No se exige extensión gráfica positiva en ambos ejes. Una referencia colineal puede intentar dimensionarse; no se declara por ello válida para corte.
 
-Cuando ambas dimensiones sean válidas, la interfaz debe proporcionar una previsualización proporcional de la pieza para que el Operario pueda identificar visualmente relaciones dimensionales extremas o posibles errores de digitación.
+## 3. Modelo de datos y separación de responsabilidades
 
-## 2. Alcance
-
-### Incluye
-
-- Permitir asociar un ancho real al polígono dibujado.
-- Permitir asociar un alto real al polígono dibujado.
-- Utilizar milímetros como unidad de medida.
-- Solicitar las dimensiones reales después de que el polígono haya sido cerrado gráficamente.
-- Validar que el ancho y alto sean valores numéricos mayores que cero.
-- Obtener el bounding box del dibujo a partir de sus vértices gráficos.
-- Normalizar las coordenadas gráficas respecto al bounding box del polígono.
-- Transformar automáticamente cada vértice gráfico a coordenadas expresadas en milímetros.
-- Mantener el orden original de los vértices.
-- Establecer el origen dimensional del polígono normalizado en `(0, 0)`.
-- Recalcular las coordenadas dimensionales cuando el Operario modifique el ancho o el alto.
-- Verificar la transformación con al menos un caso conocido cuyo resultado pueda comprobarse manualmente.
-- Preparar la geometría dimensional para su posterior utilización por T03 y por la integración del pedido.
-- Mostrar las dimensiones como `Ancho total` y `Alto total`.
-- Representar visualmente el ancho total mediante una cota horizontal.
-- Representar visualmente el alto total mediante una cota vertical.
-- Adaptar la previsualización del polígono a la proporción real `widthMm : heightMm` cuando ambas dimensiones sean válidas.
-- Ajustar la previsualización proporcional dentro del lienzo sin deformar la relación entre ancho y alto.
-- Mostrar el siguiente paso del flujo mediante una acción `Agregar pieza al pedido` deshabilitada mientras la validación geométrica de T03 no haya sido ejecutada.
-
-### Fuera de alcance
-
-- Ingreso manual de coordenadas de los vértices.
-- Modificación individual de las coordenadas de cada vértice.
-- Validación de convexidad.
-- Detección de polígonos cóncavos.
-- Detección de autointersecciones.
-- Determinar si el polígono está permitido para corte.
-- Rasterización de la geometría.
-- Ejecución de las heurísticas First Fit, Best Fit o Worst Fit.
-- Optimización de corte.
-- Cálculo o selección de planchas y retazos.
-- Persistencia definitiva de la pieza en base de datos.
-- Modificaciones estructurales de base de datos.
-- Migraciones Alembic.
-- Plantillas de polígonos.
-- Reconocimiento automático de formas.
-- Recomendaciones automáticas de tipo de figura.
-- Implementación de circunferencias o rectángulos mediante este editor.
-- Conversión del polígono a `POLIGONO_CONVEXO` validado antes de ejecutar T03.
-- Habilitar funcionalmente `Agregar pieza al pedido` antes de completar T03.
-- Asignar automáticamente una dimensión física predeterminada al dibujo.
-- Utilizar `100 mm` u otro valor como medida real asumida sin intervención del Operario.
-- Dimensionar individualmente cada segmento del polígono.
-- Resolver restricciones geométricas tipo CAD basadas en longitudes y ángulos.
-
-## 3. Actor y precondiciones
-
-**Actor:** Operario.
-
-**Precondiciones:**
-
-- El editor de pieza personalizada de HU-007 T01 se encuentra disponible.
-- Existe un dibujo con al menos tres vértices.
-- El polígono se encuentra gráficamente cerrado mediante la acción `Cerrar polígono`.
-- Los vértices mantienen el orden en que fueron ingresados por el Operario.
-- Las coordenadas actuales corresponden al sistema gráfico del SVG y todavía no representan milímetros.
-- El dibujo dispone de extensión distinta de cero tanto en el eje X como en el eje Y para poder realizar la transformación dimensional.
-- No se requiere que el polígono sea convexo en esta tarea.
-
-## 4. Entradas y datos
-
-| Campo / dato | Tipo / formato | Regla |
+| Dato | Representación | Responsabilidad |
 |---|---|---|
-| `vertices` | Arreglo de objetos `{x, y}` | Coordenadas gráficas obtenidas en T01 y conservadas en el orden de dibujo |
-| `isClosed` | Boolean | Debe ser `true` antes de asociar dimensiones reales |
-| `widthMm` | Número | Ancho exterior total del bounding box, obligatorio, mayor que 0 y expresado en mm |
-| `heightMm` | Número | Alto exterior total del bounding box, obligatorio, mayor que 0 y expresado en mm |
-| `minX` | Número calculado | Menor coordenada X de los vértices |
-| `maxX` | Número calculado | Mayor coordenada X de los vértices |
-| `minY` | Número calculado | Menor coordenada Y de los vértices |
-| `maxY` | Número calculado | Mayor coordenada Y de los vértices |
-| `drawingWidth` | Número calculado | `maxX - minX`; debe ser mayor que 0 |
-| `drawingHeight` | Número calculado | `maxY - minY`; debe ser mayor que 0 |
-| `scaledVertices` | Arreglo de pares o puntos dimensionales | Coordenadas resultantes expresadas en milímetros |
-| `previewWidth` | Número calculado | Ancho usado únicamente para representar proporcionalmente la pieza en pantalla |
-| `previewHeight` | Número calculado | Alto usado únicamente para representar proporcionalmente la pieza en pantalla |
+| `vertices` | Objetos `{x, y}` ordenados | Boceto gráfico de T01; nunca se sustituye por el resultado dimensional |
+| `isClosed` | Booleano | Habilita las medidas por segmento |
+| `segments` | `{id: "S1", index: 0, lengthMm: ""}` por lado | Valores originales del Operario; cadenas para conservar campos vacíos y edición |
+| `badInput` | Booleano opcional por segmento | Conserva el error de un input numérico que el navegador entrega como cadena vacía |
+| `activeSegmentIndex` | Índice o `null` | Selección compartida por lista y ambas vistas; no representa validación |
+| `lengths` | Números positivos | Longitudes objetivo: reales donde existen y provisionales donde faltan |
+| `measured` / `measuredCount` | Booleanos / cantidad | Distinguen medidas ingresadas de estimaciones |
+| `provisionalScale` | Número o `null` | Mediana de escalas reales/gráficas; nunca rellena campos |
+| `vertices_mm` | Pares `[x, y]` ordenados o `null` | Geometría reconstruida en mm, con el primer vértice en `(0, 0)` |
+| Puntos del preview | Objetos `{x, y}` | Ajuste visual uniforme y centrado; nunca modifica `vertices_mm` |
 
-La unidad dimensional utilizada por T02 es exclusivamente **milímetros (mm)**.
+S1 une V1 con V2, S2 une V2 con V3 y Sn une Vn con V1. El orden no se clasifica por orientación, longitud o posición. Los campos se crean vacíos al cerrar.
 
-Las coordenadas del SVG utilizadas por T01 son únicamente coordenadas gráficas y no deben interpretarse directamente como milímetros.
+`vertices_mm` omite el punto final repetido. Puede contener coordenadas negativas: el origen es el primer vértice, no la esquina del bounding box. Conserva el sistema de orientación del SVG (Y crece hacia abajo).
 
-### Transformación de coordenadas
+Estados dimensionales:
 
-Para cada vértice gráfico `(x, y)`:
+- `unscaled`: ninguna medida real; solo se normaliza visualmente el boceto, sin coordenadas en mm.
+- `provisional`: cierre logrado con al menos una longitud estimada.
+- `complete`: todas las longitudes son reales y el cierre numérico se logró.
+- `error`: entrada inválida, inconsistencia dimensional o imposibilidad numérica de reconstruir; no se conserva una geometría anterior como si siguiera vigente.
 
-`x_mm = ((x - minX) / (maxX - minX)) * widthMm`
+La salida debe mantener explícito su estado provisional o completo. Una salida provisional no es una geometría definitiva para T03 ni para registro.
 
-`y_mm = ((y - minY) / (maxY - minY)) * heightMm`
+## 4. Reglas de entrada, selección y edición
 
-De esta forma:
+- Cada longitud real debe ser un número finito estrictamente mayor que cero, en mm.
+- Se permiten decimales positivos, incluso menores que `0.01`. Los controles usan `step="any"`; no se establece un mínimo artificial.
+- Un campo vacío es una medida pendiente. Una entrada inválida no se reemplaza silenciosamente por una estimación.
+- Se muestra `3 de 5 medidas ingresadas`, contando únicamente entradas positivas finitas.
+- La selección desde cada fila/control es obligatoria y accesible por teclado. Seleccionar S3 resalta su control, el lado S3 en el boceto y el lado S3 en la vista dimensional disponible.
+- La identidad de selección es azul/cyan y está separada del estado de dimensiones completas. Los controles tienen nombres como `Longitud del segmento S3 en milímetros`.
+- Cambiar de selección conserva todas las medidas y no recalcula el solver innecesariamente.
+- Cambiar o borrar una longitud recalcula inmediatamente el resultado y el progreso; no modifica los otros campos ni el boceto.
+- Deshacer elimina el último vértice, reabre el boceto e invalida todas las medidas y la selección. Al volver a cerrar se regenera la colección S1…Sn vacía.
+- Reiniciar elimina vértices, medidas, selección y preview.
+- Agregar vértices o modificar el contorno mediante nuevas capacidades CAD no pertenece a T02.
 
-- el valor mínimo de X se transforma en `0 mm`;
-- el valor máximo de X se transforma en `widthMm`;
-- el valor mínimo de Y se transforma en `0 mm`;
-- el valor máximo de Y se transforma en `heightMm`.
+## 5. Longitudes provisionales
 
-El origen dimensional resultante se establece en la esquina superior izquierda del bounding box normalizado:
+Para cada segmento gráfico:
 
-`(0, 0)`.
+```text
+drawingLength_i = hypot(x2 - x1, y2 - y1)
+scale_i = realLength_i / drawingLength_i
+provisionalScale = median(scale_i de los segmentos medidos)
+provisionalLength_i = drawingLength_i * provisionalScale
+```
 
-T02 aplica escalamiento independiente en los ejes X e Y para hacer coincidir el dibujo realizado por el Operario con el ancho y alto reales indicados.
+Para una cantidad par de escalas, la mediana es el promedio de los dos valores centrales. Para una cantidad impar, es el valor central. No se utiliza el promedio de todas las escalas.
 
-### Previsualización proporcional
+El solver usa la longitud real en cada lado medido y la provisional en los pendientes. Al completar todas las medidas usa exclusivamente longitudes reales. Las estimaciones nunca se escriben en `lengthMm` ni aumentan el progreso.
 
-La previsualización dimensional debe representar visualmente la relación:
+Sin ninguna medida real, `provisionalScale` y `vertices_mm` son `null`. Se muestra el boceto ajustado al espacio disponible con el mensaje `Sin escala física`. No se inventan medidas predeterminadas.
 
-`widthMm : heightMm`
+Si una escala o longitud derivada no puede representarse como número positivo finito, se informa una limitación de precisión numérica en vez de emitir puntos inválidos.
 
-La pieza debe escalarse únicamente para caber dentro del área disponible de visualización, manteniendo la relación entre ancho y alto.
+## 6. Reconstrucción dimensional cerrada
 
-Por ejemplo:
+La función específica `reconstructPolygonFromSegmentLengths(vertices, targetLengths)` realiza un ajuste determinista de direcciones, sin dependencias externas.
 
-- una pieza `1200 × 700 mm` debe verse proporcionalmente más ancha que alta;
-- una pieza `200 × 5000 mm` debe verse notablemente alta y estrecha;
-- una pieza `5000 × 200 mm` debe verse notablemente ancha y baja.
+### Consistencia previa
 
-La adaptación al espacio disponible es únicamente visual y no debe modificar los valores de `scaledVertices`.
+Con todas las longitudes objetivo positivas y finitas:
 
-## 5. Reglas de negocio
+```text
+maxLength < sum(otherLengths)
+```
 
-- RN-01: Las dimensiones reales solo pueden asociarse cuando el polígono se encuentra gráficamente cerrado.
-- RN-02: El Operario no debe ingresar manualmente coordenadas de vértices.
-- RN-03: El ancho real debe expresarse en milímetros y ser mayor que cero.
-- RN-04: El alto real debe expresarse en milímetros y ser mayor que cero.
-- RN-05: No se permite realizar la conversión si el ancho gráfico del bounding box es igual a cero.
-- RN-06: No se permite realizar la conversión si el alto gráfico del bounding box es igual a cero.
-- RN-07: La transformación debe utilizar el bounding box formado por los vértices dibujados, no el tamaño total del SVG.
-- RN-08: El vértice ubicado en `minX` debe corresponder dimensionalmente a `x = 0 mm`.
-- RN-09: El vértice ubicado en `maxX` debe corresponder dimensionalmente a `x = widthMm`.
-- RN-10: El vértice ubicado en `minY` debe corresponder dimensionalmente a `y = 0 mm`.
-- RN-11: El vértice ubicado en `maxY` debe corresponder dimensionalmente a `y = heightMm`.
-- RN-12: La transformación debe conservar el orden original de los vértices.
-- RN-13: Si el Operario modifica el ancho o alto, las coordenadas dimensionales deben recalcularse utilizando los nuevos valores.
-- RN-14: Las coordenadas gráficas originales utilizadas por el lienzo no deben ser reemplazadas por las coordenadas en milímetros.
-- RN-15: Las coordenadas dimensionales generadas por T02 deben mantenerse separadas de las coordenadas gráficas de T01.
-- RN-16: T02 no debe declarar que el polígono es convexo o válido para optimización.
-- RN-17: La validación de convexidad corresponde exclusivamente a HU-007 T03.
-- RN-18: Las dimensiones deben utilizar una única unidad consistente: milímetros.
-- RN-19: El sistema debe poder verificar la conversión mediante al menos un caso de prueba con valores conocidos.
-- RN-20: T02 no realiza persistencia definitiva de la pieza en base de datos.
-- RN-21: `widthMm` representa el ancho exterior máximo de la pieza y no la longitud de uno de sus lados.
-- RN-22: `heightMm` representa el alto exterior máximo de la pieza y no la longitud de uno de sus lados.
-- RN-23: El sistema no debe asignar automáticamente una medida física predeterminada al polígono.
-- RN-24: Los campos pueden utilizar ejemplos o placeholders, pero estos no deben considerarse dimensiones ingresadas.
-- RN-25: Cuando ancho y alto sean válidos, la previsualización debe conservar la relación proporcional `widthMm : heightMm`.
-- RN-26: La previsualización proporcional debe ajustarse al área disponible del lienzo sin deformarse.
-- RN-27: Las cotas visuales deben mostrar claramente qué medida corresponde al ancho total y cuál al alto total.
-- RN-28: La acción `Agregar pieza al pedido` permanecerá deshabilitada durante T02 y deberá informar que requiere la validación geométrica de T03.
+Si el lado más largo es mayor o igual que la suma de los demás, no se ejecuta el ajuste. Esta es una comprobación dimensional de T02, no validación de convexidad.
 
-## 6. Flujo principal
+Con medidas completas se informa:
 
-1. El Operario dibuja el contorno de la pieza utilizando el editor desarrollado en T01.
-2. El Operario agrega al menos tres vértices.
-3. El Operario selecciona `Cerrar polígono`.
-4. El sistema cierra gráficamente el polígono.
-5. El sistema habilita o muestra la sección `Dimensiones reales`.
-6. El Operario ingresa el ancho exterior total de la pieza en milímetros.
-7. El Operario ingresa el alto exterior total de la pieza en milímetros.
-8. El sistema valida que ambos valores sean números mayores que cero.
-9. El sistema calcula `minX`, `maxX`, `minY` y `maxY` utilizando los vértices gráficos.
-10. El sistema calcula el ancho y alto gráficos del bounding box.
-11. El sistema normaliza cada vértice respecto al bounding box.
-12. El sistema escala las coordenadas normalizadas según el ancho y alto reales indicados.
-13. El sistema obtiene los vértices equivalentes expresados en milímetros.
-14. El sistema mantiene las coordenadas gráficas originales para conservar el borrador realizado por el Operario.
-15. El sistema conserva temporalmente la geometría dimensional para su posterior validación en T03.
-16. El sistema genera una previsualización proporcional utilizando la relación entre ancho total y alto total.
-17. El sistema ajusta la previsualización dentro del área disponible conservando la proporción dimensional.
-18. El sistema muestra una cota horizontal correspondiente al ancho total.
-19. El sistema muestra una cota vertical correspondiente al alto total.
-20. La interfaz informa al Operario las dimensiones reales asociadas, por ejemplo: `1200 × 700 mm`.
-21. La interfaz muestra la acción `Agregar pieza al pedido` como siguiente paso.
-22. La acción `Agregar pieza al pedido` permanece deshabilitada hasta que HU-007 T03 valide geométricamente el polígono.
+> Las longitudes ingresadas no permiten formar un polígono cerrado. Revisa las medidas de los segmentos.
 
-## 7. Flujos alternativos y errores
+En estados provisionales se aclara que la incompatibilidad incluye lados estimados y que completar las medidas pendientes puede resolverla.
 
-- Si el polígono todavía se encuentra abierto, la sección de dimensiones reales no debe permitir la conversión.
-- Si el ancho está vacío, no debe generarse geometría dimensional.
-- Si el alto está vacío, no debe generarse geometría dimensional.
-- Si el ancho es igual o menor que cero, debe considerarse inválido.
-- Si el alto es igual o menor que cero, debe considerarse inválido.
-- Si el usuario ingresa un valor no numérico, no debe generarse la geometría dimensional.
-- Si `maxX - minX = 0`, no debe ejecutarse la transformación para evitar una división entre cero.
-- Si `maxY - minY = 0`, no debe ejecutarse la transformación para evitar una división entre cero.
-- Si el Operario cambia el ancho después de una conversión válida, el sistema debe recalcular las coordenadas X en milímetros.
-- Si el Operario cambia el alto después de una conversión válida, el sistema debe recalcular las coordenadas Y en milímetros.
-- Si el Operario cambia cualquiera de las dimensiones, la previsualización proporcional debe actualizarse automáticamente.
-- Si el Operario introduce una relación dimensional extrema, la pieza debe ajustarse al espacio disponible sin perder la proporción real.
-- Si el Operario utiliza `Deshacer` y el polígono vuelve al estado abierto, las dimensiones asociadas no deben considerarse una geometría confirmada.
-- Si el Operario utiliza `Reiniciar dibujo`, deben eliminarse los vértices y las dimensiones reales asociadas al borrador actual.
-- Un polígono cóncavo puede llegar a esta etapa y recibir dimensiones reales; su rechazo corresponde a T03.
-- El sistema no debe presentar mensajes que indiquen `polígono válido`, `polígono convexo` o equivalentes durante T02.
-- La acción `Agregar pieza al pedido` no debe habilitarse aunque las dimensiones sean válidas mientras no se haya ejecutado T03.
-- El sistema debe informar de forma comprensible que la pieza requiere validación geométrica antes de poder agregarse al pedido.
+### Ajuste de direcciones
 
-## 8. Criterios de aceptación
+1. Obtener los ángulos de referencia `theta_i = atan2(dy_i, dx_i)`.
+2. Normalizar las longitudes objetivo por la mayor, para mejorar el acondicionamiento numérico.
+3. Calcular el vector de cierre y el Jacobiano:
 
-- CA-01: La sección de dimensiones reales solo permite asociar medidas cuando el polígono se encuentra gráficamente cerrado.
-- CA-02: El Operario puede ingresar ancho y alto reales expresados en milímetros sin ingresar manualmente coordenadas de vértices.
-- CA-03: El sistema rechaza ancho o alto no numéricos o menores o iguales que cero y no genera geometría dimensional mientras falte alguna dimensión requerida.
-- CA-04: El sistema calcula el bounding box utilizando exclusivamente los vértices dibujados.
-- CA-05: El sistema normaliza automáticamente los vértices respecto a `minX`, `maxX`, `minY` y `maxY`.
-- CA-06: El sistema transforma automáticamente los vértices gráficos a coordenadas equivalentes expresadas en milímetros.
-- CA-07: El resultado dimensional tiene origen `(0, 0)` respecto al bounding box del dibujo.
-- CA-08: El ancho máximo de la geometría transformada coincide con el ancho real ingresado.
-- CA-09: El alto máximo de la geometría transformada coincide con el alto real ingresado.
-- CA-10: El orden de los vértices transformados coincide con el orden de los vértices gráficos originales.
-- CA-11: Modificar el ancho o alto provoca el recálculo de las coordenadas dimensionales.
-- CA-12: Reiniciar el dibujo elimina también las dimensiones asociadas al borrador.
-- CA-13: T02 no ejecuta validación de convexidad ni declara la geometría como válida para corte.
-- CA-14: Al menos un caso de prueba conocido demuestra que la conversión gráfica a milímetros produce el resultado esperado.
-- CA-15: La interfaz identifica las dimensiones como `Ancho total` y `Alto total`, entendidas como las dimensiones exteriores máximas del bounding box.
-- CA-16: Cuando ancho y alto son válidos, la previsualización conserva la relación proporcional entre ambas dimensiones.
-- CA-17: Una relación extrema, por ejemplo `200 × 5000 mm`, se visualiza como una pieza proporcionalmente alta y estrecha, ajustada al espacio disponible sin deformación.
-- CA-18: La interfaz muestra cotas visuales para identificar el ancho total y el alto total.
-- CA-19: Los campos no contienen una medida real predeterminada; cualquier ejemplo se presenta únicamente como placeholder.
-- CA-20: `Agregar pieza al pedido` permanece deshabilitado durante T02 e informa que requiere la validación geométrica de T03.
+```text
+closure = sum(L_i * [cos(theta_i), sin(theta_i)])
+Jx_i = -L_i * sin(theta_i)
+Jy_i =  L_i * cos(theta_i)
+delta = -Jᵀ * inverse(J * Jᵀ + lambda * I) * closure
+```
 
-### Caso de aceptación conocido
+4. Aplicar correcciones pequeñas con regularización `1e-12`, límite angular por paso de `0.35` radianes y reducción del paso hasta disminuir el residuo.
+5. Limitar cada intento a 160 iteraciones y cada búsqueda de paso a 16 reducciones. La tolerancia de convergencia normalizada es `1e-11` respecto a la mayor longitud.
+6. Probar las direcciones originales y dos perturbaciones deterministas pequeñas (`±0.025 * sin(i + 1)` radianes) para escapar de referencias singulares. Entre las soluciones cerradas, escoger la de menor desviación angular cuadrática respecto al boceto.
+7. Acumular los segmentos con sus longitudes reales/provisionales, comenzando en `(0, 0)`. El extremo final debe coincidir con el origen dentro de la tolerancia numérica; no se fuerza el último vértice a cerrar una cadena con un hueco significativo.
 
-Dado el siguiente dibujo:
+La salida incluye `closureErrorMm` y `toleranceMm` (`1e-9 * maxLength`). La discrepancia de longitud del último lado implícito queda acotada por ese residuo de cierre. Se rechazan resultados no finitos o fuera de tolerancia.
 
-- A = `(100, 100)`
-- B = `(500, 100)`
-- C = `(500, 300)`
-- D = `(100, 300)`
+Las longitudes por sí solas no determinan una figura única, especialmente con cuatro o más lados. El boceto orienta una solución local que intenta conservar sus direcciones; el método no garantiza el mínimo angular global ni la conservación exacta de todos los ángulos. Una falta de convergencia se informa como limitación del ajuste, no como prueba de imposibilidad dimensional o invalidez para corte.
 
-El bounding box gráfico es:
+## 7. Vista dimensional y experiencia
 
-- `minX = 100`
-- `maxX = 500`
-- `minY = 100`
-- `maxY = 300`
-- ancho gráfico = `400`
-- alto gráfico = `200`
+- El dibujo original permanece visible y sin alteraciones dimensionales.
+- La sección de entrada se llama `Dimensiones por segmento`.
+- La segunda vista está debajo del área de dibujo/medidas y se llama `Vista dimensional`. No es otro editor.
+- Mientras falten medidas se indica `Vista dimensional provisional` y la cantidad de segmentos medidos. Sin medidas reales se aclara la ausencia de escala física.
+- Solo con todas las medidas y cierre numérico correcto se indica `Vista dimensional completa`.
+- Si hay error, se sustituye la geometría por un mensaje accionable. No se muestran una cadena abierta ni un resultado anterior como completos.
+- S1…Sn se identifican en ambas vistas. La etiqueta del lado activo tiene prioridad; en contornos densos se omiten etiquetas que colisionarían, manteniendo todos los lados accesibles en la lista.
+- Los lados pendientes usan trazo discontinuo en la vista inferior. La medida del lado activo aparece junto a su identificador, como medida ingresada o como `≈ … mm · Estimación provisional`.
+- La cuadrícula es solo una referencia visual, no una escala en mm.
+- El ajuste al preview usa su bounding box, una escala uniforme y centrado, sin mutar entradas. No hay escalamiento independiente de X/Y.
+- Las etiquetas mantienen tamaño legible al redimensionar. Las relaciones extremas se conservan, incluidas figuras rectangulares de lados alternados `200, 5000, 200, 5000` y `5000, 200, 5000, 200`.
+- Se conserva NewGlass: navy, azul, cyan, fondos claros y alto contraste, sin animación decorativa ni nuevas librerías.
+- PC/laptop es prioritario; tablet y móvil no deben tener overflow horizontal. La lista puede desplazarse verticalmente para muchos lados.
+- Se conserva foco visible y simultáneo con el borde de error. Cerrar por teclado lleva al primer campo; cerrar mediante puntero revela las medidas sin abrir automáticamente el teclado virtual.
+- La navegación completa del dibujo por teclado sigue siendo una limitación heredada de T01. La selección y edición de medidas sí son accesibles por teclado.
+- Se respeta `prefers-reduced-motion`.
 
-Cuando el Operario indique:
+## 8. Dependencia de T03
 
-- ancho real = `1000 mm`
-- alto real = `500 mm`
+`Agregar pieza al pedido` permanece deshabilitado durante toda T02, incluso con cierre dimensional completo. En ese estado se muestra:
 
-El resultado dimensional esperado será:
+> Las dimensiones están completas. Falta validar la geometría en T03.
 
-- A = `(0, 0)`
-- B = `(1000, 0)`
-- C = `(1000, 500)`
-- D = `(0, 500)`
+No se usan afirmaciones como “polígono válido”, “polígono convexo” o “pieza válida para corte”. T02 no rechaza figuras por concavidad y no verifica autointersecciones. La validación posterior y el registro pertenecen a tareas posteriores.
 
-La relación proporcional de la previsualización será:
+El borrador permanece solo en memoria y se pierde al salir o recargar. No se crea API ni persistencia.
 
-`1000 : 500 = 2 : 1`
-
-Por tanto, la pieza debe visualizarse proporcionalmente con un ancho aproximado al doble de su alto, independientemente del tamaño de píxel utilizado para ajustarla al lienzo.
-
-Este caso debe utilizarse como prueba verificable de la transformación implementada en T02.
-
-### Caso de aceptación de relación extrema
-
-Cuando el Operario indique:
-
-- ancho total = `200 mm`
-- alto total = `5000 mm`
-
-la relación dimensional será:
-
-`200 : 5000 = 1 : 25`
-
-La previsualización debe representar una pieza claramente alta y estrecha, ajustada al área disponible sin alterar la relación dimensional.
-
-Este caso no debe considerarse inválido únicamente por presentar una proporción extrema.
-
-## 9. Impacto técnico
-
-### Módulos
-
-Frontend:
-
-- `frontend/src/features/orders/`
-- Extensión del editor de pieza personalizada desarrollado en T01.
-- Lógica dimensional separada en `geometryScaling.js`.
-- Pruebas unitarias de transformación dimensional dentro de `frontend/tests/unit/`.
-
-La lógica de transformación dimensional debe mantenerse dentro del feature `orders` y separarse de la lógica puramente visual para facilitar sus pruebas.
-
-No se debe introducir lógica de optimización ni rasterización dentro del componente del editor.
-
-La previsualización proporcional debe utilizar las dimensiones reales únicamente para ajustar la representación visual, sin modificar las coordenadas originales almacenadas como borrador de T01.
-
-### API
-
-T02 debe preparar una representación dimensional consistente en milímetros para que pueda ser utilizada posteriormente por el flujo de pedidos.
-
-La integración con una API de persistencia definitiva no forma parte obligatoria de esta tarea mientras el flujo de órdenes correspondiente no se encuentre disponible.
-
-La estructura dimensional preparada debe ser compatible conceptualmente con una geometría basada en:
+Ejemplo conceptual de geometría dimensional completa, pendiente de T03:
 
 ```json
 {
-  "vertices_mm": [
-    [0, 0],
-    [1000, 0],
-    [1000, 500],
-    [0, 500]
-  ]
+  "status": "complete",
+  "vertices_mm": [[0, 0], [1000, 0], [1000, 500], [0, 500]]
 }
+```
+
+## 9. Criterios de aceptación
+
+- CA-01: Se preservan clics, vértices, segmentos, cierre, Deshacer y Reiniciar de T01.
+- CA-02: Después del cierre se generan S1…Sn en el orden V1→V2…Vn→V1, con medidas vacías.
+- CA-03: Cada lado admite una longitud individual positiva finita, con decimales y sin mínimo artificial.
+- CA-04: No existen entradas ni estados de dimensionado exterior por dos ejes.
+- CA-05: La lista permite seleccionar cualquier lado y sincroniza el resaltado del control y ambas vistas disponibles.
+- CA-06: La selección no borra medidas ni se interpreta como aprobación geométrica.
+- CA-07: Se informa el número de medidas reales ingresadas; las estimaciones no cuentan.
+- CA-08: Sin medidas se muestra exclusivamente un boceto normalizado sin escala física ni `vertices_mm`.
+- CA-09: Las medidas faltantes se estiman usando la mediana de las escalas de los lados medidos, sin rellenar sus campos.
+- CA-10: La vista provisional distingue las estimaciones y no se declara completa mientras falten datos.
+- CA-11: Se aplica estrictamente la desigualdad de polígono, tanto a objetivos provisionales como completos, con mensajes diferenciados.
+- CA-12: La reconstrucción es determinista, conserva el orden y produce un cierre dentro de tolerancia con cada longitud objetivo respetada numéricamente.
+- CA-13: Cambiar cualquier medida recalcula la geometría inmediatamente y conserva el resto de campos y el boceto original.
+- CA-14: Las coordenadas gráficas, `vertices_mm` y puntos de visualización son representaciones separadas y no se mutan entre sí.
+- CA-15: El primer vértice dimensional es `(0, 0)`; no se repite el punto final en `vertices_mm`.
+- CA-16: La vista inferior conserva proporción, centra la figura y maneja relaciones extremas en desktop y móvil.
+- CA-17: Las etiquetas S1…Sn y la medida activa son legibles; en contornos densos prevalece la selección y la lista conserva todos los lados.
+- CA-18: Entradas inválidas, vértices consecutivos coincidentes, valores no representables y falta de convergencia producen feedback explícito y no resultados engañosos.
+- CA-19: Deshacer invalida medidas y selección; volver a cerrar regenera segmentos. Reiniciar limpia todo el borrador.
+- CA-20: Foco, error, estados pendientes y dimensiones completas se distinguen sin depender exclusivamente del color.
+- CA-21: `Agregar pieza al pedido` siempre está deshabilitado y explica la dependencia de T03.
+- CA-22: No se implementan convexidad, rechazo de concavidad, autointersecciones, registro ni persistencia.
+
+### Casos verificables
+
+1. Boceto `(100,100), (500,100), (500,300), (100,300)` con S1=1000, S2=500, S3=1000, S4=500 mm: resultado aproximado `(0,0), (1000,0), (1000,500), (0,500)`.
+2. En ese boceto, solo S1=800 mm: escala provisional 2; objetivos `[800,400,800,400]`; los últimos tres campos permanecen vacíos.
+3. En ese boceto, S1=800 y S2=800 mm: escalas 2 y 4; mediana 3; objetivos `[800,800,1200,600]`, pendientes S3/S4.
+4. Cambiar únicamente S1 de 1000 a 1200 mm reconstruye un contorno cerrado con lados `[1200,500,1000,500]`; no queda el hueco de 200 mm que producirían las direcciones originales sin ajustar.
+5. `[2000,500,1000,500]` y `[2001,500,1000,500]` fallan la desigualdad estricta.
+6. El pentágono `(0,0), (300,0), (400,200), (150,400), (-100,200)` con `[850,420,600,510,730]` se reconstruye cerrado y respeta los cinco lados.
+7. Lados alternados `[200,5000,200,5000]` o `[5000,200,5000,200]` sobre un boceto rectangular mantienen relaciones 1:25 y 25:1 en el preview.
+
+## 10. Arquitectura y verificación
+
+- `CustomPieceEditor.jsx`: estado de dibujo/medidas/selección, controles accesibles y representación SVG. El solver se recalcula al cambiar medidas o boceto, no por selección o tamaño del preview.
+- `CustomPieceEditor.css`: estilos y adaptación local NewGlass.
+- `segmentGeometry.js`: segmentos, validación dimensional, estimaciones, solver y estados del resultado.
+- `geometryScaling.js`: bounding box y transformación visual uniforme.
+- `geometryScaling.test.js`: cobertura de longitudes gráficas, orden, mediana, estimaciones, cierre, longitudes reales reconstruidas, entradas inválidas, desigualdad, edición, inmutabilidad, orientación, figuras de 3/4/5+ lados, concavidad sin validación T03 y preview responsive.
+
+Ejecutar desde `frontend`:
+
+```text
+node --test tests/unit/geometryScaling.test.js
+npm.cmd run lint
+npm.cmd run build
+```
+
+Verificar además en navegador: cierre, selección sincronizada, edición, borrado de una medida, errores con foco, Deshacer/Reiniciar, ausencia de overflow, legibilidad móvil y bloqueo permanente de Agregar pieza. Finalmente ejecutar `git diff --check`, `git status --short` y `git diff --stat`. No hacer commit ni stash.
