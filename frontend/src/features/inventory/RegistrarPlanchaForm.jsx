@@ -1,4 +1,6 @@
 import { useId, useRef, useState } from 'react';
+import { Layers3, LoaderCircle, Save } from 'lucide-react';
+import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
 import './RegistrarPlanchaForm.css';
 
 function positiveNumber(value) {
@@ -33,9 +35,10 @@ function activeCatalog(catalogo) {
  * onSubmit(payload): recibe cinco campos numéricos; puede devolver una promesa.
  * El consumidor controla el registro y la confirmación de éxito.
  * isSubmitting: bloquea el formulario durante el procesamiento externo.
+ * onCancel: opcional; sin callback, Cancelar permanece deshabilitado.
  * Evidencia visual, teclado y Lighthouse pendientes de la pantalla integrada.
  */
-export default function RegistrarPlanchaForm({ catalogo = [], onSubmit, isSubmitting = false }) {
+export default function RegistrarPlanchaForm({ catalogo = [], onSubmit, isSubmitting = false, onCancel }) {
   const id = useId();
   const sending = useRef(false);
   const [pending, setPending] = useState(false);
@@ -130,14 +133,13 @@ export default function RegistrarPlanchaForm({ catalogo = [], onSubmit, isSubmit
   }
 
   return (
-    <form className="plancha-form" onSubmit={submit} noValidate aria-busy={busy}
+    <PageCard as="form" className="plancha-form" onSubmit={submit} noValidate aria-busy={busy}
       aria-labelledby={`${id}-title`}>
-      <header className="plancha-form__header">
-        <span className="plancha-form__eyebrow">Inventario</span>
-        <h2 id={`${id}-title`}>Registrar plancha comercial</h2>
-        <p>Ingresa el material, las dimensiones y la cantidad de planchas.</p>
+      <PageHeader context="Gestión de inventario" title="Registrar plancha comercial"
+        titleId={`${id}-title`} icon={Layers3}
+        description="Ingresa el material, las dimensiones y la cantidad de planchas que deseas registrar.">
         <p className="plancha-form__required">Todos los campos son obligatorios (*).</p>
-      </header>
+      </PageHeader>
 
       {types.length === 0 && (
         <p className="plancha-form__notice" role="status">
@@ -145,12 +147,12 @@ export default function RegistrarPlanchaForm({ catalogo = [], onSubmit, isSubmit
         </p>
       )}
 
-      <fieldset className="plancha-form__fields" disabled={busy}>
-        <legend className="plancha-form__legend">Datos de la plancha</legend>
-        <div className="plancha-form__grid">
-          <div className="plancha-form__field">
+      <fieldset className="ng-form-section" disabled={busy}>
+        <legend>Datos de la plancha</legend>
+        <div className="ng-field-grid">
+          <div className="ng-field">
             <label htmlFor={`${id}-id_tipo_vidrio`}>Tipo de vidrio *</label>
-            <select {...fieldProps('id_tipo_vidrio')} value={selectedType ? values.id_tipo_vidrio : ''}
+            <select className="ng-control" {...fieldProps('id_tipo_vidrio')} value={selectedType ? values.id_tipo_vidrio : ''}
               onChange={(event) => change('id_tipo_vidrio', event.target.value)} disabled={types.length === 0}>
               <option value="">Seleccionar tipo</option>
               {types.map((type) => <option key={type.id} value={type.id}>{type.nombre}</option>)}
@@ -158,9 +160,9 @@ export default function RegistrarPlanchaForm({ catalogo = [], onSubmit, isSubmit
             {errorMessage('id_tipo_vidrio')}
           </div>
 
-          <div className="plancha-form__field">
+          <div className="ng-field">
             <label htmlFor={`${id}-espesor_mm`}>Espesor (mm) *</label>
-            <select {...fieldProps('espesor_mm', thicknessHelpId)}
+            <select className="ng-control" {...fieldProps('espesor_mm', thicknessHelpId)}
               value={thicknesses.includes(payload.espesor_mm) ? values.espesor_mm : ''}
               onChange={(event) => change('espesor_mm', event.target.value)}
               disabled={!selectedType || thicknesses.length === 0}>
@@ -183,9 +185,9 @@ export default function RegistrarPlanchaForm({ catalogo = [], onSubmit, isSubmit
             ['alto_mm', 'Alto (mm)', 'any'],
             ['cantidad', 'Cantidad', '1'],
           ].map(([field, label, step]) => (
-            <div className="plancha-form__field" key={field}>
+            <div className="ng-field" key={field}>
               <label htmlFor={`${id}-${field}`}>{label} *</label>
-              <input {...fieldProps(field)} type="number" step={step}
+              <input className="ng-control" {...fieldProps(field)} type="number" step={step}
                 min={field === 'cantidad' ? '1' : '0'}
                 inputMode={field === 'cantidad' ? 'numeric' : 'decimal'}
                 value={values[field]} onChange={(event) => change(field, event.target.value)} />
@@ -199,11 +201,23 @@ export default function RegistrarPlanchaForm({ catalogo = [], onSubmit, isSubmit
         <p className="plancha-form__error" role="alert">Revisa los campos indicados antes de registrar.</p>
       )}
       {submitError && <p className="plancha-form__error" role="alert">{submitError}</p>}
-      <div className="plancha-form__actions">
-        <button className="plancha-form__submit" type="submit" disabled={busy || types.length === 0}>
+      {!onCancel && (
+        <p className="plancha-form__hint plancha-form__cancel-hint" id={`${id}-cancel-help`}>
+          Cancelar no está disponible en esta vista.
+        </p>
+      )}
+      <ActionBar>
+        <button className="ng-button" type="button" onClick={onCancel}
+          disabled={busy || !onCancel} aria-describedby={!onCancel ? `${id}-cancel-help` : undefined}>
+          Cancelar
+        </button>
+        <button className="ng-button ng-button--primary" type="submit"
+          aria-busy={busy} disabled={busy || types.length === 0}>
+          {busy ? <LoaderCircle className="ng-loading-icon" size={18} aria-hidden="true" />
+            : <Save size={18} aria-hidden="true" />}
           {busy ? 'Registrando...' : 'Registrar plancha'}
         </button>
-      </div>
-    </form>
+      </ActionBar>
+    </PageCard>
   );
 }
