@@ -1,0 +1,91 @@
+.retazo-form__required,
+.retazo-form__hint,
+.retazo-form__error {
+  margin: var(--ng-space-2) 0 0;
+  font-size: 14px;
+}
+
+.retazo-form__required,
+.retazo-form__hint { color: var(--ng-text-600); }
+
+.retazo-form__error { color: var(--ng-error); font-weight: 600; }
+
+.retazo-form__notice {
+  margin-bottom: var(--ng-space-6);
+  padding: var(--ng-space-3) var(--ng-space-4);
+  border-left: 4px solid var(--ng-brand-blue);
+  border-radius: var(--ng-radius-control);
+  background: var(--ng-background);
+}
+
+.retazo-form__cancel-hint { margin-top: var(--ng-space-6); }
+
+/* Editor de vértices para polígono convexo */
+.retazo-form__vertices-list {
+  display: grid;
+  gap: var(--ng-space-3);
+  margin: var(--ng-space-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.retazo-form__vertex-row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--ng-space-3);
+}
+
+.retazo-form__vertex-row > .ng-field { flex: 1; min-width: 0; }
+
+.retazo-form__vertex-label {
+  display: block;
+  margin-bottom: var(--ng-space-2);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ng-text-600);
+}
+
+.retazo-form__vertex-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--ng-control-height);
+  min-height: var(--ng-control-height);
+  padding: 0;
+  border: 1px solid var(--ng-border-strong);
+  border-radius: var(--ng-radius-control);
+  background: var(--ng-surface);
+  color: var(--ng-error);
+  font: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.retazo-form__vertex-remove:hover:not(:disabled) { background: var(--ng-background); }
+.retazo-form__vertex-remove:disabled { color: var(--ng-text-600); cursor: not-allowed; }
+.retazo-form__vertex-remove:focus-visible { outline: 3px solid var(--ng-primary-focus); outline-offset: 3px; }
+
+.retazo-form__add-vertex {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ng-space-2);
+  margin-top: var(--ng-space-2);
+  padding: var(--ng-space-2) var(--ng-space-4);
+  border: 1px dashed var(--ng-border-strong);
+  border-radius: var(--ng-radius-control);
+  background: var(--ng-surface);
+  color: var(--ng-primary-action);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.retazo-form__add-vertex:hover:not(:disabled) { background: var(--ng-action-tint); }
+.retazo-form__add-vertex:disabled { color: var(--ng-text-600); cursor: not-allowed; }
+.retazo-form__add-vertex:focus-visible { outline: 3px solid var(--ng-primary-focus); outline-offset: 3px; }
+
+@media (max-width: 600px) {
+  .retazo-form__vertex-row { flex-wrap: wrap; }
+  .retazo-form__vertex-row > .ng-field { flex: 1 1 40%; }
+}
