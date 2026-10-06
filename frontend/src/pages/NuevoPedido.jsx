@@ -10,6 +10,7 @@ import {
   PackagePlus,
 } from "lucide-react";
 import fondoVidrio from "../assets/fondo-vidrio.png";
+import CustomPieceEditor from "../features/orders/CustomPieceEditor";
 import "./NuevoPedido.css";
 
 function NuevoPedido() {
@@ -188,6 +189,8 @@ function NuevoPedido() {
 
           </div>
         </section>
+
+        <CustomPieceEditor />
 
         <div className="acciones">
 
