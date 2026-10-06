@@ -1,17 +1,56 @@
 /* Styles loaded only by the HU-007 T01 manual test entry. */
+
 * {
   box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  min-height: 100%;
 }
 
 body {
   margin: 0;
   min-width: 320px;
-  background: #f5f7fb;
-  font-family: system-ui, sans-serif;
+  min-height: 100vh;
+
+  color: #0f223d;
+
+  background-color: #eef4fb;
+  background-image:
+    linear-gradient(
+      rgba(239, 244, 251, 0.22),
+      rgba(239, 244, 251, 0.18)
+    ),
+    url("../../../src/assets/fondo-vidrio.png");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 }
 
 #manual-test-root {
-  max-width: 960px;
+  width: min(1180px, calc(100% - 48px));
   margin: 0 auto;
-  padding: 24px 16px;
+  padding: 40px 0;
+}
+
+@media (max-width: 700px) {
+  body {
+    background-attachment: scroll;
+  }
+
+  #manual-test-root {
+    width: min(100% - 24px, 1180px);
+    padding: 22px 0;
+  }
 }

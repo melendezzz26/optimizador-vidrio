@@ -51,8 +51,12 @@ function PolygonCanvas() {
   return (
     <div className="custom-piece-editor__content">
       <div className="custom-piece-editor__status" role="status">
-        <strong>{isClosed ? "Polígono cerrado" : "Polígono abierto"}</strong>
-        <span>{vertices.length} {vertices.length === 1 ? "vértice" : "vértices"}</span>
+        <strong className="custom-piece-editor__state">
+          {isClosed ? "Polígono cerrado" : "Polígono abierto"}
+        </strong>
+        <span className="custom-piece-editor__count">
+          {vertices.length} {vertices.length === 1 ? "vértice" : "vértices"}
+        </span>
       </div>
 
       <p id={instructionsId} className="custom-piece-editor__instructions">
@@ -60,6 +64,14 @@ function PolygonCanvas() {
           ? "Para seguir dibujando, deshaz el último vértice o reinicia el dibujo."
           : "Haz clic dentro del lienzo para agregar vértices. Necesitas al menos 3 para cerrar el polígono."}
       </p>
+
+      {!isClosed && (
+  <p className="custom-piece-editor__tip">
+    <strong>Consejo de trazado:</strong>{" "}
+    coloca los vértices siguiendo el contorno de la pieza. Si el último punto
+    no quedó donde esperabas, utiliza Deshacer.
+  </p>
+)}
 
       <div className="custom-piece-editor__surface">
         <svg
@@ -147,9 +159,12 @@ export default function CustomPieceEditor() {
       <h2 id={headingId}>Pieza personalizada</h2>
       <p className="custom-piece-editor__description">
         Dibuja el contorno uniendo vértices con clics.
-        {" "}El borrador es temporal: se pierde al abandonar o recargar la página.
       </p>
       <PolygonCanvas />
+      <p className="custom-piece-editor__notice">
+        <strong>Borrador temporal.</strong>{" "}
+        Se pierde al abandonar o recargar la página.
+      </p>
     </section>
   );
 }
