@@ -19,3 +19,11 @@ export function canViewResults(user) {
 export function canConfigureOptimizer(user) {
   return user?.rol === 'Administrador';
 }
+
+export function canManagePlanchas(user) {
+  return ['Administrador', 'Almacenero'].includes(user?.rol);
+}
+
+export function canManageRetazos(user) {
+  return ['Administrador', 'Almacenero'].includes(user?.rol);
+}

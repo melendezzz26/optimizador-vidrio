@@ -6,6 +6,8 @@ export { getAccessToken } from './authApi';
 export {
 	canConfigureOptimizer,
 	canManageOrders,
+	canManagePlanchas,
+	canManageRetazos,
 	canManageUsers,
 	canViewInventory,
 	canViewResults,
