@@ -113,3 +113,116 @@ cuenta de prueba, que no se reproducen en este documento.
 
 El usuario local y la ruta de Windows visibles en la terminal no se consideran
 credenciales y tampoco se reproducen aquí.
+
+## Bloque 3 — Registro E2E de plancha
+
+### Objetivo
+
+Verificar el flujo completo de registro de una plancha desde la interfaz
+React hasta FastAPI y la actualización posterior del listado.
+
+### Datos utilizados
+
+- Tipo de vidrio: Espejo
+- id_tipo_vidrio: 6
+- Espesor: 6 mm
+- Ancho: 1000 mm
+- Alto: 500 mm
+- Cantidad: 2
+
+Según los datos de prueba proporcionados por el usuario, la combinación
+Espejo + 6 mm pertenece al catálogo permitido y las dimensiones y la cantidad
+cumplen las validaciones existentes. El id_tipo_vidrio se registra a partir
+de esa información; no es visible en las capturas.
+
+### Evidencia 5 — Formulario preparado
+
+Referencia: [TA011-05-formulario-registro-plancha.png](capturas/TA011-05-formulario-registro-plancha.png).
+
+Se observa el formulario Registrar plancha comercial con tipo Espejo,
+espesor 6 mm, ancho 1000 mm, alto 500 mm, cantidad 2 y el botón Registrar
+plancha. Está integrado dentro de Gestión de inventario, con el sidebar
+correspondiente al Almacenero y sin AppShell duplicado visible.
+
+La imagen documenta el estado preparado para la prueba. Por sí sola no
+demuestra que posteriormente se enviaron exactamente esos datos.
+
+### Evidencia 6 — Resultado visible
+
+Referencia: [TA011-06-plancha-registrada-listado.png](capturas/TA011-06-plancha-registrada-listado.png).
+
+Se observa el mensaje "Plancha registrada correctamente.", el formulario
+cerrado, la pestaña Planchas activa y la siguiente fila en el listado de
+Gestión de Inventario:
+
+| Tipo de vidrio | Espesor | Ancho | Alto | Cantidad | Estado |
+| --- | --- | --- | --- | --- | --- |
+| Espejo | 6 mm | 1000 mm | 500 mm | 2 | Activo |
+
+Según la ejecución manual informada por el usuario, el listado se actualizó
+sin recarga manual inmediatamente después del registro. La captura muestra
+el resultado visible; la ausencia de recarga manual se documenta a partir
+de esa confirmación.
+
+También aparece una plancha Catedral generada previamente durante otra
+prueba intencional, según el contexto de la sesión proporcionado por el
+usuario. No corresponde a un doble envío de la plancha Espejo.
+
+### Evidencia 7 — Secuencia API
+
+Referencia: [TA011-07-post-plancha-201.png](capturas/TA011-07-post-plancha-201.png).
+
+Se observa la siguiente secuencia en los logs del backend:
+
+| Orden | Método | Endpoint | Respuesta |
+| --- | --- | --- | --- |
+| 1 | POST | `/api/inventory/planchas` | 201 Created |
+| 2 | GET | `/api/inventory/planchas` | 200 OK |
+
+La captura contiene dos secuencias POST/GET. Según la información de la
+sesión aportada por el usuario, hubo dos registros intencionales distintos:
+una plancha Catedral previa y la plancha Espejo utilizada para este bloque.
+Los logs no muestran el cuerpo de las solicitudes, por lo que no se atribuye
+visualmente un POST concreto a un material determinado ni se interpretan
+ambos POST como un mismo envío.
+
+### Flujo verificado
+
+Los resultados siguientes combinan lo observable en las evidencias 5 a 7
+con el flujo manual informado por el usuario. La reutilización del formulario
+de HU-004 se registra según la información de implementación proporcionada;
+no se deduce de las capturas ni implica una revisión de código en esta tarea.
+
+1. PASS — El usuario Almacenero abre Gestión de inventario.
+2. PASS — Accede a Registrar plancha.
+3. PASS — Se reutiliza el formulario existente de HU-004.
+4. PASS — El registro se realiza mediante POST `/api/inventory/planchas`.
+5. PASS — El backend responde 201 Created.
+6. PASS — Después se consulta GET `/api/inventory/planchas`.
+7. PASS — El GET responde 200 OK.
+8. PASS — El formulario se cierra.
+9. PASS — Se muestra el mensaje de éxito.
+10. PASS — La nueva plancha aparece en el listado sin F5.
+
+### Resultado del Bloque 3
+
+| Punto verificado | Resultado |
+| --- | --- |
+| Formulario integrado sin AppShell duplicado | PASS |
+| Registro desde React | PASS |
+| POST /api/inventory/planchas | 201 Created |
+| Refresco mediante GET /api/inventory/planchas | 200 OK |
+| Cierre del formulario tras éxito | PASS |
+| Mensaje de éxito | PASS |
+| Nueva plancha visible sin recarga manual | PASS |
+| Protección contra doble envío | Implementada, según la información proporcionada; sin evidencia directa de una prueba específica. |
+
+No se declaran como terminados la edición, el cambio de estado, los filtros,
+el registro de retazo mediante TA-011 ni HU-008.
+
+### Privacidad
+
+Las evidencias revisadas no muestran JWT, encabezados Authorization,
+contraseñas, hashes, secretos ni credenciales de base de datos. El usuario
+local y la ruta de Windows visibles en la terminal no son secretos y no se
+reproducen en este documento.
