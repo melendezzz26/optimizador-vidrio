@@ -506,7 +506,7 @@ muestra el mensaje de actualización correcta y la plancha Espejo, 6 mm,
 1000 × 500 mm, cantidad 2, Activo. Respalda la restauración posterior
 informada en la secuencia de prueba. TA011-26 también muestra ese estado
 en una consulta posterior. Se conserva el nombre original de la captura
-adicional; no se crea TA011-27.
+adicional.
 
 ### Evidencia 25 — Guardar sin cambios
 
@@ -578,3 +578,113 @@ No se observan JWT, Authorization, contraseñas, hashes, secretos,
 credenciales de Supabase ni variables sensibles. Los nombres e
 identificadores de cuenta visibles son datos identificativos y no se
 reproducen innecesariamente en este documento.
+
+## Bloque 7 — Edición de retazo
+
+### Implementación y fuentes de verificación
+
+La revisión estática confirma la reutilización de RegistrarRetazoForm en
+create/edit y la precarga de código, material, espesor y geometría mediante
+initialValues. InventoryPage construye el PATCH parcial con las diferencias
+de codigo, id_tipo_vidrio, espesor_mm y geometria. Si cambia la geometría,
+envía el objeto completo de la forma, no un campo aislado como height_mm.
+El estado queda fuera del formulario y se gestiona con Activar/Desactivar.
+area_mm2 no es editable ni enviada por el frontend; tampoco se envían estado,
+id_retazo, fecha_registro ni id_ejecucion_origen en este PATCH de edición.
+
+El backend recalcula area_mm2 cuando recibe geometria modificada. Después
+del PATCH exitoso, el frontend consulta únicamente GET del listado de retazos
+y muestra el área devuelta por backend. Estas afirmaciones proceden del código
+revisado; el log disponible no muestra cuerpos de solicitud ni respuesta.
+
+### PF-16 — Precarga de edición verificada manualmente
+
+Precondición: RET-TA011-E2E-001 existente.
+
+Esperado:
+
+- código RET-TA011-E2E-001;
+- tipo Espejo;
+- espesor 6 mm;
+- Rectángulo;
+- ancho 1000 mm;
+- alto 500 mm.
+
+Resultado obtenido: **PASS**. La comprobación manual posterior mostró todos
+los valores precargados correctamente. No se conserva una captura adicional
+para este caso y no se asigna una referencia de imagen inexistente.
+
+Durante la primera ejecución se detectó que el select no reconocía
+correctamente valores equivalentes "6.0" y "6". Se normalizó el valor inicial
+y posteriormente se repitió la comprobación manual, mostrando correctamente
+6 mm.
+
+### Evidencias 28 a 30 — Edición rectangular y restauración
+
+Entidad de prueba informada: RET-TA011-E2E-001, Espejo, 6 mm, RECTANGULO,
+1000 × 500 mm, área inicial 500000 mm² y estado Activo.
+
+| Evidencia | Resultado observado |
+| --- | --- |
+| [TA011-28-retazo-geometria-editada.png](capturas/TA011-28-retazo-geometria-editada.png) | Mensaje "Retazo actualizado correctamente."; RET-TA011-E2E-001, Espejo, 6 mm, Rectángulo 1000 × 400 mm, área 400000 mm² y Activo. |
+| [TA011-29-patch-edicion-retazo-200.png](capturas/TA011-29-patch-edicion-retazo-200.png) | PATCH /api/inventory/retazos/3 → 200 OK, seguido de GET /api/inventory/retazos → 200 OK. El log no muestra el payload exacto. |
+| [TA011-30-retazo-restaurado.png](capturas/TA011-30-retazo-restaurado.png) | La misma entidad vuelve a Rectángulo 1000 × 500 mm, área 500000 mm² y Activo; mensaje de actualización correcta visible. |
+
+La secuencia manual informada es 1000 × 500 → 1000 × 400 → 1000 × 500 mm.
+El recálculo del área lo realiza backend, confirmado por la revisión de
+update_retazo y sus resultados visibles. No se afirma una consulta SQL directa
+ni persistencia tras F5. TA011-29 acredita un par PATCH/GET, no un segundo
+par correspondiente a la restauración.
+
+### Evidencia 31 — Guardar sin cambios
+
+Referencia: [TA011-31-edicion-retazo-sin-cambios.png](capturas/TA011-31-edicion-retazo-sin-cambios.png).
+
+La entidad de esta prueba es RET-HU005-001, Incoloro, Rectángulo 850 × 420 mm,
+no RET-TA011-E2E-001. El formulario Editar retazo permanece abierto y muestra
+"No hay cambios para guardar."; código, material y dimensiones siguen visibles.
+Guardar sin modificar no debe enviar PATCH vacío ni ejecutar el GET asociado.
+La revisión estática confirma que changes vacío produce el warning y retorna
+antes de ambas llamadas, sin cerrar ni reiniciar el formulario. La captura
+acredita el feedback y el formulario abierto; por sí sola no prueba ausencia
+de tráfico HTTP. PF-20 se limita a ese resultado visible y la lógica revisada.
+
+### Evidencia 32 — Operario solo consulta
+
+Referencia: [TA011-32-operario-sin-editar-retazo.png](capturas/TA011-32-operario-sin-editar-retazo.png).
+
+Se observa rol Operario, Gestión de Inventario, pestaña Retazos y listado
+visible, sin Registrar retazo, columna Acciones, Editar ni Activar/Desactivar.
+Es evidencia de restricción visual; no demuestra un 403 backend.
+
+### Resultado del Bloque 7 y pendientes
+
+| Punto | Resultado | Sustento |
+| --- | --- | --- |
+| Precarga completa de edición | PASS | Verificación manual posterior: código, Espejo, 6 mm, Rectángulo y 1000 × 500 mm correctamente precargados. |
+| Edición rectangular | PASS | TA011-28 y TA011-29. |
+| Recálculo de área por backend | PASS | TA011-28 y revisión estática del servicio. |
+| Restauración de geometría | PASS | TA011-30. |
+| Guardar sin cambios | PASS en el alcance indicado | TA011-31 y retorno previo a PATCH/GET comprobado estáticamente; no acredita precarga de espesor. |
+| Operario sin gestión | PASS | TA011-32; restricción visual. |
+
+**Bloque 7: PASS.** PF-16 se sustenta en verificación manual posterior sin
+captura adicional. Los pendientes de edición de retazo citados en bloques
+anteriores quedan actualizados por los resultados de esta sección.
+
+E2E se ejecutó con RECTANGULO. CIRCUNFERENCIA y POLIGONO_CONVEXO quedaron
+verificados estáticamente en precarga, validación, construcción y comparación
+de geometría; no se afirma E2E de esas formas. No se implementó editor visual
+de polígonos. La mejora visual y reutilización del editor geométrico de Pedidos
+se tratará después como mejora UI/UX. Siguen pendientes filtros, pruebas
+generales 401/403/422, estados loading/empty/error aún no acreditados y HU-008.
+
+### Capturas adicionales y privacidad
+
+Se revisaron las capturas nuevas y se conservaron las evidencias oficiales
+TA011-28 a TA011-32. La captura 021018 queda fuera del conjunto oficial como
+evidencia diagnóstica de la primera ejecución, porque mostraba el espesor sin
+seleccionar. TA011-01 a TA011-26 se conservaron intactas.
+Las nuevas capturas no muestran JWT, Authorization, contraseñas, hashes,
+secretos ni credenciales Supabase. TA011-32 muestra nombre e identificador
+de cuenta; son datos identificativos que no se reproducen en este documento.

@@ -1,6 +1,6 @@
 # TA-011 — Prueba funcional
 
-Casos ejecutados de los bloques 2, 3, 4, 5 y 6, documentados con las capturas
+Casos de los bloques 2 a 7, con resultados y pendientes documentados con las capturas
 oficiales y las confirmaciones manuales del usuario recogidas en
 [Integración de inventario](integracion-inventario.md). Esta actualización
 documental no implica una nueva ejecución de las pruebas.
@@ -60,7 +60,7 @@ estas fuentes como equivalentes.
 
 La restauración a cantidad 2 y estado Activo se respalda con la
 [captura adicional 005114](capturas/Captura%20de%20pantalla%202026-10-07%20005114.png)
-y con TA011-26. No se creó una evidencia TA011-27.
+y con TA011-26.
 
 Create exige cantidad > 0; edit/PATCH admite cantidad entera >= 0, según
 la lógica revisada. El PATCH parcial incluye solo diferencias entre
@@ -71,3 +71,34 @@ Bloque 6: PASS con los límites de evidencia indicados. Pendientes restantes:
 edición de retazo; filtros tipo/espesor/estado; validaciones generales 401;
 403 backend; 422 formal; estados loading/empty/error que falten; HU-008
 separado. No se declara TA-011 terminada.
+
+## Bloque 7 — Edición de retazo
+
+Resultados documentados mediante las capturas oficiales TA011-28 a TA011-32,
+la ejecución rectangular informada, la verificación manual de precarga y la
+revisión estática. No se conserva una captura adicional para PF-16.
+
+| ID | Caso | Entrada/precondición | Esperado | Obtenido | Estado | Evidencia |
+| --- | --- | --- | --- | --- | --- | --- |
+| TA011-PF-16 | Precargar edición de retazo | RET-TA011-E2E-001 existente. | Código RET-TA011-E2E-001, Espejo, 6 mm, Rectángulo, ancho 1000 y alto 500 precargados. | Todos los valores precargados correctamente después de normalizar el espesor. Verificación manual E2E sin captura adicional. | PASS | Verificación manual posterior; sin captura oficial. |
+| TA011-PF-17 | Editar geometría rectangular | RET-TA011-E2E-001 activo; cambiar alto 500 → 400, conservar ancho 1000 mm. | PATCH 200, GET de retazos 200, geometría actualizada y feedback de éxito. | PATCH /api/inventory/retazos/3 y GET /api/inventory/retazos con 200; fila 1000 × 400 mm, Activo y "Retazo actualizado correctamente.". Log sin payload. | PASS | [TA011-28](capturas/TA011-28-retazo-geometria-editada.png) y [TA011-29](capturas/TA011-29-patch-edicion-retazo-200.png). |
+| TA011-PF-18 | Recalcular área por cambio geométrico | Mismo cambio rectangular de PF-17; área inicial 500000 mm² según la prueba informada. | Backend recalcula 400000 mm²; frontend muestra el valor del GET. | Área visible 400000 mm². Revisión estática confirma cálculo en backend y visualización de area_mm2 recibido, sin enviarlo desde el formulario. | PASS | [TA011-28](capturas/TA011-28-retazo-geometria-editada.png), [TA011-29](capturas/TA011-29-patch-edicion-retazo-200.png) y revisión estática. |
+| TA011-PF-19 | Restaurar geometría original | RET-TA011-E2E-001 en 1000 × 400 mm; restaurar alto a 500 mm. | Geometría 1000 × 500 mm, área 500000 mm², Activo. | Fila restaurada con esos valores y mensaje de actualización correcta. No se dispone de log específico de este segundo PATCH. | PASS | [TA011-30](capturas/TA011-30-retazo-restaurado.png). |
+| TA011-PF-20 | Guardar retazo sin cambios | Editar RET-HU005-001, Incoloro, Rectángulo 850 × 420 mm; guardar sin modificaciones. | Sin PATCH vacío ni GET asociado; formulario abierto y mensaje "No hay cambios para guardar.". | Formulario abierto, código/material/dimensiones visibles y mensaje esperado. Ausencia de PATCH/GET confirmada estáticamente por retorno anticipado, no por captura de red. | PASS en este alcance | [TA011-31](capturas/TA011-31-edicion-retazo-sin-cambios.png) y revisión estática. |
+| TA011-PF-21 | Operario sin acción Editar retazo | Sesión Operario; consultar Retazos. | Listado visible sin registro ni gestión. | Rol Operario y listado visibles; sin Registrar retazo, Acciones, Editar ni Activar/Desactivar. No acredita HTTP 403. | PASS | [TA011-32](capturas/TA011-32-operario-sin-editar-retazo.png). |
+
+Durante la primera ejecución se detectó que el select no reconocía
+correctamente valores equivalentes "6.0" y "6". Se normalizó el valor inicial
+y posteriormente se repitió la comprobación manual, mostrando correctamente
+6 mm. La captura antigua 021018 se conserva como evidencia diagnóstica/no
+oficial y no se usa para aprobar PF-16. Sin secretos visibles;
+la captura de Operario contiene datos identificativos que no se transcriben.
+
+Bloque 7: **PASS**.
+
+E2E limitado a RECTANGULO; CIRCUNFERENCIA y POLIGONO_CONVEXO solo verificadas
+estáticamente. No se implementó editor visual de polígonos; la reutilización
+del editor geométrico de Pedidos queda como mejora UI/UX posterior. Pendientes
+posteriores: mejora UI/UX de Inventario, filtros, mejora UX del editor de
+geometrías/polígonos, 401, 403 backend, 422 formal y estados UI restantes.
+HU-008 permanece fuera de este cierre.

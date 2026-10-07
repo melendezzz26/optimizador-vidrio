@@ -134,3 +134,64 @@ La edición de plancha queda documentada en este bloque. Siguen pendientes
 edición de retazo, filtros tipo/espesor/estado, validaciones generales 401,
 403 backend, 422 formal, estados loading/empty/error aún no acreditados y
 HU-008 como PBI separado. TA-011 no se declara completamente terminada.
+
+## Bloque 7 — Edición de retazo
+
+### Operaciones y resultados observados
+
+| Etapa | Resultado | Evidencia |
+| --- | --- | --- |
+| Actualización | PATCH `/api/inventory/retazos/3` → 200 OK. | [TA011-29](capturas/TA011-29-patch-edicion-retazo-200.png). |
+| Consulta posterior | GET `/api/inventory/retazos` → 200 OK, inmediatamente después del PATCH. | [TA011-29](capturas/TA011-29-patch-edicion-retazo-200.png). |
+| Resultado de edición | RET-TA011-E2E-001, Espejo, 6 mm, Rectángulo 1000 × 400 mm, 400000 mm², Activo y mensaje "Retazo actualizado correctamente.". | [TA011-28](capturas/TA011-28-retazo-geometria-editada.png). |
+| Restauración | Mismo retazo, Rectángulo 1000 × 500 mm, 500000 mm², Activo y mensaje de actualización correcta. | [TA011-30](capturas/TA011-30-retazo-restaurado.png). |
+
+El cambio informado parte de 1000 × 500 mm y área 500000 mm²; se reduce el
+alto a 400 mm y luego se restaura a 500 mm. TA011-29 muestra un único par
+PATCH/GET y operaciones anteriores de consulta/OPTIONS. No muestra cuerpos
+de solicitud o respuesta: no permite afirmar el payload exacto ni acredita
+por separado el PATCH de restauración.
+
+### Contrato revisado y origen del área
+
+RegistrarRetazoForm se reutiliza en create/edit, con precarga de código,
+material, espesor y geometría. InventoryPage compara contra editingRetazo
+y construye un PATCH parcial de codigo, id_tipo_vidrio, espesor_mm y geometria.
+Cuando la geometría cambia, envía la forma completa normalizada. No incluye
+area_mm2, estado, id_retazo, fecha_registro ni id_ejecucion_origen en el cuerpo.
+El estado se gestiona fuera del formulario con Activar/Desactivar.
+
+La revisión estática de update_retazo confirma que el backend recalcula
+area_mm2 mediante calculate_area_mm2 cuando cambia geometria. El frontend
+ejecuta únicamente getRetazos tras el PATCH exitoso y muestra retazo.area_mm2
+del listado recibido. El área no es editable ni calculada para envío desde
+el formulario. El valor 400000 mm² y la restauración a 500000 mm² se observan
+en las capturas; no se afirma inspección SQL ni persistencia tras F5.
+
+### Operación sin cambios y límites de evidencia
+
+[TA011-31](capturas/TA011-31-edicion-retazo-sin-cambios.png) corresponde a
+RET-HU005-001, Incoloro, Rectángulo 850 × 420 mm. Muestra el formulario abierto
+y "No hay cambios para guardar.". La revisión estática confirma retorno antes
+de PATCH y GET cuando changes está vacío. La captura no demuestra por sí sola
+ausencia de HTTP.
+
+La [captura original 021018](capturas/Captura%20de%20pantalla%202026-10-07%20021018.png)
+se conserva fuera del conjunto oficial como evidencia diagnóstica de la primera
+ejecución: mostraba el defecto de reconocimiento entre "6.0" y "6". La
+normalización del valor inicial fue corregida y la comprobación manual
+posterior confirmó la precarga correcta de 6 mm. PF-16 queda aprobado por esa
+verificación manual, sin captura adicional.
+
+[TA011-32](capturas/TA011-32-operario-sin-editar-retazo.png) demuestra consulta
+de Retazos por Operario sin Registrar retazo, Acciones, Editar ni cambios de
+estado; no prueba un 403 backend. Las capturas nuevas no exponen JWT,
+Authorization, contraseñas, hashes, secretos ni credenciales Supabase.
+
+E2E se limita a RECTANGULO. CIRCUNFERENCIA y POLIGONO_CONVEXO se verificaron
+estáticamente; no se afirma su ejecución E2E. No hay editor visual de polígonos;
+la mejora visual/reutilización del editor de Pedidos queda para UI/UX posterior.
+Siguen pendientes mejora UI/UX de Inventario, filtros, mejora UX del editor de
+geometrías/polígonos, 401, 403 backend, 422 formal y estados UI restantes.
+HU-008 permanece fuera de este cierre. Bloque 7: PASS; TA-011 continúa
+pendiente de esos trabajos posteriores.
