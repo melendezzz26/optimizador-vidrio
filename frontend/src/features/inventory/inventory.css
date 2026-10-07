@@ -39,6 +39,31 @@
   font-size: 14px;
 }
 
+.inventory-feedback {
+  margin: var(--ng-space-3) 0;
+  padding: var(--ng-space-3) var(--ng-space-4);
+  border-left: 4px solid;
+  border-radius: var(--ng-radius-control);
+  background: var(--ng-background);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.inventory-feedback--success {
+  border-left-color: var(--ng-success);
+  color: var(--ng-success);
+}
+
+.inventory-feedback--error {
+  border-left-color: var(--ng-error);
+  color: var(--ng-error);
+}
+
+.inventory-feedback--warning {
+  border-left-color: var(--ng-brand-blue);
+  color: var(--ng-text-900);
+}
+
 .inventory-error {
   color: var(--ng-error);
   font-weight: 600;

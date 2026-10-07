@@ -2,7 +2,8 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { AppShell } from '../../shared/components/AppShell';
 import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
 import RegistrarPlanchaForm from './RegistrarPlanchaForm';
-import { createPlancha, getPlanchas, getRetazos, getTiposVidrio } from './inventoryApi';
+import RegistrarRetazoForm from './RegistrarRetazoForm';
+import { createPlancha, createRetazo, getPlanchas, getRetazos, getTiposVidrio } from './inventoryApi';
 import './inventory.css';
 
 const TABS = [
@@ -126,8 +127,10 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [showPlanchaForm, setShowPlanchaForm] = useState(false);
+  const [showRetazoForm, setShowRetazoForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [operationError, setOperationError] = useState('');
+  const [operationWarning, setOperationWarning] = useState('');
   const [operationSuccess, setOperationSuccess] = useState('');
   const titleId = useId();
   const tabPanelId = useId();
@@ -158,18 +161,35 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
 
   function openPlanchaForm() {
     setOperationError('');
+    setOperationWarning('');
     setOperationSuccess('');
     setShowPlanchaForm(true);
+  }
+
+  function openRetazoForm() {
+    setOperationError('');
+    setOperationWarning('');
+    setOperationSuccess('');
+    setShowRetazoForm(true);
   }
 
   function handleCancelPlancha() {
     setShowPlanchaForm(false);
     setOperationError('');
+    setOperationWarning('');
+    setOperationSuccess('');
+  }
+
+  function handleCancelRetazo() {
+    setShowRetazoForm(false);
+    setOperationError('');
+    setOperationWarning('');
     setOperationSuccess('');
   }
 
   async function handleCreatePlancha(payload) {
     setOperationError('');
+    setOperationWarning('');
     setOperationSuccess('');
     setIsSubmitting(true);
     try {
@@ -190,7 +210,37 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
         handleApiError(error);
         setActiveTab('planchas');
         setShowPlanchaForm(false);
-        setOperationError('La plancha fue registrada, pero no se pudo actualizar el listado.');
+        setOperationWarning('La plancha fue registrada, pero no se pudo actualizar el listado.');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleCreateRetazo(payload) {
+    setOperationError('');
+    setOperationWarning('');
+    setOperationSuccess('');
+    setIsSubmitting(true);
+    try {
+      try {
+        await createRetazo(payload);
+      } catch (error) {
+        setOperationError(handleApiError(error).message);
+        return;
+      }
+
+      try {
+        const updatedRetazos = await getRetazos();
+        setRetazos(updatedRetazos);
+        setActiveTab('retazos');
+        setShowRetazoForm(false);
+        setOperationSuccess('Retazo registrado correctamente.');
+      } catch (error) {
+        handleApiError(error);
+        setActiveTab('retazos');
+        setShowRetazoForm(false);
+        setOperationWarning('El retazo fue registrado, pero no se pudo actualizar el listado.');
       }
     } finally {
       setIsSubmitting(false);
@@ -222,7 +272,9 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
   function handleTabChange(nextTab) {
     setActiveTab(nextTab);
     setShowPlanchaForm(false);
+    setShowRetazoForm(false);
     setOperationError('');
+    setOperationWarning('');
     setOperationSuccess('');
   }
 
@@ -259,12 +311,20 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
       {isLoading && <PageCard><p className="inventory-status" role="status">Cargando inventario...</p></PageCard>}
       {loadError && <PageCard><p className="inventory-error" role="alert">{loadError}</p></PageCard>}
 
-      {operationSuccess && !showPlanchaForm && activeTab === 'planchas' && (
-        <p className="inventory-status" role="status">{operationSuccess}</p>
+      {operationSuccess && !showPlanchaForm && !showRetazoForm && (
+        <p className="inventory-feedback inventory-feedback--success" role="status" aria-live="polite">
+          {operationSuccess}
+        </p>
       )}
 
-      {operationError && activeTab === 'planchas' && (
-        <p className="inventory-error" role="alert">{operationError}</p>
+      {operationError && (
+        <p className="inventory-feedback inventory-feedback--error" role="alert">{operationError}</p>
+      )}
+
+      {operationWarning && !showPlanchaForm && !showRetazoForm && (
+        <p className="inventory-feedback inventory-feedback--warning" role="status" aria-live="polite">
+          {operationWarning}
+        </p>
       )}
 
       {showPlanchaForm && activeTab === 'planchas' && (
@@ -276,7 +336,16 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
         />
       )}
 
-      {!isLoading && !loadError && !showPlanchaForm && (
+      {showRetazoForm && activeTab === 'retazos' && (
+        <RegistrarRetazoForm
+          catalogo={catalogo}
+          onSubmit={handleCreateRetazo}
+          isSubmitting={isSubmitting}
+          onCancel={handleCancelRetazo}
+        />
+      )}
+
+      {!isLoading && !loadError && !showPlanchaForm && !showRetazoForm && (
         <PageCard
           as="section"
           className="inventory-list"
@@ -289,6 +358,13 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
             <ActionBar>
               <button className="ng-button ng-button--primary" type="button" onClick={openPlanchaForm}>
                 Registrar plancha
+              </button>
+            </ActionBar>
+          )}
+          {activeTab === 'retazos' && (
+            <ActionBar>
+              <button className="ng-button ng-button--primary" type="button" onClick={openRetazoForm}>
+                Registrar retazo
               </button>
             </ActionBar>
           )}
