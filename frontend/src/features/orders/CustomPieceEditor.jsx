@@ -3,6 +3,7 @@ import { Check, LockKeyhole, MousePointer2, RotateCcw, Undo2 } from "lucide-reac
 import "./CustomPieceEditor.css";
 import { fitVerticesToPreview } from "./geometryScaling";
 import { buildDimensionalGeometry, createSegments, isPositiveLength } from "./segmentGeometry";
+import { validateConvexPolygon } from "./convexityValidation";
 
 const DRAWING_WIDTH = 800;
 const DRAWING_HEIGHT = 500;
@@ -128,6 +129,7 @@ function PolygonCanvas() {
   const correctionId = useId();
   const validationId = useId();
   const validationHelpId = useId();
+  const validationMessageId = useId();
   const firstInputRef = useRef(null);
   const drawingHeadingRef = useRef(null);
   const dimensionsRef = useRef(null);
@@ -138,6 +140,8 @@ function PolygonCanvas() {
   const [activeSegmentIndex, setActiveSegmentIndex] = useState(null);
   const { vertices, isClosed } = drawing;
   const result = useMemo(() => isClosed ? buildDimensionalGeometry(vertices, segments) : null, [vertices, isClosed, segments]);
+  const validation = useMemo(() => validateConvexPolygon(result?.status === "complete" ? result.vertices_mm : null), [result]);
+  const validationRejected = !validation.isValid && validation.reason !== "INCOMPLETE";
   const measuredCount = segments.filter((segment) => !segment.badInput && isPositiveLength(segment.lengthMm)).length;
   const dimensionsReady = result?.status === "complete";
   const hasMeasurements = segments.some(({ lengthMm, badInput }) => lengthMm !== "" || badInput);
@@ -279,16 +283,30 @@ function PolygonCanvas() {
         </div>
         <p className="custom-piece-editor__section-help">El boceto orienta la reconstrucción; las longitudes pueden cambiar sus ángulos. Esta vista no es otro editor.</p>
       </section>}
-      {isClosed && <section className="custom-piece-editor__next-step" aria-labelledby={validationId}>
+      <section className="custom-piece-editor__next-step" aria-labelledby={validationId}>
         <div>
-          <h3 id={validationId}><span className="custom-piece-editor__step" aria-hidden="true">4</span>Validación pendiente</h3>
-          <p id={validationHelpId}>{dimensionsReady ? "Las dimensiones están completas. Falta validar la geometría en T03."
-            : "Completa las longitudes y el cierre dimensional. Agregar la pieza requiere después la validación de T03."}</p>
+          <h3 id={validationId}><span className="custom-piece-editor__step" aria-hidden="true">4</span>Validación geométrica</h3>
+          <div
+            role={validationRejected ? "alert" : "status"}
+            aria-label="Resultado de validación geométrica"
+            aria-atomic="true"
+          >
+            <p
+              id={validationMessageId}
+              className="custom-piece-editor__validation-message"
+              data-valid={validation.isValid}
+              data-rejected={validationRejected}
+            >
+              {validation.message}
+            </p>
+          </div>
+          {validationRejected && <p>Revisa las medidas o deshaz el dibujo para corregir el contorno.</p>}
+          <p id={validationHelpId}>El registro de piezas en el pedido aún no está disponible.</p>
         </div>
-        <button type="button" className="custom-piece-editor__button custom-piece-editor__button--add" disabled aria-describedby={validationHelpId}>
+        <button type="button" className="custom-piece-editor__button custom-piece-editor__button--add" disabled aria-describedby={`${validationMessageId} ${validationHelpId}`}>
           <LockKeyhole size={16} aria-hidden="true" /> Agregar pieza al pedido
         </button>
-      </section>}
+      </section>
     </div>
   );
 }

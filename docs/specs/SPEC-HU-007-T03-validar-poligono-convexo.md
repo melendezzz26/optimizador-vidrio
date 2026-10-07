@@ -144,10 +144,25 @@ Antes de validar convexidad se comprobará:
 2. Todas las coordenadas son finitas.
 3. No existen vértices consecutivos equivalentes.
 4. El lado de cierre entre el último y el primer vértice tiene longitud distinta de cero.
-5. El área del polígono no es prácticamente cero.
+5. No todos los vértices son colineales y no existen retrocesos colineales ni
+   solapamientos adyacentes inválidos.
 
 Una geometría que no cumpla estas condiciones no continuará hacia la comprobación de
 convexidad.
+
+La prioridad de clasificación es determinista:
+
+1. `INCOMPLETE`: no hay geometría dimensional completa disponible.
+2. `TOO_FEW_VERTICES`: menos de tres vértices.
+3. `INVALID_COORDINATES`: coordenadas no numéricas o no finitas.
+4. `DEGENERATE`: vértices consecutivos equivalentes o lados prácticamente nulos,
+   incluido el lado de cierre.
+5. `DEGENERATE`: todos los vértices colineales.
+6. `DEGENERATE`: retrocesos colineales o solapamientos adyacentes inválidos.
+7. `SELF_INTERSECTION`: cruce, contacto o solapamiento entre lados no adyacentes.
+8. `DEGENERATE`: área prácticamente nula, después de descartar lo anterior.
+9. `NON_CONVEX`: giros significativos de signos opuestos en un polígono simple.
+10. `VALID`: geometría simple, no degenerada y convexa.
 
 ---
 
@@ -165,6 +180,13 @@ cross === 0
 La implementación deberá centralizar las tolerancias numéricas y documentar su propósito.
 
 No se debe utilizar una tolerancia arbitraria diferente en cada función.
+
+El área algebraica puede calcularse antes, pero su rechazo se difiere hasta
+descartar autointersecciones según la prioridad de la sección 7. Un bow-tie
+simétrico puede cancelar su área algebraica y debe clasificarse como
+`SELF_INTERSECTION`, no como `DEGENERATE`. Una geometría completamente colineal
+sí se clasifica previamente como `DEGENERATE`. Esta prioridad concreta CA-11 y
+CA-12 sin cambiar sus criterios.
 
 ---
 

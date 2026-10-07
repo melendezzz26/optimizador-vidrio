@@ -27,11 +27,11 @@ test.beforeEach(async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Pieza personalizada' })).toBeVisible()
 })
 
-async function drawAndClose(page) {
+async function drawAndClose(page, points = pentagon) {
   const canvas = page.getByRole('img', { name: /Lienzo del dibujo original/ })
   await expect(page.getByRole('button', { name: 'Cerrar polígono' })).toBeDisabled()
   await canvas.scrollIntoViewIfNeeded()
-  for (const [index, point] of pentagon.entries()) {
+  for (const [index, point] of points.entries()) {
     // Read the browser's actual transform, including responsive sizing and
     // scrolling. Drawing itself always uses a real mouse click, never events
     // dispatched from page.evaluate or injected component state.
@@ -45,8 +45,8 @@ async function drawAndClose(page) {
   }
   await page.getByRole('button', { name: 'Cerrar polígono' }).click()
   await expect(page.getByText('Polígono cerrado', { exact: true })).toBeVisible()
-  await expect(page.getByRole('spinbutton')).toHaveCount(5)
-  for (let id = 1; id <= 5; id++) {
+  await expect(page.getByRole('spinbutton')).toHaveCount(points.length)
+  for (let id = 1; id <= points.length; id++) {
     await expect(page.getByRole('button', { name: `Seleccionar segmento S${id}`, exact: true })).toHaveText(`S${id}`)
     await expect(field(page, id)).toBeEmpty()
   }
@@ -56,7 +56,7 @@ async function fill(page, values = lengths) {
   for (const [index, value] of values.entries()) await field(page, index + 1).fill(String(value))
 }
 
-test('T01-T02-E01: dibujo → provisional → completa → selección y edición; T03 bloqueado', async ({ page }) => {
+test('T01-T02-E01: dibujo → provisional → completa → selección y edición; registro bloqueado', async ({ page }) => {
   await drawAndClose(page)
   await expect(page.getByText('0 de 5 medidas ingresadas', { exact: true })).toBeVisible()
   await field(page, 1).fill('850')
@@ -75,7 +75,7 @@ test('T01-T02-E01: dibujo → provisional → completa → selección y edición
   for (let id = 1; id <= 5; id++) await expect(field(page, id)).toHaveValue(String(id === 3 ? 620 : lengths[id - 1]))
   await expect(page.getByRole('img', { name: /Vista dimensional completa/ })).toBeVisible()
   await expect(addButton(page)).toBeDisabled()
-  await expect(addButton(page)).toHaveAccessibleDescription('Las dimensiones están completas. Falta validar la geometría en T03.')
+  await expect(addButton(page)).toHaveAccessibleDescription('Geometría convexa validada. El registro de piezas en el pedido aún no está disponible.')
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
 })
 
@@ -135,4 +135,57 @@ test('T01-T02-E04: deshacer y reiniciar invalidan las medidas del borrador', asy
   await expect(page.getByRole('spinbutton')).toHaveCount(0)
   await expect(page.getByRole('button', { pressed: true })).toHaveCount(0)
   await expect(page.getByRole('img', { name: /Vista dimensional/ })).toHaveCount(0)
+})
+
+test('T03-E05: dimensiones completas validan convexidad automáticamente y borrar retira el éxito', async ({ page }) => {
+  const validation = page.getByRole('status', { name: 'Resultado de validación geométrica' })
+  await expect(validation).toHaveText('Pendiente de completar dimensiones.')
+  await drawAndClose(page)
+  await fill(page)
+  await expect(validation).toHaveText('Geometría convexa validada.')
+  await expect(validation).toBeVisible()
+  await expect(addButton(page)).toBeDisabled()
+  await expect(page.getByText('El registro de piezas en el pedido aún no está disponible.', { exact: true })).toBeVisible()
+  await field(page, 1).fill('')
+  await expect(validation).toHaveText('Pendiente de completar dimensiones.')
+  await field(page, 1).fill('850')
+  await expect(validation).toHaveText('Geometría convexa validada.')
+})
+
+test('T03-E06: concavidad y cambio a autointersección rechazan el flujo sin alterar otras medidas', async ({ page }) => {
+  await drawAndClose(page, [[100, 100], [500, 100], [260, 280], [500, 460], [100, 460]])
+  await fill(page, [400, 300, 300, 400, 360])
+  await expect(page.getByRole('img', { name: /Vista dimensional completa/ })).toBeVisible()
+  const rejection = page.getByRole('alert', { name: 'Resultado de validación geométrica' })
+  await expect(rejection).toHaveText('La figura resultante no es convexa.')
+  await expect(rejection).toBeVisible()
+  await expect(addButton(page)).toBeDisabled()
+  await field(page, 2).fill('700')
+  await expect(page.getByRole('img', { name: /Vista dimensional completa/ })).toBeVisible()
+  await expect(rejection).toHaveText('La geometría se intersecta consigo misma.')
+  await expect(rejection).not.toContainText(/cross|epsilon|determinant|stack/i)
+  for (const [id, value] of [[1, 400], [3, 300], [4, 400], [5, 360]]) await expect(field(page, id)).toHaveValue(String(value))
+  await expect(addButton(page)).toBeDisabled()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+})
+
+test('T03-E07: bow-tie simétrico completo se rechaza por autointersección', async ({ page }) => {
+  await drawAndClose(page, [[100, 50], [400, 450], [100, 450], [400, 50]])
+  await fill(page, [500, 300, 500, 300])
+  await expect(page.getByRole('img', { name: /Vista dimensional completa/ })).toBeVisible()
+  await expect(page.getByRole('alert', { name: 'Resultado de validación geométrica' })).toHaveText('La geometría se intersecta consigo misma.')
+  await expect(addButton(page)).toBeDisabled()
+  await expect(page.getByText('Geometría convexa validada.', { exact: true })).toHaveCount(0)
+})
+
+test('T03-E08: regresión de descripción accesible conserva el motivo actual del bloqueo', async ({ page }) => {
+  await expect(addButton(page)).toHaveAccessibleDescription('Pendiente de completar dimensiones. El registro de piezas en el pedido aún no está disponible.')
+  await drawAndClose(page)
+  await fill(page)
+  await expect(addButton(page)).toHaveAccessibleDescription('Geometría convexa validada. El registro de piezas en el pedido aún no está disponible.')
+  await page.getByRole('button', { name: 'Reiniciar dibujo' }).click()
+  await drawAndClose(page, [[100, 100], [500, 100], [260, 280], [500, 460], [100, 460]])
+  await fill(page, [400, 300, 300, 400, 360])
+  await expect(addButton(page)).toHaveAccessibleDescription('La figura resultante no es convexa. El registro de piezas en el pedido aún no está disponible.')
+  await expect(addButton(page)).toBeDisabled()
 })

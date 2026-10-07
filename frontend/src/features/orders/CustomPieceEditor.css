@@ -424,6 +424,9 @@
 
 .custom-piece-editor__next-step > div { flex: 1 1 260px; min-width: 0; }
 .custom-piece-editor__next-step p { margin-top: 6px; color: var(--editor-muted); font-size: 13px; line-height: 1.5; }
+.custom-piece-editor__next-step .custom-piece-editor__validation-message { font-size: 14px; font-weight: 650; }
+.custom-piece-editor__validation-message[data-valid="true"] { color: var(--editor-success); }
+.custom-piece-editor__validation-message[data-rejected="true"] { color: var(--editor-error); }
 .custom-piece-editor__button--add { flex-shrink: 0; }
 .custom-piece-editor__segment-list {
   display: grid;

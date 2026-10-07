@@ -197,7 +197,7 @@ describe('HU-007 T02 — dimensiones y selección (caja negra)', () => {
     for (let id = 2; id <= 5; id++) expect(field(id)).toHaveValue(lengths[id - 1])
   })
 
-  test('T02-C05: dimensiones completas mantienen Agregar deshabilitado por T03', async () => {
+  test('T02-C05: dimensiones completas mantienen Agregar deshabilitado por registro pendiente', async () => {
     const user = setup()
     await close(user)
     await fill(user)
@@ -205,7 +205,7 @@ describe('HU-007 T02 — dimensiones y selección (caja negra)', () => {
     expect(screen.getByText('Vista dimensional completa')).toBeVisible()
     expect(screen.getByRole('img', { name: /Vista dimensional completa/ })).toBeVisible()
     expect(button('Agregar pieza al pedido')).toBeDisabled()
-    expect(button('Agregar pieza al pedido')).toHaveAccessibleDescription('Las dimensiones están completas. Falta validar la geometría en T03.')
+    expect(button('Agregar pieza al pedido')).toHaveAccessibleDescription('Geometría convexa validada. El registro de piezas en el pedido aún no está disponible.')
   })
 
   test('T02-C06: longitudes 1000/100/100/100/100 informan imposibilidad sin convexidad', async () => {
@@ -300,5 +300,104 @@ describe('HU-007 T02 — dimensiones y selección (caja negra)', () => {
     expect(field(2)).toHaveFocus()
     expect(selector(2)).toHaveAttribute('aria-pressed', 'true')
     expect(within(screen.getByRole('region', { name: 'Dimensiones por segmento' })).getAllByRole('spinbutton')).toHaveLength(5)
+  })
+})
+
+describe('HU-007 T03 — validación geométrica derivada (caja negra)', () => {
+  const concave = [[100, 100], [500, 100], [260, 280], [500, 460], [100, 460]]
+  const concaveLengths = [400, 300, 300, 400, 360]
+  const validation = (role = 'status') => screen.getByRole(role, { name: 'Resultado de validación geométrica' })
+
+  async function dimensionConcave(user) {
+    await draw(user, concave)
+    await user.click(button('Cerrar polígono'))
+    await fill(user, concaveLengths)
+  }
+
+  test('T03-C01: pendiente antes de cerrar y mientras hay longitudes estimadas', async () => {
+    const user = setup()
+    expect(validation()).toHaveTextContent('Pendiente de completar dimensiones.')
+    await close(user)
+    await user.type(field(1), '850')
+    expect(screen.getByRole('img', { name: /Vista dimensional provisional/ })).toBeVisible()
+    expect(validation()).toHaveTextContent('Pendiente de completar dimensiones.')
+    expect(screen.queryByText('Geometría convexa validada.')).not.toBeInTheDocument()
+    expect(button('Agregar pieza al pedido')).toBeDisabled()
+  })
+
+  test('T03-C02: geometría completa convexa informa éxito accesible sin habilitar registro', async () => {
+    const user = setup()
+    await close(user)
+    await fill(user)
+    expect(validation()).toHaveTextContent('Geometría convexa validada.')
+    expect(validation()).toHaveAttribute('aria-atomic', 'true')
+    expect(validation()).toBeVisible()
+    expect(screen.queryByRole('button', { name: /^Validar/ })).not.toBeInTheDocument()
+    expect(button('Agregar pieza al pedido')).toBeDisabled()
+    expect(screen.getByText('El registro de piezas en el pedido aún no está disponible.')).toBeVisible()
+  })
+
+  test('T03-C03: geometría completa cóncava muestra rechazo y conserva medidas', async () => {
+    const user = setup()
+    await dimensionConcave(user)
+    expect(screen.getByRole('img', { name: /Vista dimensional completa/ })).toBeVisible()
+    expect(validation('alert')).toHaveTextContent('La figura resultante no es convexa.')
+    expect(validation('alert')).toBeVisible()
+    expect(validation('alert')).toHaveAttribute('aria-atomic', 'true')
+    expect(validation('alert')).not.toHaveTextContent(/epsilon|determinant|cross|stack/i)
+    for (let id = 1; id <= 5; id++) expect(field(id)).toHaveValue(concaveLengths[id - 1])
+    expect(button('Agregar pieza al pedido')).toBeDisabled()
+  })
+
+  test('T03-C04: bow-tie completo se anuncia como autointersección, no área nula', async () => {
+    const user = setup()
+    await draw(user, [[100, 100], [400, 500], [100, 500], [400, 100]])
+    await user.click(button('Cerrar polígono'))
+    await fill(user, [500, 300, 500, 300])
+    expect(screen.getByRole('img', { name: /Vista dimensional completa/ })).toBeVisible()
+    expect(validation('alert')).toHaveTextContent('La geometría se intersecta consigo misma.')
+    expect(button('Agregar pieza al pedido')).toBeDisabled()
+  })
+
+  test('T03-C05: editar S2 recalcula concavidad→cruce→concavidad sin resultado obsoleto', async () => {
+    const user = setup()
+    await dimensionConcave(user)
+    expect(validation('alert')).toHaveTextContent('La figura resultante no es convexa.')
+    await user.clear(field(2))
+    expect(validation()).toHaveTextContent('Pendiente de completar dimensiones.')
+    await user.type(field(2), '700')
+    expect(screen.getByRole('img', { name: /Vista dimensional completa/ })).toBeVisible()
+    expect(validation('alert')).toHaveTextContent('La geometría se intersecta consigo misma.')
+    await user.clear(field(2))
+    await user.type(field(2), '300')
+    expect(validation('alert')).toHaveTextContent('La figura resultante no es convexa.')
+    for (const id of [1, 3, 4, 5]) expect(field(id)).toHaveValue(concaveLengths[id - 1])
+  })
+
+  test('T03-C06: borrar o invalidar medidas retira VALID y corregir vuelve a validar', async () => {
+    const user = setup()
+    await close(user)
+    await fill(user)
+    expect(validation()).toHaveTextContent('Geometría convexa validada.')
+    await user.clear(field(1))
+    expect(validation()).toHaveTextContent('Pendiente de completar dimensiones.')
+    await user.type(field(1), '10000')
+    expect(screen.queryByRole('img', { name: /Vista dimensional completa/ })).not.toBeInTheDocument()
+    expect(validation()).toHaveTextContent('Pendiente de completar dimensiones.')
+    expect(button('Agregar pieza al pedido')).toBeDisabled()
+    await user.clear(field(1))
+    await user.type(field(1), '850')
+    expect(validation()).toHaveTextContent('Geometría convexa validada.')
+  })
+
+  test.each(['Deshacer último vértice', 'Reiniciar dibujo'])('T03-C07: %s invalida el éxito previo', async (action) => {
+    const user = setup()
+    await close(user)
+    await fill(user)
+    expect(validation()).toHaveTextContent('Geometría convexa validada.')
+    await user.click(button(action))
+    expect(validation()).toHaveTextContent('Pendiente de completar dimensiones.')
+    expect(screen.queryByText('Geometría convexa validada.')).not.toBeInTheDocument()
+    expect(button('Agregar pieza al pedido')).toBeDisabled()
   })
 })
