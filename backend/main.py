@@ -1,10 +1,11 @@
-from fastapi import FastAPI
+﻿from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
 from app.modules.authentication.presentation.router import router as authentication_router
 from app.modules.inventory.presentation.router import router as inventory_router
 from app.modules.users.presentation.router import router as users_router
+from app.modules.orders.presentation.router import router as orders_router
 
 app = FastAPI(
     title="Optimizador de Corte de Vidrio",
@@ -18,12 +19,14 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type"],
 )
 
-# Rutas de autenticación (HU-001)
+# Rutas de autenticaciÃ³n (HU-001)
 app.include_router(authentication_router)
 # Rutas de inventario (TA-003)
 app.include_router(inventory_router)
-# Rutas de gestión de usuarios (HU-003)
+# Rutas de gestiÃ³n de usuarios (HU-003)
 app.include_router(users_router)
+# Rutas de pedidos (HU-007)
+app.include_router(orders_router)
 
 
 @app.get("/")

@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Draft |
+| Estado | Reviewed |
 | PBI relacionado | HU-007 |
 | Tarea | T04 — Integrar pieza personalizada con registro de pedido |
 | Responsable | Andro Joseph Quispe Cesias |
@@ -143,7 +143,7 @@ Las representaciones en Base de Datos de dimensiones (opcional) y geometria (obl
 - geometria = {"type": "CIRCUNFERENCIA", "radius_mm": R}
 
 **POLIGONO_CONVEXO:**
-- dimensiones = 
+- dimensiones =
 ull
 - geometria = {"type": "POLIGONO_CONVEXO", "vertices_mm": [[...], [...], ...]}
 
@@ -259,4 +259,3 @@ Documentación con bitácora de evidencia alojada en docs/evidence/sprint-01/HU-
 - [ ] Lint y format validan estrictamente limpio.
 - [ ] Aprobación formal (Review) de Stakeholder y Reviewer Propuesto.
 - [ ] Rama disponible para rebase o Integración definitiva sin conflictos destructivos de origin/main.
-
