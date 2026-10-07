@@ -1,6 +1,6 @@
 # TA-011 — Prueba funcional
 
-Casos ejecutados de los bloques 2, 3 y 4, documentados con las capturas
+Casos ejecutados de los bloques 2, 3, 4 y 5, documentados con las capturas
 oficiales y las confirmaciones manuales del usuario recogidas en
 [Integración de inventario](integracion-inventario.md). Esta actualización
 documental no implica una nueva ejecución de las pruebas.
@@ -22,3 +22,21 @@ Referencias por caso:
 No se afirma persistencia tras F5 ni se registran casos con entrada
 insuficientemente identificada. Los logs no muestran cuerpos de solicitudes
 ni consultas SQL directas.
+
+## Bloque 5 — Cambio de estado y permisos de gestión
+
+| ID | Caso | Entrada/precondición | Esperado | Obtenido | Estado | Evidencia |
+| --- | --- | --- | --- | --- | --- | --- |
+| TA011-PF-05 | Desactivar plancha | Rol Almacenero; plancha Catedral 5 mm, 3200 × 2000 mm, cantidad 12, activa; seleccionar Desactivar. | Estado Inactivo, acción Activar y feedback de éxito; PATCH 200 y GET posterior 200. | Catedral Inactivo y acción Activar; mensaje "Plancha desactivada correctamente.". Los logs muestran dos pares PATCH/GET de planchas con 200, sin identificar el estado enviado en cada PATCH. | PASS | [TA011-14](capturas/TA011-14-plancha-desactivada.png) y [TA011-18](capturas/TA011-18-patch-estado-200.png). |
+| TA011-PF-06 | Reactivar plancha | Rol Almacenero; la misma plancha Catedral inactiva; seleccionar Activar. | Estado Activo, acción Desactivar y feedback de éxito; PATCH 200 y GET posterior 200. | Catedral Activo y acción Desactivar; mensaje "Plancha activada correctamente.". Secuencias API de planchas con 200 observadas en conjunto. | PASS | [TA011-14](capturas/TA011-14-plancha-desactivada.png), [TA011-15](capturas/TA011-15-plancha-reactivada.png) y [TA011-18](capturas/TA011-18-patch-estado-200.png). |
+| TA011-PF-07 | Desactivar retazo | Rol Almacenero; RET-HU005-002, Incoloro, 6 mm, Rectángulo 600 × 300 mm, activo; seleccionar Desactivar. | Estado Inactivo y acción Activar; PATCH 200 y GET posterior 200. | RET-HU005-002 Inactivo y acción Activar. No se observa mensaje de desactivación. Los logs muestran dos pares PATCH/GET de retazos con 200, sin identificar el estado enviado en cada PATCH. | PASS | [TA011-16](capturas/TA011-16-retazo-desactivado.png) y [TA011-18](capturas/TA011-18-patch-estado-200.png). |
+| TA011-PF-08 | Reactivar retazo | Rol Almacenero; RET-HU005-002 inactivo; seleccionar Activar. | Estado Activo, acción Desactivar y feedback de éxito; PATCH 200 y GET posterior 200. | RET-HU005-002 Activo y acción Desactivar; mensaje "Retazo activado correctamente.". Secuencias API de retazos con 200 observadas en conjunto. | PASS | [TA011-16](capturas/TA011-16-retazo-desactivado.png), [TA011-17](capturas/TA011-17-retazo-reactivado.png) y [TA011-18](capturas/TA011-18-patch-estado-200.png). |
+| TA011-PF-09 | Operario consulta inventario sin acciones de gestión | Sesión con rol Operario; abrir Gestión de inventario y consultar Planchas y Retazos. | Ambos listados visibles; sin Registrar plancha/retazo, columna Acciones ni Activar/Desactivar. | Ambos listados visibles y acciones de gestión ausentes en las capturas. No se acredita un 403 backend. | PASS | [TA011-19](capturas/TA011-19-operario-planchas-solo-consulta.png) y [TA011-20](capturas/TA011-20-operario-retazos-solo-consulta.png). |
+
+Los PASS se limitan al alcance descrito en cada caso. TA011-PF-07 acredita
+el cambio de estado y acción; no acredita el mensaje de desactivación del
+retazo. Las operaciones PATCH individuales no se clasifican como activar
+o desactivar a partir de los logs, que no muestran el cuerpo enviado.
+
+Pendientes: edición de campos de plancha; edición de campos/geometría de
+retazo; prueba backend 403; filtros; pruebas 401/422; HU-008.

@@ -338,3 +338,97 @@ cambio de estado, filtros ni HU-008.
 Las evidencias revisadas no muestran JWT, encabezados Authorization,
 contraseñas, hashes, secretos ni credenciales de base de datos. No se
 reproducen identificadores locales ni rutas de Windows.
+
+## Bloque 5 — Cambio de estado y permisos de gestión
+
+### Plancha
+
+La entidad observada es una plancha Catedral, de 5 mm, dimensiones
+3200 × 2000 mm y cantidad 12. No es la plancha Espejo E2E de 1000 × 500 mm.
+Las capturas muestran una sesión con rol Almacenero y la pestaña Planchas.
+
+| Evidencia | Cambio verificado | Resultado visible |
+| --- | --- | --- |
+| [TA011-14-plancha-desactivada.png](capturas/TA011-14-plancha-desactivada.png) | Activo → Inactivo; acción Desactivar → Activar. | Plancha Catedral Inactivo, acción Activar y mensaje "Plancha desactivada correctamente.". |
+| [TA011-15-plancha-reactivada.png](capturas/TA011-15-plancha-reactivada.png) | Inactivo → Activo; acción Activar → Desactivar. | La misma plancha Catedral Activo, acción Desactivar y mensaje "Plancha activada correctamente.". |
+
+### Retazo
+
+La entidad observada es RET-HU005-002, tipo Incoloro, espesor 6 mm y
+geometría Rectángulo 600 × 300 mm. Las capturas muestran la pestaña Retazos
+y una sesión con rol Almacenero.
+
+| Evidencia | Cambio verificado | Resultado visible |
+| --- | --- | --- |
+| [TA011-16-retazo-desactivado.png](capturas/TA011-16-retazo-desactivado.png) | Activo → Inactivo; acción Desactivar → Activar. | RET-HU005-002 Inactivo y acción Activar. No aparece un mensaje de desactivación en esta captura. |
+| [TA011-17-retazo-reactivado.png](capturas/TA011-17-retazo-reactivado.png) | Inactivo → Activo; acción Activar → Desactivar. | RET-HU005-002 Activo, acción Desactivar y mensaje "Retazo activado correctamente.". |
+
+TA011-16 se conserva sin reemplazo: la nueva captura revisada muestra una
+activación, no una desactivación con mensaje. No se registra como observado
+el mensaje "Retazo desactivado correctamente.".
+
+### Secuencia API
+
+Referencia: [TA011-18-patch-estado-200.png](capturas/TA011-18-patch-estado-200.png).
+
+Se observan las siguientes operaciones, en este orden:
+
+| Orden | Método | Endpoint | Respuesta |
+| --- | --- | --- | --- |
+| 1 | PATCH | `/api/inventory/planchas/2` | 200 OK |
+| 2 | GET | `/api/inventory/planchas` | 200 OK |
+| 3 | PATCH | `/api/inventory/planchas/2` | 200 OK |
+| 4 | GET | `/api/inventory/planchas` | 200 OK |
+| 5 | PATCH | `/api/inventory/retazos/2` | 200 OK |
+| 6 | GET | `/api/inventory/retazos` | 200 OK |
+| 7 | PATCH | `/api/inventory/retazos/2` | 200 OK |
+| 8 | GET | `/api/inventory/retazos` | 200 OK |
+
+Los logs no muestran el cuerpo de las solicitudes. No se atribuye
+individualmente desde ellos qué PATCH fue activar o desactivar; los estados,
+las acciones y los mensajes se verifican mediante las capturas de interfaz.
+
+### Permisos Operario
+
+Referencias:
+
+- [TA011-19-operario-planchas-solo-consulta.png](capturas/TA011-19-operario-planchas-solo-consulta.png).
+- [TA011-20-operario-retazos-solo-consulta.png](capturas/TA011-20-operario-retazos-solo-consulta.png).
+
+La sesión identificada con rol Operario puede consultar los listados de
+Planchas y Retazos en Gestión de inventario. No se ven Registrar plancha,
+Registrar retazo, la columna Acciones ni botones Activar/Desactivar.
+
+Estas capturas demuestran la restricción visual de acciones de gestión;
+no demuestran una respuesta HTTP 403 del backend.
+
+### Resultado del Bloque 5
+
+| Punto verificado | Resultado |
+| --- | --- |
+| Permisos visuales por rol | PASS |
+| Cambio de estado de plancha | PASS |
+| Cambio de estado de retazo | PASS |
+| PATCH 200 | PASS |
+| GET posterior 200 | PASS |
+| Actualización de badge y acción | PASS |
+| Feedback visible observado | PASS — Desactivación y activación de plancha; activación de retazo. No se acredita el mensaje de desactivación del retazo. |
+
+**Resultado del Bloque 5: PASS**, limitado a los cambios de estado y permisos
+visuales documentados. Casos asociados: TA011-PF-05 a TA011-PF-09 en
+[Prueba funcional](prueba-funcional.md).
+
+Quedan explícitamente pendientes:
+
+- Edición de campos de plancha.
+- Edición de campos y geometría de retazo.
+- Prueba backend 403.
+- Filtros.
+- Pruebas 401/422.
+- HU-008.
+
+### Privacidad
+
+Las capturas revisadas no muestran JWT, encabezados Authorization,
+contraseñas, hashes ni secretos. Los nombres e identificadores de cuenta
+visibles no se reproducen en el texto.

@@ -36,3 +36,52 @@ de evidencia de consultas SQL directas y no se afirma haberlas ejecutado.
 Las respuestas HTTP y los listados acreditan el flujo API/interfaz observado;
 no constituyen por sí solos una inspección directa de la base de datos ni una
 prueba de persistencia tras F5.
+
+## Bloque 5 — Cambio de estado y permisos de gestión
+
+### Respuesta API y consulta posterior
+
+Referencia: [TA011-18-patch-estado-200.png](capturas/TA011-18-patch-estado-200.png).
+
+Secuencia exacta de las operaciones PATCH/GET observadas:
+
+| Orden | Operación | Respuesta | Etapa |
+| --- | --- | --- | --- |
+| 1 | PATCH `/api/inventory/planchas/2` | 200 OK | Respuesta inmediata de actualización. |
+| 2 | GET `/api/inventory/planchas` | 200 OK | Consulta posterior del listado de planchas. |
+| 3 | PATCH `/api/inventory/planchas/2` | 200 OK | Respuesta inmediata de actualización. |
+| 4 | GET `/api/inventory/planchas` | 200 OK | Consulta posterior del listado de planchas. |
+| 5 | PATCH `/api/inventory/retazos/2` | 200 OK | Respuesta inmediata de actualización. |
+| 6 | GET `/api/inventory/retazos` | 200 OK | Consulta posterior del listado de retazos. |
+| 7 | PATCH `/api/inventory/retazos/2` | 200 OK | Respuesta inmediata de actualización. |
+| 8 | GET `/api/inventory/retazos` | 200 OK | Consulta posterior del listado de retazos. |
+
+No se atribuye individualmente desde los logs qué PATCH activó o desactivó
+la entidad: no se muestran los cuerpos de solicitud. Cada PATCH observado
+va seguido de un GET 200 del listado de la misma entidad.
+
+### Visualización en frontend
+
+| Entidad observada | Resultado visible | Evidencia |
+| --- | --- | --- |
+| Plancha Catedral, 5 mm, 3200 × 2000 mm, cantidad 12 | Inactivo, acción Activar y mensaje "Plancha desactivada correctamente.". | [TA011-14](capturas/TA011-14-plancha-desactivada.png). |
+| La misma plancha Catedral | Activo, acción Desactivar y mensaje "Plancha activada correctamente.". | [TA011-15](capturas/TA011-15-plancha-reactivada.png). |
+| RET-HU005-002, Incoloro, 6 mm, Rectángulo 600 × 300 mm | Inactivo y acción Activar; no se observa mensaje de desactivación. | [TA011-16](capturas/TA011-16-retazo-desactivado.png). |
+| El mismo retazo RET-HU005-002 | Activo, acción Desactivar y mensaje "Retazo activado correctamente.". | [TA011-17](capturas/TA011-17-retazo-reactivado.png). |
+
+La prueba de plancha corresponde a Catedral, no a la plancha Espejo E2E de
+1000 × 500 mm. No se afirman consultas SQL directas ni persistencia tras F5
+a partir de estas evidencias.
+
+### Permisos y alcance del cierre
+
+[TA011-19](capturas/TA011-19-operario-planchas-solo-consulta.png) y
+[TA011-20](capturas/TA011-20-operario-retazos-solo-consulta.png) muestran al
+Operario consultando Planchas y Retazos sin botones de registro, columna
+Acciones ni Activar/Desactivar. Acreditan restricción visual, no HTTP 403.
+
+Bloque 5: PASS para cambio de estado, PATCH 200, GET posterior 200,
+actualización de badge/acción, permisos visuales y feedback efectivamente
+visible. Quedan pendientes edición de campos de plancha, edición de
+campos/geometría de retazo, prueba backend 403, filtros, pruebas 401/422
+y HU-008.
