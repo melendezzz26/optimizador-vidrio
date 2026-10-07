@@ -226,3 +226,115 @@ Las evidencias revisadas no muestran JWT, encabezados Authorization,
 contraseñas, hashes, secretos ni credenciales de base de datos. El usuario
 local y la ruta de Windows visibles en la terminal no son secretos y no se
 reproducen en este documento.
+
+## Bloque 4 — Registro E2E de retazo
+
+### Datos de prueba
+
+- Código: RET-TA011-E2E-001
+- Tipo: Espejo
+- id_tipo_vidrio: 6
+- Espesor: 6 mm
+- Geometría: RECTANGULO
+- Ancho: 1000 mm
+- Alto: 500 mm
+- Área calculada por backend: 500000 mm²
+
+Este bloque combina las capturas revisadas con los resultados de ejecución
+y los detalles de implementación proporcionados por el usuario. El identificador
+del tipo, el cálculo en backend, la omisión del área en el envío y la semántica
+accesible no se deducen de una imagen estática.
+
+### Evidencia 8 — Formulario
+
+Referencia: [TA011-08-formulario-registro-retazo.png](capturas/TA011-08-formulario-registro-retazo.png).
+
+Se observa el formulario Registrar retazo integrado dentro de Gestión de
+Inventario, sin AppShell duplicado visible. Contiene el código RET-TA011-E2E-001,
+tipo Espejo, espesor 6 mm, forma Rectángulo y dimensiones 1000 × 500 mm.
+
+### Evidencia 9 — Registro exitoso
+
+Referencia: [TA011-09-retazo-registrado-listado.png](capturas/TA011-09-retazo-registrado-listado.png).
+
+Se observa la pestaña Retazos activa, el formulario cerrado y el mensaje
+"Retazo registrado correctamente.". El listado contiene:
+
+| Código | Tipo | Espesor | Geometría | Área | Estado |
+| --- | --- | --- | --- | --- | --- |
+| RET-TA011-E2E-001 | Espejo | 6 mm | Rectángulo 1000 × 500 mm | 500000 mm² | Activo |
+
+El listado se actualizó sin recarga manual, según la ejecución informada por
+el usuario. La captura documenta el resultado visible de esa operación.
+
+### Evidencia 10 — Secuencia API
+
+Referencia: [TA011-10-post-retazo-201.png](capturas/TA011-10-post-retazo-201.png).
+
+Los logs muestran POST `/api/inventory/retazos` con respuesta 201 Created,
+seguido de GET `/api/inventory/retazos` con respuesta 200 OK.
+
+Según la información de la prueba proporcionada por el usuario, el área no
+fue enviada por el frontend y fue calculada por el backend: 1000 × 500 =
+500000 mm². Los logs no muestran el cuerpo de la solicitud; el valor final
+se observa en la evidencia 9.
+
+### Evidencia 11 — Conflicto por código duplicado
+
+Referencia: [TA011-11-retazo-error-409.png](capturas/TA011-11-retazo-error-409.png).
+
+Se reintentó registrar el código RET-TA011-E2E-001. Tras el conflicto, el
+formulario permaneció abierto y conservó los datos ingresados. Se observa
+un único mensaje de error: "El código de retazo ya existe.".
+
+Los valores visibles en este reintento son RET-TA011-E2E-001, Espejo, 6 mm,
+Rectángulo, ancho 1233 mm y alto 1234 mm. Estas dimensiones corresponden al
+reintento duplicado, no al registro exitoso de 1000 × 500 mm.
+
+### Evidencia 12 — HTTP 409
+
+Referencia: [TA011-12-post-retazo-409.png](capturas/TA011-12-post-retazo-409.png).
+
+Se observa POST `/api/inventory/retazos` con respuesta 409 Conflict. No se
+observó un GET `/api/inventory/retazos` inmediatamente posterior como parte
+de esa operación fallida, dentro del tramo de logs capturado.
+
+### Evidencia 13 — Feedback visual
+
+Referencia: [TA011-13-feedback-exito-inventario.png](capturas/TA011-13-feedback-exito-inventario.png).
+
+El feedback de éxito de Inventario fue mejorado y se presenta como un bloque
+visual diferenciado. La captura muestra el mensaje de éxito de una operación
+de plancha; no corresponde al POST del retazo.
+
+Según los detalles de implementación proporcionados por el usuario, el
+feedback utiliza semántica accesible de status y el patrón es compartido por
+las operaciones de planchas y retazos. La captura acredita su presentación
+visual; no muestra por sí sola la semántica del DOM.
+
+### Resultado Bloque 4
+
+| Punto verificado | Resultado |
+| --- | --- |
+| RegistrarRetazoForm integrado | PASS |
+| POST retazo 201 | PASS |
+| GET posterior 200 | PASS |
+| Actualización sin F5 | PASS |
+| Área calculada por backend | PASS |
+| Formulario cerrado después del éxito | PASS |
+| Código duplicado devuelve 409 | PASS |
+| Formulario permanece abierto tras 409 | PASS |
+| Valores se conservan | PASS |
+| Mensaje de conflicto visible | PASS |
+| No se ejecuta refresco posterior al POST fallido | PASS — Sin GET posterior observado en el tramo capturado y según la ejecución informada. |
+| Feedback visual accesible implementado | PASS — Presentación visual revisada y semántica status informada por el usuario. |
+
+**Resultado del Bloque 4: PASS. Cierre documental completado** con el alcance
+y las fuentes de verificación indicados. No se añaden resultados de edición,
+cambio de estado, filtros ni HU-008.
+
+### Privacidad
+
+Las evidencias revisadas no muestran JWT, encabezados Authorization,
+contraseñas, hashes, secretos ni credenciales de base de datos. No se
+reproducen identificadores locales ni rutas de Windows.
