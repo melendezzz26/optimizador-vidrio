@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { AppShell } from '../../shared/components/AppShell';
-import { PageCard, PageHeader } from '../../shared/components/PageLayout';
-import { getPlanchas, getRetazos, getTiposVidrio } from './inventoryApi';
+import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
+import RegistrarPlanchaForm from './RegistrarPlanchaForm';
+import { createPlancha, getPlanchas, getRetazos, getTiposVidrio } from './inventoryApi';
 import './inventory.css';
 
 const TABS = [
@@ -124,6 +125,10 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
   const [retazos, setRetazos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
+  const [showPlanchaForm, setShowPlanchaForm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [operationError, setOperationError] = useState('');
+  const [operationSuccess, setOperationSuccess] = useState('');
   const titleId = useId();
   const tabPanelId = useId();
   const tabRefs = useRef({});
@@ -151,6 +156,47 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
     return () => { active = false; };
   }, [handleApiError]);
 
+  function openPlanchaForm() {
+    setOperationError('');
+    setOperationSuccess('');
+    setShowPlanchaForm(true);
+  }
+
+  function handleCancelPlancha() {
+    setShowPlanchaForm(false);
+    setOperationError('');
+    setOperationSuccess('');
+  }
+
+  async function handleCreatePlancha(payload) {
+    setOperationError('');
+    setOperationSuccess('');
+    setIsSubmitting(true);
+    try {
+      try {
+        await createPlancha(payload);
+      } catch (error) {
+        setOperationError(handleApiError(error).message);
+        return;
+      }
+
+      try {
+        const updatedPlanchas = await getPlanchas();
+        setPlanchas(updatedPlanchas);
+        setActiveTab('planchas');
+        setShowPlanchaForm(false);
+        setOperationSuccess('Plancha registrada correctamente.');
+      } catch (error) {
+        handleApiError(error);
+        setActiveTab('planchas');
+        setShowPlanchaForm(false);
+        setOperationError('La plancha fue registrada, pero no se pudo actualizar el listado.');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   const typesById = new Map(catalogo.map((tipo) => [tipo.id_tipo_vidrio, tipo.nombre]));
   const rows = activeTab === 'planchas' ? planchas : retazos;
   const emptyMessage = activeTab === 'planchas'
@@ -169,8 +215,15 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
     if (nextIndex === null) return;
     event.preventDefault();
     const nextTab = TABS[nextIndex];
-    setActiveTab(nextTab.id);
+    handleTabChange(nextTab.id);
     tabRefs.current[nextTab.id]?.focus();
+  }
+
+  function handleTabChange(nextTab) {
+    setActiveTab(nextTab);
+    setShowPlanchaForm(false);
+    setOperationError('');
+    setOperationSuccess('');
   }
 
   return (
@@ -194,7 +247,7 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
               id={`${tabPanelId}-tab-${tab.id}`}
               tabIndex={activeTab === tab.id ? 0 : -1}
               ref={(element) => { tabRefs.current[tab.id] = element; }}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabChange(tab.id)}
               onKeyDown={(event) => handleTabKeyDown(event, tab.id)}
             >
               {tab.label}
@@ -206,7 +259,24 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
       {isLoading && <PageCard><p className="inventory-status" role="status">Cargando inventario...</p></PageCard>}
       {loadError && <PageCard><p className="inventory-error" role="alert">{loadError}</p></PageCard>}
 
-      {!isLoading && !loadError && (
+      {operationSuccess && !showPlanchaForm && activeTab === 'planchas' && (
+        <p className="inventory-status" role="status">{operationSuccess}</p>
+      )}
+
+      {operationError && activeTab === 'planchas' && (
+        <p className="inventory-error" role="alert">{operationError}</p>
+      )}
+
+      {showPlanchaForm && activeTab === 'planchas' && (
+        <RegistrarPlanchaForm
+          catalogo={catalogo}
+          onSubmit={handleCreatePlancha}
+          isSubmitting={isSubmitting}
+          onCancel={handleCancelPlancha}
+        />
+      )}
+
+      {!isLoading && !loadError && !showPlanchaForm && (
         <PageCard
           as="section"
           className="inventory-list"
@@ -215,6 +285,13 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
           aria-labelledby={`${tabPanelId}-tab-${activeTab}`}
         >
           <h2>{activeTab === 'planchas' ? 'Planchas registradas' : 'Retazos registrados'}</h2>
+          {activeTab === 'planchas' && (
+            <ActionBar>
+              <button className="ng-button ng-button--primary" type="button" onClick={openPlanchaForm}>
+                Registrar plancha
+              </button>
+            </ActionBar>
+          )}
           {rows.length === 0 ? (
             <p className="inventory-status">{emptyMessage}</p>
           ) : (
