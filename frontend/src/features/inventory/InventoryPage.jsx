@@ -52,6 +52,41 @@ function geometryDescription(geometria) {
   return 'Geometría no disponible';
 }
 
+function normalizedRetazoGeometry(geometria) {
+  if (!geometria) return null;
+  if (geometria.type === 'RECTANGULO') {
+    return {
+      type: 'RECTANGULO',
+      width_mm: Number(geometria.width_mm),
+      height_mm: Number(geometria.height_mm),
+    };
+  }
+  if (geometria.type === 'CIRCUNFERENCIA') {
+    return { type: 'CIRCUNFERENCIA', radius_mm: Number(geometria.radius_mm) };
+  }
+  if (geometria.type === 'POLIGONO_CONVEXO') {
+    return {
+      type: 'POLIGONO_CONVEXO',
+      vertices_mm: geometria.vertices_mm.map(([x, y]) => [Number(x), Number(y)]),
+    };
+  }
+  return null;
+}
+
+function retazoGeometriesEqual(left, right) {
+  const first = normalizedRetazoGeometry(left);
+  const second = normalizedRetazoGeometry(right);
+  if (!first || !second || first.type !== second.type) return false;
+  if (first.type === 'RECTANGULO') {
+    return first.width_mm === second.width_mm && first.height_mm === second.height_mm;
+  }
+  if (first.type === 'CIRCUNFERENCIA') return first.radius_mm === second.radius_mm;
+  if (first.vertices_mm.length !== second.vertices_mm.length) return false;
+  return first.vertices_mm.every(([x, y], index) => (
+    x === second.vertices_mm[index][0] && y === second.vertices_mm[index][1]
+  ));
+}
+
 function StatusBadge({ active }) {
   return (
     <span className={`inventory-badge${active ? ' inventory-badge--active' : ''}`}>
@@ -61,7 +96,7 @@ function StatusBadge({ active }) {
 }
 
 function InventoryTable({
-  kind, rows, typesById, canManage, onToggleStatus, onEditPlancha, pendingAction,
+  kind, rows, typesById, canManage, onToggleStatus, onEditPlancha, onEditRetazo, pendingAction,
 }) {
   if (kind === 'planchas') {
     return (
@@ -149,15 +184,25 @@ function InventoryTable({
               <td>{formatDate(retazo.fecha_registro)}</td>
               {canManage && (
                 <td>
-                  <button
-                    className="ng-button"
-                    type="button"
-                    disabled={pendingAction !== null}
-                    aria-busy={pendingAction?.id === retazo.id_retazo}
-                    onClick={() => onToggleStatus(retazo)}
-                  >
-                    {retazo.estado ? 'Desactivar' : 'Activar'}
-                  </button>
+                  <div className="inventory-row-actions">
+                    <button
+                      className="ng-button"
+                      type="button"
+                      disabled={pendingAction !== null}
+                      onClick={() => onEditRetazo(retazo)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="ng-button"
+                      type="button"
+                      disabled={pendingAction !== null}
+                      aria-busy={pendingAction?.id === retazo.id_retazo}
+                      onClick={() => onToggleStatus(retazo)}
+                    >
+                      {retazo.estado ? 'Desactivar' : 'Activar'}
+                    </button>
+                  </div>
                 </td>
               )}
             </tr>
@@ -178,6 +223,7 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
   const [showPlanchaForm, setShowPlanchaForm] = useState(false);
   const [showRetazoForm, setShowRetazoForm] = useState(false);
   const [editingPlancha, setEditingPlancha] = useState(null);
+  const [editingRetazo, setEditingRetazo] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [operationError, setOperationError] = useState('');
   const [operationWarning, setOperationWarning] = useState('');
@@ -225,6 +271,7 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
     setOperationError('');
     setOperationWarning('');
     setOperationSuccess('');
+    setEditingRetazo(null);
     setShowRetazoForm(true);
   }
 
@@ -238,6 +285,7 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
 
   function handleCancelRetazo() {
     setShowRetazoForm(false);
+    setEditingRetazo(null);
     setOperationError('');
     setOperationWarning('');
     setOperationSuccess('');
@@ -370,6 +418,82 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
     }
   }
 
+  function handleEditRetazo(retazo) {
+    if (isInventoryActionPending) return;
+    setEditingRetazo(retazo);
+    setShowRetazoForm(true);
+    setOperationError('');
+    setOperationWarning('');
+    setOperationSuccess('');
+  }
+
+  async function handleUpdateRetazo(values) {
+    if (!editingRetazo) return;
+
+    setOperationError('');
+    setOperationWarning('');
+    setOperationSuccess('');
+
+    const normalized = {
+      codigo: String(values.codigo).trim(),
+      id_tipo_vidrio: Number(values.id_tipo_vidrio),
+      espesor_mm: Number(values.espesor_mm),
+    };
+    const changes = {};
+    if (normalized.codigo !== String(editingRetazo.codigo).trim()) {
+      changes.codigo = normalized.codigo;
+    }
+    if (normalized.id_tipo_vidrio !== Number(editingRetazo.id_tipo_vidrio)) {
+      changes.id_tipo_vidrio = normalized.id_tipo_vidrio;
+    }
+    if (normalized.espesor_mm !== Number(editingRetazo.espesor_mm)) {
+      changes.espesor_mm = normalized.espesor_mm;
+    }
+
+    const normalizedGeometry = normalizedRetazoGeometry(values.geometria);
+    if (!retazoGeometriesEqual(values.geometria, editingRetazo.geometria)) {
+      changes.geometria = normalizedGeometry;
+    }
+
+    if (Object.keys(changes).length === 0) {
+      setOperationWarning('No hay cambios para guardar.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setPendingInventoryAction({
+      entity: 'retazo',
+      id: editingRetazo.id_retazo,
+      operation: 'edit',
+    });
+    try {
+      try {
+        await updateRetazo(editingRetazo.id_retazo, changes);
+      } catch (error) {
+        setOperationError(handleApiError(error).message);
+        return;
+      }
+
+      try {
+        const updatedRetazos = await getRetazos();
+        setRetazos(updatedRetazos);
+        setActiveTab('retazos');
+        setShowRetazoForm(false);
+        setEditingRetazo(null);
+        setOperationSuccess('Retazo actualizado correctamente.');
+      } catch (error) {
+        handleApiError(error);
+        setActiveTab('retazos');
+        setShowRetazoForm(false);
+        setEditingRetazo(null);
+        setOperationWarning('El retazo fue actualizado, pero no se pudo refrescar el listado.');
+      }
+    } finally {
+      setIsSubmitting(false);
+      setPendingInventoryAction(null);
+    }
+  }
+
   async function handleTogglePlanchaEstado(plancha) {
     const targetState = !plancha.estado;
     setOperationError('');
@@ -457,6 +581,7 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
     setShowPlanchaForm(false);
     setShowRetazoForm(false);
     setEditingPlancha(null);
+    setEditingRetazo(null);
     setOperationError('');
     setOperationWarning('');
     setOperationSuccess('');
@@ -511,7 +636,9 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
         <p className="inventory-feedback inventory-feedback--error" role="alert">{operationError}</p>
       )}
 
-      {operationWarning && (!showPlanchaForm || editingPlancha !== null) && !showRetazoForm && (
+      {operationWarning
+        && (!showPlanchaForm || editingPlancha !== null)
+        && (!showRetazoForm || editingRetazo !== null) && (
         <p className="inventory-feedback inventory-feedback--warning" role="status" aria-live="polite">
           {operationWarning}
         </p>
@@ -538,7 +665,16 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
       {showRetazoForm && activeTab === 'retazos' && (
         <RegistrarRetazoForm
           catalogo={catalogo}
-          onSubmit={handleCreateRetazo}
+          mode={editingRetazo ? 'edit' : 'create'}
+          initialValues={editingRetazo ? {
+            id_retazo: editingRetazo.id_retazo,
+            codigo: editingRetazo.codigo,
+            id_tipo_vidrio: editingRetazo.id_tipo_vidrio,
+            espesor_mm: editingRetazo.espesor_mm,
+            geometria: editingRetazo.geometria,
+          } : null}
+          key={editingRetazo ? `edit-${editingRetazo.id_retazo}` : 'create'}
+          onSubmit={editingRetazo ? handleUpdateRetazo : handleCreateRetazo}
           isSubmitting={isSubmitting}
           onCancel={handleCancelRetazo}
         />
@@ -580,6 +716,7 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
               onToggleStatus={activeTab === 'planchas'
                 ? handleTogglePlanchaEstado : handleToggleRetazoEstado}
               onEditPlancha={handleEditPlancha}
+              onEditRetazo={handleEditRetazo}
               pendingAction={pendingInventoryAction}
             />
           )}
