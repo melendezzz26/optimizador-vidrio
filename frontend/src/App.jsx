@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { LoginForm, SessionBar, canManageUsers, useSession } from './features/authentication';
+import {
+  LoginForm,
+  SessionBar,
+  canManageOrders,
+  canManageUsers,
+  canViewInventory,
+  useSession,
+} from './features/authentication';
+import { InventoryPage } from './features/inventory/InventoryPage';
 import { UsersPage } from './features/users';
 import NuevoPedido from './pages/NuevoPedido';
 import './App.css';
@@ -16,33 +24,46 @@ function App() {
     return <LoginForm onSignIn={signIn} notice={notice} />;
   }
 
-  // La gestión de usuarios solo se ofrece a quien puede usarla; el backend
-  // valida el permiso de todos modos.
+  const showOrdersOption = canManageOrders(session.usuario);
+  const showInventoryOption = canViewInventory(session.usuario);
   const showUsersOption = canManageUsers(session.usuario);
-  const currentView = showUsersOption ? view : 'orders';
+  const allowedViews = [
+    showOrdersOption && 'orders',
+    showInventoryOption && 'inventory',
+    showUsersOption && 'users',
+  ].filter(Boolean);
+  const fallbackView = allowedViews[0];
+  const currentView = allowedViews.includes(view) ? view : fallbackView;
 
   const toolbar = (
     <div className="app-toolbar">
       <SessionBar user={session.usuario} onSignOut={signOut} />
-      {showUsersOption && (
-        <nav className="app-nav" aria-label="Secciones">
-          <button type="button" className="app-nav-button"
+      <nav className="app-nav" aria-label="Secciones">
+          {showOrdersOption && <button type="button" className="app-nav-button"
             aria-current={currentView === 'orders' ? 'page' : undefined}
             onClick={() => setView('orders')}>
             Registro de pedidos
-          </button>
-          <button type="button" className="app-nav-button"
+          </button>}
+          {showInventoryOption && <button type="button" className="app-nav-button"
+            aria-current={currentView === 'inventory' ? 'page' : undefined}
+            onClick={() => setView('inventory')}>
+            Gestión de inventario
+          </button>}
+          {showUsersOption && <button type="button" className="app-nav-button"
             aria-current={currentView === 'users' ? 'page' : undefined}
             onClick={() => setView('users')}>
             Panel de roles
-          </button>
-        </nav>
-      )}
+          </button>}
+      </nav>
     </div>
   );
 
   if (currentView === 'users') {
     return <UsersPage currentUser={session.usuario} onSessionExpired={signOut} toolbar={toolbar} />;
+  }
+
+  if (currentView === 'inventory') {
+    return <InventoryPage onSessionExpired={signOut} toolbar={toolbar} user={session.usuario} />;
   }
 
   return (

@@ -1,0 +1,101 @@
+/* Listados de inventario sobre los tokens compartidos de NewGlass. */
+.inventory-tabs {
+  display: flex;
+  gap: var(--ng-space-2);
+  margin-top: var(--ng-space-6);
+  border-bottom: 1px solid var(--ng-border-subtle);
+}
+
+.inventory-tab {
+  min-height: 44px;
+  padding: var(--ng-space-2) var(--ng-space-4);
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: var(--ng-text-600);
+  font-weight: 600;
+}
+
+.inventory-tab[aria-selected='true'] {
+  border-bottom-color: var(--ng-primary-action);
+  color: var(--ng-primary-focus);
+}
+
+.inventory-tab:focus-visible {
+  outline: 2px solid var(--ng-primary-focus);
+  outline-offset: 2px;
+}
+
+.inventory-list { margin-top: var(--ng-space-6); }
+
+.inventory-list > h2 {
+  margin: 0 0 var(--ng-space-4);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.inventory-status,
+.inventory-error {
+  font-size: 14px;
+}
+
+.inventory-error {
+  color: var(--ng-error);
+  font-weight: 600;
+}
+
+.inventory-table-scroll { overflow-x: auto; }
+
+.inventory-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  font-size: 14px;
+  text-align: left;
+}
+
+.inventory-table th,
+.inventory-table td {
+  padding: var(--ng-space-3) var(--ng-space-2);
+  border-bottom: 1px solid var(--ng-border-subtle);
+  vertical-align: middle;
+}
+
+.inventory-table thead th {
+  color: var(--ng-text-900);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.inventory-table tbody th { font-weight: 600; }
+
+.inventory-badge {
+  display: inline-block;
+  padding: var(--ng-space-1) var(--ng-space-2);
+  border: 1px solid var(--ng-border-strong);
+  border-radius: var(--ng-radius-control);
+  color: var(--ng-text-600);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.inventory-badge--active {
+  border-color: var(--ng-primary-action);
+  background: var(--ng-action-tint);
+  color: var(--ng-primary-focus);
+}
+
+.inventory-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .inventory-tabs { margin-top: var(--ng-space-4); }
+  .inventory-list { margin-top: var(--ng-space-4); }
+}

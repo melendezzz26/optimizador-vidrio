@@ -93,7 +93,7 @@ export function UsersPage({ currentUser, onSessionExpired, toolbar }) {
   }
 
   return (
-    <AppShell activeItem="roles">
+    <AppShell activeItem="roles" user={currentUser}>
       {toolbar}
 
       {isLoading && <PageCard><p role="status">Cargando usuarios...</p></PageCard>}

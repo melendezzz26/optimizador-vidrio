@@ -3,4 +3,10 @@ export { LoginForm } from './LoginForm';
 export { SessionBar } from './SessionBar';
 export { useSession } from './useSession';
 export { getAccessToken } from './authApi';
-export { canManageUsers } from './permissions';
+export {
+	canConfigureOptimizer,
+	canManageOrders,
+	canManageUsers,
+	canViewInventory,
+	canViewResults,
+} from './permissions';
