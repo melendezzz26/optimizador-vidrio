@@ -102,3 +102,40 @@ del editor geométrico de Pedidos queda como mejora UI/UX posterior. Pendientes
 posteriores: mejora UI/UX de Inventario, filtros, mejora UX del editor de
 geometrías/polígonos, 401, 403 backend, 422 formal y estados UI restantes.
 HU-008 permanece fuera de este cierre.
+
+## Bloque 8A — Mejora UI/UX y filtros de Inventario
+
+Validación E2E confirmada del 7 de octubre de 2026 con datos reales,
+Almacenero y Operario; implementación `fac938c`. Capturas TA011-33 a TA011-40.
+Las acciones, ausencia de solicitudes al filtrar, HTTP, restauración y teclas
+se sustentan en la ejecución confirmada; las capturas muestran estados visibles.
+
+| ID | Caso | Precondición | Acción | Esperado | Obtenido | Evidencia | Resultado |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| TA011-PF-22 | Filtrar planchas por tipo, espesor y estado | Almacenero; 4 planchas cargadas; filtros en Todos. | Seleccionar Espejo, 6 mm, Activo/Inactivo; cambiar tipo a Catedral. | Reducir resultados, contador correcto, sin HTTP adicional; limpiar espesor incompatible. | Espejo + 6 mm: 2 de 4; Activo mantiene 2 e Inactivo da 0. Sin solicitudes adicionales; cambiar a Catedral limpia Espesor. | [TA011-33](capturas/TA011-33-planchas-filtros.png), [TA011-34](capturas/TA011-34-planchas-sin-resultados.png) y ejecución E2E. | PASS |
+| TA011-PF-23 | Filtrar retazos por tipo, espesor y estado | Almacenero; 3 retazos cargados. | Seleccionar Incoloro, 6 mm y Activo; después Inactivo. | Coincidencias y contador correctos, sin HTTP adicional. | Incoloro + 6 mm + Activo: 2 de 3; Inactivo: 0 de 3. Sin HTTP adicional. | [TA011-35](capturas/TA011-35-retazos-filtros.png), [TA011-36](capturas/TA011-36-retazos-sin-resultados.png) y ejecución E2E. | PASS |
+| TA011-PF-24 | Limpiar filtros | Filtros activos en cada listado. | Pulsar Limpiar filtros en Planchas y Retazos. | Restablecer Todos, recuperar el total y ocultar el botón. | Planchas vuelve a 4 de 4; Retazos a 3 de 3; botón ausente sin filtros activos. | Ejecución E2E; [TA011-33](capturas/TA011-33-planchas-filtros.png)/[TA011-35](capturas/TA011-35-retazos-filtros.png) muestran el botón antes y [TA011-38](capturas/TA011-38-operario-filtros-solo-consulta.png) muestra Retazos sin filtros. | PASS |
+| TA011-PF-25 | Mostrar estado sin resultados | Inventario existente: 4 planchas y 3 retazos. | Combinar Espejo + 6 mm + Inactivo en Planchas e Incoloro + 6 mm + Inactivo en Retazos; limpiar. | Mensaje de cero coincidencias, distinto de inventario vacío; limpieza recupera datos. | 0 de 4 y 0 de 3 con "No hay resultados para los filtros seleccionados."; limpiar recupera ambos listados. No se eliminaron datos para probar empty. | [TA011-34](capturas/TA011-34-planchas-sin-resultados.png), [TA011-36](capturas/TA011-36-retazos-sin-resultados.png) y ejecución E2E. | PASS |
+| TA011-PF-26 | Actualizar inventario con filtros activos | Catedral, 5 mm, 3200 × 2000 mm, cantidad 12, Activo; filtro Catedral + Activo con 2 de 4. | Desactivar, consultar Inactivo, reactivar y volver a Activo. | PATCH 200 + GET 200; excluir del filtro al dejar de coincidir, actualizar contador y restaurar el estado original. | Al desactivar queda 1 de 4; la plancha aparece bajo Inactivo. Cada PATCH /planchas/2 y GET /planchas devuelve 200. Reactivada: 2 de 4; dato final Activo, sin altas nuevas. | [TA011-37](capturas/TA011-37-operacion-con-filtro-activo.png) muestra la desactivación; red y restauración por ejecución E2E confirmada. | PASS |
+| TA011-PF-27 | Operario conserva consulta y filtros sin acciones | Sesión Operario con datos existentes. | Consultar, filtrar y limpiar Planchas y Retazos. | Listados y filtros disponibles; sin Registrar, Acciones, Editar ni Activar/Desactivar. | Planchas 4 → 2 → 4; Retazos 3 → 2 → 3, sin acciones de gestión ni HTTP adicional al filtrar. No se forzó un 403. | [TA011-38](capturas/TA011-38-operario-filtros-solo-consulta.png) muestra Retazos; ambos listados comprobados en el E2E. | PASS |
+| TA011-PF-28 | Responsive y navegación por teclado | Sesión Almacenero; listados cargados. | Revisar 1366 × 768, 768, 400 y 375 px; usar Tab, ArrowRight, ArrowLeft, Home y End; desplazar la tabla con teclado. | Sin overflow global, filtros/etiquetas utilizables, acciones accesibles mediante scroll interno y foco visible. | Los cuatro tamaños pasan; filtros apilados en móvil, botones sin superposición, tabs operables, tabla y acciones alcanzables por teclado. Estados con texto además del color. | [TA011-39](capturas/TA011-39-responsive-400.png), [TA011-40](capturas/TA011-40-responsive-375-acciones-foco.png), foco en [TA011-33](capturas/TA011-33-planchas-filtros.png) y ejecución E2E para tamaños/teclas. | PASS |
+
+Regresión create/edit/state: **PASS** en el alcance de abrir/cancelar registro
+y edición de ambas entidades, más cambio de estado reversible de plancha.
+No se insertaron registros nuevos; la Catedral de 5 mm, 3200 × 2000 mm,
+cantidad 12 quedó Activa.
+
+Los filtros locales Tipo / Espesor / Estado son independientes por pestaña.
+El contador y Limpiar filtros distinguen coincidencias del total; las tablas
+mantienen geometría compacta, área legible y acciones dentro del scroll interno.
+No-results no equivale a inventario vacío: no se acredita una nueva prueba
+E2E de empty sin registros.
+
+**Bloque 8A = PASS. TA-011 todavía no está finalizada.** Los pendientes de
+filtros/mejora general citados en bloques anteriores quedan actualizados.
+Siguen pendientes editor visual/reutilizable para POLIGONO_CONVEXO, 401,
+403 backend, validación formal restante de 422 de TA-011, cierre documental
+final y PR. No se afirma que HU-007 esté integrado a main; HU-008 queda fuera.
+
+Las capturas revisadas no exponen JWT, Authorization, contraseñas, hashes,
+tokens ni secretos; no se transcriben los datos identificativos de las cuentas.

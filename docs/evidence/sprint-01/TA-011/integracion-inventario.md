@@ -688,3 +688,101 @@ seleccionar. TA011-01 a TA011-26 se conservaron intactas.
 Las nuevas capturas no muestran JWT, Authorization, contraseñas, hashes,
 secretos ni credenciales Supabase. TA011-32 muestra nombre e identificador
 de cuenta; son datos identificativos que no se reproducen en este documento.
+
+## Bloque 8A — Mejora UI/UX y filtros de Inventario
+
+### Entorno y alcance
+
+Validación E2E del 7 de octubre de 2026 con datos reales, React/Vite y FastAPI,
+en sesiones Almacenero y Operario. Implementación versionada en
+`fac938c feat(TA-011): mejorar interfaz y filtros de inventario`.
+
+Se documentan la ejecución E2E ya confirmada y ocho capturas seleccionadas
+de las doce originales externas, copiadas sin alterar sus originales.
+Las capturas acreditan estados visibles; la ausencia de HTTP adicional,
+las respuestas PATCH/GET, la limpieza, la restauración y la navegación por
+teclado proceden de la ejecución confirmada, no de una imagen aislada.
+
+### Evidencias 33 a 40
+
+| Evidencia | Original externo | Contenido visible |
+| --- | --- | --- |
+| [TA011-33](capturas/TA011-33-planchas-filtros.png) | 02-filtros-planchas.png | Espejo + 6 mm, Estado Todos, 2 de 4 planchas, Limpiar filtros y foco en Espesor. |
+| [TA011-34](capturas/TA011-34-planchas-sin-resultados.png) | 03-sin-resultados-planchas.png | Espejo + 6 mm + Inactivo: 0 de 4 y mensaje de filtros sin coincidencias. |
+| [TA011-35](capturas/TA011-35-retazos-filtros.png) | 05-filtros-retazos.png | Incoloro + 6 mm + Activo: 2 de 3 retazos; geometría, área y acciones. La tabla está desplazada horizontalmente y recorta el inicio de los códigos. |
+| [TA011-36](capturas/TA011-36-retazos-sin-resultados.png) | 10-sin-resultados-retazos.png | Incoloro + 6 mm + Inactivo: 0 de 3 y Limpiar filtros. |
+| [TA011-37](capturas/TA011-37-operacion-con-filtro-activo.png) | 11-operacion-filtro-activo.png | Catedral + Activo: 1 de 4 y mensaje "Plancha desactivada correctamente.". |
+| [TA011-38](capturas/TA011-38-operario-filtros-solo-consulta.png) | 06-operario-solo-consulta.png | Operario consulta Retazos con filtros; sin Registrar retazo, Acciones, Editar ni Activar/Desactivar. |
+| [TA011-39](capturas/TA011-39-responsive-400.png) | 08-responsive-400.png | Vista a 400 px: filtros apilados, códigos legibles y tabla dentro del contenedor. |
+| [TA011-40](capturas/TA011-40-responsive-375-acciones-foco.png) | 12-responsive-375-acciones-foco.png | Vista a 375 px: tabla desplazada hasta Acciones y foco visible en Desactivar. |
+
+### Comportamiento y resultados E2E
+
+Filtros locales Tipo / Espesor / Estado, independientes por pestaña, con
+contador de coincidencias respecto del total y Limpiar filtros solo cuando
+hay filtros activos. Las tablas presentan geometría compacta, área alineada
+y acciones agrupadas, con desplazamiento horizontal dentro del contenedor.
+
+| Caso | Resultado | Observación confirmada |
+| --- | --- | --- |
+| Carga Planchas | PASS | 4 registros visibles. |
+| Filtros Planchas | PASS | Espejo + 6 mm: 2 de 4; sin HTTP adicional. Cambiar a un tipo incompatible limpia Espesor. |
+| Limpiar filtros Planchas | PASS | Vuelve a 4 de 4 y desaparece Limpiar filtros. |
+| No-results Planchas | PASS | 0 de 4 y "No hay resultados para los filtros seleccionados.". |
+| Carga Retazos | PASS | 3 registros visibles. |
+| Filtros Retazos | PASS | Incoloro + 6 mm: 2 de 3; sin HTTP adicional. |
+| Limpiar filtros Retazos | PASS | Vuelve a 3 de 3 y desaparece Limpiar filtros. |
+| No-results Retazos | PASS | 0 de 3; Limpiar filtros recupera los datos. |
+| Operación con filtros activos | PASS | PATCH 200 + GET 200; el registro sale del filtro Activo y el contador se actualiza. |
+| Operario | PASS | Consulta y filtra ambos listados, sin acciones de gestión. |
+| 1366 × 768 | PASS | Sin overflow horizontal global; Retazos utiliza scroll interno. |
+| 768 px | PASS | Controles utilizables y tabla con scroll interno. |
+| 400 px | PASS | Filtros apilados, etiquetas visibles y botones sin superposición. |
+| 375 px | PASS | Sin overflow global; acciones alcanzables desplazando la tabla. |
+| Teclado/foco | PASS | Tab alcanza filtros, tabla y acciones; ArrowRight, ArrowLeft, Home y End cambian la pestaña y el foco. Foco visible y tabla desplazable con teclado. |
+| Regresión create/edit/state | PASS | Registro y edición abren/cancelan en ambas entidades; cambio de estado de plancha ejecutado y restaurado. No se probaron nuevas altas. |
+
+No-results identifica cero coincidencias sobre un inventario existente
+(0 de 4 / 0 de 3), distinto de inventario vacío (sin registros). No se vació
+la base ni se acredita aquí una nueva ejecución E2E de empty, loading o error.
+Los estados muestran texto Activo/Inactivo y no dependen únicamente del color.
+Las capturas 39 y 40 son de página completa: la altura de la imagen no representa
+la altura del viewport. Los cuatro tamaños se verificaron durante el E2E.
+La captura 38 muestra Retazos; la comprobación de Operario también incluyó
+Planchas. No constituye una prueba de 403 backend.
+
+### Operación y restauración del dato de prueba
+
+Se utilizó la plancha Catedral, 5 mm, 3200 × 2000 mm, cantidad 12
+(`id_plancha=2`). Con Tipo Catedral y Estado Activo, había 2 de 4 planchas.
+Al desactivarla, PATCH `/api/inventory/planchas/2` → 200 seguido de
+GET `/api/inventory/planchas` → 200 dejó 1 de 4. Al seleccionar Inactivo,
+la misma plancha seguía disponible: desapareció del filtro, no fue eliminada.
+
+Se reactivó con otro PATCH 200 y GET 200; el filtro Catedral + Activo volvió
+a 2 de 4. **La plancha quedó Activa**, con sus dimensiones y cantidad originales.
+No se insertaron registros nuevos durante esta validación. TA011-37 muestra
+el resultado de desactivación; la red y la restauración fueron comprobadas
+durante el E2E, sin una captura específica de esas operaciones.
+
+### Resultado y pendientes
+
+**Bloque 8A = PASS. TA-011 todavía no está finalizada.**
+Casos asociados: TA011-PF-22 a TA011-PF-28 en [Prueba funcional](prueba-funcional.md).
+Los pendientes de filtros y mejora general de Inventario de los bloques
+anteriores quedan actualizados por este cierre; se mantienen pendientes:
+
+- Editor visual/reutilizable para POLIGONO_CONVEXO.
+- 401 y 403 backend.
+- Validación formal restante de 422 de TA-011.
+- Cierre documental final de TA-011 y PR.
+
+No se afirma integración de HU-007 a main; HU-008 queda fuera de este cierre.
+
+### Privacidad
+
+Las doce capturas revisadas no muestran JWT, Authorization, contraseñas,
+hashes, tokens ni secretos. Algunas muestran nombres e identificadores de
+cuentas, que no se transcriben. Ninguna se excluyó por privacidad; las cuatro
+no seleccionadas se conservan fuera del repositorio por menor aporte frente
+a la selección. No se modificaron capturas anteriores ni código.

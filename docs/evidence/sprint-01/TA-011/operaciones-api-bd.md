@@ -195,3 +195,34 @@ Siguen pendientes mejora UI/UX de Inventario, filtros, mejora UX del editor de
 geometrías/polígonos, 401, 403 backend, 422 formal y estados UI restantes.
 HU-008 permanece fuera de este cierre. Bloque 7: PASS; TA-011 continúa
 pendiente de esos trabajos posteriores.
+
+## Bloque 8A — Mejora UI/UX y filtros de Inventario
+
+### Operación con filtros activos
+
+El E2E del 7 de octubre de 2026 añade la comprobación del refresco bajo
+filtros locales; no cambia el contrato API. Con Catedral + Activo se desactivó
+la plancha `id_plancha=2`: Catedral, 5 mm, 3200 × 2000 mm, cantidad 12.
+
+| Etapa | Operación y respuesta confirmadas durante el E2E | Resultado de interfaz |
+| --- | --- | --- |
+| Desactivar | PATCH `/api/inventory/planchas/2` → 200; GET `/api/inventory/planchas` → 200. | El contador pasa de 2 de 4 a 1 de 4; mensaje de desactivación correcta. |
+| Consultar Inactivo | Cambio de filtro local, sin HTTP adicional. | La plancha sigue presente bajo Inactivo: no fue eliminada. |
+| Restaurar Activo | PATCH `/api/inventory/planchas/2` → 200; GET `/api/inventory/planchas` → 200. | Catedral + Activo vuelve a 2 de 4; plancha restaurada a Activo. |
+
+[TA011-37](capturas/TA011-37-operacion-con-filtro-activo.png) muestra el filtro,
+el contador 1 de 4 y el mensaje de desactivación; no muestra los HTTP ni la
+restauración. Estos se documentan a partir de la ejecución E2E confirmada,
+sin atribuirlos a una captura de red inexistente.
+
+Filtrar Planchas y Retazos no generó solicitudes adicionales. Después de cada
+PATCH se consultó únicamente el listado de Planchas; no se insertaron registros
+nuevos. La entidad terminó Activa, conservando dimensiones y cantidad.
+No se afirma inspección SQL directa ni prueba de persistencia tras F5.
+
+**Bloque 8A = PASS**, con detalle en [Integración](integracion-inventario.md)
+y TA011-PF-26 en [Prueba funcional](prueba-funcional.md). Actualiza los pendientes
+anteriores de filtros/mejora general; TA-011 todavía no está finalizada.
+Siguen pendientes editor visual/reutilizable para POLIGONO_CONVEXO, 401,
+403 backend, validación formal restante de 422, cierre documental final y PR.
+No se afirma integración de HU-007 a main ni cierre de HU-008.
