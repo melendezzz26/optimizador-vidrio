@@ -432,3 +432,149 @@ Quedan explícitamente pendientes:
 Las capturas revisadas no muestran JWT, encabezados Authorization,
 contraseñas, hashes ni secretos. Los nombres e identificadores de cuenta
 visibles no se reproducen en el texto.
+
+## Bloque 6 — Edición de plancha
+
+### Flujo y alcance
+
+La edición reutiliza RegistrarPlanchaForm, con mode=create para registro y
+mode=edit para edición. Precarga id_tipo_vidrio, espesor_mm, ancho_mm,
+alto_mm y cantidad. El formulario no permite editar estado; este continúa
+gestionándose mediante Activar/Desactivar.
+
+La acción Editar está restringida a Administrador y Almacenero según la
+lógica revisada. La sesión de prueba informada es Almacenero; Operario
+conserva solo consulta. No se declara una prueba E2E con Administrador ni
+una prueba backend 403 a partir de las imágenes.
+
+### PATCH parcial
+
+InventoryPage compara los valores numéricos con la plancha seleccionada y
+envía únicamente los campos modificados entre id_tipo_vidrio, espesor_mm,
+ancho_mm, alto_mm y cantidad. El formulario no envía estado, id_plancha ni
+fecha_registro en el cuerpo. El identificador se utiliza en la ruta PATCH.
+Esta descripción corresponde a la lógica revisada, no a un payload visible
+en los logs.
+
+### Evidencia 21 — Precarga
+
+Referencia: [TA011-21-editar-plancha-precarga.png](capturas/TA011-21-editar-plancha-precarga.png).
+
+Se observa Editar plancha con Espejo, 6 mm, ancho 1000.00 mm, alto 500.00 mm
+y cantidad 2 correctamente cargados; están disponibles Guardar cambios y
+Cancelar. La captura muestra el sidebar correspondiente al contexto de la
+prueba, pero el encabezado con el rol queda fuera del encuadre. El rol
+Almacenero se registra por el contexto de la sesión informada, no como texto
+visible en esta imagen. No se utiliza la captura con "Seleccionar espesor"
+como evidencia de precarga correcta.
+
+### Evidencias 22 y 23 — Edición de cantidad
+
+Referencias:
+
+- [TA011-22-plancha-editada-cantidad.png](capturas/TA011-22-plancha-editada-cantidad.png).
+- [TA011-23-patch-edicion-plancha-200.png](capturas/TA011-23-patch-edicion-plancha-200.png).
+
+La prueba informada cambió cantidad de 2 a 3. La interfaz muestra
+"Plancha actualizada correctamente." y la fila Espejo, 6 mm, 1000 × 500 mm,
+cantidad 3, Activo, con Editar disponible. El encabezado de sesión no está
+visible en TA011-22; el rol de ejecución corresponde al contexto informado.
+
+El backend muestra PATCH `/api/inventory/planchas/3` → 200 OK, seguido por
+GET `/api/inventory/planchas` → 200 OK. El listado se actualizó sin F5 según
+la ejecución E2E informada por el usuario. TA011-23 no muestra el payload y
+no permite identificar por sí sola qué campo cambió.
+
+### Evidencia 24 — Cantidad cero
+
+Referencia: [TA011-24-plancha-cantidad-cero.png](capturas/TA011-24-plancha-cantidad-cero.png).
+
+Tras el cambio informado de 3 a 0, se observa el mensaje
+"Plancha actualizada correctamente." y la fila Espejo, 6 mm,
+1000 × 500 mm, cantidad 0, todavía Activo. La actualización fue aceptada;
+cantidad cero no desactiva automáticamente la plancha.
+
+La regla de registro exige cantidad > 0; edición/PATCH permite cantidad
+entera >= 0. La regla de create se registra por la lógica revisada, sin
+atribuirle una nueva prueba E2E en este bloque.
+
+### Restauración de la entidad de prueba
+
+La captura adicional
+[Captura de pantalla 2026-10-07 005114.png](capturas/Captura%20de%20pantalla%202026-10-07%20005114.png)
+muestra el mensaje de actualización correcta y la plancha Espejo, 6 mm,
+1000 × 500 mm, cantidad 2, Activo. Respalda la restauración posterior
+informada en la secuencia de prueba. TA011-26 también muestra ese estado
+en una consulta posterior. Se conserva el nombre original de la captura
+adicional; no se crea TA011-27.
+
+### Evidencia 25 — Guardar sin cambios
+
+Referencia: [TA011-25-edicion-plancha-sin-cambios.png](capturas/TA011-25-edicion-plancha-sin-cambios.png).
+
+Se observa el formulario Editar plancha abierto, con Espejo, 6 mm,
+1000 × 500 mm, cantidad 2, y el mensaje "No hay cambios para guardar.".
+
+No debe enviarse un PATCH vacío ni ejecutarse una actualización sin cambios.
+La lógica revisada retorna antes de updatePlancha y del GET de refresco
+cuando no hay diferencias. El feedback usa el warning existente con
+role=status y aria-live=polite, sin cerrar ni reiniciar el formulario.
+
+La imagen por sí sola no demuestra ausencia de HTTP. El log ampliado
+[Captura de pantalla 2026-10-07 005859.png](capturas/Captura%20de%20pantalla%202026-10-07%20005859.png)
+muestra tres pares PATCH/GET de planchas y después operaciones de sesión y
+consulta, sin otro PATCH en el tramo final visible. Es consistente con la
+lógica descrita, pero no delimita por sí solo el instante del clic sin cambios.
+
+### Cancelación
+
+El usuario confirmó explícitamente haber pulsado Cancelar, vuelto al listado
+y comprobado que no se envió PATCH. Se registra PASS manual sin captura;
+no se inventa evidencia visual. La revisión estática también muestra que
+Cancelar cierra el formulario y limpia la selección sin llamar a la API.
+
+### Evidencia 26 — Operario sin edición
+
+Referencia: [TA011-26-operario-sin-editar-plancha.png](capturas/TA011-26-operario-sin-editar-plancha.png).
+
+Se observa sesión con rol Operario, Gestión de inventario, Planchas activa
+y listado visible. No aparecen Registrar plancha, columna Acciones, Editar
+ni Activar/Desactivar. Demuestra restricción visual por rol, no HTTP 403.
+
+### Resultado del Bloque 6
+
+| Punto verificado | Resultado | Sustento |
+| --- | --- | --- |
+| Precarga de plancha | PASS | TA011-21; encabezado de rol fuera del encuadre. |
+| Edición de cantidad 2 → 3 | PASS | TA011-22 y TA011-23; actualización sin F5 informada por el usuario. |
+| PATCH 200 y GET posterior 200 | PASS | TA011-23. |
+| Cantidad 0 aceptada sin desactivación | PASS | TA011-24. |
+| Restauración a cantidad 2, Activo | PASS | Captura adicional 005114 y consulta TA011-26. |
+| Guardar sin modificaciones | PASS | TA011-25, revisión de lógica y alcance del log ampliado indicado. |
+| Cancelación sin PATCH | PASS | Confirmación manual explícita del usuario, sin captura. |
+| Operario sin acción Editar | PASS | TA011-26; solo restricción visual. |
+
+**Bloque 6: PASS en el alcance documentado. TA-011 no está completamente
+terminada.** El rol no es visible en TA011-21; para acreditarlo en esa misma
+imagen sería necesaria una captura con el encabezado de sesión incluido.
+
+Continúan pendientes edición de retazo, filtros tipo/espesor/estado,
+validaciones generales 401, 403 backend, 422 formal, los estados
+loading/empty/error aún no acreditados y HU-008 como PBI separado.
+
+### Capturas adicionales y privacidad
+
+Se revisaron las once capturas nuevas. Se conservaron sin renombrar:
+
+- 004938: edición con "Seleccionar espesor"; excluida de evidencia de éxito.
+- 005055: recorte mínimo sin contenido legible; no acredita una prueba.
+- 005114: evidencia adicional de restauración de cantidad a 2.
+- 005325: Operario en Retazos; no corresponde a TA011-26 de Planchas.
+- 005859: logs ampliados; evidencia complementaria con los límites indicados.
+
+Los identificadores anteriores son las horas del nombre original
+"Captura de pantalla 2026-10-07 HHMMSS.png". No se eliminaron imágenes.
+No se observan JWT, Authorization, contraseñas, hashes, secretos,
+credenciales de Supabase ni variables sensibles. Los nombres e
+identificadores de cuenta visibles son datos identificativos y no se
+reproducen innecesariamente en este documento.

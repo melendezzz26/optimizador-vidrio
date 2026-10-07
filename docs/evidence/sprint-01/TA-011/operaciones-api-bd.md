@@ -85,3 +85,52 @@ actualización de badge/acción, permisos visuales y feedback efectivamente
 visible. Quedan pendientes edición de campos de plancha, edición de
 campos/geometría de retazo, prueba backend 403, filtros, pruebas 401/422
 y HU-008.
+
+## Bloque 6 — Edición de plancha
+
+### Operaciones observadas
+
+| Etapa | Observación | Evidencia |
+| --- | --- | --- |
+| Actualización API | PATCH `/api/inventory/planchas/3` → 200 OK. | [TA011-23](capturas/TA011-23-patch-edicion-plancha-200.png). |
+| Consulta posterior | GET `/api/inventory/planchas` → 200 OK, después del PATCH. | [TA011-23](capturas/TA011-23-patch-edicion-plancha-200.png). |
+| Resultado en interfaz | Espejo 6 mm, 1000 × 500 mm, cantidad 3 y Activo; mensaje "Plancha actualizada correctamente.". Cambio informado: 2 → 3; listado sin F5 según ejecución del usuario. | [TA011-22](capturas/TA011-22-plancha-editada-cantidad.png). |
+| Cantidad cero | Actualización aceptada; cantidad 0 y estado Activo, con mensaje de éxito. | [TA011-24](capturas/TA011-24-plancha-cantidad-cero.png). |
+| Restauración | Cantidad 2 y Activo con mensaje de actualización; también visible en consulta posterior. | [Adicional 005114](capturas/Captura%20de%20pantalla%202026-10-07%20005114.png) y [TA011-26](capturas/TA011-26-operario-sin-editar-plancha.png). |
+
+La secuencia API pertenece a la prueba de edición informada. El log no
+muestra el cuerpo de la solicitud: no identifica por sí solo el campo
+modificado ni sus valores. El
+[log ampliado 005859](capturas/Captura%20de%20pantalla%202026-10-07%20005859.png)
+contiene tres pares PATCH `/api/inventory/planchas/3` y GET del listado,
+todos con 200 OK; no se asigna a cada par un payload específico.
+
+### Contrato y operaciones sin envío
+
+Según la lógica revisada, InventoryPage construye un PATCH parcial con
+los campos modificados entre id_tipo_vidrio, espesor_mm, ancho_mm, alto_mm
+y cantidad. No incluye estado, id_plancha ni fecha_registro en el cuerpo
+del formulario de edición. El estado se gestiona con Activar/Desactivar.
+Create exige cantidad > 0; edit/PATCH permite cantidad entera >= 0.
+
+Guardar sin cambios no debe enviar un PATCH vacío ni actualizar la entidad.
+La lógica retorna antes de PATCH y GET; [TA011-25](capturas/TA011-25-edicion-plancha-sin-cambios.png)
+muestra el formulario abierto y el mensaje correspondiente. La revisión del
+log ampliado no encuentra otro PATCH en el tramo final visible, pero la
+captura no delimita el instante del clic. No se presenta una imagen como
+prueba suficiente de ausencia de HTTP.
+
+Cancelar no llama a la API según la revisión estática. El usuario confirmó
+manualmente cierre, retorno al listado y ausencia de PATCH; sin captura.
+
+### Alcance de BD y permisos
+
+La evidencia corresponde a API y consulta/listado frontend. No se afirma
+consulta SQL directa ni inspección directa de PostgreSQL/Supabase.
+[TA011-26](capturas/TA011-26-operario-sin-editar-plancha.png) muestra al
+Operario sin acciones de gestión; no demuestra HTTP 403.
+
+La edición de plancha queda documentada en este bloque. Siguen pendientes
+edición de retazo, filtros tipo/espesor/estado, validaciones generales 401,
+403 backend, 422 formal, estados loading/empty/error aún no acreditados y
+HU-008 como PBI separado. TA-011 no se declara completamente terminada.

@@ -1,6 +1,6 @@
 # TA-011 — Prueba funcional
 
-Casos ejecutados de los bloques 2, 3, 4 y 5, documentados con las capturas
+Casos ejecutados de los bloques 2, 3, 4, 5 y 6, documentados con las capturas
 oficiales y las confirmaciones manuales del usuario recogidas en
 [Integración de inventario](integracion-inventario.md). Esta actualización
 documental no implica una nueva ejecución de las pruebas.
@@ -40,3 +40,34 @@ o desactivar a partir de los logs, que no muestran el cuerpo enviado.
 
 Pendientes: edición de campos de plancha; edición de campos/geometría de
 retazo; prueba backend 403; filtros; pruebas 401/422; HU-008.
+
+## Bloque 6 — Edición de plancha
+
+Entidad de prueba: Espejo, 6 mm, 1000 × 500 mm, cantidad inicial 2, Activo.
+La sesión de edición es Almacenero según el contexto informado; TA011-21
+muestra los valores pero no incluye el encabezado con el rol. Los resultados
+combinan capturas, revisión estática y confirmaciones manuales, sin presentar
+estas fuentes como equivalentes.
+
+| ID | Caso | Entrada/precondición | Esperado | Obtenido | Estado | Evidencia |
+| --- | --- | --- | --- | --- | --- | --- |
+| TA011-PF-10 | Abrir edición y precargar plancha | Abrir Editar para la plancha de prueba con cantidad 2. | Formulario edit y valores actuales precargados. | Editar plancha muestra Espejo, 6 mm, 1000.00, 500.00 y cantidad 2. | PASS | [TA011-21](capturas/TA011-21-editar-plancha-precarga.png); rol por contexto de sesión. |
+| TA011-PF-11 | Editar cantidad de plancha | Cantidad 2 → 3. | PATCH exitoso, GET posterior y fila actualizada sin recarga manual. | PATCH /planchas/3 con 200 y GET /planchas con 200; cantidad 3, Activo y mensaje "Plancha actualizada correctamente.". Sin F5 según ejecución informada. El log no muestra el payload. | PASS | [TA011-22](capturas/TA011-22-plancha-editada-cantidad.png) y [TA011-23](capturas/TA011-23-patch-edicion-plancha-200.png). |
+| TA011-PF-12 | Cantidad cero en edición | Cantidad 3 → 0. | Actualización aceptada, cantidad 0 y sin cambio automático de estado. | Mensaje de actualización correcta; Espejo 6 mm, 1000 × 500 mm, cantidad 0 y Activo. | PASS | [TA011-24](capturas/TA011-24-plancha-cantidad-cero.png). |
+| TA011-PF-13 | Guardar plancha sin modificaciones | Formulario precargado con Espejo, 6 mm, 1000 × 500 mm y cantidad restaurada a 2; guardar sin cambios. | No PATCH vacío ni actualización; formulario abierto y mensaje "No hay cambios para guardar.". | Formulario y valores conservados, mensaje visible. La lógica retorna antes de PATCH/GET; el log ampliado no muestra otro PATCH en su tramo final, sin correlación temporal exacta con el clic. | PASS | [TA011-25](capturas/TA011-25-edicion-plancha-sin-cambios.png), revisión estática y [log ampliado](capturas/Captura%20de%20pantalla%202026-10-07%20005859.png). |
+| TA011-PF-14 | Cancelar edición de plancha | Formulario de edición abierto; pulsar Cancelar. | Volver al listado, sin actualizar la entidad ni enviar PATCH. | El usuario confirmó explícitamente cierre del formulario, vuelta al listado y comprobación de ausencia de PATCH. | PASS | Verificación manual confirmada, sin captura. |
+| TA011-PF-15 | Operario sin acción Editar | Sesión Operario; consultar Planchas. | Listado visible sin acciones de gestión. | Planchas activa y registros visibles; sin Registrar plancha, columna Acciones, Editar ni Activar/Desactivar. No acredita HTTP 403. | PASS | [TA011-26](capturas/TA011-26-operario-sin-editar-plancha.png). |
+
+La restauración a cantidad 2 y estado Activo se respalda con la
+[captura adicional 005114](capturas/Captura%20de%20pantalla%202026-10-07%20005114.png)
+y con TA011-26. No se creó una evidencia TA011-27.
+
+Create exige cantidad > 0; edit/PATCH admite cantidad entera >= 0, según
+la lógica revisada. El PATCH parcial incluye solo diferencias entre
+id_tipo_vidrio, espesor_mm, ancho_mm, alto_mm y cantidad. TA011-23 no muestra
+los valores enviados. TA011-25 por sí sola no demuestra ausencia de HTTP.
+
+Bloque 6: PASS con los límites de evidencia indicados. Pendientes restantes:
+edición de retazo; filtros tipo/espesor/estado; validaciones generales 401;
+403 backend; 422 formal; estados loading/empty/error que falten; HU-008
+separado. No se declara TA-011 terminada.
