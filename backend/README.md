@@ -69,12 +69,26 @@ python -m uvicorn main:app --reload
 ```
 
 La API queda disponible en `http://127.0.0.1:8000` y su documentación interactiva
-en `http://127.0.0.1:8000/docs`. El arranque actual lee `DATABASE_URL`, aunque la
-autenticación todavía usa usuarios temporales en memoria.
+en `http://127.0.0.1:8000/docs`. La autenticación valida contra las tablas
+`usuarios` y `roles` y exige `SECRET_KEY` en el entorno.
 
 Esta preparación no crea tablas ni requiere ejecutar seed, `/db-test` o comandos
 de migración Alembic. La divergencia de revisiones remotas sigue tratándose en
 su bloque de integración; no se resuelve durante la instalación del entorno.
+
+## Primer Administrador
+
+La gestión de usuarios exige una sesión de Administrador, así que la primera
+cuenta se crea una sola vez con un comando, desde `backend/`:
+
+```bash
+python -m scripts.create_first_admin
+```
+
+Muestra la base de destino y pide confirmación, nombres, apellidos, DNI y
+contraseña por teclado. Aplica las mismas reglas que la pantalla y se niega si
+ya existe un Administrador activo. Requiere que los roles estén cargados
+(`seed.py`). En la base compartida solo se ejecuta con autorización del equipo.
 
 ## Pruebas
 
@@ -84,16 +98,17 @@ Con el entorno activado y desde `backend/`:
 python -m pytest -q
 ```
 
-La suite actual utiliza autenticación en memoria y una prueba de estructura de
-database aislada que bloquea conexiones. No necesita PostgreSQL ni Supabase en
-ejecución, ni un `.env` real para esas pruebas.
+La suite usa una base SQLite en memoria fijada en `tests/conftest.py` y una
+prueba de estructura de database aislada que bloquea conexiones. No necesita
+PostgreSQL ni Supabase en ejecución, ni un `.env` real para esas pruebas.
 
 ## Organización
 
 - `app/modules/<modulo>/`: `domain`, `application`, `infrastructure` y `presentation`.
 - `app/shared/`: capacidades transversales; `database` ya fue trasladado.
-- `app/core/`, `app/routers/`, `app/schemas/`, `app/services/` y `app/models.py`:
-  código activo conservado temporalmente hasta su migración por módulo.
+- `app/core/` y `app/models.py`: código activo conservado temporalmente hasta
+  su migración por módulo.
+- `scripts/`: comandos de operación que se ejecutan a mano.
 - `tests/`: pruebas organizadas según su propósito, con las existentes preservadas.
 
 Consultar [CONTRIBUTING.md](../CONTRIBUTING.md) y las

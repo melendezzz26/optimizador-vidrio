@@ -87,9 +87,10 @@ Una carpeta vacía reservada no representa trabajo implementado ni evidencia.
 ## Convivencia temporal con el código anterior
 
 El código anterior permanece donde está hasta que el responsable de su módulo
-lo migre con pruebas y revise sus consumidores. Esto incluye `app/core/`,
-`app/routers/`, `app/schemas/`, `app/services/` y `app/models.py`, así como
-`frontend/src/components/Login.jsx` y `frontend/src/pages/NuevoPedido.jsx`.
+lo migre con pruebas y revise sus consumidores. Esto incluye `app/core/` y
+`app/models.py`, así como `frontend/src/pages/NuevoPedido.jsx`. El inicio de
+sesión ya se migró a `app/modules/authentication/`, `app/shared/security/` y
+`frontend/src/features/authentication/` (HU-001).
 
 Las tareas estructurales no cambian sus imports, endpoints, contratos ni lógica
 de negocio, ni trasladan estos archivos a una carpeta `legacy/`. El bloque

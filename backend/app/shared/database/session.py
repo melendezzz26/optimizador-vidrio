@@ -1,8 +1,9 @@
 import os
+from collections.abc import Iterator
 
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 load_dotenv()
 
@@ -17,3 +18,9 @@ SessionLocal = sessionmaker(
 )
 
 Base = declarative_base()
+
+
+def get_db() -> Iterator[Session]:
+    """Entrega una sesión por petición y la cierra al terminar, incluso si hay error."""
+    with SessionLocal() as db:
+        yield db

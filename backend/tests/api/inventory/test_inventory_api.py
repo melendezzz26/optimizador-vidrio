@@ -3,10 +3,10 @@ from decimal import Decimal
 import pytest
 from fastapi.testclient import TestClient
 
-from app.core.security import crear_token
 from main import app
 from app.modules.inventory.application.dto import TipoVidrioData, PlanchaData, RetazoData
 from app.modules.inventory.presentation.dependencies import get_inventory_service
+from tests.auth_support import token_for, use_in_memory_accounts
 
 class FakeInventoryService:
     def list_tipos_vidrio(self):
@@ -79,13 +79,14 @@ def get_fake_inventory_service():
 @pytest.fixture(autouse=True)
 def override_dependency():
     app.dependency_overrides[get_inventory_service] = get_fake_inventory_service
+    use_in_memory_accounts(app)
     yield
     app.dependency_overrides.clear()
 
 client = TestClient(app)
 
 def make_token(rol: str) -> str:
-    return crear_token(1, "testuser", rol)
+    return token_for(rol)
 
 def test_auth_sin_token():
     response = client.get("/api/inventory/tipos-vidrio")
