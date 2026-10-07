@@ -60,7 +60,9 @@ function StatusBadge({ active }) {
   );
 }
 
-function InventoryTable({ kind, rows, typesById, canManage, onToggleStatus, pendingAction }) {
+function InventoryTable({
+  kind, rows, typesById, canManage, onToggleStatus, onEditPlancha, pendingAction,
+}) {
   if (kind === 'planchas') {
     return (
       <div className="inventory-table-scroll">
@@ -90,15 +92,25 @@ function InventoryTable({ kind, rows, typesById, canManage, onToggleStatus, pend
                 <td>{formatDate(plancha.fecha_registro)}</td>
                 {canManage && (
                   <td>
-                    <button
-                      className="ng-button"
-                      type="button"
-                      disabled={pendingAction !== null}
-                      aria-busy={pendingAction?.id === plancha.id_plancha}
-                      onClick={() => onToggleStatus(plancha)}
-                    >
-                      {plancha.estado ? 'Desactivar' : 'Activar'}
-                    </button>
+                    <div className="inventory-row-actions">
+                      <button
+                        className="ng-button"
+                        type="button"
+                        disabled={pendingAction !== null}
+                        onClick={() => onEditPlancha(plancha)}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        className="ng-button"
+                        type="button"
+                        disabled={pendingAction !== null}
+                        aria-busy={pendingAction?.id === plancha.id_plancha}
+                        onClick={() => onToggleStatus(plancha)}
+                      >
+                        {plancha.estado ? 'Desactivar' : 'Activar'}
+                      </button>
+                    </div>
                   </td>
                 )}
               </tr>
@@ -165,6 +177,7 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
   const [loadError, setLoadError] = useState('');
   const [showPlanchaForm, setShowPlanchaForm] = useState(false);
   const [showRetazoForm, setShowRetazoForm] = useState(false);
+  const [editingPlancha, setEditingPlancha] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [operationError, setOperationError] = useState('');
   const [operationWarning, setOperationWarning] = useState('');
@@ -203,6 +216,7 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
     setOperationError('');
     setOperationWarning('');
     setOperationSuccess('');
+    setEditingPlancha(null);
     setShowPlanchaForm(true);
   }
 
@@ -216,6 +230,7 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
 
   function handleCancelPlancha() {
     setShowPlanchaForm(false);
+    setEditingPlancha(null);
     setOperationError('');
     setOperationWarning('');
     setOperationSuccess('');
@@ -255,6 +270,73 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
       }
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  function handleEditPlancha(plancha) {
+    if (isInventoryActionPending) return;
+    setEditingPlancha(plancha);
+    setShowPlanchaForm(true);
+    setOperationError('');
+    setOperationWarning('');
+    setOperationSuccess('');
+  }
+
+  async function handleUpdatePlancha(values) {
+    if (!editingPlancha) return;
+
+    setOperationError('');
+    setOperationWarning('');
+    setOperationSuccess('');
+
+    const normalized = {
+      ancho_mm: Number(values.ancho_mm),
+      alto_mm: Number(values.alto_mm),
+      espesor_mm: Number(values.espesor_mm),
+      cantidad: Number(values.cantidad),
+      id_tipo_vidrio: Number(values.id_tipo_vidrio),
+    };
+    const changes = {};
+    for (const field of Object.keys(normalized)) {
+      if (normalized[field] !== Number(editingPlancha[field])) changes[field] = normalized[field];
+    }
+
+    if (Object.keys(changes).length === 0) {
+      setOperationWarning('No hay cambios para guardar.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setPendingInventoryAction({
+      entity: 'plancha',
+      id: editingPlancha.id_plancha,
+      operation: 'edit',
+    });
+    try {
+      try {
+        await updatePlancha(editingPlancha.id_plancha, changes);
+      } catch (error) {
+        setOperationError(handleApiError(error).message);
+        return;
+      }
+
+      try {
+        const updatedPlanchas = await getPlanchas();
+        setPlanchas(updatedPlanchas);
+        setActiveTab('planchas');
+        setShowPlanchaForm(false);
+        setEditingPlancha(null);
+        setOperationSuccess('Plancha actualizada correctamente.');
+      } catch (error) {
+        handleApiError(error);
+        setActiveTab('planchas');
+        setShowPlanchaForm(false);
+        setEditingPlancha(null);
+        setOperationWarning('La plancha fue actualizada, pero no se pudo refrescar el listado.');
+      }
+    } finally {
+      setIsSubmitting(false);
+      setPendingInventoryAction(null);
     }
   }
 
@@ -374,6 +456,7 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
     setActiveTab(nextTab);
     setShowPlanchaForm(false);
     setShowRetazoForm(false);
+    setEditingPlancha(null);
     setOperationError('');
     setOperationWarning('');
     setOperationSuccess('');
@@ -428,7 +511,7 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
         <p className="inventory-feedback inventory-feedback--error" role="alert">{operationError}</p>
       )}
 
-      {operationWarning && !showPlanchaForm && !showRetazoForm && (
+      {operationWarning && (!showPlanchaForm || editingPlancha !== null) && !showRetazoForm && (
         <p className="inventory-feedback inventory-feedback--warning" role="status" aria-live="polite">
           {operationWarning}
         </p>
@@ -437,7 +520,16 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
       {showPlanchaForm && activeTab === 'planchas' && (
         <RegistrarPlanchaForm
           catalogo={catalogo}
-          onSubmit={handleCreatePlancha}
+          mode={editingPlancha ? 'edit' : 'create'}
+          initialValues={editingPlancha ? {
+            id_tipo_vidrio: editingPlancha.id_tipo_vidrio,
+            espesor_mm: editingPlancha.espesor_mm,
+            ancho_mm: editingPlancha.ancho_mm,
+            alto_mm: editingPlancha.alto_mm,
+            cantidad: editingPlancha.cantidad,
+          } : null}
+          key={editingPlancha ? `edit-${editingPlancha.id_plancha}` : 'create'}
+          onSubmit={editingPlancha ? handleUpdatePlancha : handleCreatePlancha}
           isSubmitting={isSubmitting}
           onCancel={handleCancelPlancha}
         />
@@ -487,6 +579,7 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
               canManage={canManageCurrentTab}
               onToggleStatus={activeTab === 'planchas'
                 ? handleTogglePlanchaEstado : handleToggleRetazoEstado}
+              onEditPlancha={handleEditPlancha}
               pendingAction={pendingInventoryAction}
             />
           )}
