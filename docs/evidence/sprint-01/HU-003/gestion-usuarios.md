@@ -58,10 +58,11 @@ componentes.
 
 ## Matriz de casos manuales (T03)
 
-Ejecutados en el navegador con el backend y el frontend locales. El backend
-se conectó a una base SQLite local y desechable, con las tablas `usuarios` y
-`roles` creadas a partir del modelo y una cuenta de Administrador de prueba.
-No se usó la base compartida. Estado: PASS, FAIL o BLOCKED.
+Primera ejecución (06/10/2026, commit `dba14dc`): en el navegador con el
+backend y el frontend locales. El backend se conectó a una base SQLite local y
+desechable, con las tablas `usuarios` y `roles` creadas a partir del modelo y
+una cuenta de Administrador de prueba. No se usó la base compartida.
+Estado: PASS, FAIL o BLOCKED.
 
 | ID | Caso | Resultado esperado | Resultado obtenido | Estado |
 |---|---|---|---|---|
@@ -76,25 +77,59 @@ No se usó la base compartida. Estado: PASS, FAIL o BLOCKED.
 | CP-HU003-09 | Operario intenta acceder a usuarios | La interfaz no le ofrece la pantalla | Con una sesión de Operario no aparece la opción Panel de roles | PASS |
 | CP-HU003-10 | Petición sin sesión | 401 | La API responde "Debes iniciar sesión." | PASS |
 
+## Verificación contra la base compartida
+
+Flujo comprobado: React → API autenticada → PostgreSQL (Supabase) → consulta
+posterior. Corresponde al flujo crítico "el Administrador inicia sesión →
+gestiona un usuario → el cambio persiste" de la Estrategia de Pruebas.
+
+- Fecha: 06/10/2026. Rama `main`, commit `df8faaf`.
+- Sesión de Administrador: `A74000010`, creada con
+  `python -m scripts.create_first_admin`.
+- Usuario de prueba: registrado con nombres "Franco", DNI ficticio `70303030`
+  y rol Operario. El sistema generó el usuario de acceso `F70303030`.
+
+| ID | Caso | Resultado esperado | Resultado obtenido | Estado |
+|---|---|---|---|---|
+| CP-HU003-01 | Alta válida | 201; usuario de acceso generado; aparece en la tabla | Se registró el usuario y se generó `F70303030`; aparece en la tabla | PASS |
+| CP-HU003-02 | Alta con DNI ya registrado | 409; no se crea el usuario | Con el mismo DNI aparece "Ya existe un usuario con ese DNI." y no se agrega ninguna fila | PASS |
+| CP-HU003-03 | Edición de nombres y rol | 200; DNI y usuario de acceso sin cambios | Los nombres cambiaron de "Franco" a "Carlos"; el usuario de acceso sigue siendo `F70303030` (RN-04) | PASS |
+| CP-HU003-04 | Desactivar usuario | 200; el usuario no puede iniciar sesión | El usuario queda Inactivo y el login lo rechaza | PASS |
+| CP-HU003-05 | Reactivar usuario | 200; el usuario vuelve a iniciar sesión | El usuario queda Activo e inicia sesión | PASS |
+| CP-HU003-08 | Administrador intenta desactivarse | No puede; sigue activo | La fila de `A74000010` muestra "Tu cuenta" y no ofrece el botón Desactivar | PASS |
+| CP-HU003-09 | Operario intenta acceder a usuarios | La interfaz no le ofrece la pantalla | Con la sesión de `F70303030` no aparece la opción Panel de roles | PASS |
+
+Los casos 06, 07 y 10 no se repitieron contra la base compartida; vale su
+resultado de la primera ejecución.
+
+Consulta de solo lectura ejecutada después de las pruebas, desde `backend/`,
+sobre `usuarios` y `roles` (usuario, rol, estado y fecha de creación en UTC):
+
+```text
+A00000001   Almacenero     activo=True  creado=2026-10-06 05:15
+A74000010   Administrador  activo=True  creado=2026-10-07 03:49
+F70303030   Operario       activo=True  creado=2026-10-07 04:48
+```
+
+`A74000010` y `F70303030` quedaron guardados en la base compartida, ambos
+activos. `F70303030` permanece como cuenta de prueba, porque el módulo no
+elimina usuarios. La cuenta `A00000001` existía antes y no se modificó.
+
 ## Capturas
 
-En `capturas/`:
+En `capturas/`, de la primera ejecución (base local): `CP-HU003-01.png` a
+`CP-HU003-06.png`, `CP-HU003-08.png`, `CP-HU003-09.png` y `CP-HU003-10.png`.
 
-- `pantalla.png`: formulario y tabla dentro de la base visual, con *Panel de roles* resaltado.
-- `alta-usuario.png`: aviso con el usuario de acceso generado.
-- `dni-duplicado.png`: mensaje junto al campo DNI.
-- `edicion.png`: DNI y usuario de acceso como solo lectura.
-- `usuario-desactivado.png`: estado Inactivo en la tabla.
-- `cuenta-propia.png`: fila propia con "Tu cuenta".
+En `capturas/supabase/`, de la verificación contra la base compartida:
+`CP-HU003-01.png`, `CP-HU003-02.png`, `CP-HU003-03.png`, `CP-HU003-04.png`,
+`CP-HU003-05.png`, `CP-HU003-08.png` y `CP-HU003-09.png`.
 
 Los DNI y usuarios son ficticios. Las capturas no muestran contraseñas ni tokens.
 
 ## Limitaciones
 
-- Los casos manuales se ejecutaron sobre SQLite local, que no aplica las
-  restricciones CHECK ni los límites de longitud de PostgreSQL. Falta
-  repetirlos contra la base compartida cuando exista una cuenta de
-  Administrador autorizada.
+- Los casos manuales se ejecutaron a mano; no hay pruebas E2E automatizadas
+  (Playwright), previstas en el plan de adopción de la Estrategia de Pruebas.
 - Sin PostgreSQL local, las pruebas de integración con clúster propio se omiten.
 - Sin ejecutor de pruebas de frontend; la interfaz se validó de forma manual.
 - El acceso a la pantalla usa un cambio de sección provisional en `App.jsx`,
