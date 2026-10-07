@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { canManagePlanchas, canManageRetazos } from '../authentication';
 import { AppShell } from '../../shared/components/AppShell';
-import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
+import { PageCard, PageHeader } from '../../shared/components/PageLayout';
 import RegistrarPlanchaForm from './RegistrarPlanchaForm';
 import RegistrarRetazoForm from './RegistrarRetazoForm';
 import {
@@ -20,6 +20,18 @@ const TABS = [
   { id: 'retazos', label: 'Retazos' },
 ];
 
+const EMPTY_FILTERS = { tipo: '', espesor: '', estado: '' };
+
+function filterThicknesses(catalogo, rows, typeId) {
+  const values = [
+    ...catalogo.filter((type) => !typeId || Number(type.id_tipo_vidrio) === Number(typeId))
+      .flatMap((type) => type.espesores_mm ?? []),
+    ...rows.filter((row) => !typeId || Number(row.id_tipo_vidrio) === Number(typeId))
+      .map((row) => row.espesor_mm),
+  ].map(Number).filter((value) => Number.isFinite(value) && value > 0);
+  return [...new Set(values)].sort((a, b) => a - b);
+}
+
 function formatNumber(value) {
   if (value === null || value === undefined || value === '') return '—';
   const numericValue = Number(value);
@@ -35,7 +47,7 @@ function formatDate(value) {
 }
 
 function typeNameFor(id, typesById) {
-  return typesById.get(id) || `Tipo de vidrio #${id}`;
+  return typesById.get(Number(id)) || `Tipo de vidrio #${id}`;
 }
 
 function geometryDescription(geometria) {
@@ -100,16 +112,16 @@ function InventoryTable({
 }) {
   if (kind === 'planchas') {
     return (
-      <div className="inventory-table-scroll">
+      <div className="inventory-table-scroll" tabIndex={0} role="region" aria-label="Tabla de planchas">
         <table className="inventory-table">
           <caption className="inventory-visually-hidden">Listado de planchas</caption>
           <thead>
             <tr>
               <th scope="col">Tipo de vidrio</th>
-              <th scope="col">Espesor</th>
-              <th scope="col">Ancho</th>
-              <th scope="col">Alto</th>
-              <th scope="col">Cantidad</th>
+              <th scope="col" className="inventory-number">Espesor</th>
+              <th scope="col" className="inventory-number">Ancho</th>
+              <th scope="col" className="inventory-number">Alto</th>
+              <th scope="col" className="inventory-number">Cantidad</th>
               <th scope="col">Estado</th>
               <th scope="col">Fecha de registro</th>
               {canManage && <th scope="col">Acciones</th>}
@@ -119,10 +131,10 @@ function InventoryTable({
             {rows.map((plancha) => (
               <tr key={plancha.id_plancha}>
                 <th scope="row">{typeNameFor(plancha.id_tipo_vidrio, typesById)}</th>
-                <td>{formatNumber(plancha.espesor_mm)} mm</td>
-                <td>{formatNumber(plancha.ancho_mm)} mm</td>
-                <td>{formatNumber(plancha.alto_mm)} mm</td>
-                <td>{formatNumber(plancha.cantidad)}</td>
+                <td className="inventory-number">{formatNumber(plancha.espesor_mm)} mm</td>
+                <td className="inventory-number">{formatNumber(plancha.ancho_mm)} mm</td>
+                <td className="inventory-number">{formatNumber(plancha.alto_mm)} mm</td>
+                <td className="inventory-number">{formatNumber(plancha.cantidad)}</td>
                 <td><StatusBadge active={plancha.estado} /></td>
                 <td>{formatDate(plancha.fecha_registro)}</td>
                 {canManage && (
@@ -157,16 +169,16 @@ function InventoryTable({
   }
 
   return (
-    <div className="inventory-table-scroll">
+    <div className="inventory-table-scroll" tabIndex={0} role="region" aria-label="Tabla de retazos">
       <table className="inventory-table">
         <caption className="inventory-visually-hidden">Listado de retazos</caption>
         <thead>
           <tr>
             <th scope="col">Código</th>
             <th scope="col">Tipo de vidrio</th>
-            <th scope="col">Espesor</th>
+            <th scope="col" className="inventory-number">Espesor</th>
             <th scope="col">Geometría</th>
-            <th scope="col">Área</th>
+            <th scope="col" className="inventory-number">Área</th>
             <th scope="col">Estado</th>
             <th scope="col">Fecha de registro</th>
             {canManage && <th scope="col">Acciones</th>}
@@ -175,11 +187,11 @@ function InventoryTable({
         <tbody>
           {rows.map((retazo) => (
             <tr key={retazo.id_retazo}>
-              <th scope="row">{retazo.codigo}</th>
+              <th scope="row" className="inventory-code">{retazo.codigo}</th>
               <td>{typeNameFor(retazo.id_tipo_vidrio, typesById)}</td>
-              <td>{formatNumber(retazo.espesor_mm)} mm</td>
-              <td>{geometryDescription(retazo.geometria)}</td>
-              <td>{formatNumber(retazo.area_mm2)} mm²</td>
+              <td className="inventory-number">{formatNumber(retazo.espesor_mm)} mm</td>
+              <td className="inventory-geometry">{geometryDescription(retazo.geometria)}</td>
+              <td className="inventory-number">{formatNumber(retazo.area_mm2)} mm²</td>
               <td><StatusBadge active={retazo.estado} /></td>
               <td>{formatDate(retazo.fecha_registro)}</td>
               {canManage && (
@@ -215,6 +227,9 @@ function InventoryTable({
 
 export function InventoryPage({ onSessionExpired, toolbar, user }) {
   const [activeTab, setActiveTab] = useState('planchas');
+  const [filtersByTab, setFiltersByTab] = useState({
+    planchas: { ...EMPTY_FILTERS }, retazos: { ...EMPTY_FILTERS },
+  });
   const [catalogo, setCatalogo] = useState([]);
   const [planchas, setPlanchas] = useState([]);
   const [retazos, setRetazos] = useState([]);
@@ -552,8 +567,36 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
     }
   }
 
-  const typesById = new Map(catalogo.map((tipo) => [tipo.id_tipo_vidrio, tipo.nombre]));
+  const typesById = new Map(catalogo.map((tipo) => [Number(tipo.id_tipo_vidrio), tipo.nombre]));
   const rows = activeTab === 'planchas' ? planchas : retazos;
+  const filters = filtersByTab[activeTab];
+  const hasFilters = Object.values(filters).some(Boolean);
+  const filterTypes = [...new Set([
+    ...catalogo.map((tipo) => Number(tipo.id_tipo_vidrio)),
+    ...rows.map((row) => Number(row.id_tipo_vidrio)),
+  ])].sort((a, b) => typeNameFor(a, typesById).localeCompare(typeNameFor(b, typesById), 'es'));
+  const thicknesses = filterThicknesses(catalogo, rows, filters.tipo);
+  const filteredRows = rows.filter((row) => (
+    (!filters.tipo || Number(row.id_tipo_vidrio) === Number(filters.tipo))
+    && (!filters.espesor || Number(row.espesor_mm) === Number(filters.espesor))
+    && (!filters.estado || row.estado === (filters.estado === 'activo'))
+  ));
+
+  function changeFilter(field, value) {
+    setFiltersByTab((previous) => {
+      const next = { ...previous[activeTab], [field]: value };
+      if (field === 'tipo' && next.espesor
+        && !filterThicknesses(catalogo, rows, value).includes(Number(next.espesor))) {
+        next.espesor = '';
+      }
+      return { ...previous, [activeTab]: next };
+    });
+  }
+
+  function clearFilters() {
+    setFiltersByTab((previous) => ({ ...previous, [activeTab]: { ...EMPTY_FILTERS } }));
+  }
+
   const emptyMessage = activeTab === 'planchas'
     ? 'No hay planchas registradas.'
     : 'No hay retazos registrados.';
@@ -623,8 +666,19 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
         </div>
       </PageHeader>
 
-      {isLoading && <PageCard><p className="inventory-status" role="status">Cargando inventario...</p></PageCard>}
-      {loadError && <PageCard><p className="inventory-error" role="alert">{loadError}</p></PageCard>}
+      {isLoading && (
+        <PageCard className="inventory-state" aria-busy="true">
+          <p className="inventory-status" role="status">Cargando inventario...</p>
+        </PageCard>
+      )}
+      {loadError && (
+        <PageCard className="inventory-state">
+          <div className="inventory-error" role="alert">
+            <h2>No se pudo cargar el inventario</h2>
+            <p>{loadError}</p>
+          </div>
+        </PageCard>
+      )}
 
       {operationSuccess && !showPlanchaForm && !showRetazoForm && (
         <p className="inventory-feedback inventory-feedback--success" role="status" aria-live="polite">
@@ -688,29 +742,66 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
           role="tabpanel"
           aria-labelledby={`${tabPanelId}-tab-${activeTab}`}
         >
-          <h2>{activeTab === 'planchas' ? 'Planchas registradas' : 'Retazos registrados'}</h2>
-          {activeTab === 'planchas' && canManagePlanchas(user) && (
-            <ActionBar>
+          <div className="inventory-list-header">
+            <div>
+              <h2>{activeTab === 'planchas' ? 'Planchas' : 'Retazos'}</h2>
+              <p className="inventory-count" role="status" aria-live="polite" aria-atomic="true">
+                Mostrando {filteredRows.length} de {rows.length} {activeTab}
+              </p>
+            </div>
+            {canManageCurrentTab && (
               <button className="ng-button ng-button--primary" type="button"
-                onClick={openPlanchaForm} disabled={isInventoryActionPending}>
-                Registrar plancha
+                onClick={activeTab === 'planchas' ? openPlanchaForm : openRetazoForm}
+                disabled={isInventoryActionPending}>
+                {activeTab === 'planchas' ? 'Registrar plancha' : 'Registrar retazo'}
               </button>
-            </ActionBar>
-          )}
-          {activeTab === 'retazos' && canManageRetazos(user) && (
-            <ActionBar>
-              <button className="ng-button ng-button--primary" type="button"
-                onClick={openRetazoForm} disabled={isInventoryActionPending}>
-                Registrar retazo
-              </button>
-            </ActionBar>
+            )}
+          </div>
+          <fieldset className="inventory-filters" disabled={isInventoryActionPending}>
+            <legend className="inventory-visually-hidden">Filtrar {activeTab}</legend>
+            <div className="ng-field">
+              <label htmlFor={`${tabPanelId}-tipo`}>Tipo de vidrio</label>
+              <select className="ng-control" id={`${tabPanelId}-tipo`} value={filters.tipo}
+                onChange={(event) => changeFilter('tipo', event.target.value)}>
+                <option value="">Todos</option>
+                {filterTypes.map((id) => <option key={id} value={id}>{typeNameFor(id, typesById)}</option>)}
+              </select>
+            </div>
+            <div className="ng-field">
+              <label htmlFor={`${tabPanelId}-espesor`}>Espesor</label>
+              <select className="ng-control" id={`${tabPanelId}-espesor`} value={filters.espesor}
+                onChange={(event) => changeFilter('espesor', event.target.value)}>
+                <option value="">Todos</option>
+                {thicknesses.map((value) => <option key={value} value={value}>{formatNumber(value)} mm</option>)}
+              </select>
+            </div>
+            <div className="ng-field">
+              <label htmlFor={`${tabPanelId}-estado`}>Estado</label>
+              <select className="ng-control" id={`${tabPanelId}-estado`} value={filters.estado}
+                onChange={(event) => changeFilter('estado', event.target.value)}>
+                <option value="">Todos</option>
+                <option value="activo">Activo</option>
+                <option value="inactivo">Inactivo</option>
+              </select>
+            </div>
+          </fieldset>
+          {hasFilters && (
+            <div className="inventory-filter-actions">
+              <button className="ng-button" type="button" onClick={clearFilters}
+                disabled={isInventoryActionPending}>Limpiar filtros</button>
+            </div>
           )}
           {rows.length === 0 ? (
-            <p className="inventory-status">{emptyMessage}</p>
+            <div className="inventory-empty"><p className="inventory-status">{emptyMessage}</p></div>
+          ) : filteredRows.length === 0 ? (
+            <div className="inventory-empty" role="status">
+              <p>No hay resultados para los filtros seleccionados.</p>
+              <p className="inventory-status">Ajusta los filtros o usa «Limpiar filtros» para ver todo el listado.</p>
+            </div>
           ) : (
             <InventoryTable
               kind={activeTab}
-              rows={rows}
+              rows={filteredRows}
               typesById={typesById}
               canManage={canManageCurrentTab}
               onToggleStatus={activeTab === 'planchas'

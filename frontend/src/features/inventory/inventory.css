@@ -2,7 +2,7 @@
 .inventory-tabs {
   display: flex;
   gap: var(--ng-space-2);
-  margin-top: var(--ng-space-6);
+  margin-top: var(--ng-space-4);
   border-bottom: 1px solid var(--ng-border-subtle);
 }
 
@@ -21,18 +21,71 @@
   color: var(--ng-primary-focus);
 }
 
-.inventory-tab:focus-visible {
+.inventory-tab:focus-visible,
+.inventory-table-scroll:focus-visible {
   outline: 2px solid var(--ng-primary-focus);
   outline-offset: 2px;
 }
 
-.inventory-list { margin-top: var(--ng-space-6); }
+.inventory-tab:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
-.inventory-list > h2 {
-  margin: 0 0 var(--ng-space-4);
+.inventory-list {
+  min-width: 0;
+  margin-top: var(--ng-space-4);
+}
+
+.inventory-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--ng-space-4);
+  margin-bottom: var(--ng-space-6);
+}
+
+.inventory-list-header h2,
+.inventory-state h2 {
+  margin: 0;
   font-size: 20px;
   font-weight: 600;
 }
+
+.inventory-count {
+  margin: var(--ng-space-1) 0 0;
+  color: var(--ng-text-600);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.inventory-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+  gap: var(--ng-space-4);
+  min-width: 0;
+  margin: 0 0 var(--ng-space-4);
+  padding: 0;
+  border: 0;
+}
+
+.inventory-filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--ng-space-4);
+}
+
+.inventory-empty {
+  padding: var(--ng-space-8) var(--ng-space-4);
+  border-top: 1px solid var(--ng-border-subtle);
+  text-align: center;
+}
+
+.inventory-empty p { margin: 0; }
+.inventory-empty p + p { margin-top: var(--ng-space-2); }
+.inventory-empty .inventory-status { color: var(--ng-text-600); }
+.inventory-state p { margin: var(--ng-space-2) 0; overflow-wrap: anywhere; }
 
 .inventory-status,
 .inventory-error {
@@ -47,6 +100,7 @@
   background: var(--ng-background);
   font-size: 14px;
   font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
 .inventory-feedback--success {
@@ -69,11 +123,18 @@
   font-weight: 600;
 }
 
-.inventory-table-scroll { overflow-x: auto; }
+.inventory-table-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border: 1px solid var(--ng-border-subtle);
+  border-radius: var(--ng-radius-control);
+}
 
 .inventory-table {
   width: 100%;
-  min-width: 760px;
+  min-width: 880px;
   border-collapse: collapse;
   font-size: 14px;
   text-align: left;
@@ -81,18 +142,41 @@
 
 .inventory-table th,
 .inventory-table td {
-  padding: var(--ng-space-3) var(--ng-space-2);
+  padding: var(--ng-space-3);
   border-bottom: 1px solid var(--ng-border-subtle);
   vertical-align: middle;
+  white-space: nowrap;
 }
 
 .inventory-table thead th {
   color: var(--ng-text-900);
   font-weight: 600;
   white-space: nowrap;
+  background: var(--ng-background);
 }
 
 .inventory-table tbody th { font-weight: 600; }
+.inventory-table tbody tr:last-child > * { border-bottom: 0; }
+.inventory-table tbody tr:hover { background: var(--ng-action-tint); }
+.inventory-table .inventory-number { text-align: right; font-variant-numeric: tabular-nums; }
+.inventory-code { white-space: nowrap; }
+.inventory-geometry { font-variant-numeric: tabular-nums; }
+
+.inventory-row-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ng-space-2);
+  flex-wrap: nowrap;
+}
+
+.inventory-row-actions .ng-button {
+  min-height: 44px;
+  padding: var(--ng-space-2) var(--ng-space-3);
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.inventory-row-actions .ng-button:first-child:not(:disabled) { color: var(--ng-primary-focus); }
 
 .inventory-badge {
   display: inline-block;
@@ -123,4 +207,14 @@
 @media (max-width: 720px) {
   .inventory-tabs { margin-top: var(--ng-space-4); }
   .inventory-list { margin-top: var(--ng-space-4); }
+  .inventory-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .inventory-filters > .ng-field:first-of-type { grid-column: 1 / -1; }
+}
+
+@media (max-width: 480px) {
+  .inventory-list-header { align-items: stretch; gap: var(--ng-space-3); }
+  .inventory-list-header > .ng-button { width: 100%; }
+  .inventory-filters { grid-template-columns: minmax(0, 1fr); gap: var(--ng-space-3); }
+  .inventory-filter-actions .ng-button { width: 100%; }
+  .inventory-empty { padding: var(--ng-space-6) 0; }
 }
