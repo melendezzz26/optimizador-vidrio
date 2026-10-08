@@ -3,3 +3,27 @@
 export function canManageUsers(user) {
   return user?.rol === 'Administrador';
 }
+
+export function canManageOrders(user) {
+  return ['Administrador', 'Operario'].includes(user?.rol);
+}
+
+export function canViewInventory(user) {
+  return ['Administrador', 'Almacenero', 'Operario'].includes(user?.rol);
+}
+
+export function canViewResults(user) {
+  return ['Administrador', 'Almacenero', 'Operario'].includes(user?.rol);
+}
+
+export function canConfigureOptimizer(user) {
+  return user?.rol === 'Administrador';
+}
+
+export function canManagePlanchas(user) {
+  return ['Administrador', 'Almacenero'].includes(user?.rol);
+}
+
+export function canManageRetazos(user) {
+  return ['Administrador', 'Almacenero'].includes(user?.rol);
+}

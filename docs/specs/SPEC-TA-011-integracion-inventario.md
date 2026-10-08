@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Specified |
+| Estado | Verified |
 | PBI relacionado | TA-011 — Integración de stock |
 | Responsable | Fabricio A. / Fabricio M. |
 | Reviewer | Pendiente |
@@ -280,3 +280,4 @@ No se deben inventar capturas, respuestas, consultas de base de datos ni resulta
 
 - **Draft — 06/10/2026:** Especificación creada después de inspeccionar los contratos actuales de inventario, autenticación, permisos y componentes React. Se identificaron las brechas de integración frontend y navegación. HU-008 queda como trabajo posterior e independiente dentro de EP-001. Implementación pendiente.
 - **Specified — 06/10/2026:** Especificación revisada y alineada con el backlog v3.2. Se aprueba el alcance de integración E2E del módulo de inventario para planchas y retazos mediante React → FastAPI → PostgreSQL/Supabase. HU-008 permanece como PBI independiente para stock compatible por tipo y espesor.
+- **Verified — 08/10/2026:** Cierre técnico T01–T11 según la [auditoría final](../evidence/sprint-01/TA-011/prueba-funcional.md#auditoría-y-cierre--8-de-octubre-de-2026): PF-01–28 existentes, confirmaciones manuales previas del usuario para 401/403/422 y persistencia, revisión de cobertura backend y cuatro casos componente de Inventario PASS. Lint y build PASS. Las fuentes manuales, estáticas y automatizadas se distinguen en la matriz; no se repitieron altas ni se modificó la BD. Reviewer pendiente; sin commit, push ni PR en esta intervención.

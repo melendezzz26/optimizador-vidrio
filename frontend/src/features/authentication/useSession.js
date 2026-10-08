@@ -23,10 +23,14 @@ export function useSession() {
     setSession(await requestSignIn(username, password));
   }, []);
 
-  const signOut = useCallback(() => {
-    clearSession();
-    setSession(null);
-    setNotice('Sesión cerrada.');
+  const signOut = useCallback((message) => {
+  clearSession();
+  setSession(null);
+  setNotice(
+    typeof message === 'string'
+      ? message
+      : 'Sesión cerrada.'
+  );
   }, []);
 
   return { session, isChecking, notice, signIn, signOut };

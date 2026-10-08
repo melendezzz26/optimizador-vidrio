@@ -44,6 +44,38 @@ function initialVertices() {
   return [emptyVertex(), emptyVertex(), emptyVertex()];
 }
 
+function initialGeometryValues(geometria) {
+  if (!geometria) return { forma: '', width_mm: '', height_mm: '', radius_mm: '', vertices: initialVertices() };
+  if (geometria.type === 'RECTANGULO') {
+    return {
+      forma: 'RECTANGULO',
+      width_mm: String(geometria.width_mm),
+      height_mm: String(geometria.height_mm),
+      radius_mm: '',
+      vertices: initialVertices(),
+    };
+  }
+  if (geometria.type === 'CIRCUNFERENCIA') {
+    return {
+      forma: 'CIRCUNFERENCIA',
+      width_mm: '',
+      height_mm: '',
+      radius_mm: String(geometria.radius_mm),
+      vertices: initialVertices(),
+    };
+  }
+  if (geometria.type === 'POLIGONO_CONVEXO') {
+    return {
+      forma: 'POLIGONO_CONVEXO',
+      width_mm: '',
+      height_mm: '',
+      radius_mm: '',
+      vertices: geometria.vertices_mm.map(([x, y]) => ({ x: String(x), y: String(y) })),
+    };
+  }
+  return { forma: '', width_mm: '', height_mm: '', radius_mm: '', vertices: initialVertices() };
+}
+
 /**
  * SPEC-HU-005-registrar-retazo: T01.
  * Formulario desacoplado de HTTP para registrar un retazo reutilizable.
@@ -52,17 +84,31 @@ function initialVertices() {
  * isSubmitting: bloquea el formulario durante el procesamiento externo.
  * onCancel: opcional; sin callback, Cancelar permanece deshabilitado.
  */
-export default function RegistrarRetazoForm({ catalogo = [], onSubmit, isSubmitting = false, onCancel }) {
+export default function RegistrarRetazoForm({
+  catalogo = [],
+  mode = 'create',
+  initialValues = null,
+  onSubmit,
+  isSubmitting = false,
+  onCancel,
+}) {
   const id = useId();
+  const isEdit = mode === 'edit';
   const sending = useRef(false);
   const [pending, setPending] = useState(false);
   const [attempted, setAttempted] = useState(false);
   const [submitError, setSubmitError] = useState('');
-  const [values, setValues] = useState({
-    codigo: '', id_tipo_vidrio: '', espesor_mm: '', forma: '',
-    width_mm: '', height_mm: '', radius_mm: '',
-  });
-  const [vertices, setVertices] = useState(initialVertices);
+  const initialGeometry = initialGeometryValues(initialValues?.geometria);
+  const [values, setValues] = useState(() => ({
+    codigo: isEdit && initialValues ? String(initialValues.codigo ?? '') : '',
+    id_tipo_vidrio: isEdit && initialValues ? String(initialValues.id_tipo_vidrio ?? '') : '',
+    espesor_mm: isEdit && initialValues ? String(initialValues.espesor_mm ?? '') : '',
+    forma: initialGeometry.forma,
+    width_mm: initialGeometry.width_mm,
+    height_mm: initialGeometry.height_mm,
+    radius_mm: initialGeometry.radius_mm,
+  }));
+  const [vertices, setVertices] = useState(() => initialGeometry.vertices);
 
   const types = activeCatalog(catalogo);
   const selectedType = types.find((t) => t.id === Number(values.id_tipo_vidrio));
@@ -70,6 +116,17 @@ export default function RegistrarRetazoForm({ catalogo = [], onSubmit, isSubmitt
   const thicknessHelpId = !selectedType || thicknesses.length === 0
     ? `${id}-espesor_mm-help` : undefined;
   const busy = isSubmitting || pending;
+  const initialPair = isEdit && initialValues
+    ? { id: Number(initialValues.id_tipo_vidrio), espesor: Number(initialValues.espesor_mm) }
+    : null;
+  const initialCombinationAvailable = !initialPair || types.some((type) => (
+    type.id === initialPair.id && type.espesores.includes(initialPair.espesor)
+  ));
+  const currentCombinationValid = Boolean(selectedType)
+    && thicknesses.includes(Number(values.espesor_mm));
+  const showHistoricalCombinationWarning = isEdit
+    && !initialCombinationAvailable
+    && !currentCombinationValid;
 
   // --- Validación ---
   const errors = {};
@@ -228,15 +285,24 @@ export default function RegistrarRetazoForm({ catalogo = [], onSubmit, isSubmitt
   return (
     <PageCard as="form" className="retazo-form" onSubmit={submit} noValidate aria-busy={busy}
       aria-labelledby={`${id}-title`}>
-      <PageHeader context="Gestión de inventario" title="Registrar retazo"
+      <PageHeader context="Gestión de inventario" title={isEdit ? 'Editar retazo' : 'Registrar retazo'}
         titleId={`${id}-title`} icon={Layers3}
-        description="Ingresa el código, material, espesor y geometría del retazo que deseas incorporar al stock.">
+        description={isEdit
+          ? 'Actualiza el código, material, espesor y geometría del retazo.'
+          : 'Ingresa el código, material, espesor y geometría del retazo que deseas incorporar al stock.'}>
         <p className="retazo-form__required">Todos los campos son obligatorios (*).</p>
       </PageHeader>
 
       {types.length === 0 && (
         <p className="retazo-form__notice" role="status">
           No hay tipos de vidrio activos disponibles. El registro estará disponible cuando haya catálogo.
+        </p>
+      )}
+
+      {showHistoricalCombinationWarning && (
+        <p className="retazo-form__notice" role="status">
+          La combinación actual de tipo de vidrio y espesor ya no está disponible en el catálogo activo.
+          Selecciona una combinación activa para guardar cambios o cancela la edición.
         </p>
       )}
 
@@ -255,9 +321,14 @@ export default function RegistrarRetazoForm({ catalogo = [], onSubmit, isSubmitt
           <div className="ng-field">
             <label htmlFor={`${id}-id_tipo_vidrio`}>Tipo de vidrio *</label>
             <select className="ng-control" {...fieldProps('id_tipo_vidrio')}
-              value={selectedType ? values.id_tipo_vidrio : ''}
+              value={values.id_tipo_vidrio}
               onChange={(e) => change('id_tipo_vidrio', e.target.value)} disabled={types.length === 0}>
               <option value="">Seleccionar tipo</option>
+              {isEdit && values.id_tipo_vidrio && !selectedType && (
+                <option value={values.id_tipo_vidrio} disabled>
+                  Tipo de vidrio no disponible ({values.id_tipo_vidrio})
+                </option>
+              )}
               {types.map((t) => <option key={t.id} value={t.id}>{t.nombre}</option>)}
             </select>
             {errorMessage('id_tipo_vidrio')}
@@ -267,10 +338,16 @@ export default function RegistrarRetazoForm({ catalogo = [], onSubmit, isSubmitt
           <div className="ng-field">
             <label htmlFor={`${id}-espesor_mm`}>Espesor (mm) *</label>
             <select className="ng-control" {...fieldProps('espesor_mm', thicknessHelpId)}
-              value={thicknesses.includes(Number(values.espesor_mm)) ? values.espesor_mm : ''}
+              value={thicknesses.includes(Number(values.espesor_mm))
+                ? String(Number(values.espesor_mm)) : values.espesor_mm}
               onChange={(e) => change('espesor_mm', e.target.value)}
               disabled={!selectedType || thicknesses.length === 0}>
               <option value="">Seleccionar espesor</option>
+              {isEdit && values.espesor_mm && !thicknesses.includes(Number(values.espesor_mm)) && (
+                <option value={values.espesor_mm} disabled>
+                  Espesor no disponible ({values.espesor_mm} mm)
+                </option>
+              )}
               {thicknesses.map((v) => <option key={v} value={v}>{v} mm</option>)}
             </select>
             {!selectedType && (
@@ -382,7 +459,9 @@ export default function RegistrarRetazoForm({ catalogo = [], onSubmit, isSubmitt
       )}
 
       {attempted && Object.keys(errors).length > 0 && (
-        <p className="retazo-form__error" role="alert">Revisa los campos indicados antes de registrar.</p>
+        <p className="retazo-form__error" role="alert">
+          Revisa los campos indicados antes de {isEdit ? 'guardar' : 'registrar'}.
+        </p>
       )}
       {submitError && <p className="retazo-form__error" role="alert">{submitError}</p>}
       {!onCancel && (
@@ -396,10 +475,11 @@ export default function RegistrarRetazoForm({ catalogo = [], onSubmit, isSubmitt
           Cancelar
         </button>
         <button className="ng-button ng-button--primary" type="submit"
-          aria-busy={busy} disabled={busy || types.length === 0}>
+          aria-busy={busy} disabled={busy || types.length === 0 || (isEdit && !currentCombinationValid)}>
           {busy ? <LoaderCircle className="ng-loading-icon" size={18} aria-hidden="true" />
             : <Save size={18} aria-hidden="true" />}
-          {busy ? 'Registrando...' : 'Registrar retazo'}
+          {busy ? (isEdit ? 'Guardando...' : 'Registrando...')
+            : (isEdit ? 'Guardar cambios' : 'Registrar retazo')}
         </button>
       </ActionBar>
     </PageCard>

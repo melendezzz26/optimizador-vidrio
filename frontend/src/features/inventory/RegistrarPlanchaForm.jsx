@@ -38,14 +38,30 @@ function activeCatalog(catalogo) {
  * onCancel: opcional; sin callback, Cancelar permanece deshabilitado.
  * Evidencia visual, teclado y Lighthouse pendientes de la pantalla integrada.
  */
-export default function RegistrarPlanchaForm({ catalogo = [], onSubmit, isSubmitting = false, onCancel }) {
+export default function RegistrarPlanchaForm({
+  catalogo = [],
+  mode = 'create',
+  initialValues = null,
+  onSubmit,
+  isSubmitting = false,
+  onCancel,
+}) {
   const id = useId();
+  const isEdit = mode === 'edit';
   const sending = useRef(false);
   const [pending, setPending] = useState(false);
   const [attempted, setAttempted] = useState(false);
   const [submitError, setSubmitError] = useState('');
-  const [values, setValues] = useState({
-    id_tipo_vidrio: '', espesor_mm: '', ancho_mm: '', alto_mm: '', cantidad: '',
+  const [values, setValues] = useState(() => {
+    if (!isEdit || !initialValues) {
+      return {
+        id_tipo_vidrio: '', espesor_mm: '', ancho_mm: '', alto_mm: '', cantidad: '',
+      };
+    }
+    return Object.fromEntries(
+      ['id_tipo_vidrio', 'espesor_mm', 'ancho_mm', 'alto_mm', 'cantidad']
+        .map((field) => [field, initialValues[field] === undefined ? '' : String(initialValues[field])]),
+    );
   });
 
   const types = activeCatalog(catalogo);
@@ -69,7 +85,12 @@ export default function RegistrarPlanchaForm({ catalogo = [], onSubmit, isSubmit
 
   for (const [field, label] of [['ancho_mm', 'el ancho'], ['alto_mm', 'el alto'], ['cantidad', 'la cantidad']]) {
     if (!values[field].trim()) errors[field] = `Completa ${label}.`;
-    else if (positiveNumber(values[field]) === null) errors[field] = 'Ingresa un número mayor que cero.';
+    else if (field === 'cantidad' && isEdit) {
+      const quantity = Number(values[field]);
+      if (!Number.isSafeInteger(quantity) || quantity < 0) {
+        errors[field] = 'Ingresa una cantidad entera mayor o igual que cero.';
+      }
+    } else if (positiveNumber(values[field]) === null) errors[field] = 'Ingresa un número mayor que cero.';
   }
   if (!errors.cantidad && !Number.isSafeInteger(payload.cantidad)) {
     errors.cantidad = 'Ingresa una cantidad entera mayor que cero.';
@@ -135,9 +156,11 @@ export default function RegistrarPlanchaForm({ catalogo = [], onSubmit, isSubmit
   return (
     <PageCard as="form" className="plancha-form" onSubmit={submit} noValidate aria-busy={busy}
       aria-labelledby={`${id}-title`}>
-      <PageHeader context="Gestión de inventario" title="Registrar plancha comercial"
+      <PageHeader context="Gestión de inventario" title={isEdit ? 'Editar plancha' : 'Registrar plancha comercial'}
         titleId={`${id}-title`} icon={Layers3}
-        description="Ingresa el material, las dimensiones y la cantidad de planchas que deseas registrar.">
+        description={isEdit
+          ? 'Actualiza el material, las dimensiones y la cantidad de la plancha.'
+          : 'Ingresa el material, las dimensiones y la cantidad de planchas que deseas registrar.'}>
         <p className="plancha-form__required">Todos los campos son obligatorios (*).</p>
       </PageHeader>
 
@@ -163,7 +186,7 @@ export default function RegistrarPlanchaForm({ catalogo = [], onSubmit, isSubmit
           <div className="ng-field">
             <label htmlFor={`${id}-espesor_mm`}>Espesor (mm) *</label>
             <select className="ng-control" {...fieldProps('espesor_mm', thicknessHelpId)}
-              value={thicknesses.includes(payload.espesor_mm) ? values.espesor_mm : ''}
+              value={thicknesses.includes(payload.espesor_mm) ? String(payload.espesor_mm) : ''}
               onChange={(event) => change('espesor_mm', event.target.value)}
               disabled={!selectedType || thicknesses.length === 0}>
               <option value="">Seleccionar espesor</option>
@@ -188,7 +211,7 @@ export default function RegistrarPlanchaForm({ catalogo = [], onSubmit, isSubmit
             <div className="ng-field" key={field}>
               <label htmlFor={`${id}-${field}`}>{label} *</label>
               <input className="ng-control" {...fieldProps(field)} type="number" step={step}
-                min={field === 'cantidad' ? '1' : '0'}
+                min={field === 'cantidad' ? (isEdit ? '0' : '1') : '0'}
                 inputMode={field === 'cantidad' ? 'numeric' : 'decimal'}
                 value={values[field]} onChange={(event) => change(field, event.target.value)} />
               {errorMessage(field)}
@@ -215,7 +238,8 @@ export default function RegistrarPlanchaForm({ catalogo = [], onSubmit, isSubmit
           aria-busy={busy} disabled={busy || types.length === 0}>
           {busy ? <LoaderCircle className="ng-loading-icon" size={18} aria-hidden="true" />
             : <Save size={18} aria-hidden="true" />}
-          {busy ? 'Registrando...' : 'Registrar plancha'}
+          {busy ? (isEdit ? 'Guardando...' : 'Registrando...')
+            : (isEdit ? 'Guardar cambios' : 'Registrar plancha')}
         </button>
       </ActionBar>
     </PageCard>
