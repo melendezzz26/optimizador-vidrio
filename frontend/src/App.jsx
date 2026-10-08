@@ -9,7 +9,7 @@ import {
 } from './features/authentication';
 import { InventoryPage } from './features/inventory/InventoryPage';
 import { UsersPage } from './features/users';
-import NuevoPedido from './pages/NuevoPedido';
+import NuevoPedido from './features/orders/NuevoPedido';
 import './App.css';
 
 function App() {
@@ -69,7 +69,7 @@ function App() {
   return (
     <div className="app-container">
       {toolbar}
-      <NuevoPedido />
+      <NuevoPedido token={session.token || session.access_token} />    
     </div>
   );
 }
