@@ -1,5 +1,8 @@
 # TA-011 — Integración de inventario
 
+Estado vigente: ver [Cierre de la auditoría](#cierre-de-la-auditoría--8-de-octubre-de-2026).
+Los bloques siguientes conservan sus resultados y pendientes históricos.
+
 ## Bloque 2 — Consulta E2E y navegación por permisos
 
 ### Objetivo
@@ -786,3 +789,22 @@ hashes, tokens ni secretos. Algunas muestran nombres e identificadores de
 cuentas, que no se transcriben. Ninguna se excluyó por privacidad; las cuatro
 no seleccionadas se conservan fuera del repositorio por menor aporte frente
 a la selección. No se modificaron capturas anteriores ni código.
+
+## Cierre de la auditoría — 8 de octubre de 2026
+
+La [matriz T01–T11](prueba-funcional.md#auditoría-y-cierre--8-de-octubre-de-2026)
+consolida PF-01–28 sin repetirlos. Añade las confirmaciones manuales previas
+401/403/422 y persistencia aportadas por el usuario, cuatro casos componente
+de Inventario y la inspección del código y pruebas backend existentes.
+
+El archivo InventoryPage había sido eliminado localmente: se restauró desde
+HEAD y se recuperó el mensaje de sesión inválida del callback 401. El test 403
+conserva su lógica; el único 422 cubre feedback de formulario. Solo dos casos
+nuevos cubren loading, inventario vacío y error de carga, que no estaban
+acreditados por PF-25 (filtros sin coincidencias).
+
+Los pendientes históricos de HTTP y estados UI quedan resueltos con las
+fuentes y límites indicados en la matriz. T11 incorpora la confirmación manual
+de persistencia en [Operaciones API/BD](operaciones-api-bd.md#ampliación-de-evidencia--8-de-octubre-de-2026).
+HU-008 y un editor visual de polígonos no son requisitos de este cierre.
+Commit, push y PR no se realizan en esta intervención.

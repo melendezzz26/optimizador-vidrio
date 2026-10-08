@@ -1,5 +1,8 @@
 # TA-011 — Operaciones API y alcance de evidencia de BD
 
+Estado vigente: ver [Ampliación de evidencia](#ampliación-de-evidencia--8-de-octubre-de-2026)
+y la [matriz de cierre](prueba-funcional.md#auditoría-y-cierre--8-de-octubre-de-2026).
+
 Se registran las operaciones observadas en los logs y su relación con las
 capturas del frontend. Se distinguen la respuesta inmediata de cada operación,
 la consulta posterior al registro y el resultado visible en la interfaz.
@@ -226,3 +229,25 @@ anteriores de filtros/mejora general; TA-011 todavía no está finalizada.
 Siguen pendientes editor visual/reutilizable para POLIGONO_CONVEXO, 401,
 403 backend, validación formal restante de 422, cierre documental final y PR.
 No se afirma integración de HU-007 a main ni cierre de HU-008.
+
+## Ampliación de evidencia — 8 de octubre de 2026
+
+El usuario confirmó durante la auditoría que ya había verificado la
+persistencia de la plancha Espejo 6 mm, 1000 × 500 mm y del retazo
+`RET-TA011-E2E-001`, al consultársele por la comprobación en PostgreSQL/Supabase
+o por una consulta independiente posterior. Se registra como comprobación
+manual previa confirmada, complementaria a PF-02/03 y sus POST → GET → listado.
+No se precisó cuál de esos mecanismos utilizó; no se inventa SQL, captura,
+ID adicional ni una nueva ejecución. Con esa confirmación se cierra T11.
+
+También se registran las verificaciones reales previas informadas por el usuario:
+
+| Operación | Resultado confirmado | Alcance |
+| --- | --- | --- |
+| PATCH `/api/inventory/planchas/4` con sesión inválida | 401; vuelve al login con mensaje de sesión inválida tras la corrección. | API y feedback manual; sin nueva captura. |
+| PATCH forzado con sesión Operario | 403 Forbidden; Operario no ve gestión en la interfaz. | Autorización real; no se transcriben credenciales ni payload no informado. |
+| PATCH `/api/inventory/planchas/4`, body `{}` | 422, detail `PATCH vacío`. | Contrato backend; el feedback de formulario se acredita aparte con el componente. |
+
+El 409 permanece acreditado por PF-04 y TA011-11/12. No se repiten operaciones
+ni se modifica la base. Las limitaciones de las capturas históricas siguen
+vigentes: esta ampliación añade confirmaciones manuales, no contenido visual.

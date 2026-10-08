@@ -1,5 +1,8 @@
 # TA-011 — Prueba funcional
 
+Estado vigente: ver [Auditoría y cierre del 8 de octubre](#auditoría-y-cierre--8-de-octubre-de-2026).
+Los pendientes de los bloques anteriores se conservan como historial.
+
 Casos de los bloques 2 a 7, con resultados y pendientes documentados con las capturas
 oficiales y las confirmaciones manuales del usuario recogidas en
 [Integración de inventario](integracion-inventario.md). Esta actualización
@@ -139,3 +142,115 @@ final y PR. No se afirma que HU-007 esté integrado a main; HU-008 queda fuera.
 
 Las capturas revisadas no exponen JWT, Authorization, contraseñas, hashes,
 tokens ni secretos; no se transcriben los datos identificativos de las cuentas.
+
+## Auditoría y cierre — 8 de octubre de 2026
+
+SPEC: [SPEC-TA-011](../../../specs/SPEC-TA-011-integracion-inventario.md).
+Rama inspeccionada: `feature/TA-011-integracion-inventario`, HEAD `210b532`,
+con cambios locales sin commit. Auditoría de SPEC, los tres documentos de
+evidencia, pruebas backend de inventario, frontend y configuración de HU-007
+realizada antes de modificar código. HU-007 se usó solo como referencia de
+infraestructura; sus pruebas de Orders no acreditan Inventory.
+
+### Cobertura existente y decisiones
+
+- PF-01: consulta autenticada; PF-02/03: altas; PF-04: conflicto 409.
+- PF-05–08: estados; PF-09: Operario consulta; PF-10–15: edición de plancha.
+- PF-16–21: edición de retazo; PF-22–28: filtros, refresco, permisos,
+  responsive y teclado. Ya estaban PASS, con los límites de cada fila.
+- Los bloques 2, 3, 4, 5, 6, 7 y 8A ya afirman PASS en
+  `integracion-inventario.md`; `operaciones-api-bd.md` acredita POST/PATCH
+  seguidos por GET. No se ejecutaron de nuevo esos flujos.
+- Backend existente: `tests/api/inventory/test_inventory_api.py` cubre
+  contratos GET/POST/PATCH, 401 sin token, 403 de catálogo, 409 y 422
+  (incluido PATCH vacío y null en ambas entidades). No se presenta el 403
+  de catálogo como prueba automática de PATCH de planchas por Operario.
+- `tests/unit/inventory/test_service.py::test_empty_patch_is_rejected`
+  cubre ambas entidades sin escrituras. En el mismo archivo están creación,
+  cantidad cero/estado false, recálculo de área, duplicados y listas vacías.
+  `test_catalog.py` y `test_geometry.py` cubren catálogo y geometría.
+- `tests/integration/inventory/test_repository.py` prueba PostgreSQL real
+  temporal: roundtrip de ambas entidades y
+  `test_service_complete_flow_with_decimal_geometry_and_fresh_repository`.
+  `tests/integration/inventory/test_catalog.py` cubre catálogo persistido y
+  compatibilidad. Estos tests no son una captura de la BD del E2E manual.
+- Antes de esta intervención solo existían en frontend dos casos de
+  Inventario en el archivo nuevo: 403 y el intento de 422. No había otra
+  suite de `inventoryApi` ni E2E automatizado de Inventory. Las 84 unitarias
+  son geométricas; la suite componente de HU-007 no sustituye T03/T09.
+
+### Evidencia HTTP consolidada
+
+| HTTP | Evidencia previa | Acreditación del feedback / resultado |
+| --- | --- | --- |
+| 401 | Usuario confirmó PATCH real `/api/inventory/planchas/4` → 401 y retorno al login con mensaje de sesión inválida, después de corregirlo. Backend: `test_auth_sin_token`. | PASS manual informado; sin nueva captura. Se conserva el cambio local de `useSession.signOut(message)` y se recupera el envío del mensaje desde InventoryPage. |
+| 403 | PF-09/15/21/27 acreditan ocultación de acciones; usuario confirmó además PATCH forzado real con sesión Operario → 403 Forbidden. | Caso componente 403 existente PASS: alerta, sin expirar sesión, sin GET y sin modificar estado. Fetch simulado; no se presenta como autorización backend real. |
+| 409 | PF-04; TA011-11/12: duplicado real, formulario abierto, datos conservados y mensaje visible. Backend: `test_retazos`, `test_retazo_maximum_code_and_duplicate`. | PASS previo suficiente; no se añade ni repite un test. |
+| 422 | Usuario confirmó PATCH real `/api/inventory/planchas/4`, body `{}` → 422, detail `PATCH vacío`. API y servicio ya prueban el rechazo. | Se conserva un único caso componente para la brecha de feedback: respuesta simulada con detail en array → alerta visible, formulario abierto, cantidad conservada y sin GET. No vuelve a probar la regla del PATCH vacío. |
+
+`inventoryApi.messageFor` conserva un `detail` textual (incluido `PATCH vacío`)
+y usa `Revisa los datos ingresados.` para 422 con detail estructurado.
+InventoryPage lleva ese mensaje a `operationError`, renderizado como
+`role="alert"` inmediatamente antes del formulario. La inspección confirma
+la implementación; el caso componente acredita su ejecución visible. No se
+afirma un nuevo E2E real de 422 desde el formulario.
+
+### Matriz final T01–T11
+
+| Criterio | Implementado | Probado | Documentado | Pendiente |
+| --- | --- | --- | --- | --- |
+| T01 Navegación, shell y pestañas | Sí | PF-01/28 y teclado del bloque 2; inspección de App, AppShell y PageLayout. | Integración bloques 2/8A; TA011-01–04, 39/40. | Ninguno. |
+| T02 Catálogo real | Sí; ambos formularios filtran activos y derivan espesores de props. | PF-01/02/03/16; API `test_operario_get_permitido`; pruebas unitarias/integración de catálogo; inspección de `activeCatalog`. | Integración bloques 2–4/7 y operaciones API. | Ninguno; no exigir otra suite aislada de transporte. |
+| T03 Listados y estados UI | Sí | PF-01 y éxitos PF-02/03/11/17; dos casos componente nuevos: loading → vacío en ambas pestañas, y error de red visible. | Bloques previos más esta auditoría. PF-25 es no-results, no empty. | Ninguno. |
+| T04 Registrar plancha y refrescar | Sí | PF-02; API `test_planchas`; servicio `test_create_plancha_sends_normalized_data_and_utc_date`. | Bloque 3, TA011-05–07 y operaciones API. | Ninguno. |
+| T05 Editar/estado plancha | Sí | PF-05/06/10–15/26; API `test_planchas`; servicio `test_update_plancha_preserves_id_date_and_accepts_zero_false`. | Bloques 5/6/8A, TA011-14/15/18/21–26/37. | Ninguno. |
+| T06 Registrar retazo y área backend | Sí | PF-03; API `test_retazos`; servicio `test_create_retazo_uses_domain_area_and_sends_manual_origin`. | Bloque 4, TA011-08–10 y operaciones API. | Ninguno. |
+| T07 Editar/estado retazo | Sí | PF-07/08/16–21; servicio `test_update_retazo_recalculates_area_and_preserves_identity_date_origin`; roundtrip de repositorio. | Bloques 5/7, TA011-16–18/28–32. | Ninguno; E2E documentado rectangular, sin inventar E2E de otras formas. |
+| T08 Filtros locales | Sí | PF-22–27, sin HTTP adicional. | Bloque 8A, TA011-33–38. | Ninguno. |
+| T09 Mensajes 401/403/409/422 | Sí | Manuales reales previos + backend existente + componentes 403/422; fuentes separadas en tabla HTTP. | PF-04, bloques previos y cierre HTTP de esta sección. | Ninguno. |
+| T10 Formularios desacoplados | Sí | Inspección: sin fetch/axios/import de inventoryApi en formularios; props/onSubmit. PF-02/03/11/17 ejercitan su integración. | SPEC, bloques 3/4/6/7 y esta auditoría. | Ninguno. |
+| T11 Persistencia de plancha y retazo | Sí | PF-02/03 + comprobación previa de persistencia confirmada por el usuario durante esta auditoría; integración PostgreSQL existente como apoyo independiente. | Ampliación del 8 de octubre en operaciones-api-bd.md. | Ninguno; confirmación manual sin nueva captura ni SQL transcrito. |
+
+### Reparación mínima y límites
+
+Git mostraba `D frontend/src/features/inventory/InventoryPage.jsx`.
+Se reprodujo el fallo de resolución con Vitest antes de restaurar el archivo
+desde HEAD. `__tests__`, el nombre del test y `../InventoryPage` eran correctos;
+UTF-8 válido sin BOM, sin caracteres invisibles sospechosos, JSX escapado ni
+regex deformadas. No se cambió el import ni la configuración de Vitest.
+
+Se conservó la lógica del test 403. El 422 existente se orientó al formulario
+de edición, con PATCH de cantidad y respuesta simulada 422; no envía un PATCH
+vacío. Solo se añadieron dos casos para los estados UI realmente ausentes.
+La página restaurada recibe únicamente la recuperación del mensaje de sesión
+inválida en el callback 401, compatible con el cambio local de useSession.
+
+No repetir PF-01–28, 409, PATCH vacío backend, filtros, geometría ni toda la
+suite de 920 pruebas para este cambio frontend. No se modificaron backend,
+contratos API, HU-007 ni datos productivos. No se necesitan pruebas separadas
+de transporte que dupliquen el E2E real ya documentado. Editor visual de
+polígonos y HU-008 quedan fuera del cierre T01–T11.
+
+### Validación de esta intervención
+
+Entorno: Node `22.23.2`. Directorio de comandos frontend: `frontend/`.
+Se usa `npx.cmd`/`npm.cmd` porque PowerShell bloquea los wrappers `.ps1`;
+no se cambia la política de ejecución del sistema.
+
+| Comando | Resultado observado |
+| --- | --- |
+| `npx.cmd vitest run src/features/inventory/__tests__/InventoryPage.test.jsx` antes de reparar | FAIL de import; 0 tests ejecutados, archivo de página ausente. |
+| Mismo comando después de reparar | PASS: 4/4, un archivo. |
+| `npm.cmd run lint` | PASS. |
+| `npm.cmd run build` | PASS. |
+| `git diff --check` (raíz del repositorio) | PASS, sin errores de whitespace; aviso de normalización CRLF/LF del SPEC. |
+| `git status --short` (raíz del repositorio) | Cuatro documentos y dos archivos fuente modificados; directorio de tests de Inventory sin seguimiento. `useSession.js` ya estaba modificado al iniciar. Sin eliminaciones. |
+
+Antecedentes aportados por el usuario: backend 920/920, unitarias frontend
+84/84 y componentes 37/37 antes del intento 422. No se presentan como una
+nueva ejecución de esta intervención ni se suman a los cuatro casos actuales.
+
+**Cierre técnico T01–T11: PASS; SPEC actualizada a Verified.** Queda la
+revisión administrativa (Reviewer pendiente) y el flujo Git/PR posterior,
+sin commit ni push en esta intervención. No quedan pruebas duplicadas que
+deban ejecutarse para justificar este cierre.
