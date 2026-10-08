@@ -250,7 +250,7 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
   const isInventoryActionPending = pendingInventoryAction !== null;
 
   const handleApiError = useCallback((error) => {
-    if (error.status === 401) onSessionExpired();
+    if (error.status === 401) onSessionExpired('Tu sesión no es válida o ha expirado.');
     return error;
   }, [onSessionExpired]);
 
