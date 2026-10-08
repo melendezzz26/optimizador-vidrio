@@ -35,6 +35,13 @@ def _run(args, **kwargs):
 
 @pytest.fixture(scope="session")
 def isolated_postgres(tmp_path_factory):
+    with temporary_postgres(tmp_path_factory.mktemp("newglass-migrations-postgres")) as cluster:
+        yield cluster
+
+
+@contextmanager
+def temporary_postgres(root):
+    """Owned loopback cluster, also used by the real HTTP/browser test server."""
     configured = os.environ.get("NEWGLASS_TEST_PG_BIN")
     found = shutil.which("initdb")
     directory = Path(configured) if configured else (Path(found).parent if found else Path("C:/Program Files/PostgreSQL/18/bin"))
@@ -42,12 +49,11 @@ def isolated_postgres(tmp_path_factory):
     initdb, pg_ctl = (directory / (name + suffix) for name in ("initdb", "pg_ctl"))
     if not initdb.is_file() or not pg_ctl.is_file():
         pytest.skip("No hay binarios PostgreSQL locales para crear un clúster aislado.")
-    root = tmp_path_factory.mktemp("newglass-migrations-postgres")
     data = root / "data"
     result = _run([initdb, "-D", data, "-U", "r1_test", "-A", "trust", "--no-locale", "--encoding=UTF8"])
     assert result.returncode == 0, result.stderr
     with (data / "postgresql.conf").open("a", encoding="utf-8") as config:
-        config.write("\nunix_socket_directories = ''\n")
+        config.write("\nunix_socket_directories = ''\ntimezone = 'UTC'\n")
     with socket.socket() as reservation:
         reservation.bind(("127.0.0.1", 0))
         port = reservation.getsockname()[1]

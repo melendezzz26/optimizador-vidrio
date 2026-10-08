@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Generated frontend test artifacts
+test-results/
+playwright-report/
+.vitest/
