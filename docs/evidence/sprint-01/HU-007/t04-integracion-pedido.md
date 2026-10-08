@@ -317,3 +317,76 @@ Archivos modificados o creados respecto al WIP:
 - `frontend/tests/e2e/globalTeardown.js`
 - `frontend/tests/e2e/hu007-custom-piece.spec.js`
 - `frontend/tests/e2e/hu007-order-integration.spec.js`
+
+## Evidencias visuales
+
+Las siguientes capturas complementan la evidencia automatizada de T04 y documentan
+los principales puntos del flujo de integración entre la pieza personalizada,
+el pedido y el backend.
+
+### Evidencia 1 — Suite backend completa
+
+![Suite backend completa](capturas/t04/01-backend-pytest.png)
+
+La ejecución completa de `pytest` valida el backend de NewGlass, incluyendo las
+pruebas del módulo Orders, persistencia transaccional y pruebas de integración
+sobre PostgreSQL temporal aislado.
+
+**Resultado:** 920 pruebas aprobadas, sin fallos ni pruebas omitidas.
+
+### Evidencia 2 — Regresión frontend e integración
+
+![Pruebas frontend](capturas/t04/02-frontend-tests.png)
+
+La ejecución de las pruebas frontend confirma que la integración T04 no introduce
+regresiones sobre T01, T02 y T03 y que los nuevos casos del flujo de pedidos
+funcionan correctamente.
+
+**Resultados:**
+
+- Unit: 84 aprobadas.
+- Component: 36 aprobadas.
+- E2E: 24 aprobadas.
+
+### Evidencia 3 — Validación estática y build
+
+![Lint y build](capturas/t04/03-lint-build.png)
+
+La validación estática y la compilación de producción concluyen correctamente,
+confirmando que el frontend no presenta errores bloqueantes de ESLint y puede
+generar su build de producción.
+
+### Evidencia 5 — Pieza personalizada agregada localmente
+
+![Pieza agregada](capturas/t04/05-pieza-agregada.png)
+
+La pieza personalizada se incorpora al estado local del pedido y permanece
+marcada como **Sin guardar**. Esta acción no realiza todavía el `POST /api/orders`,
+de acuerdo con la estrategia definida para T04.
+
+### Evidencia 6 — Registro exitoso del pedido
+
+![Pedido guardado](capturas/t04/06-pedido-guardado-id.png)
+
+Al pulsar **Guardar pedido**, el frontend envía las piezas acumuladas al backend.
+La respuesta HTTP 201 muestra el `id_pedido` generado, confirmando el registro
+exitoso de la cabecera y sus piezas asociadas.
+
+### Evidencia 7 — Endpoint POST /api/orders en FastAPI
+
+![POST api orders](capturas/t04/07-swagger-post-orders.png)
+
+FastAPI expone el endpoint `POST /api/orders`, utilizado por el frontend para
+persistir el pedido completo. El contrato recibe material, espesor y piezas,
+mientras que los datos derivados y el usuario registrador se determinan en el
+backend.
+
+## Conclusión de T04
+
+La integración implementada permite agregar una pieza personalizada validada al
+pedido, mantener múltiples piezas localmente y persistir el pedido completo
+mediante `POST /api/orders`.
+
+El backend vuelve a validar la geometría, calcula los valores derivados y realiza
+la persistencia de `Pedido` y `Pieza` de forma transaccional. Las pruebas
+automatizadas y las evidencias visuales confirman el comportamiento esperado.
