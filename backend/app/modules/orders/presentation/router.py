@@ -6,9 +6,13 @@ from fastapi.routing import APIRoute
 from .schemas import CreateOrderRequest, CreateOrderResponse
 from ..application.use_cases import CreateOrderUseCase
 from ..domain.exceptions import InvalidOrderException, InvalidGeometryException
-from ..infrastructure.dependencies import get_create_order_use_case
+from .dependencies import get_create_order_use_case
 from app.modules.authentication.presentation.dependencies import require_permission
 from app.modules.authentication.domain.user import AuthenticatedUser
+
+from app.modules.orders.presentation.schemas import CreateOrderRequest, CreateOrderResponse
+
+
 
 class OrderRoute(APIRoute):
     def get_route_handler(self):
@@ -30,12 +34,15 @@ class OrderRoute(APIRoute):
 router = APIRouter(prefix="/api/orders", tags=["Pedidos"], route_class=OrderRoute)
 logger = logging.getLogger(__name__)
 
+permiso_gestionar_pedidos = require_permission("GESTIONAR_PEDIDOS")
+
 @router.post("", response_model=CreateOrderResponse, status_code=status.HTTP_201_CREATED)
+
 def create_order(
     request: CreateOrderRequest,
-    user: AuthenticatedUser = Depends(require_permission("GESTIONAR_PEDIDOS")),
+    user: AuthenticatedUser = Depends(permiso_gestionar_pedidos),
     use_case: CreateOrderUseCase = Depends(get_create_order_use_case),
-):
+):  
     try:
         piezas_dict = [p.model_dump() for p in request.piezas]
         id_pedido = use_case.execute(

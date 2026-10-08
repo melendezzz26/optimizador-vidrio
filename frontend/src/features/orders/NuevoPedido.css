@@ -1,0 +1,406 @@
+/* TOKENS OFICIALES UI/UX NEWGLASS */
+:root {
+  --brand-blue: #61A3E7;
+  --primary-action: #2563EB;
+  --primary-focus: #1D4ED8;
+  --text-900: #1F2937;
+  --text-600: #64748B;
+  --surface: #FFFFFF;
+  --background: #F5F7FA;
+  --success: #166534;
+  --error: #B91C1C;
+  --border-strong: #64748B;
+  --border-light: #E2E8F0;
+}
+
+/* =========================
+   LAYOUT PRINCIPAL
+========================= */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  font-family: 'Inter', system-ui, Arial, sans-serif;
+  color: var(--text-900);
+  overflow: hidden;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+.sidebar {
+  width: 260px;
+  background-color: var(--surface);
+  border-right: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  z-index: 10;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 48px;
+  padding: 0 8px;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background-color: var(--primary-action);
+  color: white;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.sidebar-logo h2 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--text-900);
+}
+
+.sidebar-logo p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-600);
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--text-600);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+  background-color: var(--background);
+  color: var(--text-900);
+}
+
+.nav-item.active {
+  background-color: #EFF6FF; /* Fondo azul muy claro */
+  color: var(--primary-action);
+  font-weight: 600;
+}
+
+/* =========================
+   ÁREA DE CONTENIDO
+========================= */
+.pagina-pedido {
+  flex: 1;
+  position: relative;
+  overflow-y: auto;
+  padding: 40px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.overlay-fondo {
+  position: absolute;
+  inset: 0;
+  background: rgba(245, 247, 250, 0.85); /* Mitiga fuertemente la foto */
+  z-index: 0;
+}
+
+/* =========================
+   TARJETA PRINCIPAL
+========================= */
+.contenedor-pedido {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 12px; /* Cumple estándar UI/UX de tarjetas */
+  box-shadow: 0 10px 25px rgba(31, 41, 55, 0.08);
+}
+
+/* =========================
+   ENCABEZADOS Y TEXTOS
+========================= */
+.encabezado { margin-bottom: 32px; }
+
+.etiqueta-pagina {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  margin-bottom: 16px;
+  color: var(--primary-action);
+  background: #EFF6FF;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.encabezado h1 {
+  margin: 0 0 8px 0;
+  color: var(--text-900);
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.encabezado p, .texto-secundario {
+  margin: 0;
+  color: var(--text-600);
+  font-size: 14px;
+}
+
+.seccion {
+  padding-top: 24px;
+  margin-bottom: 32px;
+  border-top: 1px solid var(--border-light);
+}
+
+.seccion h2 {
+  margin: 0 0 20px;
+  color: var(--text-900);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* =========================
+   CONTROLES (INPUTS/SELECTS)
+========================= */
+.campos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campo label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-900);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.campo label svg {
+  color: var(--border-strong);
+}
+
+.campo select {
+  width: 100%;
+  height: 44px; /* Cumple estándar UI/UX para inputs */
+  padding: 0 16px;
+  color: var(--text-900);
+  background: var(--surface);
+  border: 1px solid var(--border-strong); /* Borde claro para contraste */
+  border-radius: 8px; /* Cumple estándar UI/UX para controles */
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.campo select:hover:not(:disabled) {
+  border-color: var(--text-900);
+}
+
+.campo select:focus {
+  border-color: var(--primary-focus);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.campo select:disabled {
+  background: var(--background);
+  color: var(--text-600);
+  border-color: var(--border-light);
+  cursor: not-allowed;
+}
+
+/* =========================
+   BOTONES
+========================= */
+.boton-agregar, .boton-guardar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 20px;
+  color: white;
+  background-color: var(--primary-action); /* Color oficial */
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.boton-agregar:hover:not(:disabled), 
+.boton-guardar:hover:not(:disabled) {
+  background-color: var(--primary-focus);
+}
+
+.boton-cancelar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 20px;
+  color: var(--text-900);
+  background-color: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.boton-cancelar:hover:not(:disabled) {
+  background-color: var(--background);
+}
+
+button:disabled {
+  background-color: var(--border-light) !important;
+  color: var(--text-600) !important;
+  border-color: transparent !important;
+  cursor: not-allowed;
+}
+
+/* =========================
+   LISTA Y PIEZAS
+========================= */
+.encabezado-piezas {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.sin-piezas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 48px 24px;
+  background: var(--background);
+  border: 2px dashed var(--border-strong);
+  border-radius: 12px;
+  color: var(--text-600);
+}
+
+.sin-piezas svg { color: var(--border-strong); }
+.sin-piezas strong { color: var(--text-900); font-size: 16px; }
+.sin-piezas span { font-size: 14px; }
+
+.lista-piezas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pieza {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+}
+
+.pieza-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.numero-pieza {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #EFF6FF;
+  color: var(--primary-action);
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.datos-pieza strong {
+  display: block;
+  color: var(--text-900);
+  font-size: 14px;
+}
+
+.datos-pieza span {
+  color: var(--text-600);
+  font-size: 13px;
+}
+
+.boton-eliminar {
+  color: var(--text-600);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.boton-eliminar:hover {
+  color: var(--error);
+  background-color: #FEF2F2;
+}
+
+/* =========================
+   ACCIONES INFERIORES Y ALERTAS
+========================= */
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-light);
+}
+
+.alerta-error {
+  background-color: #FEF2F2;
+  color: var(--error);
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #FCA5A5;
+  margin-bottom: 24px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
