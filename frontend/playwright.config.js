@@ -6,6 +6,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: true,
   retries: 0,
+  globalTeardown: './tests/e2e/globalTeardown.js',
   workers: 2,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
@@ -21,10 +22,17 @@ export default defineConfig({
     { name: 'chromium-desktop', use: { viewport: { width: 1440, height: 900 } } },
     { name: 'chromium-mobile', use: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } },
   ],
-  webServer: {
+  webServer: [{
+    command: 'python -m tests.e2e_server',
+    cwd: '../backend',
+    url: 'http://127.0.0.1:8017/',
+    reuseExistingServer: false,
+    timeout: 120_000,
+  }, {
     command: 'npm run dev -- --host 127.0.0.1 --port 5173 --strictPort',
     url: 'http://127.0.0.1:5173/hu007-t01.html',
     reuseExistingServer: false,
+    env: { VITE_API_URL: 'http://127.0.0.1:8017' },
     timeout: 60_000,
-  },
+  }],
 })

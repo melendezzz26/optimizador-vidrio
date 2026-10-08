@@ -1,29 +1,46 @@
-﻿from typing import List, Union, Literal
-from pydantic import BaseModel, Field, conint, conlist
+from typing import Annotated, Literal
+from pydantic import BaseModel, ConfigDict, Field
 
-class RectanguloSchema(BaseModel):
+PositiveNumber = Annotated[float, Field(strict=True, gt=0, allow_inf_nan=False)]
+Coordinate = Annotated[float, Field(strict=True, allow_inf_nan=False)]
+PositiveId = Annotated[int, Field(strict=True, gt=0, le=2147483647)]
+
+
+class InputSchema(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+
+class RectanguloSchema(InputSchema):
     tipo_forma: Literal["RECTANGULO"]
-    cantidad: conint(gt=0)
-    width_mm: float = Field(gt=0)
-    height_mm: float = Field(gt=0)
+    cantidad: PositiveId
+    width_mm: PositiveNumber
+    height_mm: PositiveNumber
 
-class CircunferenciaSchema(BaseModel):
+
+class CircunferenciaSchema(InputSchema):
     tipo_forma: Literal["CIRCUNFERENCIA"]
-    cantidad: conint(gt=0)
-    radius_mm: float = Field(gt=0)
+    cantidad: PositiveId
+    radius_mm: PositiveNumber
 
-class PoligonoConvexoSchema(BaseModel):
+
+class PoligonoConvexoSchema(InputSchema):
     tipo_forma: Literal["POLIGONO_CONVEXO"]
-    cantidad: conint(gt=0)
-    vertices_mm: conlist(conlist(float, min_length=2, max_length=2), min_length=3)
+    cantidad: PositiveId
+    vertices_mm: list[Annotated[list[Coordinate], Field(min_length=2, max_length=2)]] = Field(min_length=3)
 
-PiezaSchema = Union[RectanguloSchema, CircunferenciaSchema, PoligonoConvexoSchema]
 
-class CreateOrderRequest(BaseModel):
-    id_tipo_vidrio: conint(gt=0)
-    espesor_mm: float = Field(gt=0)
-    piezas: conlist(PiezaSchema, min_length=1)
+PiezaSchema = Annotated[
+    RectanguloSchema | CircunferenciaSchema | PoligonoConvexoSchema,
+    Field(discriminator="tipo_forma"),
+]
+
+
+class CreateOrderRequest(InputSchema):
+    id_tipo_vidrio: PositiveId
+    espesor_mm: PositiveNumber
+    piezas: list[PiezaSchema] = Field(min_length=1)
+
 
 class CreateOrderResponse(BaseModel):
     id_pedido: int
-    estado: str
+    estado: Literal["PENDIENTE"]

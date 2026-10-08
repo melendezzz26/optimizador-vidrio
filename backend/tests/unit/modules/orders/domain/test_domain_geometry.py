@@ -1,4 +1,4 @@
-﻿import pytest
+import pytest
 from app.modules.orders.domain.geometry import GeometryValidator
 
 def test_validate_rectangle_valid():
@@ -49,3 +49,25 @@ def test_validate_convex_polygon_repeated_vertex():
 def test_validate_convex_polygon_invalid_coords():
     with pytest.raises(ValueError, match="números finitos"):
         GeometryValidator.validate_convex_polygon([[0,0], [10,0], [float('inf'),10]])
+
+
+@pytest.mark.parametrize("value", [True, "10", None, float("nan"), float("inf")])
+def test_all_shapes_reject_non_numeric_or_non_finite_values(value):
+    for call in (
+        lambda: GeometryValidator.validate_rectangle(value, 10),
+        lambda: GeometryValidator.validate_circle(value),
+        lambda: GeometryValidator.validate_convex_polygon([[0, 0], [10, 0], [value, 10]]),
+    ):
+        with pytest.raises(ValueError):
+            call()
+
+
+@pytest.mark.parametrize("width,height", [(1e200, 1e200), (1e-5, 1e-5), (1e16, 1)])
+def test_area_must_fit_canonical_storage(width, height):
+    with pytest.raises(ValueError):
+        GeometryValidator.validate_rectangle(width, height)
+
+
+def test_nonadjacent_duplicate_vertex_is_rejected():
+    with pytest.raises(ValueError):
+        GeometryValidator.validate_convex_polygon([[0, 0], [10, 0], [10, 10], [0, 0], [0, 10]])

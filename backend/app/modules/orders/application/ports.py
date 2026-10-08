@@ -1,5 +1,5 @@
-﻿from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Optional
+from abc import ABC, abstractmethod
+from typing import List, Dict, Any
 
 class OrderRepositoryPort(ABC):
     @abstractmethod

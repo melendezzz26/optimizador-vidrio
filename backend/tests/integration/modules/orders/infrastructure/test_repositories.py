@@ -1,75 +1,53 @@
-﻿import pytest
-from sqlalchemy.orm import Session
-from sqlalchemy import text
-from app.models import Pedido, Pieza, TipoVidrio, TipoVidrioEspesor, Rol, Usuario
+from copy import deepcopy
+
+import pytest
+from sqlalchemy import func, select, text
+from sqlalchemy.exc import IntegrityError
+
+from app.models import Pedido, Pieza
 from app.modules.orders.infrastructure.repositories import SQLAlchemyOrderRepository
 
-@pytest.fixture
-def repo(db_session: Session):
-    return SQLAlchemyOrderRepository(db_session)
+
+PIECE = {"tipo_forma": "POLIGONO_CONVEXO", "cantidad": 2, "dimensiones": None,
+         "geometria": {"type": "POLIGONO_CONVEXO", "vertices_mm": [[0, 0], [10, 0], [0, 10]]},
+         "area_mm2": 50.0}
+
 
 @pytest.fixture
-def setup_data(db_session: Session):
-    rol = Rol(nombre="TestRole")
-    db_session.add(rol)
-    db_session.commit()
+def setup_data(create_user):
+    return create_user("O70000001")
 
-    user = Usuario(dni="12345678", nombres="Test", apellidos="User", usuario="T12345678", password_hash="hash", id_rol=rol.id_rol)
-    tipo = TipoVidrio(nombre="Claro Test")
-    db_session.add_all([user, tipo])
-    db_session.commit()
 
-    espesor = TipoVidrioEspesor(id_tipo_vidrio=tipo.id_tipo_vidrio, espesor_mm=6.0)
-    db_session.add(espesor)
-    db_session.commit()
-    
-    return {
-        "id_usuario": user.id_usuario,
-        "id_tipo_vidrio": tipo.id_tipo_vidrio,
-        "espesor_mm": 6.0
-    }
+def test_validate_catalog(db_session):
+    repo = SQLAlchemyOrderRepository(db_session)
+    assert repo.validate_catalog(7, 5.5)
+    assert not repo.validate_catalog(7, 99)
+    assert not repo.validate_catalog(99, 6)
 
-def test_validate_catalog_valid(repo, setup_data):
-    assert repo.validate_catalog(setup_data["id_tipo_vidrio"], 6.0) is True
 
-def test_validate_catalog_invalid(repo, setup_data):
-    assert repo.validate_catalog(setup_data["id_tipo_vidrio"], 99.0) is False
-    assert repo.validate_catalog(99, 6.0) is False
+def test_create_order_success(db_session, session_factory, setup_data):
+    repo = SQLAlchemyOrderRepository(db_session)
+    identifier = repo.create_order(setup_data, 7, 6, [PIECE, PIECE])
+    with session_factory() as reader:
+        assert reader.get(Pedido, identifier).estado == "PENDIENTE"
+        pieces = reader.scalars(select(Pieza).where(Pieza.id_pedido == identifier)).all()
+        assert len(pieces) == 2
+        assert all(p.cantidad == 2 and p.area_mm2 == 50 and p.dimensiones is None for p in pieces)
+        assert reader.scalar(text("SELECT bool_and(dimensiones IS NULL) FROM piezas")) is True
 
-def test_create_order_success(repo, db_session, setup_data):
-    piezas = [
-        {
-            "tipo_forma": "POLIGONO_CONVEXO",
-            "cantidad": 2,
-            "dimensiones": None,
-            "geometria": {"type": "POLIGONO_CONVEXO", "vertices_mm": [[0,0], [10,0], [0,10]]},
-            "area_mm2": 50.0
-        }
-    ]
-    id_pedido = repo.create_order(setup_data["id_usuario"], setup_data["id_tipo_vidrio"], 6.0, piezas)
-    
-    pedido = db_session.query(Pedido).filter_by(id_pedido=id_pedido).first()
-    assert pedido is not None
-    assert pedido.estado == 'PENDIENTE'
-    
-    piezas_db = db_session.query(Pieza).filter_by(id_pedido=id_pedido).all()
-    assert len(piezas_db) == 1
-    assert piezas_db[0].cantidad == 2
-    assert piezas_db[0].tipo_forma == 'POLIGONO_CONVEXO'
 
-def test_create_order_rollback(repo, db_session, setup_data):
-    piezas = [
-        {
-            "tipo_forma": "POLIGONO_CONVEXO",
-            "cantidad": 2,
-            # Faltan datos requeridos para forzar excepcion (e.g. area_mm2)
-            "dimensiones": None,
-            "geometria": {"type": "POLIGONO_CONVEXO", "vertices_mm": [[0,0], [10,0], [0,10]]}
-        }
-    ]
-    with pytest.raises(Exception):
-        repo.create_order(setup_data["id_usuario"], setup_data["id_tipo_vidrio"], 6.0, piezas)
-    
-    # Confirmar rollback (el pedido no se guardó)
-    pedidos = db_session.query(Pedido).filter_by(id_usuario_registro=setup_data["id_usuario"]).all()
-    assert len(pedidos) == 0
+@pytest.mark.parametrize("failure", ["header", "second_piece", "missing_field"])
+def test_create_order_rolls_back_every_row(db_session, session_factory, setup_data, failure):
+    repo = SQLAlchemyOrderRepository(db_session)
+    second = deepcopy(PIECE)
+    if failure == "second_piece":
+        second["cantidad"] = 0  # Actual PostgreSQL CHECK violation after header flush.
+    if failure == "missing_field":
+        second.pop("area_mm2")
+    with pytest.raises((IntegrityError, KeyError)):
+        repo.create_order(-1 if failure == "header" else setup_data, 7, 6, [PIECE, second])
+    with session_factory() as reader:
+        assert reader.scalar(select(func.count()).select_from(Pedido)) == 0
+        assert reader.scalar(select(func.count()).select_from(Pieza)) == 0
+    # The session remains usable after rollback.
+    assert repo.validate_catalog(7, 6)

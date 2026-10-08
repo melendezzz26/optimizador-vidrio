@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import {
-  Plus,
   Trash2,
   Save,
   X,
@@ -11,21 +10,38 @@ import {
 } from "lucide-react";
 import fondoVidrio from "../assets/fondo-vidrio.png";
 import CustomPieceEditor from "../features/orders/CustomPieceEditor";
+import { createOrder, listOrderMaterials } from "../features/orders/ordersApi";
 import "./NuevoPedido.css";
 
 function NuevoPedido() {
-  const tiposVidrio = {
-    Incoloro: [3, 4, 5.5, 6, 8, 10, 12],
-    Bronce: [4, 5.5, 6, 8, 10],
-    Gris: [4, 5.5, 6, 8, 10],
-    Catedral: [3, 3.5, 5],
-    Reflejante: [4, 5.5, 6, 8],
-    Espejo: [2, 3, 4, 6],
-  };
+  const [tiposVidrio, setTiposVidrio] = useState([]);
+  const [catalogLoading, setCatalogLoading] = useState(true);
+  const [catalogError, setCatalogError] = useState("");
+  const [catalogAttempt, setCatalogAttempt] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitting = useRef(false);
+  const nextPieceId = useRef(1);
+  const [error, setError] = useState("");
+  const [savedOrderId, setSavedOrderId] = useState(null);
+  const [editorKey, setEditorKey] = useState(0);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    listOrderMaterials(controller.signal).then((materials) => {
+      setTiposVidrio(materials.filter((material) => material.estado && material.espesores_mm.length));
+    }).catch((err) => {
+      if (!controller.signal.aborted) setCatalogError(err.message);
+    }).finally(() => {
+      if (!controller.signal.aborted) setCatalogLoading(false);
+    });
+    return () => controller.abort();
+  }, [catalogAttempt]);
 
   const [tipoVidrio, setTipoVidrio] = useState("");
   const [espesor, setEspesor] = useState("");
   const [piezas, setPiezas] = useState([]);
+  const material = tiposVidrio.find((tipo) => tipo.id_tipo_vidrio === Number(tipoVidrio));
+  const headerReady = Boolean(material && material.espesores_mm.some((value) => Number(value) === Number(espesor)));
 
   const [listaAnimada] = useAutoAnimate();
 
@@ -34,17 +50,41 @@ function NuevoPedido() {
     setEspesor("");
   };
 
-  const agregarPieza = () => {
+  const agregarPieza = (piece) => {
+    if (submitting.current || !headerReady) return;
     const nuevaPieza = {
-      id: Date.now(),
-      nombre: `Pieza ${piezas.length + 1}`,
+      ...piece,
+      id: nextPieceId.current++,
     };
-
-    setPiezas([...piezas, nuevaPieza]);
+    setPiezas((current) => [...current, nuevaPieza]);
+    setSavedOrderId(null);
+    setError("");
   };
 
   const eliminarPieza = (id) => {
-    setPiezas(piezas.filter((pieza) => pieza.id !== id));
+    if (submitting.current) return;
+    setPiezas((current) => current.filter((pieza) => pieza.id !== id));
+  };
+
+  const guardarPedido = async () => {
+    if (submitting.current || !headerReady || !piezas.length) return;
+    submitting.current = true;
+    setIsSubmitting(true);
+    setError("");
+    try {
+      const response = await createOrder({
+        id_tipo_vidrio: Number(tipoVidrio), espesor_mm: Number(espesor),
+        piezas: piezas.map(({ tipo_forma, cantidad, vertices_mm }) => ({ tipo_forma, cantidad, vertices_mm })),
+      });
+      setSavedOrderId(response.id_pedido);
+      setPiezas([]);
+      setEditorKey((current) => current + 1);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      submitting.current = false;
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -69,6 +109,12 @@ function NuevoPedido() {
 
         <section className="seccion">
           <h2>Datos del pedido</h2>
+          {catalogLoading && <p role="status">Cargando materiales…</p>}
+          {catalogError && <div role="alert"><p>{catalogError}</p>
+            <button type="button" className="boton-cancelar" onClick={() => {
+              setCatalogError(""); setCatalogLoading(true); setCatalogAttempt((current) => current + 1);
+            }}>Reintentar catálogo</button></div>}
+          {!catalogLoading && !catalogError && !tiposVidrio.length && <p role="status">No hay materiales activos con espesores disponibles.</p>}
 
           <div className="campos">
 
@@ -82,12 +128,13 @@ function NuevoPedido() {
                 id="tipoVidrio"
                 value={tipoVidrio}
                 onChange={cambiarTipoVidrio}
+                disabled={isSubmitting || catalogLoading}
               >
                 <option value="">Seleccionar tipo</option>
 
-                {Object.keys(tiposVidrio).map((tipo) => (
-                  <option key={tipo} value={tipo}>
-                    {tipo}
+                {tiposVidrio.map((tipo) => (
+                  <option key={tipo.id_tipo_vidrio} value={tipo.id_tipo_vidrio}>
+                    {tipo.nombre}
                   </option>
                 ))}
               </select>
@@ -103,12 +150,12 @@ function NuevoPedido() {
                 id="espesor"
                 value={espesor}
                 onChange={(e) => setEspesor(e.target.value)}
-                disabled={!tipoVidrio}
+                disabled={!tipoVidrio || isSubmitting}
               >
                 <option value="">Seleccionar espesor</option>
 
-                {tipoVidrio &&
-                  tiposVidrio[tipoVidrio].map((valor) => (
+                {material &&
+                  material.espesores_mm.map((valor) => (
                     <option key={valor} value={valor}>
                       {valor} mm
                     </option>
@@ -130,15 +177,6 @@ function NuevoPedido() {
               </p>
             </div>
 
-            <button
-              type="button"
-              className="boton-agregar"
-              onClick={agregarPieza}
-              disabled={!tipoVidrio || !espesor}
-            >
-              <Plus size={18} />
-              Agregar pieza
-            </button>
           </div>
 
           <div ref={listaAnimada}>
@@ -164,12 +202,12 @@ function NuevoPedido() {
                     </div>
 
                     <div className="datos-pieza">
-                      <strong>{pieza.nombre}</strong>
-                      <span>Pendiente de configurar</span>
+                      <strong>Pieza {index + 1}</strong>
+                      <span>Polígono convexo · {pieza.vertices_mm.length} vértices · Cantidad: {pieza.cantidad}</span>
                     </div>
 
                     <span className="estado-pieza">
-                      Pendiente
+                      Sin guardar
                     </span>
 
                     <button
@@ -177,6 +215,8 @@ function NuevoPedido() {
                       className="boton-eliminar"
                       onClick={() => eliminarPieza(pieza.id)}
                       title="Eliminar pieza"
+                      aria-label={`Eliminar pieza ${index + 1}`}
+                      disabled={isSubmitting}
                     >
                       <Trash2 size={18} />
                     </button>
@@ -190,13 +230,18 @@ function NuevoPedido() {
           </div>
         </section>
 
-        <CustomPieceEditor />
+        <CustomPieceEditor key={editorKey} onAddPiece={agregarPieza} headerReady={headerReady} disabled={isSubmitting} />
+
+        {error && <p className="pedido-mensaje pedido-mensaje--error" role="alert">{error} Las piezas se conservan; puedes corregir o reintentar.</p>}
+        {savedOrderId !== null && <p className="pedido-mensaje" role="status">Pedido guardado correctamente. ID del pedido: {savedOrderId}.</p>}
 
         <div className="acciones">
 
           <button
             type="button"
             className="boton-cancelar"
+            disabled={isSubmitting}
+            onClick={() => { setPiezas([]); setError(""); setSavedOrderId(null); setEditorKey((current) => current + 1); }}
           >
             <X size={18} />
             Cancelar
@@ -205,10 +250,12 @@ function NuevoPedido() {
           <button
             type="button"
             className="boton-guardar"
-            disabled={!tipoVidrio || !espesor || piezas.length === 0}
+            disabled={!headerReady || piezas.length === 0 || isSubmitting}
+            onClick={guardarPedido}
+            aria-busy={isSubmitting}
           >
             <Save size={18} />
-            Guardar pedid
+            {isSubmitting ? "Guardando pedido…" : "Guardar pedido"}
           </button>
 
         </div>

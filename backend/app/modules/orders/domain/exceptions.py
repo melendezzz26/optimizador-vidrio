@@ -1,4 +1,4 @@
-﻿class DomainException(Exception):
+class DomainException(Exception):
     pass
 
 class InvalidGeometryException(DomainException):

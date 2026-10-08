@@ -1,10 +1,10 @@
-﻿# SPEC — HU-007 T04: Integrar pieza personalizada con registro persistente de pedido
+# SPEC — HU-007 T04: Integrar pieza personalizada con registro persistente de pedido
 
 ## Información general
 
 | Campo | Valor |
 |---|---|
-| Estado | Reviewed |
+| Estado | Implemented |
 | PBI relacionado | HU-007 |
 | Tarea | T04 — Integrar pieza personalizada con registro de pedido |
 | Responsable | Andro Joseph Quispe Cesias |
@@ -47,7 +47,7 @@ Integrar la pieza personalizada validada por T03 con el flujo real de registro d
 
 - Las fases **T01**, **T02** y **T03** deben estar operativas y sus 132 pruebas automatizadas deben ejecutarse exitosamente.
 - La rama debe estar sincronizada con origin/main incluyendo el sistema de autenticación real y los catálogos base.
-- Se reutilizarán estrictamente las tablas pedidos y piezas ya declaradas y mapeadas en ackend/app/models.py.
+- Se reutilizarán estrictamente las tablas pedidos y piezas ya declaradas y mapeadas en `backend/app/models.py`.
 
 ---
 
@@ -60,7 +60,7 @@ Integrar la pieza personalizada validada por T03 con el flujo real de registro d
 5. El botón "Agregar pieza al pedido" se habilita únicamente cuando:
    - La geometría está cerrada.
    - Todas las medidas necesarias son válidas y coherentes.
-   - Existe ertices_mm de forma completa.
+   - Existe `vertices_mm` de forma completa.
    - T03 retorna expresamente VALID.
    - Los datos requeridos del encabezado del pedido están seleccionados.
 6. Al presionar "Agregar pieza":
@@ -88,14 +88,14 @@ Integrar la pieza personalizada validada por T03 con el flujo real de registro d
 
 ## 5. Contrato HTTP (API)
 
-La API NO debe depender ni confiar de manera exclusiva en rea_mm2 o la geometría derivada en el frontend; se envían los datos base y el backend los consolida y valida independientemente.
+La API NO debe depender ni confiar de manera exclusiva en `area_mm2` o la geometría derivada en el frontend; se envían los datos base y el backend los consolida y valida independientemente.
 
 **TRANSPORTE HTTP DESDE FRONTEND:**
 
-Para formas regulares, se envían las dimensiones. Para POLIGONO_CONVEXO, el frontend **NO** envía rea_mm2, ni geometria, ni dimensiones=null como dato requerido. Solo envía los ertices_mm.
+Para formas regulares, se envían las dimensiones. Para POLIGONO_CONVEXO, el frontend **NO** envía `area_mm2`, ni geometria, ni dimensiones=null como dato requerido. Solo envía los `vertices_mm`.
 
 Contrato de entrada sugerido (JSON Payload):
-`json
+```json
 {
   "id_tipo_vidrio": 1,
   "espesor_mm": 6,
@@ -123,7 +123,7 @@ Contrato de entrada sugerido (JSON Payload):
     }
   ]
 }
-`
+```
 *Nota: Se recomienda el uso de esquemas discriminados (Union) en Pydantic por tipo de forma en la capa Presentation.*
 
 ---
@@ -143,11 +143,10 @@ Las representaciones en Base de Datos de dimensiones (opcional) y geometria (obl
 - geometria = {"type": "CIRCUNFERENCIA", "radius_mm": R}
 
 **POLIGONO_CONVEXO:**
-- dimensiones =
-ull
+- dimensiones = `null`
 - geometria = {"type": "POLIGONO_CONVEXO", "vertices_mm": [[...], [...], ...]}
 
-*Aclaración: rea_mm2 será calculada exclusivamente por el backend en todos los casos.*
+*Aclaración: `area_mm2` será calculada exclusivamente por el backend en todos los casos.*
 ---
 
 ## 7. Validaciones Backend
@@ -169,7 +168,7 @@ ull
 **Capa Backend (Clean Architecture):**
 - **Domain:** Aislada de Frameworks. Aquí van los validadores geométricos de servidor y reglas de negocio puras. No existen imports a FastAPI, SQLAlchemy, ni esquemas (Pydantic) de Presentation.
 - **Application:** Orquesta puertos de dominio. No importa NUNCA representaciones de Presentation (p.ej., Pydantic schemas) para pasar sus datos.
-- **Infrastructure:** Instancia conectores y repositorios de BD que implementan puertos abstractos, importando los Modelos SQLAlchemy Canónicos de pp.models.
+- **Infrastructure:** Instancia conectores y repositorios de BD que implementan puertos abstractos, importando los Modelos SQLAlchemy Canónicos de `app.models`.
 - **Presentation:** Expone el HTTP (FastAPI / Router) e inyecta dependencias al UseCase.
 
 ---
@@ -178,7 +177,7 @@ ull
 
 Todo acceso para registrar pedidos exige las rutinas genuinas JWT establecidas en origin/main.
 - Validar JWT mediante dependencia de ruta: get_current_user.
-- Validar con: equire_permission(...) el acceso funcional necesario.
+- Validar con: require_permission(...) el acceso funcional necesario.
 - Capturar siempre la ID del usuario registrado mediante la identidad devuelta en el token validado.
 
 ---
@@ -227,20 +226,20 @@ Todo acceso para registrar pedidos exige las rutinas genuinas JWT establecidas e
 ## 14. Archivos Previstos a Intervenir / Crear
 
 **Nuevos (Backend Orders):**
-- pp/modules/orders/domain/order.py
-- pp/modules/orders/domain/geometry.py
-- pp/modules/orders/application/ports.py
-- pp/modules/orders/application/use_cases.py
-- pp/modules/orders/infrastructure/repositories.py
-- pp/modules/orders/infrastructure/dependencies.py
-- pp/modules/orders/presentation/schemas.py
-- pp/modules/orders/presentation/router.py
+- `app/modules/orders/domain/order.py`
+- `app/modules/orders/domain/geometry.py`
+- `app/modules/orders/application/ports.py`
+- `app/modules/orders/application/use_cases.py`
+- `app/modules/orders/infrastructure/repositories.py`
+- `app/modules/orders/infrastructure/dependencies.py`
+- `app/modules/orders/presentation/schemas.py`
+- `app/modules/orders/presentation/router.py`
 
 **Modificados:**
-- ackend/main.py
-- rontend/src/features/orders/CustomPieceEditor.jsx
-- rontend/src/pages/NuevoPedido.jsx
-- rontend/tests/e2e/hu007-custom-piece.spec.js
+- `backend/main.py`
+- `frontend/src/features/orders/CustomPieceEditor.jsx`
+- `frontend/src/pages/NuevoPedido.jsx`
+- `frontend/tests/e2e/hu007-custom-piece.spec.js`
 - Archivos test (Backend pytest / Frontend vitest).
 
 ---
@@ -253,9 +252,16 @@ Documentación con bitácora de evidencia alojada en docs/evidence/sprint-01/HU-
 
 ## 16. Definition of Done
 
-- [ ] Código alojado e implementado sin regresiones.
-- [ ] Mantiene modularidad, evitando solapamientos / duplos SQLAlchemy y fallos lógicos Architecture.
+- [x] Código implementado sin regresiones en la ejecución local documentada.
+- [x] Mantiene modularidad, evitando solapamientos / duplos SQLAlchemy y fallos lógicos Architecture.
 - [ ] Pasa todas las pruebas requeridas deben pasar en Pipelines (Backend Pytest, Frontend Vitest + Playwright E2E).
-- [ ] Lint y format validan estrictamente limpio.
+- [x] Lint y `git diff --check` limpios.
 - [ ] Aprobación formal (Review) de Stakeholder y Reviewer Propuesto.
 - [ ] Rama disponible para rebase o Integración definitiva sin conflictos destructivos de origin/main.
+
+Validación local T04: backend 920 passed; frontend 84 unit, 36 component y
+24 E2E; lint/build correctos. Alembic heads/current: `1c8754481a08 (head)`
+en PostgreSQL temporal. No se cambió el esquema ni se crearon migraciones.
+CI y revisión formal siguen pendientes; este estado no es Verified.
+Detalle y pasos reproducibles en
+[evidencia T04](../evidence/sprint-01/HU-007/t04-integracion-pedido.md).

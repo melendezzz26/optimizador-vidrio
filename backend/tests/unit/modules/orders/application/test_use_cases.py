@@ -1,4 +1,4 @@
-﻿import pytest
+import pytest
 from unittest.mock import Mock
 from app.modules.orders.application.use_cases import CreateOrderUseCase
 from app.modules.orders.domain.exceptions import InvalidOrderException, InvalidGeometryException
@@ -20,9 +20,9 @@ def test_create_order_multiple_pieces(use_case, mock_repo):
         {"tipo_forma": "CIRCUNFERENCIA", "cantidad": 2, "radius_mm": 50},
         {"tipo_forma": "POLIGONO_CONVEXO", "cantidad": 1, "vertices_mm": [[0,0], [100,0], [0,100]]}
     ]
-    
+
     order_id = use_case.execute(1, 1, 6.0, piezas)
-    
+
     assert order_id == 123
     mock_repo.create_order.assert_called_once()
     _, kwargs = mock_repo.create_order.call_args
@@ -47,3 +47,9 @@ def test_create_order_zero_cantidad(use_case):
 def test_create_order_invalid_geometry(use_case):
     with pytest.raises(InvalidGeometryException):
         use_case.execute(1, 1, 6.0, [{"tipo_forma": "RECTANGULO", "cantidad": 1, "width_mm": -100, "height_mm": 200}])
+
+
+def test_empty_order_cannot_be_persisted(use_case, mock_repo):
+    with pytest.raises(InvalidOrderException):
+        use_case.execute(1, 1, 6, [])
+    mock_repo.create_order.assert_not_called()

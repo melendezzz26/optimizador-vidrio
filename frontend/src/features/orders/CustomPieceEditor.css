@@ -556,3 +556,15 @@
   .custom-piece-editor__segment-selector[aria-pressed="true"] { border: 2px solid Highlight; }
   .custom-piece-editor__input[aria-invalid="true"] { border: 2px dashed CanvasText; }
 }
+.custom-piece-editor__fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.custom-piece-editor__button--add:not(:disabled) {
+  color: white;
+  background: #123764;
+  cursor: pointer;
+}

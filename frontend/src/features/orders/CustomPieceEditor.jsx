@@ -1,5 +1,5 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-import { Check, LockKeyhole, MousePointer2, RotateCcw, Undo2 } from "lucide-react";
+import { Check, Plus, MousePointer2, RotateCcw, Undo2 } from "lucide-react";
 import "./CustomPieceEditor.css";
 import { fitVerticesToPreview } from "./geometryScaling";
 import { buildDimensionalGeometry, createSegments, isPositiveLength } from "./segmentGeometry";
@@ -121,7 +121,7 @@ function dimensionalError(result, total) {
   }
 }
 
-function PolygonCanvas() {
+function PolygonCanvas({ onAddPiece, headerReady, disabled }) {
   const instructionsId = useId();
   const drawingHeadingId = useId();
   const dimensionsHeadingId = useId();
@@ -144,6 +144,8 @@ function PolygonCanvas() {
   const validationRejected = !validation.isValid && validation.reason !== "INCOMPLETE";
   const measuredCount = segments.filter((segment) => !segment.badInput && isPositiveLength(segment.lengthMm)).length;
   const dimensionsReady = result?.status === "complete";
+  const canAdd = isClosed && dimensionsReady && validation.reason === "VALID" &&
+    Boolean(result?.vertices_mm) && headerReady && Boolean(onAddPiece) && !disabled;
   const hasMeasurements = segments.some(({ lengthMm, badInput }) => lengthMm !== "" || badInput);
   const activeSegment = segments[activeSegmentIndex];
   const activeLength = activeSegment && isPositiveLength(activeSegment.lengthMm) && !activeSegment.badInput
@@ -158,7 +160,7 @@ function PolygonCanvas() {
   }, [isClosed]);
 
   function addVertex(event) {
-    if (event.button !== 0 || isClosed) return;
+    if (disabled || event.button !== 0 || isClosed) return;
     const screenMatrix = event.currentTarget.getScreenCTM();
     if (!screenMatrix) return;
     const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(screenMatrix.inverse());
@@ -192,6 +194,13 @@ function PolygonCanvas() {
 
   function updateSegment(index, lengthMm, badInput) {
     setSegments((current) => current.map((segment) => segment.index === index ? { ...segment, lengthMm, badInput } : segment));
+  }
+
+  function addPiece() {
+    if (!canAdd) return;
+    onAddPiece({ tipo_forma: "POLIGONO_CONVEXO", cantidad: 1,
+      vertices_mm: result.vertices_mm.map((point) => [...point]) });
+    resetDrawing();
   }
 
   return (
@@ -301,22 +310,26 @@ function PolygonCanvas() {
             </p>
           </div>
           {validationRejected && <p>Revisa las medidas o deshaz el dibujo para corregir el contorno.</p>}
-          <p id={validationHelpId}>El registro de piezas en el pedido aún no está disponible.</p>
+          <p id={validationHelpId}>{headerReady
+            ? "Agrega la pieza y guarda el pedido para registrarla."
+            : "Selecciona el tipo de vidrio y el espesor en Nuevo pedido para agregar piezas."}</p>
         </div>
-        <button type="button" className="custom-piece-editor__button custom-piece-editor__button--add" disabled aria-describedby={`${validationMessageId} ${validationHelpId}`}>
-          <LockKeyhole size={16} aria-hidden="true" /> Agregar pieza al pedido
+        <button type="button" className="custom-piece-editor__button custom-piece-editor__button--add" disabled={!canAdd} onClick={addPiece} aria-describedby={`${validationMessageId} ${validationHelpId}`}>
+          <Plus size={16} aria-hidden="true" /> Agregar pieza al pedido
         </button>
       </section>
     </div>
   );
 }
 
-export default function CustomPieceEditor() {
+export default function CustomPieceEditor({ onAddPiece, headerReady = false, disabled = false }) {
   const headingId = useId();
   return <section className="custom-piece-editor" aria-labelledby={headingId}>
     <header className="custom-piece-editor__header"><h2 id={headingId}>Pieza personalizada</h2>
       <p>Traza el contorno y define la longitud real de cada lado.</p></header>
-    <PolygonCanvas />
-    <p className="custom-piece-editor__notice"><strong>Borrador temporal.</strong> Se pierde al salir o recargar la página.</p>
+    <fieldset className="custom-piece-editor__fieldset" disabled={disabled}>
+      <PolygonCanvas onAddPiece={onAddPiece} headerReady={headerReady} disabled={disabled} />
+    </fieldset>
+    <p className="custom-piece-editor__notice">Las piezas agregadas se registran al guardar el pedido.</p>
   </section>;
 }
