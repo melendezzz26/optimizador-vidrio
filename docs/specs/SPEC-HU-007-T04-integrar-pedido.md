@@ -4,14 +4,14 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Implemented |
+| Estado | Verified |
 | PBI relacionado | HU-007 |
 | Tarea | T04 — Integrar pieza personalizada con registro de pedido |
 | Responsable | Andro Joseph Quispe Cesias |
-| Reviewer propuesto | Luis Anthony Ibañez Herrera |
+| Reviewer | Fabricio Aguilar Chavez |
 | Dependencia | T03 — Validar polígono convexo |
 | Rama | feature/HU-007-lienzo-pieza-personalizada |
-| Motivo | HU-006 es la dependencia funcional directa del módulo Orders y su responsable debe revisar que T04 no contradiga el contrato de Registrar pedido. |
+| Motivo | Verificación formal de la implementación T04, sus pruebas, evidencias y compatibilidad con la arquitectura vigente del módulo Orders. |
 
 ---
 
@@ -253,15 +253,21 @@ Documentación con bitácora de evidencia alojada en docs/evidence/sprint-01/HU-
 ## 16. Definition of Done
 
 - [x] Código implementado sin regresiones en la ejecución local documentada.
-- [x] Mantiene modularidad, evitando solapamientos / duplos SQLAlchemy y fallos lógicos Architecture.
-- [ ] Pasa todas las pruebas requeridas deben pasar en Pipelines (Backend Pytest, Frontend Vitest + Playwright E2E).
+- [x] Mantiene modularidad, evitando solapamientos / duplicados SQLAlchemy y fallos lógicos de arquitectura.
+- [x] Pasa todas las pruebas requeridas: Backend Pytest, Frontend Vitest y Playwright E2E.
 - [x] Lint y `git diff --check` limpios.
-- [ ] Aprobación formal (Review) de Stakeholder y Reviewer Propuesto.
-- [ ] Rama disponible para rebase o Integración definitiva sin conflictos destructivos de origin/main.
+- [x] Aprobación formal por otro integrante.
+- [x] PR #23 revisado e integrado correctamente en `main`.
 
 Validación local T04: backend 920 passed; frontend 84 unit, 36 component y
 24 E2E; lint/build correctos. Alembic heads/current: `1c8754481a08 (head)`
 en PostgreSQL temporal. No se cambió el esquema ni se crearon migraciones.
-CI y revisión formal siguen pendientes; este estado no es Verified.
+
+Los checks de CI de backend y frontend finalizaron correctamente. La revisión
+formal fue completada por Fabricio Aguilar Chavez y el PR #23 fue aprobado e
+integrado en `main`.
+
+Estado final de T04: **Verified**.
+
 Detalle y pasos reproducibles en
 [evidencia T04](../evidence/sprint-01/HU-007/t04-integracion-pedido.md).
