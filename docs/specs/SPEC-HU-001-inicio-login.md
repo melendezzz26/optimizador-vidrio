@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Implemented |
+| Estado | Verified |
 | PBI relacionado | HU-001 (T01, T02, T03) · EN-003 Seguridad y acceso |
 | Responsable | Fabricio A. |
 | Reviewer | Fabricio M. |
@@ -208,4 +208,4 @@ En `docs/evidence/sprint-01/HU-001/`:
 - Reviewed: 04/10/2026, Fabricio M. Observaciones
   incorporadas: usuario en mayúscula y validaciones de entrada en el backend.
 - Implemented: 05/10/2026, Pull Request -> feature/HU-001-login.
-- Verified
+- Verified: 06/10/2026, casos manuales ejecutados contra la base compartida. Ver `docs/evidence/sprint-01/HU-001/inicio-sesion.md`.

@@ -14,7 +14,7 @@
   --text-secondary: #5f7088;
 
   --border: rgba(203, 213, 225, 0.65);
---card: rgba(255, 255, 255, 0.60);  
+--card: rgba(255, 255, 255, 0.60);
   --card-strong: rgba(255, 255, 255, 0.84);
   --background: #eef4fb;
 }
@@ -578,3 +578,14 @@ background:
     width: 100%;
   }
 }
+.pedido-mensaje {
+  padding: 16px;
+  color: var(--navy-900);
+  background: var(--card-strong);
+  overflow-wrap: anywhere;
+}
+
+.pedido-mensaje--error { color: #9b2424; }
+.pagina-pedido button:focus-visible { outline: 3px solid var(--blue-600); outline-offset: 3px; }
+.pagina-pedido button:disabled { cursor: not-allowed; }
+.datos-pieza { min-width: 0; overflow-wrap: anywhere; }
