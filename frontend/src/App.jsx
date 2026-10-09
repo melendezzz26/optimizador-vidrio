@@ -10,9 +10,16 @@ import {
 import { InventoryPage } from './features/inventory/InventoryPage';
 import { UsersPage } from './features/users';
 import NuevoPedido from './features/orders/NuevoPedido';
+import CustomPieceEditor from './features/orders/CustomPieceEditor';
+
 import './App.css';
 
 function App() {
+
+  if (window.location.pathname === '/editor-pieza') {
+    return <CustomPieceEditor />;
+  }
+
   const { session, isChecking, notice, signIn, signOut } = useSession();
   const [view, setView] = useState('orders');
 
