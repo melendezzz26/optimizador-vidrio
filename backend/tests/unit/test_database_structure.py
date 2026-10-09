@@ -61,6 +61,7 @@ def test_models_use_the_exported_base(database_structure):
 
 def test_importing_models_registers_all_current_tables(database_structure):
     assert set(database_structure["tables"]) == {
+        "clientes",
         "configuraciones",
         "ejecuciones_optimizacion",
         "metricas_ejecucion",
