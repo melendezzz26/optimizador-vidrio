@@ -1,7 +1,13 @@
+import { EmptyState } from '../../shared/components/feedback';
 // Tabla de usuarios. No muestra el DNI (SPEC-HU-003, RN-09).
 export function UsersTable({ users, currentUserId, pendingUserId, onEdit, onToggleStatus }) {
   if (users.length === 0) {
-    return <p className="users-hint">Todavía no hay usuarios registrados.</p>;
+    return (
+      <EmptyState
+        title="Aún no hay usuarios registrados"
+        description="Registra el primero con el formulario de esta página."
+      />
+    );
   }
 
   return (

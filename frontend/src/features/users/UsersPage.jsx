@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useState } from 'react';
 import { AppShell } from '../../shared/components/AppShell';
 import { PageCard } from '../../shared/components/PageLayout';
+import { ConfirmDialog, FeedbackMessage, LoadingState } from '../../shared/components/feedback';
 import { UserForm } from './UserForm';
 import { UsersTable } from './UsersTable';
 import { createUser, listRoles, listUsers, updateUser } from './usersApi';
@@ -18,6 +19,7 @@ export function UsersPage({ currentUser, onSessionExpired, toolbar }) {
   const [pendingUserId, setPendingUserId] = useState(null);
   const [notice, setNotice] = useState('');
   const [tableError, setTableError] = useState('');
+  const [userToDeactivate, setUserToDeactivate] = useState(null);
   const listTitleId = useId();
 
   // 401: la sesión expiró o la cuenta fue desactivada; se vuelve al inicio de sesión.
@@ -71,7 +73,7 @@ export function UsersPage({ currentUser, onSessionExpired, toolbar }) {
     }
   }
 
-  async function handleToggleStatus(user) {
+  async function changeStatus(user) {
     setNotice('');
     setTableError('');
     setPendingUserId(user.id_usuario);
@@ -86,6 +88,22 @@ export function UsersPage({ currentUser, onSessionExpired, toolbar }) {
     }
   }
 
+  // Desactivar quita el acceso, por eso se confirma antes; activar no lo necesita.
+  function handleToggleStatus(user) {
+    if (user.estado) {
+      setNotice('');
+      setTableError('');
+      setUserToDeactivate(user);
+    } else {
+      changeStatus(user);
+    }
+  }
+
+  async function confirmDeactivation() {
+    await changeStatus(userToDeactivate);
+    setUserToDeactivate(null);
+  }
+
   function startEditing(user) {
     setNotice('');
     setTableError('');
@@ -96,8 +114,12 @@ export function UsersPage({ currentUser, onSessionExpired, toolbar }) {
     <AppShell activeItem="roles" user={currentUser}>
       {toolbar}
 
-      {isLoading && <PageCard><p role="status">Cargando usuarios...</p></PageCard>}
-      {loadError && <PageCard><p className="users-error" role="alert">{loadError}</p></PageCard>}
+      {isLoading && <PageCard><LoadingState>Cargando usuarios…</LoadingState></PageCard>}
+      {loadError && (
+        <PageCard>
+          <FeedbackMessage variant="error" title="No se pudieron cargar los usuarios">{loadError}</FeedbackMessage>
+        </PageCard>
+      )}
 
       {!isLoading && !loadError && (
         <>
@@ -112,8 +134,10 @@ export function UsersPage({ currentUser, onSessionExpired, toolbar }) {
 
           <PageCard as="section" className="users-list" aria-labelledby={listTitleId}>
             <h2 id={listTitleId}>Usuarios registrados</h2>
-            {notice && <p className="users-notice" role="status">{notice}</p>}
-            {tableError && <p className="users-error" role="alert">{tableError}</p>}
+            {notice && <FeedbackMessage variant="success">{notice}</FeedbackMessage>}
+            {tableError && (
+              <FeedbackMessage variant="error" title="No se pudo cambiar el estado">{tableError}</FeedbackMessage>
+            )}
             <UsersTable
               users={users}
               currentUserId={currentUser.id_usuario}
@@ -124,6 +148,17 @@ export function UsersPage({ currentUser, onSessionExpired, toolbar }) {
           </PageCard>
         </>
       )}
+
+      <ConfirmDialog
+        open={userToDeactivate !== null}
+        title={userToDeactivate ? `¿Desactivar a ${userToDeactivate.nombres} ${userToDeactivate.apellidos}?` : ''}
+        confirmLabel="Desactivar"
+        onConfirm={confirmDeactivation}
+        onCancel={() => setUserToDeactivate(null)}
+        isConfirming={userToDeactivate !== null && pendingUserId === userToDeactivate.id_usuario}
+      >
+        <p>No podrá iniciar sesión hasta que lo vuelvas a activar. Sus datos se conservan.</p>
+      </ConfirmDialog>
     </AppShell>
   );
 }
