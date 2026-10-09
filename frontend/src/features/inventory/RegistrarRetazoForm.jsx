@@ -1,6 +1,7 @@
 import { useId, useRef, useState } from 'react';
 import { Layers3, LoaderCircle, Plus, Save, Trash2 } from 'lucide-react';
 import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
+import { FeedbackMessage, FieldError } from '../../shared/components/feedback';
 import './RegistrarRetazoForm.css';
 
 const SHAPES = [
@@ -249,11 +250,7 @@ export default function RegistrarRetazoForm({
   }
 
   function errorMessage(field) {
-    return attempted && errors[field] ? (
-      <p className="retazo-form__error" id={`${id}-${field}-error`}>
-        {errors[field]}
-      </p>
-    ) : null;
+    return <FieldError id={`${id}-${field}-error`}>{attempted ? errors[field] : null}</FieldError>;
   }
 
   async function submit(event) {
@@ -294,16 +291,16 @@ export default function RegistrarRetazoForm({
       </PageHeader>
 
       {types.length === 0 && (
-        <p className="retazo-form__notice" role="status">
+        <FeedbackMessage variant="warning">
           No hay tipos de vidrio activos disponibles. El registro estará disponible cuando haya catálogo.
-        </p>
+        </FeedbackMessage>
       )}
 
       {showHistoricalCombinationWarning && (
-        <p className="retazo-form__notice" role="status">
+        <FeedbackMessage variant="warning">
           La combinación actual de tipo de vidrio y espesor ya no está disponible en el catálogo activo.
           Selecciona una combinación activa para guardar cambios o cancela la edición.
-        </p>
+        </FeedbackMessage>
       )}
 
       <fieldset className="ng-form-section" disabled={busy}>
@@ -459,11 +456,11 @@ export default function RegistrarRetazoForm({
       )}
 
       {attempted && Object.keys(errors).length > 0 && (
-        <p className="retazo-form__error" role="alert">
+        <FeedbackMessage variant="error" title="Hay datos por corregir">
           Revisa los campos indicados antes de {isEdit ? 'guardar' : 'registrar'}.
-        </p>
+        </FeedbackMessage>
       )}
-      {submitError && <p className="retazo-form__error" role="alert">{submitError}</p>}
+      {submitError && <FeedbackMessage variant="error" title="No se pudo guardar">{submitError}</FeedbackMessage>}
       {!onCancel && (
         <p className="retazo-form__hint retazo-form__cancel-hint" id={`${id}-cancel-help`}>
           Cancelar no está disponible en esta vista.
