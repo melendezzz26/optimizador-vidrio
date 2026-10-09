@@ -69,7 +69,7 @@ function App() {
   return (
     <div className="app-container">
       {toolbar}
-      <NuevoPedido token={session.token || session.access_token} />    
+      <NuevoPedido />
     </div>
   );
 }

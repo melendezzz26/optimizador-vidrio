@@ -10,9 +10,6 @@ from .dependencies import get_create_order_use_case
 from app.modules.authentication.presentation.dependencies import require_permission
 from app.modules.authentication.domain.user import AuthenticatedUser
 
-from app.modules.orders.presentation.schemas import CreateOrderRequest, CreateOrderResponse
-
-
 
 class OrderRoute(APIRoute):
     def get_route_handler(self):
@@ -42,7 +39,7 @@ def create_order(
     request: CreateOrderRequest,
     user: AuthenticatedUser = Depends(permiso_gestionar_pedidos),
     use_case: CreateOrderUseCase = Depends(get_create_order_use_case),
-):  
+):
     try:
         piezas_dict = [p.model_dump() for p in request.piezas]
         id_pedido = use_case.execute(
