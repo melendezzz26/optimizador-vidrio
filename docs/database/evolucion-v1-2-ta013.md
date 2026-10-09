@@ -1,5 +1,9 @@
 # Evolución del modelo a v1.2: TA-013
 
+> Línea base histórica. La decisión vigente de material/espesor por PIEZA y su
+> migración pendiente están en [convergencia Orders](convergencia-orders-multimaterial.md).
+> La nueva migración no está implementada ni aplicada.
+
 Esta nota describe los cambios introducidos por `1c8754481a08` sobre la línea base v1.1/R4 (`b4d5e6f7a8c9`). No sustituye ni altera el documento histórico v1.1 o su DOCX. Las verificaciones se realizaron exclusivamente en PostgreSQL temporal local.
 
 ## Secciones que deben evolucionar

@@ -4,19 +4,19 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Implemented |
+| Estado | Reviewed |
 | PBI relacionado | HU-006 (Módulo Nuevo Pedido) |
 | Responsable | Luis Anthony Ibañez Herrera |
 | Reviewer | Equipo de Desarrollo / Arquitectura |
 
 ## 1. Objetivo
-Desarrollar la interfaz visual de usuario en React con enrutamiento centralizado y formularios dinámicos para permitir al operario configurar y registrar piezas de vidrio según sus distintas formas geométricas de manera interactiva.
+Desarrollar la interfaz visual de usuario en React con navegación centralizada en App y formularios dinámicos para permitir al operario configurar y registrar piezas de vidrio según sus distintas formas geométricas de manera interactiva.
 
 ## 2. Alcance
 ### Incluye
 - Creación del componente `NuevoPedido.jsx` y su respectiva hoja de estilos.
-- Configuración de `react-router-dom` en `App.jsx` con rutas para el Login y la vista de pedidos.
-- Formularios dinámicos condicionales para las formas: Rectángulo/Cuadrado, Círculo y Triángulo.
+- Conservación de la navegación funcional de `App.jsx` y permisos actuales. BrowserRouter no es requisito vigente; no introducir una librería por la TASK antigua.
+- Formularios dinámicos condicionales para las formas: Rectángulo/Cuadrado, Circunferencia y Polígono convexo mediante CustomPieceEditor HU-007.
 
 ### Fuera de alcance
 - Conexión directa con la base de datos de producción.
@@ -29,7 +29,7 @@ Desarrollar la interfaz visual de usuario en React con enrutamiento centralizado
 ## 4. Entradas y datos
 | Campo / dato | Tipo / formato | Regla |
 |---|---|---|
-| tipo_forma | String (Enum) | RECTANGULO, CIRCUNFERENCIA, TRIANGULO |
+| tipo_forma | String (Enum) | RECTANGULO, CIRCUNFERENCIA, POLIGONO_CONVEXO |
 | cantidad | Entero | Mayor a 0 |
 | dimensiones | Objeto JSON | Según la forma geométrica |
 
@@ -37,15 +37,17 @@ Desarrollar la interfaz visual de usuario en React con enrutamiento centralizado
 - RN-01: Los campos de dimensiones deben adaptarse dinámicamente según la forma geométrica elegida.
 
 ## 6. Flujo principal
-1. El usuario accede a la ruta `/pedidos/nuevo`.
-2. Selecciona la forma geométrica.
+1. El usuario accede a Registro de pedidos desde la navegación autorizada de App.
+2. Selecciona material, espesor, cantidad y forma de la pieza.
 3. Completa dimensiones y cantidad, luego agrega la pieza al pedido.
 
 ## 7. Flujos alternativos y errores
-- Si faltan campos obligatorios, el formulario bloquea el envío.
+- Si faltan campos obligatorios o cantidad/medidas válidas, se bloquea agregar.
+- Hasta migrar HTTP/BD, un pedido con más de una pareja no genera POST: se informa la restricción y se conserva el borrador.
+- Se conservan catálogo real, VITE_API_URL, doble envío protegido y feedback 401/403/422 HU-007.
 
 ## 8. Criterios de aceptación
-- CA-01: La interfaz compila sin errores en Vite y la navegación opera mediante `BrowserRouter`.
+- CA-01: La interfaz compila sin errores en Vite y la navegación de App mantiene permisos y acceso a Auth, Users e Inventory. La lista admite las tres formas con material/espesor/cantidad por pieza.
 
 ## 9. Impacto técnico
 - **Módulos:** `frontend/src/App.jsx`, `frontend/src/features/orders/NuevoPedido.jsx`
@@ -57,4 +59,6 @@ Desarrollar la interfaz visual de usuario en React con enrutamiento centralizado
 - Captura de pantalla del formulario en ejecución.
 
 ## Historial de estado
-- Draft -> Reviewed -> Implemented -> Verified
+- Estado anterior: Implemented, correspondiente al aporte previo a la convergencia.
+- Estado actual: Reviewed; contrato multimaterial definido, implementación completa y verificación pendientes.
+- La cobertura previa HU-007 acredita la versión histórica, no el contrato nuevo.

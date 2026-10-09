@@ -1,12 +1,18 @@
-# Plan Técnico: HU-006 Registrar Pedido
+# Plan técnico de convergencia HU-006
 
-## 1. Frontend (React)
-- **Refactorización de UI:** Eliminar el catálogo "hardcodeado" de vidrios y consumirlo desde el backend (`GET /api/inventory/tipos-vidrio`), cumpliendo la regla arquitectónica de no tener lógica de negocio en la vista.
-- **Estado y Prevención:** Implementar estados `isLoading` para la carga inicial y `isSubmitting` para el guardado del pedido, deshabilitando el botón principal para evitar doble envío.
-- **UI/UX:** Aumentar la opacidad del fondo de la tarjeta principal para reducir la competencia visual con la imagen fotográfica, y asegurar el foco de teclado en los selects y botones.
+Estado: implementación parcial; contrato multimaterial acordado, migración pendiente.
 
-## 2. Backend (FastAPI - Módulo `orders`)
-- **Presentation:** Crear el router `POST /api/orders` y los schemas de validación (Pydantic) para el payload entrante.
-- **Application:** Implementar `RegistrarPedidoUseCase` que orqueste la validación de las piezas y la creación del pedido.
-- **Domain:** Definir validaciones de negocio (espesores permitidos, cantidades > 0) independientes del framework.
-- **Infrastructure:** Crear el repositorio SQLAlchemy que inserte en `PEDIDO` y `PIEZA` dentro de una transacción atómica.
+1. Conservar historia: merge no-ff de HU-006 desde main; no reescribir 80a4fa4.
+2. Una pantalla en features/orders: estándares HU-006 + editor HU-007, material,
+   espesor y cantidad por pieza, catálogo real, ordersApi y VITE_API_URL.
+3. Mantener App/permisos y pages como compatibilidad temporal. Sin BrowserRouter obligatorio.
+4. Restringir temporalmente guardado a una única pareja comprobada entre todas las piezas;
+   no enviar multimaterial al backend antiguo ni tomar material de piezas[0].
+5. Dependencias HTTP en Presentation con repositorio importado de forma diferida.
+6. Implementar posteriormente el [contrato objetivo](contrato-orders.md) y el
+   [plan BD](../../database/convergencia-orders-multimaterial.md) en componentes canónicos.
+7. Concretar recuperación CA-02 y reautenticación sin pérdida antes de implementarlas.
+8. Adaptar pruebas existentes: lista mixta, restricción temporal y validaciones nuevas
+   ahora; persistencia multimaterial/migración después. No duplicar geometría o permisos.
+9. Regresión global y evidencia antes de Verified; después rasterización Sprint 1.
+   FF/BF/WF, métricas de colocación y selección de heurísticas: Sprint 2.

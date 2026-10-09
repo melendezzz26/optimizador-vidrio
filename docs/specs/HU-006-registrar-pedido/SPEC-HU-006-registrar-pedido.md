@@ -9,26 +9,40 @@
 | Responsable | Luis Anthony Ibañez Herrera |
 | Reviewer | Andro Joseph Quispe Cesias |
 
+## Estado de convergencia — 2026-10-08
+
+Contrato funcional vigente: **un pedido puede contener piezas de distintos tipos
+de vidrio y espesores**. HU-006 permanece Reviewed, con implementación parcial;
+no está Verified. Los estados previos de las TASK no acreditan el nuevo contrato.
+
+La pantalla mixta está activa con restricción temporal: solo guarda cuando todas
+las piezas comparten pareja; el resto permanece en borrador con feedback visible.
+HTTP/BD siguen usando material en cabecera hasta su adaptación posterior coordinada.
+Se conserva navegación de App por permisos; BrowserRouter no es requisito vigente.
+
 ## 1. Objetivo
 
-Permitir a un Operario crear un pedido definiendo el tipo de vidrio y el espesor, agregando múltiples piezas con formas estándar (indicando sus medidas y cantidades) de manera estructurada antes de confirmar y persistir la operación en la base de datos.
+Permitir a un Operario o Administrador crear un pedido definiendo tipo de vidrio,
+espesor y cantidad de cada pieza, con formas estándar y personalizadas, antes de
+confirmar y persistir la operación en la base de datos.
 
 ## 2. Alcance
 
 ### Incluye
 
-- Diseño y validación del formulario frontend por secciones (datos del pedido → piezas → guardar).
+- Diseño y validación del formulario frontend por secciones (datos de cada pieza → lista mixta → guardar).
 - Construcción del endpoint y casos de uso en el módulo `orders`.
 - Registro en PostgreSQL preservando las medidas estándar y geometría normalizada en formato JSONB.
 - Verificación y validación de tipos, medidas y campos obligatorios.
 
 ### Fuera de alcance
 
-- Ejecución del motor de optimización (First Fit / Best Fit / Worst Fit) sobre el pedido, ya que corresponde a una etapa posterior del flujo.
+- Rasterización: se implementará posteriormente en Sprint 1.
+- First Fit / Best Fit / Worst Fit, métricas de colocación y selección de heurísticas: Sprint 2.
 
 ## 3. Actor y precondiciones
 
-**Actor:** Operario.
+**Actor:** Operario / Administrador con permiso GESTIONAR_PEDIDOS.
 
 **Precondiciones:**
 
@@ -39,15 +53,15 @@ Permitir a un Operario crear un pedido definiendo el tipo de vidrio y el espesor
 
 | Campo / dato | Tipo / formato | Regla |
 |---|---|---|
-| Tipo de vidrio | FK (TIPO_VIDRIO) | Debe existir en el catálogo y estar activo. |
-| Espesor | NUMERIC(4,1) | Limitado al dominio permitido (3, 4, 5.5, 6, 8). |
+| Tipo de vidrio por pieza | FK mediante catálogo tipo-espesor | Debe existir en el catálogo y estar activo para altas. |
+| Espesor por pieza | NUMERIC(4,1) | Pareja persistida en tipos_vidrio_espesores (TA-013). |
 | Tipo de forma | VARCHAR | RECTANGULO, CIRCUNFERENCIA o POLIGONO_CONVEXO. |
 | Cantidad | INTEGER | Estrictamente mayor a 0. |
 | Dimensiones | Estructura / JSONB | Evaluadas y almacenadas en milímetros (mm). |
 
 ## 5. Reglas de negocio
 
-- RN-01: El espesor seleccionado debe pertenecer estrictamente al dominio permitido: 3, 4, 5.5, 6, 8 mm.
+- RN-01: Cada pieza referencia una pareja del catálogo TA-013; no existe una lista global de espesores. El pedido admite diferentes tipos y espesores.
 - RN-02: El pedido creado recibirá por defecto el estado `PENDIENTE`.
 - RN-03: Las longitudes deben evaluarse y almacenarse en milímetros (mm), y las áreas en mm².
 - RN-04: La cantidad de una pieza solicitada debe ser estrictamente mayor a 0 (`CHECK > 0`).
@@ -56,7 +70,7 @@ Permitir a un Operario crear un pedido definiendo el tipo de vidrio y el espesor
 ## 6. Flujo principal
 
 1. El Operario navega a la pantalla "Nuevo pedido".
-2. Selecciona el tipo de vidrio y el espesor en la sección "Datos del pedido".
+2. Selecciona el tipo de vidrio y el espesor para la pieza que va a agregar.
 3. Utiliza la sección "Piezas del pedido" para ingresar el tipo de forma, dimensiones y cantidad.
 4. El sistema valida los datos de la pieza y la añade a la lista local (estado de la UI).
 5. El Operario hace clic en "Guardar pedido".
@@ -71,9 +85,9 @@ Permitir a un Operario crear un pedido definiendo el tipo de vidrio y el espesor
 
 ## 8. Criterios de aceptación
 
-- CA-01 (T01): El formulario solicita tipo y espesor del vidrio y permite añadir más de una pieza al mismo pedido antes de guardarlo en la base de datos.
+- CA-01 (T01): El formulario solicita tipo y espesor por pieza y permite añadir más de una pieza al mismo pedido antes de guardarlo en la base de datos.
 - CA-02 (T02): El backend crea un pedido con sus piezas relacionadas en PostgreSQL y permite recuperar el pedido completo mientras se encuentre en edición.
-- CA-03 (T03): Se pueden registrar las formas estándar aprobadas con sus medidas y cantidad; cada pieza almacenada conserva tipo de forma, dimensiones originales en JSONB, cantidad y referencia al pedido.
+- CA-03 (T03): Se pueden registrar las formas aprobadas con sus medidas y cantidad; cada pieza conserva material, espesor, forma, dimensiones en JSONB cuando corresponda, geometría, área, cantidad y referencia al pedido.
 - CA-04 (T04): Las pruebas unitarias y de integración de la API garantizan que cantidades no positivas, medidas no válidas y campos obligatorios faltantes sean rechazados correctamente, conservando el resultado de cada caso.
 
 ## 9. Impacto técnico
@@ -84,12 +98,12 @@ Permitir a un Operario crear un pedido definiendo el tipo de vidrio y el espesor
 
 ### API
 
-- Creación de rutas `POST /api/orders` exponiendo schemas de transporte formales.
+- Adaptación de `POST /api/orders` existente al [contrato multimaterial objetivo](contrato-orders.md), todavía pendiente en backend. No duplicar schemas, casos de uso ni repositorios.
 
 ### Base de datos / migración
 
 - Inserción sobre las tablas `PEDIDO` y `PIEZA`.
-- No requiere nueva migración si la v1.1 ya está implementada.
+- Requiere una nueva migración posterior a TA-013 para trasladar material/espesor a PIEZA. En esta fase solo se documenta; no se crea ni ejecuta. Ver [plan de preservación](../../database/convergencia-orders-multimaterial.md).
 
 ### UI
 
@@ -112,5 +126,5 @@ Permitir a un Operario crear un pedido definiendo el tipo de vidrio y el espesor
 
 - Draft (Completado)
 - Reviewed (Actual)
-- Implemented
-- Verified
+- Implemented: pendiente para el contrato multimaterial completo.
+- Verified: pendiente; no acreditado por la convergencia estructural.

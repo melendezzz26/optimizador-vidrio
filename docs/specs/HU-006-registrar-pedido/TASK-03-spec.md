@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Implemented |
+| Estado | Reviewed |
 | PBI relacionado | HU-006 (Módulo Nuevo Pedido) |
 | Responsable | Luis Anthony Ibañez Herrera |
 | Reviewer | Equipo de Base de Datos / Backend |
@@ -14,8 +14,9 @@ Configurar los modelos ORM de SQLAlchemy y la lógica del caso de uso para asegu
 
 ## 2. Alcance
 ### Incluye
-- Mapeo de modelos ORM para tablas `pedidos` y `piezas`.
-- Lógica en `RegistrarPedidoUseCase`.
+- Evolución de los modelos canónicos de pedidos/piezas sin duplicarlos.
+- Traslado de material/espesor a PIEZA con preservación histórica. No incorporar piezas.orden.
+- Lógica en `CreateOrderUseCase` existente.
 - Asignación UTC de `fecha_registro`.
 
 ### Fuera de alcance
@@ -23,7 +24,7 @@ Configurar los modelos ORM de SQLAlchemy y la lógica del caso de uso para asegu
 
 ## 3. Actor y precondiciones
 **Actor:** Caso de Uso del Sistema.
-**Precondiciones:** Tablas `pedidos` y `piezas` migradas previamente.
+**Precondiciones:** Preparar y verificar posteriormente la migración del [plan BD](../../database/convergencia-orders-multimaterial.md). No se ejecuta en esta fase.
 
 ## 4. Entradas y datos
 | Campo / dato | Tipo / formato | Regla |
@@ -45,10 +46,10 @@ Configurar los modelos ORM de SQLAlchemy y la lógica del caso de uso para asegu
 - Rollback automático ante fallos de integridad relacional.
 
 ## 8. Criterios de aceptación
-- CA-01: Registros almacenados exitosamente en PostgreSQL.
+- CA-01: Registros almacenados atómicamente con material/espesor por pieza y FK compuesta TA-013. Pendiente para el nuevo contrato.
 
 ## 9. Impacto técnico
-- **Módulos:** `backend/app/modules/orders/application/use_cases.py`, `backend/app/modules/orders/infrastructure/models.py`
+- **Módulos:** `backend/app/modules/orders/application/use_cases.py`, `backend/app/models.py` y `backend/app/modules/orders/infrastructure/repositories.py`
 
 ## 10. Pruebas previstas
 - Pruebas de integración ORM mediante Pytest.
@@ -57,4 +58,6 @@ Configurar los modelos ORM de SQLAlchemy y la lógica del caso de uso para asegu
 - Logs de ejecución de pruebas backend.
 
 ## Historial de estado
-- Draft -> Reviewed -> Implemented -> Verified
+- Estado anterior: Implemented, correspondiente al aporte previo a la convergencia.
+- Estado actual: Reviewed; contrato multimaterial definido, implementación completa y verificación pendientes.
+- La cobertura previa HU-007 acredita la versión histórica, no el contrato nuevo.
