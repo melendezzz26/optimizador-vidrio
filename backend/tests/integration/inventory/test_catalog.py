@@ -24,7 +24,7 @@ from tests.auth_support import token_for, use_in_memory_accounts
 from tests.catalog_contract import EXPECTED_CATALOG
 from tests.integration.inventory.test_repository import SqlAlchemyInventoryRepository
 from tests.integration.postgres_support import BACKEND, _run, new_database, upgrade
-from tests.model_contracts import current_metadata
+from tests.model_contracts import historical_metadata
 
 
 R4 = "b4d5e6f7a8c9"
@@ -35,7 +35,7 @@ def migration():
     config = Config()
     config.set_main_option("script_location", str(BACKEND / "alembic"))
     scripts = ScriptDirectory.from_config(config)
-    assert scripts.get_heads() == [TA013]
+    assert TA013 in {r.revision for r in scripts.walk_revisions()}
     revision = scripts.get_revision(TA013)
     assert revision.down_revision == R4
     return revision.module
@@ -64,7 +64,7 @@ def catalog_db(isolated_postgres):
     assert isolated_postgres.host == "127.0.0.1" and isolated_postgres.username == "r1_test"
     with new_database(isolated_postgres) as engine:
         assert engine.url.host == "127.0.0.1" and engine.url.username == "r1_test"
-        result = upgrade(engine, "head")
+        result = upgrade(engine, TA013)
         assert result.returncode == 0, result.stderr
         yield engine
 
@@ -92,7 +92,7 @@ def test_seed_has_six_types_28_pairs_and_is_idempotent(catalog_db):
         assert len(before) == 6
         assert connection.scalar(sa.text("SELECT COUNT(*) FROM tipos_vidrio_espesores")) == 28
         assert persisted_catalog(connection) == EXPECTED_CATALOG
-    result = upgrade(catalog_db, "head")
+    result = upgrade(catalog_db, TA013)
     assert result.returncode == 0, result.stderr
 
 
@@ -100,7 +100,7 @@ def test_orm_matches_migrated_schema_and_composite_constraints(catalog_db):
     with catalog_db.connect() as connection:
         assert compare_metadata(MigrationContext.configure(connection, opts={
             "compare_type": True, "compare_server_default": True,
-        }), current_metadata()) == []
+        }), historical_metadata(TA013)) == []
     inspector = sa.inspect(catalog_db)
     assert inspector.get_pk_constraint("tipos_vidrio_espesores")["constrained_columns"] == ["id_tipo_vidrio", "espesor_mm"]
     for table in ("planchas", "retazos", "pedidos"):
@@ -126,12 +126,25 @@ def test_database_rejects_duplicates_and_nonpositive_thickness(catalog_db, state
 
 def insert_record(connection, table, tipo, thickness):
     parameters = {"tipo": tipo, "espesor": Decimal(thickness), "codigo": str(uuid4())}
+    pedidos_columns = {column["name"] for column in sa.inspect(connection).get_columns("pedidos")}
     statements = {
         "planchas": "INSERT INTO planchas(ancho_mm,alto_mm,espesor_mm,cantidad,fecha_registro,id_tipo_vidrio) VALUES (10,20,:espesor,1,CURRENT_TIMESTAMP,:tipo)",
         "retazos": "INSERT INTO retazos(codigo,espesor_mm,geometria,area_mm2,fecha_registro,id_tipo_vidrio) VALUES (:codigo,:espesor,'{}',200,CURRENT_TIMESTAMP,:tipo)",
-        "pedidos": "INSERT INTO pedidos(fecha_registro,estado,espesor_mm,id_tipo_vidrio,id_usuario_registro) VALUES (CURRENT_TIMESTAMP,'PENDIENTE',:espesor,:tipo,1)",
+        "pedidos": (
+            "INSERT INTO pedidos(fecha_registro,estado,espesor_mm,id_tipo_vidrio,id_usuario_registro) "
+            "VALUES (CURRENT_TIMESTAMP,'PENDIENTE',:espesor,:tipo,1)"
+            if "espesor_mm" in pedidos_columns else
+            "INSERT INTO pedidos(fecha_registro,estado,id_usuario_registro) VALUES (CURRENT_TIMESTAMP,'PENDIENTE',1) RETURNING id_pedido"
+        ),
     }
-    connection.execute(sa.text(statements[table]), parameters)
+    result = connection.execute(sa.text(statements[table]), parameters)
+    if table == "pedidos" and "espesor_mm" not in pedidos_columns:
+        order_id = result.scalar_one()
+        connection.execute(sa.text(
+            "INSERT INTO piezas(id_pedido,id_tipo_vidrio,espesor_mm,tipo_forma,cantidad,geometria,area_mm2) "
+            "VALUES (:order_id,:tipo,:espesor,'RECTANGULO',1,CAST(:geometry AS jsonb),200)"
+        ), {**parameters, "order_id": order_id,
+            "geometry": '{"type":"RECTANGULO","width_mm":10,"height_mm":20}'})
 
 
 def insert_user(connection):
@@ -279,7 +292,9 @@ def test_downgrade_aborts_without_losing_new_thickness_data(isolated_postgres, t
         result = downgrade(engine)
         assert result.returncode != 0 and "No se puede volver a v1.1" in result.stderr
         with engine.connect() as connection:
-            assert connection.scalar(sa.text("SELECT version_num FROM alembic_version")) == TA013
+            # Alembic revierte toda la cadena en una sola transacción: TA-013
+            # falla por el dato histórico y también se revierte el downgrade HU-006.
+            assert connection.scalar(sa.text("SELECT version_num FROM alembic_version")) == "d6e7f8a9b0c1"
             assert connection.execute(sa.text(f"SELECT * FROM {table}")).all() == before
             assert persisted_catalog(connection) == EXPECTED_CATALOG
 

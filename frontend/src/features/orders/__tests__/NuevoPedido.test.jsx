@@ -1,12 +1,13 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import NuevoPedido from '../../../pages/NuevoPedido'
+import NuevoPedido from '../NuevoPedido'
 
 vi.mock('@formkit/auto-animate/react', () => ({ useAutoAnimate: () => [null] }))
 
 const materials = [
   { id_tipo_vidrio: 7, nombre: 'Material de prueba', estado: true, espesores_mm: [5.5, 6] },
+  { id_tipo_vidrio: 8, nombre: 'Otro material', estado: true, espesores_mm: [4] },
   { id_tipo_vidrio: 9, nombre: 'Inactivo', estado: false, espesores_mm: [6] },
 ]
 const response = (data, status = 200) => ({ ok: status < 400, status, json: async () => data })
@@ -42,6 +43,84 @@ async function validPolygon(user) {
   }
   expect(screen.getByText('Geometría convexa validada.')).toBeVisible()
 }
+
+async function standardPiece(user, shape = 'RECTANGULO') {
+  await user.selectOptions(screen.getByLabelText('Forma'), shape)
+  if (shape === 'RECTANGULO') {
+    fireEvent.change(screen.getByLabelText('Ancho (mm)'), { target: { value: '1000' } })
+    fireEvent.change(screen.getByLabelText('Alto (mm)'), { target: { value: '500' } })
+  } else {
+    fireEvent.change(screen.getByLabelText('Radio (mm)'), { target: { value: '250' } })
+  }
+  await user.click(screen.getByRole('button', { name: 'Agregar pieza estándar' }))
+}
+
+describe('HU-006: convergencia temporal con HU-007', () => {
+  test('guarda las tres formas con cantidades propias sin reinterpretar la geometría', async () => {
+    const user = await setup()
+    await selectHeader(user)
+    await validPolygon(user)
+    fireEvent.change(screen.getByLabelText('Cantidad'), { target: { value: '3' } })
+    await user.click(addButton())
+    fireEvent.change(screen.getByLabelText('Cantidad'), { target: { value: '2' } })
+    await standardPiece(user)
+    fireEvent.change(screen.getByLabelText('Cantidad'), { target: { value: '1' } })
+    await standardPiece(user, 'CIRCUNFERENCIA')
+    // Los controles describen la siguiente pieza, no la cabecera del pedido.
+    await user.selectOptions(screen.getByLabelText('Tipo de vidrio'), '8')
+    await user.selectOptions(screen.getByLabelText('Espesor'), '4')
+    fetch.mockResolvedValueOnce(response({ id_pedido: 44, estado: 'PENDIENTE' }, 201))
+    await user.click(saveButton())
+    await screen.findByText(/ID del pedido: 44/)
+    const body = JSON.parse(fetch.mock.calls[1][1].body)
+    expect(body.id_tipo_vidrio).toBe(7)
+    expect(body.espesor_mm).toBe(5.5)
+    expect(body.piezas).toEqual([
+      { tipo_forma: 'POLIGONO_CONVEXO', cantidad: 3, vertices_mm: expect.any(Array) },
+      { tipo_forma: 'RECTANGULO', cantidad: 2, width_mm: 1000, height_mm: 500 },
+      { tipo_forma: 'CIRCUNFERENCIA', cantidad: 1, radius_mm: 250 },
+    ])
+  })
+
+  test.each([['7', '6'], ['8', '4']])('bloquea otra pareja %s/%s sin POST y conserva piezas', async (materialId, thickness) => {
+    const user = await setup()
+    await selectHeader(user)
+    await standardPiece(user)
+    await user.selectOptions(screen.getByLabelText('Tipo de vidrio'), materialId)
+    await user.selectOptions(screen.getByLabelText('Espesor'), thickness)
+    await standardPiece(user, 'CIRCUNFERENCIA')
+    expect(screen.getByText(/Por ahora solo se pueden guardar juntas/)).toBeVisible()
+    expect(screen.getByText('Pieza 1')).toBeVisible()
+    expect(screen.getByText('Pieza 2')).toBeVisible()
+    expect(saveButton()).toBeDisabled()
+    fireEvent.click(saveButton())
+    expect(fetch).toHaveBeenCalledTimes(1)
+    await user.click(screen.getByRole('button', { name: 'Eliminar pieza 2' }))
+    expect(saveButton()).toBeEnabled()
+    expect(screen.queryByText(/Por ahora solo se pueden guardar juntas/)).not.toBeInTheDocument()
+  })
+
+  test('rechaza cantidad decimal y medidas no positivas antes de agregar', async () => {
+    const user = await setup()
+    await selectHeader(user)
+    await user.selectOptions(screen.getByLabelText('Forma'), 'RECTANGULO')
+    const add = screen.getByRole('button', { name: 'Agregar pieza estándar' })
+    fireEvent.change(screen.getByLabelText('Ancho (mm)'), { target: { value: '100' } })
+    fireEvent.change(screen.getByLabelText('Alto (mm)'), { target: { value: '50' } })
+    fireEvent.change(screen.getByLabelText('Cantidad'), { target: { value: '1.5' } })
+    expect(add).toBeDisabled()
+    expect(screen.getByText(/Ingresa una cantidad entera/)).toBeVisible()
+    fireEvent.change(screen.getByLabelText('Cantidad'), { target: { value: '1' } })
+    for (const value of ['-1', '0']) {
+      fireEvent.change(screen.getByLabelText('Ancho (mm)'), { target: { value } })
+      expect(add).toBeDisabled()
+      expect(screen.getByText(/La medida debe ser/)).toBeVisible()
+    }
+    expect(screen.queryByRole('option', { name: 'Triángulo' })).not.toBeInTheDocument()
+    expect(screen.queryByText('Pieza 1')).not.toBeInTheDocument()
+    expect(fetch).toHaveBeenCalledTimes(1)
+  })
+})
 
 describe('HU-007 T04: pedido y piezas', () => {
   test('catálogo real y geometría VALID requeridos; agregar solo local y reiniciar lienzo', async () => {

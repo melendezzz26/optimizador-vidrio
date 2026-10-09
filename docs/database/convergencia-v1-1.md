@@ -1,5 +1,9 @@
 # Convergencia del modelo de datos a v1.1
 
+> Línea base histórica. La decisión vigente de material/espesor por PIEZA y su
+> migración pendiente están en [convergencia Orders](convergencia-orders-multimaterial.md).
+> La nueva migración no está implementada ni aplicada.
+
 ## Línea base normativa
 
 El documento aprobado `Documento_Diseno_Base_Datos_NewGlass_v1_1.docx` define

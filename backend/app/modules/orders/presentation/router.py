@@ -1,14 +1,15 @@
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Path, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.routing import APIRoute
-from .schemas import CreateOrderRequest, CreateOrderResponse
-from ..application.use_cases import CreateOrderUseCase
-from ..domain.exceptions import InvalidOrderException, InvalidGeometryException
-from ..infrastructure.dependencies import get_create_order_use_case
+from .schemas import CreateOrderRequest, CreateOrderResponse, OrderResponse
+from ..application.use_cases import CreateOrderUseCase, GetOrderUseCase
+from ..domain.exceptions import InvalidOrderException, InvalidGeometryException, OrderNotFoundException
+from .dependencies import get_create_order_use_case, get_order_use_case
 from app.modules.authentication.presentation.dependencies import require_permission
 from app.modules.authentication.domain.user import AuthenticatedUser
+
 
 class OrderRoute(APIRoute):
     def get_route_handler(self):
@@ -30,18 +31,19 @@ class OrderRoute(APIRoute):
 router = APIRouter(prefix="/api/orders", tags=["Pedidos"], route_class=OrderRoute)
 logger = logging.getLogger(__name__)
 
+permiso_gestionar_pedidos = require_permission("GESTIONAR_PEDIDOS")
+
 @router.post("", response_model=CreateOrderResponse, status_code=status.HTTP_201_CREATED)
+
 def create_order(
     request: CreateOrderRequest,
-    user: AuthenticatedUser = Depends(require_permission("GESTIONAR_PEDIDOS")),
+    user: AuthenticatedUser = Depends(permiso_gestionar_pedidos),
     use_case: CreateOrderUseCase = Depends(get_create_order_use_case),
 ):
     try:
         piezas_dict = [p.model_dump() for p in request.piezas]
         id_pedido = use_case.execute(
             id_usuario=user.user_id,
-            id_tipo_vidrio=request.id_tipo_vidrio,
-            espesor_mm=request.espesor_mm,
             piezas_raw=piezas_dict
         )
         return CreateOrderResponse(id_pedido=id_pedido, estado="PENDIENTE")
@@ -52,3 +54,18 @@ def create_order(
     except Exception as e:
         logger.exception("Order creation failed")
         raise HTTPException(status_code=500, detail="No se pudo guardar el pedido. Inténtalo otra vez.") from e
+
+
+@router.get("/{id_pedido}", response_model=OrderResponse)
+def get_order(
+    id_pedido: int = Path(gt=0, le=2147483647),
+    user: AuthenticatedUser = Depends(permiso_gestionar_pedidos),
+    use_case: GetOrderUseCase = Depends(get_order_use_case),
+):
+    try:
+        return use_case.execute(id_pedido)
+    except OrderNotFoundException as e:
+        raise HTTPException(status_code=404, detail=str(e)) from e
+    except Exception as e:
+        logger.exception("Order retrieval failed")
+        raise HTTPException(status_code=500, detail="No se pudo consultar el pedido. Inténtalo otra vez.") from e

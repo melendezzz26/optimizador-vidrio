@@ -1,5 +1,16 @@
 # SPEC — HU-007 T04: Integrar pieza personalizada con registro persistente de pedido
 
+> **Alcance histórico de Verified:** T04 fue verificada con material/espesor en la
+> cabecera. Su evidencia se conserva para esa versión. La decisión vigente ubica
+> ambos campos en cada pieza: [contrato HU-006](HU-006-registrar-pedido/contrato-orders.md)
+> y [plan BD](../database/convergencia-orders-multimaterial.md).
+> El contrato HTTP y la exclusión de migraciones que figuran abajo describen la
+> línea base histórica, no la convergencia multimaterial pendiente.
+> La UI conserva editor, geometría, doble envío y errores, y permite listas mixtas
+> con guardado temporalmente restringido a una pareja común. La pantalla canónica
+> está en features/orders; las dependencias HTTP, en Presentation.
+
+
 ## Información general
 
 | Campo | Valor |

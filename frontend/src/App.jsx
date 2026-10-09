@@ -9,7 +9,7 @@ import {
 } from './features/authentication';
 import { InventoryPage } from './features/inventory/InventoryPage';
 import { UsersPage } from './features/users';
-import NuevoPedido from './pages/NuevoPedido';
+import NuevoPedido from './features/orders/NuevoPedido';
 import './App.css';
 
 function App() {

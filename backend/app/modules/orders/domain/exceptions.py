@@ -6,3 +6,7 @@ class InvalidGeometryException(DomainException):
 
 class InvalidOrderException(DomainException):
     pass
+
+
+class OrderNotFoundException(DomainException):
+    pass
