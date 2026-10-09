@@ -30,3 +30,43 @@ Estado del diseño: aprobado por el equipo el 08/10/2026.
 
 - Advertencia: usa Brand Blue (#61A3E7) y se distingue por ícono y título, porque no existe un token ámbar aprobado.
 - Botón de peligro: usa Error (#B91C1C); la variante `danger` figura en el documento UI/UX y se agrega a `ui.css` en esta tarea.
+
+## Patrón de gestión (TA-034 T02)
+
+`frontend/src/shared/hooks/useManagementView.js` implementa el flujo
+"listado primero, formulario bajo acción". No dibuja nada: cada módulo
+conserva su propio listado y formulario.
+
+| Estado | Qué se muestra |
+|---|---|
+| `list` (inicial) | Listado, búsqueda, filtros y el mensaje de resultado |
+| `create` | Formulario de alta |
+| `edit` | Formulario de edición con `editingItem` |
+
+Aplicación: HU-003 T05 (Users) y HU-013 T01 (Orders). Inventory ya cumple el
+patrón con su propia implementación y no se reestructura en esta tarea.
+
+Ejemplo de uso:
+
+```jsx
+const view = useManagementView();
+
+{view.feedback && (
+  <FeedbackMessage variant={view.feedback.variant}>{view.feedback.message}</FeedbackMessage>
+)}
+{view.isListVisible && (
+  <>
+    <button className="ng-button ng-button--primary" type="button" onClick={view.openCreate}>
+      Nuevo usuario
+    </button>
+    <UsersTable onEdit={view.openEdit} />
+  </>
+)}
+{view.isFormOpen && (
+  <UserForm
+    editingUser={view.editingItem}
+    onCancel={() => view.backToList()}
+    onSaved={(message) => view.backToList({ variant: 'success', message })}
+  />
+)}
+```
