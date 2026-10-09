@@ -4,8 +4,9 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Draft |
+| Estado | Review |
 | PBI relacionado | HU-012 |
+| Reviewer | Fabricio Aguilar Chavez |
 | Responsable | Andro Joseph Quispe Cesias |
 | Sprint | Sprint 1 |
 | Épica | EP-002 — Clientes / Pedidos |
