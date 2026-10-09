@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallbackseCallback } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { 
   Plus, Trash2, Save, X, PackagePlus, Loader2,
@@ -80,14 +80,14 @@ export default function NuevoPedido({ token }) {
       setPiezas(piezasRenumeradas);
     };
 
-  const actualizarPieza = (id, campo, valor) => {
-    setPiezas(piezas.map(pieza => {
+const actualizarPieza = useCallback((id, campo, valor) => {
+    // Usamos prevPiezas para evitar problemas de dependencias en React
+    setPiezas(prevPiezas => prevPiezas.map(pieza => {
       if (pieza.id === id) {
         if (campo === 'cantidad') {
           return { ...pieza, cantidad: parseInt(valor) || '' };
         }
         if (campo === 'tipo_vidrio_id') {
-          // Si cambia el material, reseteamos el espesor porque podría no estar disponible
           return { ...pieza, tipo_vidrio_id: valor, espesor: "" };
         }
         if (campo === 'espesor') {
@@ -112,7 +112,7 @@ export default function NuevoPedido({ token }) {
       }
       return pieza;
     }));
-  };
+  }, []);
   
   const esPedidoValido = () => {
     if (piezas.length === 0) return false;
@@ -170,6 +170,7 @@ useEffect(() => {
       // Ya no enviamos id_tipo_vidrio ni espesor_mm aquí afuera
       piezas: piezas.map(p => {
         // 1. Extraemos rawState y vertices originales para no enviarlos tal cual
+        // eslint-disable-next-line no-unused-vars
         const { rawState, vertices, ...medidasLimpias } = p.dimensiones;
 
         // 2. Armamos la pieza metiendo el material y espesor ADENTRO, como exige FastAPI
