@@ -2,7 +2,7 @@ from fastapi import Depends
 from app.shared.database.session import SessionLocal
 from sqlalchemy.orm import Session
 from ..application.use_cases import CreateOrderUseCase, GetOrderUseCase
-from app.modules.authentication.presentation.dependencies import get_database_session
+from app.modules.authentication.presentation.dependencies import get_database_session, require_permission
 from ..application.ports import OrderRepositoryPort
 
 
