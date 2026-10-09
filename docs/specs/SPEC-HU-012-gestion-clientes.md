@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Review |
+| Estado | Reviewed |
 | PBI relacionado | HU-012 |
 | Reviewer | Fabricio Aguilar Chavez |
 | Responsable | Andro Joseph Quispe Cesias |
