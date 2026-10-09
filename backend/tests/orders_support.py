@@ -26,8 +26,9 @@ def session_factory(orders_database):
     with factory() as session:
         session.add_all([Rol(id_rol=i, nombre=name) for i, name in
                          [(1, "Administrador"), (2, "Almacenero"), (3, "Operario")]])
-        session.add(TipoVidrio(id_tipo_vidrio=7, nombre="Material de prueba", estado=True))
+        session.add_all([TipoVidrio(id_tipo_vidrio=i, nombre=f"Material de prueba {i}", estado=True) for i in (7, 8, 9)])
         session.flush()
         session.add_all([TipoVidrioEspesor(id_tipo_vidrio=7, espesor_mm=value) for value in (5.5, 6)])
+        session.add_all([TipoVidrioEspesor(id_tipo_vidrio=8, espesor_mm=4), TipoVidrioEspesor(id_tipo_vidrio=9, espesor_mm=6)])
         session.commit()
     return factory

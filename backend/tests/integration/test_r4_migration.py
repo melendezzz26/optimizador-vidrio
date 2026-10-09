@@ -13,7 +13,7 @@ R3 = "a3c4d5e6f7b8"
 R4 = "b4d5e6f7a8c9"
 
 
-def insert_r3_context(connection, *, with_catalog=False):
+def insert_r3_context(connection, *, with_catalog=False, with_piece_material=False):
     """Contexto sintético válido para crear una ejecución R3."""
 
     statements = [
@@ -82,7 +82,13 @@ def insert_r3_context(connection, *, with_catalog=False):
         statements.insert(3, "INSERT INTO tipos_vidrio_espesores VALUES (1,3),(1,4)")
 
     for statement in statements:
+        if with_piece_material and "INSERT INTO pedidos(" in statement:
+            statement = "INSERT INTO pedidos(id_pedido,fecha_registro,estado,id_usuario_registro) VALUES (1,CURRENT_TIMESTAMP,'PENDIENTE',1)"
         connection.exec_driver_sql(statement)
+
+    if with_piece_material:
+        connection.exec_driver_sql("""INSERT INTO piezas(id_pedido,id_tipo_vidrio,espesor_mm,tipo_forma,cantidad,geometria,area_mm2)
+            VALUES (1,1,3,'RECTANGULO',1,'{"type":"RECTANGULO","width_mm":10,"height_mm":20}',200)""")
 
 
 @pytest.fixture

@@ -1,3 +1,4 @@
+# Contrato histórico congelado de TA-013; no es un modelo de producción.
 from datetime import datetime
 from decimal import Decimal
 
@@ -145,6 +146,11 @@ class Pedido(Base):
             "estado IN ('PENDIENTE', 'EN_OPTIMIZACION', 'OPTIMIZADO', 'CONFIRMADO', 'CANCELADO')",
             name="ck_pedidos_estado",
         ),
+        ForeignKeyConstraint(
+            ["id_tipo_vidrio", "espesor_mm"],
+            ["tipos_vidrio_espesores.id_tipo_vidrio", "tipos_vidrio_espesores.espesor_mm"],
+            name="fk_pedidos_tipo_espesor",
+        ),
         Index("ix_pedidos_estado_fecha", "estado", "fecha_registro"),
     )
 
@@ -153,6 +159,12 @@ class Pedido(Base):
         DateTime(timezone=True), nullable=False
     )
     estado: Mapped[str] = mapped_column(String(20), default="PENDIENTE")
+    espesor_mm: Mapped[Decimal] = mapped_column(Numeric(4, 1), nullable=False)
+
+    id_tipo_vidrio: Mapped[int] = mapped_column(
+        ForeignKey("tipos_vidrio.id_tipo_vidrio"),
+        nullable=False
+    )
 
     id_usuario_registro: Mapped[int] = mapped_column(
         ForeignKey("usuarios.id_usuario"),
@@ -163,11 +175,6 @@ class Pedido(Base):
 class Pieza(Base):
     __tablename__ = "piezas"
     __table_args__ = (
-        ForeignKeyConstraint(
-            ["id_tipo_vidrio", "espesor_mm"],
-            ["tipos_vidrio_espesores.id_tipo_vidrio", "tipos_vidrio_espesores.espesor_mm"],
-            name="fk_piezas_tipo_espesor",
-        ),
         CheckConstraint(
             "tipo_forma IN ('RECTANGULO', 'CIRCUNFERENCIA', 'POLIGONO_CONVEXO')",
             name="ck_piezas_tipo_forma",
@@ -175,9 +182,6 @@ class Pieza(Base):
         CheckConstraint("cantidad > 0", name="ck_piezas_cantidad"),
         CheckConstraint("area_mm2 > 0", name="ck_piezas_area_positiva"),
     )
-
-    id_tipo_vidrio: Mapped[int] = mapped_column(Integer, nullable=False)
-    espesor_mm: Mapped[Decimal] = mapped_column(Numeric(4, 1), nullable=False)
 
     id_pieza: Mapped[int] = mapped_column(Integer, primary_key=True)
     tipo_forma: Mapped[str] = mapped_column(String(30), nullable=False)

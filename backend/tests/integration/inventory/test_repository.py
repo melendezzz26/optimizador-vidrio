@@ -32,7 +32,7 @@ with patch.dict(sys.modules, {"app.shared.database": isolated_base}):
 
 
 NOW = datetime(2026, 10, 5, 12, 30, tzinfo=timezone.utc)
-HEAD = "1c8754481a08"
+HEAD = "d6e7f8a9b0c1"
 
 
 @pytest.fixture(scope="module")
@@ -218,7 +218,7 @@ def test_retazo_roundtrip_defensive_copy_exact_code_and_update(repository, engin
 def test_retazo_preserves_existing_nonnull_origin(repository, engine):
     repo, _ = repository
     with engine.begin() as connection:
-        insert_r3_context(connection, with_catalog=True)
+        insert_r3_context(connection, with_catalog=True, with_piece_material=True)
     with repo.transaction():
         original = repo.create_retazo(**retazo_values(1, id_ejecucion_origen=1))
     with repo.transaction():
