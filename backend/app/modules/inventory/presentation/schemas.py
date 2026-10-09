@@ -2,10 +2,28 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Annotated, Literal, Union
 
-from pydantic import BaseModel, Field, field_serializer
+from pydantic import BaseModel, Field, field_serializer, field_validator
+
+from app.modules.inventory.domain.writeoff import TipoEventoBajaManual
 
 class BaseSchema(BaseModel):
     model_config = {"extra": "forbid"}
+
+
+class BajaManualRequest(BaseSchema):
+    """Payload público de baja; no permite enviar usuario ni fecha."""
+
+    tipo_evento: TipoEventoBajaManual
+    motivo: str = Field(min_length=1)
+    observacion: str | None = None
+
+    @field_validator("motivo")
+    @classmethod
+    def motivo_no_vacio(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("motivo debe explicar la baja y no puede estar vacío")
+        return value
 
 # --- Tipos de Vidrio ---
 
