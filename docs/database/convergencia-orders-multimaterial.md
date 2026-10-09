@@ -1,130 +1,49 @@
 # Convergencia de Orders: material y espesor por pieza
 
-Estado: contrato funcional acordado; migración y persistencia multimaterial pendientes.
-Fecha: 2026-10-08. Rama de trabajo: `integration/HU-006-convergencia`.
+Estado: implementado localmente y probado en PostgreSQL temporal aislado; no aplicado a Supabase.
+Fecha: 2026-10-08. Rama: `integration/HU-006-convergencia`.
 
-## Decisión y alcance
+## Contrato funcional vigente
 
-Un pedido puede contener piezas de distintos tipos de vidrio y espesores.
-Esta decisión sustituye la asignación de material a la cabecera documentada en
-v1.1, v1.2/TA-013 y el contrato histórico de HU-007 T04. Los documentos y evidencias
-históricos se conservan; no acreditan la implementación del contrato nuevo.
+Un pedido puede contener piezas de distintos tipos de vidrio y espesores. El encabezado PEDIDO conserva `id_pedido`, `fecha_registro`, `estado` e `id_usuario_registro`. Cada PIEZA conserva `id_pedido`, `id_tipo_vidrio`, `espesor_mm`, `tipo_forma`, `cantidad`, dimensiones, geometría y `area_mm2`. Las formas válidas son `RECTANGULO`, `CIRCUNFERENCIA` y `POLIGONO_CONVEXO`; no existe `TRIANGULO` independiente.
 
-No se modifican Supabase, modelos ni migraciones en esta fase. No se agrega
-`piezas.orden`: no existe un requisito aprobado de orden persistente.
-El commit del compañero `80a4fa4` permanece en la historia, incorporado mediante
-el merge `6eff9e0`; todas las adaptaciones son posteriores.
+La pareja `(id_tipo_vidrio, espesor_mm)` de cada pieza referencia `tipos_vidrio_espesores` con la FK compuesta `fk_piezas_tipo_espesor`. La pertenencia al catálogo es una regla de integridad; para nuevas altas Application también exige que el tipo esté activo. No se agrega `piezas.orden`: aún no existe requisito aprobado de orden persistente.
 
-## Modelo objetivo
+El commit del compañero `80a4fa4` se conserva en la historia, incorporado por el merge `6eff9e0`; los cambios de convergencia son posteriores.
 
-| Entidad | Campos |
-|---|---|
-| PEDIDO | `id_pedido`, `fecha_registro`, `estado`, `id_usuario_registro` |
-| PIEZA | `id_pieza`, `id_pedido`, `id_tipo_vidrio`, `espesor_mm`, `tipo_forma`, `cantidad`, `dimensiones`, `geometria`, `area_mm2` |
+## Revisión Alembic implementada
 
-`piezas.id_tipo_vidrio` será INTEGER NOT NULL y `piezas.espesor_mm`
-NUMERIC(4,1) NOT NULL. La pareja tendrá una FK compuesta denominada
-`fk_piezas_tipo_espesor` hacia la PK de
-`tipos_vidrio_espesores(id_tipo_vidrio, espesor_mm)`.
-No sustituirla por dos FK independientes. La relación del catálogo con
-`tipos_vidrio` ya protege la existencia del tipo.
+La cabeza comprobada antes del cambio fue `1c8754481a08`. La revisión añadida es `d6e7f8a9b0c1` (`down_revision = 1c8754481a08`), en `backend/alembic/versions/d6e7f8a9b0c1_hu006_material_por_pieza.py`.
 
-Formas admitidas: RECTANGULO, CIRCUNFERENCIA y POLIGONO_CONVEXO.
-TRIANGULO no es un tipo independiente; tres vértices válidos pueden representar
-un polígono convexo. Cantidades enteras positivas, longitudes en mm y área en mm².
-Conservar PK, FK al pedido, constraints de forma/cantidad/área y geometría JSONB.
-Conservar dimensiones de formas estándar; para polígonos, dimensiones SQL NULL
-y geometría con `vertices_mm`. El servidor calcula el área por pieza, no el área
-multiplicada por cantidad.
+El upgrade bloquea las tablas involucradas, comprueba piezas huérfanas, pedidos sin piezas, parejas históricas nulas o ajenas al catálogo y conteos; agrega nullable las dos columnas en PIEZA; copia el material histórico desde PEDIDO; vuelve a verificar preservación y consistencia; establece NOT NULL; crea la FK compuesta; descubre y retira las FK antiguas de material en PEDIDO; y elimina las columnas de cabecera sin `CASCADE`. Las comprobaciones abortan la transacción con un diagnóstico ante datos incompatibles. Los tipos inactivos históricos se preservan si la pareja sigue en el catálogo: la condición de actividad se aplica a altas nuevas, no al backfill.
 
-El catálogo vigente es TA-013: parejas persistidas por tipo, no una lista global
-de espesores ni IDs fijos. Las altas requieren tipos activos. La FK garantiza
-pertenencia al catálogo; la política de actividad corresponde a Application.
+La migración no inventa piezas ni borra pedidos históricos sin piezas: detectarlos aborta el upgrade y deja la decisión de tratamiento al equipo. Las pruebas verifican BD vacía, backfill, preservación de IDs/cantidades/dimensiones/geometría/área, constraints, rollback y dependencias externas. Se conserva una copia congelada del contrato ORM TA-013 para comparar el esquema histórico sin confundirlo con el modelo actual.
 
-## Plan Alembic exacto — NO ejecutado
+### Downgrade
 
-Precondiciones: respaldo recuperable, inspección del esquema y revisión reales
-del destino, dependencias de vistas/FK externas y ventana coordinada sin escritores
-con el contrato antiguo. No usar `stamp`, borrar filas, desactivar constraints ni
-editar revisiones aplicadas para eludir inconsistencias.
+El downgrade solo se permite cuando cada pedido tiene piezas y todas sus piezas comparten una misma pareja material/espesor. Si hay un pedido vacío o multimaterial, aborta antes de cambiar el esquema; nunca escoge arbitrariamente la primera pieza. Así puede restaurar pedidos homogéneos y bloquear una reducción semánticamente destructiva. Un retorno fiel tras datos multimaterial requiere respaldo o procedimiento manual revisado.
 
-La cadena local termina en `1c8754481a08` (TA-013). Verificar que continúa siendo
-el único head antes de crear la nueva revisión. No se consultó el head remoto.
-Ejecutar la futura migración en una transacción PostgreSQL con bloqueos coordinados
-de pedidos/piezas antes del preflight y la copia, evitando escrituras concurrentes.
+## HTTP y capas
 
-1. Crear una nueva revisión descendiente del head actual: `down_revision = 1c8754481a08` si no ha cambiado.
-2. Agregar `piezas.id_tipo_vidrio INTEGER`, inicialmente nullable, sin default.
-3. Agregar `piezas.espesor_mm NUMERIC(4,1)`, inicialmente nullable, sin default.
-4. Copiar ambos valores desde `pedidos` usando la relación `piezas.id_pedido = pedidos.id_pedido`.
-5. Validar ausencia de nulos/huérfanos, pertenencia al catálogo, igualdad exacta con la pareja histórica y conservación de filas, IDs, cantidades, dimensiones, geometrías y áreas.
-6. Establecer NOT NULL en las dos columnas nuevas.
-7. Crear `fk_piezas_tipo_espesor` y comprobar su validez para todas las filas.
-8. Retirar `fk_pedidos_tipo_espesor`.
-9. Retirar la FK individual de `pedidos.id_tipo_vidrio`, si existe. Inspeccionar su nombre real; en la cadena original es `pedidos_id_tipo_vidrio_fkey`.
-10. Eliminar `pedidos.id_tipo_vidrio` sin CASCADE.
-11. Eliminar `pedidos.espesor_mm` sin CASCADE.
-12. Verificar esquema y ORM objetivo, restricciones y conservación antes de dar por validada la evolución. Un fallo debe revertir datos, DDL y revisión.
+`POST /api/orders` recibe `piezas`, con material, espesor, forma, cantidad y geometría/dimensiones por pieza; ya no recibe material en la cabecera. Application valida todas las parejas y piezas antes de persistir, y el repositorio conserva la transacción. `GET /api/orders/{id_pedido}` recupera el pedido y sus piezas autosuficientes; ambos endpoints usan autenticación y permiso `GESTIONAR_PEDIDOS`.
 
-SQLAlchemy representará la pareja con `ForeignKeyConstraint` en `Pieza`.
-La copia de datos y sus comprobaciones requieren una migración explícita:
-autogenerate no deduce el traslado semántico de campos.
-La nueva versión de aplicación y la migración deben activarse coordinadamente;
-el backend antiguo no es compatible con la retirada de columnas de pedidos.
+Orders entrega piezas con ID, material, espesor, forma, cantidad, dimensiones, geometría en mm y área por pieza en mm². Esto permite agrupar después por `(id_tipo_vidrio, espesor_mm)`. Esta fase no implementa rasterización, colocación, métricas ni heurísticas.
 
-## Preservación histórica y reversión
+## Verificación ejecutada
 
-- **Pedidos sin piezas:** detectarlos en el preflight y abortar con diagnóstico.
-  Su pareja no tiene destino donde copiarse. No borrar el pedido, inventar piezas
-  ni retirar ese dato silenciosamente. Su tratamiento requiere decisión posterior
-  del equipo antes de aplicar la migración si se encuentran casos reales.
-- **Tipos inactivos:** conservar parejas históricas existentes, sin reactivar tipos.
-  No ejecutar la validación de alta que exige actividad durante el backfill.
-- **Parejas inválidas o nulos:** abortar, sin correcciones automáticas ni defaults.
-- **Datos nunca enviados por el cliente antiguo:** no pueden reconstruirse mediante
-  esta migración; solo se preserva fielmente lo que está almacenado.
-- **Downgrade:** no existe reducción fiel de un pedido multimaterial a una sola
-  pareja de cabecera. La futura revisión debe bloquear el downgrade automático;
-  documentar recuperación mediante respaldo/procedimiento revisado, sin elegir la
-  primera pieza, dividir pedidos ni perder información.
+Pruebas específicas antes de la regresión completa:
 
-## Validación futura, sin duplicar infraestructura
+| Suite | Resultado |
+|---|---:|
+| Migración multimaterial en PostgreSQL temporal | 13 passed |
+| Orders Application unit tests | 34 passed |
+| Orders repository integration | 6 passed |
+| Orders API | 54 passed |
 
-Reutilizar el PostgreSQL temporal de `backend/tests/integration/postgres_support.py`.
-Probar BD vacía, pedidos históricos con múltiples piezas, tipos inactivos,
-aborto ante pedido vacío/inconsistencia, rollback, nueva FK y esquema contra ORM.
-Actualizar las aserciones que fijan TA-013 como head; preservar los contratos
-históricos de R1/R3/R4 y de TA-013 al comprobar revisiones anteriores.
-No ejecutar suites que apliquen Alembic durante esta fase sin migraciones.
+Estos tests no usan la base compartida. La migración no se aplicó a Supabase. Los resultados de la suite global se registrarán tras completar la ejecución.
 
-## Puente temporal de interfaz
+## Interfaz temporal y pendientes
 
-La pantalla canónica está en `features/orders/NuevoPedido.jsx`; `pages/` conserva
-un reexport de compatibilidad. La UI permite listas mixtas y asigna material,
-espesor y cantidad al agregar cada pieza. El usuario autorizó activar esta pantalla
-con restricción temporal de guardado.
+La pantalla canónica vive en `frontend/src/features/orders/NuevoPedido.jsx`; la UI permite lista mixta, pero su puente temporal solo permite guardar cuando todas las piezas comparten una pareja, mientras el contrato backend antiguo esté activo. La fase backend presente ya cambia el contrato local a multimaterial; falta completar y validar la pantalla frontend sin esa restricción. HU-006 no queda Verified por esta implementación backend aislada.
 
-Mientras HTTP/BD mantengan el contrato antiguo, solo se envía el pedido si el
-conjunto de parejas de TODAS las piezas tiene exactamente un elemento. Esa pareja
-única se adapta a la cabecera HTTP antigua. Una lista multimaterial/multiespesor
-queda bloqueada con explicación visible y sin POST ni pérdida de datos.
-Cambiar los datos de la siguiente pieza no cambia las ya agregadas.
-No se utiliza `piezas[0]` para imponer material al resto.
-
-Este puente no acredita persistencia multimaterial. Se retirará al implementar
-conjuntamente el [contrato HTTP objetivo](../specs/HU-006-registrar-pedido/contrato-orders.md),
-Application, repositorio, modelos y migración. El borrador sigue siendo local:
-no se promete supervivencia a recarga o navegación. Se mantiene el tratamiento
-HU-007 de errores 401/403/422 con feedback y conservación del borrador en la vista;
-la reautenticación global sin pérdida sigue pendiente de definición.
-
-## Contrato pre-raster
-
-Orders deberá ofrecer piezas autosuficientes con ID, material, espesor, forma,
-cantidad, dimensiones, geometría y área. Optimization podrá agrupar por
-`(id_tipo_vidrio, espesor_mm)` y operar en mm mediante un contrato de Application,
-sin depender de modelos ORM o schemas HTTP de Orders.
-
-Sprint 1 incluye posteriormente rasterización y su visualización. No se implementa
-en esta fase. First Fit, Best Fit, Worst Fit, métricas de colocación y selección
-de heurísticas pertenecen a Sprint 2. No registrar un resultado raster como FF/BF/WF.
+La lectura se ofrece mediante la capa Application; Optimization deberá consumir después un contrato propio, sin depender de ORM o schemas HTTP de Orders. Rasterización corresponde al Sprint 1. First Fit, Best Fit y Worst Fit corresponden al Sprint 2.

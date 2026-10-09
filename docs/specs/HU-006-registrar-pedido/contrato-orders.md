@@ -1,15 +1,10 @@
-# Orders: contrato multimaterial objetivo
+# Orders: contrato multimaterial
 
-Estado: definición funcional vigente; HTTP y persistencia pendientes de adaptación.
-No confundir los ejemplos siguientes con el contrato actualmente desplegado.
+Estado: implementado en backend local y cubierto por pruebas unitarias, API e integración PostgreSQL temporal. No implica que la migración se haya aplicado a Supabase ni que HU-006 esté Verified.
 
-## Creación objetivo
+## Creación
 
-`POST /api/orders`, JWT real y permiso `GESTIONAR_PEDIDOS` (Administrador/Operario).
-La raíz contiene `piezas`, con al menos un elemento. Material y espesor son
-obligatorios en CADA pieza. La cabecera no los recibe.
-
-Ejemplo con IDs ilustrativos, que deben resolverse desde el catálogo real:
+`POST /api/orders` requiere JWT y permiso `GESTIONAR_PEDIDOS` (Administrador/Operario). Recibe `piezas` no vacío. Cada pieza incluye su material y espesor; no hay material en la cabecera. Ejemplo con IDs ilustrativos que deben resolverse desde el catálogo real:
 
 ```json
 {
@@ -21,44 +16,26 @@ Ejemplo con IDs ilustrativos, que deben resolverse desde el catálogo real:
 }
 ```
 
-No se fijan IDs por nombre. Obtener tipos activos y sus `espesores_mm` mediante
-`GET /api/inventory/tipos-vidrio` (TA-013). No aceptar TRIANGULO como discriminante.
-Validar cantidades enteras positivas y medidas/coordenadas finitas, geometría
-válida y cada pareja contra catálogo. El servidor deriva `dimensiones`,
-`geometria` y `area_mm2`; no aceptar área o geometría derivada impuesta por el cliente.
-El usuario registrador procede de la sesión; ID, fecha y estado los asigna el servidor.
+Formas admitidas: `RECTANGULO`, `CIRCUNFERENCIA` y `POLIGONO_CONVEXO`; no `TRIANGULO`. El cliente obtiene tipos activos y sus espesores de `GET /api/inventory/tipos-vidrio`. Application valida las parejas del catálogo y las reglas de actividad, cantidad y geometría antes de cualquier escritura. El servidor deriva dimensiones normalizadas, geometría y área; el usuario registrador proviene de la sesión, y el servidor asigna ID, fecha y estado. La persistencia es transaccional: una pieza inválida rechaza el pedido entero.
 
-Respuesta conservada: HTTP 201, `{"id_pedido": 42, "estado": "PENDIENTE"}`.
-Conservar 401, 403, 422 y 500 seguro, sin stack trace. Una pieza inválida rechaza
-el pedido completo, sin escrituras parciales. Conservar la guardia frontend contra
-doble envío y el borrador ante fallos de guardado.
+Respuesta: HTTP 201 con `{"id_pedido": 42, "estado": "PENDIENTE"}`. Se conservan 401, 403 y 422; los errores inesperados responden 500 sin stack trace. La guardia contra doble envío pertenece al frontend.
 
-## Lectura y consumidor pre-raster
+## Recuperación completa
 
-La recuperación completa exigida por CA-02 sigue pendiente. El contrato de lectura
-deberá incluir la cabecera y piezas con `id_pieza`, `id_pedido`, `id_tipo_vidrio`,
-`espesor_mm`, `tipo_forma`, `cantidad`, `dimensiones`, `geometria`, `area_mm2`.
-El endpoint concreto y el alcance de recuperación durante edición deben concretarse
-antes de implementar esa tarea; no se incorpora ahora CRUD, autosave ni orden persistente.
+`GET /api/orders/{id_pedido}` aplica el mismo permiso `GESTIONAR_PEDIDOS`. Devuelve la cabecera (`id_pedido`, `fecha_registro`, `estado`) y piezas con `id_pieza`, `id_tipo_vidrio`, `espesor_mm`, `tipo_forma`, `cantidad`, `dimensiones`, `geometria` y `area_mm2`. Un pedido inexistente devuelve 404; identificadores inválidos se rechazan. Las parejas históricas inactivas se pueden leer si permanecen en el catálogo.
 
-Geometría persistida conservada de HU-007:
+La geometría se expresa en milímetros y el área es por pieza en mm²:
 
 | Forma | dimensiones | geometria |
 |---|---|---|
-| RECTANGULO | Objeto `type`, `width_mm`, `height_mm` | Mismo objeto tipado |
-| CIRCUNFERENCIA | Objeto `type`, `radius_mm` | Mismo objeto tipado |
-| POLIGONO_CONVEXO | SQL NULL | Objeto `type`, `vertices_mm` |
+| RECTANGULO | objeto tipado con `width_mm`, `height_mm` | objeto tipado equivalente |
+| CIRCUNFERENCIA | objeto tipado con `radius_mm` | objeto tipado equivalente |
+| POLIGONO_CONVEXO | SQL NULL | objeto tipado con `vertices_mm` |
 
-Longitudes en mm y área por pieza en mm². Rasterización podrá agrupar por pareja
-material/espesor y utilizar cantidad sin alterar este contrato. No incorpora
-colocación, heurísticas o métricas de optimización.
+La forma de lectura permite agrupar después por `(id_tipo_vidrio, espesor_mm)` y suministra ID, geometría, dimensiones, cantidad y área para cada pieza. No define rasterización ni estrategia de colocación.
 
-## Compatibilidad temporal
+## Persistencia y migración
 
-La API actual conserva `id_tipo_vidrio` y `espesor_mm` en la raíz y solo soporta
-una pareja por pedido. La nueva UI bloquea combinaciones distintas antes de hacer
-POST y adapta únicamente el caso comprobado de pareja única. No acepta silenciosamente
-el contrato nuevo en el backend ni simula que ya se migró la BD.
+El modelo SQLAlchemy vigente pone material y espesor en PIEZA, con FK compuesta `fk_piezas_tipo_espesor` a TA-013. La revisión `d6e7f8a9b0c1` desciende de `1c8754481a08`, realiza el backfill desde PEDIDO y aborta ante filas huérfanas, pedidos sin piezas o parejas inválidas. El downgrade se bloquea si no puede reconstruir una única pareja por pedido; no elige arbitrariamente la primera pieza. Véase [convergencia y estrategia de migración](../../database/convergencia-orders-multimaterial.md).
 
-El [plan de migración y preservación](../../database/convergencia-orders-multimaterial.md)
-es parte obligatoria de la implementación posterior. HU-006 no está Verified.
+La revisión y el contrato se probaron en PostgreSQL temporal. No se aplicaron a Supabase. El despliegue requiere coordinar migración y backend: versiones anteriores esperan material en la cabecera.
