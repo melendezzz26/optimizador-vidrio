@@ -42,7 +42,7 @@ export default function NuevoPedido({ token }) {
       }
     };
     fetchTiposVidrio();
-  }, []);
+  }, [baseUrl, token]);
 
   // Función para obtener los espesores dinámicos según el vidrio seleccionado en cada pieza
   const obtenerEspesores = (idVidrio) => {
@@ -156,7 +156,7 @@ useEffect(() => {
 
     window.addEventListener('storage', recibirDatosDelEditor);
     return () => window.removeEventListener('storage', recibirDatosDelEditor);
-  }, []);
+  }, [actualizarPieza]);
 
   const abrirEditor = (id) => {
     setPiezaEnEdicion(id);

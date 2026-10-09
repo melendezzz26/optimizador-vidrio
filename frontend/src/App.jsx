@@ -15,13 +15,15 @@ import CustomPieceEditor from './features/orders/CustomPieceEditor';
 import './App.css';
 
 function App() {
-
+  
+  const { session, isChecking, notice, signIn, signOut } = useSession();
+  const [view, setView] = useState('orders');
+  
   if (window.location.pathname === '/editor-pieza') {
     return <CustomPieceEditor />;
   }
 
-  const { session, isChecking, notice, signIn, signOut } = useSession();
-  const [view, setView] = useState('orders');
+
 
   if (isChecking) {
     return <p className="app-status" role="status">Comprobando la sesión…</p>;
