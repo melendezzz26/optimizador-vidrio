@@ -166,22 +166,29 @@ useEffect(() => {
     setIsSubmitting(true);
     setErrorGlobal("");
     
+    const payload = {
+      // Ya no enviamos id_tipo_vidrio ni espesor_mm aquí afuera
+      piezas: piezas.map(p => {
+        // 1. Extraemos rawState y vertices originales para no enviarlos tal cual
+        const { rawState, vertices, ...medidasLimpias } = p.dimensiones;
 
-  const payload = {
-    id_tipo_vidrio: parseInt(piezas[0].tipo_vidrio_id),
-    espesor_mm: parseFloat(piezas[0].espesor),
-    piezas: piezas.map(p => {
-      // 1. Extraemos "rawState" para ignorarlo, y guardamos el resto en "medidasLimpias"
-      const { rawState, ...medidasLimpias } = p.dimensiones;
+        // 2. Armamos la pieza metiendo el material y espesor ADENTRO, como exige FastAPI
+        const piezaFormateada = {
+          tipo_forma: p.tipo_forma, 
+          id_tipo_vidrio: parseInt(p.tipo_vidrio_id), // Movido adentro de la pieza
+          espesor_mm: parseFloat(p.espesor),         // Movido adentro de la pieza
+          cantidad: parseInt(p.cantidad),
+          ...medidasLimpias // Inyecta width_mm, height_mm, o radius_mm
+        };
 
-      // 2. Retornamos el objeto plano sin la clave "dimensiones"
-      return {
-        tipo_forma: p.tipo_forma, 
-        cantidad: p.cantidad,
-        ...medidasLimpias // Esto inyecta width_mm, height_mm, radius_mm o vertices directamente aquí
-      };
-    })
-  };
+        // 3. Si es polígono, le cambiamos el nombre de "vertices" a "vertices_mm"
+        if (p.tipo_forma === 'POLIGONO_CONVEXO') {
+          piezaFormateada.vertices_mm = vertices;
+        }
+
+        return piezaFormateada;
+      })
+    };
 
     try {
       const response = await fetch(`${baseUrl}/api/orders/`, {
