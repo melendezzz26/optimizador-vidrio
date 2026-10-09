@@ -29,3 +29,30 @@
 
 .ng-feedback--info { border-left-color: var(--ng-primary-action); }
 .ng-feedback--info .ng-feedback__icon { color: var(--ng-primary-focus); }
+
+.ng-loading-state {
+  display: flex;
+  align-items: center;
+  gap: var(--ng-space-3);
+  padding: var(--ng-space-6) var(--ng-space-4);
+  border: 1px dashed var(--ng-border-subtle);
+  border-radius: var(--ng-radius-control);
+  color: var(--ng-text-600);
+  font-size: 14px;
+}
+.ng-loading-state .ng-loading-icon { flex-shrink: 0; color: var(--ng-primary-action); }
+
+.ng-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ng-space-2);
+  padding: var(--ng-space-8) var(--ng-space-6);
+  border: 1px solid var(--ng-border-subtle);
+  border-radius: var(--ng-radius-control);
+  text-align: center;
+}
+.ng-empty-state__icon { color: var(--ng-text-600); }
+.ng-empty-state__title { margin: 0; font-weight: 600; }
+.ng-empty-state__description { margin: 0; color: var(--ng-text-600); font-size: 14px; }
+.ng-empty-state__action { margin-top: var(--ng-space-2); }
