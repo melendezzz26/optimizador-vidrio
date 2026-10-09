@@ -13,7 +13,7 @@ from alembic.script import ScriptDirectory
 from sqlalchemy.exc import IntegrityError
 
 from tests.integration.postgres_support import BACKEND, _run, new_database, upgrade, schema_snapshot
-from tests.model_contracts import current_metadata, historical_metadata
+from tests.model_contracts import historical_metadata
 
 PREVIOUS = "1c8754481a08"
 REVISION = "d6e7f8a9b0c1"
@@ -64,17 +64,16 @@ def assert_schema(connection, metadata):
     }), metadata) == []
 
 
-def test_single_head_empty_database_and_orm(isolated_postgres):
+def test_hu006_empty_database_matches_historical_contract(isolated_postgres):
     config = Config()
     config.set_main_option("script_location", str(BACKEND / "alembic"))
     scripts = ScriptDirectory.from_config(config)
-    assert scripts.get_heads() == [REVISION]
     assert scripts.get_revision(REVISION).down_revision == PREVIOUS
     with new_database(isolated_postgres) as engine:
-        result = upgrade(engine, "head")
+        result = upgrade(engine, REVISION)
         assert result.returncode == 0, result.stderr
         with engine.connect() as connection:
-            assert_schema(connection, current_metadata())
+            assert_schema(connection, historical_metadata(REVISION))
             assert connection.scalar(sa.text("SELECT version_num FROM alembic_version")) == REVISION
             assert connection.scalar(sa.text("SELECT COUNT(*) FROM tipos_vidrio_espesores")) == 28
             assert "espesor_mm" not in {c["name"] for c in sa.inspect(connection).get_columns("pedidos")}
@@ -100,7 +99,7 @@ def test_history_inactive_type_renamed_constraint_and_safe_roundtrip(isolated_po
             assert after["piezas"] == [row | {"id_tipo_vidrio": material, "espesor_mm": 6} for row in before["piezas"]]
             assert after["tipos_vidrio"] == before["tipos_vidrio"]
             assert after["tipos_vidrio_espesores"] == before["tipos_vidrio_espesores"]
-            assert_schema(connection, current_metadata())
+            assert_schema(connection, historical_metadata(REVISION))
         result = downgrade(engine)
         assert result.returncode == 0, result.stderr
         with engine.connect() as connection:
@@ -181,4 +180,4 @@ def test_unsafe_downgrade_is_blocked_before_ddl(isolated_postgres, change, messa
         with engine.connect() as connection:
             assert snapshot(connection) == before
             assert connection.scalar(sa.text("SELECT version_num FROM alembic_version")) == REVISION
-            assert_schema(connection, current_metadata())
+            assert_schema(connection, historical_metadata(REVISION))
