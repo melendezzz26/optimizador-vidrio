@@ -56,3 +56,13 @@
 .ng-empty-state__title { margin: 0; font-weight: 600; }
 .ng-empty-state__description { margin: 0; color: var(--ng-text-600); font-size: 14px; }
 .ng-empty-state__action { margin-top: var(--ng-space-2); }
+
+.ng-field-error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ng-space-2);
+  margin: var(--ng-space-2) 0 0;
+  color: var(--ng-error);
+  font-size: 14px;
+}
+.ng-field-error__icon { flex-shrink: 0; margin-top: 2px; }
