@@ -21,6 +21,7 @@ export default function GestionPedidos({ token }) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorGlobal, setErrorGlobal] = useState("");
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null); // Controla el Modal Inteligente
+  const [modoCreacion, setModoCreacion] = useState(false);
 
   // Estados de los filtros
   const [filtroEstado, setFiltroEstado] = useState("");
@@ -85,6 +86,7 @@ export default function GestionPedidos({ token }) {
 
   const cerrarModal = () => {
     setPedidoSeleccionado(null);
+    setModoCreacion(false);
     cargarPedidos(); // Refrescar la tabla por si hubo cambios en la edición
   };
 
@@ -146,8 +148,8 @@ export default function GestionPedidos({ token }) {
               <p>Busca, filtra y administra los pedidos de tus clientes.</p>
             </div>
             {/* Botón para ir a crear nuevo pedido (Ideal si usas react-router-dom) */}
-            <button className="boton-guardar" style={{ padding: '10px 20px' }}>
-              <Plus size={18} /> Nuevo pedido
+            <button className="boton-guardar" style={{ padding: '10px 20px' }} onClick={() => setModoCreacion(true)}>
+                <Plus size={18} /> Nuevo pedido
             </button>
           </div>
 
@@ -283,29 +285,29 @@ export default function GestionPedidos({ token }) {
         </div>
       </main>
 
-      {/* MODAL INTELIGENTE (Skeleton inicial) */}
-      {pedidoSeleccionado !== null && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0, 0, 0, 0.6)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <div style={{ backgroundColor: '#fff', borderRadius: '12px', width: '90%', maxWidth: '1000px', height: '85vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
+    {(pedidoSeleccionado !== null || modoCreacion) && (
+        <div className="modal-overlay">
+          <div className="modal-content">
             
             <div style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <h3 style={{ margin: 0, color: 'var(--text-900)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  Pedido #{pedidoSeleccionado}
+                  {modoCreacion ? "Crear Nuevo Pedido" : `Pedido #${pedidoSeleccionado}`}
                 </h3>
               </div>
               <button onClick={cerrarModal} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
-                X {/* Puedes reemplazar con <X size={24} /> si importas la X de lucide-react */}
+                X 
               </button>
             </div>
 
-            <div style={{ flex: 1, overflowY: 'auto', padding: '24px', backgroundColor: '#f9fafb' }}>
+            <div style={{ flex: 1, overflowY: 'auto', backgroundColor: '#f9fafb' }}>
               <FormularioPedido 
                 token={token} 
-                idPedido={pedidoSeleccionado} 
+                idPedido={pedidoSeleccionado} // Si modoCreacion es true, esto es null y activa el modo POST
                 onCerrar={cerrarModal} 
               />
             </div>
+            
           </div>
         </div>
       )}
