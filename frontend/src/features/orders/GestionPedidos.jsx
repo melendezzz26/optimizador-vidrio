@@ -69,8 +69,14 @@ export default function GestionPedidos({ token }) {
     }
   }, [baseUrl, token, page, limit, filtrosActivos]);
 
-useEffect(() => {
-    cargarPedidos();
+  useEffect(() => {
+    // Declaramos una función interna asíncrona
+    const fetchOrders = async () => {
+      await cargarPedidos();
+    };
+    
+    // La ejecutamos inmediatamente
+    fetchOrders();
   }, [cargarPedidos]);
 
 const handleBuscar = (e) => {
