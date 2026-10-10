@@ -77,7 +77,13 @@ export default function GestionPedidos({ token }) {
   // Manejador del botón de búsqueda (para no buscar en cada tecla que presiona el usuario)
   const handleBuscar = (e) => {
     e.preventDefault();
-    setPage(1); // Reiniciar a la página 1 al aplicar nuevos filtros
+    if (page === 1) {
+      // Si ya estamos en la página 1, forzamos la recarga manualmente
+      cargarPedidos(); 
+    } else {
+      // Si estamos en otra página, al cambiar a 1 el useEffect se disparará solo
+      setPage(1); 
+    }
   };
 
   const abrirModal = (id_pedido) => {
