@@ -3,6 +3,7 @@ from decimal import Decimal
 from .ports import OrderRepositoryPort
 from ..domain.geometry import GeometryValidator
 from ..domain.exceptions import InvalidGeometryException, InvalidOrderException, OrderNotFoundException
+from datetime import date
 
 class CreateOrderUseCase:
     def __init__(self, repository: OrderRepositoryPort):
@@ -104,3 +105,30 @@ class GetOrderUseCase:
         if order is None:
             raise OrderNotFoundException("Pedido no encontrado.")
         return order
+    
+class ListOrdersUseCase:
+    def __init__(self, repository: OrderRepositoryPort):
+        self.repository = repository
+
+    def execute(self, page: int, limit: int, estado: str | None = None, cliente: str | None = None, fecha: date | None = None) -> Dict[str, Any]:
+        # Validaciones de paginación
+        if page < 1: page = 1
+        if limit < 1: limit = 10
+        
+        offset = (page - 1) * limit
+
+        result = self.repository.list_orders(
+            limit=limit,
+            offset=offset,
+            estado=estado,
+            cliente=cliente,
+            fecha=fecha
+        )
+
+        return {
+            "items": result["items"],
+            "total": result["total"],
+            "page": page,
+            "limit": limit,
+            "total_pages": (result["total"] + limit - 1) // limit if limit > 0 else 0
+        }
