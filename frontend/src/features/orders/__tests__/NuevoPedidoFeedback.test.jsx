@@ -9,12 +9,17 @@ const response = (data, status = 200) => ({ ok: status < 400, status, json: asyn
 
 async function addRectangle() {
   fireEvent.click(screen.getByRole('button', { name: /Agregar pieza/ }));
-  const [material, espesor] = screen.getAllByRole('combobox');
+  const material = screen.getByLabelText('Material');
+  const espesor = screen.getByLabelText('Espesor');
   fireEvent.change(material, { target: { value: '7' } });
   fireEvent.change(espesor, { target: { value: '6' } });
   const [, ancho, alto] = screen.getAllByRole('spinbutton');
   fireEvent.change(ancho, { target: { value: '1000' } });
   fireEvent.change(alto, { target: { value: '500' } });
+  fetch.mockResolvedValueOnce(response([{ id_cliente: 41, nombre_razon_social: 'Cliente prueba', estado: true }]));
+  fireEvent.change(screen.getByLabelText('Nombre del cliente'), { target: { value: 'prueba' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Buscar', exact: true }));
+  fireEvent.click(await screen.findByRole('button', { name: 'Seleccionar Cliente prueba' }));
 }
 
 describe('NuevoPedido — feedback compartido (TA-034)', () => {
@@ -47,7 +52,7 @@ describe('NuevoPedido — feedback compartido (TA-034)', () => {
     expect(screen.queryByText('No hay piezas agregadas')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /^Cancelar$/ }));
-    fireEvent.click(screen.getByRole('button', { name: 'Limpiar piezas' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Limpiar pedido' }));
     expect(screen.getByText('No hay piezas agregadas')).toBeInTheDocument();
   });
 
@@ -58,7 +63,7 @@ describe('NuevoPedido — feedback compartido (TA-034)', () => {
     await addRectangle();
     fetch.mockResolvedValueOnce(response({ id_pedido: 15 }, 201));
     fireEvent.click(screen.getByRole('button', { name: /Guardar pedido/ }));
-    expect(await screen.findByText('Pedido registrado correctamente.')).toBeInTheDocument();
+    expect(await screen.findByText('Pedido registrado correctamente. ID del pedido: 15.')).toBeInTheDocument();
     expect(alertSpy).not.toHaveBeenCalled();
   });
 
@@ -69,7 +74,7 @@ describe('NuevoPedido — feedback compartido (TA-034)', () => {
     fetch.mockResolvedValueOnce(response({ detail: [{ loc: ['body', 'piezas', 0], msg: 'field required' }] }, 422));
     fireEvent.click(screen.getByRole('button', { name: /Guardar pedido/ }));
     const alert = await screen.findByRole('alert');
-    expect(alert).toHaveTextContent('No se pudo registrar el pedido. Revisa las piezas e inténtalo de nuevo.');
+    expect(alert).toHaveTextContent('Revisa el cliente, el material, espesor y las medidas de las piezas.');
     expect(alert).not.toHaveTextContent('field required');
   });
 });

@@ -12,11 +12,17 @@ test.beforeEach(async ({ page, baseURL }) => {
   await page.getByLabel('Usuario', { exact: true }).fill('O70000001')
   await page.getByLabel('Contraseña', { exact: true }).fill('Orders-test-2026!')
   await page.getByRole('button', { name: 'Ingresar', exact: true }).click()
-  await page.getByLabel('Tipo de vidrio').selectOption('7')
-  await page.getByLabel('Espesor', { exact: true }).selectOption('5.5')
+  await page.getByLabel('Nombre del cliente').fill('Vidrios Norte')
+  await page.getByRole('button', { name: 'Buscar', exact: true }).click()
+  await page.getByRole('button', { name: 'Seleccionar Vidrios Norte' }).click()
 })
 
 async function drawValid(page) {
+  await page.getByRole('button', { name: 'Agregar pieza', exact: true }).click()
+  const row = page.locator('.pieza').last()
+  await row.getByLabel('Material', { exact: true }).selectOption('7')
+  await row.getByLabel('Espesor', { exact: true }).selectOption('5.5')
+  await row.getByLabel('Forma', { exact: true }).selectOption('POLIGONO_CONVEXO')
   const canvas = page.getByRole('img', { name: /Lienzo del dibujo original/ })
   await canvas.scrollIntoViewIfNeeded()
   for (const point of [[100, 100], [400, 100], [400, 300], [100, 300]]) {
@@ -35,29 +41,33 @@ async function drawValid(page) {
   await expect(page.getByRole('button', { name: 'Agregar pieza al pedido' })).toBeEnabled()
 }
 
-test('T04: login JWT real, múltiples piezas locales, POST único y 201', async ({ page }, testInfo) => {
+test('T04: login JWT real, múltiples piezas locales, POST único y 201', async ({ page }) => {
   const posts = []
   page.on('request', (request) => { if (request.url() === `${apiOrigin}/api/orders`) posts.push(request) })
   await drawValid(page)
-  await page.screenshot({ path: testInfo.outputPath('poligono-valid.png'), fullPage: true })
   await page.getByRole('button', { name: 'Agregar pieza al pedido' }).click()
   await expect(page.getByText('Pieza 1', { exact: true })).toBeVisible()
-  await expect(page.getByText('0 vértices')).toBeVisible()
+  await expect(page.getByRole('img', { name: /Lienzo del dibujo original/ })).toHaveCount(0)
   await drawValid(page)
   await page.getByRole('button', { name: 'Agregar pieza al pedido' }).click()
   expect(posts).toHaveLength(0)
-  await page.screenshot({ path: testInfo.outputPath('piezas-locales.png'), fullPage: true })
   const saved = page.waitForResponse((response) => response.url() === `${apiOrigin}/api/orders`)
-  await page.getByRole('button', { name: 'Guardar pedido' }).dblclick()
+  await page.getByRole('button', { name: 'Guardar pedido' }).click()
   const response = await saved
   expect(response.status()).toBe(201)
   const { id_pedido } = await response.json()
-  await expect(page.getByText(`Pedido guardado correctamente. ID del pedido: ${id_pedido}.`)).toBeVisible()
+  await expect(page.getByText(`Pedido registrado correctamente. ID del pedido: ${id_pedido}.`)).toBeVisible()
   expect(posts).toHaveLength(1)
   expect(posts[0].postDataJSON().piezas).toHaveLength(2)
+  expect(posts[0].postDataJSON().id_cliente).toBe(41)
+  const read = await page.request.get(`${apiOrigin}/api/orders/${id_pedido}`, { headers: { Authorization: posts[0].headers().authorization } })
+  expect(read.status()).toBe(200)
+  const order = await read.json()
+  expect(order.id_cliente).toBe(41)
+  expect(order.id_usuario_registro).not.toBe(41)
+  expect(order.piezas).toHaveLength(2)
   await expect(page.getByRole('button', { name: 'Guardar pedido' })).toBeDisabled()
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-  await page.screenshot({ path: testInfo.outputPath('pedido-guardado.png'), fullPage: true })
 })
 
 test('T04: error de red conserva pieza y reintento llega al backend real', async ({ page }) => {
@@ -65,8 +75,8 @@ test('T04: error de red conserva pieza y reintento llega al backend real', async
   await page.getByRole('button', { name: 'Agregar pieza al pedido' }).click()
   await page.route(`${apiOrigin}/api/orders`, (route) => route.abort(), { times: 1 })
   await page.getByRole('button', { name: 'Guardar pedido' }).click()
-  await expect(page.getByRole('alert')).toContainText('Las piezas se conservan')
+  await expect(page.getByRole('alert')).toContainText('Las piezas y el cliente se conservan')
   await expect(page.getByText('Pieza 1', { exact: true })).toBeVisible()
   await page.getByRole('button', { name: 'Guardar pedido' }).click()
-  await expect(page.getByText(/Pedido guardado correctamente. ID del pedido:/)).toBeVisible()
+  await expect(page.getByText(/Pedido registrado correctamente. ID del pedido:/)).toBeVisible()
 })

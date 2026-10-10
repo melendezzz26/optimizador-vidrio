@@ -1,5 +1,6 @@
 """Orders tests use canonical tables in an exclusively owned local database."""
 import pytest
+from datetime import datetime, timezone
 import sqlalchemy as sa
 from sqlalchemy.orm import sessionmaker
 
@@ -16,12 +17,12 @@ def orders_database(isolated_postgres):
 
 @pytest.fixture
 def session_factory(orders_database):
-    from app.models import Rol, TipoVidrio, TipoVidrioEspesor
+    from app.models import Cliente, Rol, TipoVidrio, TipoVidrioEspesor
 
     assert orders_database.url.host == "127.0.0.1"
     assert orders_database.url.username == "r1_test"
     with orders_database.begin() as connection:
-        connection.exec_driver_sql("TRUNCATE roles, tipos_vidrio RESTART IDENTITY CASCADE")
+        connection.exec_driver_sql("TRUNCATE clientes, roles, tipos_vidrio RESTART IDENTITY CASCADE")
     factory = sessionmaker(bind=orders_database, expire_on_commit=True)
     with factory() as session:
         session.add_all([Rol(id_rol=i, nombre=name) for i, name in
@@ -30,5 +31,7 @@ def session_factory(orders_database):
         session.flush()
         session.add_all([TipoVidrioEspesor(id_tipo_vidrio=7, espesor_mm=value) for value in (5.5, 6)])
         session.add_all([TipoVidrioEspesor(id_tipo_vidrio=8, espesor_mm=4), TipoVidrioEspesor(id_tipo_vidrio=9, espesor_mm=6)])
+        session.add(Cliente(id_cliente=41, nombre_razon_social="Cliente de prueba", estado=True,
+                            fecha_registro=datetime.now(timezone.utc)))
         session.commit()
     return factory
