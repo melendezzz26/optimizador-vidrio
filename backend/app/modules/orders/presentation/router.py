@@ -44,9 +44,10 @@ def create_order(
         piezas_dict = [p.model_dump() for p in request.piezas]
         id_pedido = use_case.execute(
             id_usuario=user.user_id,
-            piezas_raw=piezas_dict
+            piezas_raw=piezas_dict,
+            id_cliente=request.id_cliente,
         )
-        return CreateOrderResponse(id_pedido=id_pedido, estado="PENDIENTE")
+        return CreateOrderResponse(id_pedido=id_pedido, id_cliente=request.id_cliente, estado="PENDIENTE")
     except InvalidOrderException as e:
         raise HTTPException(status_code=422, detail=str(e)) from e
     except InvalidGeometryException as e:

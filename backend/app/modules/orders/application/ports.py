@@ -8,7 +8,7 @@ class OrderRepositoryPort(ABC):
         pass
 
     @abstractmethod
-    def create_order(self, id_usuario: int, piezas: List[Dict[str, Any]]) -> int:
+    def create_order(self, id_usuario: int, piezas: List[Dict[str, Any]], *, id_cliente: int) -> int:
         pass
 
     @abstractmethod

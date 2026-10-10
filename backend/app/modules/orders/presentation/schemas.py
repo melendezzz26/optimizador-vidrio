@@ -43,11 +43,13 @@ PiezaSchema = Annotated[
 
 
 class CreateOrderRequest(InputSchema):
+    id_cliente: PositiveId
     piezas: list[PiezaSchema] = Field(min_length=1)
 
 
 class CreateOrderResponse(BaseModel):
     id_pedido: int
+    id_cliente: int
     estado: Literal["PENDIENTE"]
 
 
@@ -65,6 +67,7 @@ class PieceResponse(BaseModel):
 
 class OrderResponse(BaseModel):
     id_pedido: int
+    id_cliente: int | None
     fecha_registro: datetime
     estado: Literal["PENDIENTE", "EN_OPTIMIZACION", "OPTIMIZADO", "CONFIRMADO", "CANCELADO"]
     id_usuario_registro: int

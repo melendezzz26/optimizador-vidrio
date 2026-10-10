@@ -19,12 +19,13 @@ class SQLAlchemyOrderRepository(OrderRepositoryPort):
         result = self.session.execute(stmt).scalars().first()
         return result is not None
 
-    def create_order(self, id_usuario: int, piezas: List[Dict[str, Any]]) -> int:
+    def create_order(self, id_usuario: int, piezas: List[Dict[str, Any]], *, id_cliente: int) -> int:
         try:
             nuevo_pedido = Pedido(
                 fecha_registro=datetime.now(timezone.utc),
                 estado='PENDIENTE',
-                id_usuario_registro=id_usuario
+                id_usuario_registro=id_usuario,
+                id_cliente=id_cliente,
             )
             self.session.add(nuevo_pedido)
             self.session.flush()
@@ -66,6 +67,7 @@ class SQLAlchemyOrderRepository(OrderRepositoryPort):
             "fecha_registro": order.fecha_registro,
             "estado": order.estado,
             "id_usuario_registro": order.id_usuario_registro,
+            "id_cliente": order.id_cliente,
             "piezas": [{
                 "id_pieza": piece.id_pieza, "id_pedido": piece.id_pedido,
                 "id_tipo_vidrio": piece.id_tipo_vidrio, "espesor_mm": piece.espesor_mm,
