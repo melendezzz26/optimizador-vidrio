@@ -69,9 +69,9 @@ export default function GestionPedidos({ token }) {
     }
   }, [baseUrl, token, page, limit, filtrosActivos]);
 
-  useEffect(() => {
+useEffect(() => {
     cargarPedidos();
-  }, [page, filtrosActivos, baseUrl, token, limit, cargarPedidos]);
+  }, [cargarPedidos]);
 
 const handleBuscar = (e) => {
     e.preventDefault();
