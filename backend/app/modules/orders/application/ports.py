@@ -23,3 +23,11 @@ class OrderRepositoryPort(ABC):
     @abstractmethod
     def update_order(self, id_pedido: int, piezas: List[Dict[str, Any]]) -> None:
         pass
+
+    @abstractmethod
+    def cancel_order(self, id_pedido: int) -> None:
+        pass
+
+    @abstractmethod
+    def delete_order(self, id_pedido: int) -> None:
+        pass

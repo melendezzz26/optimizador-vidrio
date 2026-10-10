@@ -1,7 +1,7 @@
 from typing import List, Dict, Any
 from decimal import Decimal
 from sqlalchemy.orm import Session
-from sqlalchemy import select, null, func, cast, Date, delete
+from sqlalchemy import select, null, func, cast, Date, delete, update
 from datetime import datetime, timezone, date
 from app.models import Pedido, Pieza, TipoVidrio, TipoVidrioEspesor, Cliente
 from ..application.ports import OrderRepositoryPort
@@ -135,3 +135,8 @@ class SQLAlchemyOrderRepository(OrderRepositoryPort):
         except Exception:
             self.session.rollback()
             raise
+
+    def cancel_order(self, id_pedido: int) -> None:
+        stmt = update(Pedido).where(Pedido.id_pedido == id_pedido).values(estado="CANCELADO")
+        self.session.execute(stmt)
+        self.session.commit()
