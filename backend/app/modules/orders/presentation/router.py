@@ -6,9 +6,9 @@ from typing import Optional
 from fastapi.exceptions import RequestValidationError
 from fastapi.routing import APIRoute
 from .schemas import CreateOrderRequest, CreateOrderResponse, OrderResponse
-from ..application.use_cases import CreateOrderUseCase, GetOrderUseCase, ListOrdersUseCase
+from ..application.use_cases import CreateOrderUseCase, GetOrderUseCase, ListOrdersUseCase, UpdateOrderUseCase
 from ..domain.exceptions import InvalidOrderException, InvalidGeometryException, OrderNotFoundException
-from .dependencies import get_create_order_use_case, get_order_use_case, get_list_orders_use_case
+from .dependencies import get_create_order_use_case, get_order_use_case, get_list_orders_use_case, get_update_order_use_case
 from app.modules.authentication.presentation.dependencies import require_permission
 from app.modules.authentication.domain.user import AuthenticatedUser
 
@@ -86,3 +86,24 @@ def get_order(
     except Exception as e:
         logger.exception("Order retrieval failed")
         raise HTTPException(status_code=500, detail="No se pudo consultar el pedido. Inténtalo otra vez.") from e
+
+@router.put("/{id_pedido}", status_code=status.HTTP_200_OK)
+def update_order(
+    request: CreateOrderRequest,
+    id_pedido: int = Path(gt=0, le=2147483647),
+    user: AuthenticatedUser = Depends(permiso_gestionar_pedidos),
+    use_case: UpdateOrderUseCase = Depends(get_update_order_use_case),
+):
+    try:
+        piezas_dict = [p.model_dump() for p in request.piezas]
+        use_case.execute(id_pedido=id_pedido, piezas_raw=piezas_dict)
+        return {"message": "Pedido actualizado exitosamente", "id_pedido": id_pedido}
+    except OrderNotFoundException as e:
+        raise HTTPException(status_code=404, detail=str(e)) from e
+    except InvalidOrderException as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
+    except InvalidGeometryException as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
+    except Exception as e:
+        logger.exception("Order update failed")
+        raise HTTPException(status_code=500, detail="No se pudo actualizar el pedido. Inténtalo otra vez.") from e
