@@ -404,3 +404,16 @@ button:disabled {
 
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
+/* Native fieldset locks the existing pieces while the order is submitted. */
+.order-pieces { min-width: 0; margin-inline: 0; padding-inline: 0; border: 0; border-top: 1px solid var(--border-light); }
+.app-layout .pagina-pedido { min-width: 0; }
+.app-layout .contenedor-pedido :is(button, input, select):focus-visible { outline: 3px solid var(--primary-focus); outline-offset: 3px; }
+@media (max-width: 800px) {
+  .app-layout { height: auto; min-height: 100vh; overflow: visible; }
+  .app-layout .sidebar { display: none; }
+  .app-layout .pagina-pedido { padding: 16px; overflow: visible; }
+  .app-layout .contenedor-pedido { padding: 16px; }
+  .app-layout .encabezado-piezas { align-items: stretch; flex-direction: column; gap: 16px; }
+  .app-layout .pieza > div { width: 100%; padding-left: 0 !important; }
+  .app-layout .acciones { flex-wrap: wrap; }
+}

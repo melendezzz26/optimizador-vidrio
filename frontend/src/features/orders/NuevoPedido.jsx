@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback} from "react";
+import { useState, useEffect, useCallback, useRef} from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { 
   Plus, Trash2, Save, X, PackagePlus, Loader2,
@@ -7,6 +7,9 @@ import {
 import fondoVidrio from "../../assets/fondo-vidrio.png";
 import "./NuevoPedido.css";
 import CustomPieceEditor from './CustomPieceEditor';
+import OrderClientSelector from './OrderClientSelector';
+import { createOrder, listOrderMaterials } from './ordersApi';
+import { validateConvexPolygon } from './convexityValidation';
 import { ConfirmDialog, EmptyState, FeedbackMessage, LoadingState } from "../../shared/components/feedback";
 
 export default function NuevoPedido({ token }) {
@@ -17,35 +20,24 @@ export default function NuevoPedido({ token }) {
   const [successMessage, setSuccessMessage] = useState("");
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
 
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [clientFormKey, setClientFormKey] = useState(0);
+  const submitting = useRef(false);
+  const [catalogAttempt, setCatalogAttempt] = useState(0);
   const [piezas, setPiezas] = useState([]);
   const [listaAnimada] = useAutoAnimate();
   const [piezaEnEdicion, setPiezaEnEdicion] = useState(null);
 
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-
   useEffect(() => {
-    const fetchTiposVidrio = async () => {
-      try {
-        const response = await fetch(`${baseUrl}/api/inventory/tipos-vidrio`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });        
-        if (!response.ok) throw new Error("Error en la red");
-        
-        const data = await response.json();
-        setTiposDisponibles(data);
-      } catch (err) {
-        console.error(err);
-        setErrorGlobal("Error al conectar con la base de datos para cargar los vidrios.");
-      } finally {
-        setIsLoadingConfig(false);
-      }
-    };
-    fetchTiposVidrio();
-  }, [baseUrl, token]);
+    const controller = new AbortController();
+    listOrderMaterials(controller.signal, token)
+      .then((data) => setTiposDisponibles(data.filter((item) => item.estado)))
+      .catch((error) => {
+        if (error.name !== 'AbortError') setErrorGlobal(error.message);
+      })
+      .finally(() => { if (!controller.signal.aborted) setIsLoadingConfig(false); });
+    return () => controller.abort();
+  }, [token, catalogAttempt]);
 
   // Función para obtener los espesores dinámicos según el vidrio seleccionado en cada pieza
   const obtenerEspesores = (idVidrio) => {
@@ -88,7 +80,7 @@ const actualizarPieza = useCallback((id, campo, valor) => {
     setPiezas(prevPiezas => prevPiezas.map(pieza => {
       if (pieza.id === id) {
         if (campo === 'cantidad') {
-          return { ...pieza, cantidad: parseInt(valor) || '' };
+          return { ...pieza, cantidad: valor };
         }
         if (campo === 'tipo_vidrio_id') {
           return { ...pieza, tipo_vidrio_id: valor, espesor: "" };
@@ -118,18 +110,19 @@ const actualizarPieza = useCallback((id, campo, valor) => {
   }, []);
   
   const esPedidoValido = () => {
-    if (piezas.length === 0) return false;
+    if (!selectedClient || piezas.length === 0) return false;
     
     return piezas.every(p => {
       // 1. Validar que tenga material, espesor y cantidad
-      if (!p.tipo_vidrio_id || !p.espesor || !p.cantidad) return false;
+      if (!p.tipo_vidrio_id || !p.espesor || !Number.isInteger(Number(p.cantidad)) || Number(p.cantidad) <= 0) return false;
       
       // 2. Validar las medidas según la forma que eligió el operario
-      if (p.tipo_forma === 'RECTANGULO' && (!p.dimensiones.width_mm || !p.dimensiones.height_mm)) return false;
-      if (p.tipo_forma === 'CIRCUNFERENCIA' && !p.dimensiones.radius_mm) return false;
+      const positive = (value) => Number.isFinite(Number(value)) && Number(value) > 0;
+      if (p.tipo_forma === 'RECTANGULO' && (!positive(p.dimensiones.width_mm) || !positive(p.dimensiones.height_mm))) return false;
+      if (p.tipo_forma === 'CIRCUNFERENCIA' && !positive(p.dimensiones.radius_mm)) return false;
       
       // 3. Validar que el polígono tenga al menos 3 vértices dibujados
-      if (p.tipo_forma === 'POLIGONO_CONVEXO' && (!p.dimensiones.vertices || p.dimensiones.vertices.length < 3)) return false;
+      if (p.tipo_forma === 'POLIGONO_CONVEXO' && !validateConvexPolygon(p.dimensiones.vertices).isValid) return false;
       
       return true;
     });
@@ -142,6 +135,8 @@ const actualizarPieza = useCallback((id, campo, valor) => {
 
   const confirmarCancelacion = () => {
     setPiezas([]);
+    setSelectedClient(null);
+    setClientFormKey((key) => key + 1);
     setErrorGlobal("");
     setSuccessMessage("");
     setIsCancelDialogOpen(false);
@@ -171,12 +166,14 @@ useEffect(() => {
   };
 
   const guardarPedido = async () => {
+    if (submitting.current || !esPedidoValido()) return;
+    submitting.current = true;
     setIsSubmitting(true);
     setErrorGlobal("");
     setSuccessMessage("");
     
     const payload = {
-      // Ya no enviamos id_tipo_vidrio ni espesor_mm aquí afuera
+      id_cliente: selectedClient.id_cliente,
       piezas: piezas.map(p => {
         // 1. Extraemos rawState y vertices originales para no enviarlos tal cual
         // eslint-disable-next-line no-unused-vars
@@ -201,33 +198,15 @@ useEffect(() => {
     };
 
     try {
-      const response = await fetch(`${baseUrl}/api/orders/`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        // Solo se muestra el detalle cuando el backend ya lo redactó para el usuario;
-        // los errores de validación técnicos se reemplazan por un mensaje comprensible.
-        const mensajeReal = typeof errorData?.detail === "string"
-            ? errorData.detail
-            : "No se pudo registrar el pedido. Revisa las piezas e inténtalo de nuevo.";
-        throw new Error(mensajeReal);
-      }
-
-      setSuccessMessage("Pedido registrado correctamente.");
+      const result = await createOrder(payload, token);
+      setSuccessMessage(`Pedido registrado correctamente. ID del pedido: ${result.id_pedido}.`);
       setPiezas([]);
-      
+      setSelectedClient(null);
+      setClientFormKey((key) => key + 1);
     } catch (error) {
-      console.error(error);
-      // Muestra el mensaje de error preparado arriba (nunca el detalle técnico del servidor)
-      setErrorGlobal(error.message); 
+      setErrorGlobal(`${error.message} Las piezas y el cliente se conservan para reintentar.`);
     } finally {
+      submitting.current = false;
       setIsSubmitting(false);
     }
   };
@@ -271,10 +250,16 @@ useEffect(() => {
             {errorGlobal && (
               <FeedbackMessage variant="error" title="No se pudo completar la operación">{errorGlobal}</FeedbackMessage>
             )}
+            {!isLoadingConfig && tiposDisponibles.length === 0 && <button type="button" className="ng-button" onClick={() => {
+              setIsLoadingConfig(true); setErrorGlobal(''); setCatalogAttempt((attempt) => attempt + 1);
+            }}>Reintentar catálogo</button>}
             {successMessage && <FeedbackMessage variant="success">{successMessage}</FeedbackMessage>}
           </div>
 
-          <section className="seccion">
+          <OrderClientSelector key={clientFormKey} value={selectedClient} onChange={setSelectedClient}
+            disabled={isSubmitting} token={token} />
+
+          <fieldset className="seccion order-pieces" disabled={isSubmitting} aria-label="Piezas del pedido">
             <div className="encabezado-piezas">
               <div>
                 <h2>Piezas del pedido</h2>
@@ -308,7 +293,7 @@ useEffect(() => {
                           <span>Configura material y medidas</span>
                         </div>
                       </div>
-                      <button type="button" className="boton-eliminar" onClick={() => eliminarPieza(pieza.id)} title="Eliminar pieza">
+                      <button type="button" className="boton-eliminar" onClick={() => eliminarPieza(pieza.id)} title="Eliminar pieza" aria-label={`Eliminar pieza ${index + 1}`}>
                         <Trash2 size={18} />
                       </button>
                     </div>
@@ -316,8 +301,8 @@ useEffect(() => {
                     {/* Fila 2: Material, Espesor, Forma y Cantidad */}
                     <div style={{ display: 'flex', gap: '24px', paddingLeft: '48px', flexWrap: 'wrap', alignItems: 'center' }}>
                       <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Material</label>
-                        <select 
+                        <label htmlFor={`piece-${pieza.id}-material`} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Material</label>
+                        <select id={`piece-${pieza.id}-material`}
                           value={pieza.tipo_vidrio_id} 
                           onChange={(e) => actualizarPieza(pieza.id, 'tipo_vidrio_id', e.target.value)}
                           style={{ padding: '6px', borderRadius: '6px', border: '1px solid var(--border-strong)', fontSize: '13px', width: '140px' }}
@@ -328,8 +313,8 @@ useEffect(() => {
                       </div>
 
                       <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Espesor</label>
-                        <select 
+                        <label htmlFor={`piece-${pieza.id}-thickness`} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Espesor</label>
+                        <select id={`piece-${pieza.id}-thickness`}
                           value={pieza.espesor} 
                           onChange={(e) => actualizarPieza(pieza.id, 'espesor', e.target.value)}
                           disabled={!pieza.tipo_vidrio_id}
@@ -341,8 +326,8 @@ useEffect(() => {
                       </div>
 
                       <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Forma</label>
-                        <select 
+                        <label htmlFor={`piece-${pieza.id}-shape`} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Forma</label>
+                        <select id={`piece-${pieza.id}-shape`}
                           value={pieza.tipo_forma} 
                           onChange={(e) => {
                             const nuevaForma = e.target.value;
@@ -361,8 +346,8 @@ useEffect(() => {
                       </div>
 
                       <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Cant.</label>
-                        <input 
+                        <label htmlFor={`piece-${pieza.id}-quantity`} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Cant.</label>
+                        <input id={`piece-${pieza.id}-quantity`}
                           type="number" min="1" 
                           value={pieza.cantidad} 
                           onChange={(e) => actualizarPieza(pieza.id, 'cantidad', e.target.value)}
@@ -372,12 +357,12 @@ useEffect(() => {
                     </div>
 
                     {/* Fila 3: Medidas dinámicas según el tipo de forma */}
-                    <div style={{ display: 'flex', gap: '24px', paddingLeft: '48px', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: '24px', paddingLeft: '48px', flexWrap: 'wrap', alignItems: 'center' }}>
                       {pieza.tipo_forma === 'RECTANGULO' && (
                         <>
                           <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Ancho (mm)</label>
-                            <input 
+                            <label htmlFor={`piece-${pieza.id}-width`} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Ancho (mm)</label>
+                            <input id={`piece-${pieza.id}-width`}
                               type="number" min="1" placeholder="Ej: 1000"
                               value={pieza.dimensiones.width_mm} 
                               onChange={(e) => actualizarPieza(pieza.id, 'width_mm', e.target.value)}
@@ -385,8 +370,8 @@ useEffect(() => {
                             />
                           </div>
                           <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Alto (mm)</label>
-                            <input 
+                            <label htmlFor={`piece-${pieza.id}-height`} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Alto (mm)</label>
+                            <input id={`piece-${pieza.id}-height`}
                               type="number" min="1" placeholder="Ej: 500"
                               value={pieza.dimensiones.height_mm} 
                               onChange={(e) => actualizarPieza(pieza.id, 'height_mm', e.target.value)}
@@ -398,8 +383,8 @@ useEffect(() => {
 
                       {pieza.tipo_forma === 'CIRCUNFERENCIA' && (
                         <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Radio (mm)</label>
-                          <input 
+                          <label htmlFor={`piece-${pieza.id}-radius`} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Radio (mm)</label>
+                          <input id={`piece-${pieza.id}-radius`}
                             type="number" min="1" placeholder="Ej: 250"
                             value={pieza.dimensiones.radius_mm} 
                             onChange={(e) => actualizarPieza(pieza.id, 'radius_mm', e.target.value)}
@@ -430,8 +415,9 @@ useEffect(() => {
               </div>  
               )}
             </div>
-          </section>
+          </fieldset>
 
+          {!selectedClient && <p id="order-save-help" className="texto-secundario">Selecciona un cliente para guardar el pedido.</p>}
           <div className="acciones">
             <button type="button" className="boton-cancelar" onClick={cancelarPedido} disabled={isSubmitting}>
               <X size={18} /> Cancelar
@@ -442,6 +428,8 @@ useEffect(() => {
               className="boton-guardar" 
               onClick={guardarPedido} 
               disabled={!esPedidoValido() || isSubmitting}
+              aria-describedby={!selectedClient ? "order-save-help" : undefined}
+              aria-busy={isSubmitting}
             >
               {isSubmitting ? <Loader2 size={18} className="spin" /> : <Save size={18} />}
               {isSubmitting ? "Guardando..." : "Guardar pedido"}
@@ -453,11 +441,11 @@ useEffect(() => {
           <ConfirmDialog
             open={isCancelDialogOpen}
             title="¿Limpiar el pedido?"
-            confirmLabel="Limpiar piezas"
+            confirmLabel="Limpiar pedido"
             onConfirm={confirmarCancelacion}
             onCancel={() => setIsCancelDialogOpen(false)}
           >
-            <p>Se quitarán todas las piezas agregadas. Esta acción no se puede deshacer.</p>
+            <p>Se quitarán todas las piezas agregadas y la selección del cliente. Esta acción no se puede deshacer.</p>
           </ConfirmDialog>
         </div>
       </main>
