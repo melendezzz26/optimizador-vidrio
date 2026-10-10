@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { 
   Home, ShoppingCart, Archive, BarChart2, Users, Settings,
-  Search, Plus, Eye, FileEdit, ChevronLeft, ChevronRight, Loader2, PackageSearch
+  Search, Plus, Eye, FileEdit, ChevronLeft, ChevronRight, Loader2, PackageSearch, Trash2
 } from "lucide-react";
 import fondoVidrio from "../../assets/fondo-vidrio.png";
 import "./NuevoPedido.css"; // Reutilizamos estilos generales, luego puedes crear GestionPedidos.css
