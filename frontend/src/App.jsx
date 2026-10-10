@@ -9,8 +9,8 @@ import {
 } from './features/authentication';
 import { InventoryPage } from './features/inventory/InventoryPage';
 import { UsersPage } from './features/users';
-import NuevoPedido from './features/orders/NuevoPedido';
 import CustomPieceEditor from './features/orders/CustomPieceEditor';
+import GestionPedidos from './features/orders/GestionPedidos';
 
 import './App.css';
 
@@ -75,13 +75,12 @@ function App() {
     return <InventoryPage onSessionExpired={signOut} toolbar={toolbar} user={session.usuario} />;
   }
 
-  return (
-    <NuevoPedido
-      token={session.token || session.access_token}
-      user={session.usuario}
-      toolbar={toolbar}
-    />
-  );
+  return <GestionPedidos
+    token={session.token || session.access_token}
+    user={session.usuario}
+    onSessionExpired={signOut}
+    toolbar={toolbar}
+  />;
 }
 
 export default App;

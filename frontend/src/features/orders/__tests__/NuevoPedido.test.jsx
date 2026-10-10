@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import NuevoPedido from '../NuevoPedido'
+import FormularioPedido from '../FormularioPedido'
 
 vi.mock('@formkit/auto-animate/react', () => ({ useAutoAnimate: () => [null] }))
 
@@ -25,7 +25,7 @@ afterEach(() => { vi.unstubAllGlobals(); sessionStorage.clear() })
 
 async function setup() {
   const user = userEvent.setup()
-  render(<NuevoPedido token="test-token" />)
+  render(<FormularioPedido token="test-token" standalone />)
   await screen.findByText('No hay piezas agregadas')
   expect(fetch).toHaveBeenCalledTimes(1)
   expect(fetch.mock.calls[0][0]).toMatch(/\/api\/inventory\/tipos-vidrio$/)
@@ -180,7 +180,7 @@ describe('HU-006: contrato multimaterial por pieza', () => {
     expect(await screen.findByText('Pedido registrado correctamente.')).toBeVisible()
 
     const [url, options] = fetch.mock.calls[1]
-    expect(url).toMatch(/\/api\/orders\/$/)
+    expect(url).toMatch(/\/api\/orders$/)
     expect(options.method).toBe('POST')
     expect(options.headers.Authorization).toBe('Bearer test-token')
     const body = JSON.parse(options.body)
@@ -301,7 +301,7 @@ describe('HU-007 T04: persistencia de piezas', () => {
 
   test('muestra el error de catálogo sin inventar controles de reintento', async () => {
     fetch.mockRejectedValueOnce(new TypeError('offline'))
-    render(<NuevoPedido token="test-token" />)
+    render(<FormularioPedido token="test-token" standalone />)
 
     expect(await screen.findByRole('alert')).toHaveTextContent('No se pudo completar la operación')
     expect(saveButton()).toBeDisabled()

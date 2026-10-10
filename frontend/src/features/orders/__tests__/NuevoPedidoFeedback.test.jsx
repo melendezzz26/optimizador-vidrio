@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import NuevoPedido from '../NuevoPedido';
+import FormularioPedido from '../FormularioPedido';
 
 vi.mock('@formkit/auto-animate/react', () => ({ useAutoAnimate: () => [null] }));
 
@@ -17,14 +17,14 @@ async function addRectangle() {
   fireEvent.change(alto, { target: { value: '500' } });
 }
 
-describe('NuevoPedido — feedback compartido (TA-034)', () => {
+describe('FormularioPedido — feedback compartido (TA-034)', () => {
   beforeEach(() => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response(catalog)));
   });
   afterEach(() => vi.unstubAllGlobals());
 
   it('muestra la carga del catálogo y luego el estado vacío', async () => {
-    render(<NuevoPedido token="token-de-prueba" />);
+    render(<FormularioPedido token="token-de-prueba" standalone />);
     expect(screen.getByText('Cargando materiales…')).toBeInTheDocument();
     expect(await screen.findByText('No hay piezas agregadas')).toBeInTheDocument();
     expect(screen.queryByText('Cargando materiales…')).not.toBeInTheDocument();
@@ -32,13 +32,13 @@ describe('NuevoPedido — feedback compartido (TA-034)', () => {
 
   it('muestra el error del catálogo como alerta', async () => {
     fetch.mockResolvedValueOnce(response({}, 500));
-    render(<NuevoPedido token="token-de-prueba" />);
+    render(<FormularioPedido token="token-de-prueba" standalone />);
     const alert = await screen.findByRole('alert');
     expect(alert).toHaveTextContent('No se pudo completar la operación');
   });
 
   it('confirma antes de limpiar el pedido y no borra si se cancela', async () => {
-    render(<NuevoPedido token="token-de-prueba" />);
+    render(<FormularioPedido token="token-de-prueba" standalone />);
     await screen.findByText('No hay piezas agregadas');
     fireEvent.click(screen.getByRole('button', { name: /Agregar pieza/ }));
     fireEvent.click(screen.getByRole('button', { name: /^Cancelar$/ }));
@@ -53,7 +53,7 @@ describe('NuevoPedido — feedback compartido (TA-034)', () => {
 
   it('muestra el éxito sin ventanas del navegador', async () => {
     const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
-    render(<NuevoPedido token="token-de-prueba" />);
+    render(<FormularioPedido token="token-de-prueba" standalone />);
     await screen.findByText('No hay piezas agregadas');
     await addRectangle();
     fetch.mockResolvedValueOnce(response({ id_pedido: 15 }, 201));
@@ -63,7 +63,7 @@ describe('NuevoPedido — feedback compartido (TA-034)', () => {
   });
 
   it('no muestra al usuario el detalle técnico de validación del backend', async () => {
-    render(<NuevoPedido token="token-de-prueba" />);
+    render(<FormularioPedido token="token-de-prueba" standalone />);
     await screen.findByText('No hay piezas agregadas');
     await addRectangle();
     fetch.mockResolvedValueOnce(response({ detail: [{ loc: ['body', 'piezas', 0], msg: 'field required' }] }, 422));

@@ -10,3 +10,9 @@ class InvalidOrderException(DomainException):
 
 class OrderNotFoundException(DomainException):
     pass
+
+
+class OrderStateConflictException(DomainException):
+    """The order exists but its current state prevents this mutation."""
+
+    pass
