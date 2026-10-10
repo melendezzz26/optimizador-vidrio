@@ -2,6 +2,7 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { canManagePlanchas, canManageRetazos } from '../authentication';
 import { AppShell } from '../../shared/components/AppShell';
 import { PageCard, PageHeader } from '../../shared/components/PageLayout';
+import { EmptyState, FeedbackMessage, LoadingState } from '../../shared/components/feedback';
 import RegistrarPlanchaForm from './RegistrarPlanchaForm';
 import RegistrarRetazoForm from './RegistrarRetazoForm';
 import {
@@ -668,34 +669,27 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
 
       {isLoading && (
         <PageCard className="inventory-state" aria-busy="true">
-          <p className="inventory-status" role="status">Cargando inventario...</p>
+          <LoadingState>Cargando inventario...</LoadingState>
         </PageCard>
       )}
       {loadError && (
         <PageCard className="inventory-state">
-          <div className="inventory-error" role="alert">
-            <h2>No se pudo cargar el inventario</h2>
-            <p>{loadError}</p>
-          </div>
+          <FeedbackMessage variant="error" title="No se pudo cargar el inventario">{loadError}</FeedbackMessage>
         </PageCard>
       )}
 
       {operationSuccess && !showPlanchaForm && !showRetazoForm && (
-        <p className="inventory-feedback inventory-feedback--success" role="status" aria-live="polite">
-          {operationSuccess}
-        </p>
+        <FeedbackMessage variant="success">{operationSuccess}</FeedbackMessage>
       )}
 
       {operationError && (
-        <p className="inventory-feedback inventory-feedback--error" role="alert">{operationError}</p>
+        <FeedbackMessage variant="error" title="No se pudo completar la operación">{operationError}</FeedbackMessage>
       )}
 
       {operationWarning
         && (!showPlanchaForm || editingPlancha !== null)
         && (!showRetazoForm || editingRetazo !== null) && (
-        <p className="inventory-feedback inventory-feedback--warning" role="status" aria-live="polite">
-          {operationWarning}
-        </p>
+          <FeedbackMessage variant="warning">{operationWarning}</FeedbackMessage>
       )}
 
       {showPlanchaForm && activeTab === 'planchas' && (
@@ -792,12 +786,13 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
             </div>
           )}
           {rows.length === 0 ? (
-            <div className="inventory-empty"><p className="inventory-status">{emptyMessage}</p></div>
+            <EmptyState title={emptyMessage} />
           ) : filteredRows.length === 0 ? (
-            <div className="inventory-empty" role="status">
-              <p>No hay resultados para los filtros seleccionados.</p>
-              <p className="inventory-status">Ajusta los filtros o usa «Limpiar filtros» para ver todo el listado.</p>
-            </div>
+            <EmptyState
+              kind="sin-resultados"
+              title="No hay resultados para los filtros seleccionados."
+              description="Ajusta los filtros o usa «Limpiar filtros» para ver todo el listado."
+            />
           ) : (
             <InventoryTable
               kind={activeTab}

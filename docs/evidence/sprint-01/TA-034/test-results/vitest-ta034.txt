@@ -1,0 +1,61 @@
+
+ RUN  v5.0.3 C:/Users/Usuario/Desktop/Repo Taller 1/optimizador-vidrio/frontend
+
+ ✓ src/shared/hooks/__tests__/useManagementView.test.jsx > useManagementView > empieza mostrando el listado, sin formulario 20ms
+ ✓ src/shared/hooks/__tests__/useManagementView.test.jsx > useManagementView > abre el formulario de alta solo con la acción Nuevo 4ms
+ ✓ src/shared/hooks/__tests__/useManagementView.test.jsx > useManagementView > abre la edición con el registro elegido 3ms
+ ✓ src/shared/hooks/__tests__/useManagementView.test.jsx > useManagementView > al guardar vuelve al listado y conserva el mensaje de resultado 4ms
+ ✓ src/shared/hooks/__tests__/useManagementView.test.jsx > useManagementView > al cancelar vuelve al listado sin mensaje 3ms
+ ✓ src/shared/hooks/__tests__/useManagementView.test.jsx > useManagementView > una nueva acción limpia el mensaje anterior 2ms
+ ✓ src/shared/components/__tests__/FieldError.test.jsx > FieldError > queda asociado al campo como su descripción accesible 240ms
+ ✓ src/shared/components/__tests__/FieldError.test.jsx > FieldError > no dibuja nada cuando no hay error 3ms
+ ✓ src/shared/components/__tests__/ConfirmDialog.test.jsx > ConfirmDialog > no dibuja nada mientras está cerrado 26ms
+ ✓ src/shared/components/__tests__/FeedbackMessage.test.jsx > FeedbackMessage > anuncia un error de inmediato y lo identifica con texto 220ms
+ ✓ src/shared/components/__tests__/FeedbackMessage.test.jsx > FeedbackMessage > muestra la variante success como estado con su título visible 14ms
+ ✓ src/shared/components/__tests__/FeedbackMessage.test.jsx > FeedbackMessage > muestra la variante warning como estado con su título visible 11ms
+ ✓ src/shared/components/__tests__/FeedbackMessage.test.jsx > FeedbackMessage > muestra la variante info como estado con su título visible 10ms
+ ✓ src/shared/components/__tests__/FeedbackMessage.test.jsx > FeedbackMessage > usa el título recibido en lugar del título por defecto 16ms
+ ✓ src/shared/components/__tests__/LoadingAndEmptyState.test.jsx > LoadingState > anuncia la espera con un texto visible 194ms
+ ✓ src/shared/components/__tests__/LoadingAndEmptyState.test.jsx > LoadingState > usa un texto genérico si no recibe uno 19ms
+ ✓ src/shared/components/__tests__/LoadingAndEmptyState.test.jsx > EmptyState > explica por qué está vacío y ofrece la acción recibida 32ms
+ ✓ src/shared/components/__tests__/LoadingAndEmptyState.test.jsx > EmptyState > no muestra ninguna acción si no la recibe 12ms
+node.exe : stderr | src/features/orders/__tests__/NuevoPedidoFeedback.test.jsx > NuevoPedido — feedback compartido (TA-034) > muestra el error del catálogo como alerta
+En línea: 1 Carácter: 1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (stderr | src/fe...ogo como alerta:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Error: Error en la red
+    at fetchTiposVidrio (C:/Users/Usuario/Desktop/Repo Taller 1/optimizador-vidrio/frontend/src/features/orders/NuevoPedido.jsx:36:33)
+
+ ✓ src/shared/components/__tests__/ConfirmDialog.test.jsx > ConfirmDialog > se anuncia con su pregunta y su consecuencia, y empieza en Cancelar 231ms
+ ✓ src/shared/components/__tests__/ConfirmDialog.test.jsx > ConfirmDialog > confirma con su botón y cancela con Escape 31ms
+ ✓ src/shared/components/__tests__/ConfirmDialog.test.jsx > ConfirmDialog > mantiene el foco dentro del diálogo al usar Tab 62ms
+ ✓ src/shared/components/__tests__/ConfirmDialog.test.jsx > ConfirmDialog > devuelve el foco al botón que lo abrió al cerrarse 38ms
+ ✓ src/shared/components/__tests__/ConfirmDialog.test.jsx > ConfirmDialog > bloquea los botones mientras se confirma 22ms
+ ✓ src/features/orders/__tests__/NuevoPedidoFeedback.test.jsx > NuevoPedido — feedback compartido (TA-034) > muestra la carga del catálogo y luego el estado vacío 159ms
+ ✓ src/features/users/__tests__/UsersPage.test.jsx > UsersPage — feedback compartido (TA-034) > muestra la carga y luego el listado 283ms
+ ✓ src/features/users/__tests__/UsersPage.test.jsx > UsersPage — feedback compartido (TA-034) > muestra el estado vacío cuando no hay usuarios 34ms
+ ✓ src/features/users/__tests__/UsersPage.test.jsx > UsersPage — feedback compartido (TA-034) > muestra el error de carga como alerta 44ms
+ ✓ src/features/orders/__tests__/NuevoPedidoFeedback.test.jsx > NuevoPedido — feedback compartido (TA-034) > muestra el error del catálogo como alerta 158ms
+ ✓ src/features/users/__tests__/UsersPage.test.jsx > UsersPage — feedback compartido (TA-034) > pide confirmación antes de desactivar y no cambia nada si se cancela 134ms
+ ✓ src/features/users/__tests__/UsersPage.test.jsx > UsersPage — feedback compartido (TA-034) > desactiva solo después de confirmar y muestra el resultado 110ms
+ ✓ src/features/orders/__tests__/NuevoPedidoFeedback.test.jsx > NuevoPedido — feedback compartido (TA-034) > confirma antes de limpiar el pedido y no borra si se cancela 254ms
+ ✓ src/features/inventory/__tests__/InventoryPage.test.jsx > TA-011 — errores HTTP de Inventario > 403 muestra error de permisos, conserva sesión y no refresca el listado 432ms
+stderr | src/features/orders/__tests__/NuevoPedidoFeedback.test.jsx > NuevoPedido — feedback compartido (TA-034) > no muestra al usuario el detalle técnico de validación del 
+backend
+Error: No se pudo registrar el pedido. Revisa las piezas e inténtalo de nuevo.
+    at guardarPedido (C:/Users/Usuario/Desktop/Repo Taller 1/optimizador-vidrio/frontend/src/features/orders/NuevoPedido.jsx:220:15)
+
+ ✓ src/features/orders/__tests__/NuevoPedidoFeedback.test.jsx > NuevoPedido — feedback compartido (TA-034) > muestra el éxito sin ventanas del navegador 159ms
+ ✓ src/features/orders/__tests__/NuevoPedidoFeedback.test.jsx > NuevoPedido — feedback compartido (TA-034) > no muestra al usuario el detalle técnico de validación del backend 130ms
+ ✓ src/features/inventory/__tests__/InventoryPage.test.jsx > TA-011 — errores HTTP de Inventario > 422 muestra validación junto al formulario y conserva los datos sin refrescar 328ms
+ ✓ src/features/inventory/__tests__/InventoryPage.test.jsx > TA-011 — estados de carga de Inventario > muestra loading y después inventario vacío en ambas pestañas 86ms
+ ✓ src/features/inventory/__tests__/InventoryPage.test.jsx > TA-011 — estados de carga de Inventario > un fallo de red muestra error de carga sin presentarlo como inventario vacío 28ms
+
+ Test Files  8 passed (8)
+      Tests  37 passed (37)
+   Start at  21:05:35
+   Duration  4.33s (environment 61%, setup 14%, tests 13%, transform 7%, import 5%)
+

@@ -132,6 +132,8 @@
 .ng-button:hover:not(:disabled) { background: var(--ng-background); }
 .ng-button--primary { border-color: var(--ng-primary-action); background: var(--ng-primary-action); color: var(--ng-surface); }
 .ng-button--primary:hover:not(:disabled) { background: var(--ng-primary-focus); }
+.ng-button--danger { border-color: var(--ng-error); background: var(--ng-error); color: var(--ng-surface); }
+.ng-button--danger:hover:not(:disabled) { background: var(--ng-error); text-decoration: underline; }
 .ng-button:disabled { border-color: var(--ng-border-strong); border-style: dashed; background: var(--ng-background); color: var(--ng-text-900); cursor: not-allowed; }
 .ng-button[aria-busy='true'] { cursor: wait; }
 .ng-control:focus-visible,

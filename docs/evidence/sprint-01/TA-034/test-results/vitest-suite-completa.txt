@@ -1,0 +1,5825 @@
+
+ RUN  v5.0.3 C:/Users/Usuario/Desktop/Repo Taller 1/optimizador-vidrio/frontend
+
+ ✓ src/shared/hooks/__tests__/useManagementView.test.jsx (6 tests) 45ms
+ ✓ src/shared/components/__tests__/FieldError.test.jsx (2 tests) 321ms
+   ✓ FieldError (2)
+     ✓ queda asociado al campo como su descripción accesible 312ms
+ ✓ src/shared/components/__tests__/FeedbackMessage.test.jsx (5 tests) 332ms
+ ✓ src/shared/components/__tests__/LoadingAndEmptyState.test.jsx (4 tests) 390ms
+node.exe : stderr | src/features/orders/__tests__/NuevoPedidoFeedback.test.jsx > NuevoPedido — feedback compartido (TA-034) > muestra el error del catálogo como alerta
+En línea: 1 Carácter: 1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (stderr | src/fe...ogo como alerta:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Error: Error en la red
+    at fetchTiposVidrio (C:/Users/Usuario/Desktop/Repo Taller 1/optimizador-vidrio/frontend/src/features/orders/NuevoPedido.jsx:36:33)
+
+ ✓ src/shared/components/__tests__/ConfirmDialog.test.jsx (6 tests) 592ms
+   ✓ ConfirmDialog (6)
+     ✓ se anuncia con su pregunta y su consecuencia, y empieza en Cancelar 326ms
+ ✓ src/features/users/__tests__/UsersPage.test.jsx (5 tests) 828ms
+   ✓ UsersPage — feedback compartido (TA-034) (5)
+     ✓ muestra la carga y luego el listado 452ms
+stderr | src/features/orders/__tests__/NuevoPedidoFeedback.test.jsx > NuevoPedido — feedback compartido (TA-034) > no muestra al usuario el detalle técnico de validación del 
+backend
+Error: No se pudo registrar el pedido. Revisa las piezas e inténtalo de nuevo.
+    at guardarPedido (C:/Users/Usuario/Desktop/Repo Taller 1/optimizador-vidrio/frontend/src/features/orders/NuevoPedido.jsx:220:15)
+
+ ✓ src/features/orders/__tests__/NuevoPedidoFeedback.test.jsx (5 tests) 1115ms
+   ✓ NuevoPedido — feedback compartido (TA-034) (5)
+     ✓ confirma antes de limpiar el pedido y no borra si se cancela 337ms
+ ✓ src/features/inventory/__tests__/InventoryPage.test.jsx (4 tests) 1010ms
+   ✓ TA-011 — errores HTTP de Inventario (2)
+     ✓ 403 muestra error de permisos, conserva sesión y no refresca el listado 505ms
+     ✓ 422 muestra validación junto al formulario y conserva los datos sin refrescar 349ms
+stderr | src/features/orders/__tests__/NuevoPedido.test.jsx > HU-007 T04: pedido y piezas > error de catálogo permite reintentar sin usar valores estáticos
+TypeError: offline
+    at C:/Users/Usuario/Desktop/Repo Taller 1/optimizador-vidrio/frontend/src/features/orders/__tests__/NuevoPedido.test.jsx:189:33
+    at file:///C:/Users/Usuario/Desktop/Repo%20Taller%201/optimizador-vidrio/frontend/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1628:35
+    at file:///C:/Users/Usuario/Desktop/Repo%20Taller%201/optimizador-vidrio/frontend/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:26
+    at file:///C:/Users/Usuario/Desktop/Repo%20Taller%201/optimizador-vidrio/frontend/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3321:20
+    at new Promise (<anonymous>)
+    at runWithCancel (file:///C:/Users/Usuario/Desktop/Repo%20Taller%201/optimizador-vidrio/frontend/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3316:10)
+    at file:///C:/Users/Usuario/Desktop/Repo%20Taller%201/optimizador-vidrio/frontend/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3301:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///C:/Users/Usuario/Desktop/Repo%20Taller%201/optimizador-vidrio/frontend/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3259:10)
+    at file:///C:/Users/Usuario/Desktop/Repo%20Taller%201/optimizador-vidrio/frontend/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3882:64
+
+ ❯ src/features/orders/__tests__/NuevoPedido.test.jsx (12 tests | 12 failed) 11465ms
+   ❯ HU-006: convergencia temporal con HU-007 (4)
+     × guarda las tres formas con cantidades propias sin reinterpretar la geometría 1155ms
+     × bloquea otra pareja 7/6 sin POST y conserva piezas 1024ms
+     × bloquea otra pareja 8/4 sin POST y conserva piezas 1015ms
+     × rechaza cantidad decimal y medidas no positivas antes de agregar 1012ms
+   ❯ HU-007 T04: pedido y piezas (8)
+     × catálogo real y geometría VALID requeridos; agregar solo local y reiniciar lienzo 1010ms
+     × múltiples piezas, un POST, bloqueo mientras guarda y éxito con id_pedido 1009ms
+     × fallo 401 conserva piezas y permite reintentar 1015ms
+     × fallo 403 conserva piezas y permite reintentar 1015ms
+     × fallo 422 conserva piezas y permite reintentar 1019ms
+     × fallo 500 conserva piezas y permite reintentar 1012ms
+     × fallo network conserva piezas y permite reintentar 1022ms
+     × error de catálogo permite reintentar sin usar valores estáticos 153ms
+ ❯ src/features/orders/__tests__/CustomPieceEditor.test.jsx (28 tests | 2 failed) 19396ms
+   ✓ HU-007 T01 — dibujo y controles (caja negra) (7)
+     ✓ T01-C01: editor inicial visible, accesible y sin dimensiones 499ms
+     ✓ T01-C02: clics crean vértices ordenados y segmentos; cerrar exige tres 413ms
+     ✓ T01-C03: cerrar bloquea clics adicionales sin cambiar el contorno 389ms
+     ✓ T01-C04: deshacer abierto elimina el último punto hasta volver al inicio 306ms
+     ✓ T01-C05: deshacer cerrado reabre, elimina el último punto y permite dibujar 446ms
+     ✓ T01-C06: reiniciar limpia el dibujo (cerrado=false) 334ms
+     ✓ T01-C06: reiniciar limpia el dibujo (cerrado=true) 401ms
+   ❯ HU-007 T02 — dimensiones y selección (caja negra) (13)
+     ✓ T02-C01: cinco lados S1…S5 vacíos, progreso cero y sin escala física 324ms
+     ✓ T02-C02: una medida deja preview provisional y cuatro campos pendientes vacíos 486ms
+     ✓ T02-C03: selección S1→S3→S5 sincroniza ambos SVG sin perder medidas 570ms
+     ✓ T02-C04: editar una medida recalcula preview y conserva boceto y otros campos 1159ms
+     × T02-C05: dimensiones completas mantienen Agregar deshabilitado por registro pendiente 812ms
+     ✓ T02-C06: longitudes 1000/100/100/100/100 informan imposibilidad sin convexidad 871ms
+     ✓ T02-C07: longitud inválida 0 da error visible y accesible 425ms
+     ✓ T02-C07: longitud inválida -1 da error visible y accesible 412ms
+     ✓ T02-C08: decimal positivo menor que 0.01 es aceptado sin mínimo artificial 393ms
+     ✓ T02-C09: borrar una medida completa vuelve a provisional; borrar todas quita escala 1016ms
+     ✓ T02-C10: deshacer invalida medidas, selección y preview; recierre crea lados vacíos 1063ms
+     ✓ T02-C11: reiniciar con medidas limpia todo y un nuevo dibujo no conserva selección 1338ms
+     ✓ T02-C12: cierre y selección por teclado dirigen el foco a controles etiquetados 487ms
+   ❯ HU-007 T03 — validación geométrica derivada (caja negra) (8)
+     ✓ T03-C01: pendiente antes de cerrar y mientras hay longitudes estimadas 379ms
+     × T03-C02: geometría completa convexa informa éxito accesible sin habilitar registro 911ms
+     ✓ T03-C03: geometría completa cóncava muestra rechazo y conserva medidas 839ms
+     ✓ T03-C04: bow-tie completo se anuncia como autointersección, no área nula 744ms
+     ✓ T03-C05: editar S2 recalcula concavidad→cruce→concavidad sin resultado obsoleto 1249ms
+     ✓ T03-C06: borrar o invalidar medidas retira VALID y corregir vuelve a validar 1229ms
+     ✓ T03-C07: Deshacer último vértice invalida el éxito previo 947ms
+     ✓ T03-C07: Reiniciar dibujo invalida el éxito previo 948ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 14 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/orders/__tests__/CustomPieceEditor.test.jsx > HU-007 T02 — dimensiones y selección (caja negra) > T02-C05: dimensiones completas mantienen Agregar 
+deshabilitado por registro pendiente
+Error: expect(element).toHaveAccessibleDescription()
+
+Expected element to have accessible description:
+  Geometría convexa validada. Selecciona el tipo de vidrio y el espesor en Nuevo pedido para agregar piezas.
+Received:
+  Geometría convexa validada. Agrega la pieza y guarda el pedido para registrarla.
+ ❯ src/features/orders/__tests__/CustomPieceEditor.test.jsx:208:47
+    206|     expect(screen.getByRole('img', { name: /Vista dimensional completa…
+    207|     expect(button('Agregar pieza al pedido')).toBeDisabled()
+    208|     expect(button('Agregar pieza al pedido')).toHaveAccessibleDescript…
+       |                                               ^
+    209|   })
+    210|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/14]⎯
+
+ FAIL  src/features/orders/__tests__/CustomPieceEditor.test.jsx > HU-007 T03 — validación geométrica derivada (caja negra) > T03-C02: geometría completa convexa informa 
+éxito accesible sin habilitar registro
+TestingLibraryElementError: Unable to find an element with the text: Selecciona el tipo de vidrio y el espesor en Nuevo pedido para agregar piezas.. This could be because the 
+text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <section
+      aria-labelledby="_r_93_"
+      class="custom-piece-editor"
+    >
+      <header
+        class="custom-piece-editor__header"
+      >
+        <h2
+          id="_r_93_"
+        >
+          Pieza personalizada
+        </h2>
+        <p>
+          Traza el contorno y define la longitud real de cada lado.
+        </p>
+      </header>
+      <fieldset
+        class="custom-piece-editor__fieldset"
+      >
+        <div
+          class="custom-piece-editor__content"
+          data-closed="true"
+        >
+          <section
+            aria-labelledby="_r_95_"
+            class="custom-piece-editor__workspace"
+          >
+            <div
+              class="custom-piece-editor__workspace-header"
+            >
+              <h3
+                id="_r_95_"
+                tabindex="-1"
+              >
+                <span
+                  aria-hidden="true"
+                  class="custom-piece-editor__step"
+                >
+                  1
+                </span>
+                Dibujo original
+              </h3>
+              <div
+                aria-atomic="true"
+                class="custom-piece-editor__status"
+                role="status"
+              >
+                <strong
+                  data-closed="true"
+                >
+                  Polígono cerrado
+                </strong>
+                <span>
+                  5
+                   
+                  vértices
+                </span>
+              </div>
+            </div>
+            <div
+              class="custom-piece-editor__surface"
+            >
+              <span
+                class="custom-piece-editor__canvas-label"
+              >
+                Boceto · Sin escala física
+              </span>
+              <svg
+                aria-describedby="_r_98_"
+                aria-label="Lienzo del dibujo original, sin escala física"
+                class="custom-piece-editor__canvas"
+                data-closed="true"
+                role="img"
+                viewBox="0 0 800 500"
+              >
+                <g
+                  aria-hidden="true"
+                  class="custom-piece-editor__drawing"
+                >
+                  <polygon
+                    points="200,50 500,50 600,250 350,450 100,250"
+                  />
+                  <circle
+                    cx="200"
+                    cy="50"
+                    r="4"
+                  />
+                  <circle
+                    cx="500"
+                    cy="50"
+                    r="4"
+                  />
+                  <circle
+                    cx="600"
+                    cy="250"
+                    r="4"
+                  />
+                  <circle
+                    cx="350"
+                    cy="450"
+                    r="4"
+                  />
+                  <circle
+                    cx="100"
+                    cy="250"
+                    r="4"
+                  />
+                </g>
+                <g
+                  aria-hidden="true"
+                  class="custom-piece-editor__segments"
+                >
+                  <line
+                    data-active="false"
+                    data-provisional="false"
+                    vector-effect="non-scaling-stroke"
+                    x1="200"
+                    x2="500"
+                    y1="50"
+                    y2="50"
+                  />
+                  <line
+                    data-active="false"
+                    data-provisional="false"
+                    vector-effect="non-scaling-stroke"
+                    x1="500"
+                    x2="600"
+                    y1="50"
+                    y2="250"
+                  />
+                  <line
+                    data-active="false"
+                    data-provisional="false"
+                    vector-effect="non-scaling-stroke"
+                    x1="600"
+                    x2="350"
+                    y1="250"
+                    y2="450"
+                  />
+                  <line
+                    data-active="false"
+                    data-provisional="false"
+                    vector-effect="non-scaling-stroke"
+                    x1="350"
+                    x2="100"
+                    y1="450"
+                    y2="250"
+                  />
+                  <line
+                    data-active="true"
+                    data-provisional="false"
+                    vector-effect="non-scaling-stroke"
+                    x1="100"
+                    x2="200"
+                    y1="250"
+                    y2="50"
+                  />
+                  [3...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/features/orders/__tests__/CustomPieceEditor.test.jsx:337:19
+    335|     expect(screen.queryByRole('button', { name: /^Validar/ })).not.toB…
+    336|     expect(button('Agregar pieza al pedido')).toBeDisabled()
+    337|     expect(screen.getByText('Selecciona el tipo de vidrio y el espesor…
+       |                   ^
+    338|   })
+    339|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/14]⎯
+
+ FAIL  src/features/orders/__tests__/NuevoPedido.test.jsx > HU-006: convergencia temporal con HU-007 > guarda las tres formas con cantidades propias sin reinterpretar la 
+geometría
+TestingLibraryElementError: Unable to find role="option" and name "Material de prueba"
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="app-layout"
+    >
+      <aside
+        class="sidebar"
+      >
+        <div
+          class="sidebar-logo"
+        >
+          <div
+            class="logo-icon"
+          >
+            N
+          </div>
+          <div>
+            <h2>
+              NewGlass
+            </h2>
+            <p>
+              Especialistas en vidrio
+            </p>
+          </div>
+        </div>
+        <nav
+          class="sidebar-nav"
+        >
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-house lucide-home"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
+              />
+              <path
+                d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+              />
+            </svg>
+             Inicio
+          </button>
+          <button
+            class="nav-item active"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-shopping-cart"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18"
+              />
+              <path
+                d="M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25"
+              />
+              <circle
+                cx="18"
+                cy="20"
+                r="2"
+              />
+              <circle
+                cx="8"
+                cy="20"
+                r="2"
+              />
+            </svg>
+             Registro de pedidos
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-archive"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="5"
+                rx="1"
+                width="20"
+                x="2"
+                y="3"
+              />
+              <path
+                d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"
+              />
+              <path
+                d="M10 12h4"
+              />
+            </svg>
+             Gestión de inventario
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chart-no-axes-column lucide-bar-chart-2"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 21v-6"
+              />
+              <path
+                d="M12 21V3"
+              />
+              <path
+                d="M19 21V9"
+              />
+            </svg>
+             Consulta de resultados
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-users"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+              />
+              <path
+                d="M16 3.128a4 4 0 0 1 0 7.744"
+              />
+              <path
+                d="M22 21v-2a4 4 0 0 0-3-3.87"
+              />
+              <circle
+                cx="9"
+                cy="7"
+                r="4"
+              />
+            </svg>
+             Panel de roles
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-settings"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 
+2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 
+3.319-1.915"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="3"
+              />
+            </svg>
+             Configuración
+          </button>
+        </nav>
+      </aside>
+      <main
+        class="pagina-pedido"
+        style="background-image: linear-gradient(rgba(245, 247, 250, 0.85), rgba(245, 247, 250, 0.85)), url(\"/src/assets/fondo-vidrio.png\"); 
+background-attachment: fixed;"
+      >
+        <div
+          class="contenedor-pedido"
+        >
+          <div
+            class="encabezado"
+          >
+            <span
+              class="etiqueta-pagina"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-package-plus"
+                fill="none"
+                height="16"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22V12"
+                />
+                <path
+                  d="M16 17h6"
+                />
+                <path
+                  d="M19 14v6"
+                />
+                <path
+                  d="M21 10.535V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.675-.955"
+                />
+                <path
+                  d="M3.29 7 12 12l8.71-5"
+                />
+                <path
+                  d="m7.5 4.27 8.997 5.148"
+                />
+              </svg>
+               Registro de pedido
+            </span>
+            <h1>
+              Nuevo pedido
+            </h1>
+            <p>
+              Configura el material, espesor y medidas de cada pieza requerida por el cliente.
+            </p>
+          </div>
+          <div
+            class="ng-ui"
+          />
+          <section
+            class="seccion"
+          >
+            <div
+              class="encabezado-piezas"
+            >
+              <div>
+                <h2>
+                  Piezas del pedido
+                </h2>
+                <p
+                  class="texto-secundario"
+                >
+                  Agrega todas las piezas que forman parte del pedido.
+                </p>
+              </div>
+              <button
+                class="boton-agregar"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-plus"
+                  fill="none"
+                  height="18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="18"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5 12h14"
+                  />
+                  <path
+                    d="M12 5v14"
+                  />
+                </svg>
+                 Agregar pieza
+              </button>
+            </div>
+            <div>
+              <div
+                class="ng-ui"
+              >
+                <div
+                  class="ng-empty-state"
+                  role="status"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-inbox ng-empty-state__icon"
+                    fill="none"
+                    height="32"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="32"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <polyline
+                      points="22 12 16 12 14 15 10 15 8 12 2 12"
+                    />
+                    <path
+                      d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+                    />
+                  </svg>
+                  <p
+                    class="ng-empty-state__title"
+                  >
+                    No hay piezas agregadas
+                  </p>
+                  <p
+                    class="ng-empty-state__description"
+                  >
+                    Haz clic en «Agregar pieza» para comenzar a armar el pedido.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+          <div
+            class="acciones"
+          >
+            <button
+              class="boton-cancelar"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-x"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18 6 6 18"
+                />
+                <path
+                  d="m6 6 12 12"
+                />
+              </svg>
+               Cancelar
+            </button>
+            <button
+              class="boton-guardar"
+              disabled=""
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-save"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+                />
+                <path
+                  d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"
+                />
+                <path
+                  d="M7 3v4a1 1 0 0 0 1 1h7"
+                />
+              </svg>
+              Guardar pedido
+            </button>
+          </div>
+        </div>
+        <div
+          class="ng-ui"
+        />
+      </main>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="app-layout"
+    >
+      <aside
+        class="sidebar"
+      >
+        <div
+          class="sidebar-logo"
+        >
+          <div
+            class="logo-icon"
+          >
+            N
+          </div>
+          <div>
+            <h2>
+              NewGlass
+            </h2>
+            <p>
+              Especialistas en vidrio
+            </p>
+          </div>
+        </div>
+        <nav
+          class="sidebar-nav"
+        >
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-house lucide-home"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
+              />
+              <path
+                d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+              />
+            </svg>
+             Inicio
+          </button>
+          <button
+            class="nav-item active"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-shopping-cart"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18"
+              />
+              <path
+                d="M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25"
+              />
+              <circle
+                cx="18"
+                cy="20"
+                r="2"
+              />
+              <circle
+                cx="8"
+                cy="20"
+                r="2"
+              />
+            </svg>
+             Registro de pedidos
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-archive"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="5"
+                rx="1"
+                width="20"
+                x="2"
+                y="3"
+              />
+              <path
+                d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"
+              />
+              <path
+                d="M10 12h4"
+              />
+            </svg>
+             Gestión de inventario
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chart-no-axes-column lucide-bar-chart-2"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 21v-6"
+              />
+              <path
+                d="M12 21V3"
+              />
+              <path
+                d="M19 21V9"
+              />
+            </svg>
+             Consulta de resultados
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-users"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+              />
+              <path
+                d="M16 3.128a4 4 0 0 1 0 7.744"
+              />
+              <path
+                d="M22 21v-2a4 4 0 0 0-3-3.87"
+              />
+              <circle
+                cx="9"
+                cy="7"
+                r="4"
+              />
+            </svg>
+             Panel de roles
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-settings"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 
+2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 
+3.319-1.915"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="3"
+              />
+            </svg>
+             Configuración
+          </button>
+        </nav>
+      </aside>
+      <main
+        class="pagina-pedido"
+        style="background-image: linear-gradient(rgba(245, 247, 250, 0.85), rgba(245, 247, 250, 0.85)), url(\"/src/assets/fondo-vidrio.png\"); 
+background-attachment: fixed;"
+      >
+        <div
+          class="contenedor-pedido"
+        >
+          <div
+            class="encabezado"
+          >
+            <span
+              class="etiqueta-pagina"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-package-plus"
+                fill="none"
+                height="16"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22V12"
+                />
+                <path
+                  d="M16 17h6"
+                />
+                <path
+                  d="M19 14v6"
+                />
+                <path
+                  d="M21 10.535V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.675-.955"
+                />
+                <path
+                  d="M3.29 7 12 12l8.71-5"
+                />
+                <path
+                  d="m7.5 4.27 8.997 5.148"
+                />
+              </svg>
+               Registro de pedido
+            </span>
+            <h1>
+              Nuevo pedido
+            </h1>
+            <p>
+              Configura el material, espesor y medidas de cada pieza requerida por el cliente.
+            </p>
+          </div>
+          <div
+            class="ng-ui"
+          />
+          <section
+            class="seccion"
+          >
+            <div
+              class="encabezado-piezas"
+            >
+              <div>
+                <h2>
+                  Piezas del pedido
+                </h2>
+                <p
+                  class="texto-secundario"
+                >
+                  Agrega todas las piezas que forman parte del pedido.
+                </p>
+              </div>
+              <button
+                class="boton-agregar"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-plus"
+                  fill="none"
+                  height="18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="18"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5 12h14"
+                  />
+                  <path
+                    d="M12 5v14"
+                  />
+                </svg>
+                 Agregar pieza
+              </button>
+            </div>
+            <div>
+              <div
+                class="ng-ui"
+              >
+                <div
+                  class="ng-empty-state"
+                  role="status"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-inbox ng-empty-state__icon"
+                    fill="none"
+                    height="32"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="32"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <polyline
+                      points="22 12 16 12 14 15 10 15 8 12 2 12"
+                    />
+                    <path
+                      d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+                    />
+                  </svg>
+                  <p
+                    class="ng-empty-state__title"
+                  >
+                    No hay piezas agregadas
+                  </p>
+                  <p
+                    class="ng-empty-state__description"
+                  >
+                    Haz clic en «Agregar pieza» para comenzar a armar el pedido.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+          <div
+            class="acciones"
+          >
+            <button
+              class="boton-cancelar"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-x"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18 6 6 18"
+                />
+                <path
+                  d="m6 6 12 12"
+                />
+              </svg>
+               Cancelar
+            </button>
+            <button
+              class="boton-guardar"
+              disabled=""
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-save"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+                />
+                <path
+                  d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"
+                />
+                <path
+                  d="M7 3v4a1 1 0 0 0 1 1h7"
+                />
+              </svg>
+              Guardar pedido
+            </button>
+          </div>
+        </div>
+        <div
+          class="ng-ui"
+        />
+      </main>
+    </div>
+  </div>
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ setup src/features/orders/__tests__/NuevoPedido.test.jsx:26:16
+     24|   const user = userEvent.setup()
+     25|   render(<NuevoPedido />)
+     26|   await screen.findByRole('option', { name: 'Material de prueba' })
+       |                ^
+     27|   return user
+     28| }
+ ❯ src/features/orders/__tests__/NuevoPedido.test.jsx:60:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/14]⎯
+
+ FAIL  src/features/orders/__tests__/NuevoPedido.test.jsx > HU-006: convergencia temporal con HU-007 > bloquea otra pareja 7/6 sin POST y conserva piezas
+ FAIL  src/features/orders/__tests__/NuevoPedido.test.jsx > HU-006: convergencia temporal con HU-007 > bloquea otra pareja 8/4 sin POST y conserva piezas
+TestingLibraryElementError: Unable to find role="option" and name "Material de prueba"
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="app-layout"
+    >
+      <aside
+        class="sidebar"
+      >
+        <div
+          class="sidebar-logo"
+        >
+          <div
+            class="logo-icon"
+          >
+            N
+          </div>
+          <div>
+            <h2>
+              NewGlass
+            </h2>
+            <p>
+              Especialistas en vidrio
+            </p>
+          </div>
+        </div>
+        <nav
+          class="sidebar-nav"
+        >
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-house lucide-home"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
+              />
+              <path
+                d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+              />
+            </svg>
+             Inicio
+          </button>
+          <button
+            class="nav-item active"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-shopping-cart"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18"
+              />
+              <path
+                d="M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25"
+              />
+              <circle
+                cx="18"
+                cy="20"
+                r="2"
+              />
+              <circle
+                cx="8"
+                cy="20"
+                r="2"
+              />
+            </svg>
+             Registro de pedidos
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-archive"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="5"
+                rx="1"
+                width="20"
+                x="2"
+                y="3"
+              />
+              <path
+                d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"
+              />
+              <path
+                d="M10 12h4"
+              />
+            </svg>
+             Gestión de inventario
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chart-no-axes-column lucide-bar-chart-2"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 21v-6"
+              />
+              <path
+                d="M12 21V3"
+              />
+              <path
+                d="M19 21V9"
+              />
+            </svg>
+             Consulta de resultados
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-users"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+              />
+              <path
+                d="M16 3.128a4 4 0 0 1 0 7.744"
+              />
+              <path
+                d="M22 21v-2a4 4 0 0 0-3-3.87"
+              />
+              <circle
+                cx="9"
+                cy="7"
+                r="4"
+              />
+            </svg>
+             Panel de roles
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-settings"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 
+2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 
+3.319-1.915"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="3"
+              />
+            </svg>
+             Configuración
+          </button>
+        </nav>
+      </aside>
+      <main
+        class="pagina-pedido"
+        style="background-image: linear-gradient(rgba(245, 247, 250, 0.85), rgba(245, 247, 250, 0.85)), url(\"/src/assets/fondo-vidrio.png\"); 
+background-attachment: fixed;"
+      >
+        <div
+          class="contenedor-pedido"
+        >
+          <div
+            class="encabezado"
+          >
+            <span
+              class="etiqueta-pagina"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-package-plus"
+                fill="none"
+                height="16"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22V12"
+                />
+                <path
+                  d="M16 17h6"
+                />
+                <path
+                  d="M19 14v6"
+                />
+                <path
+                  d="M21 10.535V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.675-.955"
+                />
+                <path
+                  d="M3.29 7 12 12l8.71-5"
+                />
+                <path
+                  d="m7.5 4.27 8.997 5.148"
+                />
+              </svg>
+               Registro de pedido
+            </span>
+            <h1>
+              Nuevo pedido
+            </h1>
+            <p>
+              Configura el material, espesor y medidas de cada pieza requerida por el cliente.
+            </p>
+          </div>
+          <div
+            class="ng-ui"
+          />
+          <section
+            class="seccion"
+          >
+            <div
+              class="encabezado-piezas"
+            >
+              <div>
+                <h2>
+                  Piezas del pedido
+                </h2>
+                <p
+                  class="texto-secundario"
+                >
+                  Agrega todas las piezas que forman parte del pedido.
+                </p>
+              </div>
+              <button
+                class="boton-agregar"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-plus"
+                  fill="none"
+                  height="18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="18"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5 12h14"
+                  />
+                  <path
+                    d="M12 5v14"
+                  />
+                </svg>
+                 Agregar pieza
+              </button>
+            </div>
+            <div>
+              <div
+                class="ng-ui"
+              >
+                <div
+                  class="ng-empty-state"
+                  role="status"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-inbox ng-empty-state__icon"
+                    fill="none"
+                    height="32"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="32"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <polyline
+                      points="22 12 16 12 14 15 10 15 8 12 2 12"
+                    />
+                    <path
+                      d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+                    />
+                  </svg>
+                  <p
+                    class="ng-empty-state__title"
+                  >
+                    No hay piezas agregadas
+                  </p>
+                  <p
+                    class="ng-empty-state__description"
+                  >
+                    Haz clic en «Agregar pieza» para comenzar a armar el pedido.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+          <div
+            class="acciones"
+          >
+            <button
+              class="boton-cancelar"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-x"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18 6 6 18"
+                />
+                <path
+                  d="m6 6 12 12"
+                />
+              </svg>
+               Cancelar
+            </button>
+            <button
+              class="boton-guardar"
+              disabled=""
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-save"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+                />
+                <path
+                  d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"
+                />
+                <path
+                  d="M7 3v4a1 1 0 0 0 1 1h7"
+                />
+              </svg>
+              Guardar pedido
+            </button>
+          </div>
+        </div>
+        <div
+          class="ng-ui"
+        />
+      </main>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="app-layout"
+    >
+      <aside
+        class="sidebar"
+      >
+        <div
+          class="sidebar-logo"
+        >
+          <div
+            class="logo-icon"
+          >
+            N
+          </div>
+          <div>
+            <h2>
+              NewGlass
+            </h2>
+            <p>
+              Especialistas en vidrio
+            </p>
+          </div>
+        </div>
+        <nav
+          class="sidebar-nav"
+        >
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-house lucide-home"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
+              />
+              <path
+                d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+              />
+            </svg>
+             Inicio
+          </button>
+          <button
+            class="nav-item active"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-shopping-cart"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18"
+              />
+              <path
+                d="M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25"
+              />
+              <circle
+                cx="18"
+                cy="20"
+                r="2"
+              />
+              <circle
+                cx="8"
+                cy="20"
+                r="2"
+              />
+            </svg>
+             Registro de pedidos
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-archive"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="5"
+                rx="1"
+                width="20"
+                x="2"
+                y="3"
+              />
+              <path
+                d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"
+              />
+              <path
+                d="M10 12h4"
+              />
+            </svg>
+             Gestión de inventario
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chart-no-axes-column lucide-bar-chart-2"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 21v-6"
+              />
+              <path
+                d="M12 21V3"
+              />
+              <path
+                d="M19 21V9"
+              />
+            </svg>
+             Consulta de resultados
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-users"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+              />
+              <path
+                d="M16 3.128a4 4 0 0 1 0 7.744"
+              />
+              <path
+                d="M22 21v-2a4 4 0 0 0-3-3.87"
+              />
+              <circle
+                cx="9"
+                cy="7"
+                r="4"
+              />
+            </svg>
+             Panel de roles
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-settings"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 
+2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 
+3.319-1.915"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="3"
+              />
+            </svg>
+             Configuración
+          </button>
+        </nav>
+      </aside>
+      <main
+        class="pagina-pedido"
+        style="background-image: linear-gradient(rgba(245, 247, 250, 0.85), rgba(245, 247, 250, 0.85)), url(\"/src/assets/fondo-vidrio.png\"); 
+background-attachment: fixed;"
+      >
+        <div
+          class="contenedor-pedido"
+        >
+          <div
+            class="encabezado"
+          >
+            <span
+              class="etiqueta-pagina"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-package-plus"
+                fill="none"
+                height="16"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22V12"
+                />
+                <path
+                  d="M16 17h6"
+                />
+                <path
+                  d="M19 14v6"
+                />
+                <path
+                  d="M21 10.535V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.675-.955"
+                />
+                <path
+                  d="M3.29 7 12 12l8.71-5"
+                />
+                <path
+                  d="m7.5 4.27 8.997 5.148"
+                />
+              </svg>
+               Registro de pedido
+            </span>
+            <h1>
+              Nuevo pedido
+            </h1>
+            <p>
+              Configura el material, espesor y medidas de cada pieza requerida por el cliente.
+            </p>
+          </div>
+          <div
+            class="ng-ui"
+          />
+          <section
+            class="seccion"
+          >
+            <div
+              class="encabezado-piezas"
+            >
+              <div>
+                <h2>
+                  Piezas del pedido
+                </h2>
+                <p
+                  class="texto-secundario"
+                >
+                  Agrega todas las piezas que forman parte del pedido.
+                </p>
+              </div>
+              <button
+                class="boton-agregar"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-plus"
+                  fill="none"
+                  height="18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="18"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5 12h14"
+                  />
+                  <path
+                    d="M12 5v14"
+                  />
+                </svg>
+                 Agregar pieza
+              </button>
+            </div>
+            <div>
+              <div
+                class="ng-ui"
+              >
+                <div
+                  class="ng-empty-state"
+                  role="status"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-inbox ng-empty-state__icon"
+                    fill="none"
+                    height="32"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="32"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <polyline
+                      points="22 12 16 12 14 15 10 15 8 12 2 12"
+                    />
+                    <path
+                      d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+                    />
+                  </svg>
+                  <p
+                    class="ng-empty-state__title"
+                  >
+                    No hay piezas agregadas
+                  </p>
+                  <p
+                    class="ng-empty-state__description"
+                  >
+                    Haz clic en «Agregar pieza» para comenzar a armar el pedido.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+          <div
+            class="acciones"
+          >
+            <button
+              class="boton-cancelar"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-x"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18 6 6 18"
+                />
+                <path
+                  d="m6 6 12 12"
+                />
+              </svg>
+               Cancelar
+            </button>
+            <button
+              class="boton-guardar"
+              disabled=""
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-save"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+                />
+                <path
+                  d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"
+                />
+                <path
+                  d="M7 3v4a1 1 0 0 0 1 1h7"
+                />
+              </svg>
+              Guardar pedido
+            </button>
+          </div>
+        </div>
+        <div
+          class="ng-ui"
+        />
+      </main>
+    </div>
+  </div>
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ setup src/features/orders/__tests__/NuevoPedido.test.jsx:26:16
+     24|   const user = userEvent.setup()
+     25|   render(<NuevoPedido />)
+     26|   await screen.findByRole('option', { name: 'Material de prueba' })
+       |                ^
+     27|   return user
+     28| }
+ ❯ src/features/orders/__tests__/NuevoPedido.test.jsx:86:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/14]⎯
+
+ FAIL  src/features/orders/__tests__/NuevoPedido.test.jsx > HU-006: convergencia temporal con HU-007 > rechaza cantidad decimal y medidas no positivas antes de agregar
+TestingLibraryElementError: Unable to find role="option" and name "Material de prueba"
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="app-layout"
+    >
+      <aside
+        class="sidebar"
+      >
+        <div
+          class="sidebar-logo"
+        >
+          <div
+            class="logo-icon"
+          >
+            N
+          </div>
+          <div>
+            <h2>
+              NewGlass
+            </h2>
+            <p>
+              Especialistas en vidrio
+            </p>
+          </div>
+        </div>
+        <nav
+          class="sidebar-nav"
+        >
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-house lucide-home"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
+              />
+              <path
+                d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+              />
+            </svg>
+             Inicio
+          </button>
+          <button
+            class="nav-item active"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-shopping-cart"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18"
+              />
+              <path
+                d="M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25"
+              />
+              <circle
+                cx="18"
+                cy="20"
+                r="2"
+              />
+              <circle
+                cx="8"
+                cy="20"
+                r="2"
+              />
+            </svg>
+             Registro de pedidos
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-archive"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="5"
+                rx="1"
+                width="20"
+                x="2"
+                y="3"
+              />
+              <path
+                d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"
+              />
+              <path
+                d="M10 12h4"
+              />
+            </svg>
+             Gestión de inventario
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chart-no-axes-column lucide-bar-chart-2"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 21v-6"
+              />
+              <path
+                d="M12 21V3"
+              />
+              <path
+                d="M19 21V9"
+              />
+            </svg>
+             Consulta de resultados
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-users"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+              />
+              <path
+                d="M16 3.128a4 4 0 0 1 0 7.744"
+              />
+              <path
+                d="M22 21v-2a4 4 0 0 0-3-3.87"
+              />
+              <circle
+                cx="9"
+                cy="7"
+                r="4"
+              />
+            </svg>
+             Panel de roles
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-settings"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 
+2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 
+3.319-1.915"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="3"
+              />
+            </svg>
+             Configuración
+          </button>
+        </nav>
+      </aside>
+      <main
+        class="pagina-pedido"
+        style="background-image: linear-gradient(rgba(245, 247, 250, 0.85), rgba(245, 247, 250, 0.85)), url(\"/src/assets/fondo-vidrio.png\"); 
+background-attachment: fixed;"
+      >
+        <div
+          class="contenedor-pedido"
+        >
+          <div
+            class="encabezado"
+          >
+            <span
+              class="etiqueta-pagina"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-package-plus"
+                fill="none"
+                height="16"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22V12"
+                />
+                <path
+                  d="M16 17h6"
+                />
+                <path
+                  d="M19 14v6"
+                />
+                <path
+                  d="M21 10.535V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.675-.955"
+                />
+                <path
+                  d="M3.29 7 12 12l8.71-5"
+                />
+                <path
+                  d="m7.5 4.27 8.997 5.148"
+                />
+              </svg>
+               Registro de pedido
+            </span>
+            <h1>
+              Nuevo pedido
+            </h1>
+            <p>
+              Configura el material, espesor y medidas de cada pieza requerida por el cliente.
+            </p>
+          </div>
+          <div
+            class="ng-ui"
+          />
+          <section
+            class="seccion"
+          >
+            <div
+              class="encabezado-piezas"
+            >
+              <div>
+                <h2>
+                  Piezas del pedido
+                </h2>
+                <p
+                  class="texto-secundario"
+                >
+                  Agrega todas las piezas que forman parte del pedido.
+                </p>
+              </div>
+              <button
+                class="boton-agregar"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-plus"
+                  fill="none"
+                  height="18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="18"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5 12h14"
+                  />
+                  <path
+                    d="M12 5v14"
+                  />
+                </svg>
+                 Agregar pieza
+              </button>
+            </div>
+            <div>
+              <div
+                class="ng-ui"
+              >
+                <div
+                  class="ng-empty-state"
+                  role="status"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-inbox ng-empty-state__icon"
+                    fill="none"
+                    height="32"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="32"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <polyline
+                      points="22 12 16 12 14 15 10 15 8 12 2 12"
+                    />
+                    <path
+                      d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+                    />
+                  </svg>
+                  <p
+                    class="ng-empty-state__title"
+                  >
+                    No hay piezas agregadas
+                  </p>
+                  <p
+                    class="ng-empty-state__description"
+                  >
+                    Haz clic en «Agregar pieza» para comenzar a armar el pedido.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+          <div
+            class="acciones"
+          >
+            <button
+              class="boton-cancelar"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-x"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18 6 6 18"
+                />
+                <path
+                  d="m6 6 12 12"
+                />
+              </svg>
+               Cancelar
+            </button>
+            <button
+              class="boton-guardar"
+              disabled=""
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-save"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+                />
+                <path
+                  d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"
+                />
+                <path
+                  d="M7 3v4a1 1 0 0 0 1 1h7"
+                />
+              </svg>
+              Guardar pedido
+            </button>
+          </div>
+        </div>
+        <div
+          class="ng-ui"
+        />
+      </main>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="app-layout"
+    >
+      <aside
+        class="sidebar"
+      >
+        <div
+          class="sidebar-logo"
+        >
+          <div
+            class="logo-icon"
+          >
+            N
+          </div>
+          <div>
+            <h2>
+              NewGlass
+            </h2>
+            <p>
+              Especialistas en vidrio
+            </p>
+          </div>
+        </div>
+        <nav
+          class="sidebar-nav"
+        >
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-house lucide-home"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
+              />
+              <path
+                d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+              />
+            </svg>
+             Inicio
+          </button>
+          <button
+            class="nav-item active"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-shopping-cart"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18"
+              />
+              <path
+                d="M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25"
+              />
+              <circle
+                cx="18"
+                cy="20"
+                r="2"
+              />
+              <circle
+                cx="8"
+                cy="20"
+                r="2"
+              />
+            </svg>
+             Registro de pedidos
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-archive"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="5"
+                rx="1"
+                width="20"
+                x="2"
+                y="3"
+              />
+              <path
+                d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"
+              />
+              <path
+                d="M10 12h4"
+              />
+            </svg>
+             Gestión de inventario
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chart-no-axes-column lucide-bar-chart-2"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 21v-6"
+              />
+              <path
+                d="M12 21V3"
+              />
+              <path
+                d="M19 21V9"
+              />
+            </svg>
+             Consulta de resultados
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-users"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+              />
+              <path
+                d="M16 3.128a4 4 0 0 1 0 7.744"
+              />
+              <path
+                d="M22 21v-2a4 4 0 0 0-3-3.87"
+              />
+              <circle
+                cx="9"
+                cy="7"
+                r="4"
+              />
+            </svg>
+             Panel de roles
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-settings"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 
+2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 
+3.319-1.915"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="3"
+              />
+            </svg>
+             Configuración
+          </button>
+        </nav>
+      </aside>
+      <main
+        class="pagina-pedido"
+        style="background-image: linear-gradient(rgba(245, 247, 250, 0.85), rgba(245, 247, 250, 0.85)), url(\"/src/assets/fondo-vidrio.png\"); 
+background-attachment: fixed;"
+      >
+        <div
+          class="contenedor-pedido"
+        >
+          <div
+            class="encabezado"
+          >
+            <span
+              class="etiqueta-pagina"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-package-plus"
+                fill="none"
+                height="16"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22V12"
+                />
+                <path
+                  d="M16 17h6"
+                />
+                <path
+                  d="M19 14v6"
+                />
+                <path
+                  d="M21 10.535V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.675-.955"
+                />
+                <path
+                  d="M3.29 7 12 12l8.71-5"
+                />
+                <path
+                  d="m7.5 4.27 8.997 5.148"
+                />
+              </svg>
+               Registro de pedido
+            </span>
+            <h1>
+              Nuevo pedido
+            </h1>
+            <p>
+              Configura el material, espesor y medidas de cada pieza requerida por el cliente.
+            </p>
+          </div>
+          <div
+            class="ng-ui"
+          />
+          <section
+            class="seccion"
+          >
+            <div
+              class="encabezado-piezas"
+            >
+              <div>
+                <h2>
+                  Piezas del pedido
+                </h2>
+                <p
+                  class="texto-secundario"
+                >
+                  Agrega todas las piezas que forman parte del pedido.
+                </p>
+              </div>
+              <button
+                class="boton-agregar"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-plus"
+                  fill="none"
+                  height="18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="18"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5 12h14"
+                  />
+                  <path
+                    d="M12 5v14"
+                  />
+                </svg>
+                 Agregar pieza
+              </button>
+            </div>
+            <div>
+              <div
+                class="ng-ui"
+              >
+                <div
+                  class="ng-empty-state"
+                  role="status"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-inbox ng-empty-state__icon"
+                    fill="none"
+                    height="32"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="32"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <polyline
+                      points="22 12 16 12 14 15 10 15 8 12 2 12"
+                    />
+                    <path
+                      d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+                    />
+                  </svg>
+                  <p
+                    class="ng-empty-state__title"
+                  >
+                    No hay piezas agregadas
+                  </p>
+                  <p
+                    class="ng-empty-state__description"
+                  >
+                    Haz clic en «Agregar pieza» para comenzar a armar el pedido.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+          <div
+            class="acciones"
+          >
+            <button
+              class="boton-cancelar"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-x"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18 6 6 18"
+                />
+                <path
+                  d="m6 6 12 12"
+                />
+              </svg>
+               Cancelar
+            </button>
+            <button
+              class="boton-guardar"
+              disabled=""
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-save"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+                />
+                <path
+                  d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"
+                />
+                <path
+                  d="M7 3v4a1 1 0 0 0 1 1h7"
+                />
+              </svg>
+              Guardar pedido
+            </button>
+          </div>
+        </div>
+        <div
+          class="ng-ui"
+        />
+      </main>
+    </div>
+  </div>
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ setup src/features/orders/__tests__/NuevoPedido.test.jsx:26:16
+     24|   const user = userEvent.setup()
+     25|   render(<NuevoPedido />)
+     26|   await screen.findByRole('option', { name: 'Material de prueba' })
+       |                ^
+     27|   return user
+     28| }
+ ❯ src/features/orders/__tests__/NuevoPedido.test.jsx:104:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/14]⎯
+
+ FAIL  src/features/orders/__tests__/NuevoPedido.test.jsx > HU-007 T04: pedido y piezas > catálogo real y geometría VALID requeridos; agregar solo local y reiniciar lienzo
+TestingLibraryElementError: Unable to find role="option" and name "Material de prueba"
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="app-layout"
+    >
+      <aside
+        class="sidebar"
+      >
+        <div
+          class="sidebar-logo"
+        >
+          <div
+            class="logo-icon"
+          >
+            N
+          </div>
+          <div>
+            <h2>
+              NewGlass
+            </h2>
+            <p>
+              Especialistas en vidrio
+            </p>
+          </div>
+        </div>
+        <nav
+          class="sidebar-nav"
+        >
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-house lucide-home"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
+              />
+              <path
+                d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+              />
+            </svg>
+             Inicio
+          </button>
+          <button
+            class="nav-item active"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-shopping-cart"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18"
+              />
+              <path
+                d="M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25"
+              />
+              <circle
+                cx="18"
+                cy="20"
+                r="2"
+              />
+              <circle
+                cx="8"
+                cy="20"
+                r="2"
+              />
+            </svg>
+             Registro de pedidos
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-archive"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="5"
+                rx="1"
+                width="20"
+                x="2"
+                y="3"
+              />
+              <path
+                d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"
+              />
+              <path
+                d="M10 12h4"
+              />
+            </svg>
+             Gestión de inventario
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chart-no-axes-column lucide-bar-chart-2"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 21v-6"
+              />
+              <path
+                d="M12 21V3"
+              />
+              <path
+                d="M19 21V9"
+              />
+            </svg>
+             Consulta de resultados
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-users"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+              />
+              <path
+                d="M16 3.128a4 4 0 0 1 0 7.744"
+              />
+              <path
+                d="M22 21v-2a4 4 0 0 0-3-3.87"
+              />
+              <circle
+                cx="9"
+                cy="7"
+                r="4"
+              />
+            </svg>
+             Panel de roles
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-settings"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 
+2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 
+3.319-1.915"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="3"
+              />
+            </svg>
+             Configuración
+          </button>
+        </nav>
+      </aside>
+      <main
+        class="pagina-pedido"
+        style="background-image: linear-gradient(rgba(245, 247, 250, 0.85), rgba(245, 247, 250, 0.85)), url(\"/src/assets/fondo-vidrio.png\"); 
+background-attachment: fixed;"
+      >
+        <div
+          class="contenedor-pedido"
+        >
+          <div
+            class="encabezado"
+          >
+            <span
+              class="etiqueta-pagina"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-package-plus"
+                fill="none"
+                height="16"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22V12"
+                />
+                <path
+                  d="M16 17h6"
+                />
+                <path
+                  d="M19 14v6"
+                />
+                <path
+                  d="M21 10.535V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.675-.955"
+                />
+                <path
+                  d="M3.29 7 12 12l8.71-5"
+                />
+                <path
+                  d="m7.5 4.27 8.997 5.148"
+                />
+              </svg>
+               Registro de pedido
+            </span>
+            <h1>
+              Nuevo pedido
+            </h1>
+            <p>
+              Configura el material, espesor y medidas de cada pieza requerida por el cliente.
+            </p>
+          </div>
+          <div
+            class="ng-ui"
+          />
+          <section
+            class="seccion"
+          >
+            <div
+              class="encabezado-piezas"
+            >
+              <div>
+                <h2>
+                  Piezas del pedido
+                </h2>
+                <p
+                  class="texto-secundario"
+                >
+                  Agrega todas las piezas que forman parte del pedido.
+                </p>
+              </div>
+              <button
+                class="boton-agregar"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-plus"
+                  fill="none"
+                  height="18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="18"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5 12h14"
+                  />
+                  <path
+                    d="M12 5v14"
+                  />
+                </svg>
+                 Agregar pieza
+              </button>
+            </div>
+            <div>
+              <div
+                class="ng-ui"
+              >
+                <div
+                  class="ng-empty-state"
+                  role="status"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-inbox ng-empty-state__icon"
+                    fill="none"
+                    height="32"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="32"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <polyline
+                      points="22 12 16 12 14 15 10 15 8 12 2 12"
+                    />
+                    <path
+                      d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+                    />
+                  </svg>
+                  <p
+                    class="ng-empty-state__title"
+                  >
+                    No hay piezas agregadas
+                  </p>
+                  <p
+                    class="ng-empty-state__description"
+                  >
+                    Haz clic en «Agregar pieza» para comenzar a armar el pedido.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+          <div
+            class="acciones"
+          >
+            <button
+              class="boton-cancelar"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-x"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18 6 6 18"
+                />
+                <path
+                  d="m6 6 12 12"
+                />
+              </svg>
+               Cancelar
+            </button>
+            <button
+              class="boton-guardar"
+              disabled=""
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-save"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+                />
+                <path
+                  d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"
+                />
+                <path
+                  d="M7 3v4a1 1 0 0 0 1 1h7"
+                />
+              </svg>
+              Guardar pedido
+            </button>
+          </div>
+        </div>
+        <div
+          class="ng-ui"
+        />
+      </main>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="app-layout"
+    >
+      <aside
+        class="sidebar"
+      >
+        <div
+          class="sidebar-logo"
+        >
+          <div
+            class="logo-icon"
+          >
+            N
+          </div>
+          <div>
+            <h2>
+              NewGlass
+            </h2>
+            <p>
+              Especialistas en vidrio
+            </p>
+          </div>
+        </div>
+        <nav
+          class="sidebar-nav"
+        >
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-house lucide-home"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
+              />
+              <path
+                d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+              />
+            </svg>
+             Inicio
+          </button>
+          <button
+            class="nav-item active"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-shopping-cart"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18"
+              />
+              <path
+                d="M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25"
+              />
+              <circle
+                cx="18"
+                cy="20"
+                r="2"
+              />
+              <circle
+                cx="8"
+                cy="20"
+                r="2"
+              />
+            </svg>
+             Registro de pedidos
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-archive"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="5"
+                rx="1"
+                width="20"
+                x="2"
+                y="3"
+              />
+              <path
+                d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"
+              />
+              <path
+                d="M10 12h4"
+              />
+            </svg>
+             Gestión de inventario
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chart-no-axes-column lucide-bar-chart-2"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 21v-6"
+              />
+              <path
+                d="M12 21V3"
+              />
+              <path
+                d="M19 21V9"
+              />
+            </svg>
+             Consulta de resultados
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-users"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+              />
+              <path
+                d="M16 3.128a4 4 0 0 1 0 7.744"
+              />
+              <path
+                d="M22 21v-2a4 4 0 0 0-3-3.87"
+              />
+              <circle
+                cx="9"
+                cy="7"
+                r="4"
+              />
+            </svg>
+             Panel de roles
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-settings"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 
+2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 
+3.319-1.915"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="3"
+              />
+            </svg>
+             Configuración
+          </button>
+        </nav>
+      </aside>
+      <main
+        class="pagina-pedido"
+        style="background-image: linear-gradient(rgba(245, 247, 250, 0.85), rgba(245, 247, 250, 0.85)), url(\"/src/assets/fondo-vidrio.png\"); 
+background-attachment: fixed;"
+      >
+        <div
+          class="contenedor-pedido"
+        >
+          <div
+            class="encabezado"
+          >
+            <span
+              class="etiqueta-pagina"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-package-plus"
+                fill="none"
+                height="16"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22V12"
+                />
+                <path
+                  d="M16 17h6"
+                />
+                <path
+                  d="M19 14v6"
+                />
+                <path
+                  d="M21 10.535V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.675-.955"
+                />
+                <path
+                  d="M3.29 7 12 12l8.71-5"
+                />
+                <path
+                  d="m7.5 4.27 8.997 5.148"
+                />
+              </svg>
+               Registro de pedido
+            </span>
+            <h1>
+              Nuevo pedido
+            </h1>
+            <p>
+              Configura el material, espesor y medidas de cada pieza requerida por el cliente.
+            </p>
+          </div>
+          <div
+            class="ng-ui"
+          />
+          <section
+            class="seccion"
+          >
+            <div
+              class="encabezado-piezas"
+            >
+              <div>
+                <h2>
+                  Piezas del pedido
+                </h2>
+                <p
+                  class="texto-secundario"
+                >
+                  Agrega todas las piezas que forman parte del pedido.
+                </p>
+              </div>
+              <button
+                class="boton-agregar"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-plus"
+                  fill="none"
+                  height="18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="18"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5 12h14"
+                  />
+                  <path
+                    d="M12 5v14"
+                  />
+                </svg>
+                 Agregar pieza
+              </button>
+            </div>
+            <div>
+              <div
+                class="ng-ui"
+              >
+                <div
+                  class="ng-empty-state"
+                  role="status"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-inbox ng-empty-state__icon"
+                    fill="none"
+                    height="32"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="32"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <polyline
+                      points="22 12 16 12 14 15 10 15 8 12 2 12"
+                    />
+                    <path
+                      d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+                    />
+                  </svg>
+                  <p
+                    class="ng-empty-state__title"
+                  >
+                    No hay piezas agregadas
+                  </p>
+                  <p
+                    class="ng-empty-state__description"
+                  >
+                    Haz clic en «Agregar pieza» para comenzar a armar el pedido.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+          <div
+            class="acciones"
+          >
+            <button
+              class="boton-cancelar"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-x"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18 6 6 18"
+                />
+                <path
+                  d="m6 6 12 12"
+                />
+              </svg>
+               Cancelar
+            </button>
+            <button
+              class="boton-guardar"
+              disabled=""
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-save"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+                />
+                <path
+                  d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"
+                />
+                <path
+                  d="M7 3v4a1 1 0 0 0 1 1h7"
+                />
+              </svg>
+              Guardar pedido
+            </button>
+          </div>
+        </div>
+        <div
+          class="ng-ui"
+        />
+      </main>
+    </div>
+  </div>
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ setup src/features/orders/__tests__/NuevoPedido.test.jsx:26:16
+     24|   const user = userEvent.setup()
+     25|   render(<NuevoPedido />)
+     26|   await screen.findByRole('option', { name: 'Material de prueba' })
+       |                ^
+     27|   return user
+     28| }
+ ❯ src/features/orders/__tests__/NuevoPedido.test.jsx:127:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/14]⎯
+
+ FAIL  src/features/orders/__tests__/NuevoPedido.test.jsx > HU-007 T04: pedido y piezas > múltiples piezas, un POST, bloqueo mientras guarda y éxito con id_pedido
+TestingLibraryElementError: Unable to find role="option" and name "Material de prueba"
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="app-layout"
+    >
+      <aside
+        class="sidebar"
+      >
+        <div
+          class="sidebar-logo"
+        >
+          <div
+            class="logo-icon"
+          >
+            N
+          </div>
+          <div>
+            <h2>
+              NewGlass
+            </h2>
+            <p>
+              Especialistas en vidrio
+            </p>
+          </div>
+        </div>
+        <nav
+          class="sidebar-nav"
+        >
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-house lucide-home"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
+              />
+              <path
+                d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+              />
+            </svg>
+             Inicio
+          </button>
+          <button
+            class="nav-item active"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-shopping-cart"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18"
+              />
+              <path
+                d="M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25"
+              />
+              <circle
+                cx="18"
+                cy="20"
+                r="2"
+              />
+              <circle
+                cx="8"
+                cy="20"
+                r="2"
+              />
+            </svg>
+             Registro de pedidos
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-archive"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="5"
+                rx="1"
+                width="20"
+                x="2"
+                y="3"
+              />
+              <path
+                d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"
+              />
+              <path
+                d="M10 12h4"
+              />
+            </svg>
+             Gestión de inventario
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chart-no-axes-column lucide-bar-chart-2"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 21v-6"
+              />
+              <path
+                d="M12 21V3"
+              />
+              <path
+                d="M19 21V9"
+              />
+            </svg>
+             Consulta de resultados
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-users"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+              />
+              <path
+                d="M16 3.128a4 4 0 0 1 0 7.744"
+              />
+              <path
+                d="M22 21v-2a4 4 0 0 0-3-3.87"
+              />
+              <circle
+                cx="9"
+                cy="7"
+                r="4"
+              />
+            </svg>
+             Panel de roles
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-settings"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 
+2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 
+3.319-1.915"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="3"
+              />
+            </svg>
+             Configuración
+          </button>
+        </nav>
+      </aside>
+      <main
+        class="pagina-pedido"
+        style="background-image: linear-gradient(rgba(245, 247, 250, 0.85), rgba(245, 247, 250, 0.85)), url(\"/src/assets/fondo-vidrio.png\"); 
+background-attachment: fixed;"
+      >
+        <div
+          class="contenedor-pedido"
+        >
+          <div
+            class="encabezado"
+          >
+            <span
+              class="etiqueta-pagina"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-package-plus"
+                fill="none"
+                height="16"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22V12"
+                />
+                <path
+                  d="M16 17h6"
+                />
+                <path
+                  d="M19 14v6"
+                />
+                <path
+                  d="M21 10.535V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.675-.955"
+                />
+                <path
+                  d="M3.29 7 12 12l8.71-5"
+                />
+                <path
+                  d="m7.5 4.27 8.997 5.148"
+                />
+              </svg>
+               Registro de pedido
+            </span>
+            <h1>
+              Nuevo pedido
+            </h1>
+            <p>
+              Configura el material, espesor y medidas de cada pieza requerida por el cliente.
+            </p>
+          </div>
+          <div
+            class="ng-ui"
+          />
+          <section
+            class="seccion"
+          >
+            <div
+              class="encabezado-piezas"
+            >
+              <div>
+                <h2>
+                  Piezas del pedido
+                </h2>
+                <p
+                  class="texto-secundario"
+                >
+                  Agrega todas las piezas que forman parte del pedido.
+                </p>
+              </div>
+              <button
+                class="boton-agregar"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-plus"
+                  fill="none"
+                  height="18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="18"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5 12h14"
+                  />
+                  <path
+                    d="M12 5v14"
+                  />
+                </svg>
+                 Agregar pieza
+              </button>
+            </div>
+            <div>
+              <div
+                class="ng-ui"
+              >
+                <div
+                  class="ng-empty-state"
+                  role="status"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-inbox ng-empty-state__icon"
+                    fill="none"
+                    height="32"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="32"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <polyline
+                      points="22 12 16 12 14 15 10 15 8 12 2 12"
+                    />
+                    <path
+                      d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+                    />
+                  </svg>
+                  <p
+                    class="ng-empty-state__title"
+                  >
+                    No hay piezas agregadas
+                  </p>
+                  <p
+                    class="ng-empty-state__description"
+                  >
+                    Haz clic en «Agregar pieza» para comenzar a armar el pedido.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+          <div
+            class="acciones"
+          >
+            <button
+              class="boton-cancelar"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-x"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18 6 6 18"
+                />
+                <path
+                  d="m6 6 12 12"
+                />
+              </svg>
+               Cancelar
+            </button>
+            <button
+              class="boton-guardar"
+              disabled=""
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-save"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+                />
+                <path
+                  d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"
+                />
+                <path
+                  d="M7 3v4a1 1 0 0 0 1 1h7"
+                />
+              </svg>
+              Guardar pedido
+            </button>
+          </div>
+        </div>
+        <div
+          class="ng-ui"
+        />
+      </main>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="app-layout"
+    >
+      <aside
+        class="sidebar"
+      >
+        <div
+          class="sidebar-logo"
+        >
+          <div
+            class="logo-icon"
+          >
+            N
+          </div>
+          <div>
+            <h2>
+              NewGlass
+            </h2>
+            <p>
+              Especialistas en vidrio
+            </p>
+          </div>
+        </div>
+        <nav
+          class="sidebar-nav"
+        >
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-house lucide-home"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
+              />
+              <path
+                d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+              />
+            </svg>
+             Inicio
+          </button>
+          <button
+            class="nav-item active"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-shopping-cart"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18"
+              />
+              <path
+                d="M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25"
+              />
+              <circle
+                cx="18"
+                cy="20"
+                r="2"
+              />
+              <circle
+                cx="8"
+                cy="20"
+                r="2"
+              />
+            </svg>
+             Registro de pedidos
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-archive"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="5"
+                rx="1"
+                width="20"
+                x="2"
+                y="3"
+              />
+              <path
+                d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"
+              />
+              <path
+                d="M10 12h4"
+              />
+            </svg>
+             Gestión de inventario
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chart-no-axes-column lucide-bar-chart-2"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 21v-6"
+              />
+              <path
+                d="M12 21V3"
+              />
+              <path
+                d="M19 21V9"
+              />
+            </svg>
+             Consulta de resultados
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-users"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+              />
+              <path
+                d="M16 3.128a4 4 0 0 1 0 7.744"
+              />
+              <path
+                d="M22 21v-2a4 4 0 0 0-3-3.87"
+              />
+              <circle
+                cx="9"
+                cy="7"
+                r="4"
+              />
+            </svg>
+             Panel de roles
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-settings"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 
+2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 
+3.319-1.915"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="3"
+              />
+            </svg>
+             Configuración
+          </button>
+        </nav>
+      </aside>
+      <main
+        class="pagina-pedido"
+        style="background-image: linear-gradient(rgba(245, 247, 250, 0.85), rgba(245, 247, 250, 0.85)), url(\"/src/assets/fondo-vidrio.png\"); 
+background-attachment: fixed;"
+      >
+        <div
+          class="contenedor-pedido"
+        >
+          <div
+            class="encabezado"
+          >
+            <span
+              class="etiqueta-pagina"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-package-plus"
+                fill="none"
+                height="16"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22V12"
+                />
+                <path
+                  d="M16 17h6"
+                />
+                <path
+                  d="M19 14v6"
+                />
+                <path
+                  d="M21 10.535V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.675-.955"
+                />
+                <path
+                  d="M3.29 7 12 12l8.71-5"
+                />
+                <path
+                  d="m7.5 4.27 8.997 5.148"
+                />
+              </svg>
+               Registro de pedido
+            </span>
+            <h1>
+              Nuevo pedido
+            </h1>
+            <p>
+              Configura el material, espesor y medidas de cada pieza requerida por el cliente.
+            </p>
+          </div>
+          <div
+            class="ng-ui"
+          />
+          <section
+            class="seccion"
+          >
+            <div
+              class="encabezado-piezas"
+            >
+              <div>
+                <h2>
+                  Piezas del pedido
+                </h2>
+                <p
+                  class="texto-secundario"
+                >
+                  Agrega todas las piezas que forman parte del pedido.
+                </p>
+              </div>
+              <button
+                class="boton-agregar"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-plus"
+                  fill="none"
+                  height="18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="18"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5 12h14"
+                  />
+                  <path
+                    d="M12 5v14"
+                  />
+                </svg>
+                 Agregar pieza
+              </button>
+            </div>
+            <div>
+              <div
+                class="ng-ui"
+              >
+                <div
+                  class="ng-empty-state"
+                  role="status"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-inbox ng-empty-state__icon"
+                    fill="none"
+                    height="32"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="32"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <polyline
+                      points="22 12 16 12 14 15 10 15 8 12 2 12"
+                    />
+                    <path
+                      d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+                    />
+                  </svg>
+                  <p
+                    class="ng-empty-state__title"
+                  >
+                    No hay piezas agregadas
+                  </p>
+                  <p
+                    class="ng-empty-state__description"
+                  >
+                    Haz clic en «Agregar pieza» para comenzar a armar el pedido.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+          <div
+            class="acciones"
+          >
+            <button
+              class="boton-cancelar"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-x"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18 6 6 18"
+                />
+                <path
+                  d="m6 6 12 12"
+                />
+              </svg>
+               Cancelar
+            </button>
+            <button
+              class="boton-guardar"
+              disabled=""
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-save"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+                />
+                <path
+                  d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"
+                />
+                <path
+                  d="M7 3v4a1 1 0 0 0 1 1h7"
+                />
+              </svg>
+              Guardar pedido
+            </button>
+          </div>
+        </div>
+        <div
+          class="ng-ui"
+        />
+      </main>
+    </div>
+  </div>
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ setup src/features/orders/__tests__/NuevoPedido.test.jsx:26:16
+     24|   const user = userEvent.setup()
+     25|   render(<NuevoPedido />)
+     26|   await screen.findByRole('option', { name: 'Material de prueba' })
+       |                ^
+     27|   return user
+     28| }
+ ❯ src/features/orders/__tests__/NuevoPedido.test.jsx:144:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/14]⎯
+
+ FAIL  src/features/orders/__tests__/NuevoPedido.test.jsx > HU-007 T04: pedido y piezas > fallo 401 conserva piezas y permite reintentar
+ FAIL  src/features/orders/__tests__/NuevoPedido.test.jsx > HU-007 T04: pedido y piezas > fallo 403 conserva piezas y permite reintentar
+ FAIL  src/features/orders/__tests__/NuevoPedido.test.jsx > HU-007 T04: pedido y piezas > fallo 422 conserva piezas y permite reintentar
+ FAIL  src/features/orders/__tests__/NuevoPedido.test.jsx > HU-007 T04: pedido y piezas > fallo 500 conserva piezas y permite reintentar
+ FAIL  src/features/orders/__tests__/NuevoPedido.test.jsx > HU-007 T04: pedido y piezas > fallo network conserva piezas y permite reintentar
+TestingLibraryElementError: Unable to find role="option" and name "Material de prueba"
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="app-layout"
+    >
+      <aside
+        class="sidebar"
+      >
+        <div
+          class="sidebar-logo"
+        >
+          <div
+            class="logo-icon"
+          >
+            N
+          </div>
+          <div>
+            <h2>
+              NewGlass
+            </h2>
+            <p>
+              Especialistas en vidrio
+            </p>
+          </div>
+        </div>
+        <nav
+          class="sidebar-nav"
+        >
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-house lucide-home"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
+              />
+              <path
+                d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+              />
+            </svg>
+             Inicio
+          </button>
+          <button
+            class="nav-item active"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-shopping-cart"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18"
+              />
+              <path
+                d="M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25"
+              />
+              <circle
+                cx="18"
+                cy="20"
+                r="2"
+              />
+              <circle
+                cx="8"
+                cy="20"
+                r="2"
+              />
+            </svg>
+             Registro de pedidos
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-archive"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="5"
+                rx="1"
+                width="20"
+                x="2"
+                y="3"
+              />
+              <path
+                d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"
+              />
+              <path
+                d="M10 12h4"
+              />
+            </svg>
+             Gestión de inventario
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chart-no-axes-column lucide-bar-chart-2"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 21v-6"
+              />
+              <path
+                d="M12 21V3"
+              />
+              <path
+                d="M19 21V9"
+              />
+            </svg>
+             Consulta de resultados
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-users"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+              />
+              <path
+                d="M16 3.128a4 4 0 0 1 0 7.744"
+              />
+              <path
+                d="M22 21v-2a4 4 0 0 0-3-3.87"
+              />
+              <circle
+                cx="9"
+                cy="7"
+                r="4"
+              />
+            </svg>
+             Panel de roles
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-settings"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 
+2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 
+3.319-1.915"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="3"
+              />
+            </svg>
+             Configuración
+          </button>
+        </nav>
+      </aside>
+      <main
+        class="pagina-pedido"
+        style="background-image: linear-gradient(rgba(245, 247, 250, 0.85), rgba(245, 247, 250, 0.85)), url(\"/src/assets/fondo-vidrio.png\"); 
+background-attachment: fixed;"
+      >
+        <div
+          class="contenedor-pedido"
+        >
+          <div
+            class="encabezado"
+          >
+            <span
+              class="etiqueta-pagina"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-package-plus"
+                fill="none"
+                height="16"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22V12"
+                />
+                <path
+                  d="M16 17h6"
+                />
+                <path
+                  d="M19 14v6"
+                />
+                <path
+                  d="M21 10.535V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.675-.955"
+                />
+                <path
+                  d="M3.29 7 12 12l8.71-5"
+                />
+                <path
+                  d="m7.5 4.27 8.997 5.148"
+                />
+              </svg>
+               Registro de pedido
+            </span>
+            <h1>
+              Nuevo pedido
+            </h1>
+            <p>
+              Configura el material, espesor y medidas de cada pieza requerida por el cliente.
+            </p>
+          </div>
+          <div
+            class="ng-ui"
+          />
+          <section
+            class="seccion"
+          >
+            <div
+              class="encabezado-piezas"
+            >
+              <div>
+                <h2>
+                  Piezas del pedido
+                </h2>
+                <p
+                  class="texto-secundario"
+                >
+                  Agrega todas las piezas que forman parte del pedido.
+                </p>
+              </div>
+              <button
+                class="boton-agregar"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-plus"
+                  fill="none"
+                  height="18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="18"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5 12h14"
+                  />
+                  <path
+                    d="M12 5v14"
+                  />
+                </svg>
+                 Agregar pieza
+              </button>
+            </div>
+            <div>
+              <div
+                class="ng-ui"
+              >
+                <div
+                  class="ng-empty-state"
+                  role="status"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-inbox ng-empty-state__icon"
+                    fill="none"
+                    height="32"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="32"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <polyline
+                      points="22 12 16 12 14 15 10 15 8 12 2 12"
+                    />
+                    <path
+                      d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+                    />
+                  </svg>
+                  <p
+                    class="ng-empty-state__title"
+                  >
+                    No hay piezas agregadas
+                  </p>
+                  <p
+                    class="ng-empty-state__description"
+                  >
+                    Haz clic en «Agregar pieza» para comenzar a armar el pedido.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+          <div
+            class="acciones"
+          >
+            <button
+              class="boton-cancelar"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-x"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18 6 6 18"
+                />
+                <path
+                  d="m6 6 12 12"
+                />
+              </svg>
+               Cancelar
+            </button>
+            <button
+              class="boton-guardar"
+              disabled=""
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-save"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+                />
+                <path
+                  d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"
+                />
+                <path
+                  d="M7 3v4a1 1 0 0 0 1 1h7"
+                />
+              </svg>
+              Guardar pedido
+            </button>
+          </div>
+        </div>
+        <div
+          class="ng-ui"
+        />
+      </main>
+    </div>
+  </div>
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="app-layout"
+    >
+      <aside
+        class="sidebar"
+      >
+        <div
+          class="sidebar-logo"
+        >
+          <div
+            class="logo-icon"
+          >
+            N
+          </div>
+          <div>
+            <h2>
+              NewGlass
+            </h2>
+            <p>
+              Especialistas en vidrio
+            </p>
+          </div>
+        </div>
+        <nav
+          class="sidebar-nav"
+        >
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-house lucide-home"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
+              />
+              <path
+                d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+              />
+            </svg>
+             Inicio
+          </button>
+          <button
+            class="nav-item active"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-shopping-cart"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18"
+              />
+              <path
+                d="M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25"
+              />
+              <circle
+                cx="18"
+                cy="20"
+                r="2"
+              />
+              <circle
+                cx="8"
+                cy="20"
+                r="2"
+              />
+            </svg>
+             Registro de pedidos
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-archive"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="5"
+                rx="1"
+                width="20"
+                x="2"
+                y="3"
+              />
+              <path
+                d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"
+              />
+              <path
+                d="M10 12h4"
+              />
+            </svg>
+             Gestión de inventario
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chart-no-axes-column lucide-bar-chart-2"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 21v-6"
+              />
+              <path
+                d="M12 21V3"
+              />
+              <path
+                d="M19 21V9"
+              />
+            </svg>
+             Consulta de resultados
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-users"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+              />
+              <path
+                d="M16 3.128a4 4 0 0 1 0 7.744"
+              />
+              <path
+                d="M22 21v-2a4 4 0 0 0-3-3.87"
+              />
+              <circle
+                cx="9"
+                cy="7"
+                r="4"
+              />
+            </svg>
+             Panel de roles
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-settings"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 
+2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 
+3.319-1.915"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="3"
+              />
+            </svg>
+             Configuración
+          </button>
+        </nav>
+      </aside>
+      <main
+        class="pagina-pedido"
+        style="background-image: linear-gradient(rgba(245, 247, 250, 0.85), rgba(245, 247, 250, 0.85)), url(\"/src/assets/fondo-vidrio.png\"); 
+background-attachment: fixed;"
+      >
+        <div
+          class="contenedor-pedido"
+        >
+          <div
+            class="encabezado"
+          >
+            <span
+              class="etiqueta-pagina"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-package-plus"
+                fill="none"
+                height="16"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22V12"
+                />
+                <path
+                  d="M16 17h6"
+                />
+                <path
+                  d="M19 14v6"
+                />
+                <path
+                  d="M21 10.535V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.675-.955"
+                />
+                <path
+                  d="M3.29 7 12 12l8.71-5"
+                />
+                <path
+                  d="m7.5 4.27 8.997 5.148"
+                />
+              </svg>
+               Registro de pedido
+            </span>
+            <h1>
+              Nuevo pedido
+            </h1>
+            <p>
+              Configura el material, espesor y medidas de cada pieza requerida por el cliente.
+            </p>
+          </div>
+          <div
+            class="ng-ui"
+          />
+          <section
+            class="seccion"
+          >
+            <div
+              class="encabezado-piezas"
+            >
+              <div>
+                <h2>
+                  Piezas del pedido
+                </h2>
+                <p
+                  class="texto-secundario"
+                >
+                  Agrega todas las piezas que forman parte del pedido.
+                </p>
+              </div>
+              <button
+                class="boton-agregar"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="lucide lucide-plus"
+                  fill="none"
+                  height="18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="18"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5 12h14"
+                  />
+                  <path
+                    d="M12 5v14"
+                  />
+                </svg>
+                 Agregar pieza
+              </button>
+            </div>
+            <div>
+              <div
+                class="ng-ui"
+              >
+                <div
+                  class="ng-empty-state"
+                  role="status"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-inbox ng-empty-state__icon"
+                    fill="none"
+                    height="32"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="32"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <polyline
+                      points="22 12 16 12 14 15 10 15 8 12 2 12"
+                    />
+                    <path
+                      d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+                    />
+                  </svg>
+                  <p
+                    class="ng-empty-state__title"
+                  >
+                    No hay piezas agregadas
+                  </p>
+                  <p
+                    class="ng-empty-state__description"
+                  >
+                    Haz clic en «Agregar pieza» para comenzar a armar el pedido.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+          <div
+            class="acciones"
+          >
+            <button
+              class="boton-cancelar"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-x"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18 6 6 18"
+                />
+                <path
+                  d="m6 6 12 12"
+                />
+              </svg>
+               Cancelar
+            </button>
+            <button
+              class="boton-guardar"
+              disabled=""
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-save"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+                />
+                <path
+                  d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"
+                />
+                <path
+                  d="M7 3v4a1 1 0 0 0 1 1h7"
+                />
+              </svg>
+              Guardar pedido
+            </button>
+          </div>
+        </div>
+        <div
+          class="ng-ui"
+        />
+      </main>
+    </div>
+  </div>
+</body>
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ setup src/features/orders/__tests__/NuevoPedido.test.jsx:26:16
+     24|   const user = userEvent.setup()
+     25|   render(<NuevoPedido />)
+     26|   await screen.findByRole('option', { name: 'Material de prueba' })
+       |                ^
+     27|   return user
+     28| }
+ ❯ src/features/orders/__tests__/NuevoPedido.test.jsx:172:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/14]⎯
+
+ FAIL  src/features/orders/__tests__/NuevoPedido.test.jsx > HU-007 T04: pedido y piezas > error de catálogo permite reintentar sin usar valores estáticos
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "Reintentar catálogo"
+
+Here are the accessible roles:
+
+  complementary:
+
+  Name "":
+  <aside
+    class="sidebar"
+  />
+
+  --------------------------------------------------
+  heading:
+
+  Name "NewGlass":
+  <h2 />
+
+  Name "Nuevo pedido":
+  <h1 />
+
+  Name "Piezas del pedido":
+  <h2 />
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  <p />
+
+  Name "":
+  <p />
+
+  Name "":
+  <p
+    class="ng-feedback__title"
+  />
+
+  Name "":
+  <p
+    class="texto-secundario"
+  />
+
+  Name "":
+  <p
+    class="ng-empty-state__title"
+  />
+
+  Name "":
+  <p
+    class="ng-empty-state__description"
+  />
+
+  --------------------------------------------------
+  navigation:
+
+  Name "":
+  <nav
+    class="sidebar-nav"
+  />
+
+  --------------------------------------------------
+  button:
+
+  Name "Inicio":
+  <button
+    class="nav-item"
+  />
+
+  Name "Registro de pedidos":
+  <button
+    class="nav-item active"
+  />
+
+  Name "Gestión de inventario":
+  <button
+    class="nav-item"
+  />
+
+  Name "Consulta de resultados":
+  <button
+    class="nav-item"
+  />
+
+  Name "Panel de roles":
+  <button
+    class="nav-item"
+  />
+
+  Name "Configuración":
+  <button
+    class="nav-item"
+  />
+
+  Name "Agregar pieza":
+  <button
+    class="boton-agregar"
+    type="button"
+  />
+
+  Name "Cancelar":
+  <button
+    class="boton-cancelar"
+    type="button"
+  />
+
+  Name "Guardar pedido":
+  <button
+    class="boton-guardar"
+    disabled=""
+    type="button"
+  />
+
+  --------------------------------------------------
+  main:
+
+  Name "":
+  <main
+    class="pagina-pedido"
+    style="background-image: linear-gradient(rgba(245, 247, 250, 0.85), rgba(245, 247, 250, 0.85)), url(\"/src/assets/fondo-vidrio.png\"); background-attachment: 
+fixed;"
+  />
+
+  --------------------------------------------------
+  alert:
+
+  Name "":
+  <div
+    class="ng-feedback ng-feedback--error"
+    role="alert"
+  />
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  <div
+    class="ng-empty-state"
+    role="status"
+  />
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="app-layout"
+    >
+      <aside
+        class="sidebar"
+      >
+        <div
+          class="sidebar-logo"
+        >
+          <div
+            class="logo-icon"
+          >
+            N
+          </div>
+          <div>
+            <h2>
+              NewGlass
+            </h2>
+            <p>
+              Especialistas en vidrio
+            </p>
+          </div>
+        </div>
+        <nav
+          class="sidebar-nav"
+        >
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-house lucide-home"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
+              />
+              <path
+                d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+              />
+            </svg>
+             Inicio
+          </button>
+          <button
+            class="nav-item active"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-shopping-cart"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18"
+              />
+              <path
+                d="M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25"
+              />
+              <circle
+                cx="18"
+                cy="20"
+                r="2"
+              />
+              <circle
+                cx="8"
+                cy="20"
+                r="2"
+              />
+            </svg>
+             Registro de pedidos
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-archive"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="5"
+                rx="1"
+                width="20"
+                x="2"
+                y="3"
+              />
+              <path
+                d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"
+              />
+              <path
+                d="M10 12h4"
+              />
+            </svg>
+             Gestión de inventario
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+
+ Test Files  2 failed | 8 passed (10)
+              class="lucide lucide-chart-no-axes-column lucide-bar-chart-2"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 21v-6"
+              />
+              <path
+                d="M12 21V3"
+              />
+              <path
+                d="M19 21V9"
+              />
+            </svg>
+             Consulta de resultados
+          </button>
+          <button
+            class="nav-item"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-users"
+              fill="none"
+      Tests  14 failed | 63 passed (77)
+   Start at  21:05:40
+   Duration  22.91s (tests 52%, environment 32%, setup 8%, transform 4%, import 4%)
+
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+  ...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/features/orders/__tests__/NuevoPedido.test.jsx:194:29
+    192|     await screen.findByRole('alert')
+    193|     expect(saveButton()).toBeDisabled()
+    194|     await user.click(screen.getByRole('button', { name: 'Reintentar ca…
+       |                             ^
+    195|     await screen.findByRole('option', { name: 'Material de prueba' })
+    196|     await waitFor(() => expect(screen.queryByRole('alert')).not.toBeIn…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/14]⎯
+
