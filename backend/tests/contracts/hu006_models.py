@@ -137,31 +137,6 @@ class Retazo(Base):
         nullable=False
     )
 
-class Cliente(Base):
-    __tablename__ = "clientes"
-    __table_args__ = (
-        UniqueConstraint(
-            "tipo_documento",
-            "numero_documento",
-            name="uq_clientes_tipo_numero_documento",
-        ),
-    )
-
-    id_cliente: Mapped[int] = mapped_column(Integer, primary_key=True)
-    tipo_documento: Mapped[str | None] = mapped_column(String, nullable=True)
-    numero_documento: Mapped[str | None] = mapped_column(String, nullable=True)
-    nombre_razon_social: Mapped[str] = mapped_column(String, nullable=False)
-    telefono: Mapped[str | None] = mapped_column(String, nullable=True)
-    estado: Mapped[bool] = mapped_column(
-        Boolean,
-        nullable=False,
-        default=True,
-        server_default=true(),
-    )
-    fecha_registro: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        nullable=False,
-    )
 
 class Pedido(Base):
     __tablename__ = "pedidos"
@@ -182,11 +157,6 @@ class Pedido(Base):
     id_usuario_registro: Mapped[int] = mapped_column(
         ForeignKey("usuarios.id_usuario"),
         nullable=False
-    )
-
-    id_cliente: Mapped[int | None] = mapped_column(
-        ForeignKey("clientes.id_cliente", name="fk_pedidos_cliente"),
-        nullable=True,
     )
 
 

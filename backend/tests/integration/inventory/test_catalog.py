@@ -22,7 +22,7 @@ from app.modules.inventory.domain.exceptions import InventoryValidationError
 from app.modules.inventory.presentation.dependencies import get_inventory_service
 from tests.auth_support import token_for, use_in_memory_accounts
 from tests.catalog_contract import EXPECTED_CATALOG
-from tests.integration.inventory.test_repository import SqlAlchemyInventoryRepository
+from tests.integration.inventory.test_repository import HEAD, SqlAlchemyInventoryRepository
 from tests.integration.postgres_support import BACKEND, _run, new_database, upgrade
 from tests.model_contracts import historical_metadata
 
@@ -293,8 +293,8 @@ def test_downgrade_aborts_without_losing_new_thickness_data(isolated_postgres, t
         assert result.returncode != 0 and "No se puede volver a v1.1" in result.stderr
         with engine.connect() as connection:
             # Alembic revierte toda la cadena en una sola transacción: TA-013
-            # falla por el dato histórico y también se revierte el downgrade HU-006.
-            assert connection.scalar(sa.text("SELECT version_num FROM alembic_version")) == "d6e7f8a9b0c1"
+            # falla por el dato histórico y se revierten los downgrades HU-006 y HU-012.
+            assert connection.scalar(sa.text("SELECT version_num FROM alembic_version")) == HEAD
             assert connection.execute(sa.text(f"SELECT * FROM {table}")).all() == before
             assert persisted_catalog(connection) == EXPECTED_CATALOG
 

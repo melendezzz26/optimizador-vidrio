@@ -121,7 +121,7 @@ function dimensionalError(result, total) {
   }
 }
 
-function PolygonCanvas({ onAddPiece, headerReady, disabled }) {
+function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState }) {
   const instructionsId = useId();
   const drawingHeadingId = useId();
   const dimensionsHeadingId = useId();
@@ -135,9 +135,11 @@ function PolygonCanvas({ onAddPiece, headerReady, disabled }) {
   const dimensionsRef = useRef(null);
   const closedWithKeyboard = useRef(false);
   const [canvasRef, canvasSize] = useCanvasSize();
-  const [drawing, setDrawing] = useState({ vertices: [], isClosed: false });
-  const [segments, setSegments] = useState([]);
-  const [activeSegmentIndex, setActiveSegmentIndex] = useState(null);
+
+  const [drawing, setDrawing] = useState(initialState?.drawing || { vertices: [], isClosed: false });
+  const [segments, setSegments] = useState(initialState?.segments || []);
+  const [activeSegmentIndex, setActiveSegmentIndex] = useState(initialState?.segments ? 0 : null);
+
   const { vertices, isClosed } = drawing;
   const result = useMemo(() => isClosed ? buildDimensionalGeometry(vertices, segments) : null, [vertices, isClosed, segments]);
   const validation = useMemo(() => validateConvexPolygon(result?.status === "complete" ? result.vertices_mm : null), [result]);
@@ -145,7 +147,7 @@ function PolygonCanvas({ onAddPiece, headerReady, disabled }) {
   const measuredCount = segments.filter((segment) => !segment.badInput && isPositiveLength(segment.lengthMm)).length;
   const dimensionsReady = result?.status === "complete";
   const canAdd = isClosed && dimensionsReady && validation.reason === "VALID" &&
-    Boolean(result?.vertices_mm) && headerReady && Boolean(onAddPiece) && !disabled;
+    Boolean(result?.vertices_mm) && headerReady && Boolean(onGuardarVertices) && !disabled;
   const hasMeasurements = segments.some(({ lengthMm, badInput }) => lengthMm !== "" || badInput);
   const activeSegment = segments[activeSegmentIndex];
   const activeLength = activeSegment && isPositiveLength(activeSegment.lengthMm) && !activeSegment.badInput
@@ -198,8 +200,18 @@ function PolygonCanvas({ onAddPiece, headerReady, disabled }) {
 
   function addPiece() {
     if (!canAdd) return;
-    onAddPiece({ tipo_forma: "POLIGONO_CONVEXO", cantidad: 1,
-      vertices_mm: result.vertices_mm.map((point) => [...point]) });
+
+    if (onGuardarVertices) {
+      onGuardarVertices({
+        // Vértices físicos para la base de datos
+        vertices: result.vertices_mm.map((point) => [...point]),
+        // Memoria gráfica para poder volver a editar
+        rawState: {
+          drawing: { vertices: drawing.vertices, isClosed: drawing.isClosed },
+          segments: segments
+        }
+      });
+    }
     resetDrawing();
   }
 
@@ -322,13 +334,13 @@ function PolygonCanvas({ onAddPiece, headerReady, disabled }) {
   );
 }
 
-export default function CustomPieceEditor({ onAddPiece, headerReady = false, disabled = false }) {
+export default function CustomPieceEditor({ onGuardarVertices, initialState, headerReady = true, disabled = false }) {
   const headingId = useId();
   return <section className="custom-piece-editor" aria-labelledby={headingId}>
     <header className="custom-piece-editor__header"><h2 id={headingId}>Pieza personalizada</h2>
       <p>Traza el contorno y define la longitud real de cada lado.</p></header>
     <fieldset className="custom-piece-editor__fieldset" disabled={disabled}>
-      <PolygonCanvas onAddPiece={onAddPiece} headerReady={headerReady} disabled={disabled} />
+      <PolygonCanvas onGuardarVertices={onGuardarVertices} initialState={initialState} headerReady={headerReady} disabled={disabled} />
     </fieldset>
     <p className="custom-piece-editor__notice">Las piezas agregadas se registran al guardar el pedido.</p>
   </section>;

@@ -1,337 +1,468 @@
-import { useEffect, useRef, useState } from "react";
+import { useState, useEffect, useCallback} from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import {
-  Trash2,
-  Save,
-  X,
-  Layers3,
-  Ruler,
-  PackagePlus,
+import { 
+  Plus, Trash2, Save, X, PackagePlus, Loader2,
+  Home, ShoppingCart, Archive, BarChart2, Users, Settings
 } from "lucide-react";
 import fondoVidrio from "../../assets/fondo-vidrio.png";
-import CustomPieceEditor from "./CustomPieceEditor";
-import { createOrder, listOrderMaterials } from "./ordersApi";
 import "./NuevoPedido.css";
+import CustomPieceEditor from './CustomPieceEditor';
 
-function NuevoPedido() {
-  const [tiposVidrio, setTiposVidrio] = useState([]);
-  const [catalogLoading, setCatalogLoading] = useState(true);
-  const [catalogError, setCatalogError] = useState("");
-  const [catalogAttempt, setCatalogAttempt] = useState(0);
+export default function NuevoPedido({ token }) {
+  const [tiposDisponibles, setTiposDisponibles] = useState([]);
+  const [isLoadingConfig, setIsLoadingConfig] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const submitting = useRef(false);
-  const nextPieceId = useRef(1);
-  const [error, setError] = useState("");
-  const [savedOrderId, setSavedOrderId] = useState(null);
-  const [editorKey, setEditorKey] = useState(0);
+  const [errorGlobal, setErrorGlobal] = useState("");
+
+  const [piezas, setPiezas] = useState([]);
+  const [listaAnimada] = useAutoAnimate();
+  const [piezaEnEdicion, setPiezaEnEdicion] = useState(null);
+
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
   useEffect(() => {
-    const controller = new AbortController();
-    listOrderMaterials(controller.signal).then((materials) => {
-      setTiposVidrio(materials.filter((material) => material.estado && material.espesores_mm.length));
-    }).catch((err) => {
-      if (!controller.signal.aborted) setCatalogError(err.message);
-    }).finally(() => {
-      if (!controller.signal.aborted) setCatalogLoading(false);
-    });
-    return () => controller.abort();
-  }, [catalogAttempt]);
-
-  const [tipoVidrio, setTipoVidrio] = useState("");
-  const [espesor, setEspesor] = useState("");
-  const [piezas, setPiezas] = useState([]);
-  const [forma, setForma] = useState("POLIGONO_CONVEXO");
-  const [cantidad, setCantidad] = useState("1");
-  const [medidas, setMedidas] = useState({ width_mm: "", height_mm: "", radius_mm: "" });
-  const cantidadValida = Number.isInteger(Number(cantidad)) && Number(cantidad) > 0 && Number(cantidad) <= 2147483647;
-  const material = tiposVidrio.find((tipo) => tipo.id_tipo_vidrio === Number(tipoVidrio));
-  const headerReady = Boolean(material && material.espesores_mm.some((value) => Number(value) === Number(espesor)));
-  // Puente temporal hacia la API monomaterial: comprobar TODAS las piezas.
-  // Eliminar este puente cuando se implemente el contrato por pieza y su migración.
-  const combinaciones = new Map(piezas.map(({ id_tipo_vidrio, espesor_mm }) =>
-    [`${id_tipo_vidrio}:${espesor_mm}`, { id_tipo_vidrio, espesor_mm }]));
-  const materialComun = combinaciones.size === 1 ? combinaciones.values().next().value : null;
-  const camposMedidas = forma === "RECTANGULO"
-    ? [["width_mm", "Ancho (mm)"], ["height_mm", "Alto (mm)"]]
-    : [["radius_mm", "Radio (mm)"]];
-  const medidasValidas = camposMedidas.every(([campo]) => Number.isFinite(Number(medidas[campo])) && Number(medidas[campo]) > 0);
-
-  const [listaAnimada] = useAutoAnimate();
-
-  const cambiarTipoVidrio = (e) => {
-    setTipoVidrio(e.target.value);
-    setEspesor("");
-  };
-
-  const agregarPieza = (piece) => {
-    if (submitting.current || !headerReady || !cantidadValida) return;
-    const nuevaPieza = {
-      ...piece,
-      id_tipo_vidrio: Number(tipoVidrio),
-      espesor_mm: Number(espesor),
-      cantidad: Number(cantidad),
-      id: nextPieceId.current++,
+    const fetchTiposVidrio = async () => {
+      try {
+        const response = await fetch(`${baseUrl}/api/inventory/tipos-vidrio`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });        
+        if (!response.ok) throw new Error("Error en la red");
+        
+        const data = await response.json();
+        setTiposDisponibles(data);
+      } catch (err) {
+        console.error(err);
+        setErrorGlobal("Error al conectar con la base de datos para cargar los vidrios.");
+      } finally {
+        setIsLoadingConfig(false);
+      }
     };
-    setPiezas((current) => [...current, nuevaPieza]);
-    setSavedOrderId(null);
-    setError("");
+    fetchTiposVidrio();
+  }, [baseUrl, token]);
+
+  // Función para obtener los espesores dinámicos según el vidrio seleccionado en cada pieza
+  const obtenerEspesores = (idVidrio) => {
+    const tipo = tiposDisponibles.find(t => t.id_tipo_vidrio.toString() === idVidrio?.toString());
+    return tipo ? tipo.espesores_mm : [];
   };
+
+  const agregarPieza = () => {
+      // Busca el número más alto extrayéndolo del texto "Pieza X"
+      const numeroMaximo = piezas.length > 0 
+        ? Math.max(...piezas.map(p => parseInt(p.nombre.split(' ')[1]) || 0)) 
+        : 0;
+
+      const nuevaPieza = {
+        id: Date.now(),
+        nombre: `Pieza ${numeroMaximo + 1}`,
+        espesor: "",        
+        cantidad: 1,
+        tipo_forma: "RECTANGULO",
+        dimensiones: { width_mm: '', height_mm: '' }
+      };
+      setPiezas([...piezas, nuevaPieza]);
+    };
 
   const eliminarPieza = (id) => {
-    if (submitting.current) return;
-    setPiezas((current) => current.filter((pieza) => pieza.id !== id));
+      // 1. Filtramos para quitar la pieza eliminada
+      // 2. Usamos map() para renumerar las que quedan (index + 1)
+      const piezasRenumeradas = piezas
+        .filter((pieza) => pieza.id !== id)
+        .map((pieza, index) => ({
+          ...pieza,
+          nombre: `Pieza ${index + 1}`
+        }));
+        
+      setPiezas(piezasRenumeradas);
+    };
+
+const actualizarPieza = useCallback((id, campo, valor) => {
+    // Usamos prevPiezas para evitar problemas de dependencias en React
+    setPiezas(prevPiezas => prevPiezas.map(pieza => {
+      if (pieza.id === id) {
+        if (campo === 'cantidad') {
+          return { ...pieza, cantidad: parseInt(valor) || '' };
+        }
+        if (campo === 'tipo_vidrio_id') {
+          return { ...pieza, tipo_vidrio_id: valor, espesor: "" };
+        }
+        if (campo === 'espesor') {
+          return { ...pieza, espesor: valor };
+        }
+        if (campo === 'tipo_forma') {
+          let nuevasDimensiones = {};
+          if (valor === 'RECTANGULO') nuevasDimensiones = { width_mm: '', height_mm: '' };
+          if (valor === 'CIRCUNFERENCIA') nuevasDimensiones = { radius_mm: '' };
+          if (valor === 'POLIGONO_CONVEXO') nuevasDimensiones = { vertices: [] };
+          return { ...pieza, tipo_forma: valor, dimensiones: nuevasDimensiones };
+        }
+        
+        if (campo === 'dimensiones') {
+          return { ...pieza, dimensiones: valor };
+        }
+
+        return { 
+          ...pieza, 
+          dimensiones: { ...pieza.dimensiones, [campo]: parseFloat(valor) || '' } 
+        };
+      }
+      return pieza;
+    }));
+  }, []);
+  
+  const esPedidoValido = () => {
+    if (piezas.length === 0) return false;
+    
+    return piezas.every(p => {
+      // 1. Validar que tenga material, espesor y cantidad
+      if (!p.tipo_vidrio_id || !p.espesor || !p.cantidad) return false;
+      
+      // 2. Validar las medidas según la forma que eligió el operario
+      if (p.tipo_forma === 'RECTANGULO' && (!p.dimensiones.width_mm || !p.dimensiones.height_mm)) return false;
+      if (p.tipo_forma === 'CIRCUNFERENCIA' && !p.dimensiones.radius_mm) return false;
+      
+      // 3. Validar que el polígono tenga al menos 3 vértices dibujados
+      if (p.tipo_forma === 'POLIGONO_CONVEXO' && (!p.dimensiones.vertices || p.dimensiones.vertices.length < 3)) return false;
+      
+      return true;
+    });
+  };
+
+  const cancelarPedido = () => {
+      if (window.confirm("¿Estás seguro de que deseas limpiar todas las piezas del pedido?")) {
+        setPiezas([]);
+        setErrorGlobal("");
+      }
+    };
+
+useEffect(() => {
+  const recibirDatosDelEditor = (evento) => {
+      if (evento.key === 'verticesPoligono_completados') {
+        const index = localStorage.getItem('piezaEnEdicion_index');
+        
+        if (index !== null) {
+          const vertices = JSON.parse(evento.newValue);
+          actualizarPieza(parseInt(index), 'dimensiones', { vertices });
+          
+          localStorage.removeItem('verticesPoligono_completados');
+          localStorage.removeItem('piezaEnEdicion_index');
+        }
+      }
+    };
+
+    window.addEventListener('storage', recibirDatosDelEditor);
+    return () => window.removeEventListener('storage', recibirDatosDelEditor);
+  }, [actualizarPieza]);
+
+  const abrirEditor = (id) => {
+    setPiezaEnEdicion(id);
   };
 
   const guardarPedido = async () => {
-    if (submitting.current || !materialComun || !piezas.length) return;
-    submitting.current = true;
     setIsSubmitting(true);
-    setError("");
+    setErrorGlobal("");
+    
+    const payload = {
+      // Ya no enviamos id_tipo_vidrio ni espesor_mm aquí afuera
+      piezas: piezas.map(p => {
+        // 1. Extraemos rawState y vertices originales para no enviarlos tal cual
+        // eslint-disable-next-line no-unused-vars
+        const { rawState, vertices, ...medidasLimpias } = p.dimensiones;
+
+        // 2. Armamos la pieza metiendo el material y espesor ADENTRO, como exige FastAPI
+        const piezaFormateada = {
+          tipo_forma: p.tipo_forma, 
+          id_tipo_vidrio: parseInt(p.tipo_vidrio_id), // Movido adentro de la pieza
+          espesor_mm: parseFloat(p.espesor),         // Movido adentro de la pieza
+          cantidad: parseInt(p.cantidad),
+          ...medidasLimpias // Inyecta width_mm, height_mm, o radius_mm
+        };
+
+        // 3. Si es polígono, le cambiamos el nombre de "vertices" a "vertices_mm"
+        if (p.tipo_forma === 'POLIGONO_CONVEXO') {
+          piezaFormateada.vertices_mm = vertices;
+        }
+
+        return piezaFormateada;
+      })
+    };
+
     try {
-      const response = await createOrder({
-        ...materialComun,
-        piezas: piezas.map((pieza) => {
-          const base = { tipo_forma: pieza.tipo_forma, cantidad: pieza.cantidad };
-          if (pieza.tipo_forma === "RECTANGULO") return { ...base, width_mm: pieza.width_mm, height_mm: pieza.height_mm };
-          if (pieza.tipo_forma === "CIRCUNFERENCIA") return { ...base, radius_mm: pieza.radius_mm };
-          return { ...base, vertices_mm: pieza.vertices_mm };
-        }),
+      const response = await fetch(`${baseUrl}/api/orders/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
       });
-      setSavedOrderId(response.id_pedido);
-      setPiezas([]);
-      setEditorKey((current) => current + 1);
-    } catch (err) {
-      setError(err.message);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        // 2. Extraemos el mensaje real de FastAPI para que no diga [object Object]
+        const mensajeReal = errorData.detail 
+            ? JSON.stringify(errorData.detail) 
+            : "Error del servidor al guardar.";
+        throw new Error(mensajeReal);
+      }
+
+      alert("¡Pedido registrado con éxito!"); 
+      setPiezas([]); 
+      
+    } catch (error) {
+      console.error(error);
+      // Ahora verás el reclamo exacto de FastAPI en la caja roja
+      setErrorGlobal(error.message); 
     } finally {
-      submitting.current = false;
       setIsSubmitting(false);
     }
   };
 
   return (
-        <div
-            className="pagina-pedido"
-                style={{ "--bg-image": `url(${fondoVidrio})` }}
-        >
-      <div className="contenedor-pedido">
-
-        <div className="encabezado">
-          <span className="etiqueta-pagina">
-            <PackagePlus size={16} />
-            Registro de pedido
-          </span>
-
-          <h1>Nuevo pedido</h1>
-
-          <p>
-            Selecciona el material, espesor y cantidad de cada pieza antes de agregarla.
-          </p>
+    <div className="app-layout">
+      {/* SIDEBAR LATERAL */}
+      <aside className="sidebar">
+        <div className="sidebar-logo">
+          <div className="logo-icon">N</div>
+          <div>
+            <h2>NewGlass</h2>
+            <p>Especialistas en vidrio</p>
+          </div>
         </div>
 
-        <section className="seccion">
-          <h2>Datos de la pieza a agregar</h2>
-          <p>Estos datos se asignan a la nueva pieza. Cambiarlos no modifica las piezas ya agregadas.</p>
-          {catalogLoading && <p role="status">Cargando materiales…</p>}
-          {catalogError && <div role="alert"><p>{catalogError}</p>
-            <button type="button" className="boton-cancelar" onClick={() => {
-              setCatalogError(""); setCatalogLoading(true); setCatalogAttempt((current) => current + 1);
-            }}>Reintentar catálogo</button></div>}
-          {!catalogLoading && !catalogError && !tiposVidrio.length && <p role="status">No hay materiales activos con espesores disponibles.</p>}
+        <nav className="sidebar-nav">
+          <button className="nav-item"><Home size={20} /> Inicio</button>
+          <button className="nav-item active"><ShoppingCart size={20} /> Registro de pedidos</button>
+          <button className="nav-item"><Archive size={20} /> Gestión de inventario</button>
+          <button className="nav-item"><BarChart2 size={20} /> Consulta de resultados</button>
+          <button className="nav-item"><Users size={20} /> Panel de roles</button>
+          <button className="nav-item"><Settings size={20} /> Configuración</button>
+        </nav>
+      </aside>
 
-          <div className="campos">
-
-            <div className="campo">
-              <label htmlFor="tipoVidrio">
-                <Layers3 size={17} />
-                Tipo de vidrio
-              </label>
-
-              <select
-                id="tipoVidrio"
-                value={tipoVidrio}
-                onChange={cambiarTipoVidrio}
-                disabled={isSubmitting || catalogLoading}
-              >
-                <option value="">Seleccionar tipo</option>
-
-                {tiposVidrio.map((tipo) => (
-                  <option key={tipo.id_tipo_vidrio} value={tipo.id_tipo_vidrio}>
-                    {tipo.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="campo">
-              <label htmlFor="espesor">
-                <Ruler size={17} />
-                Espesor
-              </label>
-
-              <select
-                id="espesor"
-                value={espesor}
-                onChange={(e) => setEspesor(e.target.value)}
-                disabled={!tipoVidrio || isSubmitting}
-              >
-                <option value="">Seleccionar espesor</option>
-
-                {material &&
-                  material.espesores_mm.map((valor) => (
-                    <option key={valor} value={valor}>
-                      {valor} mm
-                    </option>
-                  ))}
-              </select>
-            </div>
-
-          </div>
-          <div className="campos">
-            <div className="campo">
-              <label htmlFor="cantidadPieza">Cantidad</label>
-              <input id="cantidadPieza" type="number" min="1" max="2147483647" step="1"
-                value={cantidad} onChange={(event) => setCantidad(event.target.value)} disabled={isSubmitting}
-                aria-invalid={!cantidadValida} aria-describedby={!cantidadValida ? "cantidad-error" : undefined} />
-              {!cantidadValida && <p id="cantidad-error" className="pedido-mensaje--error">Ingresa una cantidad entera entre 1 y 2147483647.</p>}
-            </div>
-            <div className="campo">
-              <label htmlFor="formaPieza">Forma</label>
-              <select id="formaPieza" value={forma} disabled={isSubmitting} onChange={(event) => setForma(event.target.value)}>
-                <option value="RECTANGULO">Rectángulo / Cuadrado</option>
-                <option value="CIRCUNFERENCIA">Circunferencia</option>
-                <option value="POLIGONO_CONVEXO">Polígono convexo personalizado</option>
-              </select>
-            </div>
-          </div>
-          {forma !== "POLIGONO_CONVEXO" && <>
-            <div className="campos">
-              {camposMedidas.map(([campo, etiqueta]) => {
-                const invalida = medidas[campo] !== "" && !(Number.isFinite(Number(medidas[campo])) && Number(medidas[campo]) > 0);
-                return <div className="campo" key={campo}>
-                  <label htmlFor={campo}>{etiqueta}</label>
-                  <input id={campo} type="number" step="any" value={medidas[campo]} disabled={isSubmitting}
-                    onChange={(event) => setMedidas((current) => ({ ...current, [campo]: event.target.value }))}
-                    aria-invalid={invalida} aria-describedby={invalida ? `${campo}-error` : undefined} />
-                  {invalida && <p id={`${campo}-error`} className="pedido-mensaje--error">La medida debe ser un número finito mayor que cero.</p>}
-                </div>;
-              })}
-            </div>
-            {(!headerReady || !cantidadValida || !medidasValidas) && <p>Completa material, espesor, cantidad entera y medidas positivas para agregar la pieza estándar.</p>}
-            <button type="button" className="boton-agregar" disabled={isSubmitting || !headerReady || !cantidadValida || !medidasValidas}
-              onClick={() => {
-                if (!medidasValidas) return;
-                agregarPieza({ tipo_forma: forma, ...Object.fromEntries(camposMedidas.map(([campo]) => [campo, Number(medidas[campo])])) });
-                setMedidas({ width_mm: "", height_mm: "", radius_mm: "" });
-              }}>Agregar pieza estándar</button>
-          </>}
-        </section>
-
-        <section className="seccion">
-
-          <div className="encabezado-piezas">
-            <div>
-              <h2>Piezas del pedido</h2>
-
-              <p className="texto-secundario">
-                Agrega todas las piezas que forman parte del pedido.
-              </p>
-            </div>
-
+      {/* ÁREA DE CONTENIDO PRINCIPAL */}
+      <main className="pagina-pedido" style={{ backgroundImage: `linear-gradient(rgba(245, 247, 250, 0.85), rgba(245, 247, 250, 0.85)), url(${fondoVidrio})`, backgroundAttachment: 'fixed' }}>
+        
+        <div className="contenedor-pedido">
+          <div className="encabezado">
+            <span className="etiqueta-pagina">
+              <PackagePlus size={16} /> Registro de pedido
+            </span>
+            <h1>Nuevo pedido</h1>
+            <p>Configura el material, espesor y medidas de cada pieza requerida por el cliente.</p>
           </div>
 
-          <div ref={listaAnimada}>
+          {errorGlobal && (
+            <div className="alerta-error" role="alert">
+              {errorGlobal}
+            </div>
+          )}
 
-            {piezas.length === 0 ? (
-              <div className="sin-piezas">
-                <PackagePlus size={32} />
-
-                <strong>No hay piezas agregadas</strong>
-
-                <span>
-                  Selecciona el tipo y espesor del vidrio para comenzar.
-                </span>
+          <section className="seccion">
+            <div className="encabezado-piezas">
+              <div>
+                <h2>Piezas del pedido</h2>
+                <p className="texto-secundario">Agrega todas las piezas que forman parte del pedido.</p>
               </div>
-            ) : (
+              <button type="button" className="boton-agregar" onClick={agregarPieza} disabled={isLoadingConfig || isSubmitting}>
+                <Plus size={18} /> Agregar pieza
+              </button>
+            </div>
+
+            <div ref={listaAnimada}>
+              {piezas.length === 0 ? (
+                <div className="sin-piezas">
+                  <PackagePlus size={32} />
+                  <strong>No hay piezas agregadas</strong>
+                  <span>Haz clic en "Agregar pieza" para comenzar a armar el pedido.</span>
+                </div>
+              ) : (
+
               <div className="lista-piezas">
-
                 {piezas.map((pieza, index) => (
-                  <div className="pieza" key={pieza.id}>
-
-                    <div className="numero-pieza">
-                      {index + 1}
+                  <div className="pieza" key={pieza.id} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    
+                    {/* Fila 1: Título y Eliminar */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div className="pieza-info">
+                        <div className="numero-pieza">{index + 1}</div>
+                        <div className="datos-pieza">
+                          <strong>{pieza.nombre}</strong>
+                          <span>Configura material y medidas</span>
+                        </div>
+                      </div>
+                      <button type="button" className="boton-eliminar" onClick={() => eliminarPieza(pieza.id)} title="Eliminar pieza">
+                        <Trash2 size={18} />
+                      </button>
                     </div>
 
-                    <div className="datos-pieza">
-                      <strong>Pieza {index + 1}</strong>
-                      <span>{tiposVidrio.find((tipo) => tipo.id_tipo_vidrio === pieza.id_tipo_vidrio)?.nombre} · {pieza.espesor_mm} mm · Cantidad: {pieza.cantidad}</span>
-                      <span>{pieza.tipo_forma === "RECTANGULO" ? `Rectángulo · ${pieza.width_mm} × ${pieza.height_mm} mm`
-                        : pieza.tipo_forma === "CIRCUNFERENCIA" ? `Circunferencia · Radio: ${pieza.radius_mm} mm`
-                        : `Polígono convexo · ${pieza.vertices_mm.length} vértices`}</span>
+                    {/* Fila 2: Material, Espesor, Forma y Cantidad */}
+                    <div style={{ display: 'flex', gap: '24px', paddingLeft: '48px', flexWrap: 'wrap', alignItems: 'center' }}>
+                      <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Material</label>
+                        <select 
+                          value={pieza.tipo_vidrio_id} 
+                          onChange={(e) => actualizarPieza(pieza.id, 'tipo_vidrio_id', e.target.value)}
+                          style={{ padding: '6px', borderRadius: '6px', border: '1px solid var(--border-strong)', fontSize: '13px', width: '140px' }}
+                        >
+                          <option value="">Seleccionar...</option>
+                          {tiposDisponibles.map(t => <option key={t.id_tipo_vidrio} value={t.id_tipo_vidrio}>{t.nombre}</option>)}
+                        </select>
+                      </div>
+
+                      <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Espesor</label>
+                        <select 
+                          value={pieza.espesor} 
+                          onChange={(e) => actualizarPieza(pieza.id, 'espesor', e.target.value)}
+                          disabled={!pieza.tipo_vidrio_id}
+                          style={{ padding: '6px', borderRadius: '6px', border: '1px solid var(--border-strong)', fontSize: '13px', width: '100px' }}
+                        >
+                          <option value="">Espesor...</option>
+                          {obtenerEspesores(pieza.tipo_vidrio_id).map(e => <option key={e} value={e}>{e} mm</option>)}
+                        </select>
+                      </div>
+
+                      <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Forma</label>
+                        <select 
+                          value={pieza.tipo_forma} 
+                          onChange={(e) => {
+                            const nuevaForma = e.target.value;
+                            actualizarPieza(pieza.id, 'tipo_forma', nuevaForma);
+                            // Abre el editor de inmediato si es polígono convexo
+                            if (nuevaForma === 'POLIGONO_CONVEXO') {
+                              abrirEditor(pieza.id);
+                            }
+                          }}
+                          style={{ padding: '6px', borderRadius: '6px', border: '1px solid var(--border-strong)', fontSize: '13px', width: '190px' }} 
+                        >
+                          <option value="RECTANGULO">Rectángulo / Cuadrado</option>
+                          <option value="CIRCUNFERENCIA">Círculo</option>
+                          <option value="POLIGONO_CONVEXO">Polígono Convexo</option>
+                        </select>
+                      </div>
+
+                      <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Cant.</label>
+                        <input 
+                          type="number" min="1" 
+                          value={pieza.cantidad} 
+                          onChange={(e) => actualizarPieza(pieza.id, 'cantidad', e.target.value)}
+                          style={{ width: '60px', padding: '6px', borderRadius: '6px', border: '1px solid var(--border-strong)' }}
+                        />
+                      </div>
                     </div>
 
-                    <span className="estado-pieza">
-                      Sin guardar
-                    </span>
+                    {/* Fila 3: Medidas dinámicas según el tipo de forma */}
+                    <div style={{ display: 'flex', gap: '24px', paddingLeft: '48px', alignItems: 'center' }}>
+                      {pieza.tipo_forma === 'RECTANGULO' && (
+                        <>
+                          <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Ancho (mm)</label>
+                            <input 
+                              type="number" min="1" placeholder="Ej: 1000"
+                              value={pieza.dimensiones.width_mm} 
+                              onChange={(e) => actualizarPieza(pieza.id, 'width_mm', e.target.value)}
+                              style={{ width: '90px', padding: '6px', borderRadius: '6px', border: '1px solid var(--border-strong)' }}
+                            />
+                          </div>
+                          <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Alto (mm)</label>
+                            <input 
+                              type="number" min="1" placeholder="Ej: 500"
+                              value={pieza.dimensiones.height_mm} 
+                              onChange={(e) => actualizarPieza(pieza.id, 'height_mm', e.target.value)}
+                              style={{ width: '90px', padding: '6px', borderRadius: '6px', border: '1px solid var(--border-strong)' }}
+                            />
+                          </div>
+                        </>
+                      )}
 
-                    <button
-                      type="button"
-                      className="boton-eliminar"
-                      onClick={() => eliminarPieza(pieza.id)}
-                      title="Eliminar pieza"
-                      aria-label={`Eliminar pieza ${index + 1}`}
-                      disabled={isSubmitting}
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                      {pieza.tipo_forma === 'CIRCUNFERENCIA' && (
+                        <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Radio (mm)</label>
+                          <input 
+                            type="number" min="1" placeholder="Ej: 250"
+                            value={pieza.dimensiones.radius_mm} 
+                            onChange={(e) => actualizarPieza(pieza.id, 'radius_mm', e.target.value)}
+                            style={{ width: '90px', padding: '6px', borderRadius: '6px', border: '1px solid var(--border-strong)' }}
+                          />
+                        </div>
+                      )}
 
+                      {pieza.tipo_forma === 'POLIGONO_CONVEXO' && (
+                        <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          {pieza.dimensiones?.vertices?.length > 0 ? (
+                            <span style={{ color: 'green', fontSize: '13px', fontWeight: 'bold' }}>✓ Vértices cargados</span>
+                          ) : (
+                            <span style={{ color: '#d97706', fontSize: '13px', fontWeight: 'bold' }}>⚠️ Falta dibujar</span>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => abrirEditor(pieza.id)}
+                            style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--border-strong)', backgroundColor: 'white', cursor: 'pointer', fontSize: '13px' }}
+                          >
+                            Editar dibujo
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ))}
+              </div>  
+              )}
+            </div>
+          </section>
 
-              </div>
-            )}
+          <div className="acciones">
+            <button type="button" className="boton-cancelar" onClick={cancelarPedido} disabled={isSubmitting}>
+              <X size={18} /> Cancelar
+            </button>
 
+            <button 
+              type="button" 
+              className="boton-guardar" 
+              onClick={guardarPedido} 
+              disabled={!esPedidoValido() || isSubmitting}
+            >
+              {isSubmitting ? <Loader2 size={18} className="spin" /> : <Save size={18} />}
+              {isSubmitting ? "Guardando..." : "Guardar pedido"}
+            </button>
           </div>
-        </section>
-
-        <div hidden={forma !== "POLIGONO_CONVEXO"}>
-          <CustomPieceEditor key={editorKey} onAddPiece={agregarPieza} headerReady={headerReady && cantidadValida} disabled={isSubmitting} />
         </div>
+      </main>
 
-        {combinaciones.size > 1 && <p className="pedido-mensaje" role="status">
-          Por ahora solo se pueden guardar juntas piezas del mismo material y espesor. Las piezas con combinaciones distintas permanecen en este borrador; su guardado estará disponible en una próxima actualización.
-        </p>}
+      {piezaEnEdicion !== null && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0, 0, 0, 0.6)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <div style={{ backgroundColor: '#fff', borderRadius: '12px', width: '90%', maxWidth: '1000px', height: '85vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
+            
+            <div style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, color: 'var(--text-900)' }}>Dibujar Polígono Convexo</h3>
+              <button onClick={() => setPiezaEnEdicion(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
+                <X size={24} />
+              </button>
+            </div>
 
-        {error && <p className="pedido-mensaje pedido-mensaje--error" role="alert">{error} Las piezas se conservan; puedes corregir o reintentar.</p>}
-        {savedOrderId !== null && <p className="pedido-mensaje" role="status">Pedido guardado correctamente. ID del pedido: {savedOrderId}.</p>}
-
-        <div className="acciones">
-
-          <button
-            type="button"
-            className="boton-cancelar"
-            disabled={isSubmitting}
-            onClick={() => { setPiezas([]); setError(""); setSavedOrderId(null); setEditorKey((current) => current + 1); }}
-          >
-            <X size={18} />
-            Cancelar
-          </button>
-
-          <button
-            type="button"
-            className="boton-guardar"
-            disabled={!materialComun || piezas.length === 0 || isSubmitting}
-            onClick={guardarPedido}
-            aria-busy={isSubmitting}
-          >
-            <Save size={18} />
-            {isSubmitting ? "Guardando pedido…" : "Guardar pedido"}
-          </button>
-
+            <div style={{ flex: 1, overflowY: 'auto', padding: '24px', backgroundColor: '#f9fafb' }}>
+              <CustomPieceEditor 
+                // Buscamos la pieza que estamos editando y le pasamos su rawState
+                initialState={piezas.find(p => p.id === piezaEnEdicion)?.dimensiones?.rawState}
+                onGuardarVertices={(datos) => {
+                  // datos ahora trae { vertices, rawState }
+                  actualizarPieza(piezaEnEdicion, 'dimensiones', datos);
+                  setPiezaEnEdicion(null); 
+                }}
+              />
+            </div>
+            
+          </div>
         </div>
-
-      </div>
+      )}
     </div>
   );
 }
-
-export default NuevoPedido;
