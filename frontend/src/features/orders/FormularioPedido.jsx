@@ -125,6 +125,7 @@ export default function FormularioPedido({ token, idPedido = null, onCerrar = nu
     
     const payload = {
       piezas: piezas.map(p => {
+        // eslint-disable-next-line no-unused-vars
         const { rawState, vertices, ...medidasLimpias } = p.dimensiones;
         const piezaFormateada = {
           tipo_forma: p.tipo_forma, 
