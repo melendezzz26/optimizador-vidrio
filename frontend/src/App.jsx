@@ -9,7 +9,6 @@ import {
 } from './features/authentication';
 import { InventoryPage } from './features/inventory/InventoryPage';
 import { UsersPage } from './features/users';
-import NuevoPedido from './features/orders/NuevoPedido';
 import CustomPieceEditor from './features/orders/CustomPieceEditor';
 import GestionPedidos from './features/orders/GestionPedidos';
 
