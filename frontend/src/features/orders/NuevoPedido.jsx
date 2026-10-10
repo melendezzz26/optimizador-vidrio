@@ -7,12 +7,15 @@ import {
 import fondoVidrio from "../../assets/fondo-vidrio.png";
 import "./NuevoPedido.css";
 import CustomPieceEditor from './CustomPieceEditor';
+import { ConfirmDialog, EmptyState, FeedbackMessage, LoadingState } from "../../shared/components/feedback";
 
 export default function NuevoPedido({ token }) {
   const [tiposDisponibles, setTiposDisponibles] = useState([]);
   const [isLoadingConfig, setIsLoadingConfig] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorGlobal, setErrorGlobal] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
 
   const [piezas, setPiezas] = useState([]);
   const [listaAnimada] = useAutoAnimate();
@@ -132,12 +135,17 @@ const actualizarPieza = useCallback((id, campo, valor) => {
     });
   };
 
+  // Limpiar el pedido borra todas las piezas: se confirma con el diálogo compartido.
   const cancelarPedido = () => {
-      if (window.confirm("¿Estás seguro de que deseas limpiar todas las piezas del pedido?")) {
-        setPiezas([]);
-        setErrorGlobal("");
-      }
-    };
+    setIsCancelDialogOpen(true);
+  };
+
+  const confirmarCancelacion = () => {
+    setPiezas([]);
+    setErrorGlobal("");
+    setSuccessMessage("");
+    setIsCancelDialogOpen(false);
+  };
 
 useEffect(() => {
   const recibirDatosDelEditor = (evento) => {
@@ -165,6 +173,7 @@ useEffect(() => {
   const guardarPedido = async () => {
     setIsSubmitting(true);
     setErrorGlobal("");
+    setSuccessMessage("");
     
     const payload = {
       // Ya no enviamos id_tipo_vidrio ni espesor_mm aquí afuera
@@ -202,20 +211,21 @@ useEffect(() => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        // 2. Extraemos el mensaje real de FastAPI para que no diga [object Object]
-        const mensajeReal = errorData.detail 
-            ? JSON.stringify(errorData.detail) 
-            : "Error del servidor al guardar.";
+        const errorData = await response.json().catch(() => null);
+        // Solo se muestra el detalle cuando el backend ya lo redactó para el usuario;
+        // los errores de validación técnicos se reemplazan por un mensaje comprensible.
+        const mensajeReal = typeof errorData?.detail === "string"
+            ? errorData.detail
+            : "No se pudo registrar el pedido. Revisa las piezas e inténtalo de nuevo.";
         throw new Error(mensajeReal);
       }
 
-      alert("¡Pedido registrado con éxito!"); 
-      setPiezas([]); 
+      setSuccessMessage("Pedido registrado correctamente.");
+      setPiezas([]);
       
     } catch (error) {
       console.error(error);
-      // Ahora verás el reclamo exacto de FastAPI en la caja roja
+      // Muestra el mensaje de error preparado arriba (nunca el detalle técnico del servidor)
       setErrorGlobal(error.message); 
     } finally {
       setIsSubmitting(false);
@@ -256,11 +266,13 @@ useEffect(() => {
             <p>Configura el material, espesor y medidas de cada pieza requerida por el cliente.</p>
           </div>
 
-          {errorGlobal && (
-            <div className="alerta-error" role="alert">
-              {errorGlobal}
-            </div>
-          )}
+          <div className="ng-ui">
+            {isLoadingConfig && <LoadingState>Cargando materiales…</LoadingState>}
+            {errorGlobal && (
+              <FeedbackMessage variant="error" title="No se pudo completar la operación">{errorGlobal}</FeedbackMessage>
+            )}
+            {successMessage && <FeedbackMessage variant="success">{successMessage}</FeedbackMessage>}
+          </div>
 
           <section className="seccion">
             <div className="encabezado-piezas">
@@ -275,10 +287,11 @@ useEffect(() => {
 
             <div ref={listaAnimada}>
               {piezas.length === 0 ? (
-                <div className="sin-piezas">
-                  <PackagePlus size={32} />
-                  <strong>No hay piezas agregadas</strong>
-                  <span>Haz clic en "Agregar pieza" para comenzar a armar el pedido.</span>
+                <div className="ng-ui">
+                  <EmptyState
+                    title="No hay piezas agregadas"
+                    description="Haz clic en «Agregar pieza» para comenzar a armar el pedido."
+                  />
                 </div>
               ) : (
 
@@ -435,8 +448,20 @@ useEffect(() => {
             </button>
           </div>
         </div>
-      </main>
 
+        <div className="ng-ui">
+          <ConfirmDialog
+            open={isCancelDialogOpen}
+            title="¿Limpiar el pedido?"
+            confirmLabel="Limpiar piezas"
+            onConfirm={confirmarCancelacion}
+            onCancel={() => setIsCancelDialogOpen(false)}
+          >
+            <p>Se quitarán todas las piezas agregadas. Esta acción no se puede deshacer.</p>
+          </ConfirmDialog>
+        </div>
+      </main>
+      
       {piezaEnEdicion !== null && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0, 0, 0, 0.6)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <div style={{ backgroundColor: '#fff', borderRadius: '12px', width: '90%', maxWidth: '1000px', height: '85vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
