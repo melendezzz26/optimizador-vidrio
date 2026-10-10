@@ -69,9 +69,10 @@ export default function GestionPedidos({ token }) {
   }, [baseUrl, token, page, limit, filtroEstado, filtroCliente, filtroFecha]);
 
   // Se ejecuta al cargar el componente o cambiar la página
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     cargarPedidos();
-  }, [cargarPedidos, page]);
+  }, [page]);
 
   // Manejador del botón de búsqueda (para no buscar en cada tecla que presiona el usuario)
   const handleBuscar = (e) => {
