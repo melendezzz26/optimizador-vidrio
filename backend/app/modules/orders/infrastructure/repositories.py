@@ -1,7 +1,7 @@
 from typing import List, Dict, Any
 from decimal import Decimal
 from sqlalchemy.orm import Session
-from sqlalchemy import select, null, func, cast, Date
+from sqlalchemy import select, null, func, cast, Date, delete
 from datetime import datetime, timezone, date
 from app.models import Pedido, Pieza, TipoVidrio, TipoVidrioEspesor, Cliente
 from ..application.ports import OrderRepositoryPort
@@ -110,3 +110,28 @@ class SQLAlchemyOrderRepository(OrderRepositoryPort):
             })
 
         return {"total": total, "items": items}
+
+    def update_order(self, id_pedido: int, piezas: List[Dict[str, Any]]) -> None:
+        try:
+            # 1. Borramos las piezas actuales del pedido
+            self.session.execute(delete(Pieza).where(Pieza.id_pedido == id_pedido))
+            self.session.flush()
+
+            # 2. Insertamos las piezas nuevas/editadas
+            for p in piezas:
+                nueva_pieza = Pieza(
+                    id_tipo_vidrio=p['id_tipo_vidrio'],
+                    espesor_mm=p['espesor_mm'],
+                    tipo_forma=p['tipo_forma'],
+                    cantidad=p['cantidad'],
+                    dimensiones=p['dimensiones'] if p['dimensiones'] is not None else null(),
+                    geometria=p['geometria'],
+                    area_mm2=p['area_mm2'],
+                    id_pedido=id_pedido
+                )
+                self.session.add(nueva_pieza)
+
+            self.session.commit()
+        except Exception:
+            self.session.rollback()
+            raise
