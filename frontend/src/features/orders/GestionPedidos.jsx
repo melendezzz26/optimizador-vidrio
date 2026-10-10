@@ -77,7 +77,6 @@ export default function GestionPedidos({ token }) {
   const handleBuscar = (e) => {
     e.preventDefault();
     setPage(1); // Reiniciar a la página 1 al aplicar nuevos filtros
-    cargarPedidos();
   };
 
   const abrirModal = (id_pedido) => {
