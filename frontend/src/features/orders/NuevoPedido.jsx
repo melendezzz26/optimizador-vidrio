@@ -1,16 +1,16 @@
-import { useState, useEffect, useCallback} from "react";
+import { useState, useEffect, useCallback, useId, useRef } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { 
   Plus, Trash2, Save, X, PackagePlus, Loader2,
-  Home, ShoppingCart, Archive, BarChart2, Users, Settings
 } from "lucide-react";
-import fondoVidrio from "../../assets/fondo-vidrio.png";
 import "./NuevoPedido.css";
 import CustomPieceEditor from './CustomPieceEditor';
 import { ConfirmDialog, EmptyState, FeedbackMessage, LoadingState } from "../../shared/components/feedback";
 import { createOrder, listOrderMaterials } from './ordersApi';
+import { AppShell } from '../../shared/components/AppShell';
+import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
 
-export default function NuevoPedido({ token }) {
+export default function NuevoPedido({ token, user, toolbar }) {
   const [tiposDisponibles, setTiposDisponibles] = useState([]);
   const [isLoadingConfig, setIsLoadingConfig] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,6 +21,20 @@ export default function NuevoPedido({ token }) {
   const [piezas, setPiezas] = useState([]);
   const [listaAnimada] = useAutoAnimate();
   const [piezaEnEdicion, setPiezaEnEdicion] = useState(null);
+  const nextPieceIdRef = useRef(0);
+  const formId = useId();
+  const editorDialogRef = useRef(null);
+  const editorCloseRef = useRef(null);
+  const editorTriggerRef = useRef(null);
+  const titleId = useId();
+  const editorTitleId = useId();
+
+  useEffect(() => {
+    if (piezaEnEdicion === null) return undefined;
+    const trigger = editorTriggerRef.current;
+    editorCloseRef.current?.focus();
+    return () => trigger?.focus?.();
+  }, [piezaEnEdicion]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -47,22 +61,23 @@ export default function NuevoPedido({ token }) {
   };
 
   const agregarPieza = () => {
-      // Busca el número más alto extrayéndolo del texto "Pieza X"
-      const numeroMaximo = piezas.length > 0 
-        ? Math.max(...piezas.map(p => parseInt(p.nombre.split(' ')[1]) || 0)) 
+    const id = nextPieceIdRef.current;
+    nextPieceIdRef.current += 1;
+    setPiezas((current) => {
+      const numeroMaximo = current.length > 0
+        ? Math.max(...current.map((piece) => parseInt(piece.nombre.split(' ')[1], 10) || 0))
         : 0;
 
-      const nuevaPieza = {
-        id: Date.now(),
+      return [...current, {
+        id,
         nombre: `Pieza ${numeroMaximo + 1}`,
-        espesor: "",        
+        espesor: "",
         cantidad: 1,
         tipo_forma: "RECTANGULO",
-        dimensiones: { width_mm: '', height_mm: '' }
-      };
-      setPiezas([...piezas, nuevaPieza]);
-    };
-
+        dimensiones: { width_mm: '', height_mm: '' },
+      }];
+    });
+  };
   const eliminarPieza = (id) => {
       // 1. Filtramos para quitar la pieza eliminada
       // 2. Usamos map() para renumerar las que quedan (index + 1)
@@ -166,7 +181,36 @@ useEffect(() => {
   }, [actualizarPieza]);
 
   const abrirEditor = (id) => {
+    editorTriggerRef.current = document.activeElement;
     setPiezaEnEdicion(id);
+  };
+
+  const manejarTecladoEditor = (event) => {
+    if (event.key === 'Escape') {
+      event.stopPropagation();
+      setPiezaEnEdicion(null);
+      return;
+    }
+    if (event.key !== 'Tab') return;
+    const controls = [...editorDialogRef.current.querySelectorAll(
+      'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    )];
+    if (controls.length === 0) {
+      event.preventDefault();
+      return;
+    }
+    const first = controls[0];
+    const last = controls[controls.length - 1];
+    if (!editorDialogRef.current.contains(document.activeElement)) {
+      event.preventDefault();
+      first.focus();
+    } else if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   };
 
   const guardarPedido = async () => {
@@ -214,40 +258,17 @@ useEffect(() => {
   };
 
   return (
-    <div className="app-layout">
-      {/* SIDEBAR LATERAL */}
-      <aside className="sidebar">
-        <div className="sidebar-logo">
-          <div className="logo-icon">N</div>
-          <div>
-            <h2>NewGlass</h2>
-            <p>Especialistas en vidrio</p>
-          </div>
-        </div>
-
-        <nav className="sidebar-nav">
-          <button className="nav-item"><Home size={20} /> Inicio</button>
-          <button className="nav-item active"><ShoppingCart size={20} /> Registro de pedidos</button>
-          <button className="nav-item"><Archive size={20} /> Gestión de inventario</button>
-          <button className="nav-item"><BarChart2 size={20} /> Consulta de resultados</button>
-          <button className="nav-item"><Users size={20} /> Panel de roles</button>
-          <button className="nav-item"><Settings size={20} /> Configuración</button>
-        </nav>
-      </aside>
-
-      {/* ÁREA DE CONTENIDO PRINCIPAL */}
-      <main className="pagina-pedido" style={{ backgroundImage: `linear-gradient(rgba(245, 247, 250, 0.85), rgba(245, 247, 250, 0.85)), url(${fondoVidrio})`, backgroundAttachment: 'fixed' }}>
-        
-        <div className="contenedor-pedido">
-          <div className="encabezado">
-            <span className="etiqueta-pagina">
-              <PackagePlus size={16} /> Registro de pedido
-            </span>
-            <h1>Nuevo pedido</h1>
-            <p>Configura el material, espesor y medidas de cada pieza requerida por el cliente.</p>
-          </div>
-
-          <div className="ng-ui">
+    <AppShell activeItem="orders" user={user}>
+      {toolbar}
+      <PageHeader
+        context="Registro de pedido"
+        title="Nuevo pedido"
+        description="Configura el material, espesor y medidas de cada pieza requerida por el cliente."
+        titleId={titleId}
+        icon={PackagePlus}
+      />
+      <PageCard as="section" className="orders-page-card" aria-labelledby={titleId}>
+        <div className="ng-ui">
             {isLoadingConfig && <LoadingState>Cargando materiales…</LoadingState>}
             {errorGlobal && (
               <FeedbackMessage variant="error" title="No se pudo completar la operación">{errorGlobal}</FeedbackMessage>
@@ -277,7 +298,12 @@ useEffect(() => {
               ) : (
 
               <div className="lista-piezas">
-                {piezas.map((pieza, index) => (
+                {piezas.map((pieza, index) => {
+                  const fieldIds = Object.fromEntries(
+                    ['material', 'espesor', 'forma', 'cantidad', 'ancho', 'alto', 'radio']
+                      .map((field) => [field, `${formId}-pieza-${pieza.id}-${field}`]),
+                  );
+                  return (
                   <div className="pieza" key={pieza.id} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     
                     {/* Fila 1: Título y Eliminar */}
@@ -297,8 +323,9 @@ useEffect(() => {
                     {/* Fila 2: Material, Espesor, Forma y Cantidad */}
                     <div style={{ display: 'flex', gap: '24px', paddingLeft: '48px', flexWrap: 'wrap', alignItems: 'center' }}>
                       <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Material</label>
+                        <label htmlFor={fieldIds.material} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Material</label>
                         <select 
+                          id={fieldIds.material}
                           value={pieza.tipo_vidrio_id} 
                           onChange={(e) => actualizarPieza(pieza.id, 'tipo_vidrio_id', e.target.value)}
                           style={{ padding: '6px', borderRadius: '6px', border: '1px solid var(--border-strong)', fontSize: '13px', width: '140px' }}
@@ -309,8 +336,9 @@ useEffect(() => {
                       </div>
 
                       <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Espesor</label>
+                        <label htmlFor={fieldIds.espesor} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Espesor</label>
                         <select 
+                          id={fieldIds.espesor}
                           value={pieza.espesor} 
                           onChange={(e) => actualizarPieza(pieza.id, 'espesor', e.target.value)}
                           disabled={!pieza.tipo_vidrio_id}
@@ -322,8 +350,9 @@ useEffect(() => {
                       </div>
 
                       <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Forma</label>
+                        <label htmlFor={fieldIds.forma} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Forma</label>
                         <select 
+                          id={fieldIds.forma}
                           value={pieza.tipo_forma} 
                           onChange={(e) => {
                             const nuevaForma = e.target.value;
@@ -342,8 +371,9 @@ useEffect(() => {
                       </div>
 
                       <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Cant.</label>
+                        <label htmlFor={fieldIds.cantidad} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Cant.</label>
                         <input 
+                          id={fieldIds.cantidad}
                           type="number" min="1" 
                           value={pieza.cantidad} 
                           onChange={(e) => actualizarPieza(pieza.id, 'cantidad', e.target.value)}
@@ -357,8 +387,9 @@ useEffect(() => {
                       {pieza.tipo_forma === 'RECTANGULO' && (
                         <>
                           <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Ancho (mm)</label>
+                            <label htmlFor={fieldIds.ancho} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Ancho (mm)</label>
                             <input 
+                              id={fieldIds.ancho}
                               type="number" min="1" placeholder="Ej: 1000"
                               value={pieza.dimensiones.width_mm} 
                               onChange={(e) => actualizarPieza(pieza.id, 'width_mm', e.target.value)}
@@ -366,8 +397,9 @@ useEffect(() => {
                             />
                           </div>
                           <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Alto (mm)</label>
+                            <label htmlFor={fieldIds.alto} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Alto (mm)</label>
                             <input 
+                              id={fieldIds.alto}
                               type="number" min="1" placeholder="Ej: 500"
                               value={pieza.dimensiones.height_mm} 
                               onChange={(e) => actualizarPieza(pieza.id, 'height_mm', e.target.value)}
@@ -379,8 +411,9 @@ useEffect(() => {
 
                       {pieza.tipo_forma === 'CIRCUNFERENCIA' && (
                         <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <label style={{ fontSize: '13px', color: 'var(--text-600)' }}>Radio (mm)</label>
+                          <label htmlFor={fieldIds.radio} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Radio (mm)</label>
                           <input 
+                            id={fieldIds.radio}
                             type="number" min="1" placeholder="Ej: 250"
                             value={pieza.dimensiones.radius_mm} 
                             onChange={(e) => actualizarPieza(pieza.id, 'radius_mm', e.target.value)}
@@ -407,29 +440,28 @@ useEffect(() => {
                       )}
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>  
               )}
             </div>
           </section>
 
-          <div className="acciones">
-            <button type="button" className="boton-cancelar" onClick={cancelarPedido} disabled={isSubmitting}>
+          <ActionBar>
+            <button type="button" className="ng-button" onClick={cancelarPedido} disabled={isSubmitting}>
               <X size={18} /> Cancelar
             </button>
 
             <button 
               type="button" 
-              className="boton-guardar" 
+              className="ng-button ng-button--primary"
               onClick={guardarPedido} 
               disabled={!esPedidoValido() || isSubmitting}
             >
               {isSubmitting ? <Loader2 size={18} className="spin" /> : <Save size={18} />}
               {isSubmitting ? "Guardando..." : "Guardar pedido"}
             </button>
-          </div>
-        </div>
-
+          </ActionBar>
         <div className="ng-ui">
           <ConfirmDialog
             open={isCancelDialogOpen}
@@ -441,21 +473,27 @@ useEffect(() => {
             <p>Se quitarán todas las piezas agregadas. Esta acción no se puede deshacer.</p>
           </ConfirmDialog>
         </div>
-      </main>
+      </PageCard>
       
       {piezaEnEdicion !== null && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0, 0, 0, 0.6)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <div style={{ backgroundColor: '#fff', borderRadius: '12px', width: '90%', maxWidth: '1000px', height: '85vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
-            
-            <div style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ margin: 0, color: 'var(--text-900)' }}>Dibujar Polígono Convexo</h3>
-              <button onClick={() => setPiezaEnEdicion(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
-                <X size={24} />
+        <div className="orders-editor-backdrop">
+          <div
+            ref={editorDialogRef}
+            className="orders-editor-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={editorTitleId}
+            tabIndex={-1}
+            onKeyDown={manejarTecladoEditor}
+          >
+            <div className="orders-editor-dialog__header">
+              <h3 id={editorTitleId}>Dibujar Polígono Convexo</h3>
+              <button ref={editorCloseRef} type="button" aria-label="Cerrar editor de polígono" onClick={() => setPiezaEnEdicion(null)}>
+                <X size={24} aria-hidden="true" />
               </button>
             </div>
-
-            <div style={{ flex: 1, overflowY: 'auto', padding: '24px', backgroundColor: '#f9fafb' }}>
-              <CustomPieceEditor 
+            <div className="orders-editor-dialog__content">
+              <CustomPieceEditor
                 // Buscamos la pieza que estamos editando y le pasamos su rawState
                 initialState={piezas.find(p => p.id === piezaEnEdicion)?.dimensiones?.rawState}
                 onGuardarVertices={(datos) => {
@@ -469,6 +507,6 @@ useEffect(() => {
           </div>
         </div>
       )}
-    </div>
+    </AppShell>
   );
 }

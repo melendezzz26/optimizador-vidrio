@@ -68,6 +68,88 @@ async function addPolygon(user, row) {
   await user.click(screen.getByRole('button', { name: 'Agregar pieza al pedido' }))
 }
 
+describe('FIX-003/005: composición y accesibilidad de Orders', () => {
+  test('conserva el formulario actual y no muestra navegación lateral inerte ni lista de pedidos', async () => {
+    const user = await setup()
+
+    expect(screen.getByRole('heading', { name: 'Nuevo pedido' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Agregar pieza' })).toBeEnabled()
+    expect(screen.queryByRole('button', { name: 'Inicio' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Gestión de inventario' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: /pedidos registrados/i })).not.toBeInTheDocument()
+    expect(screen.getByText('No hay piezas agregadas')).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Agregar pieza' }))
+    expect(screen.getByText('Pieza 1')).toBeVisible()
+  })
+
+  test('asocia labels de material, espesor, forma, cantidad y medidas a sus controles', async () => {
+    const user = await setup()
+    const row = await addPiece(user)
+
+    expect(within(row).getByLabelText('Material')).toBeVisible()
+    expect(within(row).getByLabelText('Espesor')).toBeDisabled()
+    expect(within(row).getByLabelText('Forma')).toHaveValue('RECTANGULO')
+    expect(within(row).getByLabelText('Cant.')).toHaveValue(1)
+    expect(within(row).getByLabelText('Ancho (mm)')).toBeVisible()
+    expect(within(row).getByLabelText('Alto (mm)')).toBeVisible()
+  })
+
+  test('mantiene identidad, keys e IDs de controles únicos al agregar piezas en el mismo milisegundo', async () => {
+    const nowSpy = vi.spyOn(Date, 'now').mockReturnValue(123456789)
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    try {
+      const user = await setup()
+      const firstPiece = await addPiece(user)
+      const secondPiece = await addPiece(user)
+      await user.selectOptions(within(secondPiece).getByLabelText('Forma'), 'CIRCUNFERENCIA')
+
+      expect(orderPieces()).toHaveLength(2)
+      const firstQuantity = within(firstPiece).getByLabelText('Cant.')
+      const secondQuantity = within(secondPiece).getByLabelText('Cant.')
+      fireEvent.change(firstQuantity, { target: { value: '3' } })
+      expect(firstQuantity).toHaveValue(3)
+      expect(secondQuantity).toHaveValue(1)
+
+      const expectedLabels = [
+        [firstPiece, ['Material', 'Espesor', 'Forma', 'Cant.', 'Ancho (mm)', 'Alto (mm)']],
+        [secondPiece, ['Material', 'Espesor', 'Forma', 'Cant.', 'Radio (mm)']],
+      ]
+      for (const [row, labels] of expectedLabels) {
+        for (const labelText of labels) {
+          const control = within(row).getByLabelText(labelText)
+          const label = within(row).getByText(labelText, { selector: 'label' })
+          expect(label).toHaveAttribute('for', control.id)
+          expect(control.id).not.toBe('')
+        }
+      }
+
+      const ids = [...document.querySelectorAll('[id]')].map((element) => element.id)
+      expect(new Set(ids).size).toBe(ids.length)
+      expect(consoleErrorSpy.mock.calls.flat().join(' ')).not.toMatch(/same key/i)
+      expect(fetch).toHaveBeenCalledTimes(1)
+    } finally {
+      nowSpy.mockRestore()
+      consoleErrorSpy.mockRestore()
+    }
+  })
+
+  test('el editor poligonal se identifica como diálogo, soporta Escape y devuelve el foco', async () => {
+    const user = await setup()
+    const row = await addPiece(user)
+    const shapeSelect = within(row).getByLabelText('Forma')
+
+    await user.selectOptions(shapeSelect, 'POLIGONO_CONVEXO')
+    const dialog = screen.getByRole('dialog', { name: 'Dibujar Polígono Convexo' })
+    expect(dialog).toHaveAttribute('aria-modal', 'true')
+    expect(screen.getByRole('button', { name: 'Cerrar editor de polígono' })).toHaveFocus()
+
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog', { name: 'Dibujar Polígono Convexo' })).not.toBeInTheDocument()
+    expect(shapeSelect).toHaveFocus()
+  })
+})
+
 describe('HU-006: contrato multimaterial por pieza', () => {
   test('registra rectángulo, circunferencia y polígono con material, espesor y cantidad propios', async () => {
     const user = await setup()
