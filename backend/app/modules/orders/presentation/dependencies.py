@@ -1,6 +1,6 @@
 from fastapi import Depends
 from sqlalchemy.orm import Session
-from ..application.use_cases import CreateOrderUseCase, GetOrderUseCase, ListOrdersUseCase
+from ..application.use_cases import CreateOrderUseCase, GetOrderUseCase, ListOrdersUseCase, UpdateOrderUseCase
 from app.modules.authentication.presentation.dependencies import get_database_session, require_permission
 from ..application.ports import OrderRepositoryPort
 
@@ -18,3 +18,6 @@ def get_order_use_case(repo: OrderRepositoryPort = Depends(get_order_repository)
 
 def get_list_orders_use_case(repo: OrderRepositoryPort = Depends(get_order_repository)) -> ListOrdersUseCase:
     return ListOrdersUseCase(repo)
+
+def get_update_order_use_case(repo: OrderRepositoryPort = Depends(get_order_repository)) -> UpdateOrderUseCase:
+    return UpdateOrderUseCase(repo)
