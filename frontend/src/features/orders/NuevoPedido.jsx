@@ -267,90 +267,86 @@ useEffect(() => {
         titleId={titleId}
         icon={PackagePlus}
       />
-      <PageCard as="section" className="orders-page-card" aria-labelledby={titleId}>
-        <div className="ng-ui">
-            {isLoadingConfig && <LoadingState>Cargando materiales…</LoadingState>}
-            {errorGlobal && (
-              <FeedbackMessage variant="error" title="No se pudo completar la operación">{errorGlobal}</FeedbackMessage>
-            )}
-            {successMessage && <FeedbackMessage variant="success">{successMessage}</FeedbackMessage>}
-          </div>
+      <PageCard as="section" aria-labelledby={titleId}>
+        {isLoadingConfig && <LoadingState>Cargando materiales…</LoadingState>}
+        {errorGlobal && (
+          <FeedbackMessage variant="error" title="No se pudo completar la operación">{errorGlobal}</FeedbackMessage>
+        )}
+        {successMessage && <FeedbackMessage variant="success">{successMessage}</FeedbackMessage>}
 
-          <section className="seccion">
-            <div className="encabezado-piezas">
+          <section className="orders-section">
+            <div className="orders-section__header">
               <div>
                 <h2>Piezas del pedido</h2>
-                <p className="texto-secundario">Agrega todas las piezas que forman parte del pedido.</p>
+                <p className="orders-section__description">Agrega todas las piezas que forman parte del pedido.</p>
               </div>
-              <button type="button" className="boton-agregar" onClick={agregarPieza} disabled={isLoadingConfig || isSubmitting}>
+              <button type="button" className="ng-button ng-button--primary" onClick={agregarPieza} disabled={isLoadingConfig || isSubmitting}>
                 <Plus size={18} /> Agregar pieza
               </button>
             </div>
 
             <div ref={listaAnimada}>
               {piezas.length === 0 ? (
-                <div className="ng-ui">
-                  <EmptyState
-                    title="No hay piezas agregadas"
-                    description="Haz clic en «Agregar pieza» para comenzar a armar el pedido."
-                  />
-                </div>
+                <EmptyState
+                  title="No hay piezas agregadas"
+                  description="Haz clic en «Agregar pieza» para comenzar a armar el pedido."
+                />
               ) : (
 
-              <div className="lista-piezas">
+              <div className="orders-pieces">
                 {piezas.map((pieza, index) => {
                   const fieldIds = Object.fromEntries(
                     ['material', 'espesor', 'forma', 'cantidad', 'ancho', 'alto', 'radio']
                       .map((field) => [field, `${formId}-pieza-${pieza.id}-${field}`]),
                   );
                   return (
-                  <div className="pieza" key={pieza.id} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div className="orders-piece" key={pieza.id}>
                     
                     {/* Fila 1: Título y Eliminar */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div className="pieza-info">
-                        <div className="numero-pieza">{index + 1}</div>
-                        <div className="datos-pieza">
+                    <div className="orders-piece__header">
+                      <div className="orders-piece__identity">
+                        <div className="orders-piece__index">{index + 1}</div>
+                        <div className="orders-piece__details">
                           <strong>{pieza.nombre}</strong>
                           <span>Configura material y medidas</span>
                         </div>
                       </div>
-                      <button type="button" className="boton-eliminar" onClick={() => eliminarPieza(pieza.id)} title="Eliminar pieza">
+                      <button type="button" className="orders-remove-button" onClick={() => eliminarPieza(pieza.id)} aria-label={`Eliminar ${pieza.nombre}`}>
                         <Trash2 size={18} />
                       </button>
                     </div>
 
                     {/* Fila 2: Material, Espesor, Forma y Cantidad */}
-                    <div style={{ display: 'flex', gap: '24px', paddingLeft: '48px', flexWrap: 'wrap', alignItems: 'center' }}>
-                      <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <label htmlFor={fieldIds.material} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Material</label>
+                    <div className="orders-fields-row orders-fields-row--configuration">
+                      <div className="orders-field">
+                        <label htmlFor={fieldIds.material}>Material</label>
                         <select 
                           id={fieldIds.material}
                           value={pieza.tipo_vidrio_id} 
                           onChange={(e) => actualizarPieza(pieza.id, 'tipo_vidrio_id', e.target.value)}
-                          style={{ padding: '6px', borderRadius: '6px', border: '1px solid var(--border-strong)', fontSize: '13px', width: '140px' }}
+                          className="ng-control orders-control orders-control--material"
                         >
                           <option value="">Seleccionar...</option>
                           {tiposDisponibles.map(t => <option key={t.id_tipo_vidrio} value={t.id_tipo_vidrio}>{t.nombre}</option>)}
                         </select>
                       </div>
 
-                      <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <label htmlFor={fieldIds.espesor} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Espesor</label>
+                      <div className="orders-field">
+                        <label htmlFor={fieldIds.espesor}>Espesor</label>
                         <select 
                           id={fieldIds.espesor}
                           value={pieza.espesor} 
                           onChange={(e) => actualizarPieza(pieza.id, 'espesor', e.target.value)}
                           disabled={!pieza.tipo_vidrio_id}
-                          style={{ padding: '6px', borderRadius: '6px', border: '1px solid var(--border-strong)', fontSize: '13px', width: '100px' }}
+                          className="ng-control orders-control orders-control--thickness"
                         >
                           <option value="">Espesor...</option>
                           {obtenerEspesores(pieza.tipo_vidrio_id).map(e => <option key={e} value={e}>{e} mm</option>)}
                         </select>
                       </div>
 
-                      <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <label htmlFor={fieldIds.forma} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Forma</label>
+                      <div className="orders-field">
+                        <label htmlFor={fieldIds.forma}>Forma</label>
                         <select 
                           id={fieldIds.forma}
                           value={pieza.tipo_forma} 
@@ -362,7 +358,7 @@ useEffect(() => {
                               abrirEditor(pieza.id);
                             }
                           }}
-                          style={{ padding: '6px', borderRadius: '6px', border: '1px solid var(--border-strong)', fontSize: '13px', width: '190px' }} 
+                          className="ng-control orders-control orders-control--shape"
                         >
                           <option value="RECTANGULO">Rectángulo / Cuadrado</option>
                           <option value="CIRCUNFERENCIA">Círculo</option>
@@ -370,69 +366,69 @@ useEffect(() => {
                         </select>
                       </div>
 
-                      <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <label htmlFor={fieldIds.cantidad} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Cant.</label>
+                      <div className="orders-field">
+                        <label htmlFor={fieldIds.cantidad}>Cant.</label>
                         <input 
                           id={fieldIds.cantidad}
                           type="number" min="1" 
                           value={pieza.cantidad} 
                           onChange={(e) => actualizarPieza(pieza.id, 'cantidad', e.target.value)}
-                          style={{ width: '60px', padding: '6px', borderRadius: '6px', border: '1px solid var(--border-strong)' }}
+                          className="ng-control orders-control orders-control--quantity"
                         />
                       </div>
                     </div>
 
                     {/* Fila 3: Medidas dinámicas según el tipo de forma */}
-                    <div style={{ display: 'flex', gap: '24px', paddingLeft: '48px', alignItems: 'center' }}>
+                    <div className="orders-fields-row orders-fields-row--measurements">
                       {pieza.tipo_forma === 'RECTANGULO' && (
                         <>
-                          <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <label htmlFor={fieldIds.ancho} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Ancho (mm)</label>
+                          <div className="orders-field">
+                            <label htmlFor={fieldIds.ancho}>Ancho (mm)</label>
                             <input 
                               id={fieldIds.ancho}
                               type="number" min="1" placeholder="Ej: 1000"
                               value={pieza.dimensiones.width_mm} 
                               onChange={(e) => actualizarPieza(pieza.id, 'width_mm', e.target.value)}
-                              style={{ width: '90px', padding: '6px', borderRadius: '6px', border: '1px solid var(--border-strong)' }}
+                              className="ng-control orders-control orders-control--dimension"
                             />
                           </div>
-                          <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <label htmlFor={fieldIds.alto} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Alto (mm)</label>
+                          <div className="orders-field">
+                            <label htmlFor={fieldIds.alto}>Alto (mm)</label>
                             <input 
                               id={fieldIds.alto}
                               type="number" min="1" placeholder="Ej: 500"
                               value={pieza.dimensiones.height_mm} 
                               onChange={(e) => actualizarPieza(pieza.id, 'height_mm', e.target.value)}
-                              style={{ width: '90px', padding: '6px', borderRadius: '6px', border: '1px solid var(--border-strong)' }}
+                              className="ng-control orders-control orders-control--dimension"
                             />
                           </div>
                         </>
                       )}
 
                       {pieza.tipo_forma === 'CIRCUNFERENCIA' && (
-                        <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <label htmlFor={fieldIds.radio} style={{ fontSize: '13px', color: 'var(--text-600)' }}>Radio (mm)</label>
+                        <div className="orders-field">
+                          <label htmlFor={fieldIds.radio}>Radio (mm)</label>
                           <input 
                             id={fieldIds.radio}
                             type="number" min="1" placeholder="Ej: 250"
                             value={pieza.dimensiones.radius_mm} 
                             onChange={(e) => actualizarPieza(pieza.id, 'radius_mm', e.target.value)}
-                            style={{ width: '90px', padding: '6px', borderRadius: '6px', border: '1px solid var(--border-strong)' }}
+                            className="ng-control orders-control orders-control--dimension"
                           />
                         </div>
                       )}
 
                       {pieza.tipo_forma === 'POLIGONO_CONVEXO' && (
-                        <div className="campo-mini" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div className="orders-polygon-status">
                           {pieza.dimensiones?.vertices?.length > 0 ? (
-                            <span style={{ color: 'green', fontSize: '13px', fontWeight: 'bold' }}>✓ Vértices cargados</span>
+                            <span className="orders-polygon-status__complete">✓ Vértices cargados</span>
                           ) : (
-                            <span style={{ color: '#d97706', fontSize: '13px', fontWeight: 'bold' }}>⚠️ Falta dibujar</span>
+                            <span className="orders-polygon-status__pending">⚠️ Falta dibujar</span>
                           )}
                           <button
                             type="button"
+                            className="ng-button orders-editor-open"
                             onClick={() => abrirEditor(pieza.id)}
-                            style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--border-strong)', backgroundColor: 'white', cursor: 'pointer', fontSize: '13px' }}
                           >
                             Editar dibujo
                           </button>
@@ -458,11 +454,10 @@ useEffect(() => {
               onClick={guardarPedido} 
               disabled={!esPedidoValido() || isSubmitting}
             >
-              {isSubmitting ? <Loader2 size={18} className="spin" /> : <Save size={18} />}
+              {isSubmitting ? <Loader2 size={18} className="ng-loading-icon" /> : <Save size={18} />}
               {isSubmitting ? "Guardando..." : "Guardar pedido"}
             </button>
           </ActionBar>
-        <div className="ng-ui">
           <ConfirmDialog
             open={isCancelDialogOpen}
             title="¿Limpiar el pedido?"
@@ -472,7 +467,6 @@ useEffect(() => {
           >
             <p>Se quitarán todas las piezas agregadas. Esta acción no se puede deshacer.</p>
           </ConfirmDialog>
-        </div>
       </PageCard>
       
       {piezaEnEdicion !== null && (
@@ -488,7 +482,7 @@ useEffect(() => {
           >
             <div className="orders-editor-dialog__header">
               <h3 id={editorTitleId}>Dibujar Polígono Convexo</h3>
-              <button ref={editorCloseRef} type="button" aria-label="Cerrar editor de polígono" onClick={() => setPiezaEnEdicion(null)}>
+              <button ref={editorCloseRef} type="button" className="orders-editor-dialog__close" aria-label="Cerrar editor de polígono" onClick={() => setPiezaEnEdicion(null)}>
                 <X size={24} aria-hidden="true" />
               </button>
             </div>

@@ -11,10 +11,11 @@ const materials = [
 ]
 const response = (data, status = 200) => ({ ok: status < 400, status, json: async () => data })
 const saveButton = () => screen.getByRole('button', { name: 'Guardar pedido' })
-const orderPieces = () => [...document.querySelectorAll('.pieza')]
+const pieceHeadings = () => screen.queryAllByText(/^Pieza \d+$/, { selector: 'strong' })
+const orderPieces = () => pieceHeadings().map((heading) => heading.closest('.orders-piece'))
 const pieceRow = (number) => {
-  const heading = screen.getByText(`Pieza ${number}`)
-  return heading.closest('.pieza')
+  const heading = screen.getByText(`Pieza ${number}`, { selector: 'strong' })
+  return heading.closest('.orders-piece')
 }
 
 beforeEach(() => {

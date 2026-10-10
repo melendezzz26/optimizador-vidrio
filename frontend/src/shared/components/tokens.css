@@ -8,12 +8,14 @@
   --ng-border-strong: #64748b;
   --ng-surface: #ffffff;
   --ng-background: #f5f7fa;
+  --ng-success: #166534;
   --ng-error: #b91c1c;
   --ng-border-subtle: #e2e8f0;
   --ng-action-tint: #eff6ff;
   --ng-font-family: Inter, system-ui, Arial, sans-serif;
   --ng-radius-control: 8px;
   --ng-radius-card: 12px;
+  --ng-shadow-dialog: 0 8px 32px rgb(31 41 55 / 20%);
   --ng-control-height: 44px;
   --ng-space-1: 4px;
   --ng-space-2: 8px;
