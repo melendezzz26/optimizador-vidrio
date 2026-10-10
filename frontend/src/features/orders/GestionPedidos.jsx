@@ -90,6 +90,29 @@ export default function GestionPedidos({ token }) {
     cargarPedidos(); // Refrescar la tabla por si hubo cambios en la edición
   };
 
+  const handleEliminar = async (id_pedido) => {
+    if (!window.confirm(`¿Estás seguro de que deseas eliminar el pedido #${id_pedido}?`)) return;
+    
+    try {
+      const response = await fetch(`${baseUrl}/api/orders/${id_pedido}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Error al eliminar el pedido.");
+      }
+
+      alert("Pedido eliminado exitosamente.");
+      cargarPedidos(); // Refrescar la tabla para que se vea el nuevo estado "CANCELADO"
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
   // Helper para pintar el estado con colores
   const renderBadgeEstado = (estado) => {
     const colores = {
