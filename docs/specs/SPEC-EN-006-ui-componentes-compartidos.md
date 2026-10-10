@@ -3,7 +3,7 @@
 | Proyecto  | NewGlass — Optimizador de corte de vidrio   |
 | Documento | SPEC-EN-006                                 |
 | Versión   | 1.0                                         |
-| Estado    | Draft                                       |
+| Estado    | Reviewed                                      |
 | Fecha     | 08/10/2026                                  |
 | Alcance   | Sprint 1 — Base funcional pre-rasterización |
 
@@ -39,3 +39,17 @@ Establecer un patrón visual y de interacción común para los módulos de gesti
 | CA-02  | Los tres módulos principales comparten estados/mensajes visuales.                           |
 | CA-03  | No se muestran acciones ficticias sin flujo implementado.                                   |
 | CA-04  | La UI mantiene el estilo azul, superficies claras/desenfocadas y comportamiento responsive. |
+
+# 5. Estado de implementación
+
+| **Tarea** | **Alcance** | **Estado** | **Evidencia** |
+|-----------|-------------|------------|---------------|
+| TA-034 T01 | Feedback común (sección 2): éxito, error, advertencia, información, loading, vacío y confirmación en Users, Inventory y Orders | Implemented | docs/evidence/sprint-01/TA-034/ |
+| TA-034 T02 | Listado primero y formulario bajo acción (sección 2): hook `useManagementView` | Implemented | docs/evidence/sprint-01/TA-034/ |
+| Editor poligonal (sección 3) | Fuera del alcance de TA-034 | Pendiente | — |
+
+- **CA-02:** cubierto por TA-034 (Users, Inventory y Orders usan los mismos componentes de `frontend/src/shared/components/feedback/`).
+- **T02 (opción A):** la TA-034 entrega el patrón reutilizable; su aplicación completa en las pantallas corresponde a HU-003 T05 (Users) y HU-013 T01 (Orders).
+- **CA-03:** pendiente en Orders: `NuevoPedido` muestra una barra lateral con botones sin flujo implementado. Se informó al responsable de Orders.
+- Diseño de los mensajes: docs/ui-ux/feedback-compartido.md.
+- Las tareas pasan a **Verified** cuando un reviewer distinto del autor aprueba el PR.
