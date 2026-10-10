@@ -304,13 +304,18 @@ export default function FormularioPedido({ token, idPedido = null, onCerrar = nu
       </div>
 
       {piezaEnEdicion !== null && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 10000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <div style={{ background: 'white', width: '90%', height: '85vh', borderRadius: '12px', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ padding: '16px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between' }}>
-              <h3 style={{ margin: 0 }}>Editor de Polígono</h3>
-              <button onClick={() => setPiezaEnEdicion(null)}>Cerrar</button>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0, 0, 0, 0.7)', zIndex: 10000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <div style={{ backgroundColor: '#fff', borderRadius: '12px', width: '90%', maxWidth: '1000px', height: '85vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
+            
+            <div style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, color: 'var(--text-900)' }}>Dibujar Polígono Convexo</h3>
+              <button onClick={() => setPiezaEnEdicion(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: 'var(--text-500)' }}>
+                <X size={24} />
+              </button>
             </div>
-            <div style={{ flex: 1 }}>
+
+            {/* Aquí agregamos el overflowY: 'auto' y el padding de 24px para que no se corte */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '24px', backgroundColor: '#f9fafb' }}>
                <CustomPieceEditor 
                   initialState={piezas.find(p => p.id === piezaEnEdicion)?.dimensiones?.rawState}
                   readonly={esModoLectura}
@@ -320,6 +325,7 @@ export default function FormularioPedido({ token, idPedido = null, onCerrar = nu
                   }}
                 />
             </div>
+            
           </div>
         </div>
       )}
