@@ -264,17 +264,26 @@ export default function GestionPedidos({ token }) {
                         </td>
                         <td style={{ padding: '16px', color: 'var(--text-700)' }}>{pedido.cliente}</td>
                         <td style={{ padding: '16px' }}>{renderBadgeEstado(pedido.estado)}</td>
-                        <td style={{ padding: '16px', textAlign: 'right' }}>
-                          <button 
-                            onClick={() => abrirModal(pedido.id_pedido)}
-                            style={{ 
-                              padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--border-strong)', 
-                              backgroundColor: 'white', cursor: 'pointer', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '6px' 
-                            }}
-                          >
-                            {pedido.estado === 'PENDIENTE' ? <><FileEdit size={16} /> Editar</> : <><Eye size={16} /> Ver detalle</>}
-                          </button>
-                        </td>
+                        <td style={{ padding: '16px', textAlign: 'right', display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
+                            <button 
+                              onClick={() => abrirModal(pedido.id_pedido)}
+                              className="btn-accion editar"
+                            >
+                              {pedido.estado === 'PENDIENTE' ? <><FileEdit size={16} /> Editar</> : <><Eye size={16} /> Ver detalle</>}
+                            </button>
+                            
+                            {/* Botón de eliminar, SOLO visible si es PENDIENTE */}
+                            {pedido.estado === 'PENDIENTE' && (
+                              <button 
+                                onClick={() => handleEliminar(pedido.id_pedido)}
+                                className="btn-accion" 
+                                style={{ color: '#ef4444', borderColor: '#fca5a5', backgroundColor: '#fef2f2' }}
+                                title="Eliminar pedido"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            )}
+                          </td>
                       </tr>
                     ))
                   )}
