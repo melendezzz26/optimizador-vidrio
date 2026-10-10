@@ -69,11 +69,9 @@ export default function GestionPedidos({ token }) {
     }
   }, [baseUrl, token, page, limit, filtrosActivos]);
 
-  // Se ejecuta al cargar el componente o cambiar la página
-// eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     cargarPedidos();
-  }, [page, filtrosActivos, baseUrl, token, limit]);
+  }, [page, filtrosActivos, baseUrl, token, limit, cargarPedidos]);
 
 const handleBuscar = (e) => {
     e.preventDefault();
