@@ -27,7 +27,3 @@ class OrderRepositoryPort(ABC):
     @abstractmethod
     def cancel_order(self, id_pedido: int) -> None:
         pass
-
-    @abstractmethod
-    def delete_order(self, id_pedido: int) -> None:
-        pass
