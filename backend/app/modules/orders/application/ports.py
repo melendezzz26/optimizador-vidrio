@@ -19,3 +19,7 @@ class OrderRepositoryPort(ABC):
     @abstractmethod
     def list_orders(self, limit: int, offset: int, estado: str | None = None, cliente: str | None = None, fecha: date | None = None) -> dict:
         pass
+    
+    @abstractmethod
+    def update_order(self, id_pedido: int, piezas: List[Dict[str, Any]]) -> None:
+        pass
