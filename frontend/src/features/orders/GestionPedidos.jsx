@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import fondoVidrio from "../../assets/fondo-vidrio.png";
 import "./NuevoPedido.css"; // Reutilizamos estilos generales, luego puedes crear GestionPedidos.css
+import FormularioPedido from "./FormularioPedido";
 
 export default function GestionPedidos({ token }) {
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -299,10 +300,12 @@ export default function GestionPedidos({ token }) {
             </div>
 
             <div style={{ flex: 1, overflowY: 'auto', padding: '24px', backgroundColor: '#f9fafb' }}>
-              <p>Aquí inyectaremos el componente FormularioPedido (el que reemplazará a NuevoPedido) en el siguiente paso.</p>
-              <p>Ese componente hará un <code>GET /api/orders/{pedidoSeleccionado}</code> y dibujará las piezas.</p>
+              <FormularioPedido 
+                token={token} 
+                idPedido={pedidoSeleccionado} 
+                onCerrar={cerrarModal} 
+              />
             </div>
-            
           </div>
         </div>
       )}
