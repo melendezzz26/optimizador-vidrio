@@ -216,3 +216,17 @@ class UpdateOrderUseCase:
 
         # 3. ACTUALIZAR EN BASE DE DATOS
         self.repository.update_order(id_pedido, piezas_validadas)
+
+class CancelOrderUseCase:
+    def __init__(self, repository: OrderRepositoryPort):
+        self.repository = repository
+
+    def execute(self, id_pedido: int) -> None:
+        order = self.repository.get_order(id_pedido)
+        if order is None:
+            raise OrderNotFoundException("Pedido no encontrado.")
+        
+        if order["estado"] != "PENDIENTE":
+            raise InvalidOrderException(f"No se puede eliminar un pedido en estado {order['estado']}. Solo se permiten PENDIENTES.")
+
+        self.repository.cancel_order(id_pedido)
