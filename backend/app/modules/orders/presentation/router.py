@@ -6,9 +6,9 @@ from typing import Optional
 from fastapi.exceptions import RequestValidationError
 from fastapi.routing import APIRoute
 from .schemas import CreateOrderRequest, CreateOrderResponse, OrderResponse
-from ..application.use_cases import CreateOrderUseCase, GetOrderUseCase, ListOrdersUseCase, UpdateOrderUseCase
+from ..application.use_cases import CreateOrderUseCase, GetOrderUseCase, ListOrdersUseCase, UpdateOrderUseCase, CancelOrderUseCase
 from ..domain.exceptions import InvalidOrderException, InvalidGeometryException, OrderNotFoundException
-from .dependencies import get_create_order_use_case, get_order_use_case, get_list_orders_use_case, get_update_order_use_case
+from .dependencies import get_create_order_use_case, get_order_use_case, get_list_orders_use_case, get_update_order_use_case, get_cancel_order_use_case
 from app.modules.authentication.presentation.dependencies import require_permission
 from app.modules.authentication.domain.user import AuthenticatedUser
 
@@ -107,3 +107,20 @@ def update_order(
     except Exception as e:
         logger.exception("Order update failed")
         raise HTTPException(status_code=500, detail="No se pudo actualizar el pedido. Inténtalo otra vez.") from e
+
+@router.delete("/{id_pedido}", status_code=status.HTTP_200_OK)
+def delete_order(
+    id_pedido: int = Path(gt=0, le=2147483647),
+    user: AuthenticatedUser = Depends(permiso_gestionar_pedidos),
+    use_case: CancelOrderUseCase = Depends(get_cancel_order_use_case),
+):
+    try:
+        use_case.execute(id_pedido=id_pedido)
+        return {"message": "Pedido eliminado exitosamente", "id_pedido": id_pedido}
+    except OrderNotFoundException as e:
+        raise HTTPException(status_code=404, detail=str(e)) from e
+    except InvalidOrderException as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
+    except Exception as e:
+        logger.exception("Order cancellation failed")
+        raise HTTPException(status_code=500, detail="No se pudo eliminar el pedido.") from e    
