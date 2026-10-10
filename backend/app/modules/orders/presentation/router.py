@@ -1,12 +1,14 @@
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException, Path, status
+from fastapi import APIRouter, Depends, HTTPException, Path, status, Query
+from datetime import date
+from typing import Optional
 from fastapi.exceptions import RequestValidationError
 from fastapi.routing import APIRoute
 from .schemas import CreateOrderRequest, CreateOrderResponse, OrderResponse
-from ..application.use_cases import CreateOrderUseCase, GetOrderUseCase
+from ..application.use_cases import CreateOrderUseCase, GetOrderUseCase, ListOrdersUseCase
 from ..domain.exceptions import InvalidOrderException, InvalidGeometryException, OrderNotFoundException
-from .dependencies import get_create_order_use_case, get_order_use_case
+from .dependencies import get_create_order_use_case, get_order_use_case, get_list_orders_use_case
 from app.modules.authentication.presentation.dependencies import require_permission
 from app.modules.authentication.domain.user import AuthenticatedUser
 
@@ -55,6 +57,21 @@ def create_order(
         logger.exception("Order creation failed")
         raise HTTPException(status_code=500, detail="No se pudo guardar el pedido. Inténtalo otra vez.") from e
 
+@router.get("")
+def list_orders(
+    page: int = Query(1, ge=1, description="Número de página"),
+    limit: int = Query(10, ge=1, le=100, description="Registros por página"),
+    estado: Optional[str] = Query(None, description="Filtrar por estado del pedido"),
+    cliente: Optional[str] = Query(None, description="Filtrar por nombre de cliente"),
+    fecha: Optional[date] = Query(None, description="Filtrar por fecha exacta (YYYY-MM-DD)"),
+    user: AuthenticatedUser = Depends(permiso_gestionar_pedidos),
+    use_case: ListOrdersUseCase = Depends(get_list_orders_use_case)
+):
+    try:
+        return use_case.execute(page=page, limit=limit, estado=estado, cliente=cliente, fecha=fecha)
+    except Exception as e:
+        logger.exception("Order list retrieval failed")
+        raise HTTPException(status_code=500, detail="No se pudieron cargar los pedidos.") from e
 
 @router.get("/{id_pedido}", response_model=OrderResponse)
 def get_order(
