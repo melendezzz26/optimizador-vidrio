@@ -27,6 +27,7 @@ export default function GestionPedidos({ token }) {
   const [filtroEstado, setFiltroEstado] = useState("");
   const [filtroCliente, setFiltroCliente] = useState("");
   const [filtroFecha, setFiltroFecha] = useState("");
+  const [filtrosActivos, setFiltrosActivos] = useState({ estado: "", cliente: "", fecha: "" });
 
   const cargarPedidos = useCallback(async () => {
     setIsLoading(true);
@@ -39,9 +40,9 @@ export default function GestionPedidos({ token }) {
         limit: limit
       });
 
-      if (filtroEstado) params.append("estado", filtroEstado);
-      if (filtroCliente) params.append("cliente", filtroCliente);
-      if (filtroFecha) params.append("fecha", filtroFecha);
+      if (filtrosActivos.estado) params.append("estado", filtrosActivos.estado);
+      if (filtrosActivos.cliente) params.append("cliente", filtrosActivos.cliente);
+      if (filtrosActivos.fecha) params.append("fecha", filtrosActivos.fecha);
 
       const response = await fetch(`${baseUrl}/api/orders?${params.toString()}`, {
         method: 'GET',
@@ -66,24 +67,21 @@ export default function GestionPedidos({ token }) {
     } finally {
       setIsLoading(false);
     }
-  }, [baseUrl, token, page, limit, filtroEstado, filtroCliente, filtroFecha]);
+  }, [baseUrl, token, page, limit, filtrosActivos]);
 
   // Se ejecuta al cargar el componente o cambiar la página
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     cargarPedidos();
-  }, [page]);
+  }, [cargarPedidos]);
 
-  // Manejador del botón de búsqueda (para no buscar en cada tecla que presiona el usuario)
-  const handleBuscar = (e) => {
+const handleBuscar = (e) => {
     e.preventDefault();
-    if (page === 1) {
-      // Si ya estamos en la página 1, forzamos la recarga manualmente
-      cargarPedidos(); 
-    } else {
-      // Si estamos en otra página, al cambiar a 1 el useEffect se disparará solo
-      setPage(1); 
-    }
+    setFiltrosActivos({ 
+      estado: filtroEstado, 
+      cliente: filtroCliente, 
+      fecha: filtroFecha 
+    });
+    setPage(1);
   };
 
   const abrirModal = (id_pedido) => {
