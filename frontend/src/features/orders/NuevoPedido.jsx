@@ -8,6 +8,7 @@ import fondoVidrio from "../../assets/fondo-vidrio.png";
 import "./NuevoPedido.css";
 import CustomPieceEditor from './CustomPieceEditor';
 import { ConfirmDialog, EmptyState, FeedbackMessage, LoadingState } from "../../shared/components/feedback";
+import { createOrder, listOrderMaterials } from './ordersApi';
 
 export default function NuevoPedido({ token }) {
   const [tiposDisponibles, setTiposDisponibles] = useState([]);
@@ -21,31 +22,23 @@ export default function NuevoPedido({ token }) {
   const [listaAnimada] = useAutoAnimate();
   const [piezaEnEdicion, setPiezaEnEdicion] = useState(null);
 
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-
   useEffect(() => {
+    const controller = new AbortController();
     const fetchTiposVidrio = async () => {
       try {
-        const response = await fetch(`${baseUrl}/api/inventory/tipos-vidrio`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });        
-        if (!response.ok) throw new Error("Error en la red");
-        
-        const data = await response.json();
+        const data = await listOrderMaterials({ signal: controller.signal, token });
         setTiposDisponibles(data);
       } catch (err) {
+        if (err.name === 'AbortError') return;
         console.error(err);
         setErrorGlobal("Error al conectar con la base de datos para cargar los vidrios.");
       } finally {
-        setIsLoadingConfig(false);
+        if (!controller.signal.aborted) setIsLoadingConfig(false);
       }
     };
     fetchTiposVidrio();
-  }, [baseUrl, token]);
+    return () => controller.abort();
+  }, [token]);
 
   // Función para obtener los espesores dinámicos según el vidrio seleccionado en cada pieza
   const obtenerEspesores = (idVidrio) => {
@@ -88,7 +81,7 @@ const actualizarPieza = useCallback((id, campo, valor) => {
     setPiezas(prevPiezas => prevPiezas.map(pieza => {
       if (pieza.id === id) {
         if (campo === 'cantidad') {
-          return { ...pieza, cantidad: parseInt(valor) || '' };
+          return { ...pieza, cantidad: valor === '' ? '' : Number(valor) };
         }
         if (campo === 'tipo_vidrio_id') {
           return { ...pieza, tipo_vidrio_id: valor, espesor: "" };
@@ -121,12 +114,18 @@ const actualizarPieza = useCallback((id, campo, valor) => {
     if (piezas.length === 0) return false;
     
     return piezas.every(p => {
-      // 1. Validar que tenga material, espesor y cantidad
-      if (!p.tipo_vidrio_id || !p.espesor || !p.cantidad) return false;
+      const cantidad = Number(p.cantidad);
+      const espesor = Number(p.espesor);
+      const medidaPositiva = (valor) => Number.isFinite(Number(valor)) && Number(valor) > 0;
+
+      // Cada pieza requiere material, espesor y una cantidad entera positiva.
+      if (!p.tipo_vidrio_id || !medidaPositiva(espesor)
+        || !Number.isInteger(cantidad) || cantidad <= 0) return false;
       
-      // 2. Validar las medidas según la forma que eligió el operario
-      if (p.tipo_forma === 'RECTANGULO' && (!p.dimensiones.width_mm || !p.dimensiones.height_mm)) return false;
-      if (p.tipo_forma === 'CIRCUNFERENCIA' && !p.dimensiones.radius_mm) return false;
+      // Validar medidas finitas y positivas según la forma elegida.
+      if (p.tipo_forma === 'RECTANGULO'
+        && (!medidaPositiva(p.dimensiones.width_mm) || !medidaPositiva(p.dimensiones.height_mm))) return false;
+      if (p.tipo_forma === 'CIRCUNFERENCIA' && !medidaPositiva(p.dimensiones.radius_mm)) return false;
       
       // 3. Validar que el polígono tenga al menos 3 vértices dibujados
       if (p.tipo_forma === 'POLIGONO_CONVEXO' && (!p.dimensiones.vertices || p.dimensiones.vertices.length < 3)) return false;
@@ -201,25 +200,7 @@ useEffect(() => {
     };
 
     try {
-      const response = await fetch(`${baseUrl}/api/orders/`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        // Solo se muestra el detalle cuando el backend ya lo redactó para el usuario;
-        // los errores de validación técnicos se reemplazan por un mensaje comprensible.
-        const mensajeReal = typeof errorData?.detail === "string"
-            ? errorData.detail
-            : "No se pudo registrar el pedido. Revisa las piezas e inténtalo de nuevo.";
-        throw new Error(mensajeReal);
-      }
-
+      await createOrder(payload, { token });
       setSuccessMessage("Pedido registrado correctamente.");
       setPiezas([]);
       
