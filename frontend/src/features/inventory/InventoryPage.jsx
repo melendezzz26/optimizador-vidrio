@@ -2,7 +2,7 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { canManagePlanchas, canManageRetazos } from '../authentication';
 import { AppShell } from '../../shared/components/AppShell';
 import { PageCard, PageHeader } from '../../shared/components/PageLayout';
-import { EmptyState, FeedbackMessage, LoadingState } from '../../shared/components/feedback';
+import { ConfirmDialog, EmptyState, FeedbackMessage, LoadingState } from '../../shared/components/feedback';
 import RegistrarPlanchaForm from './RegistrarPlanchaForm';
 import RegistrarRetazoForm from './RegistrarRetazoForm';
 import {
@@ -245,6 +245,7 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
   const [operationWarning, setOperationWarning] = useState('');
   const [operationSuccess, setOperationSuccess] = useState('');
   const [pendingInventoryAction, setPendingInventoryAction] = useState(null);
+  const [statusChangeToConfirm, setStatusChangeToConfirm] = useState(null);
   const titleId = useId();
   const tabPanelId = useId();
   const tabRefs = useRef({});
@@ -568,6 +569,24 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
     }
   }
 
+  function requestStatusChange(resource, kind) {
+    if (isInventoryActionPending) return;
+    if (resource.estado) {
+      setStatusChangeToConfirm({ resource, kind });
+      return;
+    }
+    if (kind === 'plancha') handleTogglePlanchaEstado(resource);
+    else handleToggleRetazoEstado(resource);
+  }
+
+  async function confirmStatusChange() {
+    if (!statusChangeToConfirm || isInventoryActionPending) return;
+    const { resource, kind } = statusChangeToConfirm;
+    if (kind === 'plancha') await handleTogglePlanchaEstado(resource);
+    else await handleToggleRetazoEstado(resource);
+    setStatusChangeToConfirm(null);
+  }
+
   const typesById = new Map(catalogo.map((tipo) => [Number(tipo.id_tipo_vidrio), tipo.nombre]));
   const rows = activeTab === 'planchas' ? planchas : retazos;
   const filters = filtersByTab[activeTab];
@@ -799,8 +818,9 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
               rows={filteredRows}
               typesById={typesById}
               canManage={canManageCurrentTab}
-              onToggleStatus={activeTab === 'planchas'
-                ? handleTogglePlanchaEstado : handleToggleRetazoEstado}
+              onToggleStatus={(resource) => requestStatusChange(
+                resource, activeTab === 'planchas' ? 'plancha' : 'retazo',
+              )}
               onEditPlancha={handleEditPlancha}
               onEditRetazo={handleEditRetazo}
               pendingAction={pendingInventoryAction}
@@ -808,6 +828,16 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
           )}
         </PageCard>
       )}
+      <ConfirmDialog
+        open={statusChangeToConfirm !== null}
+        title="¿Desactivar material?"
+        confirmLabel="Desactivar"
+        onConfirm={confirmStatusChange}
+        onCancel={() => setStatusChangeToConfirm(null)}
+        isConfirming={isInventoryActionPending}
+      >
+        <p>El material dejará de aparecer como activo en el inventario.</p>
+      </ConfirmDialog>
     </AppShell>
   );
 }

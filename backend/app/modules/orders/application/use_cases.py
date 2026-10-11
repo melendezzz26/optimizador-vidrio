@@ -1,8 +1,13 @@
 from typing import List, Dict, Any
 from decimal import Decimal
-from .ports import OrderRepositoryPort
+from .ports import OrderMutationResult, OrderRepositoryPort
 from ..domain.geometry import GeometryValidator
-from ..domain.exceptions import InvalidGeometryException, InvalidOrderException, OrderNotFoundException
+from ..domain.exceptions import (
+    InvalidGeometryException,
+    InvalidOrderException,
+    OrderNotFoundException,
+    OrderStateConflictException,
+)
 from datetime import date
 
 class CreateOrderUseCase:
@@ -105,7 +110,7 @@ class GetOrderUseCase:
         if order is None:
             raise OrderNotFoundException("Pedido no encontrado.")
         return order
-    
+
 class ListOrdersUseCase:
     def __init__(self, repository: OrderRepositoryPort):
         self.repository = repository
@@ -114,7 +119,7 @@ class ListOrdersUseCase:
         # Validaciones de paginación
         if page < 1: page = 1
         if limit < 1: limit = 10
-        
+
         offset = (page - 1) * limit
 
         result = self.repository.list_orders(
@@ -142,15 +147,7 @@ class UpdateOrderUseCase:
         if type(id_pedido) is not int or not 0 < id_pedido <= 2147483647:
             raise InvalidOrderException("El identificador del pedido debe ser un entero positivo válido.")
 
-        # 1. VERIFICAR REGLA DE NEGOCIO: ESTADO DEL PEDIDO
-        order = self.repository.get_order(id_pedido)
-        if order is None:
-            raise OrderNotFoundException("Pedido no encontrado.")
-        
-        if order["estado"] != "PENDIENTE":
-            raise InvalidOrderException(f"No se puede editar un pedido en estado {order['estado']}. Solo se permiten PENDIENTES.")
-
-        # 2. VALIDAR PIEZAS (Reutilizando la lógica de creación)
+        # Validate the command before entering the repository transaction.
         if not piezas_raw:
             raise InvalidOrderException("El pedido debe contener al menos una pieza.")
         piezas_validadas = []
@@ -214,19 +211,24 @@ class UpdateOrderUseCase:
 
             piezas_validadas[-1].update(id_tipo_vidrio=id_tipo_vidrio, espesor_mm=espesor_mm)
 
-        # 3. ACTUALIZAR EN BASE DE DATOS
-        self.repository.update_order(id_pedido, piezas_validadas)
+        # The repository's locked result is authoritative for existence/state.
+        result = self.repository.update_order(id_pedido, piezas_validadas)
+        if result is OrderMutationResult.NOT_FOUND:
+            raise OrderNotFoundException("Pedido no encontrado.")
+        if result is OrderMutationResult.STATE_CONFLICT:
+            raise OrderStateConflictException(
+                "El pedido cambió de estado y ya no se puede editar."
+            )
 
 class CancelOrderUseCase:
     def __init__(self, repository: OrderRepositoryPort):
         self.repository = repository
 
     def execute(self, id_pedido: int) -> None:
-        order = self.repository.get_order(id_pedido)
-        if order is None:
+        result = self.repository.cancel_order(id_pedido)
+        if result is OrderMutationResult.NOT_FOUND:
             raise OrderNotFoundException("Pedido no encontrado.")
-        
-        if order["estado"] != "PENDIENTE":
-            raise InvalidOrderException(f"No se puede eliminar un pedido en estado {order['estado']}. Solo se permiten PENDIENTES.")
-
-        self.repository.cancel_order(id_pedido)
+        if result is OrderMutationResult.STATE_CONFLICT:
+            raise OrderStateConflictException(
+                "El pedido cambió de estado y ya no se puede cancelar."
+            )

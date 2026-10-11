@@ -27,7 +27,7 @@ Permitir a los operarios buscar, listar y filtrar los pedidos existentes en el s
 
 - Motor de cálculo algorítmico o visualización del plano de corte (corresponde a HU de Optimización).
 - Facturación, gestión de cobros o reportes financieros del pedido.
-- Creación de pedidos nuevos (ya abordado en HU-006).
+- Definición de nuevas reglas de negocio para crear pedidos: el formulario y sus validaciones corresponden a HU-006. HU-013 ofrece desde la pantalla de gestión el acceso "Nuevo pedido" a ese flujo existente, tal como establece CA-01.
 
 ## 3. Actor y precondiciones
 
@@ -50,7 +50,7 @@ Permitir a los operarios buscar, listar y filtrar los pedidos existentes en el s
 
 ## 5. Reglas de negocio
 
-- RN-01: **Máquina de estados estricta.** Un pedido solo puede ser modificado (PUT) si su estado actual en la base de datos es `PENDIENTE`. 
+- RN-01: **Máquina de estados estricta.** Un pedido solo puede ser modificado (PUT) si su estado actual en la base de datos es `PENDIENTE`.
 - RN-02: **Solo lectura.** Los estados `EN_OPTIMIZACION`, `OPTIMIZADO`, `CONFIRMADO` y `CANCELADO` hacen que el pedido sea inmutable. La interfaz debe deshabilitar los controles y el backend rechazar peticiones de cambio.
 - RN-03: **Validación integral.** Al editar o retirar piezas, se debe aplicar la misma validación geométrica de Pydantic utilizada en la creación. No se permiten actualizaciones parciales que dejen un pedido sin piezas o con datos inconsistentes.
 

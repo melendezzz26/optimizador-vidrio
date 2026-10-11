@@ -75,12 +75,12 @@ function App() {
     return <InventoryPage onSessionExpired={signOut} toolbar={toolbar} user={session.usuario} />;
   }
 
-  return (
-    <div className="app-container">
-      {toolbar}
-      <GestionPedidos token={session.token || session.access_token} />    
-    </div>
-  );
+  return <GestionPedidos
+    token={session.token || session.access_token}
+    user={session.usuario}
+    onSessionExpired={signOut}
+    toolbar={toolbar}
+  />;
 }
 
 export default App;

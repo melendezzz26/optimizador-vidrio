@@ -7,7 +7,12 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.routing import APIRoute
 from .schemas import CreateOrderRequest, CreateOrderResponse, OrderResponse
 from ..application.use_cases import CreateOrderUseCase, GetOrderUseCase, ListOrdersUseCase, UpdateOrderUseCase, CancelOrderUseCase
-from ..domain.exceptions import InvalidOrderException, InvalidGeometryException, OrderNotFoundException
+from ..domain.exceptions import (
+    InvalidOrderException,
+    InvalidGeometryException,
+    OrderNotFoundException,
+    OrderStateConflictException,
+)
 from .dependencies import get_create_order_use_case, get_order_use_case, get_list_orders_use_case, get_update_order_use_case, get_cancel_order_use_case
 from app.modules.authentication.presentation.dependencies import require_permission
 from app.modules.authentication.domain.user import AuthenticatedUser
@@ -100,6 +105,8 @@ def update_order(
         return {"message": "Pedido actualizado exitosamente", "id_pedido": id_pedido}
     except OrderNotFoundException as e:
         raise HTTPException(status_code=404, detail=str(e)) from e
+    except OrderStateConflictException as e:
+        raise HTTPException(status_code=409, detail=str(e)) from e
     except InvalidOrderException as e:
         raise HTTPException(status_code=422, detail=str(e)) from e
     except InvalidGeometryException as e:
@@ -116,11 +123,13 @@ def delete_order(
 ):
     try:
         use_case.execute(id_pedido=id_pedido)
-        return {"message": "Pedido eliminado exitosamente", "id_pedido": id_pedido}
+        return {"message": "Pedido cancelado exitosamente", "id_pedido": id_pedido}
     except OrderNotFoundException as e:
         raise HTTPException(status_code=404, detail=str(e)) from e
+    except OrderStateConflictException as e:
+        raise HTTPException(status_code=409, detail=str(e)) from e
     except InvalidOrderException as e:
         raise HTTPException(status_code=422, detail=str(e)) from e
     except Exception as e:
         logger.exception("Order cancellation failed")
-        raise HTTPException(status_code=500, detail="No se pudo eliminar el pedido.") from e    
+        raise HTTPException(status_code=500, detail="No se pudo cancelar el pedido.") from e

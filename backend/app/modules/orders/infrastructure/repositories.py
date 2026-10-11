@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select, null, func, cast, Date, delete, update
 from datetime import datetime, timezone, date
 from app.models import Pedido, Pieza, TipoVidrio, TipoVidrioEspesor, Cliente
-from ..application.ports import OrderRepositoryPort
+from ..application.ports import OrderMutationResult, OrderRepositoryPort
 
 class SQLAlchemyOrderRepository(OrderRepositoryPort):
     def __init__(self, session: Session):
@@ -76,7 +76,7 @@ class SQLAlchemyOrderRepository(OrderRepositoryPort):
         }
 
     def list_orders(self, limit: int, offset: int, estado: str | None = None, cliente: str | None = None, fecha: date | None = None) -> dict:
-        
+
         conditions = []
         if estado:
             conditions.append(Pedido.estado == estado)
@@ -111,13 +111,24 @@ class SQLAlchemyOrderRepository(OrderRepositoryPort):
 
         return {"total": total, "items": items}
 
-    def update_order(self, id_pedido: int, piezas: List[Dict[str, Any]]) -> None:
+    def update_order(self, id_pedido: int, piezas: List[Dict[str, Any]]) -> OrderMutationResult:
         try:
-            # 1. Borramos las piezas actuales del pedido
+            # Lock and recheck in the same transaction as replacing the pieces.
+            order_state = self.session.execute(
+                select(Pedido.estado).where(Pedido.id_pedido == id_pedido).with_for_update()
+            ).scalar_one_or_none()
+            if order_state is None:
+                self.session.rollback()
+                return OrderMutationResult.NOT_FOUND
+            if order_state != "PENDIENTE":
+                self.session.rollback()
+                return OrderMutationResult.STATE_CONFLICT
+
+            # The row lock prevents a concurrent state transition until commit.
             self.session.execute(delete(Pieza).where(Pieza.id_pedido == id_pedido))
             self.session.flush()
 
-            # 2. Insertamos las piezas nuevas/editadas
+            # Insert the full replacement in the same transaction.
             for p in piezas:
                 nueva_pieza = Pieza(
                     id_tipo_vidrio=p['id_tipo_vidrio'],
@@ -132,11 +143,30 @@ class SQLAlchemyOrderRepository(OrderRepositoryPort):
                 self.session.add(nueva_pieza)
 
             self.session.commit()
+            return OrderMutationResult.UPDATED
         except Exception:
             self.session.rollback()
             raise
 
-    def cancel_order(self, id_pedido: int) -> None:
-        stmt = update(Pedido).where(Pedido.id_pedido == id_pedido).values(estado="CANCELADO")
-        self.session.execute(stmt)
-        self.session.commit()
+    def cancel_order(self, id_pedido: int) -> OrderMutationResult:
+        try:
+            order_state = self.session.execute(
+                select(Pedido.estado).where(Pedido.id_pedido == id_pedido).with_for_update()
+            ).scalar_one_or_none()
+            if order_state is None:
+                self.session.rollback()
+                return OrderMutationResult.NOT_FOUND
+            if order_state != "PENDIENTE":
+                self.session.rollback()
+                return OrderMutationResult.STATE_CONFLICT
+
+            self.session.execute(
+                update(Pedido)
+                .where(Pedido.id_pedido == id_pedido)
+                .values(estado="CANCELADO")
+            )
+            self.session.commit()
+            return OrderMutationResult.UPDATED
+        except Exception:
+            self.session.rollback()
+            raise
