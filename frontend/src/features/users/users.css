@@ -7,16 +7,10 @@
   font-size: 14px;
 }
 
-.users-hint { color: var(--ng-text-600); }
-
-.users-error { color: var(--ng-error); font-weight: 600; }
-
-.users-notice {
-  margin: 0 0 var(--ng-space-4);
-  padding: var(--ng-space-3) var(--ng-space-4);
-  border-left: 4px solid var(--ng-brand-blue);
-  border-radius: var(--ng-radius-control);
-  background: var(--ng-background);
+.users-hint {
+  margin: var(--ng-space-2) 0 0;
+  color: var(--ng-text-600);
+  font-size: 14px;
 }
 
 .users-list { margin-top: var(--ng-space-6); }
@@ -26,8 +20,6 @@
   font-size: 20px;
   font-weight: 600;
 }
-
-.users-list > .users-error { margin: 0 0 var(--ng-space-4); }
 
 /* DNI y usuario de acceso en la edición: datos de solo lectura. */
 .users-readonly {

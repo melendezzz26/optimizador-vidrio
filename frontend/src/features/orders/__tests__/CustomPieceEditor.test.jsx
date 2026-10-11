@@ -205,7 +205,7 @@ describe('HU-007 T02 — dimensiones y selección (caja negra)', () => {
     expect(screen.getByText('Vista dimensional completa')).toBeVisible()
     expect(screen.getByRole('img', { name: /Vista dimensional completa/ })).toBeVisible()
     expect(button('Agregar pieza al pedido')).toBeDisabled()
-    expect(button('Agregar pieza al pedido')).toHaveAccessibleDescription('Geometría convexa validada. Selecciona el tipo de vidrio y el espesor en Nuevo pedido para agregar piezas.')
+    expect(button('Agregar pieza al pedido')).toHaveAccessibleDescription('Geometría convexa validada. Agrega la pieza y guarda el pedido para registrarla.')
   })
 
   test('T02-C06: longitudes 1000/100/100/100/100 informan imposibilidad sin convexidad', async () => {
@@ -334,7 +334,7 @@ describe('HU-007 T03 — validación geométrica derivada (caja negra)', () => {
     expect(validation()).toBeVisible()
     expect(screen.queryByRole('button', { name: /^Validar/ })).not.toBeInTheDocument()
     expect(button('Agregar pieza al pedido')).toBeDisabled()
-    expect(screen.getByText('Selecciona el tipo de vidrio y el espesor en Nuevo pedido para agregar piezas.')).toBeVisible()
+    expect(screen.getByText('Agrega la pieza y guarda el pedido para registrarla.')).toBeVisible()
   })
 
   test('T03-C03: geometría completa cóncava muestra rechazo y conserva medidas', async () => {

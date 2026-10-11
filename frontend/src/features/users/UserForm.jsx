@@ -1,6 +1,7 @@
 import { useId, useState } from 'react';
 import { LoaderCircle, Save, ShieldCheck } from 'lucide-react';
 import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
+import { FeedbackMessage, FieldError } from '../../shared/components/feedback';
 import { EMPTY_FORM, validateUserForm } from './userFormRules';
 
 function valuesFor(user) {
@@ -56,8 +57,7 @@ export function UserForm({ roles, editingUser, isOwnAccount, onSubmit, onCancel 
   }
 
   function errorMessage(name) {
-    if (!fieldErrors[name]) return null;
-    return <p className="users-error" id={`${id}-${name}-error`}>{fieldErrors[name]}</p>;
+    return <FieldError id={`${id}-${name}-error`}>{fieldErrors[name]}</FieldError>;
   }
 
   const dniHintId = `${id}-dni-hint`;
@@ -139,7 +139,9 @@ export function UserForm({ roles, editingUser, isOwnAccount, onSubmit, onCancel 
         </div>
       </fieldset>
 
-      {formError && <p className="users-error" role="alert">{formError}</p>}
+      {formError && (
+        <FeedbackMessage variant="error" title="No se pudo guardar el usuario">{formError}</FeedbackMessage>
+      )}
 
       <ActionBar>
         {isEditing && (

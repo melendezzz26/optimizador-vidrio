@@ -8,6 +8,7 @@ import pytest
 from sqlalchemy import func, select, update
 
 from app.models import Pedido, Pieza, TipoVidrio, Usuario
+from app.modules.orders.infrastructure.repositories import SQLAlchemyOrderRepository
 from app.shared.security.tokens import ALGORITHM, SECRET_KEY
 
 
@@ -197,3 +198,127 @@ def test_get_database_failure_is_safe(client, authenticated):
         result = client.get("/api/orders/1", headers=authenticated[1])
     assert result.status_code == 500
     assert "private" not in result.text
+
+
+def create_pending_order(client, headers):
+    response = client.post("/api/orders", json=PAYLOAD, headers=headers)
+    assert response.status_code == 201, response.text
+    return response.json()["id_pedido"]
+
+
+def test_update_pending_order_replaces_all_multimaterial_pieces(client, authenticated, session_factory):
+    _, headers = authenticated
+    identifier = create_pending_order(client, headers)
+    replacement = deepcopy(PAYLOAD)
+    replacement["piezas"][0]["cantidad"] = 5
+
+    response = client.put(f"/api/orders/{identifier}", json=replacement, headers=headers)
+
+    assert response.status_code == 200, response.text
+    with session_factory() as db:
+        pieces = db.scalars(select(Pieza).where(Pieza.id_pedido == identifier).order_by(Pieza.id_pieza)).all()
+        assert [(piece.id_tipo_vidrio, piece.espesor_mm, piece.cantidad) for piece in pieces] == [
+            (7, Decimal("5.5"), 5), (8, Decimal("4"), 2), (9, Decimal("6"), 1),
+        ]
+
+
+def test_update_missing_order_returns_404(client, authenticated):
+    response = client.put("/api/orders/999999", json=PAYLOAD, headers=authenticated[1])
+    assert response.status_code == 404
+
+
+def test_update_non_pending_order_returns_409(client, authenticated, session_factory):
+    identifier = create_pending_order(client, authenticated[1])
+    with session_factory() as db:
+        db.execute(update(Pedido).where(Pedido.id_pedido == identifier).values(estado="OPTIMIZADO"))
+        db.commit()
+
+    response = client.put(f"/api/orders/{identifier}", json=PAYLOAD, headers=authenticated[1])
+    assert response.status_code == 409
+
+
+def test_update_state_change_between_read_and_write_returns_409(client, authenticated, session_factory, monkeypatch):
+    identifier = create_pending_order(client, authenticated[1])
+    original_get_order = SQLAlchemyOrderRepository.get_order
+    original_update_order = SQLAlchemyOrderRepository.update_order
+
+    def read_then_advance(repository, order_id, pieces):
+        order = original_get_order(repository, order_id)
+        assert order["estado"] == "PENDIENTE"
+        with session_factory() as concurrent_db:
+            concurrent_db.execute(update(Pedido).where(Pedido.id_pedido == order_id).values(estado="OPTIMIZADO"))
+            concurrent_db.commit()
+        return original_update_order(repository, order_id, pieces)
+
+    monkeypatch.setattr(SQLAlchemyOrderRepository, "update_order", read_then_advance)
+    response = client.put(f"/api/orders/{identifier}", json=PAYLOAD, headers=authenticated[1])
+
+    assert response.status_code == 409
+    with session_factory() as db:
+        assert db.get(Pedido, identifier).estado == "OPTIMIZADO"
+        pieces = db.scalars(select(Pieza).where(Pieza.id_pedido == identifier)).all()
+        assert len(pieces) == 3 and [piece.cantidad for piece in pieces] == [3, 2, 1]
+
+
+def test_invalid_update_payload_returns_422_without_changing_pieces(client, authenticated, session_factory):
+    identifier = create_pending_order(client, authenticated[1])
+    invalid = deepcopy(PAYLOAD)
+    invalid["piezas"][1]["width_mm"] = -10
+
+    response = client.put(f"/api/orders/{identifier}", json=invalid, headers=authenticated[1])
+
+    assert response.status_code == 422
+    with session_factory() as db:
+        pieces = db.scalars(select(Pieza).where(Pieza.id_pedido == identifier).order_by(Pieza.id_pieza)).all()
+        assert [(piece.id_tipo_vidrio, piece.espesor_mm, piece.cantidad) for piece in pieces] == [
+            (7, Decimal("5.5"), 3), (8, Decimal("4"), 2), (9, Decimal("6"), 1),
+        ]
+
+
+def test_cancel_order_marks_cancelled_without_deleting(client, authenticated, session_factory):
+    identifier = create_pending_order(client, authenticated[1])
+
+    response = client.delete(f"/api/orders/{identifier}", headers=authenticated[1])
+
+    assert response.status_code == 200, response.text
+    with session_factory() as db:
+        assert db.get(Pedido, identifier).estado == "CANCELADO"
+        assert db.scalar(select(func.count()).select_from(Pedido).where(Pedido.id_pedido == identifier)) == 1
+        assert db.scalar(select(func.count()).select_from(Pieza).where(Pieza.id_pedido == identifier)) == 3
+
+
+def test_cancel_missing_order_returns_404(client, authenticated):
+    response = client.delete("/api/orders/999999", headers=authenticated[1])
+    assert response.status_code == 404
+
+
+def test_cancel_non_pending_order_returns_409(client, authenticated, session_factory):
+    identifier = create_pending_order(client, authenticated[1])
+    with session_factory() as db:
+        db.execute(update(Pedido).where(Pedido.id_pedido == identifier).values(estado="OPTIMIZADO"))
+        db.commit()
+
+    response = client.delete(f"/api/orders/{identifier}", headers=authenticated[1])
+    assert response.status_code == 409
+
+
+def test_cancel_state_change_between_read_and_write_returns_409(client, authenticated, session_factory, monkeypatch):
+    identifier = create_pending_order(client, authenticated[1])
+    original_get_order = SQLAlchemyOrderRepository.get_order
+    original_cancel_order = SQLAlchemyOrderRepository.cancel_order
+
+    def read_then_advance(repository, order_id):
+        order = original_get_order(repository, order_id)
+        assert order["estado"] == "PENDIENTE"
+        with session_factory() as concurrent_db:
+            concurrent_db.execute(update(Pedido).where(Pedido.id_pedido == order_id).values(estado="OPTIMIZADO"))
+            concurrent_db.commit()
+        return original_cancel_order(repository, order_id)
+
+    monkeypatch.setattr(SQLAlchemyOrderRepository, "cancel_order", read_then_advance)
+    response = client.delete(f"/api/orders/{identifier}", headers=authenticated[1])
+
+    assert response.status_code == 409
+    with session_factory() as db:
+        assert db.get(Pedido, identifier).estado == "OPTIMIZADO"
+        assert db.scalar(select(func.count()).select_from(Pieza).where(Pieza.id_pedido == identifier)) == 3

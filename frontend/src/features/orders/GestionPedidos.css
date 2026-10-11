@@ -1,0 +1,85 @@
+.orders-management-list { margin: 0 auto; }
+.orders-management-list__header,
+.orders-management-row-actions,
+.orders-management-pagination,
+.orders-management-pagination > div {
+  display: flex;
+  align-items: center;
+  gap: var(--ng-space-3);
+}
+.orders-management-list__header,
+.orders-management-pagination { justify-content: space-between; }
+.orders-management-list__header { margin-bottom: var(--ng-space-4); }
+.orders-management-list__header h2 { margin: 0; font-size: 20px; }
+.orders-management-list__count { margin: 0; color: var(--ng-text-600); font-size: 14px; }
+.orders-management-filters {
+  display: grid;
+  grid-template-columns: minmax(180px, 2fr) repeat(2, minmax(150px, 1fr)) auto;
+  align-items: end;
+  gap: var(--ng-space-4);
+  margin-bottom: var(--ng-space-6);
+  padding-bottom: var(--ng-space-6);
+  border-bottom: 1px solid var(--ng-border-subtle);
+}
+.orders-management-filters__actions { display: flex; }
+.orders-management-state { margin: var(--ng-space-6) 0; }
+.orders-management-table-wrap { overflow-x: auto; }
+.orders-management-table { width: 100%; border-collapse: collapse; text-align: left; }
+.orders-management-table th,
+.orders-management-table td { padding: var(--ng-space-4); border-bottom: 1px solid var(--ng-border-subtle); }
+.orders-management-table thead th { color: var(--ng-text-600); font-size: 14px; font-weight: 600; }
+.orders-management-table tbody th { font-weight: 600; white-space: nowrap; }
+.orders-management-row-actions { justify-content: flex-end; }
+.orders-management-row-actions .ng-button { min-height: 38px; padding: var(--ng-space-2) var(--ng-space-3); font-size: 14px; white-space: nowrap; }
+.orders-status { display: inline-block; padding: 3px var(--ng-space-3); border-radius: 999px; background: var(--ng-background); color: var(--ng-text-600); font-size: 12px; font-weight: 700; white-space: nowrap; }
+.orders-status--pendiente { background: #fef3c7; color: #92400e; }
+.orders-status--en_optimizacion { background: #e0e7ff; color: #3730a3; }
+.orders-status--optimizado { background: #dcfce7; color: #166534; }
+.orders-status--confirmado { background: #dbeafe; color: #1e40af; }
+.orders-status--cancelado { background: #fee2e2; color: #991b1b; }
+.orders-management-pagination { margin-top: var(--ng-space-4); padding-top: var(--ng-space-4); border-top: 1px solid var(--ng-border-subtle); color: var(--ng-text-600); font-size: 14px; }
+.orders-management-pagination > div { justify-content: flex-end; }
+.orders-management-pagination .ng-button { min-height: 38px; padding: var(--ng-space-2) var(--ng-space-3); }
+.orders-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: var(--ng-space-4);
+  background: rgb(31 41 55 / 45%);
+}
+.orders-modal {
+  display: flex;
+  width: min(960px, 96vw);
+  max-height: 92vh;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--ng-border-subtle);
+  border-radius: var(--ng-radius-card);
+  background: var(--ng-surface);
+  box-shadow: var(--ng-shadow-dialog);
+}
+.orders-modal__header { display: flex; align-items: center; justify-content: space-between; gap: var(--ng-space-4); padding: var(--ng-space-4) var(--ng-space-6); border-bottom: 1px solid var(--ng-border-subtle); }
+.orders-modal__header h2 { margin: 0; font-size: 20px; }
+.orders-modal__header .ng-button { min-height: 40px; padding: var(--ng-space-2) var(--ng-space-3); }
+.orders-modal__content { overflow: auto; background: var(--ng-background); }
+.orders-modal__content > .ng-page-card { border: 0; border-radius: 0; box-shadow: none; }
+
+@media (max-width: 900px) {
+  .orders-management-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .orders-management-filters__actions { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  .orders-management-list__header,
+  .orders-management-pagination { align-items: flex-start; flex-direction: column; }
+  .orders-management-filters { grid-template-columns: 1fr; }
+  .orders-management-filters__actions { grid-column: auto; }
+  .orders-management-filters__actions .ng-button { width: 100%; }
+  .orders-management-pagination > div { width: 100%; justify-content: space-between; }
+  .orders-management-table th,
+  .orders-management-table td { padding: var(--ng-space-3); }
+  .orders-management-row-actions { align-items: flex-start; flex-direction: column; }
+  .orders-modal { max-height: 96vh; }
+  .orders-modal__header { padding: var(--ng-space-3) var(--ng-space-4); }
+}
