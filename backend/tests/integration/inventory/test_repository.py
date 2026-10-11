@@ -32,7 +32,7 @@ with patch.dict(sys.modules, {"app.shared.database": isolated_base}):
 
 
 NOW = datetime(2026, 10, 5, 12, 30, tzinfo=timezone.utc)
-HEAD = "ef6564220e70"
+HEAD = "fa014e1a2b3c"
 
 
 @pytest.fixture(scope="module")
