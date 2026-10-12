@@ -8,11 +8,15 @@ documento con permiso para migrar/publicar ni con resultados de Staging.
 
 ## Gate previo al release
 
-- [ ] Resolver o aceptar explícitamente tras evaluación el aviso high transitivo
-  de source-map-js 1.2.1 (dependencia dev en lockfile) reportado por npm ci/audit en T06
-  ([GHSA-68fv-2mgg-jv7q](https://github.com/advisories/GHSA-68fv-2mgg-jv7q)).
-  No se modificó el lockfile en este TA. No aprobar el release automáticamente
-  mientras esta decisión esté pendiente.
+- [x] Resolver el aviso high transitivo de `source-map-js@1.2.1` con la
+  actualización mínima del lockfile a 1.2.2. El audit posterior reportó 0
+  vulnerabilidades. Ver [evidencia de seguridad](test-results/security-source-map-js.md).
+- [x] Validar E2E después del cambio de lockfile: `npm run test:e2e`, 32 casos
+  descubiertos, 31 passed, 1 skipped, 0 failed, 34.8 s. Python 3.11.9 se
+  localizó primero en `backend/venv/Scripts/python.exe`. El único skip es
+  “HU-014 Almacenero registra una baja” en chromium-mobile; el escenario
+  equivalente desktop y el caso de permisos HU-014 pasaron. Esta ejecución
+  manual válida reemplaza la limitación anterior del entorno Codex.
 - [ ] Revisar e integrar el SHA aprobado en `integration/sprint-01`; esta sesión
   no hizo push. Registrar SHA integrado y resultado real de Actions en Linux.
 - [ ] Configurar checks requeridos backend/frontend/e2e y protección de rama.
@@ -20,8 +24,9 @@ documento con permiso para migrar/publicar ni con resultados de Staging.
 - [ ] Configurar aprobación humana del environment `github-pages` antes de un
   push integrado: ese push dispara el workflow de Pages. Restringirlo a la rama
   aprobada; no aprobar publicación hasta completar los pasos siguientes.
-- [ ] Confirmar regresión local/CI del SHA a desplegar y revisar el skip E2E
-  explícito de baja única de inventario en móvil (caso desktop cubierto).
+- [ ] Confirmar regresión local/CI del SHA integrado que se desplegará y que
+  Actions pasó para ese mismo SHA. La ejecución manual E2E post-seguridad y el
+  skip conocido están registrados en [evidencia de seguridad](test-results/security-source-map-js.md).
 
 ## 1. Configurar Supabase Staging
 
@@ -136,9 +141,31 @@ revisión automática de permisos; tras la instrucción de continuar se reintent
 y pasó. Backend conserva el aviso StarletteDeprecationWarning sobre httpx en
 TestClient. No se modificaron dependencias para ocultarlo.
 
-La regresión local final está aprobada con las omisiones/avisos declarados.
-Recomendación de release: **BLOCKED**, pendiente de resolver o evaluar/aceptar
-explícitamente el aviso high de source-map-js. No se declara T07 completada.
+### Validación manual post-seguridad
+
+Python se localizó primero en `backend/venv/Scripts/python.exe` y reportó
+Python 3.11.9. En esta ejecución manual se registraron:
+
+| Verificación | Resultado observado |
+|---|---|
+| `npm run test:unit` | 101 passed |
+| `npm run test:component` | 206 passed |
+| `npm run lint` | PASS |
+| `npm run build` | PASS |
+| Build Staging / check Staging | PASS |
+| `npm run test:e2e` | 32 descubiertos: 31 passed, 1 skipped, 0 failed; 34.8 s |
+
+El único skip fue “HU-014 Almacenero registra una baja” en chromium-mobile.
+El escenario equivalente desktop pasó y el caso de permisos HU-014 pasó en las
+plataformas ejecutadas. La imposibilidad previa de iniciar E2E correspondía al
+entorno de Codex y queda reemplazada por esta ejecución manual válida. La
+recomendación del preflight es **READY FOR HUMAN STAGING DEPLOY**; T07 continúa
+pendiente y no se declara deployment realizado.
+
+Siguen pendientes para T07: conexión con Supabase real, Config Vars de Heroku,
+migración real, bootstrap real, deploy manual de Heroku, publicación de Pages y
+smoke Staging. El SHA integrado y la aprobación de Actions aún deben confirmarse
+para el despliegue.
 
 Escaneo local por patrones sobre los 526 archivos de `git ls-files`: sin `.env`
 real ni archivos de claves versionados; sin coincidencias de clave privada,

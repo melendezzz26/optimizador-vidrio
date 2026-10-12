@@ -81,9 +81,11 @@ local, pendiente de carga/recarga en Pages real. No se publicó el sitio.
 **IMPLEMENTADA / VALIDACIÓN LOCAL.** CI backend/frontend/E2E con PostgreSQL
 obligatorio aislado y workflow Pages restringido a integración, después de CI.
 [Resultados T06](test-results/t06-ci-pages.md): backend 1284 passed, frontend
-101 unit y 206 component passed; E2E 31 passed y 1 skip explícito preexistente.
-Lint, build y artefacto Staging sintético aprobados. npm reporta un aviso high
-transitivo pendiente de evaluación; no se alteraron dependencias.
+101 unit y 206 component passed; E2E 31 passed y 1 skip explícito preexistente
+en esa ejecución. Lint, build y artefacto Staging sintético aprobados. El aviso
+high transitivo de `source-map-js@1.2.1` identificado entonces se corrigió en el
+lockfile a 1.2.2; auditorías y validaciones de seguimiento están en
+[security-source-map-js.md](test-results/security-source-map-js.md).
 CA-12/13 siguen parciales hasta ejecutar Actions, configurar protecciones y
 publicar con aprobación. No se ejecutó T07 ni se modificó el estado Reviewed.
 
@@ -92,7 +94,18 @@ publicar con aprobación. No se ejecutó T07 ni se modificó el estado Reviewed.
 [Checklist de deployment](t07-deployment-checklist.md) con pasos operativos,
 gates, recuperación, estado de CA y resultados locales. **T07 pendiente**:
 sin configuración remota, conexión Supabase Staging o publicación realizada.
-La recomendación de release permanece **BLOCKED** hasta evaluar/resolver o
-aceptar explícitamente el aviso high de source-map-js documentado en T06.
-No se actualizaron dependencias fuera del alcance ni se aceptó ese riesgo
-en nombre del responsable del release.
+El bloqueo de seguridad de `source-map-js` quedó resuelto con la actualización
+transitiva mínima a 1.2.2. La validación E2E manual posterior al cambio pasó
+(31 passed, 1 skipped, 0 failed); reemplaza la limitación previa del entorno
+Codex. Estado del preflight: **READY FOR HUMAN STAGING DEPLOY**. Esto habilita la
+revisión humana del despliegue, pero no declara T07 completada: siguen pendientes
+Supabase real, Config Vars Heroku, migración y bootstrap reales, deploy manual
+Heroku, publicación Pages y smoke Staging.
+
+La validación post-seguridad registró `npm audit` y `npm audit --omit=dev` con
+0 vulnerabilidades; frontend unit 101 passed, component 206 passed, lint/build/
+build Staging-check PASS. E2E se ejecutó manualmente con Python 3.11.9 desde
+`backend/venv/Scripts/python.exe`: 32 descubiertos, 31 passed, 1 skipped,
+0 failed en 34.8 s. El skip conocido es la baja HU-014 en chromium-mobile; el
+escenario desktop equivalente y el caso de permisos pasaron. Detalle en
+[evidencia de seguridad](test-results/security-source-map-js.md).
