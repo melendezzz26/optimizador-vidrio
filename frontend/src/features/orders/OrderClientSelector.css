@@ -1,0 +1,21 @@
+.order-client { text-align: left; }
+.order-client > .orders-section__description { margin-bottom: 20px; }
+.order-client__search { display: flex; align-items: end; flex-wrap: wrap; gap: 16px; }
+.order-client__search .ng-field { flex: 1 1 180px; }
+.order-client__results { list-style: none; padding: 0; margin: 16px 0; max-height: 360px; overflow-y: auto; }
+.order-client__results li, .order-client__selected {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+  gap: 16px; padding: 16px; border: 1px solid var(--ng-border-subtle); border-radius: 8px;
+}
+.order-client__results li + li { margin-top: 8px; }
+.order-client__results li > div, .order-client__selected > div { min-width: 0; flex: 1 1 180px; overflow-wrap: anywhere; }
+.order-client__results p, .order-client__selected p { margin: 8px 0; }
+.order-client__selected { border-color: var(--ng-primary-action); background: var(--ng-action-tint); }
+.order-client__selected p:first-child { display: flex; align-items: center; gap: 8px; color: var(--ng-success); font-weight: 600; }
+.order-client__selected:focus { outline: 3px solid var(--ng-primary-focus); outline-offset: 3px; }
+.order-client__register { margin-top: 16px; }
+@media (max-width: 600px) {
+  .order-client__search { align-items: stretch; flex-direction: column; }
+  .order-client__search .ng-field { flex-basis: auto; }
+  .order-client .ng-button { width: 100%; }
+}

@@ -1,5 +1,6 @@
 from typing import List, Dict, Any
 from decimal import Decimal
+from app.modules.clients.application.ports import ClientLookup
 from .ports import OrderMutationResult, OrderRepositoryPort
 from ..domain.geometry import GeometryValidator
 from ..domain.exceptions import (
@@ -11,10 +12,15 @@ from ..domain.exceptions import (
 from datetime import date
 
 class CreateOrderUseCase:
-    def __init__(self, repository: OrderRepositoryPort):
+    def __init__(self, repository: OrderRepositoryPort, clients: ClientLookup):
         self.repository = repository
+        self.clients = clients
 
-    def execute(self, id_usuario: int, piezas_raw: List[Dict[str, Any]]) -> int:
+    def execute(self, id_usuario: int, piezas_raw: List[Dict[str, Any]], *, id_cliente: int | None = None) -> int:
+        if type(id_cliente) is not int or not 0 < id_cliente <= 2147483647:
+            raise InvalidOrderException("Selecciona un cliente válido para registrar el pedido.")
+        if not self.clients.exists(id_cliente):
+            raise InvalidOrderException("El cliente seleccionado no existe. Busca o registra otro cliente.")
         if not piezas_raw:
             raise InvalidOrderException("El pedido debe contener al menos una pieza.")
         piezas_validadas = []
@@ -96,7 +102,7 @@ class CreateOrderUseCase:
 
             piezas_validadas[-1].update(id_tipo_vidrio=id_tipo_vidrio, espesor_mm=espesor_mm)
 
-        return self.repository.create_order(id_usuario, piezas_validadas)
+        return self.repository.create_order(id_usuario, piezas_validadas, id_cliente=id_cliente)
 
 
 class GetOrderUseCase:

@@ -30,6 +30,10 @@ async function setup() {
   expect(fetch).toHaveBeenCalledTimes(1)
   expect(fetch.mock.calls[0][0]).toMatch(/\/api\/inventory\/tipos-vidrio$/)
   expect(fetch.mock.calls[0][1].headers.Authorization).toBe('Bearer test-token')
+  fetch.mockResolvedValueOnce(response([{ id_cliente: 41, nombre_razon_social: 'Cliente prueba', estado: true }]))
+  fireEvent.change(screen.getByLabelText('Nombre del cliente'), { target: { value: 'prueba' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Buscar', exact: true }))
+  fireEvent.click(await screen.findByRole('button', { name: 'Seleccionar Cliente prueba' }))
   return user
 }
 
@@ -128,7 +132,7 @@ describe('FIX-003/005: composición y accesibilidad de Orders', () => {
       const ids = [...document.querySelectorAll('[id]')].map((element) => element.id)
       expect(new Set(ids).size).toBe(ids.length)
       expect(consoleErrorSpy.mock.calls.flat().join(' ')).not.toMatch(/same key/i)
-      expect(fetch).toHaveBeenCalledTimes(1)
+      expect(fetch).toHaveBeenCalledTimes(2)
     } finally {
       nowSpy.mockRestore()
       consoleErrorSpy.mockRestore()
@@ -174,12 +178,12 @@ describe('HU-006: contrato multimaterial por pieza', () => {
     expect(quantity).toHaveValue(1)
 
     expect(saveButton()).toBeEnabled()
-    expect(fetch).toHaveBeenCalledTimes(1)
+    expect(fetch).toHaveBeenCalledTimes(2)
     fetch.mockResolvedValueOnce(response({ id_pedido: 44, estado: 'PENDIENTE' }, 201))
     await user.click(saveButton())
-    expect(await screen.findByText('Pedido registrado correctamente.')).toBeVisible()
+    expect(await screen.findByText(/Pedido registrado correctamente. ID del pedido:/)).toBeVisible()
 
-    const [url, options] = fetch.mock.calls[1]
+    const [url, options] = fetch.mock.calls[2]
     expect(url).toMatch(/\/api\/orders$/)
     expect(options.method).toBe('POST')
     expect(options.headers.Authorization).toBe('Bearer test-token')
@@ -226,7 +230,7 @@ describe('HU-006: contrato multimaterial por pieza', () => {
       fireEvent.change(height, { target: { value: '50' } })
     }
     expect(saveButton()).toBeEnabled()
-    expect(fetch).toHaveBeenCalledTimes(1)
+    expect(fetch).toHaveBeenCalledTimes(2)
   })
 })
 
@@ -249,7 +253,7 @@ describe('HU-007 T04: persistencia de piezas', () => {
     }
     expect(screen.getByRole('alert', { name: 'Resultado de validación geométrica' })).toHaveTextContent('La figura resultante no es convexa.')
     expect(screen.getByRole('button', { name: 'Agregar pieza al pedido' })).toBeDisabled()
-    expect(fetch).toHaveBeenCalledTimes(1)
+    expect(fetch).toHaveBeenCalledTimes(2)
   })
 
   test('envía un único POST mientras guarda y limpia solo al confirmar éxito', async () => {
@@ -264,12 +268,12 @@ describe('HU-007 T04: persistencia de piezas', () => {
     await user.click(saveButton())
     await user.click(screen.getByRole('button', { name: /Guardando/ }))
 
-    expect(fetch).toHaveBeenCalledTimes(2)
+    expect(fetch).toHaveBeenCalledTimes(3)
     expect(screen.getByRole('button', { name: /Guardando/ })).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Cancelar' })).toBeDisabled()
 
     await act(async () => resolvePost(response({ id_pedido: 42, estado: 'PENDIENTE' }, 201)))
-    expect(await screen.findByText('Pedido registrado correctamente.')).toBeVisible()
+    expect(await screen.findByText(/Pedido registrado correctamente. ID del pedido:/)).toBeVisible()
     expect(screen.queryByText('Pieza 1')).not.toBeInTheDocument()
     expect(saveButton()).toBeDisabled()
   })
@@ -292,20 +296,20 @@ describe('HU-007 T04: persistencia de piezas', () => {
     expect(screen.getByText('Pieza 1')).toBeVisible()
     expect(saveButton()).toBeEnabled()
 
-    const firstBody = fetch.mock.calls[1][1].body
+    const firstBody = fetch.mock.calls[2][1].body
     fetch.mockResolvedValueOnce(response({ id_pedido: 43, estado: 'PENDIENTE' }, 201))
     await user.click(saveButton())
-    expect(await screen.findByText('Pedido registrado correctamente.')).toBeVisible()
-    expect(JSON.parse(fetch.mock.calls[2][1].body)).toEqual(JSON.parse(firstBody))
+    expect(await screen.findByText(/Pedido registrado correctamente. ID del pedido:/)).toBeVisible()
+    expect(JSON.parse(fetch.mock.calls[3][1].body)).toEqual(JSON.parse(firstBody))
   })
 
-  test('muestra el error de catálogo sin inventar controles de reintento', async () => {
+  test('muestra el error de catálogo y permite reintentar sin inventar materiales', async () => {
     fetch.mockRejectedValueOnce(new TypeError('offline'))
     render(<FormularioPedido token="test-token" standalone />)
 
     expect(await screen.findByRole('alert')).toHaveTextContent('No se pudo completar la operación')
     expect(saveButton()).toBeDisabled()
-    expect(screen.queryByRole('button', { name: /Reintentar catálogo/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Reintentar catálogo/i })).toBeEnabled()
     expect(screen.queryByRole('option', { name: 'Material de prueba' })).not.toBeInTheDocument()
   })
 })

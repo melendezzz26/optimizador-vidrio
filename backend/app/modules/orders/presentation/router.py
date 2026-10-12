@@ -5,7 +5,7 @@ from datetime import date
 from typing import Optional
 from fastapi.exceptions import RequestValidationError
 from fastapi.routing import APIRoute
-from .schemas import CreateOrderRequest, CreateOrderResponse, OrderResponse
+from .schemas import CreateOrderRequest, CreateOrderResponse, OrderResponse, UpdateOrderRequest
 from ..application.use_cases import CreateOrderUseCase, GetOrderUseCase, ListOrdersUseCase, UpdateOrderUseCase, CancelOrderUseCase
 from ..domain.exceptions import (
     InvalidOrderException,
@@ -51,9 +51,10 @@ def create_order(
         piezas_dict = [p.model_dump() for p in request.piezas]
         id_pedido = use_case.execute(
             id_usuario=user.user_id,
-            piezas_raw=piezas_dict
+            piezas_raw=piezas_dict,
+            id_cliente=request.id_cliente,
         )
-        return CreateOrderResponse(id_pedido=id_pedido, estado="PENDIENTE")
+        return CreateOrderResponse(id_pedido=id_pedido, id_cliente=request.id_cliente, estado="PENDIENTE")
     except InvalidOrderException as e:
         raise HTTPException(status_code=422, detail=str(e)) from e
     except InvalidGeometryException as e:
@@ -94,7 +95,7 @@ def get_order(
 
 @router.put("/{id_pedido}", status_code=status.HTTP_200_OK)
 def update_order(
-    request: CreateOrderRequest,
+    request: UpdateOrderRequest,
     id_pedido: int = Path(gt=0, le=2147483647),
     user: AuthenticatedUser = Depends(permiso_gestionar_pedidos),
     use_case: UpdateOrderUseCase = Depends(get_update_order_use_case),

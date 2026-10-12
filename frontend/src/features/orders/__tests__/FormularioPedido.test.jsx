@@ -41,6 +41,11 @@ describe('FormularioPedido canónico', () => {
     const user = userEvent.setup();
     render(<FormularioPedido token="decimal-token" standalone />);
     await screen.findByText('No hay piezas agregadas');
+  fetch.mockResolvedValueOnce(response([{ id_cliente: 41, nombre_razon_social: 'Cliente prueba', estado: true }]))
+  fireEvent.change(screen.getByLabelText('Nombre del cliente'), { target: { value: 'prueba' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Buscar', exact: true }))
+  fireEvent.click(await screen.findByRole('button', { name: 'Seleccionar Cliente prueba' }))
+
     await user.click(screen.getByRole('button', { name: 'Agregar pieza' }));
     const row = screen.getByText('Pieza 1', { selector: 'strong' }).closest('.orders-piece');
     await user.selectOptions(within(row).getByLabelText('Material'), '7');

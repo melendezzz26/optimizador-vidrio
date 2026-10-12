@@ -14,7 +14,7 @@ vi.mock('../FormularioPedido', () => ({
     <div role="group" aria-label="Formulario canónico de pedidos">
       <p>{idPedido ? `Pedido ${idPedido}` : 'Pedido nuevo'} ({mode})</p>
       <button type="button" onClick={() => onSubmittingChange(true)}>Iniciar guardado</button>
-      <button type="button" onClick={() => { onSuccess(mode); onCerrar(); }}>Guardar formulario</button>
+      <button type="button" onClick={() => { onSuccess(mode, { id_pedido: 27 }); onCerrar(); }}>Guardar formulario</button>
       <button type="button" onClick={onCerrar}>Cerrar formulario</button>
     </div>
   ),
@@ -287,7 +287,7 @@ describe('GestionPedidos — acciones y modal', () => {
     const dialog = screen.getByRole('dialog', { name: 'Crear pedido' });
     await userEventInstance.click(within(dialog).getByRole('button', { name: 'Guardar formulario' }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-    expect(await screen.findByText('Pedido creado correctamente.')).toBeVisible();
+    expect(await screen.findByText('Pedido registrado correctamente. ID del pedido: 27.')).toBeVisible();
     await screen.findByRole('row', { name: /27.*Vidrios Andinos/i });
     expect(listOrders).toHaveBeenCalledTimes(2);
   });

@@ -11,6 +11,11 @@ class SqlAlchemyClientRepository:
     def __init__(self, session: Session):
         self._session = session
 
+    def exists(self, client_id: int) -> bool:
+        return self._session.scalar(
+            select(Cliente.id_cliente).where(Cliente.id_cliente == client_id)
+        ) is not None
+
     def add(self, client: NewClient) -> Client:
         row = Cliente(
             nombre_razon_social=client.name,

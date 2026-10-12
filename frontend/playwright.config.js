@@ -14,8 +14,8 @@ export default defineConfig({
     browserName: 'chromium',
     // Local default: installed stable Chrome. CI can select managed Chromium.
     channel: process.env.PLAYWRIGHT_CHANNEL || 'chrome',
-    trace: 'retain-on-failure',
-    screenshot: 'only-on-failure',
+    trace: 'off',
+    screenshot: 'off',
     serviceWorkers: 'block',
   },
   projects: [
