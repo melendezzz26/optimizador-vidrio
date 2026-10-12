@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Reviewed |
+| Estado | Implemented |
 | PBI relacionado | HU-003 T04 y T05 · depende de TA-034 (EN-006) |
 | Responsable | Fabricio A. |
 | Origen | SPEC_HU-003_Mejora_Gestion_Usuarios v1.0 (08/10/2026), aprobada en el refinamiento pre-raster |
@@ -46,3 +46,13 @@ Mantener el CRUD existente, pero convertir la experiencia en una vista de gesti�
 - **Búsqueda:** por usuario de acceso, nombres y apellidos, sin distinguir tildes ni mayúsculas. El DNI no se muestra en la tabla (RN-09 de SPEC-HU-003), pero forma parte del usuario de acceso, así que también se encuentra por esos dígitos.
 - **Permisos:** no cambian. La API sigue restringida al Administrador (`require_permission`) y la pantalla solo se muestra a ese rol.
 - **Patrón:** `useManagementView` de TA-034 T02 para "listado primero, formulario bajo acción".
+
+## 6. Estado de implementación
+
+| Tarea | Estado | Evidencia |
+|---|---|---|
+| T04 — Búsqueda y filtros | Implemented | docs/evidence/sprint-01/HU-003-T04-T05/ |
+| T05 — Alta y edición solo bajo acción | Implemented | docs/evidence/sprint-01/HU-003-T04-T05/ |
+
+- Pasa a **Verified** cuando un reviewer distinto del autor apruebe el PR.
+- Mejora pendiente: al cerrar el formulario, el foco no vuelve al botón que lo abrió.
