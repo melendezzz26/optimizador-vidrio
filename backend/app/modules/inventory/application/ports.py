@@ -5,7 +5,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Protocol
 
-from .dto import PlanchaData, RetazoData, TipoVidrioData
+from .dto import MovimientoInventarioData, PlanchaData, RetazoData, TipoVidrioData
 
 
 class GlassCatalog(Protocol):
@@ -48,6 +48,15 @@ class InventoryRepository(GlassCatalog, Protocol):
 
     def get_plancha(self, id_plancha: int) -> PlanchaData | None: ...
 
+    def lock_plancha_for_update(self, id_plancha: int) -> PlanchaData | None: ...
+
+    def has_manual_writeoff_plancha(self, id_plancha: int) -> bool: ...
+
+    def create_plancha_writeoff_movement(
+        self, id_plancha: int, *, tipo_evento: str, motivo: str,
+        observacion: str | None, id_usuario: int,
+    ) -> MovimientoInventarioData: ...
+
     def create_plancha(self, *, ancho_mm: Decimal, alto_mm: Decimal,
                        espesor_mm: Decimal, cantidad: int, estado: bool,
                        fecha_registro: datetime, id_tipo_vidrio: int) -> PlanchaData: ...
@@ -57,6 +66,15 @@ class InventoryRepository(GlassCatalog, Protocol):
     def save_plancha(self, data: PlanchaData) -> PlanchaData: ...
 
     def get_retazo(self, id_retazo: int) -> RetazoData | None: ...
+
+    def lock_retazo_for_update(self, id_retazo: int) -> RetazoData | None: ...
+
+    def has_manual_writeoff_retazo(self, id_retazo: int) -> bool: ...
+
+    def create_retazo_writeoff_movement(
+        self, id_retazo: int, *, tipo_evento: str, motivo: str,
+        observacion: str | None, id_usuario: int,
+    ) -> MovimientoInventarioData: ...
 
     def retazo_codigo_exists(self, codigo: str, exclude_id: int | None = None) -> bool: ...
 

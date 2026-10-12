@@ -25,6 +25,23 @@ class BajaManualRequest(BaseSchema):
             raise ValueError("motivo debe explicar la baja y no puede estar vacío")
         return value
 
+
+class MovimientoInventarioResponse(BaseSchema):
+    id_movimiento: int
+    id_plancha: int | None
+    id_retazo: int | None
+    tipo_evento: TipoEventoBajaManual
+    motivo: str
+    observacion: str | None
+    id_usuario: int
+    fecha: datetime
+    id_optimizacion: int | None
+
+
+class BajaManualResponse(BaseSchema):
+    estado: Literal[False]
+    movimiento: MovimientoInventarioResponse
+
 # --- Tipos de Vidrio ---
 
 class TipoVidrioCreate(BaseSchema):

@@ -5,11 +5,14 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from app.modules.inventory.application.dto import CreateTipoVidrio, CreatePlancha, UpdatePlancha, CreateRetazo, UpdateRetazo
 from app.modules.inventory.application.service import InventoryService
 from app.modules.inventory.domain.exceptions import InventoryNotFoundError, InventoryConflictError, InventoryValidationError, InvalidGeometryError
+from app.modules.inventory.domain.writeoff import BajaManual
+from app.modules.authentication.domain.user import AuthenticatedUser
 from app.modules.inventory.presentation.dependencies import get_inventory_service, require_permission
 from app.modules.inventory.presentation.schemas import (
     TipoVidrioCreate, TipoVidrioResponse,
     PlanchaCreate, PlanchaPatch, PlanchaResponse,
-    RetazoCreate, RetazoPatch, RetazoResponse
+    RetazoCreate, RetazoPatch, RetazoResponse,
+    BajaManualRequest, BajaManualResponse, MovimientoInventarioResponse,
 )
 
 router = APIRouter(prefix="/api/inventory", tags=["Inventario"])
@@ -89,6 +92,34 @@ def update_plancha(
     with handle_domain_exceptions():
         return service.update_plancha(id_plancha, dto)
 
+
+@router.post(
+    "/planchas/{id_plancha}/baja",
+    response_model=BajaManualResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def writeoff_plancha(
+    id_plancha: int,
+    data: BajaManualRequest,
+    service: InventoryService = Depends(get_inventory_service),
+    actor: AuthenticatedUser = Depends(require_permission("GESTIONAR_PLANCHAS")),
+):
+    with handle_domain_exceptions():
+        command = BajaManual(
+            tipo_evento=data.tipo_evento,
+            motivo=data.motivo,
+            observacion=data.observacion,
+        )
+        movement = service.writeoff_plancha(
+            id_plancha, command, id_usuario=actor.user_id,
+        )
+        return BajaManualResponse(
+            estado=False,
+            movimiento=MovimientoInventarioResponse.model_validate(
+                movement, from_attributes=True,
+            ),
+        )
+
 # --- Retazos ---
 
 @router.post("/retazos", response_model=RetazoResponse, status_code=status.HTTP_201_CREATED)
@@ -136,3 +167,31 @@ def update_retazo(
     )
     with handle_domain_exceptions():
         return service.update_retazo(id_retazo, dto)
+
+
+@router.post(
+    "/retazos/{id_retazo}/baja",
+    response_model=BajaManualResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def writeoff_retazo(
+    id_retazo: int,
+    data: BajaManualRequest,
+    service: InventoryService = Depends(get_inventory_service),
+    actor: AuthenticatedUser = Depends(require_permission("GESTIONAR_RETAZOS")),
+):
+    with handle_domain_exceptions():
+        command = BajaManual(
+            tipo_evento=data.tipo_evento,
+            motivo=data.motivo,
+            observacion=data.observacion,
+        )
+        movement = service.writeoff_retazo(
+            id_retazo, command, id_usuario=actor.user_id,
+        )
+        return BajaManualResponse(
+            estado=False,
+            movimiento=MovimientoInventarioResponse.model_validate(
+                movement, from_attributes=True,
+            ),
+        )
