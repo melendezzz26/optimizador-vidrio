@@ -61,3 +61,10 @@ Implementación local de `/health/live`, `/health/ready` y retirada de `/db-test
 Contrato, límites y ejecuciones en [t03-health.md](test-results/t03-health.md).
 CA-05/06/07 se verifican localmente; el smoke de los servicios desplegados
 permanece pendiente de T07. No se modificaron T01/T02.
+
+## T04 — Procedimiento Alembic y bootstrap
+
+Preparación local y runbook en [staging.md](../../../infrastructure/staging.md).
+Ensayos y auditoría en [t04-alembic-bootstrap.md](test-results/t04-alembic-bootstrap.md).
+T04-A/B remotas y bootstrap Staging no ejecutados; CA-08 permanece parcial
+hasta verificar destino, revisión, recuperación y datos reales autorizados en T07.
