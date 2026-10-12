@@ -86,3 +86,13 @@ Lint, build y artefacto Staging sintético aprobados. npm reporta un aviso high
 transitivo pendiente de evaluación; no se alteraron dependencias.
 CA-12/13 siguen parciales hasta ejecutar Actions, configurar protecciones y
 publicar con aprobación. No se ejecutó T07 ni se modificó el estado Reviewed.
+
+## Preflight T07 — preparación humana
+
+[Checklist de deployment](t07-deployment-checklist.md) con pasos operativos,
+gates, recuperación, estado de CA y resultados locales. **T07 pendiente**:
+sin configuración remota, conexión Supabase Staging o publicación realizada.
+La recomendación de release permanece **BLOCKED** hasta evaluar/resolver o
+aceptar explícitamente el aviso high de source-map-js documentado en T06.
+No se actualizaron dependencias fuera del alcance ni se aceptó ese riesgo
+en nombre del responsable del release.
