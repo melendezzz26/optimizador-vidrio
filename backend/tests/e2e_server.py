@@ -55,13 +55,26 @@ def main():
         from app.shared.security import hash_password
 
         with engine.begin() as connection:
-            connection.execute(sa.text("INSERT INTO roles(id_rol,nombre) VALUES (1,'Operario')"))
+            connection.execute(sa.text(
+                "INSERT INTO roles(id_rol,nombre) VALUES (1,'Operario'), (2,'Almacenero')"
+            ))
             connection.execute(sa.text("""
                 INSERT INTO usuarios(dni,nombres,apellidos,usuario,password_hash,id_rol,fecha_creacion)
                 VALUES ('70000001','Operario','Prueba','O70000001',:password,1,:now)
             """), {"password": hash_password("Orders-test-2026!"), "now": datetime.now(timezone.utc)})
+            connection.execute(sa.text("""
+                INSERT INTO usuarios(dni,nombres,apellidos,usuario,password_hash,id_rol,fecha_creacion)
+                VALUES ('70000002','Almacenero','Prueba','A70000002',:password,2,:now)
+            """), {"password": hash_password("Inventory-test-2026!"), "now": datetime.now(timezone.utc)})
             connection.execute(sa.text("INSERT INTO tipos_vidrio(id_tipo_vidrio,nombre,estado) VALUES (7,'Material de prueba',true)"))
             connection.execute(sa.text("INSERT INTO tipos_vidrio_espesores VALUES (7,5.5),(7,6)"))
+            connection.execute(sa.text("""
+                INSERT INTO planchas(
+                    id_plancha, ancho_mm, alto_mm, espesor_mm, cantidad,
+                    estado, fecha_registro, id_tipo_vidrio
+                )
+                VALUES (701, 1000, 500, 5.5, 2, true, :now, 7)
+            """), {"now": datetime.now(timezone.utc)})
 
         for command in ("heads", "current"):
             result = _run([sys.executable, "-m", "alembic", command], env=os.environ)

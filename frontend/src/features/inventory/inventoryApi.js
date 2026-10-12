@@ -52,9 +52,19 @@ export const updatePlancha = (idPlancha, payload) => request(`/planchas/${idPlan
   method: 'PATCH',
   body: payload,
 });
+export const writeoffPlancha = (idPlancha, payload) => request(`/planchas/${idPlancha}/baja`, {
+  method: 'POST',
+  body: payload,
+});
+export const getPlanchaMovements = (idPlancha) => request(`/planchas/${idPlancha}/movimientos`);
 export const getRetazos = () => request('/retazos');
 export const createRetazo = (payload) => request('/retazos', { method: 'POST', body: payload });
 export const updateRetazo = (idRetazo, payload) => request(`/retazos/${idRetazo}`, {
   method: 'PATCH',
   body: payload,
 });
+export const writeoffRetazo = (idRetazo, payload) => request(`/retazos/${idRetazo}/baja`, {
+  method: 'POST',
+  body: payload,
+});
+export const getRetazoMovements = (idRetazo) => request(`/retazos/${idRetazo}/movimientos`);

@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
-import { canManagePlanchas, canManageRetazos } from '../authentication';
+import {
+  canManagePlanchas,
+  canManageRetazos,
+  canViewInventory,
+} from '../authentication';
 import { AppShell } from '../../shared/components/AppShell';
 import { PageCard, PageHeader } from '../../shared/components/PageLayout';
 import { ConfirmDialog, EmptyState, FeedbackMessage, LoadingState } from '../../shared/components/feedback';
@@ -9,11 +13,17 @@ import {
   createPlancha,
   createRetazo,
   getPlanchas,
+  getPlanchaMovements,
   getRetazos,
+  getRetazoMovements,
   getTiposVidrio,
   updatePlancha,
   updateRetazo,
+  writeoffPlancha,
+  writeoffRetazo,
 } from './inventoryApi';
+import { MovementHistoryDialog } from './MovementHistoryDialog';
+import { WriteoffDialog } from './WriteoffDialog';
 import './inventory.css';
 
 const TABS = [
@@ -109,7 +119,17 @@ function StatusBadge({ active }) {
 }
 
 function InventoryTable({
-  kind, rows, typesById, canManage, onToggleStatus, onEditPlancha, onEditRetazo, pendingAction,
+  kind,
+  rows,
+  typesById,
+  canManage,
+  canViewHistory,
+  onToggleStatus,
+  onEditPlancha,
+  onEditRetazo,
+  onWriteoff,
+  onViewHistory,
+  pendingAction,
 }) {
   if (kind === 'planchas') {
     return (
@@ -125,7 +145,7 @@ function InventoryTable({
               <th scope="col" className="inventory-number">Cantidad</th>
               <th scope="col">Estado</th>
               <th scope="col">Fecha de registro</th>
-              {canManage && <th scope="col">Acciones</th>}
+              {(canManage || canViewHistory) && <th scope="col">Acciones</th>}
             </tr>
           </thead>
           <tbody>
@@ -138,26 +158,42 @@ function InventoryTable({
                 <td className="inventory-number">{formatNumber(plancha.cantidad)}</td>
                 <td><StatusBadge active={plancha.estado} /></td>
                 <td>{formatDate(plancha.fecha_registro)}</td>
-                {canManage && (
+                {(canManage || canViewHistory) && (
                   <td>
                     <div className="inventory-row-actions">
-                      <button
-                        className="ng-button"
-                        type="button"
-                        disabled={pendingAction !== null}
-                        onClick={() => onEditPlancha(plancha)}
-                      >
-                        Editar
-                      </button>
-                      <button
-                        className="ng-button"
-                        type="button"
-                        disabled={pendingAction !== null}
-                        aria-busy={pendingAction?.id === plancha.id_plancha}
-                        onClick={() => onToggleStatus(plancha)}
-                      >
-                        {plancha.estado ? 'Desactivar' : 'Activar'}
-                      </button>
+                      {canViewHistory && (
+                        <button
+                          className="ng-button"
+                          type="button"
+                          disabled={pendingAction !== null}
+                          aria-label={`Ver historial de plancha #${plancha.id_plancha}`}
+                          onClick={() => onViewHistory(plancha)}
+                        >Historial</button>
+                      )}
+                      {canManage && (
+                        <>
+                          <button
+                            className="ng-button"
+                            type="button"
+                            disabled={pendingAction !== null}
+                            onClick={() => onEditPlancha(plancha)}
+                          >Editar</button>
+                          <button
+                            className="ng-button"
+                            type="button"
+                            disabled={pendingAction !== null}
+                            aria-busy={pendingAction?.id === plancha.id_plancha}
+                            onClick={() => onToggleStatus(plancha)}
+                          >{plancha.estado ? 'Desactivar' : 'Activar'}</button>
+                          <button
+                            className="ng-button ng-button--danger"
+                            type="button"
+                            disabled={pendingAction !== null}
+                            aria-label={`Dar de baja plancha #${plancha.id_plancha}`}
+                            onClick={() => onWriteoff(plancha)}
+                          >Dar de baja</button>
+                        </>
+                      )}
                     </div>
                   </td>
                 )}
@@ -182,7 +218,7 @@ function InventoryTable({
             <th scope="col" className="inventory-number">Área</th>
             <th scope="col">Estado</th>
             <th scope="col">Fecha de registro</th>
-            {canManage && <th scope="col">Acciones</th>}
+            {(canManage || canViewHistory) && <th scope="col">Acciones</th>}
           </tr>
         </thead>
         <tbody>
@@ -195,26 +231,42 @@ function InventoryTable({
               <td className="inventory-number">{formatNumber(retazo.area_mm2)} mm²</td>
               <td><StatusBadge active={retazo.estado} /></td>
               <td>{formatDate(retazo.fecha_registro)}</td>
-              {canManage && (
+              {(canManage || canViewHistory) && (
                 <td>
                   <div className="inventory-row-actions">
-                    <button
-                      className="ng-button"
-                      type="button"
-                      disabled={pendingAction !== null}
-                      onClick={() => onEditRetazo(retazo)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="ng-button"
-                      type="button"
-                      disabled={pendingAction !== null}
-                      aria-busy={pendingAction?.id === retazo.id_retazo}
-                      onClick={() => onToggleStatus(retazo)}
-                    >
-                      {retazo.estado ? 'Desactivar' : 'Activar'}
-                    </button>
+                    {canViewHistory && (
+                      <button
+                        className="ng-button"
+                        type="button"
+                        disabled={pendingAction !== null}
+                        aria-label={`Ver historial de retazo ${retazo.codigo}`}
+                        onClick={() => onViewHistory(retazo)}
+                      >Historial</button>
+                    )}
+                    {canManage && (
+                      <>
+                        <button
+                          className="ng-button"
+                          type="button"
+                          disabled={pendingAction !== null}
+                          onClick={() => onEditRetazo(retazo)}
+                        >Editar</button>
+                        <button
+                          className="ng-button"
+                          type="button"
+                          disabled={pendingAction !== null}
+                          aria-busy={pendingAction?.id === retazo.id_retazo}
+                          onClick={() => onToggleStatus(retazo)}
+                        >{retazo.estado ? 'Desactivar' : 'Activar'}</button>
+                        <button
+                          className="ng-button ng-button--danger"
+                          type="button"
+                          disabled={pendingAction !== null}
+                          aria-label={`Dar de baja retazo ${retazo.codigo}`}
+                          onClick={() => onWriteoff(retazo)}
+                        >Dar de baja</button>
+                      </>
+                    )}
                   </div>
                 </td>
               )}
@@ -246,9 +298,16 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
   const [operationSuccess, setOperationSuccess] = useState('');
   const [pendingInventoryAction, setPendingInventoryAction] = useState(null);
   const [statusChangeToConfirm, setStatusChangeToConfirm] = useState(null);
+  const [writeoffTarget, setWriteoffTarget] = useState(null);
+  const [writeoffError, setWriteoffError] = useState('');
+  const [historyTarget, setHistoryTarget] = useState(null);
+  const [movementHistory, setMovementHistory] = useState([]);
+  const [isHistoryLoading, setIsHistoryLoading] = useState(false);
+  const [historyError, setHistoryError] = useState('');
   const titleId = useId();
   const tabPanelId = useId();
   const tabRefs = useRef({});
+  const historyRequestId = useRef(0);
   const isInventoryActionPending = pendingInventoryAction !== null;
 
   const handleApiError = useCallback((error) => {
@@ -579,6 +638,110 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
     else handleToggleRetazoEstado(resource);
   }
 
+  function openWriteoff(resource, kind) {
+    if (isInventoryActionPending) return;
+    setOperationError('');
+    setOperationWarning('');
+    setOperationSuccess('');
+    setWriteoffError('');
+    setWriteoffTarget({ resource, kind });
+  }
+
+  function closeWriteoff() {
+    if (isInventoryActionPending) return;
+    setWriteoffTarget(null);
+    setWriteoffError('');
+  }
+
+  async function submitWriteoff(payload) {
+    if (!writeoffTarget || isInventoryActionPending) return;
+    const { resource, kind } = writeoffTarget;
+    const resourceId = kind === 'plancha' ? resource.id_plancha : resource.id_retazo;
+    setWriteoffError('');
+    setOperationError('');
+    setOperationWarning('');
+    setOperationSuccess('');
+    setPendingInventoryAction({ entity: kind, id: resourceId, operation: 'writeoff' });
+
+    try {
+      let result;
+      if (kind === 'plancha') result = await writeoffPlancha(resourceId, payload);
+      else result = await writeoffRetazo(resourceId, payload);
+
+      if (kind === 'plancha') {
+        setPlanchas((current) => current.map((item) => (
+          item.id_plancha === resourceId ? { ...item, estado: result.estado } : item
+        )));
+      } else {
+        setRetazos((current) => current.map((item) => (
+          item.id_retazo === resourceId ? { ...item, estado: result.estado } : item
+        )));
+      }
+      setWriteoffTarget(null);
+      setOperationSuccess(
+        `Baja registrada correctamente. Movimiento #${result.movimiento.id_movimiento}.`,
+      );
+
+      try {
+        const updatedRows = kind === 'plancha' ? await getPlanchas() : await getRetazos();
+        if (kind === 'plancha') setPlanchas(updatedRows);
+        else setRetazos(updatedRows);
+      } catch (error) {
+        handleApiError(error);
+        setOperationWarning('La baja se registró, pero no se pudo actualizar el listado.');
+      }
+    } catch (error) {
+      const handledError = handleApiError(error);
+      const message = error.status === 0 || error.status >= 500
+        ? `No se pudo confirmar la baja. ${handledError.message}`
+        : handledError.message;
+      setWriteoffError(message);
+    } finally {
+      setPendingInventoryAction(null);
+    }
+  }
+
+  async function loadMovementHistory(resource, kind, requestId) {
+    setIsHistoryLoading(true);
+    setHistoryError('');
+    try {
+      const resourceId = kind === 'plancha' ? resource.id_plancha : resource.id_retazo;
+      const movements = kind === 'plancha'
+        ? await getPlanchaMovements(resourceId)
+        : await getRetazoMovements(resourceId);
+      if (requestId === historyRequestId.current) setMovementHistory(movements);
+    } catch (error) {
+      if (requestId === historyRequestId.current) {
+        setHistoryError(handleApiError(error).message);
+      }
+    } finally {
+      if (requestId === historyRequestId.current) setIsHistoryLoading(false);
+    }
+  }
+
+  function openMovementHistory(resource, kind) {
+    if (isInventoryActionPending) return;
+    const requestId = historyRequestId.current + 1;
+    historyRequestId.current = requestId;
+    setHistoryTarget({ resource, kind });
+    setMovementHistory([]);
+    setHistoryError('');
+    void loadMovementHistory(resource, kind, requestId);
+  }
+
+  function retryMovementHistory() {
+    if (!historyTarget) return;
+    const requestId = historyRequestId.current + 1;
+    historyRequestId.current = requestId;
+    void loadMovementHistory(historyTarget.resource, historyTarget.kind, requestId);
+  }
+
+  function closeMovementHistory() {
+    historyRequestId.current += 1;
+    setHistoryTarget(null);
+    setIsHistoryLoading(false);
+  }
+
   async function confirmStatusChange() {
     if (!statusChangeToConfirm || isInventoryActionPending) return;
     const { resource, kind } = statusChangeToConfirm;
@@ -653,6 +816,7 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
   const canManageCurrentTab = activeTab === 'planchas'
     ? canManagePlanchas(user)
     : canManageRetazos(user);
+  const canViewCurrentHistory = canViewInventory(user);
 
   return (
     <AppShell activeItem="inventory" user={user}>
@@ -818,11 +982,18 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
               rows={filteredRows}
               typesById={typesById}
               canManage={canManageCurrentTab}
+              canViewHistory={canViewCurrentHistory}
               onToggleStatus={(resource) => requestStatusChange(
                 resource, activeTab === 'planchas' ? 'plancha' : 'retazo',
               )}
               onEditPlancha={handleEditPlancha}
               onEditRetazo={handleEditRetazo}
+              onWriteoff={(resource) => openWriteoff(
+                resource, activeTab === 'planchas' ? 'plancha' : 'retazo',
+              )}
+              onViewHistory={(resource) => openMovementHistory(
+                resource, activeTab === 'planchas' ? 'plancha' : 'retazo',
+              )}
               pendingAction={pendingInventoryAction}
             />
           )}
@@ -838,6 +1009,28 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
       >
         <p>El material dejará de aparecer como activo en el inventario.</p>
       </ConfirmDialog>
+      {writeoffTarget && (
+        <WriteoffDialog
+          resource={writeoffTarget.resource}
+          kind={writeoffTarget.kind}
+          typesById={typesById}
+          error={writeoffError}
+          isSubmitting={pendingInventoryAction?.operation === 'writeoff'}
+          onClose={closeWriteoff}
+          onSubmit={submitWriteoff}
+        />
+      )}
+      {historyTarget && (
+        <MovementHistoryDialog
+          resource={historyTarget.resource}
+          kind={historyTarget.kind}
+          movements={movementHistory}
+          isLoading={isHistoryLoading}
+          error={historyError}
+          onRetry={retryMovementHistory}
+          onClose={closeMovementHistory}
+        />
+      )}
     </AppShell>
   );
 }
