@@ -3,8 +3,19 @@ from unittest.mock import Mock, call
 
 import pytest
 
-from app.modules.orders.application.use_cases import CreateOrderUseCase, GetOrderUseCase
-from app.modules.orders.domain.exceptions import InvalidGeometryException, InvalidOrderException, OrderNotFoundException
+from app.modules.orders.application.ports import OrderMutationResult
+from app.modules.orders.application.use_cases import (
+    CancelOrderUseCase,
+    CreateOrderUseCase,
+    GetOrderUseCase,
+    UpdateOrderUseCase,
+)
+from app.modules.orders.domain.exceptions import (
+    InvalidGeometryException,
+    InvalidOrderException,
+    OrderNotFoundException,
+    OrderStateConflictException,
+)
 
 
 RECTANGLE = {"id_tipo_vidrio": 1, "espesor_mm": 6, "tipo_forma": "RECTANGULO",
@@ -106,3 +117,49 @@ def test_unknown_client_never_writes(use_case, mock_repo):
         use_case.execute(1, [RECTANGLE], id_cliente=99)
     mock_repo.validate_catalog.assert_not_called()
     mock_repo.create_order.assert_not_called()
+
+
+def test_update_pending_order_maps_repository_success(mock_repo):
+    mock_repo.update_order.return_value = OrderMutationResult.UPDATED
+    UpdateOrderUseCase(mock_repo).execute(123, [RECTANGLE])
+    mock_repo.update_order.assert_called_once()
+    mock_repo.get_order.assert_not_called()
+
+
+def test_update_missing_order_raises_not_found(mock_repo):
+    mock_repo.update_order.return_value = OrderMutationResult.NOT_FOUND
+    with pytest.raises(OrderNotFoundException):
+        UpdateOrderUseCase(mock_repo).execute(123, [RECTANGLE])
+    mock_repo.update_order.assert_called_once()
+    mock_repo.get_order.assert_not_called()
+
+
+def test_update_concurrent_state_change_result_raises_conflict(mock_repo):
+    mock_repo.update_order.return_value = OrderMutationResult.STATE_CONFLICT
+    with pytest.raises(OrderStateConflictException):
+        UpdateOrderUseCase(mock_repo).execute(123, [RECTANGLE])
+    mock_repo.update_order.assert_called_once()
+    mock_repo.get_order.assert_not_called()
+
+
+def test_cancel_pending_order_maps_repository_success(mock_repo):
+    mock_repo.cancel_order.return_value = OrderMutationResult.UPDATED
+    CancelOrderUseCase(mock_repo).execute(123)
+    mock_repo.cancel_order.assert_called_once_with(123)
+    mock_repo.get_order.assert_not_called()
+
+
+def test_cancel_missing_order_raises_not_found(mock_repo):
+    mock_repo.cancel_order.return_value = OrderMutationResult.NOT_FOUND
+    with pytest.raises(OrderNotFoundException):
+        CancelOrderUseCase(mock_repo).execute(123)
+    mock_repo.cancel_order.assert_called_once_with(123)
+    mock_repo.get_order.assert_not_called()
+
+
+def test_cancel_state_conflict_comes_from_repository(mock_repo):
+    mock_repo.cancel_order.return_value = OrderMutationResult.STATE_CONFLICT
+    with pytest.raises(OrderStateConflictException):
+        CancelOrderUseCase(mock_repo).execute(123)
+    mock_repo.cancel_order.assert_called_once_with(123)
+    mock_repo.get_order.assert_not_called()

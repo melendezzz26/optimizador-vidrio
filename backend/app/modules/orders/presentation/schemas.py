@@ -42,9 +42,12 @@ PiezaSchema = Annotated[
 ]
 
 
-class CreateOrderRequest(InputSchema):
-    id_cliente: PositiveId
+class UpdateOrderRequest(InputSchema):
     piezas: list[PiezaSchema] = Field(min_length=1)
+
+
+class CreateOrderRequest(UpdateOrderRequest):
+    id_cliente: PositiveId
 
 
 class CreateOrderResponse(BaseModel):

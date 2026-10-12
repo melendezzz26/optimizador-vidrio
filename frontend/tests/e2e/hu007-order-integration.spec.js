@@ -12,6 +12,7 @@ test.beforeEach(async ({ page, baseURL }) => {
   await page.getByLabel('Usuario', { exact: true }).fill('O70000001')
   await page.getByLabel('Contraseña', { exact: true }).fill('Orders-test-2026!')
   await page.getByRole('button', { name: 'Ingresar', exact: true }).click()
+  await page.getByRole('button', { name: 'Nuevo pedido', exact: true }).click()
   await page.getByLabel('Nombre del cliente').fill('Vidrios Norte')
   await page.getByRole('button', { name: 'Buscar', exact: true }).click()
   await page.getByRole('button', { name: 'Seleccionar Vidrios Norte' }).click()
@@ -19,7 +20,7 @@ test.beforeEach(async ({ page, baseURL }) => {
 
 async function drawValid(page) {
   await page.getByRole('button', { name: 'Agregar pieza', exact: true }).click()
-  const row = page.locator('.pieza').last()
+  const row = page.locator('.orders-piece').last()
   await row.getByLabel('Material', { exact: true }).selectOption('7')
   await row.getByLabel('Espesor', { exact: true }).selectOption('5.5')
   await row.getByLabel('Forma', { exact: true }).selectOption('POLIGONO_CONVEXO')
@@ -43,7 +44,7 @@ async function drawValid(page) {
 
 test('T04: login JWT real, múltiples piezas locales, POST único y 201', async ({ page }) => {
   const posts = []
-  page.on('request', (request) => { if (request.url() === `${apiOrigin}/api/orders`) posts.push(request) })
+  page.on('request', (request) => { if (request.url() === `${apiOrigin}/api/orders` && request.method() === 'POST') posts.push(request) })
   await drawValid(page)
   await page.getByRole('button', { name: 'Agregar pieza al pedido' }).click()
   await expect(page.getByText('Pieza 1', { exact: true })).toBeVisible()
@@ -51,7 +52,7 @@ test('T04: login JWT real, múltiples piezas locales, POST único y 201', async 
   await drawValid(page)
   await page.getByRole('button', { name: 'Agregar pieza al pedido' }).click()
   expect(posts).toHaveLength(0)
-  const saved = page.waitForResponse((response) => response.url() === `${apiOrigin}/api/orders`)
+  const saved = page.waitForResponse((response) => response.url() === `${apiOrigin}/api/orders` && response.request().method() === 'POST')
   await page.getByRole('button', { name: 'Guardar pedido' }).click()
   const response = await saved
   expect(response.status()).toBe(201)
@@ -66,7 +67,7 @@ test('T04: login JWT real, múltiples piezas locales, POST único y 201', async 
   expect(order.id_cliente).toBe(41)
   expect(order.id_usuario_registro).not.toBe(41)
   expect(order.piezas).toHaveLength(2)
-  await expect(page.getByRole('button', { name: 'Guardar pedido' })).toBeDisabled()
+  await expect(page.getByRole('dialog', { name: 'Crear pedido' })).toHaveCount(0)
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
 })
 

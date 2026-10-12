@@ -8,7 +8,8 @@ test.beforeEach(async ({ page, baseURL }) => {
   await page.getByLabel('Usuario', { exact: true }).fill('O70000001');
   await page.getByLabel('Contraseña', { exact: true }).fill('Orders-test-2026!');
   await page.getByRole('button', { name: 'Ingresar', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Nuevo pedido', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Nuevo pedido', exact: true }).click();
+  await expect(page.getByRole('dialog', { name: 'Crear pedido', exact: true })).toBeVisible();
 });
 
 async function rectangle(page) {
@@ -30,7 +31,7 @@ test('T03: alta contextual, bloqueo sin cliente, persistencia y lectura real', a
   expect(clientResponse.status()).toBe(201);
   const client = await clientResponse.json();
   await expect(page.getByLabel('Cliente seleccionado', { exact: true })).toContainText(client.nombre_razon_social);
-  const saved = page.waitForResponse((response) => response.url() === `${apiOrigin}/api/orders`);
+  const saved = page.waitForResponse((response) => response.url() === `${apiOrigin}/api/orders` && response.request().method() === 'POST');
   await page.getByRole('button', { name: 'Guardar pedido' }).click();
   const response = await saved;
   expect(response.status()).toBe(201);
@@ -74,7 +75,7 @@ test('T03: duplicado controlado, búsqueda documental y cambio a cliente inactiv
   await page.getByRole('button', { name: 'Seleccionar Cliente inactivo' }).click();
   await expect(page.getByLabel('Cliente seleccionado', { exact: true })).toContainText('Inactivo');
   await expect(page.getByText('Pieza 1', { exact: true })).toBeVisible();
-  const saved = page.waitForResponse((response) => response.url() === `${apiOrigin}/api/orders`);
+  const saved = page.waitForResponse((response) => response.url() === `${apiOrigin}/api/orders` && response.request().method() === 'POST');
   await page.getByRole('button', { name: 'Guardar pedido' }).click();
   const response = await saved;
   expect(response.status()).toBe(201);
