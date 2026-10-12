@@ -6,6 +6,16 @@ from pydantic import BaseModel, Field, field_serializer, field_validator
 
 from app.modules.inventory.domain.writeoff import TipoEventoBajaManual
 
+# El historial muestra todos los valores persistibles; BajaManualRequest sigue
+# limitado a los cuatro eventos manuales.
+TipoEventoHistorial = Literal[
+    "BAJA_ROTURA",
+    "BAJA_MERMA",
+    "BAJA_ERROR_REGISTRO",
+    "BAJA_RETIRO",
+    "CONSUMO_OPTIMIZACION",
+]
+
 class BaseSchema(BaseModel):
     model_config = {"extra": "forbid"}
 
@@ -31,6 +41,18 @@ class MovimientoInventarioResponse(BaseSchema):
     id_plancha: int | None
     id_retazo: int | None
     tipo_evento: TipoEventoBajaManual
+    motivo: str
+    observacion: str | None
+    id_usuario: int
+    fecha: datetime
+    id_optimizacion: int | None
+
+
+class MovimientoHistorialResponse(BaseSchema):
+    id_movimiento: int
+    id_plancha: int | None
+    id_retazo: int | None
+    tipo_evento: TipoEventoHistorial
     motivo: str
     observacion: str | None
     id_usuario: int

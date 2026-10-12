@@ -31,6 +31,7 @@ from tests.integration.test_r4_migration import insert_r3_context
 isolated_base = ModuleType("app.shared.database")
 isolated_base.Base = declarative_base()
 with patch.dict(sys.modules, {"app.shared.database": isolated_base}):
+    from app.models import MovimientoInventario
     from app.modules.inventory.infrastructure.repository import SqlAlchemyInventoryRepository
 
 
@@ -468,7 +469,7 @@ def test_writeoff_persists_movement_and_deactivates_resource_atomically(reposito
 
 
 @pytest.mark.parametrize("kind", ["plancha", "retazo"])
-def test_writeoff_not_found_inactive_and_duplicate_conflicts(repository, engine, kind):
+def test_writeoff_not_found_inactive_without_history_and_duplicate_conflict(repository, engine, kind):
     repo, _sessions = repository
     seed_writeoff_actor(engine)
     plancha, retazo = create_writeoff_resources(repo)
@@ -482,18 +483,57 @@ def test_writeoff_not_found_inactive_and_duplicate_conflicts(repository, engine,
 
     patch_type = UpdatePlancha(estado=False) if kind == "plancha" else UpdateRetazo(estado=False)
     getattr(service, f"update_{kind}")(identifier, patch_type)
-    with pytest.raises(InventoryConflictError):
-        writeoff(identifier, writeoff_command(), id_usuario=1)
 
-    # Una baja confirmada no puede repetirse y conserva el primer movimiento.
-    getattr(service, f"update_{kind}")(identifier, UpdatePlancha(estado=True) if kind == "plancha" else UpdateRetazo(estado=True))
-    # El estado legacy se reactivó porque todavía no existía movimiento; ahora la baja es válida.
-    writeoff(identifier, writeoff_command(), id_usuario=1)
+    # El estado inactivo heredado no equivale a una baja histórica.
+    table = "planchas" if kind == "plancha" else "retazos"
+    id_column = "id_plancha" if kind == "plancha" else "id_retazo"
+    with engine.connect() as connection:
+        assert connection.scalar(
+            sa.text(f"SELECT estado FROM {table} WHERE {id_column}=:id"),
+            {"id": identifier},
+        ) is False
+        assert connection.scalar(
+            sa.text(
+                "SELECT count(*) FROM movimientos_inventario "
+                f"WHERE {id_column}=:id"
+            ),
+            {"id": identifier},
+        ) == 0
+
+    command = writeoff_command()
+    movement = writeoff(identifier, command, id_usuario=1)
+    assert movement.id_plancha == (identifier if kind == "plancha" else None)
+    assert movement.id_retazo == (identifier if kind == "retazo" else None)
+    assert movement.id_usuario == 1
+    assert movement.tipo_evento == "BAJA_ROTURA"
+    assert movement.motivo == command.motivo
+    assert movement.observacion == command.observacion
+
+    # Una baja confirmada sí impide una segunda baja.
     with pytest.raises(InventoryConflictError):
         writeoff(identifier, writeoff_command(), id_usuario=1)
 
     with engine.connect() as connection:
-        assert connection.scalar(sa.text("SELECT count(*) FROM movimientos_inventario")) == 1
+        assert connection.scalar(
+            sa.text(f"SELECT estado FROM {table} WHERE {id_column}=:id"),
+            {"id": identifier},
+        ) is False
+        rows = connection.execute(
+            sa.text(
+                "SELECT id_movimiento, id_usuario, tipo_evento, motivo, observacion "
+                f"FROM movimientos_inventario WHERE {id_column}=:id"
+            ),
+            {"id": identifier},
+        ).all()
+        assert [tuple(row) for row in rows] == [
+            (
+                movement.id_movimiento,
+                1,
+                "BAJA_ROTURA",
+                command.motivo,
+                command.observacion,
+            )
+        ]
 
 
 @pytest.mark.parametrize("kind", ["plancha", "retazo"])
@@ -674,3 +714,109 @@ def test_partial_unique_index_violation_maps_to_inventory_conflict(repository, e
     assert isinstance(caught.value.__cause__, IntegrityError)
     with engine.connect() as connection:
         assert connection.scalar(sa.text("SELECT count(*) FROM movimientos_inventario")) == 0
+
+
+@pytest.mark.parametrize("kind", ["plancha", "retazo"])
+def test_movement_history_is_empty_for_existing_resource_and_not_found_otherwise(repository, engine, kind):
+    repo, sessions = repository
+    plancha, retazo = create_writeoff_resources(repo)
+    resource = plancha if kind == "plancha" else retazo
+    identifier = resource.id_plancha if kind == "plancha" else resource.id_retazo
+    service = InventoryService(repo)
+
+    assert getattr(service, f"list_{kind}_movements")(identifier) == []
+    with pytest.raises(InventoryNotFoundError):
+        getattr(service, f"list_{kind}_movements")(999999)
+
+    assert_released(engine, sessions)
+
+
+@pytest.mark.parametrize("kind", ["plancha", "retazo"])
+def test_movement_history_is_isolated_chronological_and_read_only(repository, engine, kind):
+    repo, sessions = repository
+    seed_writeoff_actor(engine)
+    plancha, retazo = create_writeoff_resources(repo)
+    target = plancha if kind == "plancha" else retazo
+    other = retazo if kind == "plancha" else plancha
+    other_kind = "retazo" if kind == "plancha" else "plancha"
+    target_id = target.id_plancha if kind == "plancha" else target.id_retazo
+    other_id = other.id_retazo if kind == "plancha" else other.id_plancha
+    repeated_timestamp = NOW + timedelta(hours=1)
+    latest_timestamp = NOW + timedelta(hours=2)
+
+    def movement_for(resource_kind, identifier, event, reason, date, observation):
+        return MovimientoInventario(
+            id_plancha=identifier if resource_kind == "plancha" else None,
+            id_retazo=identifier if resource_kind == "retazo" else None,
+            tipo_evento=event,
+            motivo=reason,
+            observacion=observation,
+            id_usuario=1,
+            fecha=date,
+            id_optimizacion=None,
+        )
+
+    # Sembrar el evento reservado prueba lectura histórica, no habilita su creación por API.
+    first_tie = movement_for(
+        kind, target_id, "CONSUMO_OPTIMIZACION", "Evento anterior A",
+        repeated_timestamp, None,
+    )
+    later = movement_for(
+        kind, target_id, "BAJA_ROTURA", "Rotura registrada",
+        latest_timestamp, "Acta 81",
+    )
+    second_tie = movement_for(
+        kind, target_id, "CONSUMO_OPTIMIZACION", "Evento anterior B",
+        repeated_timestamp, "Nota B",
+    )
+    other_resource_movement = movement_for(
+        "retazo" if kind == "plancha" else "plancha",
+        other_id,
+        "BAJA_MERMA",
+        "Movimiento del otro recurso",
+        NOW,
+        None,
+    )
+    with Session(engine) as seed_session:
+        with seed_session.begin():
+            seed_session.add_all([later, first_tie, other_resource_movement, second_tie])
+            seed_session.flush()
+            expected_ids = [
+                row.id_movimiento
+                for row in sorted(
+                    [first_tie, later, second_tie],
+                    key=lambda row: (row.fecha, row.id_movimiento),
+                )
+            ]
+            other_movement_id = other_resource_movement.id_movimiento
+
+    writes = []
+
+    def capture_writes(_conn, _cursor, statement, _parameters, _context, _executemany):
+        operation = statement.lstrip().split(None, 1)[0].upper()
+        if operation in {"INSERT", "UPDATE", "DELETE", "TRUNCATE"}:
+            writes.append(statement)
+
+    sa.event.listen(engine, "before_cursor_execute", capture_writes)
+    try:
+        history = getattr(InventoryService(repo), f"list_{kind}_movements")(target_id)
+        other_history = getattr(InventoryService(repo), f"list_{other_kind}_movements")(other_id)
+    finally:
+        sa.event.remove(engine, "before_cursor_execute", capture_writes)
+
+    assert writes == []
+    assert [item.id_movimiento for item in history] == expected_ids
+    assert all(
+        item.id_plancha == (target_id if kind == "plancha" else None)
+        and item.id_retazo == (target_id if kind == "retazo" else None)
+        for item in history
+    )
+    assert [(item.tipo_evento, item.motivo, item.observacion, item.id_usuario, item.fecha.utcoffset(), item.id_optimizacion)
+            for item in history] == [
+        ("CONSUMO_OPTIMIZACION", "Evento anterior A", None, 1, timedelta(0), None),
+        ("CONSUMO_OPTIMIZACION", "Evento anterior B", "Nota B", 1, timedelta(0), None),
+        ("BAJA_ROTURA", "Rotura registrada", "Acta 81", 1, timedelta(0), None),
+    ]
+    assert [item.id_movimiento for item in other_history] == [other_movement_id]
+    assert other_history[0].motivo == "Movimiento del otro recurso"
+    assert_released(engine, sessions)

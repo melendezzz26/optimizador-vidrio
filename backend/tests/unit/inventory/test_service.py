@@ -520,7 +520,7 @@ def test_manual_writeoff_locks_records_movement_and_deactivates_atomically(inven
 
 
 @pytest.mark.parametrize("kind", ["plancha", "retazo"])
-def test_manual_writeoff_missing_or_inactive_resource_conflicts_without_writes(inventory, kind):
+def test_manual_writeoff_allows_inactive_resource_without_history_and_rejects_duplicate(inventory, kind):
     service, repo = inventory
     method = getattr(service, f"writeoff_{kind}")
     command = BajaManual(tipo_evento=TipoEventoBajaManual.BAJA_RETIRO, motivo="Retiro")
@@ -530,12 +530,19 @@ def test_manual_writeoff_missing_or_inactive_resource_conflicts_without_writes(i
     resource = getattr(service, f"create_{kind}")(
         plancha_command() if kind == "plancha" else retazo_command()
     )
+    identifier = resource.id_plancha if kind == "plancha" else resource.id_retazo
     patch = UpdatePlancha(estado=False) if kind == "plancha" else UpdateRetazo(estado=False)
-    getattr(service, f"update_{kind}")(resource.id_plancha if kind == "plancha" else resource.id_retazo, patch)
-    movements_before = deepcopy(repo.movimientos)
+    getattr(service, f"update_{kind}")(identifier, patch)
+
+    movement = method(identifier, command, id_usuario=1)
+
+    assert movement.id_plancha == (identifier if kind == "plancha" else None)
+    assert movement.id_retazo == (identifier if kind == "retazo" else None)
+    assert getattr(repo, f"get_{kind}")(identifier).estado is False
+    assert len(repo.movimientos) == 1
     with pytest.raises(InventoryConflictError):
-        method(1, command, id_usuario=1)
-    assert repo.movimientos == movements_before
+        method(identifier, command, id_usuario=1)
+    assert len(repo.movimientos) == 1
 
 
 @pytest.mark.parametrize("kind", ["plancha", "retazo"])

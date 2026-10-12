@@ -13,6 +13,7 @@ from app.modules.inventory.presentation.schemas import (
     PlanchaCreate, PlanchaPatch, PlanchaResponse,
     RetazoCreate, RetazoPatch, RetazoResponse,
     BajaManualRequest, BajaManualResponse, MovimientoInventarioResponse,
+    MovimientoHistorialResponse,
 )
 
 router = APIRouter(prefix="/api/inventory", tags=["Inventario"])
@@ -70,6 +71,24 @@ def list_planchas(
 ):
     with handle_domain_exceptions():
         return service.list_planchas()
+
+
+@router.get(
+    "/planchas/{id_plancha}/movimientos",
+    response_model=list[MovimientoHistorialResponse],
+    status_code=status.HTTP_200_OK,
+)
+def list_plancha_movements(
+    id_plancha: int,
+    service: InventoryService = Depends(get_inventory_service),
+    _ = Depends(require_permission("CONSULTAR_STOCK")),
+):
+    with handle_domain_exceptions():
+        movements = service.list_plancha_movements(id_plancha)
+        return [
+            MovimientoHistorialResponse.model_validate(item, from_attributes=True)
+            for item in movements
+        ]
 
 @router.patch("/planchas/{id_plancha}", response_model=PlanchaResponse, status_code=status.HTTP_200_OK)
 def update_plancha(
@@ -142,6 +161,24 @@ def list_retazos(
 ):
     with handle_domain_exceptions():
         return service.list_retazos()
+
+
+@router.get(
+    "/retazos/{id_retazo}/movimientos",
+    response_model=list[MovimientoHistorialResponse],
+    status_code=status.HTTP_200_OK,
+)
+def list_retazo_movements(
+    id_retazo: int,
+    service: InventoryService = Depends(get_inventory_service),
+    _ = Depends(require_permission("CONSULTAR_STOCK")),
+):
+    with handle_domain_exceptions():
+        movements = service.list_retazo_movements(id_retazo)
+        return [
+            MovimientoHistorialResponse.model_validate(item, from_attributes=True)
+            for item in movements
+        ]
 
 @router.patch("/retazos/{id_retazo}", response_model=RetazoResponse, status_code=status.HTTP_200_OK)
 def update_retazo(

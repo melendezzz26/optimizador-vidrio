@@ -67,6 +67,25 @@ class SqlAlchemyInventoryRepository:
             session.close()
             self._session = None
 
+    @contextmanager
+    def read_transaction(self) -> Generator[None, None, None]:
+        """Abre una sesión de lectura que nunca confirma cambios."""
+        if self._session is not None:
+            raise RuntimeError("Transacción anidada no permitida: ya hay una sesión activa.")
+
+        session: Session = self._session_factory()
+        self._session = session
+        try:
+            yield
+        finally:
+            try:
+                session.rollback()
+            finally:
+                try:
+                    session.close()
+                finally:
+                    self._session = None
+
     @staticmethod
     def _translate_or_raise(exc: IntegrityError) -> None:
         constraint = getattr(getattr(getattr(exc, "orig", None), "diag", None), "constraint_name", None)
@@ -258,6 +277,18 @@ class SqlAlchemyInventoryRepository:
         session = self._require_session()
         return [self._to_plancha(row) for row in session.query(Plancha).all()]
 
+    def list_plancha_movements(self, id_plancha: int) -> list[MovimientoInventarioData] | None:
+        """Lista del más antiguo al más reciente; el ID ordena fechas iguales."""
+        session = self._require_session()
+        if session.get(Plancha, id_plancha) is None:
+            return None
+        rows = session.execute(
+            select(MovimientoInventario)
+            .where(MovimientoInventario.id_plancha == id_plancha)
+            .order_by(MovimientoInventario.fecha.asc(), MovimientoInventario.id_movimiento.asc())
+        ).scalars().all()
+        return [self._to_movement(row) for row in rows]
+
     def save_plancha(self, data: PlanchaData) -> PlanchaData:
         session = self._require_session()
         row = session.get(Plancha, data.id_plancha)
@@ -334,6 +365,18 @@ class SqlAlchemyInventoryRepository:
     def list_retazos(self) -> list[RetazoData]:
         session = self._require_session()
         return [self._to_retazo(row) for row in session.query(Retazo).all()]
+
+    def list_retazo_movements(self, id_retazo: int) -> list[MovimientoInventarioData] | None:
+        """Lista del más antiguo al más reciente; el ID ordena fechas iguales."""
+        session = self._require_session()
+        if session.get(Retazo, id_retazo) is None:
+            return None
+        rows = session.execute(
+            select(MovimientoInventario)
+            .where(MovimientoInventario.id_retazo == id_retazo)
+            .order_by(MovimientoInventario.fecha.asc(), MovimientoInventario.id_movimiento.asc())
+        ).scalars().all()
+        return [self._to_movement(row) for row in rows]
 
     def save_retazo(self, data: RetazoData) -> RetazoData:
         session = self._require_session()
