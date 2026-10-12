@@ -1,0 +1,32 @@
+﻿
+ RUN  v5.0.3 C:/Users/Usuario/Desktop/Repo Taller 1/optimizador-vidrio/frontend
+
+ ✓ src/features/users/__tests__/userFilters.test.jsx > filterUsers (HU-003 T04) > sin filtros devuelve todos los usuarios 2ms
+ ✓ src/features/users/__tests__/userFilters.test.jsx > filterUsers (HU-003 T04) > busca por una parte del usuario de acceso 0ms
+ ✓ src/features/users/__tests__/userFilters.test.jsx > filterUsers (HU-003 T04) > busca sin importar tildes ni mayúsculas 0ms
+ ✓ src/features/users/__tests__/userFilters.test.jsx > filterUsers (HU-003 T04) > acepta varias palabras en cualquier orden 0ms
+ ✓ src/features/users/__tests__/userFilters.test.jsx > filterUsers (HU-003 T04) > filtra por rol 0ms
+ ✓ src/features/users/__tests__/userFilters.test.jsx > filterUsers (HU-003 T04) > filtra por estado 0ms
+ ✓ src/features/users/__tests__/userFilters.test.jsx > filterUsers (HU-003 T04) > combina búsqueda, rol y estado; sin coincidencias devuelve una lista vacía 0ms
+ ✓ src/features/users/__tests__/userFilters.test.jsx > hasActiveFilters > no cuenta los espacios en blanco como búsqueda 0ms
+ ✓ src/features/users/__tests__/UsersPage.test.jsx > UsersPage — feedback compartido (TA-034) > muestra la carga y luego el listado 115ms
+ ✓ src/features/users/__tests__/UsersPage.test.jsx > UsersPage — feedback compartido (TA-034) > muestra el estado vacío cuando no hay usuarios 16ms
+ ✓ src/features/users/__tests__/UsersPage.test.jsx > UsersPage — feedback compartido (TA-034) > muestra el error de carga como alerta 16ms
+ ✓ src/features/users/__tests__/UsersPageManagement.test.jsx > UsersPage — listado primero y formulario bajo acción (HU-003 T05) > al entrar muestra el listado y no el formulario 149ms
+ ✓ src/features/users/__tests__/UsersPageManagement.test.jsx > UsersPage — listado primero y formulario bajo acción (HU-003 T05) > Nuevo usuario abre el formulario en lugar del listado y Cancelar vuelve sin perder los filtros 81ms
+ ✓ src/features/users/__tests__/UsersPageFilters.test.jsx > UsersPage — búsqueda y filtros (HU-003 T04) > muestra los controles y el total de usuarios 141ms
+ ✓ src/features/users/__tests__/UsersPageFilters.test.jsx > UsersPage — búsqueda y filtros (HU-003 T04) > busca por nombre sin importar tildes 33ms
+ ✓ src/features/users/__tests__/UsersPageFilters.test.jsx > UsersPage — búsqueda y filtros (HU-003 T04) > combina rol y estado 33ms
+ ✓ src/features/users/__tests__/UsersPageFilters.test.jsx > UsersPage — búsqueda y filtros (HU-003 T04) > sin coincidencias muestra el estado vacío y Limpiar filtros recupera el listado 59ms
+ ✓ src/features/users/__tests__/UsersPageFilters.test.jsx > UsersPage — búsqueda y filtros (HU-003 T04) > sin usuarios registrados no muestra los filtros 18ms
+ ✓ src/features/users/__tests__/UsersPage.test.jsx > UsersPage — feedback compartido (TA-034) > pide confirmación antes de desactivar y no cambia nada si se cancela 75ms
+ ✓ src/features/users/__tests__/UsersPage.test.jsx > UsersPage — feedback compartido (TA-034) > desactiva solo después de confirmar y muestra el resultado 68ms
+ ✓ src/features/users/__tests__/UsersPageManagement.test.jsx > UsersPage — listado primero y formulario bajo acción (HU-003 T05) > al registrar vuelve al listado con el mensaje de éxito 80ms
+ ✓ src/features/users/__tests__/UsersPageManagement.test.jsx > UsersPage — listado primero y formulario bajo acción (HU-003 T05) > un usuario duplicado mantiene el formulario abierto con el error junto al DNI 59ms
+ ✓ src/features/users/__tests__/UsersPageManagement.test.jsx > UsersPage — listado primero y formulario bajo acción (HU-003 T05) > Editar abre el formulario con los datos actuales y al guardar vuelve al listado 57ms
+
+ Test Files  4 passed (4)
+      Tests  23 passed (23)
+   Start at  22:37:41
+   Duration  1.98s (environment 61%, tests 15%, setup 12%, transform 7%, import 5%)
+

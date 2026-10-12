@@ -1,15 +1,6 @@
-import { EmptyState } from '../../shared/components/feedback';
 // Tabla de usuarios. No muestra el DNI (SPEC-HU-003, RN-09).
+// Recibe la lista ya filtrada; los estados vacíos los decide UsersPage.
 export function UsersTable({ users, currentUserId, pendingUserId, onEdit, onToggleStatus }) {
-  if (users.length === 0) {
-    return (
-      <EmptyState
-        title="Aún no hay usuarios registrados"
-        description="Registra el primero con el formulario de esta página."
-      />
-    );
-  }
-
   return (
     <div className="users-table-scroll">
       <table className="users-table">
