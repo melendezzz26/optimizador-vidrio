@@ -9,6 +9,7 @@
 | Rama | `feature/HU-014-trazabilidad-inventario` |
 | HEAD funcional HU-014 antes del merge | `83cedbe` |
 | Merge post-integración | `01d84f9` |
+| HEAD actual | `6489120` |
 | Estado de SPEC | Implemented; pendiente revisión final para Verified |
 
 ## Trazabilidad de implementación
@@ -69,10 +70,15 @@ La matriz completa CA-01 a CA-19, incluido el texto de cada criterio, está en l
 
 ## Resultados post-merge informados
 
+- Backend completo: **1207 passed, 1 warning**, duración **258.92 s**. Comando: `.\venv\Scripts\python.exe -m pytest tests -q`. El único warning es `StarletteDeprecationWarning` de FastAPI/Starlette `TestClient`; no bloqueante.
+- Alembic: `fa014e1a2b3c (head)`, único head. Comando: `.\venv\Scripts\python.exe -m alembic heads`.
+- Frontend unit: **84 passed, 0 failed** (`npm run test:unit`).
+- Frontend component: **19 test files passed; 205 tests passed, 0 failed** (`npm run test:component`).
+- Lint: **PASS** (`npm run lint`).
+- Build: **PASS** (`npm run build`), Vite **8.3.1**, **1941 modules transformed**.
 - E2E específico HU-014: **3 passed, 1 skipped, 0 failed**. Comando: `npx playwright test tests/e2e/hu014-inventory-writeoff.spec.js`.
 - Suite E2E completa: **31 passed, 1 skipped, 0 failed**. Comando: `npm run test:e2e`.
 - El único skip corresponde al escenario de baja HU-014 en `chromium-mobile`: el fixture tiene una única plancha y esa baja solo puede ejecutarse una vez. El escenario de permisos sí se ejecuta en desktop y mobile. El skip es intencional, no un fallo.
-- Backend completo, `alembic heads`, frontend unit, frontend component, lint y build: resultado post-merge no proporcionado en esta actualización; pendiente de registrar sin inferirlo de la ejecución previa al merge.
 - `git diff --check`: PASS para este cambio documental, verificado después de editar.
 
 La suite E2E completa post-merge está verde en los resultados informados; ya no se registra una deuda vigente de HU-007 para esta rama.

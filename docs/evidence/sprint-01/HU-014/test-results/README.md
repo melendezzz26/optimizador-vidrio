@@ -24,10 +24,10 @@ Entorno: Windows, Python 3.11.9 y PostgreSQL aislado para integración. La adver
 
 Resultados post-merge de backend y Alembic:
 
-| Verificación | Resultado post-merge |
+| Comando | Resultado post-merge |
 |---|---|
-| `python -m pytest tests -q` | No proporcionado en esta actualización; pendiente de registrar. |
-| `python -m alembic heads` | No proporcionado en esta actualización; pendiente de registrar. |
+| `.\venv\Scripts\python.exe -m pytest tests -q` | **1207 passed, 1 warning**, 258.92 s. `StarletteDeprecationWarning` de FastAPI/Starlette `TestClient`, no bloqueante. |
+| `.\venv\Scripts\python.exe -m alembic heads` | `fa014e1a2b3c (head)`; un único head. |
 
 ## Frontend
 
@@ -51,10 +51,10 @@ Resultados post-merge de frontend:
 
 | Comando | Resultado post-merge |
 |---|---|
-| `npm run test:unit` | No proporcionado en esta actualización; pendiente de registrar. |
-| `npm run test:component` | No proporcionado en esta actualización; pendiente de registrar. |
-| `npm run lint` | No proporcionado en esta actualización; pendiente de registrar. |
-| `npm run build` | No proporcionado en esta actualización; pendiente de registrar. |
+| `npm run test:unit` | **84 passed, 0 failed**. |
+| `npm run test:component` | **19 test files passed; 205 tests passed, 0 failed**. |
+| `npm run lint` | **PASS**. |
+| `npm run build` | **PASS**; Vite 8.3.1, 1941 modules transformed. |
 
 ## E2E HU-014
 
