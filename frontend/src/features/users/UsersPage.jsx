@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useId, useState } from 'react';
 import { AppShell } from '../../shared/components/AppShell';
 import { PageCard } from '../../shared/components/PageLayout';
-import { ConfirmDialog, FeedbackMessage, LoadingState } from '../../shared/components/feedback';
+import { ConfirmDialog, EmptyState, FeedbackMessage, LoadingState } from '../../shared/components/feedback';
 import { UserForm } from './UserForm';
+import { UsersFilters } from './UsersFilters';
 import { UsersTable } from './UsersTable';
+import { EMPTY_USER_FILTERS, filterUsers } from './userFilters';
 import { createUser, listRoles, listUsers, updateUser } from './usersApi';
 import './users.css';
 
@@ -20,7 +22,11 @@ export function UsersPage({ currentUser, onSessionExpired, toolbar }) {
   const [notice, setNotice] = useState('');
   const [tableError, setTableError] = useState('');
   const [userToDeactivate, setUserToDeactivate] = useState(null);
+  const [filters, setFilters] = useState(EMPTY_USER_FILTERS);
   const listTitleId = useId();
+
+  // La lista visible se calcula en cada render; no se guarda en el estado.
+  const visibleUsers = filterUsers(users, filters);
 
   // 401: la sesión expiró o la cuenta fue desactivada; se vuelve al inicio de sesión.
   const handleApiError = useCallback((error) => {
@@ -138,13 +144,39 @@ export function UsersPage({ currentUser, onSessionExpired, toolbar }) {
             {tableError && (
               <FeedbackMessage variant="error" title="No se pudo cambiar el estado">{tableError}</FeedbackMessage>
             )}
-            <UsersTable
-              users={users}
-              currentUserId={currentUser.id_usuario}
-              pendingUserId={pendingUserId}
-              onEdit={startEditing}
-              onToggleStatus={handleToggleStatus}
-            />
+            {users.length === 0 ? (
+              <EmptyState
+                title="Aún no hay usuarios registrados"
+                description="Registra el primero con el formulario de esta página."
+              />
+            ) : (
+              <>
+                <UsersFilters
+                  filters={filters}
+                  roles={roles}
+                  onChange={setFilters}
+                  onClear={() => setFilters(EMPTY_USER_FILTERS)}
+                />
+                <p className="users-count" role="status">
+                  Mostrando {visibleUsers.length} de {users.length} usuarios
+                </p>
+                {visibleUsers.length === 0 ? (
+                  <EmptyState
+                    kind="sin-resultados"
+                    title="No hay usuarios que coincidan con la búsqueda."
+                    description="Cambia la búsqueda o los filtros, o usa «Limpiar filtros» para ver a todos."
+                  />
+                ) : (
+                  <UsersTable
+                    users={visibleUsers}
+                    currentUserId={currentUser.id_usuario}
+                    pendingUserId={pendingUserId}
+                    onEdit={startEditing}
+                    onToggleStatus={handleToggleStatus}
+                  />
+                )}
+              </>
+            )}
           </PageCard>
         </>
       )}
