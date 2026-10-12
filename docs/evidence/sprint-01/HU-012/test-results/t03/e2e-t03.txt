@@ -1,0 +1,29 @@
+
+> frontend@0.0.0 test:e2e
+> playwright test hu012-client-order
+
+npm.cmd : [WebServer] (node:12188) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+En línea: 2 Carácter: 92
++ ... pgsql/bin'; npm.cmd run test:e2e -- hu012-client-order > "$env:TEMP\h ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([WebServer] (no... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 2 workers
+
+(node:10400) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20524) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 [chromium-desktop] › tests\e2e\hu012-client-order.spec.js:56:1 › T03: duplicado controlado, búsqueda documental y cambio a cliente inactivo (11.3s)
+  ok 1 [chromium-desktop] › tests\e2e\hu012-client-order.spec.js:22:1 › T03: alta contextual, bloqueo sin cliente, persistencia y lectura real (11.5s)
+(node:24532) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10648) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 3 [chromium-mobile] › tests\e2e\hu012-client-order.spec.js:22:1 › T03: alta contextual, bloqueo sin cliente, persistencia y lectura real (3.4s)
+  ok 4 [chromium-mobile] › tests\e2e\hu012-client-order.spec.js:56:1 › T03: duplicado controlado, búsqueda documental y cambio a cliente inactivo (3.9s)
+
+  4 passed (1.0m)
