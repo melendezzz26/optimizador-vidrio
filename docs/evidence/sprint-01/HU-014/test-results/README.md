@@ -1,6 +1,6 @@
 # HU-014 — comandos y resultados de pruebas
 
-Estos son comandos reproducibles. Ejecutar los comandos de backend desde `backend/` y los de frontend/E2E desde `frontend/`. Los resultados siguientes corresponden a la ejecución reportada para la rama y el HEAD funcional `83cedbe`; no se volvieron a ejecutar en el cierre documental.
+Estos son comandos reproducibles. Ejecutar los comandos de backend desde `backend/` y los de frontend/E2E desde `frontend/`. Los resultados pre-merge abajo se conservan como referencia histórica de `83cedbe`. Los resultados post-merge se separan para no atribuir a `01d84f9` ejecuciones anteriores.
 
 ## Backend
 
@@ -11,7 +11,7 @@ python -m pytest tests/integration/inventory -q
 python -m pytest tests -q
 ```
 
-Resultados reportados:
+Resultados reportados antes del merge `01d84f9`:
 
 | Suite | Resultado |
 |---|---:|
@@ -22,6 +22,13 @@ Resultados reportados:
 
 Entorno: Windows, Python 3.11.9 y PostgreSQL aislado para integración. La advertencia `StarletteDeprecationWarning` / `httpx` fue reportada como no bloqueante. La migración HU-014 se verificó en PostgreSQL aislado; no ejecutar estos comandos contra Supabase.
 
+Resultados post-merge de backend y Alembic:
+
+| Verificación | Resultado post-merge |
+|---|---|
+| `python -m pytest tests -q` | No proporcionado en esta actualización; pendiente de registrar. |
+| `python -m alembic heads` | No proporcionado en esta actualización; pendiente de registrar. |
+
 ## Frontend
 
 ```powershell
@@ -31,7 +38,7 @@ npm run lint
 npm run build
 ```
 
-Resultados reportados:
+Resultados reportados antes del merge `01d84f9`:
 
 | Comando | Resultado |
 |---|---:|
@@ -39,6 +46,15 @@ Resultados reportados:
 | `npm run test:component` | 166/166 PASS |
 | `npm run lint` | PASS |
 | `npm run build` | PASS |
+
+Resultados post-merge de frontend:
+
+| Comando | Resultado post-merge |
+|---|---|
+| `npm run test:unit` | No proporcionado en esta actualización; pendiente de registrar. |
+| `npm run test:component` | No proporcionado en esta actualización; pendiente de registrar. |
+| `npm run lint` | No proporcionado en esta actualización; pendiente de registrar. |
+| `npm run build` | No proporcionado en esta actualización; pendiente de registrar. |
 
 ## E2E HU-014
 
@@ -48,7 +64,13 @@ npx playwright test tests/e2e/hu014-inventory-writeoff.spec.js
 
 Resultado reportado: **3 passed, 1 skipped, 0 failed**. La baja real usa una única plancha del fixture y se ejecuta solo en desktop para evitar repetir una baja única en el mismo recurso. El test de permisos corre en desktop y mobile; el skip del flujo mutante en mobile es intencional, no un fallo.
 
-La suite E2E global también se ejecutó y contiene fallos de HU-007. No está verde; esos fallos son deuda externa a HU-014 y requieren revisión separada.
+Suite E2E completa post-merge:
+
+```powershell
+npm run test:e2e
+```
+
+Resultado informado: **31 passed, 1 skipped, 0 failed**. El único skip corresponde al escenario de baja HU-014 en `chromium-mobile` porque el fixture contiene una sola plancha susceptible de una única baja manual. El escenario de permisos se ejecuta en desktop y mobile. No se registra deuda vigente de HU-007 en esta rama tras la integración.
 
 ## Calidad documental
 
@@ -56,4 +78,4 @@ La suite E2E global también se ejecutó y contiene fallos de HU-007. No está v
 git diff --check
 ```
 
-Resultado reportado para este cierre documental: **PASS**. Esta carpeta contiene únicamente el resumen reproducible; no se generaron logs ni reportes de prueba artificiales.
+Resultado post-merge de este ajuste documental: **PASS** (`git diff --check`). Esta carpeta contiene únicamente el resumen reproducible; no se generaron logs ni reportes de prueba artificiales.

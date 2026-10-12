@@ -7,7 +7,8 @@
 | PBI | HU-014 — Baja y trazabilidad de inventario |
 | SPEC | [SPEC-HU-014-trazabilidad-inventario.md](../../../specs/SPEC-HU-014-trazabilidad-inventario.md) |
 | Rama | `feature/HU-014-trazabilidad-inventario` |
-| HEAD funcional documentado | `83cedbe` |
+| HEAD funcional HU-014 antes del merge | `83cedbe` |
+| Merge post-integración | `01d84f9` |
 | Estado de SPEC | Implemented; pendiente revisión final para Verified |
 
 ## Trazabilidad de implementación
@@ -23,6 +24,10 @@ Commits funcionales de HU-014:
 - `83cedbe` — frontend + E2E HU-014.
 
 La migración `fa014e1a2b3c` tiene como parent `ef6564220e70`. La revisión específica de migración se realizó con PostgreSQL aislado; no se ejecutó contra Supabase.
+
+## Sincronización post-integración
+
+`integration/sprint-01` llegó a `9407f26` y fue incorporada a esta rama mediante el merge `01d84f9`. Antes del PR quedaron incluidos los cambios integrados de HU-003 y HU-012.
 
 ## Backend y API
 
@@ -49,24 +54,28 @@ Los diálogos implementan nombre accesible, foco inicial, ciclo de foco, Escape,
 
 La matriz completa CA-01 a CA-19, incluido el texto de cada criterio, está en la [SPEC, sección 13](../../../specs/SPEC-HU-014-trazabilidad-inventario.md). CA-01 a CA-06, CA-08 a CA-15 y CA-17 a CA-19 constan como cumplidos. CA-07 y CA-16 permanecen parciales porque actualmente no existe un consumidor first-party real de stock elegible en el que verificar la exclusión. La auditoría no detectó un flujo first-party que permita utilizar material dado de baja; no se implementó funcionalidad especulativa para cerrar artificialmente esos criterios. La futura HU/PBI que implemente selección o consumo para optimización deberá verificar RN-09 con PostgreSQL controlado.
 
-## Entorno y resultados informados
+## Entorno y resultados previos al merge
 
 - Backend: Windows, Python 3.11.9, pytest y PostgreSQL aislado para pruebas de integración.
-- Inventory unit: **350 passed**.
-- Inventory integration: **59 passed**.
-- Inventory API: **46 passed**.
-- Backend completo: **1181 passed**.
-- Frontend unit: **84/84 PASS**.
-- Frontend component: **166/166 PASS**.
-- Frontend lint: **PASS**.
-- Frontend build: **PASS**.
-- E2E específico HU-014: **3 passed, 1 skipped, 0 failed**.
-- `git diff --check`: **PASS**.
+- Inventory unit: **350 passed** (resultado previo al merge).
+- Inventory integration: **59 passed** (resultado previo al merge).
+- Inventory API: **46 passed** (resultado previo al merge).
+- Backend completo: **1181 passed** (resultado previo al merge).
+- Frontend unit: **84/84 PASS** (resultado previo al merge).
+- Frontend component: **166/166 PASS** (resultado previo al merge).
+- Frontend lint: **PASS** (resultado previo al merge).
+- Frontend build: **PASS** (resultado previo al merge).
 - Advertencia no bloqueante reportada en backend: `StarletteDeprecationWarning` / `httpx`.
 
-El caso que registra una baja real se ejecuta en desktop: el fixture tiene una única plancha y la baja manual es única. El escenario de permisos se ejecuta en desktop y mobile. El skip no es un fallo.
+## Resultados post-merge informados
 
-La suite E2E global se ejecutó y tiene fallos pertenecientes a HU-007. No se reporta como verde y esos fallos no se atribuyen a HU-014; se revisarán separadamente.
+- E2E específico HU-014: **3 passed, 1 skipped, 0 failed**. Comando: `npx playwright test tests/e2e/hu014-inventory-writeoff.spec.js`.
+- Suite E2E completa: **31 passed, 1 skipped, 0 failed**. Comando: `npm run test:e2e`.
+- El único skip corresponde al escenario de baja HU-014 en `chromium-mobile`: el fixture tiene una única plancha y esa baja solo puede ejecutarse una vez. El escenario de permisos sí se ejecuta en desktop y mobile. El skip es intencional, no un fallo.
+- Backend completo, `alembic heads`, frontend unit, frontend component, lint y build: resultado post-merge no proporcionado en esta actualización; pendiente de registrar sin inferirlo de la ejecución previa al merge.
+- `git diff --check`: PASS para este cambio documental, verificado después de editar.
+
+La suite E2E completa post-merge está verde en los resultados informados; ya no se registra una deuda vigente de HU-007 para esta rama.
 
 Los comandos reproducibles y el desglose se encuentran en [test-results/README.md](test-results/README.md). No se fabricaron ni adjuntaron logs JUnit, salidas de pytest o capturas inexistentes.
 
