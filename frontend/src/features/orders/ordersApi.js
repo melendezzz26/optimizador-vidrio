@@ -56,7 +56,7 @@ export const listOrderMaterials = ({ signal, token } = {}) =>
 export const createOrder = (body, { signal, token } = {}) =>
   request('/api/orders', {
     method: 'POST', body, signal, token,
-    validationFallback: 'No se pudo registrar el pedido. Revisa las piezas e inténtalo de nuevo.',
+    validationFallback: 'Revisa el cliente, el material, espesor y las medidas de las piezas.',
   });
 
 export const listOrders = ({ page = 1, limit = 10, estado, cliente, fecha } = {}, { signal, token } = {}) => {

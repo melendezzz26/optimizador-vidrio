@@ -76,6 +76,13 @@ def main():
                 VALUES (701, 1000, 500, 5.5, 2, true, :now, 7)
             """), {"now": datetime.now(timezone.utc)})
 
+            connection.execute(sa.text("""
+                INSERT INTO clientes(id_cliente,nombre_razon_social,tipo_documento,numero_documento,estado,fecha_registro)
+                VALUES (41,'Vidrios Norte','TEST','DEMO-003',true,:now),
+                       (42,'Cliente inactivo','TEST','DEMO-004',false,:now)
+            """), {"now": datetime.now(timezone.utc)})
+            connection.execute(sa.text("SELECT setval(pg_get_serial_sequence('clientes', 'id_cliente'), 42)"))
+
         for command in ("heads", "current"):
             result = _run([sys.executable, "-m", "alembic", command], env=os.environ)
             print(f"python -m alembic {command}\n{result.stdout}{result.stderr}", flush=True)

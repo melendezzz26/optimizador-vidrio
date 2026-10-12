@@ -1,0 +1,23 @@
+﻿ssssssssssssssssssssssssssssssssssssssssssss..........ssssssssssssssssss [  6%]
+sssssssssssssssssssssssssssssssssssssssssssss........................... [ 13%]
+........................................................................ [ 19%]
+.................sssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 26%]
+ssssssssssssssssssssss...............sssssssssssssssssssssssssssssssssss [ 33%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 39%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssss.................... [ 46%]
+........................................................................ [ 52%]
+........................................................................ [ 59%]
+........................................................................ [ 66%]
+........................................................................ [ 72%]
+........................................................................ [ 79%]
+........................................................................ [ 85%]
+........................................................................ [ 92%]
+........................................................................ [ 99%]
+..........                                                               [100%]
+============================== warnings summary ===============================
+venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\Usuario\Desktop\Repo Taller 1\optimizador-vidrio\backend\venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+747 passed, 343 skipped, 1 warning in 15.95s

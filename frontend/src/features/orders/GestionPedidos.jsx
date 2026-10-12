@@ -116,10 +116,10 @@ export default function GestionPedidos({ token, user, toolbar, onSessionExpired 
     setOrderModal(null);
   };
 
-  const handleOrderSaved = (mode) => {
+  const handleOrderSaved = (mode, result) => {
     setFeedback({
       variant: 'success',
-      message: mode === 'create' ? 'Pedido creado correctamente.' : 'Pedido actualizado correctamente.',
+      message: mode === 'create' ? `Pedido registrado correctamente. ID del pedido: ${result.id_pedido}.` : 'Pedido actualizado correctamente.',
     });
     setLoadError('');
     setIsLoading(true);
@@ -329,7 +329,7 @@ export default function GestionPedidos({ token, user, toolbar, onSessionExpired 
                 idPedido={orderModal.orderId}
                 mode={orderModal.mode}
                 onCerrar={closeOrderModal}
-                onSuccess={() => handleOrderSaved(orderModal.mode)}
+                onSuccess={(_action, result) => handleOrderSaved(orderModal.mode, result)}
                 onSubmittingChange={setIsFormSubmitting}
               />
             </div>

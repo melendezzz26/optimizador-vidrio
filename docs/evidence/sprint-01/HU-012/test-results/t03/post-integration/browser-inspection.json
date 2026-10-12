@@ -1,0 +1,53 @@
+{
+  "kind": "Automated DOM and computed-layout inspection; no screenshots; not human visual approval",
+  "reports": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "focusSelected": true,
+      "documentOverflow": false,
+      "selectorOverflow": false,
+      "selectorColors": {
+        "text": "rgb(31, 41, 55)",
+        "background": "rgb(255, 255, 255)"
+      },
+      "controls": [
+        {
+          "label": "Cambiar cliente",
+          "width": 163,
+          "height": 44
+        }
+      ],
+      "saveStatus": 201,
+      "readStatus": 200,
+      "clientMatches": true,
+      "pieceCount": 1
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "focusSelected": true,
+      "documentOverflow": false,
+      "selectorOverflow": false,
+      "selectorColors": {
+        "text": "rgb(31, 41, 55)",
+        "background": "rgb(255, 255, 255)"
+      },
+      "controls": [
+        {
+          "label": "Cambiar cliente",
+          "width": 306,
+          "height": 44
+        }
+      ],
+      "saveStatus": 201,
+      "readStatus": 200,
+      "clientMatches": true,
+      "pieceCount": 1
+    }
+  ]
+}

@@ -5,6 +5,8 @@ import { AppShell } from '../../shared/components/AppShell';
 import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
 import { ConfirmDialog, EmptyState, FeedbackMessage, FieldError, LoadingState } from '../../shared/components/feedback';
 import CustomPieceEditor from './CustomPieceEditor';
+import OrderClientSelector from './OrderClientSelector';
+import { validateConvexPolygon } from './convexityValidation';
 import { createSegments, getDrawingSegmentLength } from './segmentGeometry';
 import { createOrder, getOrder, listOrderMaterials, updateOrder } from './ordersApi';
 import './NuevoPedido.css';
@@ -98,6 +100,9 @@ export default function FormularioPedido({
   toolbar,
 }) {
   const [tiposDisponibles, setTiposDisponibles] = useState([]);
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [clientFormKey, setClientFormKey] = useState(0);
+  const [catalogAttempt, setCatalogAttempt] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorGlobal, setErrorGlobal] = useState('');
@@ -133,7 +138,7 @@ export default function FormularioPedido({
           editing ? getOrder(idPedido, { signal: controller.signal, token }) : Promise.resolve(null),
         ]);
         if (controller.signal.aborted) return;
-        setTiposDisponibles(materials);
+        setTiposDisponibles(materials.filter((material) => material.estado !== false));
         if (order) {
           setEstadoPedido(order.estado);
           nextPieceIdRef.current = 0;
@@ -149,7 +154,7 @@ export default function FormularioPedido({
     }
     load();
     return () => controller.abort();
-  }, [editing, idPedido, token]);
+  }, [editing, idPedido, token, catalogAttempt]);
 
   useEffect(() => {
     if (piezaEnEdicion === null) return undefined;
@@ -238,7 +243,7 @@ export default function FormularioPedido({
   }
 
   function isValid() {
-    if (!piezas.length) return false;
+    if ((creating && !selectedClient) || loadError || !piezas.length) return false;
     return piezas.every((piece) => {
       if (!piece.tipo_vidrio_id || !positiveNumber(piece.espesor)
         || !Number.isInteger(Number(piece.cantidad)) || Number(piece.cantidad) <= 0) return false;
@@ -246,7 +251,7 @@ export default function FormularioPedido({
         return positiveNumber(piece.dimensiones.width_mm) && positiveNumber(piece.dimensiones.height_mm);
       }
       if (piece.tipo_forma === 'CIRCUNFERENCIA') return positiveNumber(piece.dimensiones.radius_mm);
-      return Array.isArray(piece.dimensiones.vertices) && piece.dimensiones.vertices.length >= 3;
+      return validateConvexPolygon(piece.dimensiones.vertices).isValid;
     });
   }
 
@@ -259,14 +264,19 @@ export default function FormularioPedido({
     setSuccessMessage('');
     try {
       const payload = buildPayload(piezas);
-      if (editing) await updateOrder(idPedido, payload, { token });
-      else await createOrder(payload, { token });
-      setSuccessMessage(editing ? 'Pedido actualizado correctamente.' : 'Pedido registrado correctamente.');
-      onSuccess?.(editing ? 'update' : 'create');
+      const result = editing
+        ? await updateOrder(idPedido, payload, { token })
+        : await createOrder({ ...payload, id_cliente: selectedClient.id_cliente }, { token });
+      setSuccessMessage(editing ? 'Pedido actualizado correctamente.' : `Pedido registrado correctamente. ID del pedido: ${result.id_pedido}.`);
+      onSuccess?.(editing ? 'update' : 'create', result);
       if (onCerrar) onCerrar();
-      else if (!editing) setPiezas([]);
+      else if (!editing) {
+        setPiezas([]);
+        setSelectedClient(null);
+        setClientFormKey((key) => key + 1);
+      }
     } catch (error) {
-      setErrorGlobal(error.message);
+      setErrorGlobal(`${error.message} ${creating ? 'Las piezas y el cliente se conservan' : 'Las piezas se conservan'} para reintentar.`);
     } finally {
       submittingRef.current = false;
       setIsSubmitting(false);
@@ -290,10 +300,12 @@ export default function FormularioPedido({
       <PageCard as="section" aria-labelledby={standalone ? titleId : undefined}>
         {isLoading && <LoadingState>{editing ? 'Cargando pedido…' : 'Cargando materiales…'}</LoadingState>}
         {errorGlobal && <FeedbackMessage variant="error" title="No se pudo completar la operación">{errorGlobal}</FeedbackMessage>}
+        {loadError && creating && <button type="button" className="ng-button" onClick={() => setCatalogAttempt((attempt) => attempt + 1)}>Reintentar catálogo</button>}
         {successMessage && <FeedbackMessage variant="success">{successMessage}</FeedbackMessage>}
         {readOnly && <FeedbackMessage variant="warning" title="Pedido en modo lectura">El estado {estadoPedido} no permite modificar sus piezas.</FeedbackMessage>}
 
         {!isLoading && (!loadError || creating) && <>
+          {creating && <OrderClientSelector key={clientFormKey} value={selectedClient} onChange={setSelectedClient} disabled={isSubmitting} token={token} />}
           <section className="orders-section">
             <div className="orders-section__header">
               <div>
@@ -383,10 +395,11 @@ export default function FormularioPedido({
             </div>
           </section>
 
+          {creating && !selectedClient && <p id={`${formId}-client-help`}>Selecciona un cliente para guardar el pedido.</p>}
           <ActionBar>
             {onCerrar && <button type="button" className="ng-button" onClick={onCerrar} disabled={isSubmitting}><X size={18} /> Cerrar</button>}
             {standalone && creating && <button type="button" className="ng-button" onClick={() => setIsCancelDialogOpen(true)} disabled={isSubmitting}><X size={18} /> Cancelar</button>}
-            {!readOnly && <button type="button" className="ng-button ng-button--primary" onClick={saveOrder} disabled={!isValid() || isSubmitting}>
+            {!readOnly && <button type="button" className="ng-button ng-button--primary" onClick={saveOrder} aria-describedby={creating && !selectedClient ? `${formId}-client-help` : undefined} disabled={!isValid() || isSubmitting}>
               {isSubmitting ? <Loader2 size={18} className="ng-loading-icon" /> : <Save size={18} />}
               {isSubmitting ? 'Guardando…' : editing ? 'Guardar cambios' : 'Guardar pedido'}
             </button>}
@@ -394,10 +407,10 @@ export default function FormularioPedido({
         </>}
       </PageCard>
 
-      <ConfirmDialog open={isCancelDialogOpen} title="¿Limpiar el pedido?" confirmLabel="Limpiar piezas"
-        onConfirm={() => { setPiezas([]); setErrorGlobal(''); setSuccessMessage(''); setIsCancelDialogOpen(false); }}
+      <ConfirmDialog open={isCancelDialogOpen} title="¿Limpiar el pedido?" confirmLabel="Limpiar pedido"
+        onConfirm={() => { setPiezas([]); setSelectedClient(null); setClientFormKey((key) => key + 1); setErrorGlobal(''); setSuccessMessage(''); setIsCancelDialogOpen(false); }}
         onCancel={() => setIsCancelDialogOpen(false)}>
-        <p>Se quitarán todas las piezas agregadas. Esta acción no se puede deshacer.</p>
+        <p>Se quitarán todas las piezas agregadas y la selección del cliente. Esta acción no se puede deshacer.</p>
       </ConfirmDialog>
 
       {piezaEnEdicion !== null && <div className="orders-editor-backdrop">

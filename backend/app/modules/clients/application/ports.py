@@ -7,6 +7,13 @@ from app.modules.clients.domain.client import Client, NewClient
 Clock = Callable[[], datetime]
 
 
+class ClientLookup(Protocol):
+    """Read-only reference lookup, including active and inactive clients."""
+
+    def exists(self, client_id: int) -> bool:
+        ...
+
+
 class ClientRepository(Protocol):
     """El adaptador confirma cada alta o la revierte, como Orders.
 

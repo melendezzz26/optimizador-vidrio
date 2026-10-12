@@ -12,7 +12,7 @@ from app.modules.orders.infrastructure.repositories import SQLAlchemyOrderReposi
 from app.shared.security.tokens import ALGORITHM, SECRET_KEY
 
 
-PAYLOAD = {"piezas": [
+PAYLOAD = {"id_cliente": 41, "piezas": [
     {"id_tipo_vidrio": 7, "espesor_mm": 5.5, "tipo_forma": "POLIGONO_CONVEXO", "cantidad": 3,
      "vertices_mm": [[0, 0], [500, 0], [500, 300], [0, 300]]},
     {"id_tipo_vidrio": 8, "espesor_mm": 4, "tipo_forma": "RECTANGULO", "cantidad": 2, "width_mm": 100, "height_mm": 200},
@@ -36,6 +36,8 @@ def test_create_order_201_persists_all_pieces(client, authenticated, session_fac
     with session_factory() as db:
         order = db.get(Pedido, response.json()["id_pedido"])
         assert order.id_usuario_registro == identifier
+        assert order.id_cliente == 41
+        assert response.json()["id_cliente"] == 41
         pieces = db.scalars(select(Pieza).where(Pieza.id_pedido == order.id_pedido).order_by(Pieza.id_pieza)).all()
         assert len(pieces) == 3
         assert [(p.id_tipo_vidrio, p.espesor_mm, p.cantidad) for p in pieces] == [(7, Decimal("5.5"), 3), (8, Decimal("4"), 2), (9, Decimal("6"), 1)]
@@ -54,6 +56,7 @@ def test_create_order_201_persists_all_pieces(client, authenticated, session_fac
     result = recovered.json()
     assert result["piezas"] == expected
     assert result["id_usuario_registro"] == identifier
+    assert result["id_cliente"] == 41
     assert result["estado"] == "PENDIENTE"
     assert datetime.fromisoformat(result["fecha_registro"].replace("Z", "+00:00")).tzinfo is not None
     assert "id_tipo_vidrio" not in result and "espesor_mm" not in result
@@ -150,7 +153,7 @@ def test_commit_failure_is_safe_and_rolls_back(client, authenticated, session_fa
 
 @pytest.mark.parametrize("coordinate", ["1e400", "NaN", "Infinity"])
 def test_non_finite_json_coordinate_returns_serializable_422(client, authenticated, coordinate):
-    payload = ('{"piezas":['
+    payload = ('{"id_cliente":41,"piezas":['
                '{"id_tipo_vidrio":7,"espesor_mm":5.5,"tipo_forma":"POLIGONO_CONVEXO","cantidad":1,'
                '"vertices_mm":[[0,0],[10,0],[' + coordinate + ',10]]}]}')
     response = client.post("/api/orders", content=payload,
@@ -200,6 +203,41 @@ def test_get_database_failure_is_safe(client, authenticated):
     assert "private" not in result.text
 
 
+@pytest.mark.parametrize("identifier", [None, 0, -1, True, "41", 1.5, 2147483648, 999])
+def test_invalid_client_rejected_without_writes(client, authenticated, session_factory, identifier):
+    response = client.post("/api/orders", json=PAYLOAD | {"id_cliente": identifier}, headers=authenticated[1])
+    assert response.status_code == 422
+    if identifier == 999:
+        assert response.json()["detail"] == "El cliente seleccionado no existe. Busca o registra otro cliente."
+    with session_factory() as db:
+        assert db.scalar(select(func.count()).select_from(Pedido)) == 0
+        assert db.scalar(select(func.count()).select_from(Pieza)) == 0
+
+
+def test_missing_client_request(client, authenticated):
+    response = client.post("/api/orders", json={"piezas": PAYLOAD["piezas"]}, headers=authenticated[1])
+    assert response.status_code == 422
+    assert response.json()["detail"][0]["loc"] == ["body", "id_cliente"]
+
+
+def test_inactive_client_allowed_and_historical_null_readable(client, authenticated, session_factory):
+    from app.models import Cliente
+    with session_factory() as db:
+        db.execute(update(Cliente).where(Cliente.id_cliente == 41).values(estado=False))
+        db.commit()
+    response = client.post("/api/orders", json=PAYLOAD, headers=authenticated[1])
+    assert response.status_code == 201
+    identifier = response.json()["id_pedido"]
+    assert client.get(f"/api/orders/{identifier}", headers=authenticated[1]).json()["id_cliente"] == 41
+    with session_factory() as db:
+        db.execute(update(Pedido).where(Pedido.id_pedido == identifier).values(id_cliente=None))
+        db.commit()
+    historical = client.get(f"/api/orders/{identifier}", headers=authenticated[1])
+    assert historical.status_code == 200
+    assert historical.json()["id_cliente"] is None
+    assert len(historical.json()["piezas"]) == 3
+
+
 def create_pending_order(client, headers):
     response = client.post("/api/orders", json=PAYLOAD, headers=headers)
     assert response.status_code == 201, response.text
@@ -210,6 +248,7 @@ def test_update_pending_order_replaces_all_multimaterial_pieces(client, authenti
     _, headers = authenticated
     identifier = create_pending_order(client, headers)
     replacement = deepcopy(PAYLOAD)
+    replacement.pop("id_cliente")
     replacement["piezas"][0]["cantidad"] = 5
 
     response = client.put(f"/api/orders/{identifier}", json=replacement, headers=headers)
@@ -223,7 +262,7 @@ def test_update_pending_order_replaces_all_multimaterial_pieces(client, authenti
 
 
 def test_update_missing_order_returns_404(client, authenticated):
-    response = client.put("/api/orders/999999", json=PAYLOAD, headers=authenticated[1])
+    response = client.put("/api/orders/999999", json={"piezas": PAYLOAD["piezas"]}, headers=authenticated[1])
     assert response.status_code == 404
 
 
@@ -233,7 +272,7 @@ def test_update_non_pending_order_returns_409(client, authenticated, session_fac
         db.execute(update(Pedido).where(Pedido.id_pedido == identifier).values(estado="OPTIMIZADO"))
         db.commit()
 
-    response = client.put(f"/api/orders/{identifier}", json=PAYLOAD, headers=authenticated[1])
+    response = client.put(f"/api/orders/{identifier}", json={"piezas": PAYLOAD["piezas"]}, headers=authenticated[1])
     assert response.status_code == 409
 
 
@@ -251,7 +290,7 @@ def test_update_state_change_between_read_and_write_returns_409(client, authenti
         return original_update_order(repository, order_id, pieces)
 
     monkeypatch.setattr(SQLAlchemyOrderRepository, "update_order", read_then_advance)
-    response = client.put(f"/api/orders/{identifier}", json=PAYLOAD, headers=authenticated[1])
+    response = client.put(f"/api/orders/{identifier}", json={"piezas": PAYLOAD["piezas"]}, headers=authenticated[1])
 
     assert response.status_code == 409
     with session_factory() as db:
@@ -263,6 +302,7 @@ def test_update_state_change_between_read_and_write_returns_409(client, authenti
 def test_invalid_update_payload_returns_422_without_changing_pieces(client, authenticated, session_factory):
     identifier = create_pending_order(client, authenticated[1])
     invalid = deepcopy(PAYLOAD)
+    invalid.pop("id_cliente")
     invalid["piezas"][1]["width_mm"] = -10
 
     response = client.put(f"/api/orders/{identifier}", json=invalid, headers=authenticated[1])
@@ -322,3 +362,25 @@ def test_cancel_state_change_between_read_and_write_returns_409(client, authenti
     with session_factory() as db:
         assert db.get(Pedido, identifier).estado == "OPTIMIZADO"
         assert db.scalar(select(func.count()).select_from(Pieza).where(Pieza.id_pedido == identifier)) == 3
+
+
+@pytest.mark.parametrize("historical", [False, True])
+def test_update_pieces_preserves_client_including_historical_null(client, authenticated, session_factory, historical):
+    identifier = create_pending_order(client, authenticated[1])
+    if historical:
+        with session_factory() as db:
+            db.execute(update(Pedido).where(Pedido.id_pedido == identifier).values(id_cliente=None))
+            db.commit()
+    response = client.put(f"/api/orders/{identifier}", json={"piezas": PAYLOAD["piezas"]}, headers=authenticated[1])
+    assert response.status_code == 200, response.text
+    read = client.get(f"/api/orders/{identifier}", headers=authenticated[1])
+    assert read.json()["id_cliente"] == (None if historical else 41)
+    assert len(read.json()["piezas"]) == 3
+
+
+def test_update_does_not_silently_accept_client_reassignment(client, authenticated, session_factory):
+    identifier = create_pending_order(client, authenticated[1])
+    response = client.put(f"/api/orders/{identifier}", json=PAYLOAD | {"id_cliente": 42}, headers=authenticated[1])
+    assert response.status_code == 422
+    with session_factory() as db:
+        assert db.get(Pedido, identifier).id_cliente == 41
