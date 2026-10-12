@@ -27,9 +27,9 @@ El detalle de comandos y resultados está en [test-results/t01-heroku-boot.md](t
 
 ## Alcance de esta evidencia
 
-Este directorio registra la evidencia disponible de T01 y la implementación
-local de T02. No contiene evidencia de ejecución de T03–T07. No se ejecutó un
-despliegue ni una instalación limpia Linux/Heroku para producir este registro.
+Este directorio registra evidencia local por tarea, detallada a continuación.
+No se ejecutó un despliegue ni una instalación limpia Linux/Heroku para producir
+estos registros. La validación remota de T07 sigue pendiente.
 
 ## Estado de T02 — Configuración de Staging y conexión segura
 
@@ -53,7 +53,7 @@ El cambio parte de `1ff7cfd847625b262caf717f4f945fa7d9711fc9`, en
 
 No se validaron conexión Supabase, TLS remoto, límites del plan, CORS Pages real
 ni configuración Heroku. Esos puntos quedan para T04/T07. La SPEC no se marca
-Implemented y no se avanza a T03–T07.
+Implemented. Durante T02 no se avanzó a T03–T07.
 
 ## T03 — Health checks
 
@@ -68,3 +68,10 @@ Preparación local y runbook en [staging.md](../../../infrastructure/staging.md)
 Ensayos y auditoría en [t04-alembic-bootstrap.md](test-results/t04-alembic-bootstrap.md).
 T04-A/B remotas y bootstrap Staging no ejecutados; CA-08 permanece parcial
 hasta verificar destino, revisión, recuperación y datos reales autorizados en T07.
+
+## T05 — Preparación de GitHub Pages
+
+Build Staging con API HTTPS obligatoria y base `/optimizador-vidrio/`; editor
+por flujo interno de pedidos. [Resultados T05](test-results/t05-pages-build.md).
+CA-09/10/11: comprobaciones locales con API sintética; CA-17 solo navegación
+local, pendiente de carga/recarga en Pages real. No se publicó el sitio.
