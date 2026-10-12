@@ -15,12 +15,6 @@
 
 .users-list { margin-top: var(--ng-space-6); }
 
-.users-list > h2 {
-  margin: 0 0 var(--ng-space-4);
-  font-size: 20px;
-  font-weight: 600;
-}
-
 /* DNI y usuario de acceso en la edición: datos de solo lectura. */
 .users-readonly {
   display: grid;
@@ -125,4 +119,30 @@
 @media (max-width: 480px) {
   .users-filters { grid-template-columns: minmax(0, 1fr); gap: var(--ng-space-3); }
   .users-filter-actions .ng-button { width: 100%; }
+}
+
+
+/* Listado primero, formulario bajo acción (HU-003 T05). */
+.users-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--ng-space-4);
+  margin-bottom: var(--ng-space-4);
+}
+
+.users-list-header h2,
+.users-form-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.users-form-header { margin-bottom: var(--ng-space-4); }
+
+.users-form-header h2:focus { outline: none; }
+
+@media (max-width: 480px) {
+  .users-list-header > .ng-button { width: 100%; }
 }
