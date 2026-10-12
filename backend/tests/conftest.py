@@ -2,8 +2,9 @@
 import os
 import secrets
 
-# Se fijan antes de importar la aplicación. Como load_dotenv() no reemplaza
-# variables ya definidas, ninguna prueba llega a leer el backend/.env local.
+# Se fijan antes de importar la aplicación. Desactivar dotenv también impide
+# heredar opciones de pool/CORS del archivo local del desarrollador.
+os.environ["PYTHON_DOTENV_DISABLED"] = "1"
 os.environ["DATABASE_URL"] = "sqlite://"
 os.environ["SECRET_KEY"] = secrets.token_urlsafe(48)
 os.environ["TOKEN_MINUTOS"] = "480"

@@ -1,5 +1,24 @@
 # Frontend de NewGlass
 
+## Build Staging (TA-DEPLOY-001 T05)
+
+`npm run build` conserva el build local. Para el artefacto Pages, suministrar
+`VITE_API_URL` externamente y ejecutar `npm run build:staging`, seguido de
+`npm run check:staging`. El modo staging fija `/optimizador-vidrio/` y rechaza
+API ausente, HTTP, localhost/loopback o URL con credenciales/query/fragmento.
+No existe una URL productiva predeterminada. El build normal no debe publicarse
+en Pages; el workflow de publicación debe usar exclusivamente el modo staging.
+
+`VITE_*` es configuración pública incluida en JS, nunca un lugar para secretos.
+`check:staging` comprueba base/archivos de assets y patrones prohibidos en el
+bundle; es un control estático, no certifica conectividad ni detecta todo secreto
+posible. Desarrollo mantiene el fallback local autorizado.
+
+El editor se abre desde Nuevo pedido → Agregar pieza → Forma: Polígono convexo.
+Permanece dentro de la SPA; no se publica `/editor-pieza` como ruta física.
+Una recarga de la URL base reinicia la vista/formulario; no persiste borradores.
+La carga/recarga en Pages real y su API/CORS se validan durante T07.
+
 Interfaz web con React y Vite, organizada progresivamente por funcionalidades.
 El entorno de pruebas HU-007 utiliza Node.js **24.21.0** y npm **11.19.0**.
 Para las nuevas dependencias de pruebas, usar Node 22.22.2+, 24.15.0+ o 26+,

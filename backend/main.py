@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import text
+from app.shared.config import cors_origins
+from app.shared.observability.health import router as health_router
 
 from app.modules.authentication.presentation.router import router as authentication_router
 from app.modules.inventory.presentation.router import router as inventory_router
@@ -15,7 +16,8 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=cors_origins(),
+    allow_credentials=False,
     allow_methods=["GET", "POST", "PATCH", "DELETE", "PUT"],
     allow_headers=["Authorization", "Content-Type"],
 )
@@ -30,26 +32,11 @@ app.include_router(users_router)
 app.include_router(orders_router)
 # Rutas de consulta y alta de clientes (HU-012 T02)
 app.include_router(clients_router)
+app.include_router(health_router)
 
 
 @app.get("/")
 def inicio():
     return {
         "mensaje": "Backend del optimizador de vidrio funcionando"
-    }
-
-
-@app.get("/db-test")
-def probar_base_datos():
-    from app.shared.database import engine
-    with engine.connect() as conexion:
-        resultado = conexion.execute(
-            text("SELECT version();")
-        )
-
-        version = resultado.scalar()
-
-    return {
-        "conexion": "correcta",
-        "postgresql": version
     }

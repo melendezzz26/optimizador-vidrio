@@ -9,7 +9,6 @@ import {
 } from './features/authentication';
 import { InventoryPage } from './features/inventory/InventoryPage';
 import { UsersPage } from './features/users';
-import CustomPieceEditor from './features/orders/CustomPieceEditor';
 import GestionPedidos from './features/orders/GestionPedidos';
 
 import './App.css';
@@ -19,12 +18,6 @@ function App() {
   const { session, isChecking, notice, signIn, signOut } = useSession();
   const [view, setView] = useState('orders');
   
-  if (window.location.pathname === '/editor-pieza') {
-    return <CustomPieceEditor />;
-  }
-
-
-
   if (isChecking) {
     return <p className="app-status" role="status">Comprobando la sesión…</p>;
   }
