@@ -120,6 +120,28 @@ su resultado; no improvisar DDL ni borrar datos. **Está prohibido usar
 
 ## Validación de release pendiente
 
+CI se ejecuta en PR y pushes a `main`/`integration/sprint-01`, y es reutilizable
+por el workflow Pages para comprobar el mismo commit antes de publicar.
+Usa Python 3.11, Node 22 y PostgreSQL temporal en loopback, sin secretos Staging.
+`NEWGLASS_REQUIRE_POSTGRES=1` convierte la ausencia de binarios PostgreSQL en
+fallo explícito; `CI=true` también activa esta protección. El job E2E instala
+Chromium administrado por Playwright y ejecuta desktop/mobile con backend y BD
+sintéticos. La prueba de baja única de inventario conserva su exclusión móvil
+explícita; no es una omisión por falta de infraestructura.
+
+Antes de integrar/publicar, configurar humanamente protección de rama con los
+checks backend, frontend y e2e requeridos. Confirmar sus nombres en un run real.
+Seleccionar Pages **GitHub Actions**, restringir el environment `github-pages`
+a `integration/sprint-01` y configurar aprobación humana del deployment antes
+del primer push integrado que pueda dispararlo. El workflow también permite
+ejecución manual, exclusivamente sobre esa rama, y serializa publicaciones.
+Configurar `VITE_API_URL` como variable GitHub del environment o repositorio:
+es la URL HTTPS pública aprobada de la API, nunca un secreto ni un ejemplo.
+El build Staging falla si falta o apunta a localhost; inspecciona `frontend/dist`
+antes de subirlo. PR no publica. No se agrega deploy de backend ni migraciones
+a Actions. La ejecución Linux/Actions y las protecciones remotas deben validarse
+en T07; las pruebas locales no certifican esa configuración.
+
 T07 requiere backend completo, unit/component, lint/build y Playwright aprobados
 antes del despliegue. Después: live/ready, ausencia de db-test, login y `/me`,
 lectura de inventario, preflight permitido/denegado, carga/recarga de Pages bajo

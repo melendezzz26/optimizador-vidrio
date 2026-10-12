@@ -75,3 +75,14 @@ Build Staging con API HTTPS obligatoria y base `/optimizador-vidrio/`; editor
 por flujo interno de pedidos. [Resultados T05](test-results/t05-pages-build.md).
 CA-09/10/11: comprobaciones locales con API sintética; CA-17 solo navegación
 local, pendiente de carga/recarga en Pages real. No se publicó el sitio.
+
+## T06 — CI y workflow Pages
+
+**IMPLEMENTADA / VALIDACIÓN LOCAL.** CI backend/frontend/E2E con PostgreSQL
+obligatorio aislado y workflow Pages restringido a integración, después de CI.
+[Resultados T06](test-results/t06-ci-pages.md): backend 1284 passed, frontend
+101 unit y 206 component passed; E2E 31 passed y 1 skip explícito preexistente.
+Lint, build y artefacto Staging sintético aprobados. npm reporta un aviso high
+transitivo pendiente de evaluación; no se alteraron dependencias.
+CA-12/13 siguen parciales hasta ejecutar Actions, configurar protecciones y
+publicar con aprobación. No se ejecutó T07 ni se modificó el estado Reviewed.
