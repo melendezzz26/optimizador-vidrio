@@ -22,6 +22,7 @@ from tests.model_contracts import current_metadata, historical_metadata
 
 PREVIOUS = "d6e7f8a9b0c1"
 REVISION = "ef6564220e70"
+HEAD = "fa014e1a2b3c"
 
 
 def downgrade(engine):
@@ -172,7 +173,7 @@ def test_hu012_is_single_head_and_matches_current_orm(isolated_postgres):
 
     scripts = ScriptDirectory.from_config(config)
 
-    assert scripts.get_heads() == [REVISION]
+    assert scripts.get_heads() == [HEAD]
     assert scripts.get_revision(REVISION).down_revision == PREVIOUS
 
     with new_database(isolated_postgres) as engine:
@@ -183,7 +184,7 @@ def test_hu012_is_single_head_and_matches_current_orm(isolated_postgres):
         with engine.connect() as connection:
             assert connection.scalar(
                 sa.text("SELECT version_num FROM alembic_version")
-            ) == REVISION
+            ) == HEAD
 
             inspector = sa.inspect(connection)
 

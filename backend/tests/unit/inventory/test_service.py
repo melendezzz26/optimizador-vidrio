@@ -12,8 +12,8 @@ import sys
 import pytest
 
 from app.modules.inventory.application.dto import (
-    CreatePlancha, CreateRetazo, CreateTipoVidrio, PlanchaData, RetazoData,
-    TipoVidrioData, UpdatePlancha, UpdateRetazo,
+    CreatePlancha, CreateRetazo, CreateTipoVidrio, MovimientoInventarioData,
+    PlanchaData, RetazoData, TipoVidrioData, UpdatePlancha, UpdateRetazo,
 )
 from app.modules.inventory.application.ports import InventoryRepository
 from app.modules.inventory.application.service import InventoryService
@@ -22,6 +22,7 @@ from app.modules.inventory.domain.exceptions import (
     InventoryValidationError,
 )
 from app.modules.inventory.domain.geometry import calculate_area_mm2
+from app.modules.inventory.domain.writeoff import BajaManual, TipoEventoBajaManual
 
 
 NOW = datetime(2026, 10, 4, 15, 30, tzinfo=timezone.utc)
@@ -38,6 +39,7 @@ class FakeInventoryRepository(InventoryRepository):
         }
         self.planchas = {}
         self.retazos = {}
+        self.movimientos = {}
         self.writes = []
         self.code_checks = []
         self.commits = 0
@@ -49,7 +51,7 @@ class FakeInventoryRepository(InventoryRepository):
     @contextmanager
     def transaction(self):
         assert not self.in_transaction
-        before = deepcopy((self.tipos, self.planchas, self.retazos))
+        before = deepcopy((self.tipos, self.planchas, self.retazos, self.movimientos))
         self.in_transaction = True
         try:
             yield
@@ -57,7 +59,7 @@ class FakeInventoryRepository(InventoryRepository):
                 raise RuntimeError("simulated commit failure")
             self.commits += 1
         except Exception:
-            self.tipos, self.planchas, self.retazos = before
+            self.tipos, self.planchas, self.retazos, self.movimientos = before
             self.rollbacks += 1
             raise
         finally:
@@ -87,6 +89,25 @@ class FakeInventoryRepository(InventoryRepository):
     def get_plancha(self, id_plancha):
         return deepcopy(self.planchas.get(id_plancha))
 
+    def lock_plancha_for_update(self, id_plancha):
+        assert self.in_transaction
+        return self.get_plancha(id_plancha)
+
+    def has_manual_writeoff_plancha(self, id_plancha):
+        return any(m.id_plancha == id_plancha and m.tipo_evento in {e.value for e in TipoEventoBajaManual}
+                   for m in self.movimientos.values())
+
+    def create_plancha_writeoff_movement(self, id_plancha, **values):
+        item = MovimientoInventarioData(
+            id_movimiento=max(self.movimientos, default=0) + 1,
+            id_plancha=id_plancha,
+            id_retazo=None,
+            fecha=NOW,
+            id_optimizacion=None,
+            **values,
+        )
+        return self._write(self.movimientos, item.id_movimiento, item)
+
     def create_plancha(self, **values):
         item = PlanchaData(id_plancha=max(self.planchas, default=0) + 1, **values)
         return self._write(self.planchas, item.id_plancha, item)
@@ -99,6 +120,25 @@ class FakeInventoryRepository(InventoryRepository):
 
     def get_retazo(self, id_retazo):
         return deepcopy(self.retazos.get(id_retazo))
+
+    def lock_retazo_for_update(self, id_retazo):
+        assert self.in_transaction
+        return self.get_retazo(id_retazo)
+
+    def has_manual_writeoff_retazo(self, id_retazo):
+        return any(m.id_retazo == id_retazo and m.tipo_evento in {e.value for e in TipoEventoBajaManual}
+                   for m in self.movimientos.values())
+
+    def create_retazo_writeoff_movement(self, id_retazo, **values):
+        item = MovimientoInventarioData(
+            id_movimiento=max(self.movimientos, default=0) + 1,
+            id_plancha=None,
+            id_retazo=id_retazo,
+            fecha=NOW,
+            id_optimizacion=None,
+            **values,
+        )
+        return self._write(self.movimientos, item.id_movimiento, item)
 
     def retazo_codigo_exists(self, codigo, exclude_id=None):
         self.code_checks.append((codigo, exclude_id))
@@ -135,10 +175,10 @@ def retazo_command(**changes):
 
 
 def assert_rejected_without_write(repo, error, action):
-    before = deepcopy((repo.tipos, repo.planchas, repo.retazos, repo.writes))
+    before = deepcopy((repo.tipos, repo.planchas, repo.retazos, repo.movimientos, repo.writes))
     with pytest.raises(error):
         action()
-    assert (repo.tipos, repo.planchas, repo.retazos, repo.writes) == before
+    assert (repo.tipos, repo.planchas, repo.retazos, repo.movimientos, repo.writes) == before
 
 
 def test_create_tipo_and_list_preserve_all_states(inventory):
@@ -455,6 +495,110 @@ def test_commit_failure_does_not_return_success(inventory):
         service.create_retazo(retazo_command())
     assert repo.retazos == {}
     assert repo.rollbacks == 1 and repo.commits == 0
+
+
+@pytest.mark.parametrize("kind", ["plancha", "retazo"])
+def test_manual_writeoff_locks_records_movement_and_deactivates_atomically(inventory, kind):
+    service, repo = inventory
+    resource = getattr(service, f"create_{kind}")(
+        plancha_command() if kind == "plancha" else retazo_command()
+    )
+    commits_before = repo.commits
+    movement = getattr(service, f"writeoff_{kind}")(
+        resource.id_plancha if kind == "plancha" else resource.id_retazo,
+        BajaManual(tipo_evento=TipoEventoBajaManual.BAJA_ROTURA, motivo="Rotura"),
+        id_usuario=17,
+    )
+
+    assert movement.id_usuario == 17
+    assert movement.tipo_evento == "BAJA_ROTURA"
+    assert movement.id_plancha == (resource.id_plancha if kind == "plancha" else None)
+    assert movement.id_retazo == (resource.id_retazo if kind == "retazo" else None)
+    assert repo.commits == commits_before + 1
+    assert getattr(repo, f"get_{kind}")(1).estado is False
+    assert len(repo.movimientos) == 1
+
+
+@pytest.mark.parametrize("kind", ["plancha", "retazo"])
+def test_manual_writeoff_allows_inactive_resource_without_history_and_rejects_duplicate(inventory, kind):
+    service, repo = inventory
+    method = getattr(service, f"writeoff_{kind}")
+    command = BajaManual(tipo_evento=TipoEventoBajaManual.BAJA_RETIRO, motivo="Retiro")
+    with pytest.raises(InventoryNotFoundError):
+        method(999, command, id_usuario=1)
+
+    resource = getattr(service, f"create_{kind}")(
+        plancha_command() if kind == "plancha" else retazo_command()
+    )
+    identifier = resource.id_plancha if kind == "plancha" else resource.id_retazo
+    patch = UpdatePlancha(estado=False) if kind == "plancha" else UpdateRetazo(estado=False)
+    getattr(service, f"update_{kind}")(identifier, patch)
+
+    movement = method(identifier, command, id_usuario=1)
+
+    assert movement.id_plancha == (identifier if kind == "plancha" else None)
+    assert movement.id_retazo == (identifier if kind == "retazo" else None)
+    assert getattr(repo, f"get_{kind}")(identifier).estado is False
+    assert len(repo.movimientos) == 1
+    with pytest.raises(InventoryConflictError):
+        method(identifier, command, id_usuario=1)
+    assert len(repo.movimientos) == 1
+
+
+@pytest.mark.parametrize("kind", ["plancha", "retazo"])
+def test_manual_writeoff_rejects_duplicate_and_reactivation_but_allows_legacy_activation(inventory, kind):
+    service, repo = inventory
+    resource = getattr(service, f"create_{kind}")(
+        plancha_command() if kind == "plancha" else retazo_command()
+    )
+    identifier = resource.id_plancha if kind == "plancha" else resource.id_retazo
+    command = BajaManual(tipo_evento=TipoEventoBajaManual.BAJA_MERMA, motivo="Merma")
+    getattr(service, f"writeoff_{kind}")(identifier, command, id_usuario=1)
+    with pytest.raises(InventoryConflictError):
+        getattr(service, f"writeoff_{kind}")(identifier, command, id_usuario=1)
+    state_patch = UpdatePlancha(estado=True) if kind == "plancha" else UpdateRetazo(estado=True)
+    with pytest.raises(InventoryConflictError):
+        getattr(service, f"update_{kind}")(identifier, state_patch)
+    assert len(repo.movimientos) == 1
+    assert getattr(repo, f"get_{kind}")(identifier).estado is False
+
+    legacy = getattr(service, f"create_{kind}")(
+        plancha_command() if kind == "plancha" else retazo_command(codigo="R-002")
+    )
+    legacy_id = legacy.id_plancha if kind == "plancha" else legacy.id_retazo
+    inactive_patch = UpdatePlancha(estado=False) if kind == "plancha" else UpdateRetazo(estado=False)
+    activate_patch = UpdatePlancha(estado=True) if kind == "plancha" else UpdateRetazo(estado=True)
+    getattr(service, f"update_{kind}")(legacy_id, inactive_patch)
+    assert getattr(service, f"update_{kind}")(legacy_id, activate_patch).estado is True
+
+
+@pytest.mark.parametrize("failure", ["movement", "resource_update"])
+@pytest.mark.parametrize("kind", ["plancha", "retazo"])
+def test_manual_writeoff_failure_rolls_back_movement_and_resource(inventory, monkeypatch, kind, failure):
+    service, repo = inventory
+    resource = getattr(service, f"create_{kind}")(
+        plancha_command() if kind == "plancha" else retazo_command()
+    )
+    identifier = resource.id_plancha if kind == "plancha" else resource.id_retazo
+    command = BajaManual(tipo_evento=TipoEventoBajaManual.BAJA_ERROR_REGISTRO, motivo="Corrección")
+
+    if failure == "movement":
+        repo.fail_write = True
+    else:
+        original_save = getattr(repo, f"save_{kind}")
+
+        def fail_after_update(data):
+            original_save(data)
+            raise RuntimeError("fallo al actualizar estado")
+
+        monkeypatch.setattr(repo, f"save_{kind}", fail_after_update)
+
+    with pytest.raises(RuntimeError):
+        getattr(service, f"writeoff_{kind}")(identifier, command, id_usuario=1)
+
+    assert repo.movimientos == {}
+    assert getattr(repo, f"get_{kind}")(identifier) == resource
+    assert repo.rollbacks == 1
 
 
 def test_application_imports_without_infrastructure():

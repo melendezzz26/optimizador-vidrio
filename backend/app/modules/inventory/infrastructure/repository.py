@@ -7,15 +7,23 @@ from datetime import datetime
 from decimal import Decimal
 
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models import Plancha, Retazo, TipoVidrio, TipoVidrioEspesor
-from app.modules.inventory.application.dto import PlanchaData, RetazoData, TipoVidrioData
+from app.models import MovimientoInventario, Plancha, Retazo, TipoVidrio, TipoVidrioEspesor
+from app.modules.inventory.application.dto import (
+    MovimientoInventarioData, PlanchaData, RetazoData, TipoVidrioData,
+)
 from app.modules.inventory.domain.exceptions import InventoryConflictError, InventoryNotFoundError
+from app.modules.inventory.domain.writeoff import TipoEventoBajaManual
+
+_MANUAL_WRITEOFF_EVENTS = tuple(event.value for event in TipoEventoBajaManual)
 
 _UNIQUE_CONFLICT_CONSTRAINTS = frozenset({
     "tipos_vidrio_nombre_key",
     "retazos_codigo_key",
+    "uq_movimientos_baja_manual_plancha",
+    "uq_movimientos_baja_manual_retazo",
 })
 
 
@@ -58,6 +66,25 @@ class SqlAlchemyInventoryRepository:
         finally:
             session.close()
             self._session = None
+
+    @contextmanager
+    def read_transaction(self) -> Generator[None, None, None]:
+        """Abre una sesión de lectura que nunca confirma cambios."""
+        if self._session is not None:
+            raise RuntimeError("Transacción anidada no permitida: ya hay una sesión activa.")
+
+        session: Session = self._session_factory()
+        self._session = session
+        try:
+            yield
+        finally:
+            try:
+                session.rollback()
+            finally:
+                try:
+                    session.close()
+                finally:
+                    self._session = None
 
     @staticmethod
     def _translate_or_raise(exc: IntegrityError) -> None:
@@ -119,6 +146,20 @@ class SqlAlchemyInventoryRepository:
             id_ejecucion_origen=row.id_ejecucion_origen,
         )
 
+    @staticmethod
+    def _to_movement(row: MovimientoInventario) -> MovimientoInventarioData:
+        return MovimientoInventarioData(
+            id_movimiento=row.id_movimiento,
+            id_plancha=row.id_plancha,
+            id_retazo=row.id_retazo,
+            tipo_evento=row.tipo_evento,
+            motivo=row.motivo,
+            observacion=row.observacion,
+            id_usuario=row.id_usuario,
+            fecha=row.fecha,
+            id_optimizacion=row.id_optimizacion,
+        )
+
     # ------------------------------------------------------------------ #
     # TipoVidrio                                                          #
     # ------------------------------------------------------------------ #
@@ -171,6 +212,54 @@ class SqlAlchemyInventoryRepository:
         row = session.get(Plancha, id_plancha)
         return self._to_plancha(row) if row is not None else None
 
+    def lock_plancha_for_update(self, id_plancha: int) -> PlanchaData | None:
+        session = self._require_session()
+        row = session.execute(
+            select(Plancha)
+            .where(Plancha.id_plancha == id_plancha)
+            .with_for_update()
+        ).scalar_one_or_none()
+        return self._to_plancha(row) if row is not None else None
+
+    def has_manual_writeoff_plancha(self, id_plancha: int) -> bool:
+        session = self._require_session()
+        return session.query(
+            session.query(MovimientoInventario.id_movimiento)
+            .filter(
+                MovimientoInventario.id_plancha == id_plancha,
+                MovimientoInventario.tipo_evento.in_(_MANUAL_WRITEOFF_EVENTS),
+            )
+            .exists()
+        ).scalar()
+
+    def create_plancha_writeoff_movement(
+        self, id_plancha: int, *, tipo_evento: str, motivo: str,
+        observacion: str | None, id_usuario: int,
+    ) -> MovimientoInventarioData:
+        return self._create_writeoff_movement(
+            id_plancha=id_plancha, id_retazo=None, tipo_evento=tipo_evento,
+            motivo=motivo, observacion=observacion, id_usuario=id_usuario,
+        )
+
+    def _create_writeoff_movement(
+        self, *, id_plancha: int | None, id_retazo: int | None,
+        tipo_evento: str, motivo: str, observacion: str | None, id_usuario: int,
+    ) -> MovimientoInventarioData:
+        session = self._require_session()
+        row = MovimientoInventario(
+            id_plancha=id_plancha,
+            id_retazo=id_retazo,
+            tipo_evento=tipo_evento,
+            motivo=motivo,
+            observacion=observacion,
+            id_usuario=id_usuario,
+            id_optimizacion=None,
+        )
+        session.add(row)
+        session.flush()
+        session.refresh(row)
+        return self._to_movement(row)
+
     def create_plancha(self, *, ancho_mm: Decimal, alto_mm: Decimal,
                        espesor_mm: Decimal, cantidad: int, estado: bool,
                        fecha_registro: datetime, id_tipo_vidrio: int) -> PlanchaData:
@@ -187,6 +276,18 @@ class SqlAlchemyInventoryRepository:
     def list_planchas(self) -> list[PlanchaData]:
         session = self._require_session()
         return [self._to_plancha(row) for row in session.query(Plancha).all()]
+
+    def list_plancha_movements(self, id_plancha: int) -> list[MovimientoInventarioData] | None:
+        """Lista del más antiguo al más reciente; el ID ordena fechas iguales."""
+        session = self._require_session()
+        if session.get(Plancha, id_plancha) is None:
+            return None
+        rows = session.execute(
+            select(MovimientoInventario)
+            .where(MovimientoInventario.id_plancha == id_plancha)
+            .order_by(MovimientoInventario.fecha.asc(), MovimientoInventario.id_movimiento.asc())
+        ).scalars().all()
+        return [self._to_movement(row) for row in rows]
 
     def save_plancha(self, data: PlanchaData) -> PlanchaData:
         session = self._require_session()
@@ -210,6 +311,35 @@ class SqlAlchemyInventoryRepository:
         session = self._require_session()
         row = session.get(Retazo, id_retazo)
         return self._to_retazo(row) if row is not None else None
+
+    def lock_retazo_for_update(self, id_retazo: int) -> RetazoData | None:
+        session = self._require_session()
+        row = session.execute(
+            select(Retazo)
+            .where(Retazo.id_retazo == id_retazo)
+            .with_for_update()
+        ).scalar_one_or_none()
+        return self._to_retazo(row) if row is not None else None
+
+    def has_manual_writeoff_retazo(self, id_retazo: int) -> bool:
+        session = self._require_session()
+        return session.query(
+            session.query(MovimientoInventario.id_movimiento)
+            .filter(
+                MovimientoInventario.id_retazo == id_retazo,
+                MovimientoInventario.tipo_evento.in_(_MANUAL_WRITEOFF_EVENTS),
+            )
+            .exists()
+        ).scalar()
+
+    def create_retazo_writeoff_movement(
+        self, id_retazo: int, *, tipo_evento: str, motivo: str,
+        observacion: str | None, id_usuario: int,
+    ) -> MovimientoInventarioData:
+        return self._create_writeoff_movement(
+            id_plancha=None, id_retazo=id_retazo, tipo_evento=tipo_evento,
+            motivo=motivo, observacion=observacion, id_usuario=id_usuario,
+        )
 
     def retazo_codigo_exists(self, codigo: str, exclude_id: int | None = None) -> bool:
         session = self._require_session()
@@ -235,6 +365,18 @@ class SqlAlchemyInventoryRepository:
     def list_retazos(self) -> list[RetazoData]:
         session = self._require_session()
         return [self._to_retazo(row) for row in session.query(Retazo).all()]
+
+    def list_retazo_movements(self, id_retazo: int) -> list[MovimientoInventarioData] | None:
+        """Lista del más antiguo al más reciente; el ID ordena fechas iguales."""
+        session = self._require_session()
+        if session.get(Retazo, id_retazo) is None:
+            return None
+        rows = session.execute(
+            select(MovimientoInventario)
+            .where(MovimientoInventario.id_retazo == id_retazo)
+            .order_by(MovimientoInventario.fecha.asc(), MovimientoInventario.id_movimiento.asc())
+        ).scalars().all()
+        return [self._to_movement(row) for row in rows]
 
     def save_retazo(self, data: RetazoData) -> RetazoData:
         session = self._require_session()

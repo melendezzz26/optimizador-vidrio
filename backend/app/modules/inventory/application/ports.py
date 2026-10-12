@@ -5,7 +5,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Protocol
 
-from .dto import PlanchaData, RetazoData, TipoVidrioData
+from .dto import MovimientoInventarioData, PlanchaData, RetazoData, TipoVidrioData
 
 
 class GlassCatalog(Protocol):
@@ -24,7 +24,8 @@ class InventoryRepository(GlassCatalog, Protocol):
     El adaptador abre/cierra la unidad transaccional: confirma al salir con éxito
     y revierte si falla el cuerpo O la confirmación, propagando el error. Las
     escrituras individuales pueden hacer flush, pero nunca commit independiente.
-    También se cierra la transacción en consultas. No hay commit en Application.
+    Las consultas de historial usan read_transaction(), que cierra la sesión con
+    rollback y no confirma cambios. No hay commit en Application.
 
     Los métodos devuelven snapshots DTO desconectados (incluida geometria), nunca
     entidades ORM. Las altas asignan el ID y retornan el registro completo.
@@ -39,6 +40,8 @@ class InventoryRepository(GlassCatalog, Protocol):
 
     def transaction(self) -> AbstractContextManager[None]: ...
 
+    def read_transaction(self) -> AbstractContextManager[None]: ...
+
     def tipo_nombre_exists(self, nombre: str) -> bool: ...
 
     def create_tipo_vidrio(self, *, nombre: str, descripcion: str | None,
@@ -47,6 +50,17 @@ class InventoryRepository(GlassCatalog, Protocol):
     def list_tipos_vidrio(self) -> list[TipoVidrioData]: ...
 
     def get_plancha(self, id_plancha: int) -> PlanchaData | None: ...
+
+    def list_plancha_movements(self, id_plancha: int) -> list[MovimientoInventarioData] | None: ...
+
+    def lock_plancha_for_update(self, id_plancha: int) -> PlanchaData | None: ...
+
+    def has_manual_writeoff_plancha(self, id_plancha: int) -> bool: ...
+
+    def create_plancha_writeoff_movement(
+        self, id_plancha: int, *, tipo_evento: str, motivo: str,
+        observacion: str | None, id_usuario: int,
+    ) -> MovimientoInventarioData: ...
 
     def create_plancha(self, *, ancho_mm: Decimal, alto_mm: Decimal,
                        espesor_mm: Decimal, cantidad: int, estado: bool,
@@ -57,6 +71,17 @@ class InventoryRepository(GlassCatalog, Protocol):
     def save_plancha(self, data: PlanchaData) -> PlanchaData: ...
 
     def get_retazo(self, id_retazo: int) -> RetazoData | None: ...
+
+    def list_retazo_movements(self, id_retazo: int) -> list[MovimientoInventarioData] | None: ...
+
+    def lock_retazo_for_update(self, id_retazo: int) -> RetazoData | None: ...
+
+    def has_manual_writeoff_retazo(self, id_retazo: int) -> bool: ...
+
+    def create_retazo_writeoff_movement(
+        self, id_retazo: int, *, tipo_evento: str, motivo: str,
+        observacion: str | None, id_usuario: int,
+    ) -> MovimientoInventarioData: ...
 
     def retazo_codigo_exists(self, codigo: str, exclude_id: int | None = None) -> bool: ...
 
