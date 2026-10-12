@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Draft |
+| Estado | Reviewed |
 | Tipo | TA — tarea de arquitectura/infraestructura |
 | Rama | `feature/TA-DEPLOY-001-staging` |
 | Base de trabajo | `978705f` |
