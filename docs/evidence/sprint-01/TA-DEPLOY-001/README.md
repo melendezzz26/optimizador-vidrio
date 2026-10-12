@@ -54,3 +54,10 @@ El cambio parte de `1ff7cfd847625b262caf717f4f945fa7d9711fc9`, en
 No se validaron conexión Supabase, TLS remoto, límites del plan, CORS Pages real
 ni configuración Heroku. Esos puntos quedan para T04/T07. La SPEC no se marca
 Implemented y no se avanza a T03–T07.
+
+## T03 — Health checks
+
+Implementación local de `/health/live`, `/health/ready` y retirada de `/db-test`.
+Contrato, límites y ejecuciones en [t03-health.md](test-results/t03-health.md).
+CA-05/06/07 se verifican localmente; el smoke de los servicios desplegados
+permanece pendiente de T07. No se modificaron T01/T02.
