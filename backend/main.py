@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
+from app.shared.config import cors_origins
 
 from app.modules.authentication.presentation.router import router as authentication_router
 from app.modules.inventory.presentation.router import router as inventory_router
@@ -15,7 +16,8 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=cors_origins(),
+    allow_credentials=False,
     allow_methods=["GET", "POST", "PATCH", "DELETE", "PUT"],
     allow_headers=["Authorization", "Content-Type"],
 )

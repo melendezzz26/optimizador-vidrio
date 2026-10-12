@@ -1,30 +1,24 @@
 from logging.config import fileConfig
-import os
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
-from dotenv import load_dotenv
+from app.shared.config import database_engine_options, database_url
 
 from app.shared.database import Base
 from app import models
 
 
-# Cargar variables del archivo .env
-load_dotenv()
-
 # Objeto de configuración de Alembic
 config = context.config
 
-# Obtener la URL de conexión desde .env
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-if not DATABASE_URL:
-    raise ValueError("No se encontró DATABASE_URL en el archivo .env")
+# El entorno prevalece sobre el .env opcional de desarrollo.
+DATABASE_URL = database_url()
 
 # Reemplazar la URL definida en alembic.ini
-config.set_main_option("sqlalchemy.url", DATABASE_URL)
+# Escapar solo la representación de ConfigParser, nunca la URL del entorno.
+config.set_main_option("sqlalchemy.url", DATABASE_URL.replace("%", "%%"))
 
 
 # Configuración de logs
@@ -65,6 +59,7 @@ def run_migrations_online() -> None:
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
+        **database_engine_options(DATABASE_URL, pooled=False),
     )
 
     with connectable.connect() as connection:

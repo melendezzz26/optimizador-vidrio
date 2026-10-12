@@ -5,7 +5,7 @@
 - **PBI:** TA-DEPLOY-001 — Preparación y despliegue controlado de Staging
 - **SPEC:** `docs/specs/SPEC-TA-DEPLOY-001-staging.md`
 - **Rama:** `feature/TA-DEPLOY-001-staging`
-- **Estado de la SPEC:** Draft
+- **Estado de la SPEC:** Reviewed (según la autorización de implementación).
 
 ## Estado de T01 — Arranque Heroku del monorepo
 
@@ -27,4 +27,30 @@ El detalle de comandos y resultados está en [test-results/t01-heroku-boot.md](t
 
 ## Alcance de esta evidencia
 
-Este directorio registra únicamente la evidencia disponible de T01. No contiene evidencia de T02–T07. No se ejecutó un despliegue ni una instalación limpia Linux/Heroku para producir este registro.
+Este directorio registra la evidencia disponible de T01 y la implementación
+local de T02. No contiene evidencia de ejecución de T03–T07. No se ejecutó un
+despliegue ni una instalación limpia Linux/Heroku para producir este registro.
+
+## Estado de T02 — Configuración de Staging y conexión segura
+
+**IMPLEMENTADA / VALIDACIÓN LOCAL.** Configuración externa centralizada,
+CORS configurable, validación de secretos/números, opciones PostgreSQL,
+`pool_pre_ping` y representación segura de `%` en ConfigParser/Alembic.
+
+Resultados realmente ejecutados y limitaciones en
+[test-results/t02-config-staging.md](test-results/t02-config-staging.md).
+El cambio parte de `1ff7cfd847625b262caf717f4f945fa7d9711fc9`, en
+`feature/TA-DEPLOY-001-staging`; no se hizo commit durante esta implementación.
+
+- **CA-02: aporte local parcial.** Prueba de carga de app/engine desde entorno
+  sin depender del `.env`. Pendiente build limpio y configuración de plataforma.
+- **CA-03: aporte local parcial.** Variables obligatorias sin defaults secretos,
+  errores sanitizados y prioridad del entorno. Pendiente configuración protegida
+  real y revisión de logs/operación del destino.
+- **CA-04: aporte local parcial.** Defaults de desarrollo y preflight con
+  orígenes sintéticos permitidos/denegados. Pendiente origen real de Pages y
+  preflight remoto en T07; no se declara completamente cumplido.
+
+No se validaron conexión Supabase, TLS remoto, límites del plan, CORS Pages real
+ni configuración Heroku. Esos puntos quedan para T04/T07. La SPEC no se marca
+Implemented y no se avanza a T03–T07.
