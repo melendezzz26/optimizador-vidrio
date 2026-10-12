@@ -1,0 +1,12 @@
+> frontend@0.0.0 test:component
+> vitest run --reporter=dot
+
+
+ RUN  v5.0.3 C:/Users/Andro/optimizador-vidrio/frontend
+
+····················································································································································
+
+ Test Files  17 passed (17)
+      Tests  148 passed (148)
+   Start at  23:51:03
+   Duration  29.43s (tests 58%, environment 29%, setup 6%, import 4%, transform 3%)

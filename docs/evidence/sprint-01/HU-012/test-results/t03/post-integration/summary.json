@@ -1,0 +1,59 @@
+{
+  "date_user": "2026-10-11",
+  "branch": "feature/HU-012-T03-asociar-cliente-pedido",
+  "initial_head": "7fd7c08",
+  "initial_merge_base": "6ae091b",
+  "integration_head": "bf6ca1a",
+  "tested_merge": "5103734",
+  "backend_focused": {
+    "passed": 395,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "warnings": 1,
+    "seconds": 227.82
+  },
+  "backend_full": {
+    "collected": 1116,
+    "passed": 1116,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "warnings": 1,
+    "seconds": 332.86
+  },
+  "frontend_unit": {
+    "passed": 84,
+    "failed": 0,
+    "skipped": 0
+  },
+  "frontend_component": {
+    "files": 17,
+    "passed": 148,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 29.43
+  },
+  "lint_exit": 0,
+  "build_exit": 0,
+  "e2e_t03": {
+    "passed": 4,
+    "failed": 0,
+    "seconds": 34.6
+  },
+  "e2e_full": {
+    "passed": 28,
+    "failed": 0,
+    "seconds": 38.8
+  },
+  "alembic_heads": [
+    "ef6564220e70"
+  ],
+  "new_migrations": false,
+  "manual_review": "User confirmed: Revisión realizada sin observaciones",
+  "verified": false,
+  "notes": [
+    "PowerShell logs normalized to UTF-8, ANSI removed, whitespace normalized; failure content preserved",
+    "Frontend first attempt: 5 failed, 143 passed; retained log, corrected and rerun"
+  ]
+}

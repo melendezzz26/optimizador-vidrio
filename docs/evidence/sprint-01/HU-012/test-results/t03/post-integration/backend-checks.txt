@@ -1,0 +1,18 @@
+python -m compileall -q app tests
+Exit code: 0
+
+python -m alembic heads
+ef6564220e70 (head)
+Exit code: 0
+
+python -m alembic history
+d6e7f8a9b0c1 -> ef6564220e70 (head), HU-012: incorporar clientes y asociarlos a pedidos.
+1c8754481a08 -> d6e7f8a9b0c1, HU-006: trasladar material y espesor del pedido a cada pieza.
+b4d5e6f7a8c9 -> 1c8754481a08, TA-013 catalogo tipos y espesores
+a3c4d5e6f7b8 -> b4d5e6f7a8c9, R4: alinear métricas de ejecución con el modelo v1.1.
+f2b3c4d5e6a7 -> a3c4d5e6f7b8, R3: trazabilidad de optimizaciones, ejecuciones y material propuesto.
+e1a2b3c4d5f6 -> f2b3c4d5e6a7, R2: alinear CONFIGURACION con snapshots del modelo v1.1.
+c4e8a1f2b3d5 -> e1a2b3c4d5f6, R1: alinear identidad, inventario y pedidos con el modelo v1.1.
+9b9f04eb67f6 -> c4e8a1f2b3d5, HU-003: agregar dni y usuario a usuarios; correo pasa a opcional
+<base> -> 9b9f04eb67f6, crear esquema inicial
+Exit code: 0
