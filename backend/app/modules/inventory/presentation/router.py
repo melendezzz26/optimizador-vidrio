@@ -18,6 +18,45 @@ from app.modules.inventory.presentation.schemas import (
 
 router = APIRouter(prefix="/api/inventory", tags=["Inventario"])
 
+
+def _http_detail_response(description: str, example: str) -> dict:
+    """Describe el formato HTTPException que ya devuelve Inventory."""
+    return {
+        "description": description,
+        "content": {
+            "application/json": {
+                "schema": {
+                    "type": "object",
+                    "properties": {"detail": {"type": "string"}},
+                    "required": ["detail"],
+                },
+                "example": {"detail": example},
+            }
+        },
+    }
+
+
+def _validation_response(description: str) -> dict:
+    """Documenta validación FastAPI y errores de validación del dominio."""
+    return {
+        "description": description,
+        "content": {
+            "application/json": {
+                "schema": {
+                    "oneOf": [
+                        {"$ref": "#/components/schemas/HTTPValidationError"},
+                        {
+                            "type": "object",
+                            "properties": {"detail": {"type": "string"}},
+                            "required": ["detail"],
+                        },
+                    ]
+                }
+            }
+        },
+    }
+
+
 @contextmanager
 def handle_domain_exceptions():
     try:
@@ -77,6 +116,15 @@ def list_planchas(
     "/planchas/{id_plancha}/movimientos",
     response_model=list[MovimientoHistorialResponse],
     status_code=status.HTTP_200_OK,
+    responses={
+        401: _http_detail_response("No autenticado.", "Debes iniciar sesión."),
+        403: _http_detail_response(
+            "Sin permiso para consultar stock.",
+            "No tienes el permiso: CONSULTAR_STOCK",
+        ),
+        404: _http_detail_response("Plancha inexistente.", "Plancha inexistente."),
+        422: _validation_response("Validación del parámetro de ruta o del identificador."),
+    },
 )
 def list_plancha_movements(
     id_plancha: int,
@@ -116,6 +164,19 @@ def update_plancha(
     "/planchas/{id_plancha}/baja",
     response_model=BajaManualResponse,
     status_code=status.HTTP_201_CREATED,
+    responses={
+        401: _http_detail_response("No autenticado.", "Debes iniciar sesión."),
+        403: _http_detail_response(
+            "Sin permiso para gestionar planchas.",
+            "No tienes el permiso: GESTIONAR_PLANCHAS",
+        ),
+        404: _http_detail_response("Plancha inexistente.", "Plancha inexistente."),
+        409: _http_detail_response(
+            "La plancha ya tiene una baja manual registrada.",
+            "La plancha ya tiene una baja manual registrada.",
+        ),
+        422: _validation_response("Validación del cuerpo, parámetro o regla de entrada."),
+    },
 )
 def writeoff_plancha(
     id_plancha: int,
@@ -167,6 +228,15 @@ def list_retazos(
     "/retazos/{id_retazo}/movimientos",
     response_model=list[MovimientoHistorialResponse],
     status_code=status.HTTP_200_OK,
+    responses={
+        401: _http_detail_response("No autenticado.", "Debes iniciar sesión."),
+        403: _http_detail_response(
+            "Sin permiso para consultar stock.",
+            "No tienes el permiso: CONSULTAR_STOCK",
+        ),
+        404: _http_detail_response("Retazo inexistente.", "Retazo inexistente."),
+        422: _validation_response("Validación del parámetro de ruta o del identificador."),
+    },
 )
 def list_retazo_movements(
     id_retazo: int,
@@ -210,6 +280,19 @@ def update_retazo(
     "/retazos/{id_retazo}/baja",
     response_model=BajaManualResponse,
     status_code=status.HTTP_201_CREATED,
+    responses={
+        401: _http_detail_response("No autenticado.", "Debes iniciar sesión."),
+        403: _http_detail_response(
+            "Sin permiso para gestionar retazos.",
+            "No tienes el permiso: GESTIONAR_RETAZOS",
+        ),
+        404: _http_detail_response("Retazo inexistente.", "Retazo inexistente."),
+        409: _http_detail_response(
+            "El retazo ya tiene una baja manual registrada.",
+            "El retazo ya tiene una baja manual registrada.",
+        ),
+        422: _validation_response("Validación del cuerpo, parámetro o regla de entrada."),
+    },
 )
 def writeoff_retazo(
     id_retazo: int,
