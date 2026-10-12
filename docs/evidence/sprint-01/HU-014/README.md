@@ -47,7 +47,7 @@ Los diálogos implementan nombre accesible, foco inicial, ciclo de foco, Escape,
 
 ## Criterios de aceptación
 
-La matriz completa CA-01 a CA-19 está en la [SPEC, sección 13](../../../specs/SPEC-HU-014-trazabilidad-inventario.md). CA-01 a CA-06 y CA-08 a CA-15, CA-17 a CA-19 constan como cumplidos. CA-07 y CA-16 constan como parciales porque la exclusión general de materiales en consumidores de stock no está demostrada por un contrato o consumidor activo de stock disponible.
+La matriz completa CA-01 a CA-19, incluido el texto de cada criterio, está en la [SPEC, sección 13](../../../specs/SPEC-HU-014-trazabilidad-inventario.md). CA-01 a CA-06, CA-08 a CA-15 y CA-17 a CA-19 constan como cumplidos. CA-07 y CA-16 permanecen parciales porque actualmente no existe un consumidor first-party real de stock elegible en el que verificar la exclusión. La auditoría no detectó un flujo first-party que permita utilizar material dado de baja; no se implementó funcionalidad especulativa para cerrar artificialmente esos criterios. La futura HU/PBI que implemente selección o consumo para optimización deberá verificar RN-09 con PostgreSQL controlado.
 
 ## Entorno y resultados informados
 
@@ -72,4 +72,4 @@ Los comandos reproducibles y el desglose se encuentran en [test-results/README.m
 
 ## Cierre
 
-La SPEC queda en **Implemented**, no en Verified. Antes de Verified y del cierre formal del PR queda la revisión final por otro integrante. La cobertura parcial de elegibilidad general de stock también queda visible en CA-07 y CA-16.
+La rama puede someterse a revisión mediante PR. La SPEC permanece en **Implemented**, no en Verified, y HU-014 no se declara Done. Verified requiere resolver formalmente CA-07/CA-16 mediante una selección real de stock y sus pruebas, o una decisión de alcance aprobada por el equipo/PO que difiera esos criterios. También queda pendiente la revisión final por otro integrante y el cierre formal del PR.

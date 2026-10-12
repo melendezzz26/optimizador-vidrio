@@ -145,7 +145,7 @@ No se definen nuevos valores para `estado` del material. El pedido conserva su p
 4. La interfaz solicita confirmación indicando que el material dejará de ser elegible para stock y que la acción queda en historial.
 5. El backend autentica al usuario, valida permiso, existencia, tipo de evento y datos obligatorios; el actor se toma del principal autenticado.
 6. En una única transacción, el backend ejecuta `SELECT ... FOR UPDATE` sobre la fila del recurso, vuelve a comprobar que no exista baja manual previa, crea el movimiento con fecha de servidor y establece `estado=false`.
-7. Si falla el movimiento o el cambio de estado, revierte ambos. Si ambos confirman, devuelve el resultado persistido y la interfaz informa éxito y actualiza la disponibilidad sin borrar el recurso.
+7. Si falla el movimiento o el cambio de estado, revierte ambos. Si ambos confirman, devuelve el resultado persistido y la interfaz informa éxito, refleja el estado inactivo y conserva el recurso.
 
 ### Consulta de historial
 
@@ -186,9 +186,18 @@ retazo disponible  = estado = true
                     AND no existe movimiento de baja manual
 ```
 
-Los endpoints actuales de listado son administrativos y devuelven todos los registros; la pantalla permite distinguir estado activo/inactivo y conserva filas dadas de baja. El repositorio actual no ofrece un endpoint separado de candidatos de stock ni integra planchas/retazos con una selección activa de stock para optimización. Por ello, esta SPEC deja constancia del estado false producido por la baja, pero no afirma que la exclusión esté demostrada para todo consumidor futuro.
+Los endpoints GET administrativos de Inventory **no son consultas de elegibilidad de stock**. Por diseño pueden devolver recursos inactivos y planchas con cantidad cero; la pantalla permite distinguir el estado y conserva las filas dadas de baja. Actualmente no existe en NewGlass un consumidor, endpoint o caso de uso que seleccione planchas o retazos concretos como candidatos para optimización o consumo. Por tanto, todavía no hay una selección real sobre la que verificar la exclusión exigida por RN-09.
 
-Una plancha con cantidad cero no representa stock utilizable. Un material con `estado=false` tampoco debe presentarse como disponible, aunque no tenga movimiento; ese valor sin movimiento no acredita una baja. La UI mantiene los valores estado y cantidad visibles, pero los listados siguen siendo administrativos. La exclusión explícita de candidatos de stock para todas las integraciones se marca parcial en CA-07 y CA-16. Cuando existe movimiento de baja, el PATCH a `estado=true` se rechaza con `409 Conflict`.
+Una plancha con cantidad cero no representa stock utilizable. Un material con `estado=false` tampoco debe presentarse como disponible, aunque no tenga movimiento; ese valor sin movimiento no acredita una baja. Cuando existe movimiento de baja, el PATCH a `estado=true` se rechaza con `409 Conflict`. La aplicación de RN-09 deberá probarse cuando exista el primer consumidor real de stock disponible. Por esta dependencia, CA-07 y CA-16 permanecen parciales; no se cambia el contrato administrativo de listado ni se introduce una consulta especulativa sin consumidor.
+
+### Dependencia para verificación completa
+
+CA-07 y CA-16 deberán verificarse en la futura HU/PBI que implemente selección o consumo de stock para optimización. No se asigna un identificador hasta que exista en el backlog. Esa funcionalidad deberá probarse contra PostgreSQL controlado, verificando que:
+
+- una plancha activa, con cantidad positiva y sin baja manual se incluya;
+- una plancha con cantidad cero, una plancha con `estado=false` y una plancha con baja manual histórica se excluyan;
+- un retazo activo sin baja manual se incluya;
+- un retazo con `estado=false` o con baja manual histórica se excluya.
 
 ## 12. Contratos/API implementados
 
@@ -209,31 +218,31 @@ El request prohíbe campos adicionales, incluyendo `id_usuario`, `fecha` e `id_o
 
 ## 13. Criterios de aceptación y evidencia
 
-La numeración siguiente es la vigente de CA-01 a CA-19. `Parcial` identifica requisitos cuyo efecto está cubierto en la baja/UI, pero cuya aplicación general a selección de stock no está demostrada por una interfaz de stock disponible o consumidor activo en Inventory.
+La numeración siguiente es la vigente de CA-01 a CA-19. Cada fila conserva el requisito completo. `Parcial` identifica los criterios cuya exclusión general en una selección real de stock todavía depende de un consumidor futuro.
 
-| CA | Estado | Evidencia |
-|---|---|---|
-| CA-01 | Cumplido | `backend/tests/unit/inventory/test_writeoff.py`; `backend/tests/api/inventory/test_writeoff_schema.py`; prueba API de baja. Request limitado a los cuatro eventos manuales y rechaza consumo/valores desconocidos. |
-| CA-02 | Cumplido | Pruebas de dominio, API y componentes HU-014: motivo no vacío, observación nullable y preservación de valores. |
-| CA-03 | Cumplido | `backend/tests/integration/inventory/test_repository.py` y `backend/tests/api/inventory/test_writeoff_api.py`: movimiento plancha con referencia XOR correcta. |
-| CA-04 | Cumplido | `backend/tests/integration/inventory/test_repository.py` y `backend/tests/api/inventory/test_writeoff_api.py`: movimiento retazo con referencia XOR correcta. |
-| CA-05 | Cumplido | `backend/tests/unit/inventory/test_movement_model.py` y `backend/tests/integration/test_hu014_movement_migration.py`: constraint XOR verificado en PostgreSQL aislado. |
-| CA-06 | Cumplido | Pruebas de baja API/repositorio: actor autenticado, timestamp de servidor y persistencia auditada. |
-| CA-07 | Parcial | Integración PostgreSQL demuestra retención del recurso, `estado=false` y movimiento consultable; UI conserva la fila. No hay verificación de exclusión en todos los consumidores de stock. |
-| CA-08 | Cumplido | `backend/tests/integration/inventory/test_repository.py`: persistencia atómica y fallos con rollback para plancha y retazo. |
-| CA-09 | Cumplido | Prueba de integración PostgreSQL de baja y reactivación: 409; el estado y movimiento persisten intactos. |
-| CA-10 | Cumplido | `backend/tests/integration/inventory/test_repository.py`: recurso inactivo sin historial puede reactivarse; PATCH no crea movimiento. |
-| CA-11 | Cumplido | Pruebas de integración de duplicado y concurrencia con lock de fila e índice parcial de defensa. |
-| CA-12 | Cumplido | `backend/tests/integration/inventory/test_repository.py`, `backend/tests/api/inventory/test_movement_history_api.py` y componentes: campos auditables y orden cronológico estable. |
-| CA-13 | Cumplido | Prueba PostgreSQL de historial aislado plancha/retazo en `test_repository.py`. |
-| CA-14 | Cumplido | Pruebas API de permisos para baja/historial; E2E HU-014 verifica que Operario puede consultar pero no ve acción de baja. |
-| CA-15 | Cumplido | Pruebas API y OpenAPI: 401/403/404/409/422 aplicables a baja e historial; 409 no se documenta para GET de historial. |
-| CA-16 | Parcial | La UI muestra cantidad y estado, y la baja deja el recurso inactivo. Los GET administrativos devuelven todos los registros y no existe contrato separado de stock disponible que pruebe la exclusión general por cantidad/estado. |
-| CA-17 | Cumplido | Pruebas de repositorio/API e E2E: los recursos se conservan y siguen consultables; HU-014 no ejecuta DELETE físico. |
-| CA-18 | Cumplido | Enum/schema restringen el comando manual; `CONSUMO_OPTIMIZACION` está reservado y no existe flujo funcional de consumo en HU-014. |
-| CA-19 | Cumplido | `frontend/src/features/inventory/__tests__/Hu014Inventory.test.jsx` y `frontend/tests/e2e/hu014-inventory-writeoff.spec.js`: revisión explícita con recurso, evento, motivo y efecto antes de confirmar. |
+| CA | Criterio | Estado | Evidencia / observación |
+|---|---|---|---|
+| CA-01 | La baja acepta exclusivamente los eventos `BAJA_ROTURA`, `BAJA_MERMA`, `BAJA_ERROR_REGISTRO` y `BAJA_RETIRO`; rechaza `CONSUMO_OPTIMIZACION` y valores desconocidos sin persistir. | Cumplido | `backend/tests/unit/inventory/test_writeoff.py`; `backend/tests/api/inventory/test_writeoff_schema.py`; prueba API de baja. Request limitado a los cuatro eventos manuales y rechaza consumo/valores desconocidos. |
+| CA-02 | Toda baja manual requiere motivo no vacío y conserva observación cuando se proporciona. | Cumplido | Pruebas de dominio, API y componentes HU-014: motivo no vacío, observación nullable y preservación de valores. |
+| CA-03 | Una baja de plancha crea un movimiento ligado a exactamente esa plancha; `id_retazo` queda nulo. | Cumplido | `backend/tests/integration/inventory/test_repository.py` y `backend/tests/api/inventory/test_writeoff_api.py`: movimiento de plancha con referencia XOR correcta. |
+| CA-04 | Una baja de retazo crea un movimiento ligado a exactamente ese retazo; `id_plancha` queda nulo. | Cumplido | `backend/tests/integration/inventory/test_repository.py` y `backend/tests/api/inventory/test_writeoff_api.py`: movimiento de retazo con referencia XOR correcta. |
+| CA-05 | La integridad de persistencia rechaza movimientos con ambas referencias nulas o ambas presentes. | Cumplido | `backend/tests/unit/inventory/test_movement_model.py` y `backend/tests/integration/test_hu014_movement_migration.py`: constraint XOR verificado en PostgreSQL aislado. |
+| CA-06 | La identidad del movimiento corresponde al usuario autenticado y su fecha es asignada en servidor con zona horaria. | Cumplido | Pruebas de baja API/repositorio: actor autenticado, timestamp de servidor y persistencia auditada. |
+| CA-07 | Después de una baja confirmada el material permanece persistido, aparece en consultas históricas/administrativas y no puede utilizarse como stock disponible. | Parcial | PostgreSQL comprueba que el recurso se conserva, queda `estado=false` y el movimiento puede consultarse; la UI conserva la fila y el PATCH de reactivación con historial responde conflicto. Pendiente: probar exclusión desde una selección real de stock. No existe actualmente en NewGlass un consumidor, endpoint o caso de uso que seleccione planchas/retazos como candidatos de optimización o consumo; es una dependencia funcional futura, no un defecto actual conocido. |
+| CA-08 | La baja establece `estado=false` y persiste el movimiento en una única transacción. Ante falla de cualquiera de las dos escrituras, no se confirma ninguna. | Cumplido | `backend/tests/integration/inventory/test_repository.py`: persistencia atómica y fallos con rollback para plancha y retazo. |
+| CA-09 | Un PATCH `estado=true` después de una baja manual devuelve `409 Conflict` y mantiene `estado=false` y el movimiento. | Cumplido | Prueba de integración PostgreSQL de baja y reactivación: 409; el estado y movimiento persisten intactos. |
+| CA-10 | Para un recurso sin baja, PATCH `estado=true` y `estado=false` conservan el comportamiento histórico y no generan movimientos. | Cumplido | `backend/tests/integration/inventory/test_repository.py`: recurso inactivo sin historial puede reactivarse; PATCH no crea movimiento. |
+| CA-11 | Una segunda baja del mismo recurso devuelve `409 Conflict`, no cambia el registro inicial y no crea otro movimiento. | Cumplido | Pruebas de integración de duplicado y concurrencia con lock de fila e índice parcial de defensa. |
+| CA-12 | La consulta de historial devuelve tipo de evento, motivo, observación (incluido null), usuario responsable y fecha para cada movimiento, en orden cronológico estable. | Cumplido | `backend/tests/integration/inventory/test_repository.py`, `backend/tests/api/inventory/test_movement_history_api.py` y componentes: campos auditables y orden cronológico estable. |
+| CA-13 | Una consulta de historial de plancha no mezcla movimientos de retazo y viceversa. | Cumplido | Prueba PostgreSQL de historial aislado plancha/retazo en `test_repository.py`. |
+| CA-14 | La operación de baja exige permiso de gestión del tipo de material; la consulta exige `CONSULTAR_STOCK`. | Cumplido | Pruebas API de permisos para baja/historial; E2E HU-014 verifica que Operario puede consultar pero no ve acción de baja. |
+| CA-15 | Las respuestas de error incluyen `401` sin sesión, `403` sin permiso, `404` para material inexistente, `409` para doble baja o PATCH de reactivación y `422` para datos inválidos. | Cumplido | Pruebas API y OpenAPI: 401/403/404/409/422 aplicables a baja e historial; 409 no se documenta para GET de historial. |
+| CA-16 | Las planchas con cantidad cero y los materiales con `estado=false` no se ofrecen como stock disponible, aunque no tengan movimiento de baja. | Parcial | El modelo y las operaciones representan `estado=false` y cantidad cero, y los GET administrativos conservan esos recursos deliberadamente. Pendiente: probar que una consulta real de stock elegible filtre `estado=true`, cantidad positiva para planchas y ausencia de baja manual histórica. La selección elegible aún no existe; es una dependencia funcional futura. |
+| CA-17 | Los registros existentes de planchas y retazos continúan listándose y consultándose conforme a los contratos actuales; no se ejecuta `DELETE` físico. | Cumplido | Pruebas de repositorio/API e E2E: los recursos se conservan y siguen consultables; HU-014 no ejecuta DELETE físico. |
+| CA-18 | `CONSUMO_OPTIMIZACION` no descuenta cantidad ni cambia estado como parte de HU-014 y permanece reservado para etapa futura. | Cumplido | Enum/schema restringen el comando manual; `CONSUMO_OPTIMIZACION` está reservado y no existe flujo funcional de consumo en HU-014. |
+| CA-19 | La confirmación de baja es explícita en UI y presenta el material afectado, tipo, motivo y efecto de dejarlo fuera de disponibilidad. | Cumplido | `frontend/src/features/inventory/__tests__/Hu014Inventory.test.jsx` y `frontend/tests/e2e/hu014-inventory-writeoff.spec.js`: revisión explícita con recurso, evento, motivo y efecto antes de confirmar. |
 
-CA-07 y CA-16 quedan parciales hasta que exista evidencia de una ruta/consumidor de stock disponible que aplique estas reglas de forma integral; esa deuda no cambia los contratos administrativos de listado.
+CA-07 y CA-16 permanecen parciales hasta que exista una consulta o consumidor real de stock elegible y se pruebe con los casos indicados en “Dependencia para verificación completa”. Esta dependencia no cambia el contrato administrativo de listado.
 
 ## 14. Casos límite
 
