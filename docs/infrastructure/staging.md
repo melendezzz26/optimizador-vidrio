@@ -4,6 +4,34 @@ SPEC: [TA-DEPLOY-001](../specs/SPEC-TA-DEPLOY-001-staging.md), Reviewed.
 Este documento prepara una ejecución humana posterior; no certifica servicios
 remotos ni autoriza por sí solo migraciones, bootstrap o publicación.
 
+> **Actualización verificada TA-035-T1, 13/10/2026:** el usuario aportó Activity
+> de Heroku Staging: release `v12`, `Deployed 293a2a93`, 16:35 según el panel.
+> La consola remota reportó head de código `ta036a1b2c3d` y revisión de BD
+> `fa014e1a2b3c`. Posteriormente el usuario confirmó upgrade exitoso de
+> `fa014e1a2b3c` a **`ta036a1b2c3d`** y current **`ta036a1b2c3d (head)`**.
+> La introspección remota posterior reportó **SCHEMA_PASS**: `cantidad_afectada`
+> INTEGER nullable, checks `ck_movimientos_cantidad_positiva` y
+> `ck_movimientos_retazo_unitario` presentes, índice antiguo
+> `uq_movimientos_baja_manual_plancha` ausente. No repetir el upgrade. La cadena y
+> expectativas de `fa014e1a2b3c` descritas más abajo pertenecen al procedimiento
+> histórico inicial. Para esta actualización, seguir las decisiones y registrar
+> resultados en la [auditoría TA-035-T1](../evidence/sprint-01/TA-DEPLOY-001/actualizacion-predeploy-post-ta036.md).
+> Los one-off del monorepo deben ejecutar Alembic desde `backend/`, donde está
+> `alembic.ini`; el `cd backend` del proceso web no cambia su directorio inicial.
+
+> **Cierre TA-035-T1 confirmado por el usuario:** base inicial de la rama
+> `373dfc2`; versión final verificada **`293a2a9`**, con PR #42, #44 y #43.
+> `origin/integration/sprint-01`, Heroku v12 y Pages corresponden a `293a2a9`.
+> Pedidos: POST 201, lectura 200 y UI; inventario: GET planchas/retazos 200.
+> Retazo `RET-HU005-002`: POST 201, GET 200 y edición 200 de 3 a 4 vértices.
+> Supabase Staging confirmó ID 2, POLIGONO_CONVEXO con vertices_mm, área final
+> 5705.55 mm², estado true; Alembic `ta036a1b2c3d`, cantidad_afectada integer
+> nullable y ambos constraints TA-036. Correctivo Decimal JSON 500 validado
+> mediante API y persistencia. TA-035-T1 completado y validado en Staging.
+> Este cierre es documental: no repetir deploy, publicación, upgrade ni datos
+> de prueba. Los procedimientos siguientes se conservan como referencia para
+> futuras operaciones autorizadas, no como acciones pendientes de este cierre.
+
 ## Configuración y destino
 
 Aplicación: `newglass-api-staging`, GitHub conectado, deploy backend manual,
