@@ -1,5 +1,19 @@
 # TA-DEPLOY-001 — Evidencia de Staging
 
+## Actualización TA-035-T1 — 13/10/2026
+
+El checklist original corresponde al estado previo a la ejecución remota que
+documentaba esta tarea. El usuario confirmó que Staging fue creado y utilizado
+posteriormente; las declaraciones históricas de «sin despliegue» no describen
+su estado operativo actual. Se conserva el historial sin atribuirle resultados
+remotos que no registró.
+
+La [actualización posterior a TA-036](actualizacion-predeploy-post-ta036.md)
+registra las consultas remotas nuevas: Heroku live/ready 200 después de un
+503 transitorio, Pages publicado desde `373dfc2` y checks locales focalizados.
+La revisión Alembic de Staging, el SHA backend y el smoke autenticado siguen
+pendientes de acceso operativo; no se declara completada esta actualización.
+
 ## Identificación
 
 - **PBI:** TA-DEPLOY-001 — Preparación y despliegue controlado de Staging
