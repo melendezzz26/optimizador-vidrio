@@ -93,3 +93,57 @@ def rasterize_convex_polygon(vertices_mm, resolution_mm=DEFAULT_RESOLUTION_MM) -
         spans.append(_column_span(low, high, resolution))
 
     return RasterMask.from_spans(resolution, _cell_count(width, resolution), spans)
+
+def rasterize_rectangle(width_mm, height_mm, resolution_mm=DEFAULT_RESOLUTION_MM) -> RasterMask:
+    """Rasteriza un rectángulo (TA-005) como polígono convexo de 4 vértices."""
+    width = _positive(width_mm, "El ancho")
+    height = _positive(height_mm, "El alto")
+    return rasterize_convex_polygon(
+        [[0, 0], [width, 0], [width, height], [0, height]], resolution_mm
+    )
+
+def rasterize_circle(radius_mm, resolution_mm=DEFAULT_RESOLUTION_MM) -> RasterMask:
+    """Rasteriza una circunferencia (TA-005) con la regla conservadora.
+
+    El centro queda en (radio, radio). En cada franja horizontal, el círculo es
+    más ancho en la altura más cercana al centro; esa es la que define el tramo.
+    """
+    resolution = _positive(resolution_mm, "La resolución")
+    radius = _positive(radius_mm, "El radio")
+    diameter = round(2 * radius, COORDINATE_DECIMALS)
+
+    spans = []
+    for row in range(_cell_count(diameter, resolution)):
+        top = row * resolution
+        bottom = min(top + resolution, diameter)
+        if top <= radius <= bottom:
+            nearest = 0.0  # La franja contiene la altura del centro.
+        else:
+            nearest = min(abs(top - radius), abs(bottom - radius))
+        half_width = math.sqrt(max(radius * radius - nearest * nearest, 0.0))
+        spans.append(_column_span(radius - half_width, radius + half_width, resolution))
+
+    return RasterMask.from_spans(resolution, _cell_count(diameter, resolution), spans)
+
+
+def _field(geometry: dict, name: str):
+    if name not in geometry:
+        raise RasterizationError(f"A la geometría le falta el campo {name}.")
+    return geometry[name]
+
+
+def rasterize_geometry(geometry, resolution_mm=DEFAULT_RESOLUTION_MM) -> RasterMask:
+    """Punto de entrada: recibe la ``geometria`` tal como la guarda el módulo de pedidos."""
+    if not isinstance(geometry, dict):
+        raise RasterizationError("La geometría debe ser un objeto con el campo type.")
+
+    shape = geometry.get("type")
+    if shape == "RECTANGULO":
+        return rasterize_rectangle(
+            _field(geometry, "width_mm"), _field(geometry, "height_mm"), resolution_mm
+        )
+    if shape == "CIRCUNFERENCIA":
+        return rasterize_circle(_field(geometry, "radius_mm"), resolution_mm)
+    if shape == "POLIGONO_CONVEXO":
+        return rasterize_convex_polygon(_field(geometry, "vertices_mm"), resolution_mm)
+    raise RasterizationError("Tipo de geometría no soportado.")
