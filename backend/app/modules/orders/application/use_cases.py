@@ -102,6 +102,8 @@ class CreateOrderUseCase:
 
             piezas_validadas[-1].update(id_tipo_vidrio=id_tipo_vidrio, espesor_mm=espesor_mm)
 
+        # TA-036: registrar no exige stock. La consulta compatible pertenece
+        # al flujo posterior de Optimization; el catálogo sí sigue validándose.
         return self.repository.create_order(id_usuario, piezas_validadas, id_cliente=id_cliente)
 
 

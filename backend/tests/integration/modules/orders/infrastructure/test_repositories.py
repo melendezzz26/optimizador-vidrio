@@ -193,3 +193,21 @@ def test_cancel_order_commit_failure_rolls_back(db_session, session_factory, set
     with session_factory() as reader:
         assert reader.get(Pedido, identifier).estado == "PENDIENTE"
         assert reader.scalar(select(func.count()).select_from(Pieza).where(Pieza.id_pedido == identifier)) == 1
+
+@pytest.mark.parametrize("state", ["PENDIENTE", "EN_OPTIMIZACION", "OPTIMIZADO", "CONFIRMADO"])
+def test_list_orders_prioritizes_non_cancelled_with_stable_date_id_order(db_session, setup_data, state):
+    from datetime import datetime, timedelta, timezone
+    now = datetime(2026, 10, 12, tzinfo=timezone.utc)
+    repo = SQLAlchemyOrderRepository(db_session)
+    ids = [repo.create_order(setup_data, [PIECE], id_cliente=41) for _ in range(5)]
+    for identifier, status, date in zip(ids,
+        [state, "CANCELADO", state, "CANCELADO", state],
+        [now, now+timedelta(days=1), now, now+timedelta(days=1), now-timedelta(days=1)]):
+        order = db_session.get(Pedido, identifier)
+        order.estado, order.fecha_registro = status, date
+    db_session.commit()
+    expected = [ids[2], ids[0], ids[4], ids[3], ids[1]]
+    assert [r["id_pedido"] for r in repo.list_orders(100, 0)["items"]] == expected
+    assert [r["id_pedido"] for r in repo.list_orders(2, 2)["items"]] == expected[2:4]
+    assert [r["id_pedido"] for r in repo.list_orders(100, 0, estado="CANCELADO")["items"]] == expected[-2:]
+    assert [r["id_pedido"] for r in repo.list_orders(100, 0, estado=state)["items"]] == expected[:3]

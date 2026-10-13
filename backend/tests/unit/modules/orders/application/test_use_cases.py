@@ -163,3 +163,9 @@ def test_cancel_state_conflict_comes_from_repository(mock_repo):
         CancelOrderUseCase(mock_repo).execute(123)
     mock_repo.cancel_order.assert_called_once_with(123)
     mock_repo.get_order.assert_not_called()
+
+
+def test_create_order_never_queries_stock_compatibility(use_case, mock_repo):
+    mock_repo.get_compatible_stock.side_effect = AssertionError("Stock query forbidden during registration")
+    assert use_case.execute(1, [RECTANGLE], id_cliente=41) == 123
+    assert [c[0] for c in mock_repo.method_calls] == ["validate_catalog", "create_order"]
