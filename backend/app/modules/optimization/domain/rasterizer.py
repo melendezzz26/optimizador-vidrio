@@ -147,3 +147,99 @@ def rasterize_geometry(geometry, resolution_mm=DEFAULT_RESOLUTION_MM) -> RasterM
     if shape == "POLIGONO_CONVEXO":
         return rasterize_convex_polygon(_field(geometry, "vertices_mm"), resolution_mm)
     raise RasterizationError("Tipo de geometría no soportado.")
+
+# Una celda del material es usable solo si está completamente dentro de él, para
+# que una pieza colocada ahí nunca quede sobre una zona sin vidrio.
+
+
+def _interior_span(low_mm: float, high_mm: float, resolution_mm: float) -> tuple[int, int]:
+    """Tramo [inicio, fin) de columnas contenidas por completo en [low, high]; puede ser vacío."""
+    start = math.ceil(low_mm / resolution_mm - _EPSILON)
+    end = math.floor(high_mm / resolution_mm + _EPSILON)
+    return (start, end) if end > start else (0, 0)
+
+
+def _cross_section(points, y_mm: float):
+    """Intervalo [x mínima, x máxima] del polígono sobre la recta horizontal y; None si no la corta."""
+    xs = []
+    count = len(points)
+    for index in range(count):
+        (ax, ay), (bx, by) = points[index], points[(index + 1) % count]
+        if ay == by:
+            if ay == y_mm:
+                xs.extend((ax, bx))
+        elif min(ay, by) <= y_mm <= max(ay, by):
+            xs.append(ax + (y_mm - ay) / (by - ay) * (bx - ax))
+    return (min(xs), max(xs)) if xs else None
+
+
+def rasterize_material_polygon(vertices_mm, resolution_mm=DEFAULT_RESOLUTION_MM) -> RasterMask:
+    """Celdas usables de un retazo poligonal convexo (regla interior).
+
+    En una franja horizontal, la parte del polígono convexo que la cruza entera
+    está limitada por sus cortes en el borde superior y en el inferior: se toma
+    la intersección de ambos intervalos.
+    """
+    resolution = _positive(resolution_mm, "La resolución")
+    points = _normalized_vertices(vertices_mm)
+    width = max(x for x, _ in points)
+    height = max(y for _, y in points)
+    if width <= 0 or height <= 0:
+        raise RasterizationError("El polígono debe tener ancho y alto mayores que cero.")
+
+    row_count = _cell_count(height, resolution)
+    columns = _cell_count(width, resolution)
+
+    spans = []
+    for row in range(row_count):
+        top = row * resolution
+        bottom = top + resolution
+        upper = _cross_section(points, top)
+        lower = _cross_section(points, bottom) if bottom <= height + _EPSILON * resolution else None
+        if upper is None or lower is None:
+            spans.append((0, 0))
+            continue
+        spans.append(_interior_span(max(upper[0], lower[0]), min(upper[1], lower[1]), resolution))
+
+    return RasterMask.from_spans(resolution, columns, spans)
+
+
+def rasterize_material_circle(radius_mm, resolution_mm=DEFAULT_RESOLUTION_MM) -> RasterMask:
+    """Celdas usables de un retazo circular (regla interior)."""
+    resolution = _positive(resolution_mm, "La resolución")
+    radius = _positive(radius_mm, "El radio")
+    diameter = round(2 * radius, COORDINATE_DECIMALS)
+    cells = _cell_count(diameter, resolution)
+
+    spans = []
+    for row in range(cells):
+        top = row * resolution
+        bottom = top + resolution
+        if bottom > diameter + _EPSILON * resolution:
+            spans.append((0, 0))
+            continue
+        # El borde de la franja más alejado del centro es el que limita el ancho.
+        farthest = max(abs(top - radius), abs(bottom - radius))
+        half_width = math.sqrt(max(radius * radius - farthest * farthest, 0.0))
+        spans.append(_interior_span(radius - half_width, radius + half_width, resolution))
+
+    return RasterMask.from_spans(resolution, cells, spans)
+
+
+def rasterize_material(geometry, resolution_mm=DEFAULT_RESOLUTION_MM) -> RasterMask:
+    """Celdas usables de una plancha (RECTANGULO) o de un retazo (las tres formas)."""
+    if not isinstance(geometry, dict):
+        raise RasterizationError("La geometría debe ser un objeto con el campo type.")
+
+    shape = geometry.get("type")
+    if shape == "RECTANGULO":
+        width = _positive(_field(geometry, "width_mm"), "El ancho")
+        height = _positive(_field(geometry, "height_mm"), "El alto")
+        return rasterize_material_polygon(
+            [[0, 0], [width, 0], [width, height], [0, height]], resolution_mm
+        )
+    if shape == "CIRCUNFERENCIA":
+        return rasterize_material_circle(_field(geometry, "radius_mm"), resolution_mm)
+    if shape == "POLIGONO_CONVEXO":
+        return rasterize_material_polygon(_field(geometry, "vertices_mm"), resolution_mm)
+    raise RasterizationError("Tipo de geometría no soportado.")

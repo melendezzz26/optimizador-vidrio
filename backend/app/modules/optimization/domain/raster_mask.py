@@ -79,6 +79,25 @@ class RasterMask:
         """Área que representa la máscara: celdas ocupadas por el área de una celda."""
         return self.occupied_cells * self.resolution_mm * self.resolution_mm
 
+    def row_runs(self, row: int) -> tuple[tuple[int, int], ...]:
+        """Tramos [inicio, fin) de columnas ocupadas en una fila, de izquierda a derecha."""
+        if not 0 <= row < self.row_count:
+            raise IndexError("La fila está fuera de la máscara.")
+        bits = self.rows[row]
+        runs = []
+        column = 0
+        while bits:
+            if bits & 1:
+                start = column
+                while bits & 1:
+                    bits >>= 1
+                    column += 1
+                runs.append((start, column))
+            else:
+                bits >>= 1
+                column += 1
+        return tuple(runs)
+        
     def is_occupied(self, row: int, column: int) -> bool:
         if not (0 <= row < self.row_count and 0 <= column < self.columns):
             raise IndexError("La celda está fuera de la máscara.")
