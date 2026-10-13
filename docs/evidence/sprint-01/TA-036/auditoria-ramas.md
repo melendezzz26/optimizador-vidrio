@@ -1,4 +1,4 @@
-﻿# TA-036 — Auditoría previa de ramas paralelas
+# TA-036 — Auditoría previa de ramas paralelas
 
 Base: `origin/integration/sprint-01` = `b7a0175`; trabajo: `feature/TA-036-saneamiento-funcional`, documental `f6ed987`.
 Inspección de referencias disponibles mediante `git log`, `git diff --name-status` y `git show`. Ningún checkout, merge, rebase, cherry-pick ni copia de implementación paralela.

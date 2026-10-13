@@ -25,19 +25,6 @@ const planchas = [
   },
 ]
 
-const retazos = [
-  {
-    id_retazo: 9,
-    codigo: 'R-9',
-    id_tipo_vidrio: 1,
-    espesor_mm: 6,
-    geometria: { type: 'RECTANGULO', width_mm: 400, height_mm: 250 },
-    area_mm2: 100000,
-    estado: true,
-    fecha_registro: '2026-10-08T12:00:00',
-  },
-]
-
 const response = (data, status = 200) => ({
   ok: status < 400,
   status,

@@ -212,7 +212,7 @@ describe('HU-014: formulario y confirmación de baja', () => {
   })
 
   test('plancha no disponible impide baja parcial', async () => {
-    const { user } = await renderInventory({ planchas: [{ ...plancha, estado: false }] })
+    await renderInventory({ planchas: [{ ...plancha, estado: false }] })
     expect(screen.getByRole('cell', { name: 'Inactivo' })).toBeVisible()
     expect(screen.getByRole('button', { name: 'Dar de baja plancha #4' })).toBeDisabled()
   })

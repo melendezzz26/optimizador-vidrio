@@ -1,6 +1,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Check, Plus, MousePointer2, RotateCcw, Undo2 } from "lucide-react";
 import "./CustomPieceEditor.css";
+import { interiorAngles } from "./polygonMeasurements";
 import { fitVerticesToPreview } from "./geometryScaling";
 import { buildDimensionalGeometry, createSegments, isPositiveLength } from "./segmentGeometry";
 import { validateConvexPolygon } from "./convexityValidation";
@@ -109,19 +110,17 @@ function DimensionalPreview({ vertices, result, activeSegmentIndex }) {
   );
 }
 
-function dimensionalError(result, total) {
+function dimensionalError(result) {
   switch (result.error) {
+    case "shape-mismatch": return "Las medidas no corresponden al contorno. Cambia una longitud para escalar toda la figura conservando sus ángulos.";
     case "drawing": return "Hay vértices consecutivos en el mismo punto. Deshaz o reinicia el dibujo para separar esos vértices.";
     case "length": return "Revisa las medidas marcadas: cada longitud debe ser un número finito mayor que 0.";
-    case "inequality": return result.measuredCount < total
-      ? "Las medidas actuales y los lados estimados todavía no permiten cerrar la figura. Completa las medidas pendientes o corrige las ingresadas."
-      : "Las longitudes ingresadas no permiten formar un polígono cerrado. Revisa las medidas de los segmentos.";
     case "numeric-range": return "No se pueden representar estas medidas con precisión numérica. Revisa la magnitud de los valores.";
     default: return "No se logró cerrar la vista con este boceto y estas medidas. Revisa las longitudes o corrige el dibujo. Esto no determina su validez para corte.";
   }
 }
 
-function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState }) {
+function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState, addLabel, helpText, onGeometryChange }) {
   const instructionsId = useId();
   const drawingHeadingId = useId();
   const dimensionsHeadingId = useId();
@@ -153,6 +152,9 @@ function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState 
   const activeLength = activeSegment && isPositiveLength(activeSegment.lengthMm) && !activeSegment.badInput
     ? `${formatLength(Number(activeSegment.lengthMm))} mm · Medida ingresada`
     : result?.lengths ? `≈ ${formatLength(result.lengths[activeSegmentIndex])} mm · Estimación provisional` : "Sin medida real";
+  const angles = useMemo(() => {
+    try { return result?.vertices_mm ? interiorAngles(result.vertices_mm) : []; } catch { return []; }
+  }, [result]);
   const drawingPoints = vertices.map(({ x, y }) => `${x},${y}`).join(" ");
 
   useEffect(() => {
@@ -160,6 +162,10 @@ function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState 
     if (closedWithKeyboard.current) firstInputRef.current?.focus();
     else dimensionsRef.current?.scrollIntoView({ block: "nearest", behavior: "instant" });
   }, [isClosed]);
+
+  useEffect(() => {
+    if (onGeometryChange) onGeometryChange(dimensionsReady && validation.isValid ? result.vertices_mm : null);
+  }, [onGeometryChange, dimensionsReady, validation.isValid, result]);
 
   function addVertex(event) {
     if (disabled || event.button !== 0 || isClosed) return;
@@ -195,7 +201,17 @@ function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState 
   }
 
   function updateSegment(index, lengthMm, badInput) {
-    setSegments((current) => current.map((segment) => segment.index === index ? { ...segment, lengthMm, badInput } : segment));
+    if (!badInput && isPositiveLength(lengthMm)) {
+      const start = vertices[index];
+      const end = vertices[(index + 1) % vertices.length];
+      const scale = Number(lengthMm) / Math.hypot(end.x - start.x, end.y - start.y);
+      setSegments((current) => current.map((segment, i) => {
+        const a = vertices[i]; const b = vertices[(i + 1) % vertices.length];
+        return { ...segment, lengthMm: i === index ? lengthMm : String(Math.hypot(b.x - a.x, b.y - a.y) * scale), badInput: false };
+      }));
+    } else {
+      setSegments((current) => current.map((segment) => segment.index === index ? { ...segment, lengthMm, badInput } : segment));
+    }
   }
 
   function addPiece() {
@@ -271,14 +287,14 @@ function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState 
       <section ref={dimensionsRef} className="custom-piece-editor__dimensions" aria-labelledby={dimensionsHeadingId}>
         <h3 id={dimensionsHeadingId}><span className="custom-piece-editor__step" aria-hidden="true">2</span>Dimensiones por segmento</h3>
         {!isClosed ? <p className="custom-piece-editor__section-help">Cierra el polígono para identificar sus lados e ingresar sus longitudes en milímetros.</p> : <>
-          <p className="custom-piece-editor__section-help">Selecciona un lado e ingresa su longitud. Puedes corregir cualquier medida.</p>
+          <p className="custom-piece-editor__section-help">Define la longitud real de un lado. Toda la figura se escala proporcionalmente y conserva sus ángulos. Para cambiar la forma, corrige el dibujo.</p>
           <p className="custom-piece-editor__progress" role="status" aria-atomic="true">{measuredCount} de {segments.length} medidas ingresadas</p>
           <ol className="custom-piece-editor__segment-list">
             {segments.map((segment) => <SegmentField key={segment.id} segment={segment} active={activeSegmentIndex === segment.index}
               inputRef={segment.index === 0 ? firstInputRef : undefined} onSelect={() => setActiveSegmentIndex(segment.index)}
               onChange={(value, badInput) => updateSegment(segment.index, value, badInput)} />)}
           </ol>
-          <p className="custom-piece-editor__section-help">El lado seleccionado se resalta en ambos dibujos. Los campos vacíos siguen pendientes.</p>
+          <p className="custom-piece-editor__section-help">El lado seleccionado se resalta en ambos dibujos. Las demás longitudes se calculan desde el contorno.</p>
         </>}
       </section>
       {isClosed && <section className="custom-piece-editor__preview" aria-labelledby={previewHeadingId}>
@@ -291,18 +307,24 @@ function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState 
         </div>
         <p className="custom-piece-editor__section-help">
           {result.status === "unscaled" ? "Sin escala física. Ingresa una primera medida para dimensionar el boceto."
-            : `${measuredCount} de ${segments.length} segmentos medidos. ${dimensionsReady ? "Reconstrucción cerrada con tus longitudes." : "Los lados sin medida usan estimaciones del boceto."}`}
+            : `${measuredCount} de ${segments.length} segmentos medidos. ${dimensionsReady ? "Contorno conservado a escala." : "Los lados sin medida usan estimaciones del boceto."}`}
         </p>
         <div className="custom-piece-editor__preview-surface">
           {result.status === "error" ? <div className="custom-piece-editor__preview-placeholder">
-            <p className="custom-piece-editor__geometry-error" role="alert">{dimensionalError(result, segments.length)}</p>
+            <p className="custom-piece-editor__geometry-error" role="alert">{dimensionalError(result)}</p>
           </div> : <DimensionalPreview vertices={vertices} result={result} activeSegmentIndex={activeSegmentIndex} />}
         </div>
         <div className="custom-piece-editor__preview-caption">
           <p className="custom-piece-editor__active-length"><strong>{activeSegment?.id}</strong><span>{activeLength}</span></p>
           <p className="custom-piece-editor__preview-note">{!dimensionsReady && "Trazo discontinuo: sin medida real. "}Cuadrícula de referencia, sin escala en mm.</p>
         </div>
-        <p className="custom-piece-editor__section-help">El boceto orienta la reconstrucción; las longitudes pueden cambiar sus ángulos. Esta vista no es otro editor.</p>
+        <p className="custom-piece-editor__section-help">Los vértices definen la forma. Cambiar la escala conserva sus ángulos.</p>
+      </section>}
+      {angles.length > 0 && <section className="custom-piece-editor__angles" aria-label="Ángulos interiores">
+        <h3>Ángulos interiores</h3>
+        <ol>{angles.map((angle, index) => <li key={index}>
+          V{index + 1}: {formatLength(angle)}° (entre S{index || angles.length} y S{index + 1})
+        </li>)}</ol>
       </section>}
       <section className="custom-piece-editor__next-step" aria-labelledby={validationId}>
         <div>
@@ -323,25 +345,28 @@ function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState 
           </div>
           {validationRejected && <p>Revisa las medidas o deshaz el dibujo para corregir el contorno.</p>}
           <p id={validationHelpId}>{headerReady
-            ? "Agrega la pieza y guarda el pedido para registrarla."
+            ? helpText
             : "Selecciona el tipo de vidrio y el espesor en Nuevo pedido para agregar piezas."}</p>
         </div>
-        <button type="button" className="custom-piece-editor__button custom-piece-editor__button--add" disabled={!canAdd} onClick={addPiece} aria-describedby={`${validationMessageId} ${validationHelpId}`}>
-          <Plus size={16} aria-hidden="true" /> Agregar pieza al pedido
-        </button>
+        {!onGeometryChange && <button type="button" className="custom-piece-editor__button custom-piece-editor__button--add" disabled={!canAdd} onClick={addPiece} aria-describedby={`${validationMessageId} ${validationHelpId}`}>
+          <Plus size={16} aria-hidden="true" /> {addLabel}
+        </button>}
       </section>
     </div>
   );
 }
 
-export default function CustomPieceEditor({ onGuardarVertices, initialState, headerReady = true, disabled = false }) {
+export default function CustomPieceEditor({ onGuardarVertices, initialState, headerReady = true, disabled = false,
+  title = "Pieza personalizada", addLabel = "Agregar pieza al pedido",
+  helpText = "Agrega la pieza y guarda el pedido para registrarla.", onGeometryChange,
+}) {
   const headingId = useId();
   return <section className="custom-piece-editor" aria-labelledby={headingId}>
-    <header className="custom-piece-editor__header"><h2 id={headingId}>Pieza personalizada</h2>
-      <p>Traza el contorno y define la longitud real de cada lado.</p></header>
+    <header className="custom-piece-editor__header"><h2 id={headingId}>{title}</h2>
+      <p>Traza el contorno y fija su escala con una longitud real.</p></header>
     <fieldset className="custom-piece-editor__fieldset" disabled={disabled}>
-      <PolygonCanvas onGuardarVertices={onGuardarVertices} initialState={initialState} headerReady={headerReady} disabled={disabled} />
+      <PolygonCanvas onGuardarVertices={onGuardarVertices} initialState={initialState} headerReady={headerReady} disabled={disabled} addLabel={addLabel} helpText={helpText} onGeometryChange={onGeometryChange} />
     </fieldset>
-    <p className="custom-piece-editor__notice">Las piezas agregadas se registran al guardar el pedido.</p>
+    {!onGeometryChange && <p className="custom-piece-editor__notice">Las piezas agregadas se registran al guardar el pedido.</p>}
   </section>;
 }

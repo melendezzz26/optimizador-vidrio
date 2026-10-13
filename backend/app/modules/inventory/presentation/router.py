@@ -172,8 +172,8 @@ def update_plancha(
         ),
         404: _http_detail_response("Plancha inexistente.", "Plancha inexistente."),
         409: _http_detail_response(
-            "La plancha ya tiene una baja manual registrada.",
-            "La plancha ya tiene una baja manual registrada.",
+            "La plancha no tiene stock disponible.",
+            "La plancha no tiene stock disponible.",
         ),
         422: _validation_response("Validación del cuerpo, parámetro o regla de entrada."),
     },

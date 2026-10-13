@@ -56,13 +56,12 @@ async function fill(page, values = lengths) {
   for (const [index, value] of values.entries()) await field(page, index + 1).fill(String(value))
 }
 
-test('T01-T02-E01: dibujo → provisional → completa → selección y edición; registro bloqueado', async ({ page }) => {
+test('TA-036: dibujo y escala conservan contorno y ángulos; selección accesible', async ({ page }) => {
   await drawAndClose(page)
   await expect(page.getByText('0 de 5 medidas ingresadas', { exact: true })).toBeVisible()
   await field(page, 1).fill('850')
-  await expect(page.getByText('1 de 5 medidas ingresadas', { exact: true })).toBeVisible()
-  await expect(page.getByRole('img', { name: /Vista dimensional provisional/ })).toBeVisible()
-  for (let id = 2; id <= 5; id++) await expect(field(page, id)).toBeEmpty()
+  await expect(page.getByText('5 de 5 medidas ingresadas', { exact: true })).toBeVisible()
+  await expect(page.getByRole('region', { name: 'Ángulos interiores' })).toBeVisible()
   await fill(page)
   await expect(page.getByText('5 de 5 medidas ingresadas', { exact: true })).toBeVisible()
   await expect(page.getByRole('img', { name: /Vista dimensional completa/ })).toBeVisible()
@@ -72,25 +71,19 @@ test('T01-T02-E01: dibujo → provisional → completa → selección y edición
   await expect(field(page, 3)).toBeFocused()
   await expect(page.getByRole('img', { name: 'Vista dimensional completa. Segmento S3 seleccionado.' })).toBeVisible()
   await field(page, 3).fill('620')
-  for (let id = 1; id <= 5; id++) await expect(field(page, id)).toHaveValue(String(id === 3 ? 620 : lengths[id - 1]))
+  await expect(field(page, 3)).toHaveValue('620')
   await expect(page.getByRole('img', { name: /Vista dimensional completa/ })).toBeVisible()
   await expect(addButton(page)).toBeDisabled()
   await expect(addButton(page)).toHaveAccessibleDescription('Geometría convexa validada. Agrega la pieza y guarda el pedido para registrarla.')
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
 })
 
-test('T02-E02: combinación imposible retira la geometría completa y permite corregir', async ({ page }) => {
+test('TA-036: cambiar la escala conserva los ángulos', async ({ page }) => {
   await drawAndClose(page)
-  await fill(page)
-  await expect(page.getByRole('img', { name: /Vista dimensional completa/ })).toBeVisible()
-  await fill(page, [1000, 100, 100, 100, 100])
-  await expect(page.getByRole('alert')).toContainText('Las longitudes ingresadas no permiten formar un polígono cerrado.')
-  await expect(page.getByRole('alert')).not.toContainText(/convex/i)
-  await expect(page.getByRole('img', { name: /Vista dimensional/ })).toHaveCount(0)
-  await expect(page.getByText('Vista dimensional completa', { exact: true })).toHaveCount(0)
-  await expect(addButton(page)).toBeDisabled()
-  await fill(page)
-  await expect(page.getByRole('alert')).toHaveCount(0)
+  await field(page, 1).fill('850')
+  const angles = await page.getByRole('region', { name: 'Ángulos interiores' }).textContent()
+  await field(page, 1).fill('1700')
+  await expect(page.getByRole('region', { name: 'Ángulos interiores' })).toHaveText(angles)
   await expect(page.getByRole('img', { name: /Vista dimensional completa/ })).toBeVisible()
 })
 
@@ -105,12 +98,12 @@ for (const value of ['0', '-1', '1e']) {
     await field(page, 1).press('Tab')
     await expect(field(page, 1)).toHaveAttribute('aria-invalid', 'true')
     await expect(field(page, 1)).toHaveAccessibleDescription('Usa un número finito mayor que 0.')
-    await expect(page.getByText('0 de 5 medidas ingresadas', { exact: true })).toBeVisible()
+    await expect(page.getByText(`${value === '1e' ? 4 : 0} de 5 medidas ingresadas`, { exact: true })).toBeVisible()
     await expect(page.getByRole('img', { name: /Vista dimensional/ })).toHaveCount(0)
     await expect(addButton(page)).toBeDisabled()
     await field(page, 1).fill('850')
     await expect(field(page, 1)).toHaveAttribute('aria-invalid', 'false')
-    await expect(page.getByRole('img', { name: /Vista dimensional provisional/ })).toBeVisible()
+    await expect(page.getByRole('img', { name: /Vista dimensional completa/ })).toBeVisible()
   })
 }
 
@@ -152,7 +145,7 @@ test('T03-E05: dimensiones completas validan convexidad automáticamente y borra
   await expect(validation).toHaveText('Geometría convexa validada.')
 })
 
-test('T03-E06: concavidad y cambio a autointersección rechazan el flujo sin alterar otras medidas', async ({ page }) => {
+test('TA-036: escalar un contorno cóncavo conserva su rechazo', async ({ page }) => {
   await drawAndClose(page, [[100, 100], [500, 100], [260, 280], [500, 460], [100, 460]])
   await fill(page, [400, 300, 300, 400, 360])
   await expect(page.getByRole('img', { name: /Vista dimensional completa/ })).toBeVisible()
@@ -162,9 +155,9 @@ test('T03-E06: concavidad y cambio a autointersección rechazan el flujo sin alt
   await expect(addButton(page)).toBeDisabled()
   await field(page, 2).fill('700')
   await expect(page.getByRole('img', { name: /Vista dimensional completa/ })).toBeVisible()
-  await expect(rejection).toHaveText('La geometría se intersecta consigo misma.')
+  await expect(rejection).toHaveText('La figura resultante no es convexa.')
   await expect(rejection).not.toContainText(/cross|epsilon|determinant|stack/i)
-  for (const [id, value] of [[1, 400], [3, 300], [4, 400], [5, 360]]) await expect(field(page, id)).toHaveValue(String(value))
+  await expect(field(page, 2)).toHaveValue('700')
   await expect(addButton(page)).toBeDisabled()
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
 })

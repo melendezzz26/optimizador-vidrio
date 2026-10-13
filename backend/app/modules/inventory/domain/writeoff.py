@@ -20,7 +20,8 @@ class BajaManual:
     """Datos validados de una baja manual, sin identidad ni persistencia.
 
     El usuario y la fecha se asignan en Application a partir de la sesión y
-    del reloj del servidor. El cliente solo aporta categoría, motivo y nota.
+    del reloj del servidor. El cliente aporta categoría, motivo, nota y cantidad
+    de plancha. En retazo la cantidad es siempre una unidad.
     """
 
     tipo_evento: TipoEventoBajaManual
