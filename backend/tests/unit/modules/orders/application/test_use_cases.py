@@ -13,6 +13,7 @@ from app.modules.orders.application.use_cases import (
 from app.modules.orders.domain.exceptions import (
     InvalidGeometryException,
     InvalidOrderException,
+    NoCompatibleStockException,
     OrderNotFoundException,
     OrderStateConflictException,
 )
@@ -32,7 +33,9 @@ def mock_repo():
 
 @pytest.fixture
 def use_case(mock_repo):
-    return CreateOrderUseCase(mock_repo, Mock(exists=Mock(return_value=True)))
+    checker = Mock()
+    checker.find_missing_candidate_indexes.return_value = []
+    return CreateOrderUseCase(mock_repo, Mock(exists=Mock(return_value=True)), checker)
 
 
 def test_create_order_multiple_pieces(use_case, mock_repo):
@@ -49,6 +52,19 @@ def test_create_order_multiple_pieces(use_case, mock_repo):
     use_case.clients.exists.assert_called_once_with(41)
     assert len(validated) == 3 and validated[0]["area_mm2"] == 20000
     assert [(p["id_tipo_vidrio"], p["espesor_mm"], p["cantidad"]) for p in validated] == [(1, 6, 1), (1, 6, 2), (2, 4, 3)]
+    use_case.stock_candidate_checker.find_missing_candidate_indexes.assert_called_once_with(validated)
+
+
+def test_create_order_missing_candidate_returns_structured_piece_indexes(use_case, mock_repo):
+    use_case.stock_candidate_checker.find_missing_candidate_indexes.return_value = [0, 1]
+    pieces = [RECTANGLE, RECTANGLE | {"width_mm": 400, "height_mm": 300}]
+
+    with pytest.raises(NoCompatibleStockException) as caught:
+        use_case.execute(1, pieces, id_cliente=41)
+
+    assert [item["index"] for item in caught.value.pieces] == [1, 2]
+    assert all("dimensiones suficientes" in item["reason"] for item in caught.value.pieces)
+    mock_repo.create_order.assert_not_called()
 
 
 def test_create_order_invalid_catalog(use_case, mock_repo):

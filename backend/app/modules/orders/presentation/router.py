@@ -12,6 +12,7 @@ from ..domain.exceptions import (
     InvalidGeometryException,
     OrderNotFoundException,
     OrderStateConflictException,
+    NoCompatibleStockException,
 )
 from .dependencies import get_create_order_use_case, get_order_use_case, get_list_orders_use_case, get_update_order_use_case, get_cancel_order_use_case
 from app.modules.authentication.presentation.dependencies import require_permission
@@ -59,6 +60,12 @@ def create_order(
         raise HTTPException(status_code=422, detail=str(e)) from e
     except InvalidGeometryException as e:
         raise HTTPException(status_code=422, detail=str(e)) from e
+    except NoCompatibleStockException as e:
+        raise HTTPException(status_code=422, detail={
+            "code": "NO_COMPATIBLE_STOCK",
+            "message": str(e),
+            "pieces": e.pieces,
+        }) from e
     except Exception as e:
         logger.exception("Order creation failed")
         raise HTTPException(status_code=500, detail="No se pudo guardar el pedido. Inténtalo otra vez.") from e

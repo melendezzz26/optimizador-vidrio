@@ -3,12 +3,19 @@ from decimal import Decimal
 from typing import List, Dict, Any
 from datetime import date
 from enum import Enum
+from typing import Protocol, Sequence
 
 
 class OrderMutationResult(Enum):
     UPDATED = "updated"
     NOT_FOUND = "not_found"
     STATE_CONFLICT = "state_conflict"
+
+
+class StockCandidateChecker(Protocol):
+    """Read-only boundary used by Orders to ask Inventory about stock candidates."""
+
+    def find_missing_candidate_indexes(self, pieces: Sequence[Dict[str, Any]]) -> list[int]: ...
 
 class OrderRepositoryPort(ABC):
     @abstractmethod

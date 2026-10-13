@@ -7,7 +7,7 @@ import jwt
 import pytest
 from sqlalchemy import func, select, update
 
-from app.models import Pedido, Pieza, TipoVidrio, Usuario
+from app.models import Pedido, Pieza, Plancha, Retazo, TipoVidrio, Usuario
 from app.modules.orders.infrastructure.repositories import SQLAlchemyOrderRepository
 from app.shared.security.tokens import ALGORITHM, SECRET_KEY
 
@@ -21,11 +21,70 @@ PAYLOAD = {"id_cliente": 41, "piezas": [
 
 
 @pytest.fixture
-def authenticated(client, create_user, password):
+def authenticated(client, create_user, password, session_factory):
     identifier = create_user("O70000001")
+    with session_factory() as db:
+        now = datetime.now(timezone.utc)
+        db.add_all([
+            Plancha(ancho_mm=2000, alto_mm=1000, espesor_mm=Decimal("5.5"), cantidad=5,
+                    estado=True, fecha_registro=now, id_tipo_vidrio=7),
+            Plancha(ancho_mm=2000, alto_mm=1000, espesor_mm=Decimal("4"), cantidad=5,
+                    estado=True, fecha_registro=now, id_tipo_vidrio=8),
+            Plancha(ancho_mm=2000, alto_mm=1000, espesor_mm=Decimal("6"), cantidad=5,
+                    estado=True, fecha_registro=now, id_tipo_vidrio=9),
+        ])
+        db.commit()
     response = client.post("/api/auth/login", json={"username": "O70000001", "password": password})
     assert response.status_code == 200
     return identifier, {"Authorization": "Bearer " + response.json()["access_token"]}
+
+
+def test_create_order_without_individual_candidate_returns_structured_422_and_writes_nothing(
+    client, authenticated, session_factory,
+):
+    payload = deepcopy(PAYLOAD)
+    payload["piezas"][1]["width_mm"] = 3000
+
+    response = client.post("/api/orders", json=payload, headers=authenticated[1])
+
+    assert response.status_code == 422, response.text
+    assert response.json()["detail"] == {
+        "code": "NO_COMPATIBLE_STOCK",
+        "message": "Una o más piezas no tienen material compatible disponible.",
+        "pieces": [{
+            "index": 2,
+            "reason": "No hay plancha ni retazo disponible del tipo y espesor seleccionados con dimensiones suficientes para esta pieza.",
+        }],
+    }
+    with session_factory() as db:
+        assert db.scalar(select(func.count()).select_from(Pedido)) == 0
+        assert db.scalar(select(func.count()).select_from(Pieza)) == 0
+        inventory = db.scalars(select(Plancha).order_by(Plancha.id_plancha)).all()
+        assert [(item.cantidad, item.estado) for item in inventory] == [(5, True), (5, True), (5, True)]
+
+
+def test_create_order_accepts_a_compatible_retazo(client, authenticated, session_factory):
+    with session_factory() as db:
+        db.query(Plancha).filter(Plancha.id_tipo_vidrio == 8).update({"estado": False})
+        db.add(Retazo(
+            codigo="HU008-RET-1", espesor_mm=Decimal("4"),
+            geometria={"type": "RECTANGULO", "width_mm": 100, "height_mm": 200},
+            area_mm2=Decimal("20000"), estado=True, fecha_registro=datetime.now(timezone.utc),
+            id_tipo_vidrio=8, id_ejecucion_origen=None,
+        ))
+        db.commit()
+    payload = {"id_cliente": 41, "piezas": [{
+        "id_tipo_vidrio": 8, "espesor_mm": 4, "tipo_forma": "RECTANGULO",
+        "cantidad": 1, "width_mm": 100, "height_mm": 200,
+    }]}
+
+    response = client.post("/api/orders", json=payload, headers=authenticated[1])
+
+    assert response.status_code == 201, response.text
+    with session_factory() as db:
+        assert db.scalar(select(func.count()).select_from(Pedido)) == 1
+        assert db.scalar(select(func.count()).select_from(Pieza)) == 1
+        assert db.scalar(select(Retazo).where(Retazo.codigo == "HU008-RET-1")).estado is True
 
 
 def test_create_order_201_persists_all_pieces(client, authenticated, session_factory):

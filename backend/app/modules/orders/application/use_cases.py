@@ -1,20 +1,27 @@
 from typing import List, Dict, Any
 from decimal import Decimal
 from app.modules.clients.application.ports import ClientLookup
-from .ports import OrderMutationResult, OrderRepositoryPort
+from .ports import OrderMutationResult, OrderRepositoryPort, StockCandidateChecker
 from ..domain.geometry import GeometryValidator
 from ..domain.exceptions import (
     InvalidGeometryException,
     InvalidOrderException,
+    NoCompatibleStockException,
     OrderNotFoundException,
     OrderStateConflictException,
 )
 from datetime import date
 
 class CreateOrderUseCase:
-    def __init__(self, repository: OrderRepositoryPort, clients: ClientLookup):
+    def __init__(
+        self,
+        repository: OrderRepositoryPort,
+        clients: ClientLookup,
+        stock_candidate_checker: StockCandidateChecker,
+    ):
         self.repository = repository
         self.clients = clients
+        self.stock_candidate_checker = stock_candidate_checker
 
     def execute(self, id_usuario: int, piezas_raw: List[Dict[str, Any]], *, id_cliente: int | None = None) -> int:
         if type(id_cliente) is not int or not 0 < id_cliente <= 2147483647:
@@ -101,6 +108,17 @@ class CreateOrderUseCase:
                 raise InvalidOrderException(f"Tipo de forma no soportado: {tipo_forma}")
 
             piezas_validadas[-1].update(id_tipo_vidrio=id_tipo_vidrio, espesor_mm=espesor_mm)
+
+        missing_indexes = self.stock_candidate_checker.find_missing_candidate_indexes(piezas_validadas)
+        if missing_indexes:
+            reason = (
+                "No hay plancha ni retazo disponible del tipo y espesor seleccionados "
+                "con dimensiones suficientes para esta pieza."
+            )
+            raise NoCompatibleStockException([
+                {"index": index + 1, "reason": reason}
+                for index in missing_indexes
+            ])
 
         return self.repository.create_order(id_usuario, piezas_validadas, id_cliente=id_cliente)
 

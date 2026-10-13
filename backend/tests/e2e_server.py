@@ -73,7 +73,9 @@ def main():
                     id_plancha, ancho_mm, alto_mm, espesor_mm, cantidad,
                     estado, fecha_registro, id_tipo_vidrio
                 )
-                VALUES (701, 1000, 500, 5.5, 2, true, :now, 7)
+                VALUES (701, 1000, 500, 5.5, 2, true, :now, 7),
+                       (702, 1000, 500, 6, 2, true, :now, 7),
+                       (703, 1000, 500, 5.5, 2, true, :now, 7)
             """), {"now": datetime.now(timezone.utc)})
 
             connection.execute(sa.text("""
