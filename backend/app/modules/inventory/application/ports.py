@@ -93,3 +93,12 @@ class InventoryRepository(GlassCatalog, Protocol):
     def list_retazos(self) -> list[RetazoData]: ...
 
     def save_retazo(self, data: RetazoData) -> RetazoData: ...
+
+    def get_compatible_stock(
+            self, id_tipo_vidrio: int, espesor_mm: Decimal
+        ) -> tuple[list[PlanchaData], list[RetazoData]]:
+            """
+            Devuelve tupla (planchas, retazos) con estado=True (y cantidad>0 para planchas)
+            que coincidan con el tipo de vidrio y espesor requeridos. No bloquea registros.
+            """
+            ...
