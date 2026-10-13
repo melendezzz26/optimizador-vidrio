@@ -1,6 +1,6 @@
 # SPEC-TA-007 — Validación geométrica de colocaciones
 
-Estado: Draft
+Estado: Implemented
 PBI relacionado: TA-007 T01 (límites y superposición) y TA-007 T02 (separación y margen) · EN-004
 Responsable: Fabricio A.
 Dependencias: SPEC-TA-005-TA-006 (máscaras de piezas), RN-001 (valores configurados de separación y margen)
@@ -110,3 +110,13 @@ Fuera de alcance:
 - **RN-001:** el validador recibe margen y separación en mm. RN-001 decidirá dónde se guardan y los pasará al crear el estado.
 - **Puerta TA-035 T02:** igual que en SPEC-TA-005-TA-006, sección 13: el smoke de staging está parcial por HU-008.
 - La SPEC no tuvo revisión previa porque el equipo no estaba disponible; se revisa en el PR.
+
+## 13. Estado de implementación
+
+| Tarea | Estado | Evidencia |
+|---|---|---|
+| TA-007 T01 — Límites y superposición | Implemented | docs/evidence/sprint-01/TA-007/ |
+| TA-007 T02 — Separación y margen | Implemented | docs/evidence/sprint-01/TA-007/ |
+
+- La rama sale de `feature/TA-005-TA-006-rasterizacion` porque usa sus máscaras; el PR se abre cuando el PR #42 esté integrado.
+- Pasa a **Verified** cuando un reviewer distinto del autor apruebe el PR.
