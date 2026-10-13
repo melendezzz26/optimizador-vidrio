@@ -14,7 +14,7 @@ from app.models import MovimientoInventario, Plancha, Retazo, TipoVidrio, TipoVi
 from app.modules.inventory.application.dto import (
     MovimientoInventarioData, PlanchaData, RetazoData, TipoVidrioData,
 )
-from app.modules.inventory.domain.exceptions import InventoryConflictError, InventoryNotFoundError
+from app.modules.inventory.domain.exceptions import InventoryConflictError, InventoryNotFoundError, InventoryValidationError
 from app.modules.inventory.domain.writeoff import TipoEventoBajaManual
 
 _MANUAL_WRITEOFF_EVENTS = tuple(event.value for event in TipoEventoBajaManual)
@@ -245,6 +245,11 @@ class SqlAlchemyInventoryRepository:
         self, *, id_plancha: int | None, id_retazo: int | None,
         tipo_evento: str, motivo: str, observacion: str | None, id_usuario: int, cantidad_afectada: int,
     ) -> MovimientoInventarioData:
+        # NULL is readable history, never a valid new application write.
+        if type(cantidad_afectada) is not int or cantidad_afectada <= 0:
+            raise InventoryValidationError("cantidad_afectada debe ser un entero positivo.")
+        if id_retazo is not None and cantidad_afectada != 1:
+            raise InventoryValidationError("La baja de retazo afecta exactamente una unidad.")
         session = self._require_session()
         row = MovimientoInventario(
             id_plancha=id_plancha,

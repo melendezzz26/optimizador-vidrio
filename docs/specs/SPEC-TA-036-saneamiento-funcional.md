@@ -233,3 +233,14 @@ Se implementan T02–T05 en la rama indicada, después de auditar en lectura los
 - **Raster:** la base TA-036 no contiene rasterizador; la rama de Aguilar ya acepta `rasterize_geometry(geometria, resolution_mm)` y `rasterize_convex_polygon(vertices_mm, resolution_mm)`. El consumidor posterior debe pasar la geometría persistida final, sin inferirla de lados o guardar ángulos aparte. No es necesario añadir otro algoritmo ni commit de raster.
 
 Pendiente de coordinación: HU-008 conservará su puerto de consulta y lo conectará al futuro flujo de Optimization; Aguilar conectará los vértices persistidos finales. TA-036 no integra estas ramas. Las pruebas y el inventario completo de archivos se registran en la evidencia de ejecución.
+
+## 16. Correctivo de regresión previo a T06
+
+Se separan dos garantías de `cantidad_afectada`:
+
+- **Integridad histórica (CA-12):** la columna nullable preserva cantidades desconocidas sin imputarlas. `ta036a1b2c3d` y su padre `fa014e1a2b3c` no se alteran. El CHECK `cantidad_afectada IS NULL OR cantidad_afectada > 0` rechaza valores conocidos no positivos; el CHECK unitario limita cantidades conocidas de retazo a 1.
+- **Nuevas bajas de la aplicación (6.3/6.4):** plancha exige entero positivo y saldo suficiente; retazo registra exactamente 1. Request, dominio y servicio mantienen sus validaciones. El escritor común de movimientos del repositorio también rechaza NULL, booleanos, fracciones, valores no positivos y retazo distinto de 1 antes de insertar, incluso en llamadas internas.
+
+Esta SPEC no exige distinguir temporalmente inserciones SQL directas nuevas y filas históricas mediante una restricción de BD. NULL permanece permitido por compatibilidad histórica a nivel de esquema, sin una garantía temporal en SQL; su uso para nuevas bajas de la aplicación está prohibido y validado. No se agregan triggers, columnas legacy ni fechas/cutoffs artificiales. Las nuevas rutas de escritura se verifican contra PostgreSQL aislado y HTTP real, y se conserva la lectura del histórico NULL.
+
+Se restaura cobertura vigente de preview, escalado, extremos numéricos, interacción de ambos SVG y flujos actuales de inventario. Los casos que exigían resolver una forma desde lados independientes o usar Activar/Desactivar permanecen retirados. La matriz anterior→equivalente y los resultados del correctivo se registran en `docs/evidence/sprint-01/TA-036/correctivo-regresion.md`. Este correctivo no ejecuta T06 ni cambia el estado Draft/reviewer pendiente.

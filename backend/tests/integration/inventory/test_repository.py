@@ -20,7 +20,7 @@ from app.modules.inventory.application.dto import (
     TipoVidrioData, UpdatePlancha, UpdateRetazo,
 )
 from app.modules.inventory.application.service import InventoryService
-from app.modules.inventory.domain.exceptions import InventoryConflictError, InventoryNotFoundError
+from app.modules.inventory.domain.exceptions import InventoryConflictError, InventoryNotFoundError, InventoryValidationError
 from app.modules.inventory.domain.writeoff import BajaManual, TipoEventoBajaManual
 from tests.integration.postgres_support import new_database, upgrade
 from tests.integration.test_r4_migration import insert_r3_context
@@ -881,3 +881,100 @@ def test_plancha_order_is_available_then_date_and_id_desc(repository):
         tie = repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio))
         rows = repo.list_planchas()
     assert [r.id_plancha for r in rows] == [tie.id_plancha, newest.id_plancha, older.id_plancha, zero.id_plancha, unavailable.id_plancha]
+
+
+@pytest.mark.parametrize("quantity", [None, 0, -1, True, 1.5, "1"])
+def test_internal_plancha_movement_rejects_invalid_quantity_without_inserting(repository, engine, quantity):
+    repo, _sessions = repository
+    seed_writeoff_actor(engine)
+    plancha, _retazo = create_writeoff_resources(repo)
+    with pytest.raises(InventoryValidationError, match="cantidad_afectada"):
+        with repo.transaction():
+            repo.create_plancha_writeoff_movement(plancha.id_plancha, tipo_evento="BAJA_MERMA",
+                motivo="Baja interna", observacion=None, id_usuario=1, cantidad_afectada=quantity)
+    with engine.connect() as connection:
+        assert connection.scalar(sa.text("SELECT count(*) FROM movimientos_inventario")) == 0
+        assert connection.scalar(sa.text("SELECT cantidad FROM planchas")) == 1
+
+
+def test_common_movement_writer_rejects_non_unit_retazo_quantity(repository, engine):
+    repo, _sessions = repository
+    seed_writeoff_actor(engine)
+    _plancha, retazo = create_writeoff_resources(repo)
+    with pytest.raises(InventoryValidationError, match="exactamente una unidad"):
+        with repo.transaction():
+            repo._create_writeoff_movement(id_plancha=None, id_retazo=retazo.id_retazo,
+                tipo_evento="BAJA_RETIRO", motivo="Retiro", observacion=None,
+                id_usuario=1, cantidad_afectada=2)
+    with engine.connect() as connection:
+        assert connection.scalar(sa.text("SELECT count(*) FROM movimientos_inventario")) == 0
+
+
+def test_service_rejects_missing_plancha_quantity_and_assigns_one_to_retazo(repository, engine):
+    repo, _sessions = repository
+    seed_writeoff_actor(engine)
+    plancha, retazo = create_writeoff_resources(repo)
+    service = InventoryService(repo)
+    command = BajaManual(tipo_evento="BAJA_ROTURA", motivo="Rotura")
+    with pytest.raises(InventoryValidationError, match="cantidad_afectada"):
+        service.writeoff_plancha(plancha.id_plancha, command, id_usuario=1)
+    with engine.connect() as connection:
+        assert connection.scalar(sa.text("SELECT count(*) FROM movimientos_inventario")) == 0
+    result = service.writeoff_retazo(retazo.id_retazo, command, id_usuario=1)
+    assert result.movimiento.cantidad_afectada == 1
+    with engine.connect() as connection:
+        assert connection.execute(sa.text("SELECT id_retazo,cantidad_afectada FROM movimientos_inventario")).one() == (retazo.id_retazo, 1)
+
+
+def test_real_writeoff_http_routes_never_persist_null_quantity(repository, engine):
+    from fastapi.testclient import TestClient
+    from app.modules.authentication.presentation.dependencies import get_database_session
+    from app.modules.inventory.presentation.dependencies import get_inventory_service
+    from app.shared.security import create_access_token
+    from main import app
+
+    repo, _sessions = repository
+    seed_writeoff_actor(engine)
+    plancha, retazo = create_writeoff_resources(repo)
+    service = InventoryService(repo)
+    service.update_plancha(plancha.id_plancha, UpdatePlancha(cantidad=10))
+
+    def database_session():
+        with Session(engine) as session:
+            yield session
+
+    original_overrides = dict(app.dependency_overrides)
+    # Only inject the owned DB. Authentication reader, service and repository are real.
+    app.dependency_overrides[get_database_session] = database_session
+    app.dependency_overrides[get_inventory_service] = lambda: InventoryService(
+        SqlAlchemyInventoryRepository(lambda: Session(engine)))
+    headers = {"Authorization": "Bearer " + create_access_token(1, "A12345678", "Administrador")}
+    body = {"tipo_evento": "BAJA_ROTURA", "motivo": "Rotura HTTP"}
+    try:
+        with TestClient(app) as client:
+            for extra in ({}, {"cantidad_afectada": None}, {"cantidad_afectada": 0},
+                          {"cantidad_afectada": -1}, {"cantidad_afectada": True},
+                          {"cantidad_afectada": 1.5}, {"cantidad_afectada": 11}):
+                response = client.post(f"/api/inventory/planchas/{plancha.id_plancha}/baja",
+                                       headers=headers, json=body | extra)
+                assert response.status_code == 422, response.text
+            response = client.post(f"/api/inventory/retazos/{retazo.id_retazo}/baja",
+                                   headers=headers, json=body | {"cantidad_afectada": None})
+            assert response.status_code == 422
+            with engine.connect() as connection:
+                assert connection.scalar(sa.text("SELECT count(*) FROM movimientos_inventario")) == 0
+            plancha_response = client.post(f"/api/inventory/planchas/{plancha.id_plancha}/baja",
+                headers=headers, json=body | {"cantidad_afectada": 2})
+            retazo_response = client.post(f"/api/inventory/retazos/{retazo.id_retazo}/baja",
+                headers=headers, json=body)
+            assert plancha_response.status_code == retazo_response.status_code == 201
+            assert plancha_response.json()["cantidad"] == 8
+            assert plancha_response.json()["movimiento"]["cantidad_afectada"] == 2
+            assert retazo_response.json()["movimiento"]["cantidad_afectada"] == 1
+    finally:
+        app.dependency_overrides.clear()
+        app.dependency_overrides.update(original_overrides)
+    with engine.connect() as connection:
+        assert connection.execute(sa.text(
+            "SELECT cantidad_afectada FROM movimientos_inventario ORDER BY id_movimiento"
+        )).scalars().all() == [2, 1]

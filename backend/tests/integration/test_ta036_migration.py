@@ -22,6 +22,10 @@ def test_upgrade_preserves_unknown_history_and_allows_partial_writeoffs(isolated
             _insert_movement(connection, event="BAJA_ROTURA", plancha=1)
             _insert_movement(connection, event="BAJA_ROTURA", retazo=1)
         assert upgrade(engine, "head").returncode == 0
+        quantity_column = next(column for column in sa.inspect(engine).get_columns("movimientos_inventario")
+                               if column["name"] == "cantidad_afectada")
+        assert quantity_column["nullable"] is True  # Unknown history remains readable.
+        assert quantity_column["default"] is None  # Never invent a historical quantity.
         with engine.begin() as connection:
             assert connection.execute(sa.text(
                 "SELECT cantidad_afectada FROM movimientos_inventario ORDER BY id_movimiento"
@@ -30,7 +34,8 @@ def test_upgrade_preserves_unknown_history_and_allows_partial_writeoffs(isolated
                 "INSERT INTO movimientos_inventario(id_plancha,tipo_evento,motivo,id_usuario,cantidad_afectada) "
                 "VALUES (1,'BAJA_MERMA','Baja parcial',1,2), (1,'BAJA_MERMA','Otra baja',1,1)"
             )
-            for resource, quantity in (("id_plancha", 0), ("id_plancha", -1), ("id_retazo", 2)):
+            for resource, quantity in (("id_plancha", 0), ("id_plancha", -1),
+                                       ("id_retazo", 0), ("id_retazo", -1), ("id_retazo", 2)):
                 with pytest.raises(sa.exc.IntegrityError), connection.begin_nested():
                     connection.exec_driver_sql(
                         f"INSERT INTO movimientos_inventario({resource},tipo_evento,motivo,id_usuario,cantidad_afectada) "

@@ -42,3 +42,9 @@ def test_manual_writeoff_rejects_non_text_observation():
             motivo="Rotura",
             observacion=12,
         )
+
+
+@pytest.mark.parametrize("quantity", [0, -1, True, 1.5, "1", float("inf")])
+def test_writeoff_command_rejects_invalid_explicit_quantity(quantity):
+    with pytest.raises(InventoryValidationError, match="cantidad_afectada"):
+        BajaManual(tipo_evento="BAJA_ROTURA", motivo="Rotura", cantidad_afectada=quantity)
