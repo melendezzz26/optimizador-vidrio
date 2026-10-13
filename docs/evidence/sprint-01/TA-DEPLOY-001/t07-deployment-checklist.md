@@ -1,5 +1,14 @@
 # T07 — Checklist para ejecución humana de Staging
 
+> **Nota de actualización, 13/10/2026:** este checklist conserva el estado
+> previo a la ejecución remota que documentó originalmente. El usuario
+> confirmó que Staging ya fue creado y utilizado. Sus casillas pendientes no
+> deben interpretarse como ausencia actual de infraestructura. Véase la
+> [auditoría remota TA-035-T1](actualizacion-predeploy-post-ta036.md) para los
+> resultados actuales y los puntos aún no verificados. No se completan
+> retrospectivamente casillas sin evidencia. La revisión `fa014e1a2b3c`
+> mencionada abajo es histórica, no una lectura actual de Staging.
+
 **T07 NO COMPLETADA. No se ejecutó ninguna acción remota.**
 SPEC Reviewed; runbook: [staging.md](../../../infrastructure/staging.md).
 Preparación local sobre `a95d92f`, 12/10/2026. Los checks siguientes requieren

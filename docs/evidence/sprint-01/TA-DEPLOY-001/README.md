@@ -1,5 +1,61 @@
 # TA-DEPLOY-001 — Evidencia de Staging
 
+## Actualización TA-035-T1 — 13/10/2026
+
+El checklist original corresponde al estado previo a la ejecución remota que
+documentaba esta tarea. El usuario confirmó que Staging fue creado y utilizado
+posteriormente; las declaraciones históricas de «sin despliegue» no describen
+su estado operativo actual. Se conserva el historial sin atribuirle resultados
+remotos que no registró.
+
+**Auditoría inicial (histórica):** la [actualización posterior a TA-036](actualizacion-predeploy-post-ta036.md)
+registra las consultas remotas nuevas: Heroku live/ready 200 después de un
+503 transitorio, Pages publicado desde `373dfc2` y checks locales focalizados.
+En esa auditoría, la revisión Alembic de Staging, el SHA backend y el smoke
+autenticado estaban pendientes; aún no se declaraba completada la actualización.
+
+**Continuación verificada, 13/10/2026, 21:36 UTC / 16:36 Lima:** el usuario
+autorizó actualizar la línea base a `293a2a9` (incluye TA-036 y TA-007), después
+de comprobar el avance de integración y el workflow Pages `38443828520`
+exitoso. El usuario confirmó Manual Deploy Heroku exitoso, release `v12`, y
+después aportó Activity: `Deployed 293a2a93`, 16:35 según el panel. Raíz y ambos
+health de Heroku devolvieron 200; Pages también 200. Heroku CLI no está
+disponible localmente. La auditoría enlazada contiene los pasos de consola
+remota, SQL de solo lectura, smoke autenticado manual y capturas A–H.
+No se requiere navegador conectado a Codex. La consola remota aportada por el
+usuario mostró head `ta036a1b2c3d` y BD `fa014e1a2b3c`; después confirmó upgrade
+exitoso y current **`ta036a1b2c3d (head)`**. El smoke posterior a la migración,
+21:42:03 UTC, devolvió 200 en raíz/live/ready. La introspección remota posterior
+aportada por el usuario dio **SCHEMA_PASS**: columna INTEGER nullable, ambos
+checks TA-036 y ausencia del índice antiguo de bajas de plancha. Esa etapa
+quedó en **READY FOR USER STAGING SMOKE** y fue seguida por el cierre siguiente.
+
+**Cierre confirmado, 13/10/2026: completado y validado en Staging.** La base
+inicial de la rama TA-035-T1 es `373dfc2` (PR #42 y #44); la versión final
+verificada es **`293a2a9`**, que incorpora después PR #43 (TA-007). Tras el
+`git fetch origin --prune` informado por el usuario, la referencia local
+`origin/integration/sprint-01` también se confirmó en `293a2a9`. La eliminación
+de la rama remota TA-007 posterior al merge es normal. Heroku v12 y Pages ya
+estaban en esa versión; no se requiere otro deploy ni publicación.
+
+El usuario confirmó `POST /api/orders → 201`, lectura posterior 200 y pedido
+visible en UI; GET planchas/retazos 200; `POST /api/inventory/retazos → 201
+Created`, GET posterior 200 y `RET-HU005-002` visible en UI. La edición del
+mismo retazo de 3 a 4 vértices respondió 200, con área final **5705.55 mm²**.
+Las consultas de solo lectura en **Supabase Staging** confirmaron la fila ID 2,
+código `RET-HU005-002`, `POLIGONO_CONVEXO`, `vertices_mm`, área 5705.55 y estado
+true, además de Alembic `ta036a1b2c3d`, cantidad_afectada integer nullable y
+ambos constraints TA-036. El defecto histórico Decimal JSON 500 queda resuelto
+en el caso validado: POST 201 + GET 200 + persistencia PostgreSQL.
+
+La auditoría contiene el checklist de once evidencias disponibles de código,
+terminal, API de pedidos/inventario/retazo, esquema, persistencia, UI,
+error/corrección y pruebas, más el resumen final para Notion. Este cierre solo
+actualiza los tres documentos autorizados y los protege en un commit; no repite
+operaciones remotas ni suites. Próximo estado con working tree limpio:
+**READY TO SYNC WITH INTEGRATION**. Sin push, PR ni merge en este cierre.
+El historial siguiente se conserva y no describe el estado final actual.
+
 ## Identificación
 
 - **PBI:** TA-DEPLOY-001 — Preparación y despliegue controlado de Staging
