@@ -123,7 +123,9 @@ class SqlAlchemyInventoryRepository:
     def _encode_geometria(data: object) -> object:
         if isinstance(data, dict):
             return {k: SqlAlchemyInventoryRepository._encode_geometria(v) for k, v in data.items()}
-        elif isinstance(data, list):
+        # Pydantic's Python-mode dump preserves vertex pairs as tuples of Decimal.
+        # Both containers must be traversed at the JSONB boundary (POST and PATCH).
+        elif isinstance(data, (list, tuple)):
             return [SqlAlchemyInventoryRepository._encode_geometria(v) for v in data]
         elif isinstance(data, Decimal):
             if data == data.to_integral_value():

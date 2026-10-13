@@ -39,6 +39,64 @@ NOW = datetime(2026, 10, 5, 12, 30, tzinfo=timezone.utc)
 HEAD = "ta036a1b2c3d"
 
 
+@pytest.mark.parametrize("geometry", [
+    {"type": "POLIGONO_CONVEXO", "vertices_mm": [[0, 0], [50, 0], [20, 40]]},
+    {"type": "POLIGONO_CONVEXO", "vertices_mm": [[0, 0], [120, 0], [100, 70], [10, 80]]},
+    {"type": "POLIGONO_CONVEXO", "vertices_mm": [[0.25, 0.75], [50.25, 0.75], [20.5, 40.125]]},
+    {"type": "RECTANGULO", "width_mm": 50.25, "height_mm": 20.75},
+    {"type": "CIRCUNFERENCIA", "radius_mm": 12.25},
+])
+def test_retazo_geometry_http_post_patch_postgres_json_numbers(repository, engine, geometry):
+    from fastapi.testclient import TestClient
+    from app.modules.authentication.presentation.dependencies import get_database_session
+    from app.modules.inventory.presentation.dependencies import get_inventory_service
+    from app.shared.security import create_access_token
+    from main import app
+
+    repo, _ = repository
+    seed_writeoff_actor(engine)
+    with repo.transaction():
+        tipo = create_tipo(repo)
+
+    def database_session():
+        with Session(engine) as session:
+            yield session
+
+    original = dict(app.dependency_overrides)
+    app.dependency_overrides[get_database_session] = database_session
+    app.dependency_overrides[get_inventory_service] = lambda: InventoryService(
+        SqlAlchemyInventoryRepository(lambda: Session(engine)))
+    headers = {"Authorization": "Bearer " + create_access_token(1, "A12345678", "Administrador")}
+    try:
+        with TestClient(app) as client:
+            response = client.post('/api/inventory/retazos', headers=headers, json={
+                "codigo": "JSON-REGRESSION", "espesor_mm": 4,
+                "id_tipo_vidrio": tipo.id_tipo_vidrio, "geometria": geometry})
+            assert response.status_code == 201, response.text
+            identifier = response.json()["id_retazo"]
+            for actual in [response.json()["geometria"],
+                           next(row for row in client.get('/api/inventory/retazos', headers=headers).json()
+                                if row['id_retazo'] == identifier)['geometria']]:
+                if 'vertices_mm' in actual:
+                    assert actual == geometry
+                    assert all(type(value) in (int, float) for point in actual['vertices_mm'] for value in point)
+                else:
+                    assert actual['type'] == geometry['type']
+                    assert all(float(actual[key]) == value for key, value in geometry.items() if key != 'type')
+            patched = {"type": "POLIGONO_CONVEXO", "vertices_mm": [[0.125, 0], [40.25, 0], [0.125, 30.75]]}
+            response = client.patch(f'/api/inventory/retazos/{identifier}', headers=headers, json={'geometria': patched})
+            assert response.status_code == 200, response.text
+            assert response.json()['geometria'] == patched
+        with engine.connect() as connection:
+            stored = connection.scalar(sa.text('SELECT geometria FROM retazos WHERE id_retazo=:id'), {'id': identifier})
+            assert stored == patched
+            assert all(type(value) in (int, float) for point in stored['vertices_mm'] for value in point)
+            assert connection.scalar(sa.text("SELECT jsonb_typeof(geometria->'vertices_mm'->0->0) FROM retazos WHERE id_retazo=:id"), {'id': identifier}) == 'number'
+    finally:
+        app.dependency_overrides.clear()
+        app.dependency_overrides.update(original)
+
+
 @pytest.fixture(scope="module")
 def inventory_database(isolated_postgres):
     assert isolated_postgres.host == "127.0.0.1"

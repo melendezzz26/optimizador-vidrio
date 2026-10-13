@@ -104,6 +104,12 @@ class PoligonoConvexo(BaseSchema):
     type: Literal["POLIGONO_CONVEXO"]
     vertices_mm: list[tuple[Decimal, Decimal]] = Field(min_length=3)
 
+    @field_serializer("vertices_mm", when_used="json")
+    def serialize_vertices(self, vertices: list[tuple[Decimal, Decimal]]) -> list[list[int | float]]:
+        # JSON transport is numeric; validation and Python-mode DTOs retain Decimal.
+        return [[int(value) if value == value.to_integral_value() else float(value)
+                 for value in point] for point in vertices]
+
 Geometria = Annotated[
     Union[Rectangulo, Circunferencia, PoligonoConvexo],
     Field(discriminator="type")
