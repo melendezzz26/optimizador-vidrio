@@ -384,3 +384,32 @@ def test_update_does_not_silently_accept_client_reassignment(client, authenticat
     assert response.status_code == 422
     with session_factory() as db:
         assert db.get(Pedido, identifier).id_cliente == 41
+
+
+def test_register_order_without_inventory_and_cancel_moves_it_to_end(client, authenticated, session_factory):
+    from app.models import Plancha, Retazo
+    _actor, headers = authenticated
+    with session_factory() as db:
+        assert db.scalar(select(func.count()).select_from(Plancha)) == 0
+        assert db.scalar(select(func.count()).select_from(Retazo)) == 0
+    first = create_pending_order(client, headers)
+    second = create_pending_order(client, headers)
+    assert client.delete(f"/api/orders/{second}", headers=headers).status_code == 200
+    result = client.get("/api/orders", headers=headers)
+    assert result.status_code == 200
+    assert [row["id_pedido"] for row in result.json()["items"]] == [first, second]
+
+
+def test_same_edge_lengths_preserve_distinct_canonical_polygons_in_order(client, authenticated):
+    square = [[0, 0], [10, 0], [10, 10], [0, 10]]
+    rhombus = [[0, 0], [10, 0], [16, 8], [6, 8]]
+    payload = {"id_cliente": 41, "piezas": [
+        {"id_tipo_vidrio": 7, "espesor_mm": 6, "cantidad": 1, "tipo_forma": "POLIGONO_CONVEXO",
+         "vertices_mm": vertices} for vertices in (square, rhombus)
+    ]}
+    created = client.post("/api/orders", json=payload, headers=authenticated[1])
+    assert created.status_code == 201, created.text
+    recovered = client.get(f"/api/orders/{created.json()['id_pedido']}", headers=authenticated[1])
+    pieces = recovered.json()["piezas"]
+    assert [piece["geometria"]["vertices_mm"] for piece in pieces] == [square, rhombus]
+    assert [float(piece["area_mm2"]) for piece in pieces] == [100, 80]

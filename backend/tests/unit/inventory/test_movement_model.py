@@ -9,6 +9,7 @@ def test_movement_model_declares_contract_fields_and_server_timestamp():
 
     assert set(table.columns.keys()) == {
         "id_movimiento",
+        "cantidad_afectada",
         "id_plancha",
         "id_retazo",
         "tipo_evento",
@@ -53,12 +54,12 @@ def test_xor_and_event_constraints_are_declared_in_database_metadata():
 def test_manual_baja_indexes_are_partial_and_exclude_optimization_consumption():
     table = MovimientoInventario.__table__
     indexes = {index.name: index for index in table.indexes}
+    assert "uq_movimientos_baja_manual_plancha" not in indexes
     manual_events = (
         "BAJA_ROTURA", "BAJA_MERMA", "BAJA_ERROR_REGISTRO", "BAJA_RETIRO"
     )
 
     for name, resource_column in (
-        ("uq_movimientos_baja_manual_plancha", "id_plancha"),
         ("uq_movimientos_baja_manual_retazo", "id_retazo"),
     ):
         index = indexes[name]

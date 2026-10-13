@@ -97,3 +97,11 @@ class MovimientoInventarioData:
     id_usuario: int
     fecha: datetime
     id_optimizacion: int | None
+    cantidad_afectada: int | None = None
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class BajaInventarioResult:
+    movimiento: MovimientoInventarioData
+    estado: bool
+    cantidad: int | None = None

@@ -12,7 +12,7 @@ from ..domain.exceptions import (
 from ..domain.geometry import calculate_area_mm2
 from ..domain.writeoff import BajaManual
 from .dto import (
-    CreatePlancha, CreateRetazo, CreateTipoVidrio, MovimientoInventarioData,
+    BajaInventarioResult, CreatePlancha, CreateRetazo, CreateTipoVidrio, MovimientoInventarioData,
     PlanchaData, RetazoData, TipoVidrioData, UpdatePlancha, UpdateRetazo,
 )
 from .ports import InventoryRepository
@@ -124,7 +124,9 @@ class InventoryService:
             current = self._repository.lock_plancha_for_update(identifier)
             if current is None:
                 raise InventoryNotFoundError("Plancha inexistente.")
-            if changes.get("estado") is True and self._repository.has_manual_writeoff_plancha(identifier):
+            if changes.get("cantidad", current.cantidad) == 0:
+                changes["estado"] = False
+            if command.estado is True and not current.estado and self._repository.has_manual_writeoff_plancha(identifier):
                 raise InventoryConflictError("Una plancha dada de baja no puede reactivarse.")
             tipo = changes.get("id_tipo_vidrio", current.id_tipo_vidrio)
             espesor = changes.get("espesor_mm", current.espesor_mm)
@@ -183,7 +185,7 @@ class InventoryService:
 
     def writeoff_plancha(
         self, id_plancha: int, command: BajaManual, *, id_usuario: int,
-    ) -> MovimientoInventarioData:
+    ) -> BajaInventarioResult:
         identifier = _integer(id_plancha, "id_plancha")
         actor = _integer(id_usuario, "id_usuario")
         if not isinstance(command, BajaManual):
@@ -193,8 +195,12 @@ class InventoryService:
             current = self._repository.lock_plancha_for_update(identifier)
             if current is None:
                 raise InventoryNotFoundError("Plancha inexistente.")
-            if self._repository.has_manual_writeoff_plancha(identifier):
-                raise InventoryConflictError("La plancha ya tiene una baja manual registrada.")
+            if not current.estado or current.cantidad <= 0:
+                raise InventoryConflictError("La plancha no tiene stock disponible.")
+            quantity = _integer(command.cantidad_afectada, "cantidad_afectada")
+            if quantity > current.cantidad:
+                raise InventoryValidationError("cantidad_afectada excede la cantidad disponible.")
+            remaining = current.cantidad - quantity
 
             movement = self._repository.create_plancha_writeoff_movement(
                 identifier,
@@ -202,17 +208,23 @@ class InventoryService:
                 motivo=command.motivo,
                 observacion=command.observacion,
                 id_usuario=actor,
+                cantidad_afectada=quantity,
             )
-            self._repository.save_plancha(replace(current, estado=False))
-        return movement
+            updated = self._repository.save_plancha(replace(
+                current, cantidad=remaining, estado=remaining > 0,
+            ))
+        return BajaInventarioResult(movimiento=movement, estado=updated.estado, cantidad=updated.cantidad)
 
     def writeoff_retazo(
         self, id_retazo: int, command: BajaManual, *, id_usuario: int,
-    ) -> MovimientoInventarioData:
+    ) -> BajaInventarioResult:
         identifier = _integer(id_retazo, "id_retazo")
         actor = _integer(id_usuario, "id_usuario")
         if not isinstance(command, BajaManual):
             raise InventoryValidationError("La solicitud de baja no es válida.")
+
+        if command.cantidad_afectada not in (None, 1):
+            raise InventoryValidationError("La baja de retazo afecta exactamente una unidad.")
 
         with self._repository.transaction():
             current = self._repository.lock_retazo_for_update(identifier)
@@ -229,4 +241,4 @@ class InventoryService:
                 id_usuario=actor,
             )
             self._repository.save_retazo(replace(current, estado=False))
-        return movement
+        return BajaInventarioResult(movimiento=movement, estado=False)

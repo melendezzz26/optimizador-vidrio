@@ -24,3 +24,15 @@ def test_baja_request_accepts_approved_manual_event(event):
 def test_baja_request_rejects_reserved_empty_and_server_owned_fields(payload):
     with pytest.raises(ValidationError):
         BajaManualRequest.model_validate(payload)
+
+@pytest.mark.parametrize("quantity", [0, -1, 1.5, True, "2", None])
+def test_plancha_writeoff_requires_strict_positive_quantity(quantity):
+    from app.modules.inventory.presentation.schemas import BajaPlanchaRequest
+    with pytest.raises(ValidationError):
+        BajaPlanchaRequest(tipo_evento="BAJA_ROTURA", motivo="Rotura", cantidad_afectada=quantity)
+
+
+def test_plancha_writeoff_requires_quantity_in_payload():
+    from app.modules.inventory.presentation.schemas import BajaPlanchaRequest
+    with pytest.raises(ValidationError):
+        BajaPlanchaRequest(tipo_evento="BAJA_ROTURA", motivo="Rotura")

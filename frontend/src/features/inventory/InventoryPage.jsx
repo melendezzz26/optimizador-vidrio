@@ -6,7 +6,7 @@ import {
 } from '../authentication';
 import { AppShell } from '../../shared/components/AppShell';
 import { PageCard, PageHeader } from '../../shared/components/PageLayout';
-import { ConfirmDialog, EmptyState, FeedbackMessage, LoadingState } from '../../shared/components/feedback';
+import { EmptyState, FeedbackMessage, LoadingState } from '../../shared/components/feedback';
 import RegistrarPlanchaForm from './RegistrarPlanchaForm';
 import RegistrarRetazoForm from './RegistrarRetazoForm';
 import {
@@ -124,7 +124,6 @@ function InventoryTable({
   typesById,
   canManage,
   canViewHistory,
-  onToggleStatus,
   onEditPlancha,
   onEditRetazo,
   onWriteoff,
@@ -179,16 +178,9 @@ function InventoryTable({
                             onClick={() => onEditPlancha(plancha)}
                           >Editar</button>
                           <button
-                            className="ng-button"
-                            type="button"
-                            disabled={pendingAction !== null}
-                            aria-busy={pendingAction?.id === plancha.id_plancha}
-                            onClick={() => onToggleStatus(plancha)}
-                          >{plancha.estado ? 'Desactivar' : 'Activar'}</button>
-                          <button
                             className="ng-button ng-button--danger"
                             type="button"
-                            disabled={pendingAction !== null}
+                            disabled={pendingAction !== null || !plancha.estado || plancha.cantidad <= 0}
                             aria-label={`Dar de baja plancha #${plancha.id_plancha}`}
                             onClick={() => onWriteoff(plancha)}
                           >Dar de baja</button>
@@ -252,13 +244,6 @@ function InventoryTable({
                           onClick={() => onEditRetazo(retazo)}
                         >Editar</button>
                         <button
-                          className="ng-button"
-                          type="button"
-                          disabled={pendingAction !== null}
-                          aria-busy={pendingAction?.id === retazo.id_retazo}
-                          onClick={() => onToggleStatus(retazo)}
-                        >{retazo.estado ? 'Desactivar' : 'Activar'}</button>
-                        <button
                           className="ng-button ng-button--danger"
                           type="button"
                           disabled={pendingAction !== null}
@@ -297,7 +282,6 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
   const [operationWarning, setOperationWarning] = useState('');
   const [operationSuccess, setOperationSuccess] = useState('');
   const [pendingInventoryAction, setPendingInventoryAction] = useState(null);
-  const [statusChangeToConfirm, setStatusChangeToConfirm] = useState(null);
   const [writeoffTarget, setWriteoffTarget] = useState(null);
   const [writeoffError, setWriteoffError] = useState('');
   const [historyTarget, setHistoryTarget] = useState(null);
@@ -570,74 +554,6 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
     }
   }
 
-  async function handleTogglePlanchaEstado(plancha) {
-    const targetState = !plancha.estado;
-    setOperationError('');
-    setOperationWarning('');
-    setOperationSuccess('');
-    setPendingInventoryAction({ entity: 'plancha', id: plancha.id_plancha, targetState });
-    try {
-      try {
-        await updatePlancha(plancha.id_plancha, { estado: targetState });
-      } catch (error) {
-        setOperationError(handleApiError(error).message);
-        return;
-      }
-
-      try {
-        const updatedPlanchas = await getPlanchas();
-        setPlanchas(updatedPlanchas);
-        setActiveTab('planchas');
-        setOperationSuccess(`Plancha ${targetState ? 'activada' : 'desactivada'} correctamente.`);
-      } catch (error) {
-        handleApiError(error);
-        setActiveTab('planchas');
-        setOperationWarning('El estado de la plancha fue actualizado, pero no se pudo refrescar el listado.');
-      }
-    } finally {
-      setPendingInventoryAction(null);
-    }
-  }
-
-  async function handleToggleRetazoEstado(retazo) {
-    const targetState = !retazo.estado;
-    setOperationError('');
-    setOperationWarning('');
-    setOperationSuccess('');
-    setPendingInventoryAction({ entity: 'retazo', id: retazo.id_retazo, targetState });
-    try {
-      try {
-        await updateRetazo(retazo.id_retazo, { estado: targetState });
-      } catch (error) {
-        setOperationError(handleApiError(error).message);
-        return;
-      }
-
-      try {
-        const updatedRetazos = await getRetazos();
-        setRetazos(updatedRetazos);
-        setActiveTab('retazos');
-        setOperationSuccess(`Retazo ${targetState ? 'activado' : 'desactivado'} correctamente.`);
-      } catch (error) {
-        handleApiError(error);
-        setActiveTab('retazos');
-        setOperationWarning('El estado del retazo fue actualizado, pero no se pudo refrescar el listado.');
-      }
-    } finally {
-      setPendingInventoryAction(null);
-    }
-  }
-
-  function requestStatusChange(resource, kind) {
-    if (isInventoryActionPending) return;
-    if (resource.estado) {
-      setStatusChangeToConfirm({ resource, kind });
-      return;
-    }
-    if (kind === 'plancha') handleTogglePlanchaEstado(resource);
-    else handleToggleRetazoEstado(resource);
-  }
-
   function openWriteoff(resource, kind) {
     if (isInventoryActionPending) return;
     setOperationError('');
@@ -670,7 +586,7 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
 
       if (kind === 'plancha') {
         setPlanchas((current) => current.map((item) => (
-          item.id_plancha === resourceId ? { ...item, estado: result.estado } : item
+          item.id_plancha === resourceId ? { ...item, estado: result.estado, cantidad: result.cantidad } : item
         )));
       } else {
         setRetazos((current) => current.map((item) => (
@@ -742,14 +658,6 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
     setIsHistoryLoading(false);
   }
 
-  async function confirmStatusChange() {
-    if (!statusChangeToConfirm || isInventoryActionPending) return;
-    const { resource, kind } = statusChangeToConfirm;
-    if (kind === 'plancha') await handleTogglePlanchaEstado(resource);
-    else await handleToggleRetazoEstado(resource);
-    setStatusChangeToConfirm(null);
-  }
-
   const typesById = new Map(catalogo.map((tipo) => [Number(tipo.id_tipo_vidrio), tipo.nombre]));
   const rows = activeTab === 'planchas' ? planchas : retazos;
   const filters = filtersByTab[activeTab];
@@ -763,7 +671,12 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
     (!filters.tipo || Number(row.id_tipo_vidrio) === Number(filters.tipo))
     && (!filters.espesor || Number(row.espesor_mm) === Number(filters.espesor))
     && (!filters.estado || row.estado === (filters.estado === 'activo'))
-  ));
+  )).sort((a, b) => {
+    const available = (row) => Number(row.estado && (activeTab !== 'planchas' || row.cantidad > 0));
+    return available(b) - available(a)
+      || new Date(b.fecha_registro) - new Date(a.fecha_registro)
+      || (b.id_plancha ?? b.id_retazo) - (a.id_plancha ?? a.id_retazo);
+  });
 
   function changeFilter(field, value) {
     setFiltersByTab((previous) => {
@@ -983,9 +896,6 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
               typesById={typesById}
               canManage={canManageCurrentTab}
               canViewHistory={canViewCurrentHistory}
-              onToggleStatus={(resource) => requestStatusChange(
-                resource, activeTab === 'planchas' ? 'plancha' : 'retazo',
-              )}
               onEditPlancha={handleEditPlancha}
               onEditRetazo={handleEditRetazo}
               onWriteoff={(resource) => openWriteoff(
@@ -999,16 +909,6 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
           )}
         </PageCard>
       )}
-      <ConfirmDialog
-        open={statusChangeToConfirm !== null}
-        title="¿Desactivar material?"
-        confirmLabel="Desactivar"
-        onConfirm={confirmStatusChange}
-        onCancel={() => setStatusChangeToConfirm(null)}
-        isConfirming={isInventoryActionPending}
-      >
-        <p>El material dejará de aparecer como activo en el inventario.</p>
-      </ConfirmDialog>
       {writeoffTarget && (
         <WriteoffDialog
           resource={writeoffTarget.resource}

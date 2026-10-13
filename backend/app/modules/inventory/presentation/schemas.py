@@ -46,6 +46,7 @@ class MovimientoInventarioResponse(BaseSchema):
     id_usuario: int
     fecha: datetime
     id_optimizacion: int | None
+    cantidad_afectada: int | None
 
 
 class MovimientoHistorialResponse(BaseSchema):
@@ -58,11 +59,17 @@ class MovimientoHistorialResponse(BaseSchema):
     id_usuario: int
     fecha: datetime
     id_optimizacion: int | None
+    cantidad_afectada: int | None
 
 
 class BajaManualResponse(BaseSchema):
-    estado: Literal[False]
+    estado: bool
+    cantidad: int | None = None
     movimiento: MovimientoInventarioResponse
+
+
+class BajaPlanchaRequest(BajaManualRequest):
+    cantidad_afectada: int = Field(gt=0, strict=True)
 
 # --- Tipos de Vidrio ---
 
@@ -96,6 +103,12 @@ class Circunferencia(BaseSchema):
 class PoligonoConvexo(BaseSchema):
     type: Literal["POLIGONO_CONVEXO"]
     vertices_mm: list[tuple[Decimal, Decimal]] = Field(min_length=3)
+
+    @field_serializer("vertices_mm", when_used="json")
+    def serialize_vertices(self, vertices: list[tuple[Decimal, Decimal]]) -> list[list[int | float]]:
+        # JSON transport is numeric; validation and Python-mode DTOs retain Decimal.
+        return [[int(value) if value == value.to_integral_value() else float(value)
+                 for value in point] for point in vertices]
 
 Geometria = Annotated[
     Union[Rectangulo, Circunferencia, PoligonoConvexo],

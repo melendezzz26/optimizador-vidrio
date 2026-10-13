@@ -43,6 +43,8 @@ export function WriteoffDialog({
   const fieldId = useId();
   const [step, setStep] = useState('form');
   const [eventType, setEventType] = useState(WRITE_OFF_EVENTS[0].value);
+  const [quantity, setQuantity] = useState('1');
+  const remaining = kind === 'plancha' ? resource.cantidad - Number(quantity) : 0;
   const [reason, setReason] = useState('');
   const [observation, setObservation] = useState('');
   const [validationError, setValidationError] = useState('');
@@ -56,6 +58,10 @@ export function WriteoffDialog({
       setValidationError('El motivo es obligatorio.');
       return;
     }
+    if (kind === 'plancha' && (!Number.isInteger(Number(quantity)) || Number(quantity) <= 0 || remaining < 0)) {
+      setValidationError('La cantidad debe ser un entero positivo que no exceda el stock.');
+      return;
+    }
     setValidationError('');
     setStep('confirm');
   }
@@ -63,6 +69,7 @@ export function WriteoffDialog({
   function confirmWriteoff() {
     onSubmit({
       tipo_evento: eventType,
+      ...(kind === 'plancha' ? { cantidad_afectada: Number(quantity) } : {}),
       motivo: reason.trim(),
       observacion: observation.trim() || null,
     });
@@ -93,6 +100,16 @@ export function WriteoffDialog({
               ))}
             </select>
           </div>
+          {kind === 'plancha' && (
+            <div className="ng-field">
+              <p>Cantidad disponible actual: {resource.cantidad}</p>
+              <label htmlFor={`${fieldId}-quantity`}>Cantidad a dar de baja</label>
+              <input id={`${fieldId}-quantity`} className="ng-control" type="number"
+                min="1" max={resource.cantidad} step="1" required value={quantity}
+                disabled={isSubmitting} onChange={(event) => setQuantity(event.target.value)} />
+              <p aria-live="polite">Cantidad restante: {Number.isFinite(remaining) ? remaining : '—'}</p>
+            </div>
+          )}
           <div className="ng-field">
             <label htmlFor={`${fieldId}-reason`}>Motivo <span aria-hidden="true">*</span></label>
             <textarea
@@ -143,7 +160,9 @@ export function WriteoffDialog({
             <div><dt>Tipo de baja</dt><dd>{selectedEvent?.label}</dd></div>
             <div><dt>Motivo</dt><dd>{reason.trim()}</dd></div>
             {observation.trim() && <div><dt>Observación</dt><dd>{observation.trim()}</dd></div>}
-            <div><dt>Efecto</dt><dd>Se registrará en el historial y el material quedará inactivo. No se eliminará.</dd></div>
+            <div><dt>Cantidad afectada</dt><dd>{kind === 'plancha' ? quantity : 1}</dd></div>
+            {kind === 'plancha' && <div><dt>Cantidad restante</dt><dd>{remaining}</dd></div>}
+            <div><dt>Efecto</dt><dd>{remaining > 0 ? 'Se conservará el saldo disponible y el movimiento en el historial.' : 'Se registrará en el historial y el material quedará inactivo. No se eliminará.'}</dd></div>
           </dl>
           {error && <FeedbackMessage variant="error" title="No se pudo registrar la baja">{error}</FeedbackMessage>}
           <div className="ng-action-bar">

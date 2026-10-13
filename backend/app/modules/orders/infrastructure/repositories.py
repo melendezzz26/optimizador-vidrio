@@ -99,7 +99,10 @@ class SQLAlchemyOrderRepository(OrderRepositoryPort):
         total = self.session.execute(count_stmt).scalar() or 0
 
         # 2. Obtenemos los registros con límite y offset
-        stmt = stmt.order_by(Pedido.fecha_registro.desc()).offset(offset).limit(limit)
+        stmt = stmt.order_by(
+            (Pedido.estado == "CANCELADO").asc(),
+            Pedido.fecha_registro.desc(), Pedido.id_pedido.desc(),
+        ).offset(offset).limit(limit)
         rows = self.session.execute(stmt).all()
 
         items = []

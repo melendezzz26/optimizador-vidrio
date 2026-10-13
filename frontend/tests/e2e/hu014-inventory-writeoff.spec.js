@@ -13,9 +13,9 @@ async function signInAndOpenInventory(page, username, password) {
 }
 
 test('HU-014: Almacenero registra una baja y consulta el movimiento persistido', async ({ page }, testInfo) => {
-  // La baja es única por recurso. Ejecutarla una vez evita que el segundo
+  // Esta baja agota el saldo. Ejecutarla una vez evita que el segundo
   // viewport reutilice el mismo fixture ya dado de baja.
-  test.skip(testInfo.project.name !== 'chromium-desktop', 'La mutación usa un recurso de baja única.')
+  test.skip(testInfo.project.name !== 'chromium-desktop', 'La mutación agota un recurso compartido entre viewports.')
 
   await signInAndOpenInventory(page, 'A70000002', 'Inventory-test-2026!')
   await expect(page.getByRole('row', { name: /Material de prueba/ })).toContainText('Activo')
@@ -38,6 +38,7 @@ test('HU-014: Almacenero registra una baja y consulta el movimiento persistido',
   const writeoffDialog = page.getByRole('dialog', { name: 'Dar de baja plancha' })
   await expect(writeoffDialog).toBeVisible()
   await expect(writeoffDialog.getByLabel('Tipo de baja')).toBeFocused()
+  await writeoffDialog.getByLabel('Cantidad a dar de baja').fill('2')
   await writeoffDialog.getByLabel('Tipo de baja').selectOption('BAJA_ROTURA')
   await writeoffDialog.getByLabel('Motivo').fill('Rotura durante el almacenamiento')
   await writeoffDialog.getByLabel('Observación (opcional)').fill('Prueba E2E sintética')
@@ -64,6 +65,7 @@ test('HU-014: Almacenero registra una baja y consulta el movimiento persistido',
   expect(response.status()).toBe(201)
   expect(posts).toHaveLength(1)
   expect(posts[0].postDataJSON()).toEqual({
+    cantidad_afectada: 2,
     tipo_evento: 'BAJA_ROTURA',
     motivo: 'Rotura durante el almacenamiento',
     observacion: 'Prueba E2E sintética',

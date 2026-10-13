@@ -12,7 +12,7 @@ from app.modules.inventory.presentation.schemas import (
     TipoVidrioCreate, TipoVidrioResponse,
     PlanchaCreate, PlanchaPatch, PlanchaResponse,
     RetazoCreate, RetazoPatch, RetazoResponse,
-    BajaManualRequest, BajaManualResponse, MovimientoInventarioResponse,
+    BajaManualRequest, BajaPlanchaRequest, BajaManualResponse, MovimientoInventarioResponse,
     MovimientoHistorialResponse,
 )
 
@@ -172,15 +172,15 @@ def update_plancha(
         ),
         404: _http_detail_response("Plancha inexistente.", "Plancha inexistente."),
         409: _http_detail_response(
-            "La plancha ya tiene una baja manual registrada.",
-            "La plancha ya tiene una baja manual registrada.",
+            "La plancha no tiene stock disponible.",
+            "La plancha no tiene stock disponible.",
         ),
         422: _validation_response("Validación del cuerpo, parámetro o regla de entrada."),
     },
 )
 def writeoff_plancha(
     id_plancha: int,
-    data: BajaManualRequest,
+    data: BajaPlanchaRequest,
     service: InventoryService = Depends(get_inventory_service),
     actor: AuthenticatedUser = Depends(require_permission("GESTIONAR_PLANCHAS")),
 ):
@@ -189,14 +189,16 @@ def writeoff_plancha(
             tipo_evento=data.tipo_evento,
             motivo=data.motivo,
             observacion=data.observacion,
+            cantidad_afectada=data.cantidad_afectada,
         )
-        movement = service.writeoff_plancha(
+        result = service.writeoff_plancha(
             id_plancha, command, id_usuario=actor.user_id,
         )
         return BajaManualResponse(
-            estado=False,
+            estado=result.estado,
+            cantidad=result.cantidad,
             movimiento=MovimientoInventarioResponse.model_validate(
-                movement, from_attributes=True,
+                result.movimiento, from_attributes=True,
             ),
         )
 
@@ -306,12 +308,13 @@ def writeoff_retazo(
             motivo=data.motivo,
             observacion=data.observacion,
         )
-        movement = service.writeoff_retazo(
+        result = service.writeoff_retazo(
             id_retazo, command, id_usuario=actor.user_id,
         )
         return BajaManualResponse(
-            estado=False,
+            estado=result.estado,
+            cantidad=result.cantidad,
             movimiento=MovimientoInventarioResponse.model_validate(
-                movement, from_attributes=True,
+                result.movimiento, from_attributes=True,
             ),
         )

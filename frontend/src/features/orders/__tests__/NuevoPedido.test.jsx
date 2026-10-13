@@ -246,6 +246,8 @@ describe('HU-007 T04: persistencia de piezas', () => {
       await user.pointer({ target: canvas, keys: '[MouseLeft]', coords: { clientX: x, clientY: y } })
     }
     await user.click(screen.getByRole('button', { name: 'Cerrar polígono' }))
+    // This case validates the drawn concave contour, not a new cyclic construction.
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Configuración geométrica' }), 'guided')
     for (let index = 1; index <= 5; index++) {
       fireEvent.change(screen.getByRole('spinbutton', { name: `Longitud del segmento S${index} en milímetros` }), {
         target: { value: ['400', '300', '300', '400', '360'][index - 1] },

@@ -11,6 +11,7 @@ import { InventoryPage } from './features/inventory/InventoryPage';
 import { UsersPage } from './features/users';
 import GestionPedidos from './features/orders/GestionPedidos';
 
+import { NavigationContext } from './shared/components/NavigationContext';
 import './App.css';
 
 function App() {
@@ -37,43 +38,21 @@ function App() {
   const fallbackView = allowedViews[0];
   const currentView = allowedViews.includes(view) ? view : fallbackView;
 
-  const toolbar = (
-    <div className="app-toolbar">
-      <SessionBar user={session.usuario} onSignOut={signOut} />
-      <nav className="app-nav" aria-label="Secciones">
-          {showOrdersOption && <button type="button" className="app-nav-button"
-            aria-current={currentView === 'orders' ? 'page' : undefined}
-            onClick={() => setView('orders')}>
-            Registro de pedidos
-          </button>}
-          {showInventoryOption && <button type="button" className="app-nav-button"
-            aria-current={currentView === 'inventory' ? 'page' : undefined}
-            onClick={() => setView('inventory')}>
-            Gestión de inventario
-          </button>}
-          {showUsersOption && <button type="button" className="app-nav-button"
-            aria-current={currentView === 'users' ? 'page' : undefined}
-            onClick={() => setView('users')}>
-            Panel de roles
-          </button>}
-      </nav>
-    </div>
-  );
+  const toolbar = <SessionBar user={session.usuario} onSignOut={signOut} />;
 
+  let page;
   if (currentView === 'users') {
-    return <UsersPage currentUser={session.usuario} onSessionExpired={signOut} toolbar={toolbar} />;
-  }
-
-  if (currentView === 'inventory') {
-    return <InventoryPage onSessionExpired={signOut} toolbar={toolbar} user={session.usuario} />;
-  }
-
-  return <GestionPedidos
+    page = <UsersPage currentUser={session.usuario} onSessionExpired={signOut} toolbar={toolbar} />;
+  } else if (currentView === 'inventory') {
+    page = <InventoryPage onSessionExpired={signOut} toolbar={toolbar} user={session.usuario} />;
+  } else page = <GestionPedidos
     token={session.token || session.access_token}
     user={session.usuario}
     onSessionExpired={signOut}
     toolbar={toolbar}
   />;
+
+  return <NavigationContext.Provider value={{ onNavigate: setView, availableViews: allowedViews }}>{page}</NavigationContext.Provider>;
 }
 
 export default App;

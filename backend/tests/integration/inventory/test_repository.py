@@ -20,7 +20,7 @@ from app.modules.inventory.application.dto import (
     TipoVidrioData, UpdatePlancha, UpdateRetazo,
 )
 from app.modules.inventory.application.service import InventoryService
-from app.modules.inventory.domain.exceptions import InventoryConflictError, InventoryNotFoundError
+from app.modules.inventory.domain.exceptions import InventoryConflictError, InventoryNotFoundError, InventoryValidationError
 from app.modules.inventory.domain.writeoff import BajaManual, TipoEventoBajaManual
 from tests.integration.postgres_support import new_database, upgrade
 from tests.integration.test_r4_migration import insert_r3_context
@@ -36,7 +36,65 @@ with patch.dict(sys.modules, {"app.shared.database": isolated_base}):
 
 
 NOW = datetime(2026, 10, 5, 12, 30, tzinfo=timezone.utc)
-HEAD = "fa014e1a2b3c"
+HEAD = "ta036a1b2c3d"
+
+
+@pytest.mark.parametrize("geometry", [
+    {"type": "POLIGONO_CONVEXO", "vertices_mm": [[0, 0], [50, 0], [20, 40]]},
+    {"type": "POLIGONO_CONVEXO", "vertices_mm": [[0, 0], [120, 0], [100, 70], [10, 80]]},
+    {"type": "POLIGONO_CONVEXO", "vertices_mm": [[0.25, 0.75], [50.25, 0.75], [20.5, 40.125]]},
+    {"type": "RECTANGULO", "width_mm": 50.25, "height_mm": 20.75},
+    {"type": "CIRCUNFERENCIA", "radius_mm": 12.25},
+])
+def test_retazo_geometry_http_post_patch_postgres_json_numbers(repository, engine, geometry):
+    from fastapi.testclient import TestClient
+    from app.modules.authentication.presentation.dependencies import get_database_session
+    from app.modules.inventory.presentation.dependencies import get_inventory_service
+    from app.shared.security import create_access_token
+    from main import app
+
+    repo, _ = repository
+    seed_writeoff_actor(engine)
+    with repo.transaction():
+        tipo = create_tipo(repo)
+
+    def database_session():
+        with Session(engine) as session:
+            yield session
+
+    original = dict(app.dependency_overrides)
+    app.dependency_overrides[get_database_session] = database_session
+    app.dependency_overrides[get_inventory_service] = lambda: InventoryService(
+        SqlAlchemyInventoryRepository(lambda: Session(engine)))
+    headers = {"Authorization": "Bearer " + create_access_token(1, "A12345678", "Administrador")}
+    try:
+        with TestClient(app) as client:
+            response = client.post('/api/inventory/retazos', headers=headers, json={
+                "codigo": "JSON-REGRESSION", "espesor_mm": 4,
+                "id_tipo_vidrio": tipo.id_tipo_vidrio, "geometria": geometry})
+            assert response.status_code == 201, response.text
+            identifier = response.json()["id_retazo"]
+            for actual in [response.json()["geometria"],
+                           next(row for row in client.get('/api/inventory/retazos', headers=headers).json()
+                                if row['id_retazo'] == identifier)['geometria']]:
+                if 'vertices_mm' in actual:
+                    assert actual == geometry
+                    assert all(type(value) in (int, float) for point in actual['vertices_mm'] for value in point)
+                else:
+                    assert actual['type'] == geometry['type']
+                    assert all(float(actual[key]) == value for key, value in geometry.items() if key != 'type')
+            patched = {"type": "POLIGONO_CONVEXO", "vertices_mm": [[0.125, 0], [40.25, 0], [0.125, 30.75]]}
+            response = client.patch(f'/api/inventory/retazos/{identifier}', headers=headers, json={'geometria': patched})
+            assert response.status_code == 200, response.text
+            assert response.json()['geometria'] == patched
+        with engine.connect() as connection:
+            stored = connection.scalar(sa.text('SELECT geometria FROM retazos WHERE id_retazo=:id'), {'id': identifier})
+            assert stored == patched
+            assert all(type(value) in (int, float) for point in stored['vertices_mm'] for value in point)
+            assert connection.scalar(sa.text("SELECT jsonb_typeof(geometria->'vertices_mm'->0->0) FROM retazos WHERE id_retazo=:id"), {'id': identifier}) == 'number'
+    finally:
+        app.dependency_overrides.clear()
+        app.dependency_overrides.update(original)
 
 
 @pytest.fixture(scope="module")
@@ -122,7 +180,7 @@ def seed_writeoff_actor(engine):
 def create_writeoff_resources(repo):
     with repo.transaction():
         tipo = create_tipo(repo)
-        plancha = repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio))
+        plancha = repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio, cantidad=1))
         retazo = repo.create_retazo(**retazo_values(tipo.id_tipo_vidrio))
     return plancha, retazo
 
@@ -132,6 +190,7 @@ def writeoff_command():
         tipo_evento=TipoEventoBajaManual.BAJA_ROTURA,
         motivo="Daño detectado en inspección",
         observacion="Acta de almacén",
+        cantidad_afectada=1,
     )
 
 
@@ -443,7 +502,7 @@ def test_writeoff_persists_movement_and_deactivates_resource_atomically(reposito
 
     movement = getattr(InventoryService(repo), f"writeoff_{kind}")(
         identifier, writeoff_command(), id_usuario=1,
-    )
+    ).movimiento
 
     assert movement.id_plancha == (identifier if kind == "plancha" else None)
     assert movement.id_retazo == (identifier if kind == "retazo" else None)
@@ -501,7 +560,11 @@ def test_writeoff_not_found_inactive_without_history_and_duplicate_conflict(repo
         ) == 0
 
     command = writeoff_command()
-    movement = writeoff(identifier, command, id_usuario=1)
+    if kind == "plancha":
+        with pytest.raises(InventoryConflictError):
+            writeoff(identifier, command, id_usuario=1)
+        return
+    movement = writeoff(identifier, command, id_usuario=1).movimiento
     assert movement.id_plancha == (identifier if kind == "plancha" else None)
     assert movement.id_retazo == (identifier if kind == "retazo" else None)
     assert movement.id_usuario == 1
@@ -566,7 +629,7 @@ def test_manual_writeoff_prevents_reactivation_and_preserves_history(repository,
 
     movement = getattr(service, f"writeoff_{kind}")(
         identifier, command, id_usuario=1,
-    )
+    ).movimiento
 
     def persisted_snapshot():
         with engine.connect() as connection:
@@ -691,7 +754,7 @@ def test_concurrent_writeoffs_serialize_on_resource_row_lock(repository, engine,
         assert connection.scalar(sa.text("SELECT count(*) FROM movimientos_inventario")) == 1
 
 
-@pytest.mark.parametrize("kind", ["plancha", "retazo"])
+@pytest.mark.parametrize("kind", ["retazo"])
 def test_partial_unique_index_violation_maps_to_inventory_conflict(repository, engine, kind):
     repo, _sessions = repository
     seed_writeoff_actor(engine)
@@ -820,3 +883,156 @@ def test_movement_history_is_isolated_chronological_and_read_only(repository, en
     assert [item.id_movimiento for item in other_history] == [other_movement_id]
     assert other_history[0].motivo == "Movimiento del otro recurso"
     assert_released(engine, sessions)
+
+@pytest.mark.parametrize("quantity,remaining", [(1, 9), (4, 6), (10, 0)])
+def test_partial_writeoff_postgres_balance_history_and_order(repository, engine, quantity, remaining):
+    repo, _sessions = repository
+    seed_writeoff_actor(engine)
+    plancha, retazo = create_writeoff_resources(repo)
+    service = InventoryService(repo)
+    service.update_plancha(plancha.id_plancha, UpdatePlancha(cantidad=10))
+    result = service.writeoff_plancha(plancha.id_plancha, BajaManual(
+        tipo_evento="BAJA_MERMA", motivo="Baja parcial", cantidad_afectada=quantity), id_usuario=1)
+    assert result.cantidad == remaining and result.estado is (remaining > 0)
+    with engine.connect() as connection:
+        assert connection.execute(sa.text("SELECT cantidad,estado FROM planchas")).one() == (remaining, remaining > 0)
+        assert connection.scalar(sa.text("SELECT cantidad_afectada FROM movimientos_inventario")) == quantity
+    assert service.list_plancha_movements(plancha.id_plancha) == [result.movimiento]
+    service.writeoff_retazo(retazo.id_retazo, BajaManual(tipo_evento="BAJA_RETIRO", motivo="Retiro"), id_usuario=1)
+    other = service.create_retazo(CreateRetazo(codigo="Disponible", espesor_mm=4,
+        id_tipo_vidrio=retazo.id_tipo_vidrio, geometria=retazo.geometria))
+    assert [r.id_retazo for r in service.list_retazos()] == [other.id_retazo, retazo.id_retazo]
+    assert service.list_retazo_movements(retazo.id_retazo)[0].cantidad_afectada == 1
+
+
+def test_concurrent_partial_writeoffs_do_not_overspend_balance(repository, engine):
+    repo, _sessions = repository
+    seed_writeoff_actor(engine)
+    plancha, _retazo = create_writeoff_resources(repo)
+    InventoryService(repo).update_plancha(plancha.id_plancha, UpdatePlancha(cantidad=10))
+    barrier = Barrier(2)
+    from app.modules.inventory.domain.exceptions import InventoryValidationError
+    def attempt(_index):
+        service = InventoryService(SqlAlchemyInventoryRepository(lambda: Session(engine)))
+        barrier.wait(timeout=10)
+        try:
+            return service.writeoff_plancha(plancha.id_plancha, BajaManual(
+                tipo_evento="BAJA_ROTURA", motivo="Concurrente", cantidad_afectada=6), id_usuario=1).cantidad
+        except InventoryValidationError:
+            return "rejected"
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        outcomes = list(executor.map(attempt, range(2)))
+    assert sorted(map(str, outcomes)) == ["4", "rejected"]
+    with engine.connect() as connection:
+        assert connection.scalar(sa.text("SELECT cantidad FROM planchas")) == 4
+        assert connection.scalar(sa.text("SELECT count(*) FROM movimientos_inventario")) == 1
+
+
+def test_plancha_order_is_available_then_date_and_id_desc(repository):
+    repo, _sessions = repository
+    with repo.transaction():
+        tipo = create_tipo(repo)
+        unavailable = repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio, estado=False))
+        older = repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio, fecha_registro=NOW-timedelta(days=1)))
+        zero = repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio, cantidad=0))
+        newest = repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio))
+        tie = repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio))
+        rows = repo.list_planchas()
+    assert [r.id_plancha for r in rows] == [tie.id_plancha, newest.id_plancha, older.id_plancha, zero.id_plancha, unavailable.id_plancha]
+
+
+@pytest.mark.parametrize("quantity", [None, 0, -1, True, 1.5, "1"])
+def test_internal_plancha_movement_rejects_invalid_quantity_without_inserting(repository, engine, quantity):
+    repo, _sessions = repository
+    seed_writeoff_actor(engine)
+    plancha, _retazo = create_writeoff_resources(repo)
+    with pytest.raises(InventoryValidationError, match="cantidad_afectada"):
+        with repo.transaction():
+            repo.create_plancha_writeoff_movement(plancha.id_plancha, tipo_evento="BAJA_MERMA",
+                motivo="Baja interna", observacion=None, id_usuario=1, cantidad_afectada=quantity)
+    with engine.connect() as connection:
+        assert connection.scalar(sa.text("SELECT count(*) FROM movimientos_inventario")) == 0
+        assert connection.scalar(sa.text("SELECT cantidad FROM planchas")) == 1
+
+
+def test_common_movement_writer_rejects_non_unit_retazo_quantity(repository, engine):
+    repo, _sessions = repository
+    seed_writeoff_actor(engine)
+    _plancha, retazo = create_writeoff_resources(repo)
+    with pytest.raises(InventoryValidationError, match="exactamente una unidad"):
+        with repo.transaction():
+            repo._create_writeoff_movement(id_plancha=None, id_retazo=retazo.id_retazo,
+                tipo_evento="BAJA_RETIRO", motivo="Retiro", observacion=None,
+                id_usuario=1, cantidad_afectada=2)
+    with engine.connect() as connection:
+        assert connection.scalar(sa.text("SELECT count(*) FROM movimientos_inventario")) == 0
+
+
+def test_service_rejects_missing_plancha_quantity_and_assigns_one_to_retazo(repository, engine):
+    repo, _sessions = repository
+    seed_writeoff_actor(engine)
+    plancha, retazo = create_writeoff_resources(repo)
+    service = InventoryService(repo)
+    command = BajaManual(tipo_evento="BAJA_ROTURA", motivo="Rotura")
+    with pytest.raises(InventoryValidationError, match="cantidad_afectada"):
+        service.writeoff_plancha(plancha.id_plancha, command, id_usuario=1)
+    with engine.connect() as connection:
+        assert connection.scalar(sa.text("SELECT count(*) FROM movimientos_inventario")) == 0
+    result = service.writeoff_retazo(retazo.id_retazo, command, id_usuario=1)
+    assert result.movimiento.cantidad_afectada == 1
+    with engine.connect() as connection:
+        assert connection.execute(sa.text("SELECT id_retazo,cantidad_afectada FROM movimientos_inventario")).one() == (retazo.id_retazo, 1)
+
+
+def test_real_writeoff_http_routes_never_persist_null_quantity(repository, engine):
+    from fastapi.testclient import TestClient
+    from app.modules.authentication.presentation.dependencies import get_database_session
+    from app.modules.inventory.presentation.dependencies import get_inventory_service
+    from app.shared.security import create_access_token
+    from main import app
+
+    repo, _sessions = repository
+    seed_writeoff_actor(engine)
+    plancha, retazo = create_writeoff_resources(repo)
+    service = InventoryService(repo)
+    service.update_plancha(plancha.id_plancha, UpdatePlancha(cantidad=10))
+
+    def database_session():
+        with Session(engine) as session:
+            yield session
+
+    original_overrides = dict(app.dependency_overrides)
+    # Only inject the owned DB. Authentication reader, service and repository are real.
+    app.dependency_overrides[get_database_session] = database_session
+    app.dependency_overrides[get_inventory_service] = lambda: InventoryService(
+        SqlAlchemyInventoryRepository(lambda: Session(engine)))
+    headers = {"Authorization": "Bearer " + create_access_token(1, "A12345678", "Administrador")}
+    body = {"tipo_evento": "BAJA_ROTURA", "motivo": "Rotura HTTP"}
+    try:
+        with TestClient(app) as client:
+            for extra in ({}, {"cantidad_afectada": None}, {"cantidad_afectada": 0},
+                          {"cantidad_afectada": -1}, {"cantidad_afectada": True},
+                          {"cantidad_afectada": 1.5}, {"cantidad_afectada": 11}):
+                response = client.post(f"/api/inventory/planchas/{plancha.id_plancha}/baja",
+                                       headers=headers, json=body | extra)
+                assert response.status_code == 422, response.text
+            response = client.post(f"/api/inventory/retazos/{retazo.id_retazo}/baja",
+                                   headers=headers, json=body | {"cantidad_afectada": None})
+            assert response.status_code == 422
+            with engine.connect() as connection:
+                assert connection.scalar(sa.text("SELECT count(*) FROM movimientos_inventario")) == 0
+            plancha_response = client.post(f"/api/inventory/planchas/{plancha.id_plancha}/baja",
+                headers=headers, json=body | {"cantidad_afectada": 2})
+            retazo_response = client.post(f"/api/inventory/retazos/{retazo.id_retazo}/baja",
+                headers=headers, json=body)
+            assert plancha_response.status_code == retazo_response.status_code == 201
+            assert plancha_response.json()["cantidad"] == 8
+            assert plancha_response.json()["movimiento"]["cantidad_afectada"] == 2
+            assert retazo_response.json()["movimiento"]["cantidad_afectada"] == 1
+    finally:
+        app.dependency_overrides.clear()
+        app.dependency_overrides.update(original_overrides)
+    with engine.connect() as connection:
+        assert connection.execute(sa.text(
+            "SELECT cantidad_afectada FROM movimientos_inventario ORDER BY id_movimiento"
+        )).scalars().all() == [2, 1]

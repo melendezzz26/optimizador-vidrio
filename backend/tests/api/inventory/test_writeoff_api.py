@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import pytest
 from fastapi.testclient import TestClient
 
-from app.modules.inventory.application.dto import MovimientoInventarioData
+from app.modules.inventory.application.dto import BajaInventarioResult, MovimientoInventarioData
 from app.modules.inventory.domain.exceptions import InventoryConflictError, InventoryNotFoundError
 from app.modules.inventory.presentation.dependencies import get_inventory_service
 from app.shared.security import decode_access_token
@@ -14,6 +14,8 @@ from tests.auth_support import token_for, use_in_memory_accounts
 class FakeWriteoffService:
     def __init__(self):
         self.calls = []
+        self.estado = False
+        self.cantidad = 0
 
     def _writeoff(self, resource, identifier, command, id_usuario):
         if identifier == 404:
@@ -21,7 +23,7 @@ class FakeWriteoffService:
         if identifier == 409:
             raise InventoryConflictError("Recurso en conflicto")
         self.calls.append((resource, identifier, command, id_usuario))
-        return MovimientoInventarioData(
+        movement = MovimientoInventarioData(
             id_movimiento=10,
             id_plancha=identifier if resource == "plancha" else None,
             id_retazo=identifier if resource == "retazo" else None,
@@ -31,7 +33,11 @@ class FakeWriteoffService:
             id_usuario=id_usuario,
             fecha=datetime(2026, 10, 11, tzinfo=timezone.utc),
             id_optimizacion=None,
+            cantidad_afectada=command.cantidad_afectada or 1,
         )
+
+        return BajaInventarioResult(movimiento=movement, estado=self.estado,
+                                    cantidad=self.cantidad if resource == "plancha" else None)
 
     def writeoff_plancha(self, identifier, command, *, id_usuario):
         return self._writeoff("plancha", identifier, command, id_usuario)
@@ -72,6 +78,7 @@ def test_manual_writeoff_uses_authenticated_actor_and_returns_audit_data(
             "tipo_evento": "BAJA_RETIRO",
             "motivo": "Retiro solicitado",
             "observacion": "Acta 123",
+            **({"cantidad_afectada": 1} if resource == "planchas" else {}),
         },
         headers={"Authorization": f"Bearer {token}"},
     )
@@ -115,7 +122,7 @@ def test_manual_writeoff_maps_not_found_and_conflict(writeoff_client, resource, 
     token = token_for("Administrador")
     response = client.post(
         f"/api/inventory/{resource}/{identifier}/baja",
-        json={"tipo_evento": "BAJA_ROTURA", "motivo": "Rotura"},
+        json={"tipo_evento": "BAJA_ROTURA", "motivo": "Rotura", **({"cantidad_afectada": 1} if resource == "planchas" else {})},
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == expected
@@ -127,8 +134,21 @@ def test_manual_writeoff_requires_inventory_management_permission(writeoff_clien
     token = token_for(role)
     response = client.post(
         f"/api/inventory/{resource}/7/baja",
-        json={"tipo_evento": "BAJA_ROTURA", "motivo": "Rotura"},
+        json={"tipo_evento": "BAJA_ROTURA", "motivo": "Rotura", **({"cantidad_afectada": 1} if resource == "planchas" else {})},
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 403
     assert service.calls == []
+
+
+def test_partial_plancha_response_exposes_confirmed_remaining_balance(writeoff_client):
+    client, service = writeoff_client
+    service.estado, service.cantidad = True, 9
+    response = client.post("/api/inventory/planchas/7/baja", json={
+        "tipo_evento": "BAJA_ROTURA", "motivo": "Una unidad rota", "cantidad_afectada": 1,
+    }, headers={"Authorization": f"Bearer {token_for('Almacenero')}"})
+    assert response.status_code == 201
+    assert response.json()["estado"] is True
+    assert response.json()["cantidad"] == 9
+    assert response.json()["movimiento"]["cantidad_afectada"] == 1
+    assert service.calls[0][2].cantidad_afectada == 1
