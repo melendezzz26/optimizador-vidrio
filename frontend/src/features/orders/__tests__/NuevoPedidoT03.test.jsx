@@ -64,6 +64,37 @@ async function validPolygon(user) {
 }
 
 describe('HU-012 T03 con HU-006 multimaterial y HU-007 real', () => {
+  test('HU-008 identifica la pieza rechazada, conserva el borrador y permite corregir y reintentar', async () => {
+    await setup();
+    await addPiece();
+    fetch.mockResolvedValueOnce(response({ detail: {
+      code: 'NO_COMPATIBLE_STOCK',
+      message: 'Una o más piezas no tienen material compatible disponible.',
+      pieces: [{ index: 1, reason: 'No hay dimensiones suficientes en el stock disponible.' }],
+    } }, 422));
+
+    fireEvent.click(saveButton());
+
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent('Pieza 1');
+    expect(alert).toHaveTextContent('No hay dimensiones suficientes');
+    expect(screen.getByLabelText('Cliente seleccionado')).toHaveTextContent('Vidrios Norte');
+    expect(screen.getByText('Pieza 1')).toBeVisible();
+    const group = screen.getByRole('group', { name: 'Pieza 1' });
+    expect(group).toHaveTextContent('No hay dimensiones suficientes');
+    expect(posts()).toHaveLength(1);
+
+    fireEvent.change(within(group).getByLabelText('Ancho (mm)'), { target: { value: '300' } });
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(group).not.toHaveTextContent('No hay dimensiones suficientes');
+    fetch.mockResolvedValueOnce(response({ id_pedido: 64, id_cliente: 41 }, 201));
+    fireEvent.click(saveButton());
+
+    expect(await screen.findByText(/ID del pedido: 64/)).toBeVisible();
+    expect(posts()).toHaveLength(2);
+    expect(JSON.parse(posts()[1][1].body).piezas[0].width_mm).toBe(300);
+  });
+
   test('guarda las tres formas y cantidades con cliente; excluye rawState', async () => {
     const user = await setup();
     const polygon = await addPiece('POLIGONO_CONVEXO');

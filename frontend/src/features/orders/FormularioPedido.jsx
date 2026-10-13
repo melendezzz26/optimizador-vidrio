@@ -106,6 +106,7 @@ export default function FormularioPedido({
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorGlobal, setErrorGlobal] = useState('');
+  const [stockFailures, setStockFailures] = useState({});
   const [loadError, setLoadError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [estadoPedido, setEstadoPedido] = useState('PENDIENTE');
@@ -164,6 +165,13 @@ export default function FormularioPedido({
   }, [piezaEnEdicion]);
 
   const actualizarPieza = useCallback((id, field, value) => {
+    setErrorGlobal('');
+    setStockFailures((current) => {
+      if (!(id in current)) return current;
+      const next = { ...current };
+      delete next[id];
+      return next;
+    });
     setPiezas((current) => current.map((piece) => {
       if (piece.id !== id) return piece;
       if (field === 'tipo_vidrio_id') return { ...piece, tipo_vidrio_id: value, espesor: '' };
@@ -193,6 +201,13 @@ export default function FormularioPedido({
   }
 
   function removePiece(id) {
+    setErrorGlobal('');
+    setStockFailures((current) => {
+      if (!(id in current)) return current;
+      const next = { ...current };
+      delete next[id];
+      return next;
+    });
     setPiezas((current) => current.filter((piece) => piece.id !== id)
       .map((piece, index) => ({ ...piece, nombre: `Pieza ${index + 1}` })));
   }
@@ -267,6 +282,7 @@ export default function FormularioPedido({
       const result = editing
         ? await updateOrder(idPedido, payload, { token })
         : await createOrder({ ...payload, id_cliente: selectedClient.id_cliente }, { token });
+      setStockFailures({});
       setSuccessMessage(editing ? 'Pedido actualizado correctamente.' : `Pedido registrado correctamente. ID del pedido: ${result.id_pedido}.`);
       onSuccess?.(editing ? 'update' : 'create', result);
       if (onCerrar) onCerrar();
@@ -276,7 +292,22 @@ export default function FormularioPedido({
         setClientFormKey((key) => key + 1);
       }
     } catch (error) {
-      setErrorGlobal(`${error.message} ${creating ? 'Las piezas y el cliente se conservan' : 'Las piezas se conservan'} para reintentar.`);
+      if (error.code === 'NO_COMPATIBLE_STOCK' && Array.isArray(error.pieces)) {
+        const failures = {};
+        const messages = [];
+        for (const failure of error.pieces) {
+          const index = Number(failure.index) - 1;
+          if (!Number.isInteger(index) || index < 0 || index >= piezas.length) continue;
+          const piece = piezas[index];
+          failures[piece.id] = failure.reason;
+          messages.push(`${piece.nombre}: ${failure.reason}`);
+        }
+        setStockFailures(failures);
+        setErrorGlobal(`${error.message} ${messages.join(' ')} Corrige las piezas marcadas y vuelve a guardar.`);
+      } else {
+        setStockFailures({});
+        setErrorGlobal(`${error.message} ${creating ? 'Las piezas y el cliente se conservan' : 'Las piezas se conservan'} para reintentar.`);
+      }
     } finally {
       submittingRef.current = false;
       setIsSubmitting(false);
@@ -321,21 +352,27 @@ export default function FormularioPedido({
               {!piezas.length ? <EmptyState title="No hay piezas agregadas" description={readOnly ? 'Este pedido no contiene piezas.' : 'Haz clic en «Agregar pieza» para comenzar.'} /> : (
                 <div className="orders-pieces">
                   {piezas.map((piece, index) => {
+                    const pieceLabelId = `${formId}-piece-${piece.id}-title`;
+                    const stockFailureId = `${formId}-piece-${piece.id}-stock-error`;
+                    const stockFailure = stockFailures[piece.id];
                     const ids = Object.fromEntries(['material', 'espesor', 'forma', 'cantidad', 'ancho', 'alto', 'radio']
                       .map((field) => [field, `${formId}-piece-${piece.id}-${field}`]));
                     const materialField = fieldProps(piece, 'material');
                     const thicknessField = fieldProps(piece, 'espesor');
                     const quantityField = fieldProps(piece, 'cantidad');
-                    return <div className="orders-piece" key={piece.id}>
+                    return <div className={`orders-piece${stockFailure ? ' orders-piece--stock-error' : ''}`} key={piece.id}
+                      role="group" aria-labelledby={pieceLabelId}
+                      aria-describedby={stockFailure ? stockFailureId : undefined}>
                       <div className="orders-piece__header">
                         <div className="orders-piece__identity">
                           <div className="orders-piece__index">{index + 1}</div>
-                          <div className="orders-piece__details"><strong>{piece.nombre}</strong><span>Material y geometría propios</span></div>
+                          <div className="orders-piece__details"><strong id={pieceLabelId}>{piece.nombre}</strong><span>Material y geometría propios</span></div>
                         </div>
                         {!readOnly && <button type="button" className="orders-remove-button" onClick={() => removePiece(piece.id)} aria-label={`Eliminar ${piece.nombre}`} disabled={isSubmitting}>
                           <Trash2 size={18} />
                         </button>}
                       </div>
+                      {stockFailure && <p className="orders-piece__stock-error" id={stockFailureId}>{stockFailure}</p>}
                       <div className="orders-fields-row orders-fields-row--configuration">
                         <div className="orders-field">
                           <label htmlFor={ids.material}>Material</label>

@@ -18,6 +18,15 @@
 
 .orders-pieces { display: grid; gap: var(--ng-space-3); }
 
+.orders-piece--stock-error { border-color: var(--ng-error); }
+.orders-piece__stock-error {
+  margin: 0;
+  color: var(--ng-error);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
 .orders-piece {
   display: flex;
   flex-direction: column;

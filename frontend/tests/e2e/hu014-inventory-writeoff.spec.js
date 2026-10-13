@@ -12,13 +12,19 @@ async function signInAndOpenInventory(page, username, password) {
   await expect(page.getByRole('heading', { name: 'Gestión de Inventario' })).toBeVisible()
 }
 
+function getPlanchaRow(page) {
+  return page.getByRole('row').filter({
+    has: page.getByRole('button', { name: `Ver historial de plancha #${planchaId}`, exact: true }),
+  })
+}
+
 test('HU-014: Almacenero registra una baja y consulta el movimiento persistido', async ({ page }, testInfo) => {
   // La baja es única por recurso. Ejecutarla una vez evita que el segundo
   // viewport reutilice el mismo fixture ya dado de baja.
   test.skip(testInfo.project.name !== 'chromium-desktop', 'La mutación usa un recurso de baja única.')
 
   await signInAndOpenInventory(page, 'A70000002', 'Inventory-test-2026!')
-  await expect(page.getByRole('row', { name: /Material de prueba/ })).toContainText('Activo')
+  await expect(getPlanchaRow(page)).toContainText('Activo')
 
   const historyButton = page.getByRole('button', {
     name: `Ver historial de plancha #${planchaId}`,
@@ -70,7 +76,7 @@ test('HU-014: Almacenero registra una baja y consulta el movimiento persistido',
   })
   await expect(page.getByText(/Baja registrada correctamente\. Movimiento #\d+\./)).toBeVisible()
 
-  const planchaRow = page.getByRole('row', { name: /Material de prueba/ })
+  const planchaRow = getPlanchaRow(page)
   await expect(planchaRow).toBeVisible()
   await expect(planchaRow).toContainText('Inactivo')
   await expect(planchaRow.getByRole('button', {

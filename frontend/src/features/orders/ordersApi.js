@@ -14,6 +14,8 @@ export class OrdersApiError extends Error {
     super(message, options);
     this.name = 'OrdersApiError';
     this.status = status;
+    this.code = options.code ?? null;
+    this.pieces = options.pieces ?? [];
   }
 }
 
@@ -41,10 +43,18 @@ async function request(path, { method = 'GET', body, signal, token, validationFa
 
   const data = await response.json().catch(() => null);
   if (!response.ok) {
-    const message = response.status === 422
-      ? (typeof data?.detail === 'string' ? data.detail : validationFallback ?? 'Revisa los datos del pedido e inténtalo otra vez.')
-      : STATUS_MESSAGES[response.status] ?? 'No se pudo completar la solicitud. Inténtalo otra vez.';
-    throw new OrdersApiError(message, response.status);
+    const detail = data?.detail;
+    const structuredStockError = response.status === 422
+      && detail?.code === 'NO_COMPATIBLE_STOCK'
+      && Array.isArray(detail.pieces);
+    const message = structuredStockError
+      ? detail.message
+      : response.status === 422
+        ? (typeof detail === 'string' ? detail : validationFallback ?? 'Revisa los datos del pedido e intenta otra vez.')
+        : STATUS_MESSAGES[response.status] ?? 'No se pudo completar la solicitud. Intenta otra vez.';
+    throw new OrdersApiError(message, response.status, structuredStockError
+      ? { code: detail.code, pieces: detail.pieces }
+      : {});
   }
   if (!data) throw new OrdersApiError('El servidor devolvió una respuesta inesperada.', response.status);
   return data;
