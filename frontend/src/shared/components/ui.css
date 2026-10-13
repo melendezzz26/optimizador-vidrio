@@ -28,6 +28,12 @@
 }
 .ng-sidebar__list { display: grid; gap: var(--ng-space-2); margin: 0; padding: 0; list-style: none; }
 .ng-sidebar__item {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: var(--ng-space-3);
@@ -38,6 +44,8 @@
   font-size: 14px;
 }
 .ng-sidebar__item > svg { flex-shrink: 0; }
+.ng-sidebar__item:focus-visible { outline: 3px solid var(--ng-primary-focus); outline-offset: 2px; }
+.ng-sidebar__item:hover:not(:disabled) { background: var(--ng-action-tint); }
 .ng-sidebar__item--active {
   border-color: var(--ng-primary-action);
   background: var(--ng-action-tint);
