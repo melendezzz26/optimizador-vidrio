@@ -1,6 +1,6 @@
 # SPEC-TA-005-TA-006 — Rasterización de piezas estándar y personalizadas
 
-Estado: Draft
+Estado: Implemented
 PBI relacionado: TA-005 T01 (rasterización estándar) y TA-006 T01 (rasterización personalizada) · EN-004
 Responsable: Fabricio A.
 Dependencias: SP-001 (resolución 5 mm), spike de costo de rasterización (regla conservadora), HU-007 T02/T03 (formato y convexidad de vertices_mm)
@@ -107,12 +107,20 @@ Fuera de alcance:
 
 ## 12. Decisiones / notas
 
-- **Representación:** cada fila de la máscara se guarda como un entero de Python usado como mapa de bits
-  (spike: entre 40 y 55 veces menos memoria que una lista de listas). Permite que TA-007 detecte
-  superposición con una operación AND por fila.
+- **Representación:** cada fila de la máscara se guarda como un entero de Python usado como mapa de bits (spike: entre 40 y 55 veces menos memoria que una lista de listas). Permite que TA-007 detecte superposición con una operación AND por fila.
 - **Sin dependencias nuevas:** solo biblioteca estándar; agregar NumPy u otra librería requeriría ADR.
-- **D-01 (pendiente del PO):** el sistema solo tiene dos formas estándar (`RECTANGULO` y `CIRCUNFERENCIA`, HU-006 T03).
-  Se propone que el criterio "al menos otra forma estándar" de TA-005 se cumpla con el polígono convexo de TA-006,
-  ya que comparten rasterizador.
-- **D-02 (con Luis, TA-007):** confirmar que el contrato de la máscara (CA-09) es suficiente para la validación geométrica.
+- **D-01 (decisión del responsable, a validar en el PR):** el sistema solo tiene dos formas estándar (`RECTANGULO` y `CIRCUNFERENCIA`, HU-006 T03). El criterio "al menos otra forma estándar" de TA-005 se cubre con el polígono convexo de TA-006, que comparte rasterizador.
+- **D-02 (decisión del responsable, a validar con TA-007):** la máscara expone `rows` (bits por fila), `columns`, `row_count`, `resolution_mm`, `is_occupied`, `occupied_cells` y `area_mm2`. Si TA-007 necesita algo adicional, se agrega sin romper este contrato.
 - **D-03:** la resolución se recibe como parámetro; su lectura desde la configuración versionada queda para RN-001.
+
+## 13. Estado de implementación
+
+| Tarea | Estado | Evidencia |
+|---|---|---|
+| TA-006 T01 — Polígono convexo | Implemented | docs/evidence/sprint-01/TA-005-TA-006/ |
+| TA-005 T01 — Rectángulo y circunferencia | Implemented | docs/evidence/sprint-01/TA-005-TA-006/ |
+
+- La SPEC no pasó por revisión antes de implementar porque el equipo no estaba disponible; D-01 y D-02 se validan en la revisión del PR.
+- El backlog indica no iniciar hasta completar TA-035 T02 (smoke de staging). Se avanzó con el paso de validación de stock
+  bloqueado por HU-008, que no está implementada; la rasterización no depende de HU-008 (se integran recién en TA-008).
+- Pasa a **Verified** cuando un reviewer distinto del autor apruebe el PR.
