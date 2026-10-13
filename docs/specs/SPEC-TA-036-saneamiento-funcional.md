@@ -244,3 +244,23 @@ Se separan dos garantías de `cantidad_afectada`:
 Esta SPEC no exige distinguir temporalmente inserciones SQL directas nuevas y filas históricas mediante una restricción de BD. NULL permanece permitido por compatibilidad histórica a nivel de esquema, sin una garantía temporal en SQL; su uso para nuevas bajas de la aplicación está prohibido y validado. No se agregan triggers, columnas legacy ni fechas/cutoffs artificiales. Las nuevas rutas de escritura se verifican contra PostgreSQL aislado y HTTP real, y se conserva la lectura del histórico NULL.
 
 Se restaura cobertura vigente de preview, escalado, extremos numéricos, interacción de ambos SVG y flujos actuales de inventario. Los casos que exigían resolver una forma desde lados independientes o usar Activar/Desactivar permanecen retirados. La matriz anterior→equivalente y los resultados del correctivo se registran en `docs/evidence/sprint-01/TA-036/correctivo-regresion.md`. Este correctivo no ejecuta T06 ni cambia el estado Draft/reviewer pendiente.
+
+## 17. T06 — regresión transversal, 13/10/2026
+
+T06 se ejecutó sobre `0e67631`: backend completo 1330 passed; frontend unit
+103 passed; component 211 passed; lint/build correctos. E2E completo descubrió
+32 casos: 31 passed, cero fallos y un skip móvil conocido de HU-014 por baja
+de un fixture compartido. Alembic conserva un único head `ta036a1b2c3d`, padre
+`fa014e1a2b3c`. No se modificó producción ni migraciones durante este cierre.
+
+La implementación del alcance TA-036 está técnicamente completa y pendiente
+de revisión formal. La matriz de aceptación registra CA-01–CA-08 y
+CA-10–CA-13 PASS; CA-09 PARTIAL porque conectar la consulta compatible desde
+Optimization pertenece a la integración posterior de HU-008. No se integra
+trabajo ajeno para completar ese punto. Los límites, comandos y evidencias
+están consolidados en `docs/evidence/sprint-01/TA-036/README.md`.
+
+**Estado formal conservado: Draft. Reviewer: Pendiente.** La conclusión
+READY FOR HUMAN REVIEW no representa aprobación ni transición a Verified.
+La revisión humana decidirá los pasos Reviewed/Implemented y, posteriormente,
+Verified conforme al flujo establecido.
