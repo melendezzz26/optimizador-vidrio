@@ -50,6 +50,14 @@ def test_fits_geometrically_orientacion_natural():
     )
     assert fits is True
 
+
+def test_fits_geometrically_dimensiones_exactas():
+    box = BoundingBox(width_mm=Decimal("800"), height_mm=Decimal("600"))
+
+    assert StockCompatibilityValidator.fits_geometrically(
+        box, stock_width_mm=Decimal("800"), stock_height_mm=Decimal("600")
+    ) is True
+
 def test_fits_geometrically_con_rotacion_90_grados():
     box = BoundingBox(width_mm=Decimal("550"), height_mm=Decimal("750"))
     

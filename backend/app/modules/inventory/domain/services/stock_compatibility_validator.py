@@ -25,8 +25,8 @@ class StockCompatibilityValidator:
         Calcula las dimensiones envolventes mínimas (ancho x alto) en Decimal.
         Soporta RECTANGULO, CIRCUNFERENCIA y POLIGONO_CONVEXO según SP-005.
         """
-        shape_type = piece.get("tipo_forma")
-        dimensions = piece.get("dimensiones") or {}
+        dimensions = piece.get("dimensiones") or piece.get("geometria") or piece
+        shape_type = piece.get("tipo_forma") or dimensions.get("type") or piece.get("type")
 
         if shape_type == "RECTANGULO":
             w = Decimal(str(dimensions.get("width_mm", piece.get("ancho_mm", "0.0"))))
@@ -39,10 +39,7 @@ class StockCompatibilityValidator:
             return BoundingBox(width_mm=diameter, height_mm=diameter)
 
         elif shape_type == "POLIGONO_CONVEXO":
-            vertices: list[list[float]] = (
-                dimensions.get("vertices_mm")
-                or piece.get("geometria", {}).get("vertices_mm", [])
-            )
+            vertices: list[list[float]] = dimensions.get("vertices_mm") or []
             if not vertices or len(vertices) < 3:
                 raise ValueError("Un POLIGONO_CONVEXO debe contener al menos 3 vértices.")
 
@@ -52,10 +49,7 @@ class StockCompatibilityValidator:
             h = max(ys) - min(ys)
             return BoundingBox(width_mm=w, height_mm=h)
 
-        # Fallback para estructuras genéricas
-        w = Decimal(str(piece.get("width_mm", "0.0")))
-        h = Decimal(str(piece.get("height_mm", "0.0")))
-        return BoundingBox(width_mm=w, height_mm=h)
+        raise ValueError(f"Tipo de geometría no soportado: {shape_type}.")
 
     @staticmethod
     def fits_geometrically(

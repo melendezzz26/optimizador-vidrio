@@ -258,6 +258,53 @@ def test_retazo_preserves_existing_nonnull_origin(repository, engine):
         assert updated.id_ejecucion_origen == 1
 
 
+def test_get_compatible_stock_filters_type_thickness_state_and_quantity(repository, engine):
+    repo, sessions = repository
+    with repo.transaction():
+        tipo = create_tipo(repo, nombre="Compatible")
+        otro_tipo = create_tipo(repo, nombre="Otro tipo")
+        active_plancha = repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio))
+        repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio, estado=False))
+        repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio, cantidad=0))
+        repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio, espesor_mm=Decimal("6")))
+        repo.create_plancha(**plancha_values(otro_tipo.id_tipo_vidrio))
+        active_retazo = repo.create_retazo(**retazo_values(tipo.id_tipo_vidrio))
+        repo.create_retazo(**retazo_values(tipo.id_tipo_vidrio, codigo="R-INACTIVO", estado=False))
+        repo.create_retazo(**retazo_values(otro_tipo.id_tipo_vidrio, codigo="R-OTRO-TIPO"))
+
+    with repo.read_transaction():
+        compatible_planchas, compatible_retazos = repo.get_compatible_stock(
+            tipo.id_tipo_vidrio, Decimal("5.5"),
+        )
+        retazos_for_their_thickness = repo.get_compatible_stock(
+            tipo.id_tipo_vidrio, Decimal("4"),
+        )
+
+    assert compatible_planchas == [active_plancha]
+    assert compatible_retazos == []
+    assert retazos_for_their_thickness == ([], [active_retazo])
+    assert_released(engine, sessions)
+
+
+def test_get_compatible_stock_excludes_hu014_writeoffs_without_mutating_inventory(repository, engine):
+    repo, sessions = repository
+    seed_writeoff_actor(engine)
+    plancha, retazo = create_writeoff_resources(repo)
+    InventoryService(repo).writeoff_plancha(plancha.id_plancha, writeoff_command(), id_usuario=1)
+    InventoryService(repo).writeoff_retazo(retazo.id_retazo, writeoff_command(), id_usuario=1)
+
+    with repo.read_transaction():
+        assert repo.get_compatible_stock(plancha.id_tipo_vidrio, plancha.espesor_mm) == ([], [])
+        assert repo.get_compatible_stock(retazo.id_tipo_vidrio, retazo.espesor_mm) == ([], [])
+
+    with engine.connect() as connection:
+        assert connection.scalar(sa.text("SELECT estado FROM planchas WHERE id_plancha=:id"), {"id": plancha.id_plancha}) is False
+        assert connection.scalar(sa.text("SELECT estado FROM retazos WHERE id_retazo=:id"), {"id": retazo.id_retazo}) is False
+        assert connection.scalar(sa.text("SELECT count(*) FROM movimientos_inventario")) == 2
+        assert connection.scalar(sa.text("SELECT cantidad FROM planchas WHERE id_plancha=:id"), {"id": plancha.id_plancha}) == plancha.cantidad
+    assert_released(engine, sessions)
+
+
 @pytest.mark.parametrize("operation", ["create", "save"])
 def test_duplicate_retazo_is_translated_on_create_and_update(repository, engine, operation):
     repo, sessions = repository

@@ -402,14 +402,14 @@ class SqlAlchemyInventoryRepository:
         planchas_query = select(Plancha).where(
             Plancha.id_tipo_vidrio == id_tipo_vidrio,
             Plancha.espesor_mm == espesor_mm,
-            Plancha.estado == True,
+            Plancha.estado.is_(True),
             Plancha.cantidad > 0
         )
         
         retazos_query = select(Retazo).where(
             Retazo.id_tipo_vidrio == id_tipo_vidrio,
             Retazo.espesor_mm == espesor_mm,
-            Retazo.estado == True
+            Retazo.estado.is_(True)
         )
 
         planchas_rows = session.execute(planchas_query).scalars().all()
