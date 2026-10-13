@@ -392,3 +392,30 @@ class SqlAlchemyInventoryRepository:
         # Preserve: id_retazo, fecha_registro, id_ejecucion_origen
         session.flush()
         return self._to_retazo(row)
+
+
+    def get_compatible_stock(
+        self, id_tipo_vidrio: int, espesor_mm: Decimal
+    ) -> tuple[list[PlanchaData], list[RetazoData]]:
+        session = self._require_session()
+        
+        planchas_query = select(Plancha).where(
+            Plancha.id_tipo_vidrio == id_tipo_vidrio,
+            Plancha.espesor_mm == espesor_mm,
+            Plancha.estado == True,
+            Plancha.cantidad > 0
+        )
+        
+        retazos_query = select(Retazo).where(
+            Retazo.id_tipo_vidrio == id_tipo_vidrio,
+            Retazo.espesor_mm == espesor_mm,
+            Retazo.estado == True
+        )
+
+        planchas_rows = session.execute(planchas_query).scalars().all()
+        retazos_rows = session.execute(retazos_query).scalars().all()
+
+        planchas_data = [self._to_plancha(row) for row in planchas_rows]
+        retazos_data = [self._to_retazo(row) for row in retazos_rows]
+        
+        return planchas_data, retazos_data
