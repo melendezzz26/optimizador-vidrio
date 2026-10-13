@@ -32,6 +32,15 @@
   text-align: left;
 }
 
+.custom-piece-editor__vertex-label { fill: #52657c; stroke: white; paint-order: stroke; }
+.custom-piece-editor__vertex-label[data-highlight="true"] { fill: #123764; font-weight: 800; }
+.custom-piece-editor__angles li { padding: 8px; border-radius: 6px; }
+.custom-piece-editor__angles li[data-active="true"] { background: #edf3fb; }
+.custom-piece-editor__angles input { width: 110px; max-width: 100%; margin: 6px; padding: 8px; }
+.custom-piece-editor__angles button { margin: 6px; padding: 8px; cursor: pointer; }
+.custom-piece-editor__angles button:disabled { cursor: default; opacity: .6; }
+.custom-piece-editor__angles input:focus-visible, .custom-piece-editor__angles button:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
+
 @supports (backdrop-filter: blur(8px)) {
   .custom-piece-editor { backdrop-filter: blur(8px); }
 }
@@ -577,3 +586,8 @@
   background: #123764;
   cursor: pointer;
 }
+.custom-piece-editor__configuration { display: grid; gap: 8px; margin: 12px 0; font-size: 14px; }
+.custom-piece-editor__configuration select,
+.custom-piece-editor__configuration input { width: 100%; min-width: 0; padding: 10px; border: 1px solid #94a3b8; border-radius: 6px; font: inherit; background: white; color: #182230; }
+.custom-piece-editor__configuration span { font-size: 13px; }
+.custom-piece-editor__configuration :focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }

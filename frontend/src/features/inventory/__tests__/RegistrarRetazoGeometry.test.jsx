@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, test, vi } from 'vitest'
 import RegistrarRetazoForm from '../RegistrarRetazoForm'
+import { edgeLengths, interiorAngles } from '../../orders/polygonMeasurements'
 
 const catalogo = [{ id_tipo_vidrio: 1, nombre: 'Incoloro', estado: true, espesores_mm: [6] }]
 const canvas = () => screen.getByRole('img', { name: /Lienzo del dibujo original/ })
@@ -22,10 +23,28 @@ async function draw(user) {
     await user.pointer({ target: canvas(), keys: '[MouseLeft]', coords: { clientX:x, clientY:y } })
   }
   await user.click(screen.getByRole('button',{name:'Cerrar polígono'}))
-  fireEvent.change(screen.getByLabelText('Longitud del segmento S1 en milímetros'), { target:{value:'600'} })
+  await user.selectOptions(screen.getByRole('combobox', { name: /Configuraci/ }), 'guided')
+  ;[600, Math.hypot(200,400), 600, Math.hypot(200,400)].forEach((value,i) =>
+    fireEvent.change(screen.getByLabelText(`Longitud del segmento S${i+1} en milímetros`), { target:{value:String(value)} }))
 }
 
 describe('TA-036: retazo con editor compartido', () => {
+  test('usa el mismo editor corregido: lados independientes y ángulo fijo con payload canónico', async () => {
+    const { user, onSubmit } = await setup()
+    for (const [x, y] of [[100,100],[400,100],[400,300],[100,300]]) {
+      await user.pointer({ target: canvas(), keys: '[MouseLeft]', coords: { clientX:x, clientY:y } })
+    }
+    await user.click(screen.getByRole('button', { name: 'Cerrar polígono' }))
+    for (const [i, value] of [120,73,91,108].entries()) fireEvent.change(screen.getByLabelText(`Longitud del segmento S${i+1} en milímetros`), { target: { value: String(value) } })
+    await user.selectOptions(screen.getByLabelText('Configuración geométrica'), 'angle')
+    fireEvent.change(screen.getByRole('spinbutton', { name: /Ángulo interior fijado/ }), { target: { value: '110' } })
+    await user.click(screen.getByRole('button', { name: 'Registrar retazo', exact: true }))
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce())
+    const geometry = onSubmit.mock.calls[0][0].geometria
+    expect(geometry.type).toBe('POLIGONO_CONVEXO')
+    edgeLengths(geometry.vertices_mm).forEach((side, i) => expect(side).toBeCloseTo([120,73,91,108][i], 7))
+    expect(interiorAngles(geometry.vertices_mm)[1]).toBeCloseTo(110, 7)
+  })
   test('reutiliza dibujo, escala y ángulos; envía vertices_mm sin otro editor de coordenadas',async()=>{
     const {user,onSubmit}=await setup()
     expect(screen.getByRole('region',{name:'Geometría del retazo'})).toBeVisible()
@@ -35,8 +54,8 @@ describe('TA-036: retazo con editor compartido', () => {
     expect(screen.queryByRole('button',{name:'Agregar pieza al pedido'})).not.toBeInTheDocument()
     await user.click(screen.getByRole('button',{name:'Registrar retazo',exact:true}))
     await waitFor(()=>expect(onSubmit).toHaveBeenCalledOnce())
-    expect(onSubmit).toHaveBeenCalledWith({codigo:'R-POL',id_tipo_vidrio:1,espesor_mm:6,
-      geometria:{type:'POLIGONO_CONVEXO',vertices_mm:[[0,0],[600,0],[800,400],[200,400]]}})
+    expect(onSubmit.mock.calls[0][0]).toMatchObject({codigo:'R-POL',id_tipo_vidrio:1,espesor_mm:6,geometria:{type:'POLIGONO_CONVEXO'}})
+    onSubmit.mock.calls[0][0].geometria.vertices_mm.forEach((point,i) => point.forEach((value,axis) => expect(value).toBeCloseTo([[0,0],[600,0],[800,400],[200,400]][i][axis],7)))
   })
 
   test('reiniciar después de una figura válida invalida el payload anterior',async()=>{

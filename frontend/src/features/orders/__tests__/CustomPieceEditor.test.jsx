@@ -1,3 +1,4 @@
+// Regression suite adapted to explicit independent lengths and a sketch initial guess.
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, test, vi } from 'vitest'
@@ -11,7 +12,7 @@ const button = (name) => screen.getByRole('button', { name })
 
 function setup() {
   const user = userEvent.setup()
-  render(<CustomPieceEditor />)
+  render(<CustomPieceEditor initialState={{ construction: { mode: 'guided', angle: '90' } }} />)
   return user
 }
 
@@ -128,7 +129,13 @@ describe('HU-007 T01 — dibujo y controles (caja negra)', () => {
 })
 
 describe('TA-036: regresiones vigentes del editor', () => {
-  const measure = (id, value) => fireEvent.change(field(id), { target: { value: String(value) } })
+  const measure = (id, value) => {
+    // Enter every still-empty side explicitly; the production editor never fills other fields.
+    const points = canvas().querySelector('polygon').getAttribute('points').split(' ').map(p => p.split(',').map(Number));
+    const sides = points.map((p,i) => Math.hypot(points[(i+1)%points.length][0]-p[0], points[(i+1)%points.length][1]-p[1]));
+    if (Number(value)>0 && sides[id-1]>0) sides.forEach((side,i) => { if (i!==id-1 && field(i+1).value==='') fireEvent.change(field(i+1), { target: { value: String(side * Number(value) / sides[id-1]) } }); });
+    fireEvent.change(field(id), { target: { value: String(value) } });
+  }
 
   function expectSynchronized(id, previewName) {
     expect(selector(id)).toHaveAttribute('aria-pressed', 'true')
@@ -152,7 +159,7 @@ describe('TA-036: regresiones vigentes del editor', () => {
       expect(field(id)).toHaveAttribute('step', 'any')
     }
     expect(screen.getByText('0 de 5 medidas ingresadas')).toBeVisible()
-    expect(screen.getByText(/Sin escala física. Ingresa una primera medida/)).toBeVisible()
+    expect(screen.getByText(/Completa todos los lados/)).toBeVisible()
     expect(screen.getByRole('status', { name: 'Resultado de validación geométrica' })).toHaveTextContent('Pendiente de completar dimensiones.')
     expect(button('Agregar pieza al pedido')).toBeDisabled()
     expectSynchronized(1, 'Vista dimensional provisional. Segmento S1 seleccionado.')
@@ -181,10 +188,10 @@ describe('TA-036: regresiones vigentes del editor', () => {
   test('longitud 0.001 válida produce vértices pequeños y conserva ángulos y validación', async () => {
     const onSave = vi.fn()
     const user = userEvent.setup()
-    render(<CustomPieceEditor onGuardarVertices={onSave} />)
+    render(<CustomPieceEditor initialState={{ construction: { mode: 'guided', angle: '90' } }} onGuardarVertices={onSave} />)
     await draw(user, [[100, 100], [500, 100], [500, 300], [100, 300]])
     await user.click(button('Cerrar polígono'))
-    await user.type(field(1), '0.001')
+    measure(1, 0.001)
     expect(field(1)).toHaveValue(0.001)
     expect(field(2)).toHaveValue(0.0005)
     expect(field(1)).toHaveAttribute('aria-invalid', 'false')
@@ -198,7 +205,7 @@ describe('TA-036: regresiones vigentes del editor', () => {
 
   test('deshacer una figura dimensionada invalida el resultado y recerrar crea campos vacíos', async () => {
     const user = userEvent.setup()
-    render(<CustomPieceEditor onGuardarVertices={vi.fn()} />)
+    render(<CustomPieceEditor initialState={{ construction: { mode: 'guided', angle: '90' } }} onGuardarVertices={vi.fn()} />)
     await close(user)
     measure(1, 850)
     await user.click(selector(5))
@@ -229,12 +236,12 @@ describe('TA-036: regresiones vigentes del editor', () => {
 
   test('borrar todas las medidas retira escala, ángulos y resultado válido anterior', async () => {
     const user = userEvent.setup()
-    render(<CustomPieceEditor onGuardarVertices={vi.fn()} />)
+    render(<CustomPieceEditor initialState={{ construction: { mode: 'guided', angle: '90' } }} onGuardarVertices={vi.fn()} />)
     await close(user)
     measure(1, 850)
     for (let id = 1; id <= 5; id++) await user.clear(field(id))
     expect(screen.getByText('0 de 5 medidas ingresadas')).toBeVisible()
-    expect(screen.getByText(/Sin escala física. Ingresa una primera medida/)).toBeVisible()
+    expect(screen.getByText(/Completa todos los lados/)).toBeVisible()
     expect(screen.getByRole('status', { name: 'Resultado de validación geométrica' })).toHaveTextContent('Pendiente de completar dimensiones.')
     expect(screen.queryByRole('region', { name: 'Ángulos interiores' })).not.toBeInTheDocument()
     expect(button('Agregar pieza al pedido')).toBeDisabled()
@@ -243,7 +250,7 @@ describe('TA-036: regresiones vigentes del editor', () => {
   test('geometría completa no autoriza guardar sin material de pedido válido', async () => {
     const onSave = vi.fn()
     const user = userEvent.setup()
-    render(<CustomPieceEditor onGuardarVertices={onSave} headerReady={false} />)
+    render(<CustomPieceEditor initialState={{ construction: { mode: 'guided', angle: '90' } }} onGuardarVertices={onSave} headerReady={false} />)
     await close(user)
     measure(1, 850)
     expect(screen.getByText('Geometría convexa validada.')).toBeVisible()
@@ -256,10 +263,10 @@ describe('TA-036: regresiones vigentes del editor', () => {
   test('vértices consecutivos repetidos muestran error de dibujo sin guardar geometría degenerada', async () => {
     const onSave = vi.fn()
     const user = userEvent.setup()
-    render(<CustomPieceEditor onGuardarVertices={onSave} />)
+    render(<CustomPieceEditor initialState={{ construction: { mode: 'guided', angle: '90' } }} onGuardarVertices={onSave} />)
     await draw(user, [[100, 100], [400, 100], [400, 100], [100, 300]])
     await user.click(button('Cerrar polígono'))
-    expect(screen.getByText(/Hay vértices consecutivos en el mismo punto/)).toBeVisible()
+    expect(screen.getByText(/lados superpuestos|área insuficiente/)).toBeVisible()
     expect(button('Agregar pieza al pedido')).toBeDisabled()
     expect(onSave).not.toHaveBeenCalled()
   })
@@ -275,7 +282,7 @@ describe('TA-036: regresiones vigentes del editor', () => {
 
   test('invalidar y corregir una dimensión retira y recalcula la validación sin geometría obsoleta', async () => {
     const user = userEvent.setup()
-    render(<CustomPieceEditor onGuardarVertices={vi.fn()} />)
+    render(<CustomPieceEditor initialState={{ construction: { mode: 'guided', angle: '90' } }} onGuardarVertices={vi.fn()} />)
     await close(user)
     measure(1, 850)
     expect(button('Agregar pieza al pedido')).toBeEnabled()
@@ -299,12 +306,18 @@ describe('TA-036: regresiones vigentes del editor', () => {
 
 describe('TA-036: vértices canónicos, escala y ángulos', () => {
   const rectangle = [[100, 100], [500, 100], [500, 300], [100, 300]]
-  const measure = (index, value) => fireEvent.change(field(index), { target: { value: String(value) } })
+  const measure = (id, value) => {
+    // Enter every still-empty side explicitly; the production editor never fills other fields.
+    const points = canvas().querySelector('polygon').getAttribute('points').split(' ').map(p => p.split(',').map(Number));
+    const sides = points.map((p,i) => Math.hypot(points[(i+1)%points.length][0]-p[0], points[(i+1)%points.length][1]-p[1]));
+    if (Number(value)>0 && sides[id-1]>0) sides.forEach((side,i) => { if (i!==id-1 && field(i+1).value==='') fireEvent.change(field(i+1), { target: { value: String(side * Number(value) / sides[id-1]) } }); });
+    fireEvent.change(field(id), { target: { value: String(value) } });
+  }
 
-  test('una longitud fija escala y deriva todos los lados y ángulos sin alterar el contorno', async () => {
+  test('longitudes explícitas compatibles conservan forma y ángulos del boceto', async () => {
     const onSave = vi.fn()
     const user = userEvent.setup()
-    render(<CustomPieceEditor onGuardarVertices={onSave} />)
+    render(<CustomPieceEditor initialState={{ construction: { mode: 'guided', angle: '90' } }} onGuardarVertices={onSave} />)
     await draw(user, rectangle)
     await user.click(button('Cerrar polígono'))
     expect(button('Agregar pieza al pedido')).toBeDisabled()
@@ -316,22 +329,22 @@ describe('TA-036: vértices canónicos, escala y ángulos', () => {
     expect(screen.getByRole('region', { name: 'Ángulos interiores' })).toHaveTextContent('V1: 90°')
     expect(canvas().querySelector('polygon')).toHaveAttribute('points', rectangle.map(p => p.join(',')).join(' '))
     await user.click(button('Agregar pieza al pedido'))
-    expect(onSave.mock.calls[0][0].vertices).toEqual([[0,0],[800,0],[800,400],[0,400]])
+    onSave.mock.calls[0][0].vertices.forEach((point,i) => point.forEach((value,axis) => expect(value).toBeCloseTo([[0,0],[800,0],[800,400],[0,400]][i][axis],7)))
     expectInitial()
   })
 
-  test('editar otro lado reescala proporcionalmente sin cambiar ángulos ni proporción visual', async () => {
+  test('editar otro lado conserva los demás campos y recalcula una geometría distinta', async () => {
     const user = setup()
     await draw(user, rectangle)
     await user.click(button('Cerrar polígono'))
     measure(1, 800)
     const preview = screen.getByRole('img', { name: /Vista dimensional completa/ }).querySelector('polygon').getAttribute('points')
     measure(2, 600)
-    expect(field(1)).toHaveValue(1200)
+    expect(field(1)).toHaveValue(800)
     expect(field(2)).toHaveValue(600)
     const after = screen.getByRole('img', { name: /Vista dimensional completa/ }).querySelector('polygon').getAttribute('points')
-    after.split(/[ ,]/).map(Number).forEach((value,i) => expect(value).toBeCloseTo(preview.split(/[ ,]/).map(Number)[i],8))
-    expect(screen.getByRole('region', { name: 'Ángulos interiores' })).toHaveTextContent('V4: 90°')
+    expect(after).not.toBe(preview)
+    expect(screen.getByRole('region', { name: 'Ángulos interiores' })).toHaveTextContent('Calculado')
     expect(button('Agregar pieza al pedido')).toBeDisabled()
     expect(button('Agregar pieza al pedido')).toHaveAccessibleDescription('Geometría convexa validada. Agrega la pieza y guarda el pedido para registrarla.')
   })
@@ -349,7 +362,7 @@ describe('TA-036: vértices canónicos, escala y ángulos', () => {
 
   test('borrar una longitud invalida el guardado hasta corregirla; reiniciar borra la escala', async () => {
     const user = userEvent.setup()
-    render(<CustomPieceEditor onGuardarVertices={vi.fn()} />)
+    render(<CustomPieceEditor initialState={{ construction: { mode: 'guided', angle: '90' } }} onGuardarVertices={vi.fn()} />)
     await close(user)
     measure(1, 850)
     expect(button('Agregar pieza al pedido')).toBeEnabled()
@@ -367,7 +380,7 @@ describe('TA-036: vértices canónicos, escala y ángulos', () => {
     ['degenerado', [[100,100],[200,100],[300,100]], /área|colineal|degenerad/i],
   ])('contorno %s sigue rechazado después de cambiar escala', async (_name, points, message) => {
     const user = userEvent.setup()
-    render(<CustomPieceEditor onGuardarVertices={vi.fn()} />)
+    render(<CustomPieceEditor initialState={{ construction: { mode: 'guided', angle: '90' } }} onGuardarVertices={vi.fn()} />)
     await draw(user, points)
     await user.click(button('Cerrar polígono'))
     measure(1, 600)

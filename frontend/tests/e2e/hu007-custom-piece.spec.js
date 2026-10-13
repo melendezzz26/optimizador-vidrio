@@ -27,7 +27,7 @@ test.beforeEach(async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Pieza personalizada' })).toBeVisible()
 })
 
-async function drawAndClose(page, points = pentagon) {
+async function drawAndClose(page, points = pentagon, mode = 'guided') {
   const canvas = page.getByRole('img', { name: /Lienzo del dibujo original/ })
   await expect(page.getByRole('button', { name: 'Cerrar polígono' })).toBeDisabled()
   await canvas.scrollIntoViewIfNeeded()
@@ -45,6 +45,7 @@ async function drawAndClose(page, points = pentagon) {
   }
   await page.getByRole('button', { name: 'Cerrar polígono' }).click()
   await expect(page.getByText('Polígono cerrado', { exact: true })).toBeVisible()
+  if (mode === 'guided') await page.getByRole('combobox').selectOption('guided')
   await expect(page.getByRole('spinbutton')).toHaveCount(points.length)
   for (let id = 1; id <= points.length; id++) {
     await expect(page.getByRole('button', { name: `Seleccionar segmento S${id}`, exact: true })).toHaveText(`S${id}`)
@@ -56,10 +57,70 @@ async function fill(page, values = lengths) {
   for (const [index, value] of values.entries()) await field(page, index + 1).fill(String(value))
 }
 
-test('TA-036: dibujo y escala conservan contorno y ángulos; selección accesible', async ({ page }) => {
+for (const sides of [[80,115,63,92,71], [80,115,63,92,71,98]]) {
+  test(`${sides.length} lados: fijar hasta n-3 ángulos y liberar para elegir otro vértice`, async ({ page }) => {
+    const n=sides.length;
+    const points=Array.from({length:n},(_,i)=>[350+180*Math.cos(i*2*Math.PI/n),250+180*Math.sin(i*2*Math.PI/n)]);
+    await drawAndClose(page,points,'cyclic'); await fill(page,sides);
+    for(let v=2;v<=n-2;v++) await page.getByRole('button',{name:`Fijar ángulo V${v}`,exact:true}).click();
+    await expect(page.getByText(`Restricciones de forma: ${n-3} de ${n-3} utilizadas`)).toBeVisible();
+    await expect(page.getByRole('button',{name:'Fijar ángulo V1',exact:true})).toBeDisabled();
+    const shape=page.getByRole('img',{name:/Vista dimensional completa/}).locator('polygon');
+    const before=await shape.getAttribute('points');
+    const angle=page.getByRole('spinbutton',{name:/Ángulo interior fijado en V2/});
+    await angle.fill(String(Number(await angle.inputValue())-5));
+    await expect(shape).not.toHaveAttribute('points',before);
+    for(const [i,side] of sides.entries()) await expect(field(page,i+1)).toHaveValue(String(side));
+    await page.getByRole('button',{name:'Liberar ángulo V2',exact:true}).click();
+    await page.getByRole('button',{name:'Fijar ángulo V1',exact:true}).click();
+    await expect(page.getByRole('spinbutton',{name:/Ángulo interior fijado en V1/})).toBeVisible();
+    await expect(page.getByText('Geometría convexa validada.',{exact:true})).toBeVisible();
+  });
+}
+
+test('lados independientes: triángulo 50/70/65 y rechazo de 10/10/30', async ({ page }) => {
+  await drawAndClose(page, [[100, 100], [500, 100], [300, 400]], 'cyclic')
+  await field(page, 1).fill('50')
+  await expect(field(page, 2)).toBeEmpty()
+  await fill(page, [50, 70, 65])
+  await expect(page.getByRole('region', { name: 'Ángulos interiores' })).toContainText('63,026945°')
+  await expect(page.getByRole('status', { name: 'Resultado de validación geométrica' })).toHaveText('Geometría convexa validada.')
+  await fill(page, [10, 10, 30])
+  await expect(page.getByText(/el lado mayor debe ser menor/)).toBeVisible()
+  await expect(page.getByRole('img', { name: /Vista dimensional completa/ })).toHaveCount(0)
+  await expect(page.getByRole('region', { name: 'Ángulos interiores' })).toHaveCount(0)
+})
+
+test('lados independientes: ángulo fijado cambia cuadrilátero sin cambiar lados', async ({ page }) => {
+  await drawAndClose(page, [[100, 100], [500, 100], [500, 400], [100, 400]], 'cyclic')
+  const sides = [120, 73, 91, 108]
+  await fill(page, sides)
+  await page.getByRole('combobox').selectOption('angle')
+  const angle = page.getByRole('spinbutton', { name: /Ángulo interior fijado/ })
+  await angle.fill('85')
+  const shape = page.getByRole('img', { name: /Vista dimensional completa/ }).locator('polygon')
+  const before = await shape.getAttribute('points')
+  await angle.fill('110')
+  await expect(shape).not.toHaveAttribute('points', before)
+  await expect(angle).toHaveValue('110')
+  await expect(page.getByRole('region', { name: 'Ángulos interiores' })).toContainText('Fijado')
+  for (const [i, side] of sides.entries()) await expect(field(page, i + 1)).toHaveValue(String(side))
+})
+
+test('lados independientes: pentágono irregular con restricción cíclica explícita', async ({ page }) => {
+  await drawAndClose(page, pentagon, 'cyclic')
+  await fill(page, [80, 115, 63, 92, 71])
+  await expect(page.getByRole('status', { name: 'Resultado de validación geométrica' })).toHaveText('Geometría convexa validada.')
+  await expect(page.getByRole('region', { name: 'Ángulos interiores' }).locator('li')).toHaveCount(5)
+  await expect(page.getByText(/circunferencia/)).toBeVisible()
+  await expect(page.getByRole('img', { name: /Vista dimensional completa/ })).toBeVisible()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+})
+
+test('TA-036: longitudes independientes y selección accesible en ambas vistas', async ({ page }) => {
   await drawAndClose(page)
   await expect(page.getByText('0 de 5 medidas ingresadas', { exact: true })).toBeVisible()
-  await field(page, 1).fill('850')
+  await fill(page)
   await expect(page.getByText('5 de 5 medidas ingresadas', { exact: true })).toBeVisible()
   await expect(page.getByRole('region', { name: 'Ángulos interiores' })).toBeVisible()
   await fill(page)
@@ -78,11 +139,11 @@ test('TA-036: dibujo y escala conservan contorno y ángulos; selección accesibl
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
 })
 
-test('TA-036: cambiar la escala conserva los ángulos', async ({ page }) => {
+test('TA-036: multiplicar explícitamente todos los lados conserva los ángulos', async ({ page }) => {
   await drawAndClose(page)
-  await field(page, 1).fill('850')
+  await fill(page)
   const angles = await page.getByRole('region', { name: 'Ángulos interiores' }).textContent()
-  await field(page, 1).fill('1700')
+  await fill(page, lengths.map(value => value * 2))
   await expect(page.getByRole('region', { name: 'Ángulos interiores' })).toHaveText(angles)
   await expect(page.getByRole('img', { name: /Vista dimensional completa/ })).toBeVisible()
 })
@@ -90,6 +151,8 @@ test('TA-036: cambiar la escala conserva los ángulos', async ({ page }) => {
 for (const value of ['0', '-1', '1e']) {
   test(`T02-E03: entrada numérica inválida ${value} muestra error y se recupera`, async ({ page }) => {
     await drawAndClose(page)
+    await fill(page)
+    await field(page, 1).fill('')
     if (value === '1e') {
       await field(page, 1).pressSequentially(value)
       // Chromium exposes an unfinished exponent as badInput and an empty value.
@@ -98,7 +161,7 @@ for (const value of ['0', '-1', '1e']) {
     await field(page, 1).press('Tab')
     await expect(field(page, 1)).toHaveAttribute('aria-invalid', 'true')
     await expect(field(page, 1)).toHaveAccessibleDescription('Usa un número finito mayor que 0.')
-    await expect(page.getByText(`${value === '1e' ? 4 : 0} de 5 medidas ingresadas`, { exact: true })).toBeVisible()
+    await expect(page.getByText('4 de 5 medidas ingresadas', { exact: true })).toBeVisible()
     await expect(page.getByRole('img', { name: /Vista dimensional/ })).toHaveCount(0)
     await expect(addButton(page)).toBeDisabled()
     await field(page, 1).fill('850')
