@@ -54,6 +54,7 @@ export function MovementHistoryDialog({
                     <time dateTime={movement.fecha}>{formatDateTime(movement.fecha)}</time>
                   </header>
                   <dl className="inventory-history__details">
+                    <div><dt>Cantidad afectada</dt><dd>{movement.cantidad_afectada ?? 'Desconocida (histórico)'}</dd></div>
                     <div><dt>Motivo</dt><dd>{movement.motivo}</dd></div>
                     <div><dt>Observación</dt><dd>{movement.observacion || 'Sin observación'}</dd></div>
                     <div><dt>Actor</dt><dd>Usuario #{movement.id_usuario}</dd></div>

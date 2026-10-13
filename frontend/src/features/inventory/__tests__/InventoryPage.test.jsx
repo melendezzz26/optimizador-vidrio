@@ -1,4 +1,4 @@
-import { act, render, screen, within } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { InventoryPage } from '../InventoryPage'
@@ -87,57 +87,12 @@ async function renderInventory(onSessionExpired = vi.fn(), retazoRows = [], plan
     />,
   )
 
-  await screen.findByRole('button', {
-    name: planchaRows.some((row) => row.estado) ? /Desactivar/i : /Activar/i,
-  })
+  await screen.findByText('Mostrando 1 de 1 planchas')
 
   return { user, onSessionExpired }
 }
 
 describe('TA-011 — errores HTTP de Inventario', () => {
-  test('403 muestra error de permisos, conserva sesión y no refresca el listado', async () => {
-    const { user, onSessionExpired } = await renderInventory()
-
-    fetch.mockResolvedValueOnce(
-      response(
-        { detail: 'No tienes el permiso: GESTIONAR_PLANCHAS' },
-        403,
-      ),
-    )
-
-    await user.click(
-      screen.getByRole('button', { name: /Desactivar/i }),
-    )
-    expect(screen.getByRole('alertdialog', { name: '¿Desactivar material?' })).toBeVisible()
-    await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Desactivar' }))
-
-    expect(await screen.findByRole('alert')).toHaveTextContent(
-      'No tienes el permiso: GESTIONAR_PLANCHAS',
-    )
-
-    expect(onSessionExpired).not.toHaveBeenCalled()
-
-    expect(fetch).toHaveBeenCalledTimes(4)
-
-    const [url, options] = fetch.mock.calls[3]
-
-    expect(url).toMatch(/\/api\/inventory\/planchas\/4$/)
-    expect(options.method).toBe('PATCH')
-    expect(options.headers.Authorization).toBe('Bearer test-token')
-    expect(JSON.parse(options.body)).toEqual({ estado: false })
-
-    // Al fallar el PATCH no debe ejecutarse GET /planchas posterior.
-    expect(fetch).toHaveBeenCalledTimes(4)
-
-    // El estado visible tampoco debe cambiar.
-    expect(screen.getByRole('cell', { name: 'Activo' })).toBeVisible()
-
-    expect(
-    screen.getByRole('button', { name: /Desactivar/i }),
-    ).toBeEnabled()
-
-    })
-
   test('422 muestra validación junto al formulario y conserva los datos sin refrescar', async () => {
     const { user, onSessionExpired } = await renderInventory()
     await user.click(screen.getByRole('button', { name: 'Editar' }))
@@ -165,58 +120,13 @@ describe('TA-011 — errores HTTP de Inventario', () => {
     expect(JSON.parse(options.body)).toEqual({ cantidad: 3 })
   })
 
-  test('cancelar desactivación cierra el diálogo sin enviar PATCH ni cambiar estado', async () => {
-    const { user } = await renderInventory()
-    const button = screen.getByRole('button', { name: /Desactivar/i })
-    await user.click(button)
-    expect(screen.getByRole('alertdialog', { name: '¿Desactivar material?' })).toBeVisible()
-    await user.click(screen.getByRole('button', { name: 'Cancelar' }))
-
-    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
-    expect(fetch).toHaveBeenCalledTimes(3)
-    expect(screen.getByRole('cell', { name: 'Activo' })).toBeVisible()
-    expect(button).toHaveFocus()
+  test('solo ofrece historial, edición y baja, sin toggles de estado', async () => {
+    await renderInventory()
+    expect(screen.queryByRole('button', { name: /^(Activar|Desactivar)$/ })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Editar' })).toBeVisible()
+    expect(screen.getByRole('button', { name: /Dar de baja plancha/ })).toBeVisible()
   })
 
-  test('activar un material inactivo conserva el PATCH inmediato sin confirmación', async () => {
-    const inactivePlanchas = planchas.map((row) => ({ ...row, estado: false }))
-    const { user } = await renderInventory(vi.fn(), [], inactivePlanchas)
-    fetch
-      .mockResolvedValueOnce(response({ estado: true }))
-      .mockResolvedValueOnce(response(planchas))
-
-    await user.click(screen.getByRole('button', { name: 'Activar' }))
-
-    expect(await screen.findByText('Plancha activada correctamente.')).toBeVisible()
-    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
-    expect(fetch).toHaveBeenCalledTimes(5)
-    const [url, options] = fetch.mock.calls[3]
-    expect(url).toMatch(/\/api\/inventory\/planchas\/4$/)
-    expect(options.method).toBe('PATCH')
-    expect(JSON.parse(options.body)).toEqual({ estado: true })
-  })
-
-  test.each([
-    ['plancha', 'planchas', /Desactivar/i, /\/api\/inventory\/planchas\/4$/],
-    ['retazo', 'retazos', /Desactivar/i, /\/api\/inventory\/retazos\/9$/],
-  ])('confirmar desactivación de %s realiza un PATCH y refresca el listado', async (_kind, tab, buttonName, endpoint) => {
-    const { user } = await renderInventory(vi.fn(), retazos)
-    if (tab === 'retazos') await user.click(screen.getByRole('tab', { name: 'Retazos' }))
-    await user.click(screen.getByRole('button', { name: buttonName }))
-    fetch
-      .mockResolvedValueOnce(response({ estado: false }))
-      .mockResolvedValueOnce(response(tab === 'planchas' ? planchas.map((row) => ({ ...row, estado: false })) : retazos.map((row) => ({ ...row, estado: false }))));
-    await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Desactivar' }))
-
-    const feedback = tab === 'planchas' ? 'Plancha desactivada correctamente.' : 'Retazo desactivado correctamente.'
-    expect(await screen.findByText(feedback)).toBeVisible()
-    expect(fetch).toHaveBeenCalledTimes(5)
-    const [url, options] = fetch.mock.calls[3]
-    expect(url).toMatch(endpoint)
-    expect(options.method).toBe('PATCH')
-    expect(JSON.parse(options.body)).toEqual({ estado: false })
-    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
-  })
 })
 
 describe('TA-011 — estados de carga de Inventario', () => {

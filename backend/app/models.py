@@ -322,6 +322,10 @@ class MovimientoInventario(Base):
             "length(trim(motivo)) > 0",
             name="ck_movimientos_inventario_motivo_no_vacio",
         ),
+        CheckConstraint("cantidad_afectada IS NULL OR cantidad_afectada > 0",
+                        name="ck_movimientos_cantidad_positiva"),
+        CheckConstraint("id_retazo IS NULL OR cantidad_afectada IS NULL OR cantidad_afectada = 1",
+                        name="ck_movimientos_retazo_unitario"),
         Index(
             "ix_movimientos_inventario_plancha_fecha",
             "id_plancha",
@@ -333,13 +337,6 @@ class MovimientoInventario(Base):
             "id_retazo",
             "fecha",
             "id_movimiento",
-        ),
-        Index(
-            "uq_movimientos_baja_manual_plancha",
-            "id_plancha",
-            unique=True,
-            postgresql_where=text(f"tipo_evento IN ({_EVENTOS_BAJA_MANUAL})"),
-            sqlite_where=text(f"tipo_evento IN ({_EVENTOS_BAJA_MANUAL})"),
         ),
         Index(
             "uq_movimientos_baja_manual_retazo",
@@ -359,6 +356,7 @@ class MovimientoInventario(Base):
         ForeignKey("retazos.id_retazo", name="fk_movimientos_inventario_retazo"),
         nullable=True,
     )
+    cantidad_afectada: Mapped[int | None] = mapped_column(Integer, nullable=True)
     tipo_evento: Mapped[str] = mapped_column(String(30), nullable=False)
     motivo: Mapped[str] = mapped_column(Text, nullable=False)
     observacion: Mapped[str | None] = mapped_column(Text, nullable=True)

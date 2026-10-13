@@ -26,8 +26,13 @@ class BajaManual:
     tipo_evento: TipoEventoBajaManual
     motivo: str
     observacion: str | None = None
+    cantidad_afectada: int | None = None
 
     def __post_init__(self) -> None:
+        if self.cantidad_afectada is not None and (
+            type(self.cantidad_afectada) is not int or self.cantidad_afectada <= 0
+        ):
+            raise InventoryValidationError("cantidad_afectada debe ser un entero positivo.")
         try:
             event = TipoEventoBajaManual(self.tipo_evento)
         except (TypeError, ValueError) as exc:

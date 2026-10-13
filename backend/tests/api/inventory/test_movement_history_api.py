@@ -94,6 +94,7 @@ def test_movement_history_returns_audit_fields_and_resource_reference(
     assert len(payload) == 1
     assert {key: value for key, value in payload[0].items() if key != "fecha"} == {
         "id_movimiento": 17,
+        "cantidad_afectada": None,
         "id_plancha": 8 if kind == "plancha" else None,
         "id_retazo": 8 if kind == "retazo" else None,
         "tipo_evento": "CONSUMO_OPTIMIZACION",

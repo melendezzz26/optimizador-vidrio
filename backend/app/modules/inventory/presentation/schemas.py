@@ -46,6 +46,7 @@ class MovimientoInventarioResponse(BaseSchema):
     id_usuario: int
     fecha: datetime
     id_optimizacion: int | None
+    cantidad_afectada: int | None
 
 
 class MovimientoHistorialResponse(BaseSchema):
@@ -58,11 +59,17 @@ class MovimientoHistorialResponse(BaseSchema):
     id_usuario: int
     fecha: datetime
     id_optimizacion: int | None
+    cantidad_afectada: int | None
 
 
 class BajaManualResponse(BaseSchema):
-    estado: Literal[False]
+    estado: bool
+    cantidad: int | None = None
     movimiento: MovimientoInventarioResponse
+
+
+class BajaPlanchaRequest(BajaManualRequest):
+    cantidad_afectada: int = Field(gt=0, strict=True)
 
 # --- Tipos de Vidrio ---
 

@@ -104,6 +104,7 @@ def test_repository_movement_mapping_preserves_audit_fields():
         id_usuario=3,
         fecha=datetime(2026, 10, 10, 14, 20, tzinfo=timezone.utc),
         id_optimizacion=22,
+        cantidad_afectada=None,
     )
 
     result = SqlAlchemyInventoryRepository._to_movement(row)

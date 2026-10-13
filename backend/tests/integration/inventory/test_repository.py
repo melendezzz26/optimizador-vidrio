@@ -36,7 +36,7 @@ with patch.dict(sys.modules, {"app.shared.database": isolated_base}):
 
 
 NOW = datetime(2026, 10, 5, 12, 30, tzinfo=timezone.utc)
-HEAD = "fa014e1a2b3c"
+HEAD = "ta036a1b2c3d"
 
 
 @pytest.fixture(scope="module")
@@ -122,7 +122,7 @@ def seed_writeoff_actor(engine):
 def create_writeoff_resources(repo):
     with repo.transaction():
         tipo = create_tipo(repo)
-        plancha = repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio))
+        plancha = repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio, cantidad=1))
         retazo = repo.create_retazo(**retazo_values(tipo.id_tipo_vidrio))
     return plancha, retazo
 
@@ -132,6 +132,7 @@ def writeoff_command():
         tipo_evento=TipoEventoBajaManual.BAJA_ROTURA,
         motivo="Daño detectado en inspección",
         observacion="Acta de almacén",
+        cantidad_afectada=1,
     )
 
 
@@ -443,7 +444,7 @@ def test_writeoff_persists_movement_and_deactivates_resource_atomically(reposito
 
     movement = getattr(InventoryService(repo), f"writeoff_{kind}")(
         identifier, writeoff_command(), id_usuario=1,
-    )
+    ).movimiento
 
     assert movement.id_plancha == (identifier if kind == "plancha" else None)
     assert movement.id_retazo == (identifier if kind == "retazo" else None)
@@ -501,7 +502,11 @@ def test_writeoff_not_found_inactive_without_history_and_duplicate_conflict(repo
         ) == 0
 
     command = writeoff_command()
-    movement = writeoff(identifier, command, id_usuario=1)
+    if kind == "plancha":
+        with pytest.raises(InventoryConflictError):
+            writeoff(identifier, command, id_usuario=1)
+        return
+    movement = writeoff(identifier, command, id_usuario=1).movimiento
     assert movement.id_plancha == (identifier if kind == "plancha" else None)
     assert movement.id_retazo == (identifier if kind == "retazo" else None)
     assert movement.id_usuario == 1
@@ -566,7 +571,7 @@ def test_manual_writeoff_prevents_reactivation_and_preserves_history(repository,
 
     movement = getattr(service, f"writeoff_{kind}")(
         identifier, command, id_usuario=1,
-    )
+    ).movimiento
 
     def persisted_snapshot():
         with engine.connect() as connection:
@@ -691,7 +696,7 @@ def test_concurrent_writeoffs_serialize_on_resource_row_lock(repository, engine,
         assert connection.scalar(sa.text("SELECT count(*) FROM movimientos_inventario")) == 1
 
 
-@pytest.mark.parametrize("kind", ["plancha", "retazo"])
+@pytest.mark.parametrize("kind", ["retazo"])
 def test_partial_unique_index_violation_maps_to_inventory_conflict(repository, engine, kind):
     repo, _sessions = repository
     seed_writeoff_actor(engine)
@@ -820,3 +825,59 @@ def test_movement_history_is_isolated_chronological_and_read_only(repository, en
     assert [item.id_movimiento for item in other_history] == [other_movement_id]
     assert other_history[0].motivo == "Movimiento del otro recurso"
     assert_released(engine, sessions)
+
+@pytest.mark.parametrize("quantity,remaining", [(1, 9), (4, 6), (10, 0)])
+def test_partial_writeoff_postgres_balance_history_and_order(repository, engine, quantity, remaining):
+    repo, _sessions = repository
+    seed_writeoff_actor(engine)
+    plancha, retazo = create_writeoff_resources(repo)
+    service = InventoryService(repo)
+    service.update_plancha(plancha.id_plancha, UpdatePlancha(cantidad=10))
+    result = service.writeoff_plancha(plancha.id_plancha, BajaManual(
+        tipo_evento="BAJA_MERMA", motivo="Baja parcial", cantidad_afectada=quantity), id_usuario=1)
+    assert result.cantidad == remaining and result.estado is (remaining > 0)
+    with engine.connect() as connection:
+        assert connection.execute(sa.text("SELECT cantidad,estado FROM planchas")).one() == (remaining, remaining > 0)
+        assert connection.scalar(sa.text("SELECT cantidad_afectada FROM movimientos_inventario")) == quantity
+    assert service.list_plancha_movements(plancha.id_plancha) == [result.movimiento]
+    service.writeoff_retazo(retazo.id_retazo, BajaManual(tipo_evento="BAJA_RETIRO", motivo="Retiro"), id_usuario=1)
+    other = service.create_retazo(CreateRetazo(codigo="Disponible", espesor_mm=4,
+        id_tipo_vidrio=retazo.id_tipo_vidrio, geometria=retazo.geometria))
+    assert [r.id_retazo for r in service.list_retazos()] == [other.id_retazo, retazo.id_retazo]
+    assert service.list_retazo_movements(retazo.id_retazo)[0].cantidad_afectada == 1
+
+
+def test_concurrent_partial_writeoffs_do_not_overspend_balance(repository, engine):
+    repo, _sessions = repository
+    seed_writeoff_actor(engine)
+    plancha, _retazo = create_writeoff_resources(repo)
+    InventoryService(repo).update_plancha(plancha.id_plancha, UpdatePlancha(cantidad=10))
+    barrier = Barrier(2)
+    from app.modules.inventory.domain.exceptions import InventoryValidationError
+    def attempt(_index):
+        service = InventoryService(SqlAlchemyInventoryRepository(lambda: Session(engine)))
+        barrier.wait(timeout=10)
+        try:
+            return service.writeoff_plancha(plancha.id_plancha, BajaManual(
+                tipo_evento="BAJA_ROTURA", motivo="Concurrente", cantidad_afectada=6), id_usuario=1).cantidad
+        except InventoryValidationError:
+            return "rejected"
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        outcomes = list(executor.map(attempt, range(2)))
+    assert sorted(map(str, outcomes)) == ["4", "rejected"]
+    with engine.connect() as connection:
+        assert connection.scalar(sa.text("SELECT cantidad FROM planchas")) == 4
+        assert connection.scalar(sa.text("SELECT count(*) FROM movimientos_inventario")) == 1
+
+
+def test_plancha_order_is_available_then_date_and_id_desc(repository):
+    repo, _sessions = repository
+    with repo.transaction():
+        tipo = create_tipo(repo)
+        unavailable = repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio, estado=False))
+        older = repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio, fecha_registro=NOW-timedelta(days=1)))
+        zero = repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio, cantidad=0))
+        newest = repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio))
+        tie = repo.create_plancha(**plancha_values(tipo.id_tipo_vidrio))
+        rows = repo.list_planchas()
+    assert [r.id_plancha for r in rows] == [tie.id_plancha, newest.id_plancha, older.id_plancha, zero.id_plancha, unavailable.id_plancha]

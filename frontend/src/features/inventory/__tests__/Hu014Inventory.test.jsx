@@ -76,6 +76,8 @@ async function fillWriteoff(user, { reason = 'Borde dañado', event = 'BAJA_ROTU
   await user.selectOptions(screen.getByLabelText('Tipo de baja'), event)
   if (reason) await user.type(screen.getByLabelText(/Motivo/), reason)
   if (observation) await user.type(screen.getByLabelText('Observación (opcional)'), observation)
+  const quantity = screen.queryByLabelText('Cantidad a dar de baja')
+  if (quantity) { await user.clear(quantity); await user.type(quantity, '2') }
   await user.click(screen.getByRole('button', { name: 'Revisar baja' }))
   return screen.getByRole('dialog', { name: 'Confirmar baja manual' })
 }
@@ -171,7 +173,7 @@ describe('HU-014: formulario y confirmación de baja', () => {
     await screen.findByText(/Baja registrada correctamente/)
     const post = fetch.mock.calls.find(([url]) => String(url).includes('/planchas/4/baja'))
     expect(JSON.parse(post[1].body)).toEqual({
-      tipo_evento: 'BAJA_MERMA', motivo: 'Merma del material', observacion: null,
+      tipo_evento: 'BAJA_MERMA', motivo: 'Merma del material', observacion: null, cantidad_afectada: 2,
     })
   })
 
@@ -209,11 +211,10 @@ describe('HU-014: formulario y confirmación de baja', () => {
     expect(fetch.mock.calls.find(([url]) => String(url).includes('/retazos/9/baja'))[1].method).toBe('POST')
   })
 
-  test('estado=false sin historial mantiene disponible la acción manual de baja', async () => {
+  test('plancha no disponible impide baja parcial', async () => {
     const { user } = await renderInventory({ planchas: [{ ...plancha, estado: false }] })
     expect(screen.getByRole('cell', { name: 'Inactivo' })).toBeVisible()
-    expect(screen.getByRole('button', { name: 'Dar de baja plancha #4' })).toBeEnabled()
-    await openWriteoff(user)
+    expect(screen.getByRole('button', { name: 'Dar de baja plancha #4' })).toBeDisabled()
   })
 
   test('segunda activación durante el envío no duplica POST, bloquea cierre y muestra procesamiento', async () => {
@@ -404,5 +405,53 @@ describe('HU-014: accesibilidad', () => {
     fetch.mockResolvedValueOnce(response([{ ...plancha, estado: false }]))
     await act(async () => finishPost(response({ estado: false, movimiento: { id_movimiento: 60 } }, 201)))
     await screen.findByText(/Baja registrada correctamente/)
+  })
+})
+
+describe('TA-036: baja parcial y cantidades', () => {
+  test('actualiza saldo confirmado aunque falle refresco, conserva historial y disponibilidad', async () => {
+    const { user } = await renderInventory({ planchas: [{ ...plancha, cantidad: 10 }] })
+    await openWriteoff(user)
+    expect(screen.getByText('Cantidad disponible actual: 10')).toBeVisible()
+    await user.type(screen.getByLabelText(/Motivo/), 'Rotura de una unidad')
+    expect(screen.getByText('Cantidad restante: 9')).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Revisar baja' }))
+    expect(screen.getByRole('dialog')).toHaveTextContent('Cantidad restante9')
+    fetch.mockResolvedValueOnce(response({ estado: true, cantidad: 9, movimiento: { id_movimiento: 90 } }, 201))
+      .mockRejectedValueOnce(new Error('offline'))
+    await user.click(screen.getByRole('button', { name: 'Confirmar baja' }))
+    await screen.findByText(/no se pudo actualizar el listado/)
+    expect(screen.getByRole('cell', { name: '9' })).toBeVisible()
+    expect(screen.getByRole('cell', { name: 'Activo' })).toBeVisible()
+    expect(screen.getByRole('button', { name: /Dar de baja plancha/ })).toBeEnabled()
+    expect(JSON.parse(fetch.mock.calls[3][1].body).cantidad_afectada).toBe(1)
+    expect(screen.queryByRole('button', { name: /^(Activar|Desactivar)$/ })).not.toBeInTheDocument()
+  })
+
+  test.each(['0', '11', '1.5'])('cantidad inválida %s no avanza a confirmación', async (value) => {
+    const { user } = await renderInventory({ planchas: [{ ...plancha, cantidad: 10 }] })
+    await openWriteoff(user)
+    await user.type(screen.getByLabelText(/Motivo/), 'Motivo')
+    await user.clear(screen.getByLabelText('Cantidad a dar de baja'))
+    await user.type(screen.getByLabelText('Cantidad a dar de baja'), value)
+    await user.click(screen.getByRole('button', { name: 'Revisar baja' }))
+    expect(screen.queryByRole('button', { name: 'Confirmar baja' })).not.toBeInTheDocument()
+    expect(fetch).toHaveBeenCalledTimes(3)
+  })
+
+  test('retazo no solicita cantidad editable y queda detrás del disponible tras baja', async () => {
+    const { user } = await renderInventory({ retazos: [retazo, { ...retazo, id_retazo: 10, codigo: 'R-10' }] })
+    await user.click(screen.getByRole('tab', { name: 'Retazos' }))
+    await openWriteoff(user, 'retazo')
+    expect(screen.queryByLabelText('Cantidad a dar de baja')).not.toBeInTheDocument()
+    await fillWriteoff(user)
+    fetch.mockResolvedValueOnce(response({ estado: false, movimiento: { id_movimiento: 91 } }, 201))
+      .mockRejectedValueOnce(new Error('offline'))
+    await user.click(screen.getByRole('button', { name: 'Confirmar baja' }))
+    await screen.findByText(/no se pudo actualizar el listado/)
+    const rows = screen.getAllByRole('row').slice(1)
+    expect(rows[0]).toHaveTextContent('R-10')
+    expect(rows[1]).toHaveTextContent('R-9')
+    expect(rows[1]).toHaveTextContent('Inactivo')
   })
 })

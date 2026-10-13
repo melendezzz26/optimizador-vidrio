@@ -134,6 +134,7 @@ class FakeInventoryRepository(InventoryRepository):
             id_movimiento=max(self.movimientos, default=0) + 1,
             id_plancha=None,
             id_retazo=id_retazo,
+            cantidad_afectada=1,
             fecha=NOW,
             id_optimizacion=None,
             **values,
@@ -506,10 +507,11 @@ def test_manual_writeoff_locks_records_movement_and_deactivates_atomically(inven
     commits_before = repo.commits
     movement = getattr(service, f"writeoff_{kind}")(
         resource.id_plancha if kind == "plancha" else resource.id_retazo,
-        BajaManual(tipo_evento=TipoEventoBajaManual.BAJA_ROTURA, motivo="Rotura"),
+        BajaManual(tipo_evento=TipoEventoBajaManual.BAJA_ROTURA, motivo="Rotura", cantidad_afectada=resource.cantidad if kind == "plancha" else 1),
         id_usuario=17,
     )
 
+    movement = movement.movimiento
     assert movement.id_usuario == 17
     assert movement.tipo_evento == "BAJA_ROTURA"
     assert movement.id_plancha == (resource.id_plancha if kind == "plancha" else None)
@@ -523,7 +525,7 @@ def test_manual_writeoff_locks_records_movement_and_deactivates_atomically(inven
 def test_manual_writeoff_allows_inactive_resource_without_history_and_rejects_duplicate(inventory, kind):
     service, repo = inventory
     method = getattr(service, f"writeoff_{kind}")
-    command = BajaManual(tipo_evento=TipoEventoBajaManual.BAJA_RETIRO, motivo="Retiro")
+    command = BajaManual(tipo_evento=TipoEventoBajaManual.BAJA_RETIRO, motivo="Retiro", cantidad_afectada=1)
     with pytest.raises(InventoryNotFoundError):
         method(999, command, id_usuario=1)
 
@@ -534,7 +536,12 @@ def test_manual_writeoff_allows_inactive_resource_without_history_and_rejects_du
     patch = UpdatePlancha(estado=False) if kind == "plancha" else UpdateRetazo(estado=False)
     getattr(service, f"update_{kind}")(identifier, patch)
 
-    movement = method(identifier, command, id_usuario=1)
+    if kind == "plancha":
+        with pytest.raises(InventoryConflictError):
+            method(identifier, command, id_usuario=1)
+        assert repo.movimientos == {}
+        return
+    movement = method(identifier, command, id_usuario=1).movimiento
 
     assert movement.id_plancha == (identifier if kind == "plancha" else None)
     assert movement.id_retazo == (identifier if kind == "retazo" else None)
@@ -552,7 +559,7 @@ def test_manual_writeoff_rejects_duplicate_and_reactivation_but_allows_legacy_ac
         plancha_command() if kind == "plancha" else retazo_command()
     )
     identifier = resource.id_plancha if kind == "plancha" else resource.id_retazo
-    command = BajaManual(tipo_evento=TipoEventoBajaManual.BAJA_MERMA, motivo="Merma")
+    command = BajaManual(tipo_evento=TipoEventoBajaManual.BAJA_MERMA, motivo="Merma", cantidad_afectada=resource.cantidad if kind == "plancha" else 1)
     getattr(service, f"writeoff_{kind}")(identifier, command, id_usuario=1)
     with pytest.raises(InventoryConflictError):
         getattr(service, f"writeoff_{kind}")(identifier, command, id_usuario=1)
@@ -580,7 +587,7 @@ def test_manual_writeoff_failure_rolls_back_movement_and_resource(inventory, mon
         plancha_command() if kind == "plancha" else retazo_command()
     )
     identifier = resource.id_plancha if kind == "plancha" else resource.id_retazo
-    command = BajaManual(tipo_evento=TipoEventoBajaManual.BAJA_ERROR_REGISTRO, motivo="Corrección")
+    command = BajaManual(tipo_evento=TipoEventoBajaManual.BAJA_ERROR_REGISTRO, motivo="Corrección", cantidad_afectada=1)
 
     if failure == "movement":
         repo.fail_write = True
@@ -616,3 +623,38 @@ from app.modules.inventory.application.service import InventoryService
     result = subprocess.run([sys.executable, "-B", "-c", script],
         cwd=Path(__file__).resolve().parents[3], capture_output=True, text=True, timeout=15)
     assert result.returncode == 0, result.stderr
+
+@pytest.mark.parametrize("quantity,remaining", [(1, 9), (4, 6), (10, 0)])
+def test_partial_writeoff_records_quantity_and_preserves_remaining_stock(inventory, quantity, remaining):
+    service, repo = inventory
+    resource = service.create_plancha(plancha_command(cantidad=10))
+    result = service.writeoff_plancha(resource.id_plancha, BajaManual(
+        tipo_evento="BAJA_ROTURA", motivo="Rotura", cantidad_afectada=quantity), id_usuario=1)
+    assert result.cantidad == remaining
+    assert result.estado is (remaining > 0)
+    assert result.movimiento.cantidad_afectada == quantity
+    assert repo.get_plancha(resource.id_plancha).cantidad == remaining
+    assert repo.movimientos[result.movimiento.id_movimiento] == result.movimiento
+    if remaining:
+        again = service.writeoff_plancha(resource.id_plancha, BajaManual(
+            tipo_evento="BAJA_MERMA", motivo="Otra baja", cantidad_afectada=1), id_usuario=1)
+        assert again.cantidad == remaining - 1
+        assert len(repo.movimientos) == 2
+
+
+@pytest.mark.parametrize("quantity", [0, -1, 11, True, 1.5, None])
+def test_invalid_partial_writeoff_leaves_stock_and_history_unchanged(inventory, quantity):
+    service, repo = inventory
+    resource = service.create_plancha(plancha_command(cantidad=10))
+    with pytest.raises(InventoryValidationError):
+        service.writeoff_plancha(resource.id_plancha, BajaManual(
+            tipo_evento="BAJA_ROTURA", motivo="Rotura", cantidad_afectada=quantity), id_usuario=1)
+    assert repo.get_plancha(resource.id_plancha) == resource
+    assert repo.movimientos == {}
+
+
+def test_patch_zero_quantity_automatically_deactivates(inventory):
+    service, _repo = inventory
+    resource = service.create_plancha(plancha_command())
+    updated = service.update_plancha(resource.id_plancha, UpdatePlancha(cantidad=0, estado=True))
+    assert updated.cantidad == 0 and updated.estado is False

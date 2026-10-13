@@ -241,7 +241,8 @@ def test_hu014_openapi_responses_and_success_schemas():
         success_content = responses[success_code]["content"]["application/json"]["schema"]
         if method == "post":
             request_schema = operation["requestBody"]["content"]["application/json"]["schema"]
-            assert request_schema["$ref"].endswith("/schemas/BajaManualRequest")
+            expected_request = "BajaPlanchaRequest" if "/planchas/" in path else "BajaManualRequest"
+            assert request_schema["$ref"].endswith(f"/schemas/{expected_request}")
         if is_list:
             assert success_content["type"] == "array"
             assert success_content["items"]["$ref"].endswith(

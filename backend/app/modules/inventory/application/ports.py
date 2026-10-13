@@ -29,7 +29,7 @@ class InventoryRepository(GlassCatalog, Protocol):
 
     Los métodos devuelven snapshots DTO desconectados (incluida geometria), nunca
     entidades ORM. Las altas asignan el ID y retornan el registro completo.
-    Listar incluye activos e inactivos, sin orden garantizado.
+    Listar incluye activos e inactivos; disponibles primero, fecha e ID descendentes.
 
     Las comprobaciones previas no reemplazan las garantías de concurrencia:
     el adaptador debe mantener unicidad y referencias válidas en la transacción,
@@ -59,7 +59,7 @@ class InventoryRepository(GlassCatalog, Protocol):
 
     def create_plancha_writeoff_movement(
         self, id_plancha: int, *, tipo_evento: str, motivo: str,
-        observacion: str | None, id_usuario: int,
+        observacion: str | None, id_usuario: int, cantidad_afectada: int,
     ) -> MovimientoInventarioData: ...
 
     def create_plancha(self, *, ancho_mm: Decimal, alto_mm: Decimal,

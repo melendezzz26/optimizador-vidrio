@@ -22,7 +22,6 @@ _MANUAL_WRITEOFF_EVENTS = tuple(event.value for event in TipoEventoBajaManual)
 _UNIQUE_CONFLICT_CONSTRAINTS = frozenset({
     "tipos_vidrio_nombre_key",
     "retazos_codigo_key",
-    "uq_movimientos_baja_manual_plancha",
     "uq_movimientos_baja_manual_retazo",
 })
 
@@ -158,6 +157,7 @@ class SqlAlchemyInventoryRepository:
             id_usuario=row.id_usuario,
             fecha=row.fecha,
             id_optimizacion=row.id_optimizacion,
+            cantidad_afectada=row.cantidad_afectada,
         )
 
     # ------------------------------------------------------------------ #
@@ -234,16 +234,16 @@ class SqlAlchemyInventoryRepository:
 
     def create_plancha_writeoff_movement(
         self, id_plancha: int, *, tipo_evento: str, motivo: str,
-        observacion: str | None, id_usuario: int,
+        observacion: str | None, id_usuario: int, cantidad_afectada: int,
     ) -> MovimientoInventarioData:
         return self._create_writeoff_movement(
             id_plancha=id_plancha, id_retazo=None, tipo_evento=tipo_evento,
-            motivo=motivo, observacion=observacion, id_usuario=id_usuario,
+            motivo=motivo, observacion=observacion, id_usuario=id_usuario, cantidad_afectada=cantidad_afectada,
         )
 
     def _create_writeoff_movement(
         self, *, id_plancha: int | None, id_retazo: int | None,
-        tipo_evento: str, motivo: str, observacion: str | None, id_usuario: int,
+        tipo_evento: str, motivo: str, observacion: str | None, id_usuario: int, cantidad_afectada: int,
     ) -> MovimientoInventarioData:
         session = self._require_session()
         row = MovimientoInventario(
@@ -254,6 +254,7 @@ class SqlAlchemyInventoryRepository:
             observacion=observacion,
             id_usuario=id_usuario,
             id_optimizacion=None,
+            cantidad_afectada=cantidad_afectada,
         )
         session.add(row)
         session.flush()
@@ -275,7 +276,10 @@ class SqlAlchemyInventoryRepository:
 
     def list_planchas(self) -> list[PlanchaData]:
         session = self._require_session()
-        return [self._to_plancha(row) for row in session.query(Plancha).all()]
+        return [self._to_plancha(row) for row in session.query(Plancha).order_by(
+            (Plancha.estado & (Plancha.cantidad > 0)).desc(),
+            Plancha.fecha_registro.desc(), Plancha.id_plancha.desc(),
+        ).all()]
 
     def list_plancha_movements(self, id_plancha: int) -> list[MovimientoInventarioData] | None:
         """Lista del más antiguo al más reciente; el ID ordena fechas iguales."""
@@ -336,9 +340,10 @@ class SqlAlchemyInventoryRepository:
         self, id_retazo: int, *, tipo_evento: str, motivo: str,
         observacion: str | None, id_usuario: int,
     ) -> MovimientoInventarioData:
+        cantidad_afectada = 1
         return self._create_writeoff_movement(
             id_plancha=None, id_retazo=id_retazo, tipo_evento=tipo_evento,
-            motivo=motivo, observacion=observacion, id_usuario=id_usuario,
+            motivo=motivo, observacion=observacion, id_usuario=id_usuario, cantidad_afectada=cantidad_afectada,
         )
 
     def retazo_codigo_exists(self, codigo: str, exclude_id: int | None = None) -> bool:
@@ -364,7 +369,9 @@ class SqlAlchemyInventoryRepository:
 
     def list_retazos(self) -> list[RetazoData]:
         session = self._require_session()
-        return [self._to_retazo(row) for row in session.query(Retazo).all()]
+        return [self._to_retazo(row) for row in session.query(Retazo).order_by(
+            Retazo.estado.desc(), Retazo.fecha_registro.desc(), Retazo.id_retazo.desc(),
+        ).all()]
 
     def list_retazo_movements(self, id_retazo: int) -> list[MovimientoInventarioData] | None:
         """Lista del más antiguo al más reciente; el ID ordena fechas iguales."""
