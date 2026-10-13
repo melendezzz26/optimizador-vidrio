@@ -59,3 +59,15 @@ def test_rejects_rows_outside_the_mask(columns, rows):
 def test_from_spans_rejects_span_outside_columns():
     with pytest.raises(RasterizationError):
         RasterMask.from_spans(5.0, 4, [(2, 5)])
+        
+def test_row_runs_lists_occupied_spans_from_left_to_right():
+    mask = RasterMask(5.0, 8, [0b1110_0110, 0, 0b1111_1111])
+
+    assert mask.row_runs(0) == ((1, 3), (5, 8))
+    assert mask.row_runs(1) == ()
+    assert mask.row_runs(2) == ((0, 8),)
+
+
+def test_row_runs_rejects_rows_outside_the_mask():
+    with pytest.raises(IndexError):
+        RasterMask(5.0, 2, [0b11]).row_runs(1)
