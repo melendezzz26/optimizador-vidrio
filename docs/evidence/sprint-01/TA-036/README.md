@@ -7,7 +7,8 @@ Rama: `feature/TA-036-saneamiento-funcional`. Implementación sometida a T06:
 | --- | --- |
 | [Implementación T02–T05](implementacion-validacion.md) | Cambios por bloque, migración y resultados históricos de la primera validación. |
 | [Correctivo de regresión](correctivo-regresion.md) | Causa de la pérdida de cobertura, matriz test anterior/equivalente actual y refuerzo de cantidad_afectada. |
-| [T06: regresión final](t06-regresion-final.md) | Ejecución completa backend/frontend/E2E, omisión explícita, matriz de CA, decisiones, revisión Git y riesgos residuales. Es la referencia de resultados finales. |
+| [T06: regresión final](t06-regresion-final.md) | Ejecución completa backend/frontend/E2E, omisión explícita, matriz de CA, decisiones, revisión Git y riesgos residuales del cierre T06. |
+| [Revisión técnica final](revision-tecnica-final.md) | Nueva ejecución completa, análisis literal de CA-09, conflicto documental HU-008 y preservación antes de retirar worktrees. No constituye revisión humana formal. |
 | [Ramas paralelas](auditoria-ramas.md) | Tips inspeccionados, solapamientos, contratos e instrucciones para compañeros después del merge de TA-036. |
 | [SPEC](../../../specs/SPEC-TA-036-saneamiento-funcional.md) | Contratos funcionales y criterios de aceptación. |
 
