@@ -1,84 +1,149 @@
-# SPEC-HU-008 — Stock compatible
-| | |
-| :--- | :--- |
-| **Estado** | Draft |
-| **PBI Relacionado** | HU-008 |
-| **Responsable** | Luis Ibañez & Andro Quispe |
+# SPEC-HU-008 - Stock compatible
 
-## 1. Objetivo
-Validar que cada pieza individual de un pedido tenga al menos una fuente de material compatible disponible en el inventario (plancha o retazo) antes de permitir el registro del pedido en el sistema. Esto evita iniciar procesos de optimización inviables.
+| Campo | Valor |
+|---|---|
+| Estado | Implemented - revisión independiente pendiente; no Verified |
+| PBI relacionado | HU-008 - Stock compatible |
+| Rama | feature/HU-008-stock-compatible |
+| Spike geométrico | [SP-005 - Compatibilidad geométrica pre-raster](../spikes/SP-005-compatibilidad-geometrica-pre-raster.md) |
+| Dependencia de disponibilidad | HU-014 - Baja y trazabilidad de inventario |
 
-## 2. Alcance
-- **Incluye:**
-  - Consulta de planchas nuevas y retazos reutilizables filtrados por tipo de vidrio y espesor.
-  - Validación geométrica individual de cada pieza utilizando la regla definida en el Spike SP-005.
-  - Bloqueo del registro de pedido si una o más piezas carecen de stock candidato.
-  - Generación de mensajes de error específicos (HTTP 422) identificando la pieza sin stock.
-- **Fuera de alcance:**
-  - Simulación de corte y empaquetamiento conjunto del pedido (*bin packing*).
-  - Reserva, descuento o alteración del inventario en base de datos.
-  - Manejo de piezas con geometrías no definidas o inválidas (cubierto en validaciones previas de la API).
+Cinco commits previos de Luis Anthony Ibañez Herrera se preservaron sin
+reescritura. Los commits posteriores y los resultados reproducibles se registran
+en docs/evidence/sprint-01/HU-008/.
 
-## 3. Actor y precondiciones
-- **Actor:** Operario (inicia el registro del pedido) / Sistema (ejecuta la validación).
-- **Precondiciones:**
-  - El usuario (Operario) ha iniciado sesión y tiene permisos válidos.
-  - La base de datos contiene inventario activo (planchas o retazos).
-  - El payload HTTP recibido en el endpoint de creación de pedido es estructuralmente válido.
+## 1. Objetivo y alcance
 
-## 4. Entradas / datos
-- **Petición (Payload de Pedido):**
-  - `id_tipo_vidrio` (Integer): Material del pedido.
-  - `espesor_mm` (Float): Espesor del pedido.
-  - `piezas` (Array de objetos): Lista de piezas a validar, cada una con `tipo_forma` y `dimensiones`.
-- **Datos de Inventario (Consulta a BD):**
-  - Entidades `PLANCHA` y `RETAZO` filtradas.
+Antes de persistir un pedido nuevo, comprobar que cada pieza solicitada tenga al
+menos una plancha o retazo candidato individual de su tipo de vidrio y espesor.
+Si una o más piezas no tienen candidato, el POST se rechaza completo, se
+identifica cada pieza y no se persiste pedido ni piezas.
 
-## 5. Reglas de negocio
-- **RN-01 (Filtrado de Material):** Las fuentes candidatas de stock deben coincidir exactamente con el `id_tipo_vidrio` y `espesor_mm` del pedido.
-- **RN-02 (Disponibilidad):** Las fuentes candidatas deben tener `estado = True`. Para las planchas, adicionalmente `cantidad > 0`.
-- **RN-03 (Cabida Geométrica):** Se aplica la regla geométrica formalizada en **SP-005** (evaluación de Bounding Box con rotación de 90 grados).
-- **RN-04 (Bloqueo Estricto):** Si existe **al menos una pieza** en el pedido que no cumple la RN-03 frente a todo el stock disponible (planchas y retazos), se rechaza todo el pedido.
+La validación es pre-raster, de solo lectura y no reserva ni consume inventario.
+No garantiza factibilidad conjunta de las piezas ni cambia el comportamiento de
+PUT /api/orders para editar pedidos existentes.
 
-## 6. Flujo principal
-1. El backend recibe la solicitud POST para crear un nuevo pedido.
-2. La capa de aplicación extrae el material y espesor requeridos.
-3. El repositorio de inventario consulta la BD y retorna todas las planchas y retazos disponibles (RN-01, RN-02).
-4. El servicio de dominio itera sobre cada pieza del pedido.
-5. Para cada pieza, calcula su Bounding Box y verifica si cabe en al menos un elemento del stock retornado (RN-03).
-6. Si todas las piezas tienen al menos un candidato válido, la validación pasa y el flujo de registro continúa.
+Incluye las geometrías actuales de Orders: RECTANGULO, CIRCUNFERENCIA y
+POLIGONO_CONVEXO. La regla geométrica se define en SP-005.
 
-## 7. Flujos alternativos / errores
-- **E-01 (Stock Insuficiente por Pieza):**
-  - Condición: En el paso 5, una pieza no encuentra ningún candidato compatible.
-  - Acción: Se interrumpe la iteración, se bloquea el registro y la API responde con un código HTTP 422 (Unprocessable Entity).
-  - Respuesta sugerida: `{"detail": "La pieza [Nombre/Índice] no cuenta con material disponible en stock que soporte sus dimensiones."}`.
-- **E-02 (Inventario Vacío):**
-  - Condición: En el paso 3, la consulta a BD retorna una lista vacía para ese material/espesor.
-  - Acción: Se rechaza inmediatamente el pedido con HTTP 422 indicando "No hay stock registrado para este tipo de vidrio y espesor."
+Fuera de alcance: rasterización, colocación conjunta, heurísticas FF/BF/WF,
+elección del mejor candidato, reserva, confirmación o consumo.
 
-## 8. Criterios de aceptación
-- **CA-01 (T01):** El repositorio filtra correctamente el stock usando el tipo de vidrio y espesor sin alterar la base de datos.
-- **CA-02 (T02):** El validador procesa las dimensiones de las piezas y aprueba el encaje en planchas permitiendo rotación ortogonal.
-- **CA-03 (T03):** El validador incluye los retazos reutilizables disponibles como fuentes válidas de material.
-- **CA-04 (T04):** Un intento de registrar un pedido con una pieza más grande que cualquier stock disponible retorna HTTP 422 y un mensaje claro.
+## 2. Regla de candidato compatible
 
-## 9. Impacto técnico
-- **Módulos:**
-  - `Inventory`: Modificación de `application/ports.py` y `infrastructure/repositories.py`.
-  - `Orders`: Creación de validador en `domain/validators.py` y ajuste en los casos de uso (`application/use_cases.py`).
-- **API:** Posibles nuevos códigos de respuesta 422 en el endpoint `POST /api/orders`.
-- **BD / migración:** No requiere cambios estructurales; usa tablas existentes (`PLANCHA`, `RETAZO`).
+Una pieza tiene candidato si al menos un recurso satisface tipo de vidrio,
+espesor, disponibilidad y cabida individual por caja envolvente. La pieza se
+comprueba una vez por línea; el campo cantidad no multiplica recursos ni inicia
+una reserva conjunta.
 
-## 10. Pruebas previstas
-- **Unitarias (Dominio):** Validación de la lógica geométrica (`fits_geometrically`, `has_candidate`) con mocks de inventario.
-- **Integración (Repositorio):** Pruebas de consultas a PostgreSQL para asegurar el correcto filtrado (RN-01, RN-02).
-- **API (Caja Negra):** Envío de un pedido válido (retorna 200/201) y envío de un pedido con pieza gigante (retorna 422).
+Plancha: mismo id_tipo_vidrio y espesor_mm, estado = true, cantidad > 0 y
+dimensiones suficientes en orientación normal o girada 90 grados.
 
-## 11. Evidencias requeridas
-- Reporte de pytest demostrando la ejecución exitosa de las pruebas unitarias y de integración.
-- Respuestas HTTP capturadas comprobando el error 422 para piezas sin stock.
-- Pull Request fusionado aplicando la arquitectura limpia.
+Retazo: mismo id_tipo_vidrio y espesor_mm, estado = true y caja envolvente
+derivada de la geometría suficiente en orientación normal o girada 90 grados.
+No hay cantidad de retazo.
 
-## 12. Decisiones / notas
-- La responsabilidad técnica se divide: T01 y T02 (infraestructura y dominio geométrico para planchas) por Luis Ibañez, y T03 y T04 (consulta de retazos e integración al caso de uso) por Andro Quispe.
+El ajuste es inclusivo en los bordes. Para cajas (w, h) de pieza y (W, H) de
+stock:
+
+    (w <= W AND h <= H) OR (w <= H AND h <= W)
+
+La caja de una circunferencia usa su diámetro en ambos ejes. La caja de un
+polígono usa max - min de cada coordenada. Para geometrías no rectangulares de
+retazo, comparar envolventes es un filtro pre-raster; no certifica contención
+exacta en la silueta ni una colocación final. La limitación está documentada
+en SP-005.
+
+### Disponibilidad HU-014
+
+HU-014 registra la baja y fija estado=false atómicamente; también impide
+reactivar un recurso con una baja manual. Por eso Inventory excluye material
+inactivo y planchas con cantidad cero usando el estado actual del recurso, sin
+consultar de nuevo la tabla de movimientos. Esta decisión depende del invariante
+transaccional de HU-014; una escritura externa que deje movimiento de baja con
+estado=true quedaría fuera del contrato actual.
+
+## 3. Flujo de creación
+
+1. Orders valida el cliente, catálogo, cantidades y geometrías con las reglas
+   actuales.
+2. El puerto de Orders StockCandidateChecker solicita los índices de piezas sin
+   candidato.
+3. El adaptador de infraestructura delega a Inventory.StockCompatibilityService
+   y a InventoryRepository.get_compatible_stock; no hace una llamada HTTP interna.
+4. Inventory agrupa lecturas por pareja de tipo/espesor dentro de
+   read_transaction(), calcula cajas y evalúa cada pieza sin considerar su
+   cantidad como reserva.
+5. Si falta un candidato, Orders lanza NoCompatibleStockException. El endpoint
+   devuelve 422 antes de invocar la persistencia de Orders.
+6. Si todas las piezas tienen candidato, el flujo existente persiste pedido y
+   piezas en una transacción.
+
+El validador de dominio no importa FastAPI ni SQLAlchemy. Application depende del
+puerto; el adaptador de Orders Infrastructure conecta ese puerto con el servicio
+y repositorio de Inventory. La lectura finaliza con rollback y no escribe
+inventario. No se añaden tablas ni migraciones.
+
+## 4. Contrato de error API
+
+El POST conserva el 422 usado por Orders para reglas de negocio. Para falta de
+stock devuelve un objeto detail estructurado:
+
+    {
+      "detail": {
+        "code": "NO_COMPATIBLE_STOCK",
+        "message": "Una o más piezas no tienen material compatible disponible.",
+        "pieces": [
+          {
+            "index": 2,
+            "reason": "No hay plancha ni retazo disponible del tipo y espesor seleccionados con dimensiones suficientes para esta pieza."
+          }
+        ]
+      }
+    }
+
+index es base 1 y corresponde al orden de piezas del POST. No se exponen SQL,
+traceback ni datos innecesarios. Los demás errores de 422 mantienen el contrato
+vigente.
+
+## 5. Comportamiento frontend
+
+El formulario canónico FormularioPedido conserva cliente y piezas al recibir
+NO_COMPATIBLE_STOCK, marca las piezas indicadas y muestra su motivo junto a la
+pieza. Si el usuario edita una pieza marcada, retira el mensaje de esa pieza para
+que pueda corregir y volver a enviar. El backend es la fuente de verdad y no se
+replica una consulta de stock en React.
+
+El modo de edición no usa el chequeo de stock de creación. No se amplió
+HU-008 al PUT de pedidos históricos.
+
+## 6. Tareas y criterios de aceptación
+
+| Tarea | Resultado implementado |
+|---|---|
+| T01 - filtrar por tipo y espesor | get_compatible_stock aplica parejas exactas y disponibilidad; pruebas PostgreSQL cubren tipo, espesor, estado y cantidad. |
+| SP-005 T01 - formalizar candidato | Regla de caja envolvente, rotación, disponibilidad, límite individual/conjunto y colisión histórica documentados en el spike geométrico. |
+| T02 - planchas | El servicio evalúa cada forma contra planchas candidatas con dimensiones exactas, rotación y rechazo por tamaño. |
+| T03 - retazos | El servicio deriva la caja desde rectángulo, círculo o polígono convexo persistido y acepta con un solo candidato individual. |
+| T04 - bloquear registro | El POST verifica todas las piezas antes de persistir y devuelve los índices/motivos; el formulario conserva y marca el borrador. |
+
+- CA-01: una pieza con plancha compatible disponible se acepta.
+- CA-02: un retazo compatible puede satisfacer la validación individual.
+- CA-03: se excluyen materiales inactivos, planchas con cantidad cero y parejas
+  incompatibles de tipo/espesor.
+- CA-04: si alguna pieza carece de candidato, no se persiste el pedido ni ninguna
+  pieza.
+- CA-05: API y UI identifican la pieza y muestran un motivo comprensible.
+- CA-06: la validación no modifica cantidades ni estados de inventario.
+
+## 7. Pruebas y evidencia
+
+La evidencia ejecutable cubre cajas de geometría, límites exactos, rotación, no
+cabida, candidatos de plancha y retazo, filtros reales de Inventory en PostgreSQL,
+disponibilidad HU-014, errores de Orders, ausencia de persistencia parcial,
+conservación del borrador, E2E de éxito/rechazo, suites completas y Alembic.
+Los comandos y sus resultados exactos se registran en
+[La evidencia reproducible](../evidence/sprint-01/HU-008/README.md).
+
+Implemented describe el estado de código y validación de esta rama. La SPEC no
+pasa a Verified: falta una revisión independiente y el cierre formal del PR.
