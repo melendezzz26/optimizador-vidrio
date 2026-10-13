@@ -67,7 +67,10 @@ Alinear especificaciones y contratos de NewGlass alrededor de la geometría can�
 
 - La geometría canónica de un polígono es la secuencia ordenada `vertices_mm`; el último vértice se conecta implícitamente con el primero y no hace falta duplicarlo al final.
 - La forma final debe reconstruirse inequívocamente de esa secuencia. Longitudes y ángulos interiores son propiedades derivables; no se agregan columnas `angulo_1`, `angulo_2`, etc. sin una necesidad de dominio aprobada.
-- El editor conserva los vértices dibujados y su escala a medidas físicas. Las longitudes y ángulos forman parte de la forma resultante mediante las coordenadas; no se reconstruye una forma alternativa usando solamente longitudes.
+- Aclaración funcional solicitada el 13/10/2026 y ampliada tras validación manual: todos los lados son independientes. En triángulos, tres lados válidos determinan la forma (salvo movimientos rígidos/reflexión); `10/10/30` se rechaza. Para n lados se permiten hasta n−3 ángulos interiores fijados en vértices diferentes: 0/1/2/3 para triángulo/cuadrilátero/pentágono/hexágono. La UI identifica Fijado/Calculado, permite fijar/liberar y muestra utilizados/permitidos; el límite no garantiza que cualquier combinación sea compatible.
+- Sin ángulos fijados se ofrece una construcción cíclica explícita o búsqueda orientada por el boceto. Fijar ángulos usa esos valores como restricciones exactas (dentro de tolerancia), no exige además conciclicidad. El boceto aporta número/orden, orientación, topología y punto de partida; nunca una medición angular exacta. Se bloquea el cambio de configuración mientras haya restricciones fijadas, con indicación de liberarlas primero.
+- Editar un lado nunca sobrescribe los demás. El modo de reescalado automático se retira de la UI por solicitud expresa; las geometrías existentes se usan como punto de partida con sus longitudes explícitas. Las restricciones pertenecen al borrador de edición; solo los vértices finales `vertices_mm` son geometría persistida. Guardado y rasterización consumen esos vértices. Escalar explícitamente todas las medidas por igual conserva la forma correspondiente.
+- El solver comprueba de nuevo longitudes (error relativo ≤1e−7), ángulos fijados (error ≤1e−5 grados), suma angular (error ≤n×1e−5 grados), cierre implícito incluida la última arista, área, convexidad y ausencia de autointersección. El cierre numérico usa residual normalizado ≤1e−9. La validación convexa compartida conserva tolerancia relativa 1e−9. No se aceptan resultados únicamente porque termine la iteración; ante incompatibilidad o falta de convergencia se bloquea confirmar y se explica que no se encontró solución, sin afirmar una demostración de imposibilidad.
 - Validación backend conserva convexidad, cierre, ausencia de autointersección, área positiva y límites numéricos. El escalado del lienzo transforma coordenadas sin cambiar la forma ni su orden.
 - La rasterización futura consume los `vertices_mm` persistidos, sin reconstruir el polígono a partir de medidas de lados.
 
@@ -264,3 +267,56 @@ están consolidados en `docs/evidence/sprint-01/TA-036/README.md`.
 READY FOR HUMAN REVIEW no representa aprobación ni transición a Verified.
 La revisión humana decidirá los pasos Reviewed/Implemented y, posteriormente,
 Verified conforme al flujo establecido.
+
+## 18. Ajuste funcional solicitado después de la revisión técnica — 13/10/2026
+
+La solicitud posterior amplía la edición geométrica conforme a §6.1: lados
+independientes, triángulos por tres lados, cuadriláteros con V2 fijado y
+pentágonos con restricción cíclica explícita. Sustituye la limitación a escala
+uniforme de la implementación inicial descrita históricamente en §15; no
+restaura la premisa de que cualquier polígono queda definido únicamente por
+longitudes. El retazo utiliza exactamente el mismo `CustomPieceEditor`.
+
+También se solicita que los módulos se naveguen exclusivamente desde el
+sidebar, según permisos, y que el header de sesión contenga solo identidad,
+rol y cerrar sesión. No se modifican autenticación ni autorizaciones.
+
+Los resultados históricos de T06 y la revisión técnica anterior corresponden
+a sus SHA; no certifican estos cambios posteriores. Nueva evidencia en
+`docs/evidence/sprint-01/TA-036/ajuste-editor-navegacion.md`.
+CA-09 no cambia. La SPEC permanece **Draft**, con **Reviewer pendiente**.
+
+## 19. Último correctivo de validación manual — 13/10/2026
+
+Se registran dos hallazgos posteriores a §18: faltaban restricciones angulares
+genéricas para polígonos de cuatro o más lados y el alta de retazo poligonal
+fallaba al serializar coordenadas Decimal dentro de tuplas. §6.1 refleja la
+ampliación angular solicitada; no se sustituye el modelo canónico ni el
+rasterizador de Aguilar. El editor corregido sigue compartido por pedidos y
+retazos. No se habilita concavidad.
+
+El normalizador de Infrastructure convierte recursivamente listas **y tuplas**
+antes de persistir JSONB; Decimal se mantiene en schema Python/DTO/dominio y
+se convierte a int/float en esa frontera. El serializer HTTP de `vertices_mm`
+también entrega números, no strings. Aplica a POST y PATCH; sin migración.
+
+Evidencia, tolerancias, diagnóstico, pruebas y pasos manuales en
+`docs/evidence/sprint-01/TA-036/correctivo-angular-json.md`.
+Se preserva navegación actual según confirmación del usuario; Inicio,
+Resultados y Configuración no tienen pantallas funcionales en esta rama.
+CA-09 sigue **PARTIAL**, sin cambios en su redacción. Estado **Draft**,
+reviewer pendiente. Los cambios se mantuvieron sin commit hasta el retest
+manual del usuario.
+
+## 20. Validación manual final — 13/10/2026
+
+El usuario confirmó: «El retest manual final de TA-036 fue satisfactorio».
+Autorizó registrar los cambios locales en cuatro commits separados:
+geometría/editor y pruebas, navegación y pruebas, persistencia JSON de retazo
+y pruebas, y evidencia documental. No autoriza push ni merge.
+
+Se registra el resultado funcional comunicado por el usuario, sin atribuir
+una nueva ejecución manual al agente ni inventar una aprobación de reviewer.
+La SPEC permanece **Draft**, **Reviewer pendiente**, y CA-09 **PARTIAL** con
+su redacción intacta. El detalle y las pruebas automatizadas previas están en
+`docs/evidence/sprint-01/TA-036/correctivo-angular-json.md`.
