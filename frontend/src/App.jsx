@@ -3,6 +3,7 @@ import {
   LoginForm,
   SessionBar,
   canManageOrders,
+  canExecuteOptimization,
   canManageUsers,
   canViewInventory,
   useSession,
@@ -10,6 +11,7 @@ import {
 import { InventoryPage } from './features/inventory/InventoryPage';
 import { UsersPage } from './features/users';
 import GestionPedidos from './features/orders/GestionPedidos';
+import { OptimizationPage } from './features/optimization';
 
 import { NavigationContext } from './shared/components/NavigationContext';
 import './App.css';
@@ -32,6 +34,7 @@ function App() {
   const showUsersOption = canManageUsers(session.usuario);
   const allowedViews = [
     showOrdersOption && 'orders',
+    canExecuteOptimization(session.usuario) && 'optimization',
     showInventoryOption && 'inventory',
     showUsersOption && 'users',
   ].filter(Boolean);
@@ -43,6 +46,8 @@ function App() {
   let page;
   if (currentView === 'users') {
     page = <UsersPage currentUser={session.usuario} onSessionExpired={signOut} toolbar={toolbar} />;
+  } else if (currentView === 'optimization') {
+    page = <OptimizationPage user={session.usuario} token={session.token || session.access_token} onSessionExpired={signOut} toolbar={toolbar} />;
   } else if (currentView === 'inventory') {
     page = <InventoryPage onSessionExpired={signOut} toolbar={toolbar} user={session.usuario} />;
   } else page = <GestionPedidos

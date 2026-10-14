@@ -23,7 +23,7 @@ test('módulos accesibles solo desde sidebar; header conserva identidad, rol y c
   expect(within(header).getByRole('button', { name: 'Cerrar sesión' })).toBeVisible();
   expect(within(header).getByText('Administrador')).toBeVisible();
   expect(within(header).queryByRole('navigation')).not.toBeInTheDocument();
-  for (const label of ['Registro de pedidos', 'Gestión de inventario', 'Panel de roles']) {
+  for (const label of ['Registro de pedidos', 'Optimización', 'Gestión de inventario', 'Panel de roles']) {
     expect(screen.getAllByRole('button', { name: label, exact: true })).toHaveLength(1);
     expect(within(sidebar).getByRole('button', { name: label, exact: true })).toBeEnabled();
   }
@@ -43,4 +43,24 @@ test('sidebar respeta permisos del operario sin exponer Panel de roles', () => {
   state.role = 'Operario'; render(<App />);
   expect(screen.queryByRole('button', { name: 'Panel de roles' })).not.toBeInTheDocument();
   expect(screen.getByRole('button', { name: 'Gestión de inventario', exact: true })).toBeVisible();
+  expect(screen.getByRole('button', { name: 'Optimización', exact: true })).toBeVisible();
+});
+
+test.each(['Administrador', 'Operario'])('%s navega a Optimization por teclado sin cambiar subpath', async role => {
+  state.role = role;
+  window.history.replaceState({}, '', '/optimizador-vidrio/');
+  const user = userEvent.setup(); render(<App />);
+  const button = screen.getByRole('button', { name: 'Optimización', exact: true });
+  button.focus(); await user.keyboard('{Enter}');
+  expect(screen.getByRole('heading', { name: 'Optimización', exact: true })).toBeVisible();
+  expect(screen.getByRole('button', { name: 'Optimización', exact: true })).toHaveAttribute('aria-current', 'page');
+  expect(window.location.pathname).toBe('/optimizador-vidrio/');
+  expect(screen.getAllByRole('button', { name: 'Cerrar sesión' })).toHaveLength(1);
+  window.history.replaceState({}, '', '/');
+});
+
+test('Almacenero conserva Inventory como fallback sin exponer Optimization', () => {
+  state.role = 'Almacenero'; render(<App />);
+  expect(screen.queryByRole('button', { name: 'Optimización' })).not.toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Gestión de Inventario' })).toBeVisible();
 });

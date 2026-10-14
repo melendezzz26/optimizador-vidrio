@@ -8,6 +8,10 @@ export function canManageOrders(user) {
   return ['Administrador', 'Operario'].includes(user?.rol);
 }
 
+export function canExecuteOptimization(user) {
+  return ['Administrador', 'Operario'].includes(user?.rol);
+}
+
 export function canViewInventory(user) {
   return ['Administrador', 'Almacenero', 'Operario'].includes(user?.rol);
 }

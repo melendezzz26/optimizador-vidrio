@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Callable
 from decimal import Decimal
 from sqlalchemy.orm import Session
 from sqlalchemy import select, null, func, cast, Date, delete, update
@@ -58,6 +58,7 @@ class SQLAlchemyOrderRepository(OrderRepositoryPort):
         rows = self.session.execute(
             select(Pedido, Pieza).outerjoin(Pieza, Pieza.id_pedido == Pedido.id_pedido)
             .where(Pedido.id_pedido == id_pedido).order_by(Pieza.id_pieza)
+            .execution_options(populate_existing=True)
         ).all()
         if not rows:
             return None
@@ -76,6 +77,32 @@ class SQLAlchemyOrderRepository(OrderRepositoryPort):
                 "area_mm2": piece.area_mm2,
             } for _, piece in rows if piece is not None],
         }
+
+    def start_optimization(self, id_pedido: int, validate: Callable[[dict], None]) -> OrderMutationResult:
+        try:
+            # CAS obtiene el bloqueo de escritura de cabecera. Releer DESPUÉS
+            # evita validar piezas obsoletas si update/cancel ganó la carrera.
+            # El cambio tentativo nunca es visible sin validación y commit.
+            identifier = self.session.execute(
+                update(Pedido)
+                .where(Pedido.id_pedido == id_pedido, Pedido.estado == "PENDIENTE")
+                .values(estado="EN_OPTIMIZACION")
+                .returning(Pedido.id_pedido)
+                .execution_options(synchronize_session=False)
+            ).scalar_one_or_none()
+            if identifier is None:
+                exists = self.session.execute(
+                    select(Pedido.id_pedido).where(Pedido.id_pedido == id_pedido)
+                ).scalar_one_or_none()
+                self.session.rollback()
+                return (OrderMutationResult.NOT_FOUND if exists is None
+                        else OrderMutationResult.STATE_CONFLICT)
+            validate(self.get_order(id_pedido))
+            self.session.commit()
+            return OrderMutationResult.UPDATED
+        except Exception:
+            self.session.rollback()
+            raise
 
     def list_orders(self, limit: int, offset: int, estado: str | None = None, cliente: str | None = None, fecha: date | None = None) -> dict:
 
