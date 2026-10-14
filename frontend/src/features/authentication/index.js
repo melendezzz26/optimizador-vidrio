@@ -11,5 +11,6 @@ export {
 	canManageRetazos,
 	canManageUsers,
 	canViewInventory,
+	canViewDashboard,
 	canViewResults,
 } from './permissions';

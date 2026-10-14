@@ -8,6 +8,8 @@ test.beforeEach(async ({ page, baseURL }) => {
   await page.getByLabel('Usuario', { exact: true }).fill('O70000001');
   await page.getByLabel('Contraseña', { exact: true }).fill('Orders-test-2026!');
   await page.getByRole('button', { name: 'Ingresar', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Inicio', exact: true })).toHaveAttribute('aria-current', 'page');
+  await page.getByRole('button', { name: 'Registro de pedidos', exact: true }).click();
   await page.getByRole('button', { name: 'Nuevo pedido', exact: true }).click();
   await expect(page.getByRole('dialog', { name: 'Crear pedido', exact: true })).toBeVisible();
 });

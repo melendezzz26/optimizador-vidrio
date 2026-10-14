@@ -11,7 +11,7 @@ vi.mock('../../features/authentication', async importOriginal => ({
 }));
 beforeEach(() => {
   state.role = 'Administrador'; state.signOut.mockClear();
-  vi.stubGlobal('fetch', vi.fn(async url => ({ ok: true, status: 200, json: async () => String(url).endsWith('/api/orders?limit=10&offset=0') || String(url).includes('/api/orders?') ? { items: [], total: 0, total_pages: 0 } : [] })));
+  vi.stubGlobal('fetch', vi.fn(async url => ({ ok: true, status: 200, json: async () => String(url).endsWith('/api/orders?limit=10&offset=0') || String(url).includes('/api/orders?') ? { items: [], total: 0, total_pages: 0, page: 1, limit: 10 } : [] })));
 });
 afterEach(() => vi.unstubAllGlobals());
 
@@ -23,7 +23,7 @@ test('módulos accesibles solo desde sidebar; header conserva identidad, rol y c
   expect(within(header).getByRole('button', { name: 'Cerrar sesión' })).toBeVisible();
   expect(within(header).getByText('Administrador')).toBeVisible();
   expect(within(header).queryByRole('navigation')).not.toBeInTheDocument();
-  for (const label of ['Registro de pedidos', 'Optimización', 'Gestión de inventario', 'Panel de roles']) {
+  for (const label of ['Inicio', 'Registro de pedidos', 'Optimización', 'Gestión de inventario', 'Panel de roles']) {
     expect(screen.getAllByRole('button', { name: label, exact: true })).toHaveLength(1);
     expect(within(sidebar).getByRole('button', { name: label, exact: true })).toBeEnabled();
   }
@@ -59,8 +59,9 @@ test.each(['Administrador', 'Operario'])('%s navega a Optimization por teclado s
   window.history.replaceState({}, '', '/');
 });
 
-test('Almacenero conserva Inventory como fallback sin exponer Optimization', () => {
+test('Almacenero entra a Inicio y conserva Inventory sin exponer Optimization', () => {
   state.role = 'Almacenero'; render(<App />);
   expect(screen.queryByRole('button', { name: 'Optimización' })).not.toBeInTheDocument();
-  expect(screen.getByRole('heading', { name: 'Gestión de Inventario' })).toBeVisible();
+  expect(screen.getByRole('heading', { name: 'Inicio' })).toBeVisible();
+  expect(screen.getByRole('button', { name: 'Gestión de inventario', exact: true })).toBeVisible();
 });

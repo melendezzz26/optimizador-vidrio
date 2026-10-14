@@ -1,15 +1,17 @@
 import { useContext } from 'react';
-import { PackagePlus, Layers3, ShieldCheck, ScanLine } from 'lucide-react';
+import { House, PackagePlus, Layers3, ShieldCheck, ScanLine } from 'lucide-react';
 import { NavigationContext } from './NavigationContext';
 import {
   canManageOrders,
   canExecuteOptimization,
   canManageUsers,
   canViewInventory,
+  canViewDashboard,
 } from '../../features/authentication/permissions';
 import './ui.css';
 
 const sections = [
+  { id: 'dashboard', label: 'Inicio', icon: House, canView: canViewDashboard },
   { id: 'orders', label: 'Registro de pedidos', icon: PackagePlus, canView: canManageOrders },
   { id: 'optimization', label: 'Optimización', icon: ScanLine, canView: canExecuteOptimization },
   { id: 'inventory', label: 'Gestión de inventario', icon: Layers3, canView: canViewInventory },

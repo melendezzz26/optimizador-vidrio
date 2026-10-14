@@ -121,6 +121,7 @@ T3: Playwright existente con navegador/backend/datos reales controlados; login d
 - Orders prioriza no cancelados: no presentar los primeros cinco como los cinco últimos absolutos.
 - Clientes no conserva status en errores actualmente; extensión mínima para 401 debe mantener mensajes/contratos de consumidores existentes.
 - Cambio del destino inicial modifica expectativas de pruebas de navegación: actualizar sus entradas al módulo explícitamente, sin eliminar aserciones anteriores.
+- HU-007/Orders y HU-012 E2E asumían Orders activo justo después de login. T1 adapta únicamente su entrada a Inicio → Pedidos, conservando cuerpos/aserciones; ejecución real y cierre E2E permanecen pendientes de T3.
 - PLAN no tiene aprobación técnica humana registrada; T1 se ejecuta por autorización explícita del equipo, conservando esa distinción.
 
 Fuera de alcance: gráficos, alertas/umbrales, métricas futuras/M1/M2, FF/BF/WF, ejecución de optimización, stock compatible, placement, merma/aprovechamiento, mutaciones, migraciones, dashboard final T2, E2E/evidencia final T3, push/PR/merge/deploy.
@@ -135,14 +136,14 @@ PBI completo posteriormente: UI final T2, 18 CA contrastados, integración/regre
 
 ### T1 — Navegación + datos
 
-- [ ] Auditar rama/base, SPEC completa, navegación/sesión/roles y contratos HTTP.
-- [ ] Crear este PLAN y la división de tareas sin atribuir aprobación humana nueva.
-- [ ] Añadir vista dashboard protegida, Inicio en Sidebar, entrada post-login/restauración y logout/relogin.
-- [ ] Reutilizar GET existentes, extender opciones/errores mínimos y componer fuentes por permisos.
-- [ ] Transformar resúmenes con alcance real; implementar loading/empty/success/error/partial-error sin valores ficticios.
-- [ ] Descartar respuestas obsoletas y resolver 401 mediante sesión global.
-- [ ] Añadir pantalla mínima y pruebas de modelo/API/hook/App; ejecutar focalizadas, unit/component, lint/build/diff check.
-- [ ] Registrar resultados reales y estado de 18 CA; commit local técnico y árbol limpio.
+- [x] Auditar rama/base, SPEC completa, navegación/sesión/roles y contratos HTTP.
+- [x] Crear este PLAN y la división de tareas sin atribuir aprobación humana nueva.
+- [x] Añadir vista dashboard protegida, Inicio en Sidebar, entrada post-login/restauración y logout/relogin.
+- [x] Reutilizar GET existentes, extender opciones/errores mínimos y componer fuentes por permisos.
+- [x] Transformar resúmenes con alcance real; implementar loading/empty/success/error/partial-error sin valores ficticios.
+- [x] Descartar respuestas obsoletas y resolver 401 mediante sesión global.
+- [x] Añadir pantalla mínima y pruebas de modelo/API/hook/App; ejecutar focalizadas, unit/component, lint/build/diff check.
+- [x] Registrar resultados reales y estado de 18 CA; entrega mediante commit local técnico.
 
 **Cierre verificable:** infraestructura de navegación/datos funcional y probada; no UI final ni E2E/capturas finales. Evidencia técnica T1 en `docs/evidence/sprint-01/TA-DASHBOARD-001/t1-navegacion-datos.md` cuando exista.
 
@@ -168,3 +169,4 @@ PBI completo posteriormente: UI final T2, 18 CA contrastados, integración/regre
 ## Historial del plan
 
 - 14/10/2026 — Draft: planificación y TASKS derivadas de SPEC Approved `835c30d` y contratos de la base integrada `86972fd`. Backend innecesario; tareas en §12 conforme al PLAN previo. La implementación T1 fue solicitada expresamente; no se inventa aprobación técnica del PLAN ni se marca el PBI completo.
+- 14/10/2026 — T1 implementada y comprobada; estado documental del PLAN sigue Draft, revisión técnica humana pendiente. Resultados y matriz CA parcial en [evidencia técnica T1](../evidence/sprint-01/TA-DASHBOARD-001/t1-navegacion-datos.md). T2/T3 siguen sin ejecutar; SPEC conserva Approved.
