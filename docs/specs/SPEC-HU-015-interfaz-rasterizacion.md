@@ -1,0 +1,432 @@
+# SPEC-HU-015 — Interfaz de rasterización
+
+## Información general
+
+| Campo | Valor |
+|---|---|
+| Estado | **Draft** |
+| PBI relacionado | HU-015 — Interfaz de rasterización; Sprint 1 |
+| Responsable | Fabricio Melendez |
+| Reviewer | Por designar |
+| Fecha de auditoría | 13/10/2026 |
+| Rama auditada | `integration/sprint-01` |
+| HEAD local inicial y remoto después de fetch | `728c1dd9020f6c562419620bbcaa1c1ca0545757` |
+| Convención | SPEC de archivo único, según `SPEC-TEMPLATE.md` y `CONTRIBUTING.md` |
+
+Documento de alcance para revisión. No constituye implementación, plan técnico ni división de tareas aprobada. Los hechos auditados se distinguen de las decisiones señaladas como **Propuesta para revisión**. No se ejecutaron pruebas, experimentos ni capturas para redactarlo.
+
+## 1. Contexto, fuente y problema
+
+La fuente explícita recuperada es [ADR-002, §2.11](../adr/ADR-002-operacion-pre-raster.md): selección de pedido; recuperación de piezas; ejecución/configuración permitida; visualización de geometría original frente a máscara raster; estados de error y resultado. El mismo ADR identifica HU-015 por nombre y mantiene FF/BF/WF en Sprint 2.
+
+Se buscaron HU-015/HU015, interfaz/visualización raster, rasterización, Optimization y Results en el repositorio, documentación, historial y referencias remotas disponibles. No se recuperó una SPEC previa de HU-015, plan, tasks ni un backlog versionado que detalle sus criterios. **La división original T1/T2/T3 no fue encontrada en las fuentes auditadas.** No se le atribuirá una división histórica inventada. Un plan/tasks posterior podrá contener una **«Descomposición técnica propuesta»** identificada como tal.
+
+El backend integrado convierte las tres geometrías admitidas en máscaras y valida colocaciones. Sin embargo, no tiene una API de rasterización ni una pantalla que conecte pedidos persistidos con ese dominio. Las imágenes de experimentos no constituyen una interfaz funcional.
+
+Hay documentación histórica divergente: ADR-002 §2.4 exige stock antes de registrar pedidos; [TA-036, §6.2](SPEC-TA-036-saneamiento-funcional.md) y `CreateOrderUseCase` vigente mantienen el POST independiente del stock. HU-015 conserva esta última regla. El apartado inicial de auditoría de TA-036 describe un Optimization aún vacío, pero es anterior a las integraciones #42/#43 y no describe el HEAD actual. No se modifican esos documentos en esta tarea.
+
+## 2. Objetivo
+
+Permitir a los usuarios autorizados seleccionar un pedido persistido, consultar sus piezas y visualizar su geometría original junto con la máscara calculada por el rasterizador backend existente, identificando pieza, pedido, unidades y resolución. La operación debe ser reproducible a partir de sus datos efectivos y no producir efectos de optimización, cambios de pedido ni movimientos de inventario.
+
+## 3. Auditoría de la base integrada y ramas paralelas
+
+### 3.1 Git
+
+Se ejecutaron `git status`, `git branch --show-current`, `git fetch origin --prune` y nuevamente `git status`. El primer fetch no pudo conectar por la restricción de red; la repetición autorizada terminó con código 0. Se revisaron también:
+
+```text
+git log --oneline --decorate -15
+git log --oneline HEAD..origin/integration/sprint-01
+git branch -r --sort=-committerdate
+git log --all --oneline --decorate --since="2026-10-13 00:00"
+git log --first-parent --format="%h %ad %s" --date=iso -10
+git log --oneline HEAD..origin/feature/HU-008-stock-compatible
+git diff --name-only HEAD...origin/feature/HU-008-stock-compatible
+```
+
+- Rama local: `integration/sprint-01`; working tree inicial limpio.
+- Local y `origin/integration/sprint-01`: `728c1dd`. El rango `HEAD..origin/integration/sprint-01` está vacío: no hay avance posterior ni PR nuevo en integration frente a la base conocida.
+- El fetch completado no informó actualizaciones ni referencias pruneadas. No se atribuyen eliminaciones históricas a este fetch.
+- No se hizo merge, checkout, integración de ramas ni modificación de referencias de trabajo.
+
+Integraciones relevantes, en orden real de la primera línea de padres (fechas Git, zona `-0500`):
+
+| Fecha | Commit | PR / contenido |
+|---|---|---|
+| 12/10/2026 00:06:49 | `9407f26` | #39, HU-012 T03: cliente asociado al pedido |
+| 12/10/2026 00:41:59 | `978705f` | #40, HU-014: trazabilidad de inventario |
+| 12/10/2026 02:41:21 | `b7a0175` | #41, staging existente |
+| 13/10/2026 00:54:59 | `cff3db6` | #42, TA-005/TA-006: rasterización |
+| 13/10/2026 12:07:08 | `373dfc2` | #44, TA-036: saneamiento funcional |
+| 13/10/2026 13:04:40 | `293a2a9` | #43, TA-007: validación geométrica |
+| 13/10/2026 17:25:28 | `728c1dd` | #45, cierre documental TA-035-T1 |
+
+Referencias remotas observadas; su existencia no demuestra trabajo activo en este instante:
+
+| Rama `origin/…` | Punta | Relación con HEAD |
+|---|---|---|
+| `feature/HU-008-stock-compatible` | `a0a2dd2` | No integrada; contiene 10 commits exclusivos frente a HEAD |
+| `feature/TA-036-saneamiento-funcional` | `4e431e5` | Punta antecesora de HEAD |
+| `feature/TA-005-TA-006-rasterizacion` | `0ef9819` | Punta antecesora de HEAD |
+| `feature/HU-012-T03-asociar-cliente-pedido` | `e1fe3a5` | Punta antecesora de HEAD |
+| `feature/TA-DEPLOY-001-staging` | `44b375f` | Punta antecesora de HEAD |
+| `feature/HU-014-trazabilidad-inventario` | `f4a6926` | Punta antecesora de HEAD |
+| `main` / `HEAD` simbólico | `aae4bcc` | Antecesor de HEAD local |
+
+No aparecen ramas remotas adicionales de Results, Configuration u Optimization. Las antiguas ramas TA-007 y TA-035-T1 no figuran en el inventario actual; no se infiere cuándo se borraron.
+
+### 3.2 Riesgo HU-008
+
+La punta `a0a2dd2` tiene fecha Git `2026-10-12 22:45:23 -0800` (13/10/2026 01:45:23 en Lima). Sus commits exclusivos son `24484a4`, `8ea8acd`, `0241365`, `ccfa6a6`, `46d801e`, `b660021`, `9bf2a50`, `9aaec66`, `edc0809` y `a0a2dd2`. Son trabajo paralelo preexistente, no nuevos merges de integration detectados por el fetch.
+
+- Inventory incorpora `get_compatible_stock(id_tipo_vidrio, espesor_mm)`, que devuelve planchas y retazos candidatos, y `StockCompatibilityService.find_missing_candidate_indexes(pieces)`.
+- El servicio filtra por material/espesor y disponibilidad, y verifica candidatos individuales mediante cajas envolventes y giro de 90°. No garantiza que todas las cantidades del pedido quepan simultáneamente ni equivale a la validación raster de TA-007.
+- Orders incorpora un `StockCandidateChecker`; `9aaec66` bloquea el registro cuando faltan candidatos y `edc0809` presenta ese rechazo en el formulario.
+- Afecta puertos/repositorio/servicio/dominio de Inventory, caso de uso/dependencias/router de Orders, formulario/servicio API frontend y pruebas. Puede interferir directamente con el desacoplamiento pedido-stock y con contratos futuros de HU-015.
+- Ese comportamiento contradice TA-036 y la regla vigente del producto. No se integra ni se corrige aquí. Antes de reutilizarlo debe acordarse un contrato de consulta posterior a la creación del pedido; HU-015 no depende de archivos de una rama no integrada.
+
+## 4. Alcance
+
+### Incluye
+
+El núcleo procede de ADR-002 §2.11. Su concreción siguiente es **Propuesta para revisión**:
+
+- Acceso a la vista raster desde la navegación existente para Administrador y Operario.
+- Listado paginado/selección de pedidos reales y lectura de su detalle completo mediante los contratos actuales de Orders.
+- Presentación de todas las líneas de piezas del pedido: identificador, forma, dimensiones o vértices, cantidad, tipo de vidrio y espesor; selección de una pieza para su vista previa.
+- Flujo mínimo **pedido → piezas → selección de una pieza persistida → resolución → rasterización → visualización**. La operación calcula una pieza seleccionada por solicitud; no rasteriza todo el pedido automáticamente.
+- Rasterización de la geometría persistida recuperada por el backend. Cada línea con cantidad N conserva N como dato; una misma geometría se representa una vez, sin enviar N máscaras ni N colocaciones.
+- Resolución de la vista previa, carga, bloqueo de doble envío, errores recuperables y resultado con geometría/máscara comparables.
+- Identificación y metadatos suficientes para interpretar y reproducir el cálculo, sin guardar un historial de ejecuciones.
+- Adaptación backend/API mínima necesaria para conectar el dominio existente. No hay endpoint integrado que la sustituya; su responsabilidad y contrato deben revisarse antes de implementar.
+
+### Fuera de alcance
+
+- First Fit, Best Fit, Worst Fit, comparación o elección de heurística, mejor solución y colocación completa del pedido.
+- Aprovechamiento final, merma final, planchas utilizadas u otras métricas de una optimización no ejecutada.
+- Consumo, reserva o descuento de stock; confirmación de solución; transiciones del estado del pedido.
+- Persistir la vista previa en `optimizaciones`, `ejecuciones_optimizacion`, `metricas_ejecucion` o movimientos de inventario, incluyendo registros ficticios FF/BF/WF.
+- Crear/editar piezas o pedidos desde la vista raster, reconstruir polígonos desde lados/ángulos o habilitar concavidad.
+- Selección de stock compatible, rasterización de material y validación interactiva de colocaciones en esta propuesta mínima. Requieren un alcance y contrato integrado adicionales; la existencia del dominio TA-007 no implica que ese flujo ya exista.
+- CRUD de configuración global, lectura ficticia de una configuración vigente, rotación de piezas y parámetros que no consume la operación ejecutada.
+- Reimplementar rasterización en React, cambiar los algoritmos TA-005/006/007, rediseñar globalmente la aplicación o introducir otra arquitectura de navegación.
+
+## 5. Actores, permisos y precondiciones
+
+La matriz efectiva está en [permissions.py](../../backend/app/core/permissions.py):
+
+| Capacidad actual | Administrador | Operario | Almacenero |
+|---|---|---|---|
+| `GESTIONAR_PEDIDOS` | Sí | Sí | No |
+| `EJECUTAR_OPTIMIZACION` | Sí | Sí | No |
+| `CONSULTAR_STOCK` / `CONSULTAR_TIPOS_VIDRIO` | Sí | Sí | Sí |
+| `CONFIGURAR_OPTIMIZADOR` | Sí | No | No |
+| `CONSULTAR_RESULTADOS` | Sí | Sí | Sí |
+
+La matriz vigente confirma que `EJECUTAR_OPTIMIZACION` corresponde a **Administrador y Operario**, y no a Almacenero. **Propuesta para revisión:** aplicar ese permiso a `POST /api/optimization/rasterize`, ocultar la opción al Almacenero y rechazar también su solicitud directa en backend. `CONSULTAR_RESULTADOS` no concede permiso para calcular raster ni habilita una pantalla Results todavía inexistente.
+
+Precondiciones: sesión válida, autorización comprobada en cada solicitud, pedido existente y pieza perteneciente a él, geometría compatible, resolución y tamaño dentro de los límites acordados. Inventario con stock no es precondición de esta vista previa.
+
+**Política propuesta para HU-015:** solo un pedido `PENDIENTE` es elegible para iniciar rasterización desde esta interfaz. `CONFIRMADO` y `CANCELADO` no son elegibles; tampoco se incorporan `EN_OPTIMIZACION` u `OPTIMIZADO` sin un requisito posterior. La operación no cambia el pedido a `EN_OPTIMIZACION` ni a otro estado. Orders ya persiste `PENDIENTE` al crear y expone los cinco estados en su respuesta; no existe un endpoint raster integrado que contradiga esta restricción. La UI filtra/identifica pedidos elegibles y el backend vuelve a comprobar el estado vigente.
+
+## 6. Contratos integrados y dependencias
+
+### 6.1 Orders: entrada suficiente, sin nuevo CRUD
+
+Fuentes: [router](../../backend/app/modules/orders/presentation/router.py), [schemas](../../backend/app/modules/orders/presentation/schemas.py), [casos de uso](../../backend/app/modules/orders/application/use_cases.py), [repositorio](../../backend/app/modules/orders/infrastructure/repositories.py).
+
+| Endpoint existente | Datos y comportamiento relevantes |
+|---|---|
+| `GET /api/orders` | Filtros `page`, `limit` (1–100), `estado`, `cliente`, `fecha`. Devuelve `items`, `total`, `page`, `limit`, `total_pages`. Cada resumen incluye ID, fecha, estado y cliente visible; no sustituye el detalle de piezas. |
+| `GET /api/orders/{id_pedido}` | Devuelve `id_pedido`, `id_cliente` nullable, fecha, estado, usuario de registro y `piezas` completas. Cada pieza contiene `id_pieza`, `id_pedido`, `id_tipo_vidrio`, `espesor_mm`, `tipo_forma`, `cantidad`, `dimensiones`, `geometria`, `area_mm2`. |
+| `POST /api/orders` | Crea pedido con cliente, catálogo y geometría válidos; no consulta ni exige stock. No se invoca desde la vista raster. |
+| `PUT` / `DELETE /api/orders/{id_pedido}` | Edición/cancelación existentes; fuera de la operación raster. La edición puede reemplazar filas de piezas y cambiar sus IDs. |
+
+Todas estas rutas usan `GESTIONAR_PEDIDOS`. El detalle sí permite recuperar un pedido persistido completo. `dimensiones` puede ser null para polígonos; `geometria` es la fuente del cálculo. Material y espesor pertenecen a cada pieza, no a una cabecera única del pedido.
+
+`espesor_mm` y `area_mm2` son `Decimal` en el esquema de respuesta: no presuponer que cualquier campo numérico HTTP llega como `number`. La adaptación/presentación debe seguir el contrato de serialización real y conservar unidades. El rasterizador recibe números finitos `int`/`float`, no `Decimal`; el límite de adaptación debe normalizar lo necesario sin cambiar el modelo de dominio ni regenerar geometrías.
+
+Frontend ya dispone de `listOrders`, `getOrder`, `listOrderMaterials` y manejo de `OrdersApiError` en [ordersApi.js](../../frontend/src/features/orders/ordersApi.js). No hace falta reconstruir un servicio CRUD paralelo. **Optimization/Application** define el puerto de lectura que necesita el caso de uso por pieza; **Optimization/Infrastructure** implementa ese puerto adaptando el acceso a Orders. Orders sigue siendo la fuente de verdad del pedido, pieza, geometría persistida, material, espesor y cantidad. El adaptador no duplica las reglas de Orders. **Optimization/Domain** no importa esquemas HTTP ni modelos ORM.
+
+### 6.2 Inventory: inventario consultable no equivale a stock compatible
+
+Fuentes: [router](../../backend/app/modules/inventory/presentation/router.py), [schemas](../../backend/app/modules/inventory/presentation/schemas.py), [puertos](../../backend/app/modules/inventory/application/ports.py).
+
+| Endpoint existente | Datos relevantes |
+|---|---|
+| `GET /api/inventory/tipos-vidrio` | ID, nombre, descripción, estado y espesores del catálogo; permite identificar el material de cada pieza. |
+| `GET /api/inventory/planchas` | ID, ancho, alto, espesor, cantidad, estado, fecha e ID de tipo de vidrio. |
+| `GET /api/inventory/retazos` | ID, código, espesor, geometría, área, estado, fecha, tipo de vidrio e ID de ejecución de origen nullable. |
+
+Los listados no son una respuesta de compatibilidad. Incluyen estados; una plancha disponible requiere estado activo y cantidad positiva, y un retazo activo es unitario. No hay un endpoint integrado que garantice compatibilidad individual o conjunta con un pedido. Identificar tipo/espesor no basta para afirmar que una pieza cabe.
+
+El alcance mínimo usa el catálogo para rotular piezas, sin obligar a que exista stock. Si no se recupera el nombre, mostrar el ID y un aviso; no inventar un material. La selección de material pertenece a una etapa posterior que necesitará HU-008 desacoplada y el contrato de instancia correspondiente (TA-008), sin integración automática en HU-015.
+
+### 6.3 Configuration y Results
+
+Los módulos backend `configuration/` y `results/` contienen únicamente archivos `__init__.py` de reserva. Sus features frontend contienen `.gitkeep`. [backend/main.py](../../backend/main.py) no registra routers de Configuration, Results ni Optimization.
+
+Sí existen modelos y migraciones de persistencia en [models.py](../../backend/app/models.py): `Configuracion` versionada, con `separacion_mm`, `margen_mm`, `resolucion_raster_mm`, paso angular opcional, mínimos de retazo, vigencia y autor; `Optimizacion`; `EjecucionOptimizacion`; `MaterialUtilizado`; `MetricaEjecucion`. La existencia de esas tablas no equivale a servicios públicos implementados.
+
+`EjecucionOptimizacion.metodo` admite exclusivamente `FF`, `BF`, `WF` mediante `ck_ejecuciones_metodo`. No se debe reutilizar ese registro para una simple máscara. Los valores globales configurados no están disponibles por una API integrada. La línea base de [SP-001](SPEC-TA-005-TA-006-rasterizacion.md) está incorporada como `DEFAULT_RESOLUTION_MM = 5.0` mm/celda en `rasterizer.py`; es el valor inicial de la interfaz propuesto, no una configuración vigente leída de la BD.
+
+## 7. Contrato de dominio TA-005/TA-006/TA-007
+
+Fuentes: [raster_mask.py](../../backend/app/modules/optimization/domain/raster_mask.py), [rasterizer.py](../../backend/app/modules/optimization/domain/rasterizer.py), [placement.py](../../backend/app/modules/optimization/domain/placement.py), [SPEC TA-005/006](SPEC-TA-005-TA-006-rasterizacion.md), [SPEC TA-007](SPEC-TA-007-validacion-geometrica.md).
+
+### 7.1 Piezas y máscaras integradas (#42)
+
+| Entrada pública | Datos | Salida |
+|---|---|---|
+| `rasterize_geometry(geometry, resolution_mm=5.0)` | Dict con `type`; despacha las tres formas | `RasterMask` |
+| `rasterize_rectangle(width_mm, height_mm, resolution_mm=5.0)` | Medidas finitas positivas, mm | Máscara conservadora |
+| `rasterize_circle(radius_mm, resolution_mm=5.0)` | Radio finito positivo, mm | Máscara conservadora |
+| `rasterize_convex_polygon(vertices_mm, resolution_mm=5.0)` | ≥3 pares finitos; polígono simple convexo validado previamente | Máscara conservadora |
+
+`POLIGONO_CONVEXO` consume directamente `geometry["vertices_mm"]` a través de `_field`; es compatible con la geometría canónica de TA-036. No consume boceto, longitudes ni restricciones angulares del editor.
+
+- Una celda de pieza se ocupa si la figura cubre área positiva de ella; tocar solo una esquina/borde no la ocupa. No es un muestreo por el centro. Una pieza o tramo más delgado que `resolution_mm` no desaparece: ocupa las celdas necesarias según esta regla conservadora.
+- Caja trasladada a origen `(0,0)`, fila 0 arriba, Y creciente hacia abajo. Vértices pueden contener coordenadas negativas. El cierre último→primero es implícito.
+- Coordenadas normalizadas con redondeo a 6 decimales; tamaños de rejilla por techo de extensión/resolución, con tolerancia interna `1e-9` y mínimo una fila/columna. La extensión de la rejilla puede exceder la geometría.
+- `RasterMask` es inmutable: `resolution_mm`, `columns`, `rows` como tupla de enteros de bits. Expone `row_count`, `width_mm`, `height_mm`, `occupied_cells`, `area_mm2`, `row_runs`, `is_occupied` y `to_text`; `from_spans` construye filas por tramos.
+- Tipo desconocido, campo ausente, medidas/resolución no finitas o no positivas, vértices mal formados o extensión nula producen `RasterizationError(ValueError)`. Booleanos no se consideran números válidos.
+- La biblioteca presupone convexidad/simplicidad ya validada por Orders; no representa una validación completa de polígonos arbitrarios. No se habilita concavidad porque alguna entrada concava no lance excepción.
+- No existe tope de filas, columnas, celdas o costo de respuesta en el dominio actual. Debe definirse y aplicarse en la nueva frontera antes de asignar/calcular la máscara.
+
+La RN-07 de SPEC-TA-005/006 recomienda una resolución que no supere la dimensión mínima para reducir el error de área; el código vigente admite figuras más delgadas que una celda y las cubre conservadoramente. **HU-015 reutiliza esta regla sin redefinir la ocupación ni rechazar una pieza por ser delgada.** La UI representa el `RasterMask` producido por backend y no aplica un redondeo visual diferente para calcular celdas.
+
+### 7.2 Material y colocaciones integradas (#43)
+
+`rasterize_material`, `rasterize_material_polygon` y `rasterize_material_circle` aceptan las mismas familias de geometría. La celda material solo es usable si queda completamente dentro de la figura; no se debe mostrar esa máscara como si siguiera la regla conservadora de una pieza.
+
+`SheetLayout.empty(material, margin_mm=0, separation_mm=0)` prepara estado inmutable; `check(piece, row, column)` devuelve `PlacementCheck(is_valid, issue)`; `place` devuelve un nuevo estado o lanza `PlacementError`. Pieza y material requieren la misma resolución. Se comprueban límites de rejilla/material, margen, superposición y separación, en ese orden: `FUERA_DE_LIMITE`, `MARGEN_INSUFICIENTE`, `SUPERPOSICION`, `SEPARACION_INSUFICIENTE`.
+
+Margen y separación son finitos no negativos; se elevan a celdas enteras con tolerancia mediante `distance_in_cells`. Erosión del material y dilatación de ocupación usan vecindad cuadrada, conservadora también en diagonal. No equivalen a distancias euclidianas exactas.
+
+TA-007 se conserva como dependencia de futuras colocaciones. No se muestran controles de margen/separación en una llamada que solo usa `rasterize_geometry`, porque no tendrían efecto.
+
+### 7.3 Cobertura y evidencia existente
+
+Se inspeccionaron, sin ejecutar, `backend/tests/optimization/test_raster_mask.py`, `test_rasterize_standard.py`, `test_rasterize_polygon.py`, `test_rasterize_material.py` y `test_placement.py`: invariantes de máscara, tres formas, entradas inválidas, determinismo/traslación, cobertura conservadora/interior, límites, superposición, margen, separación e inmutabilidad.
+
+`experiments/raster/scripts/raster_evidence.py` y `placement_evidence.py` importan el dominio real y generan evidencia gráfica; no son servicios de aplicación. Hay resultados históricos en `docs/evidence/sprint-01/TA-005-TA-006/` y `TA-007/`. El README de experiments conserva frases de la reserva inicial pese a que ahora existen scripts. No se ejecutaron estos scripts ni se usan sus resultados como pruebas actuales. La aplicación no debe importar `experiments/`.
+
+## 8. Datos de entrada y salida de HU-015
+
+**Propuesta para revisión:** cálculo de una línea de pieza persistida por solicitud. La cantidad de esa línea se informa sin duplicar la máscara. Para ver otra pieza se realiza una nueva selección y solicitud.
+
+| Entrada lógica | Regla |
+|---|---|
+| `id_pedido`, `id_pieza` | IDs positivos válidos; el servidor comprueba existencia y pertenencia. No confiar solo en el selector UI. |
+| Geometría | Leída en backend del pedido persistido, nunca sustituida por coordenadas/dimensiones libres enviadas por el cliente. |
+| `resolution_mm` | mm/celda, finito y >0; interfaz iniciada en el `DEFAULT_RESOLUTION_MM` vigente de 5.0. Puede enviarse otra resolución positiva; no se define un conjunto cerrado. Sujeta al límite seguro de recursos. |
+| Material, espesor, cantidad | Metadatos de la pieza consultada; no condiciones de stock ni controles de edición. |
+
+El request propuesto contiene **solo** estos campos:
+
+```json
+{
+  "id_pedido": 41,
+  "id_pieza": 7,
+  "resolution_mm": 5.0
+}
+```
+
+Los números son ilustrativos del contrato, no datos observados. El frontend no envía `geometria`, dimensiones ni `vertices_mm` para sustituir los persistidos. El servidor verifica que el pedido y la pieza existan y que la pieza pertenezca al pedido antes de calcular.
+
+La respuesta compacta propuesta debe incluir, como mínimo:
+
+- `id_pedido`, `id_pieza`, `tipo_forma`, `resolution_mm`, `row_count`, `columns` y `occupied_cells`.
+- `geometria` efectiva persistida, cantidad y material/espesor como contexto de la pieza; la respuesta permite reproducir el raster con los datos usados, sin depender de un detalle del pedido que pudiera cambiar después.
+- `spans_by_row`: una entrada `{ "row": índice, "runs": [...] }` por fila, de arriba abajo. Cada `runs` contiene cero o más pares `[start_col, end_col_exclusive]`, indexados desde cero. Debe haber exactamente `row_count` entradas, con `row` consecutivos desde cero, rangos dentro de `columns` y suma de longitudes igual a `occupied_cells`. Representa la máscara sin pérdida de celdas.
+- Convención de origen: caja de la geometría trasladada a `(0,0)` para la máscara, fila 0 arriba, columna 0 a la izquierda e Y creciente hacia abajo. Las dimensiones del contorno original y las de la rejilla se distinguen; la interfaz puede calcular la extensión de la rejilla como `columns × resolution_mm` y `row_count × resolution_mm`.
+- Identificación explícita de resultado de **rasterización de pieza**, sin mensajes de factibilidad de material ni optimización completada.
+
+Ejemplo **conceptual** de respuesta; todos sus valores, incluidos filas y celdas, son ilustrativos y no resultados observados. Solo `resolution_mm = 5.0` procede del default vigente:
+
+```json
+{
+  "id_pedido": 4,
+  "id_pieza": 12,
+  "tipo_forma": "POLIGONO_CONVEXO",
+  "geometria": { "type": "POLIGONO_CONVEXO", "vertices_mm": [[0, 0], [10, 0], [0, 10]] },
+  "id_tipo_vidrio": 1,
+  "espesor_mm": 4.0,
+  "cantidad": 1,
+  "resolution_mm": 5.0,
+  "row_count": 2,
+  "columns": 2,
+  "occupied_cells": 3,
+  "spans_by_row": [
+    { "row": 0, "runs": [[0, 2]] },
+    { "row": 1, "runs": [[0, 1]] }
+  ]
+}
+```
+
+`RasterMask.row_runs(row)` devuelve exactamente una `tuple[tuple[int, int], ...]` de tramos `[inicio, fin)` de izquierda a derecha; una fila sin celdas devuelve la tupla vacía. El adaptador solo añade `row` y serializa los pares como listas JSON, sin modificar su semántica. La matriz booleana densa no será el contrato HTTP principal. Los enteros Python de `rows` pueden superar `Number.MAX_SAFE_INTEGER` y las operaciones bit a bit de JavaScript se limitan a 32 bits; los rangos acotados por el límite seguro de rejilla evitan esa pérdida. Las pruebas de contrato deben cubrir más de 53 columnas y una fila vacía cuando corresponda.
+
+## 9. Flujo principal y estados de UI
+
+1. El usuario autorizado abre Optimización/Rasterización desde el sidebar.
+2. El sistema carga el listado paginado e identifica los pedidos `PENDIENTE` por ID, cliente, fecha y estado; no habilita ejecutar desde `CONFIRMADO`, `CANCELADO` ni otros estados.
+3. Al seleccionar uno, carga su detalle; muestra todas las piezas reales y sus datos, sin editar su geometría.
+4. El usuario elige una pieza y una resolución permitida. La geometría original se presenta como referencia.
+5. Ejecuta la vista previa. Se valida la entrada y se indica carga; una acción repetida no origina doble solicitud.
+6. Backend autoriza, recupera la pieza, valida parámetros/presupuesto y llama al dominio existente; responde sin escrituras funcionales.
+7. La pantalla identifica el resultado y permite comparar geometría original con máscara, escala/unidades y rejilla.
+8. Al cambiar pieza, pedido o resolución, invalida el resultado anterior como resultado vigente. Puede ejecutar nuevamente; una respuesta tardía no reemplaza la selección actual.
+
+| Estado | Comportamiento visible |
+|---|---|
+| Cargando pedidos / detalle | Feedback de carga identificable; controles dependientes deshabilitados. |
+| Sin pedidos / sin coincidencias | Explicación y posibilidad de recargar o cambiar filtros; no datos de demostración fingidos. |
+| Sin pieza seleccionada | Lista real y explicación de qué seleccionar para ejecutar. |
+| Pedido sin piezas / dato inconsistente | Mensaje comprensible y ejecución bloqueada, sin generar geometría de reemplazo. |
+| Parámetro inválido | Error asociado al campo y motivo visible del bloqueo. |
+| Ejecutando | `loading`, acción deshabilitada y contexto de pieza/resolución en curso. |
+| Éxito | Contorno y máscara coherentes, identificadores y metadatos efectivos; no métricas heurísticas. |
+| Error | Mensaje y acción de recuperación; no máscara inventada ni éxito del resultado anterior. |
+| Selección modificada | Resultado anterior retirado o claramente invalidado; nunca rotulado como resultado nuevo. |
+
+## 10. Reglas funcionales y de validación
+
+- **RN-01:** Orders es la fuente de piezas y geometría canónica. Backend obtiene pedido/pieza vigentes por el puerto de Optimization/Application implementado en Optimization/Infrastructure hacia Orders. `POLIGONO_CONVEXO` usa `vertices_mm`; no resolver otra vez lados/ángulos ni aceptar geometría arbitraria del request.
+- **RN-02:** Cada cálculo usa una lectura coherente de pieza/pedido. Una pieza retirada o reemplazada desde la selección exige recargar; la respuesta debe identificar la geometría efectiva para evitar presentar un contorno viejo junto a una máscara nueva.
+- **RN-03:** Se calcula una máscara de la pieza seleccionada por solicitud. La cantidad se conserva como metadato; no se duplica la máscara por unidad ni se rasteriza todo el pedido automáticamente.
+- **RN-04:** No se consulta disponibilidad de stock para autorizar el registro de un pedido ni para esta vista previa de piezas. Rasterizar no modifica el pedido ni inventario, no cambia su estado a `EN_OPTIMIZACION`, no crea `Optimizacion` ni ninguna `EjecucionOptimizacion`, y no persiste el preview raster.
+- **RN-05:** Backend valida autorización, pertenencia y valores aunque frontend haya validado. Una forma desconocida/inconsistente se rechaza con mensaje comprensible; no se aproxima a rectángulo silenciosamente.
+- **RN-06:** La validación de resolución rechaza vacío, cero, negativo, booleano y valor no finito. Antes de construir/serializar una respuesta excesiva, backend estima la rejilla y rechaza solicitudes que superen el máximo seguro de celdas definido mediante benchmark reproducible en el plan técnico. El valor numérico permanece pendiente de esa medición; no se fija arbitrariamente.
+- **RN-07:** La interfaz inicia en `DEFAULT_RESOLUTION_MM = 5.0` mm/celda, baseline SP-001, y permite enviar otra resolución positiva. No se limita a un conjunto cerrado, no escribe `Configuracion` ni concede `CONFIGURAR_OPTIMIZADOR`.
+- **RN-08:** La UI representa las celdas de `RasterMask` siguiendo la regla conservadora del backend, incluso cuando una pieza o tramo es más delgado que la celda. No aplica redondeo visual distinto. Un cambio de tamaño/zoom de pantalla no altera geometría, resolución ni máscara.
+- **RN-09:** No exponer margen, separación, paso angular u otros parámetros que la operación mínima no utiliza.
+- **RN-10:** No mostrar un resultado anterior como vigente tras cambiar sus entradas, fallar una solicitud o cerrar sesión. Ignorar/abortar respuestas obsoletas según el patrón existente.
+- **RN-11:** El área de una máscara, si se muestra, se identifica como área raster aproximada. No es aprovechamiento, merma ni resultado de una heurística. Su visualización no es obligatoria para este alcance mínimo.
+- **RN-12:** Solo un pedido cuyo estado vigente es `PENDIENTE` puede iniciar el cálculo desde HU-015. Un pedido en `CONFIRMADO`, `CANCELADO`, `EN_OPTIMIZACION` u `OPTIMIZADO` se rechaza sin mutaciones; ningún estado nuevo se introduce.
+
+## 11. API faltante y manejo de errores
+
+No hay endpoint raster en HEAD. **Propuesta para revisión:** `POST /api/optimization/rasterize`, protegido por `EJECUTAR_OPTIMIZACION`, con respuesta `200` para un cálculo exitoso de una pieza. La ruta, request y respuesta de §8 son contratos propuestos, no capacidades existentes.
+
+El cuerpo mínimo tiene `id_pedido: int`, `id_pieza: int` y `resolution_mm: number`. No admite geometría alternativa ni parámetros de heurísticas. El backend recupera los datos vigentes, comprueba pertenencia y estado `PENDIENTE`, aplica el límite de recursos y llama a `rasterize_geometry`. Responde con los datos efectivos y tramos de §8; no utiliza `201`, no crea `Optimizacion`/`EjecucionOptimizacion`, no persiste preview ni escribe en Orders/Inventory.
+
+Responsabilidades de la implementación propuesta:
+
+| Capa | Responsabilidad |
+|---|---|
+| `Optimization/Application` | Caso de uso de rasterización por pieza; define el puerto de lectura de la pieza persistida y comprueba estado, pertenencia y parámetros antes de llamar al dominio. |
+| `Optimization/Infrastructure` | Implementa el puerto adaptando el acceso a Orders, sin convertirse en fuente de verdad ni duplicar sus reglas. |
+| `Optimization/Domain` | Conserva `RasterMask`, `rasterizer.py` y la validación geométrica existente; no importa FastAPI, SQLAlchemy ni schemas HTTP de Orders. |
+| `Optimization/Presentation` | Endpoint, request/response schemas, autorización y traducción de errores de aplicación a HTTP; serializa `row_runs()` según §8. |
+
+Orders conserva pedido, pieza, geometría persistida, material, espesor y cantidad como datos de origen. No se modifica su comportamiento de registro ni su estado durante el preview.
+
+Mapa de errores **propuesto**, siguiendo las convenciones HTTP existentes:
+
+| Situación | Respuesta / recuperación |
+|---|---|
+| Sin sesión o vencida | `401`; flujo de expiración de sesión actual. |
+| Rol sin permiso | `403`; no realizar cálculo. Ocultar la opción no sustituye el control backend. |
+| Pedido o pieza inexistente | `404`; recargar listado/detalle. |
+| Pieza existente que no pertenece al pedido solicitado | `404` dentro del contexto de ese pedido; no rasterizarla ni revelar datos de otro pedido. |
+| Pedido existente con estado distinto de `PENDIENTE` | `409` propuesto; recargar el pedido. No cambiar su estado. |
+| Resolución no positiva/no finita o geometría persistida no soportada | `422` con motivo seguro y accionable; no sustituir la geometría. |
+| Rejilla estimada superior al límite seguro | `422` propuesto, con motivo accionable; rechazar antes de construir/serializar una respuesta excesiva. El número máximo se fijará mediante benchmark. |
+| Error inesperado | `500` con mensaje general, sin stack trace ni detalles SQL. |
+| Red/timeout o respuesta mal formada | Mensaje de conexión/resultado inválido; permitir reintento explícito, sin presentar éxito. |
+
+Orders no expone actualmente una versión de recurso; su edición reemplaza piezas. El caso de uso relee la pieza al ejecutar y la respuesta incluye la geometría efectiva utilizada. Si el ID seleccionado ya no existe se devuelve `404`; si el pedido dejó de ser `PENDIENTE`, `409`. No se introduce versionado ni migración en HU-015.
+
+## 12. UI, accesibilidad y arquitectura frontend
+
+Hechos: [App.jsx](../../frontend/src/App.jsx) usa estado y `NavigationContext` para Orders, Inventory y Users. [Sidebar](../../frontend/src/shared/components/Sidebar.jsx) contiene esas tres opciones, sin Optimización para ningún rol. `SessionBar` muestra identidad/rol/sesión. Las carpetas `features/optimization`, `results` y `configuration` solo contienen `.gitkeep`; no hay visor ni servicio raster integrado. El SVG del editor de piezas no es un rasterizador.
+
+Las llamadas actuales usan `fetch`, sesión existente y [shared/apiUrl.js](../../frontend/src/shared/apiUrl.js), con `VITE_API_URL`; en modo staging exige esa variable y en desarrollo puede usar `http://127.0.0.1:8000`. Se conserva ese mecanismo. `ordersApi.js` ya acepta señal de cancelación, token y errores legibles.
+
+Reutilizar `AppShell`, `Sidebar`, `PageHeader`, `PageCard`, `ActionBar`, tokens visuales y componentes `LoadingState`, `EmptyState`, `FeedbackMessage`, `FieldError` cuando correspondan. [Feedback compartido](../ui-ux/feedback-compartido.md) y [base visual](../ui-ux/inventario-base-visual.md) definen el lenguaje existente. El patrón de gestión abre formularios bajo acción; HU-015 mantiene selección/listado inicial, sin forzar un CRUD ni duplicar `useManagementView` para un caso diferente.
+
+- Sidebar como navegación principal; header para identidad/sesión. Mantener navegación por estado, sin introducir React Router.
+- Desktop-first y responsive: selección, controles y resultado siguen utilizables en ancho reducido; un viewport desplazable de la rejilla debe estar claramente delimitado y ser operable.
+- Labels y unidades explícitos, navegación por teclado, foco visible y estados de controles comprensibles; error de campo con `aria-invalid`/`aria-describedby`, cargas y resultados anunciados, errores con `role="alert"` conforme al patrón compartido.
+- No depender solo de color para distinguir contorno/celdas; leyenda, contraste y resumen textual accesible con pieza, forma, resolución y dimensiones. No crear un foco por cada celda.
+- La representación debe permitir comparar la geometría original persistida y la máscara en la misma escala o con correspondencia explícita entre ambas vistas, sin deformar la proporción física. Mostrar tipo de forma, dimensiones relevantes, resolución, filas, columnas y celdas ocupadas. No presentar colocación automática, heurísticas, aprovechamiento, merma ni stock consumido.
+
+Evaluación para el plan posterior: Canvas reduce nodos al representar muchas celdas, pero necesita alternativa textual y manejo de escala; SVG facilita contornos/etiquetas, pero requiere controlar el número de elementos; CSS grid/matriz DOM es legible con rejillas pequeñas, pero puede crecer excesivamente. La SPEC no prescribe tecnología; la decisión dependerá de los límites aprobados, accesibilidad y tamaño real de máscara. Renderizar datos del servidor no equivale a calcular el raster en React.
+
+## 13. Criterios de aceptación verificables
+
+Estos criterios describen el comportamiento objetivo de la **Propuesta para revisión**; no son resultados de pruebas ni criterios recuperados literalmente del backlog. Solo el valor numérico del límite seguro requiere medición antes de implementar.
+
+| CA | Dado / Cuando / Entonces |
+|---|---|
+| CA-01 | Dado un Administrador u Operario autenticado, cuando abre la opción raster, entonces puede seleccionar un pedido `PENDIENTE` persistido; `CONFIRMADO`, `CANCELADO` y los demás estados no habilitan Ejecutar. El listado conserva identificación y paginación de Orders. |
+| CA-02 | Dado un pedido seleccionado, cuando termina la carga de detalle, entonces se muestran todas sus líneas de piezas con ID, forma, datos geométricos, cantidad, material y espesor, sin inventar piezas ni un material único para un pedido multimaterial. |
+| CA-03 | Dada una pieza de cualquiera de las tres formas, cuando se solicita `POST /api/optimization/rasterize`, entonces backend recupera su `geometria` persistida de Orders mediante el puerto de Optimization/Application; para polígono usa los `vertices_mm` originales y no acepta una geometría sustituta del cliente. |
+| CA-04 | Dada cantidad N en una línea, cuando se visualiza su raster, entonces la API devuelve una sola máscara y conserva N como contexto, sin afirmar que N unidades fueron colocadas o consumidas; las demás piezas del pedido no se rasterizan en esa solicitud. |
+| CA-05 | Dada `resolution_mm` vacía, igual a cero, negativa, no finita o booleana, cuando se intenta ejecutar, entonces UI informa el error y bloquea el envío; backend rechaza también la solicitud directa con valor inválido. |
+| CA-06 | Dada una resolución que produciría una rejilla superior al máximo seguro de celdas definido por benchmark, cuando llega al servicio, entonces backend rechaza antes de construir/serializar una respuesta excesiva y explica cómo corregirla. Verificar el límite y el valor inmediatamente superior. |
+| CA-07 | Dada una solicitud en curso, cuando se vuelve a activar Ejecutar, entonces no se emite una segunda solicitud y se mantiene visible el estado de carga. |
+| CA-08 | Dada respuesta válida, cuando se muestra, entonces aparecen pedido/pieza, tipo de forma, dimensiones relevantes, resolución efectiva, filas, columnas, celdas ocupadas y geometría original comparable con la máscara backend, con unidades y escala identificables. |
+| CA-09 | Dada una pieza rectangular persistida de 800×600 mm a la resolución inicial de 5 mm/celda, cuando se rasteriza, entonces se muestran 160 columnas, 120 filas y 19 200 celdas ocupadas. Dada una pieza de 1×10 mm a la misma resolución, entonces conserva 1 columna y 2 filas ocupadas; la UI no aplica otro redondeo a la máscara. |
+| CA-10 | Dado un polígono con coordenadas negativas y una máscara de más de 53 columnas, cuando se serializa en `spans_by_row` con pares `[start_col, end_col_exclusive]` y se visualiza, entonces reconstruir sus celdas coincide con `RasterMask`, sin perder celdas ni modificar la geometría persistida. |
+| CA-11 | Dado un cambio de pedido, pieza o resolución durante/después de una solicitud, cuando llega una respuesta anterior, entonces no se presenta como resultado de la selección vigente. |
+| CA-12 | Dado fallo HTTP, de red o respuesta mal formada, cuando finaliza la solicitud, entonces se muestra un mensaje accionable sin stack trace, se permite recuperación y no se fabrica un raster exitoso. |
+| CA-13 | Dado un listado sin pedidos `PENDIENTE` o un pedido elegible sin piezas válidas, cuando se carga, entonces se distingue el estado vacío/inconsistente y no se habilita ejecutar sin pieza. |
+| CA-14 | Dado un pedido válido con inventario sin stock compatible, cuando se crea mediante el flujo existente y luego se rasteriza una pieza, entonces la ausencia de stock no bloquea ninguna de esas operaciones. |
+| CA-15 | Dado un pedido `PENDIENTE` y una vista previa exitosa o fallida, cuando se comparan los datos antes/después, entonces el pedido permanece `PENDIENTE` y no cambia a `EN_OPTIMIZACION`; tampoco cambian la cantidad/estado de planchas o retazos ni los movimientos de inventario. |
+| CA-16 | Dado un Almacenero o una sesión ausente/vencida, cuando intenta calcular por solicitud directa, entonces backend rechaza con 403/401 respectivamente; la UI no concede la operación por ocultamiento visual solamente. |
+| CA-17 | Dada una pieza reemplazada o una selección desactualizada, cuando se solicita, entonces se rechaza/recarga según el contrato y no se combina una máscara nueva con un contorno antiguo. |
+| CA-18 | Dado uso por teclado o viewport reducido, cuando se recorre el flujo, entonces se accede a selección, parámetros y acción con foco visible, labels/unidades y feedback anunciado; se conserva un resumen textual del resultado. |
+| CA-19 | Dada una ejecución repetida con la misma geometría persistida y resolución efectiva, cuando se consulta el resultado, entonces coinciden `row_count`, `columns`, `occupied_cells` y cada rango de `spans_by_row`; la respuesta identifica la geometría utilizada y no exige historial persistido. |
+| CA-20 | Dada una vista previa exitosa o fallida, cuando se consultan los datos antes/después, entonces no se crea `Optimizacion`, ninguna `EjecucionOptimizacion` —incluidas FF/BF/WF—, métrica ni preview raster persistido. |
+| CA-21 | Dado un `id_pieza` inexistente, cuando se solicita rasterizarlo, entonces backend responde `404` y no calcula una máscara. |
+| CA-22 | Dada una pieza existente que pertenece a otro `id_pedido`, cuando se solicita con el pedido seleccionado, entonces backend responde `404`, no calcula la máscara y no devuelve la geometría ajena. |
+| CA-23 | Dada una geometría persistida con `type` no soportado o datos incompatibles, cuando se solicita, entonces backend responde `422` con mensaje comprensible sin stack trace, no sustituye la forma ni muestra un raster como éxito. |
+
+## 14. Estrategia de pruebas prevista
+
+No se ejecutan ni crean pruebas en esta tarea documental. Los resultados históricos del repositorio no se presentan como validación de HU-015.
+
+| Nivel | Cobertura futura y propósito |
+|---|---|
+| Unitarias frontend | Solo lógica nueva aislable: adaptación de DTO, unidades/etiquetas, validación de parámetros y representación sin pérdida. No replicar rasterización ni tests del editor geométrico. |
+| Componentes | Selector paginado y detalle real representado por fixtures de contrato; estados vacío/loading/error/success, parámetros, bloqueo de doble envío, cambio de selección y respuesta tardía, máscara/leyenda/resumen accesible, roles y ancho reducido. Los mocks no demuestran integración backend. |
+| API / integración | `POST /api/optimization/rasterize` propuesto: autorización, pieza ausente/ajena, lectura de pedido persistido mediante puerto de Optimization/Application, geometría efectiva, tres formas, geometría no soportada, rangos por fila y >53 columnas, resolución inválida, presupuesto antes del cálculo y ausencia de escrituras. Recursos de prueba locales/controlados. |
+| Unitarias backend | Solo nueva orquestación, validación de presupuesto y serialización; reutilizar la cobertura existente de TA-005/006/007 como regresión, sin duplicar todos sus casos. |
+| Regresión | Preservar creación de pedido sin stock, contratos de detalle/material y navegación/roles existentes; evaluar pruebas focalizadas y lint/build según los archivos que realmente cambien. |
+| E2E posterior | Flujo crítico estabilizado: pedido persistido local → selección → rasterización backend → resultado visible. No declarar E2E completo con solo construcción de UI o respuestas simuladas. |
+
+Comandos existentes de referencia, no ejecutados aquí: desde `frontend/`, `npm run test:unit`, `npm run test:component`, `npm run lint`, `npm run build`; `npm run test:e2e` solo con flujo y entorno preparados. Desde `backend/`, `python -m pytest -q tests/optimization` y selección de pruebas API/unidad correspondientes a la futura implementación. La selección exacta se hará cuando existan cambios; no se define un comando para un archivo HU-015 todavía inexistente.
+
+## 15. Evidencias futuras requeridas
+
+- Código real de la conexión pedido→dominio y de la presentación del resultado, con archivo/fragmento/commit identificables.
+- Terminal con comandos y resultados reales de pruebas, duración y contexto; separar resultados actuales de antecedentes.
+- API local si se implementa el adaptador: solicitud/respuesta raster, identificadores, resolución, rejilla, autorización y rechazo de entrada inválida, sin credenciales.
+- Frontend ejecutado **localmente**: selección de pedido real, piezas, estados, comparación original/máscara y resultado reproducible para las tres formas.
+- Error real, diagnóstico, corrección y verificación si aparece durante implementación; no fabricar un fallo para completar una narrativa.
+- Verificación de que una vista previa no crea ejecuciones FF/BF/WF ni descuenta inventario.
+
+No se generan capturas ahora. `NewGlass-Notion` queda intacta y se reserva exclusivamente para futuras capturas reales; no se guardarán allí Markdown, logs, scripts, resultados ni índices. La documentación/evidencia técnica futura seguirá las convenciones de `docs/evidence/` del repositorio. En capturas y outputs no mostrar contraseñas, JWT, Authorization, cookies, cadenas de conexión ni tokens.
+
+## 16. Decisiones cerradas y pendientes materiales
+
+La propuesta funcional queda definida para revisión del equipo: una pieza persistida de un pedido `PENDIENTE` por solicitud; geometría obtenida de Orders mediante el puerto de Optimization/Application y su adaptador de Infrastructure; `POST /api/optimization/rasterize`; respuesta sin pérdida por `spans_by_row`, derivada de `RasterMask.row_runs()`; resolución inicial 5.0 mm/celda y cualquier otro valor positivo dentro del presupuesto; ocupación conservadora incluso para tramos más delgados que una celda; autorización de Administrador/Operario; ninguna mutación ni persistencia de optimización o preview. La capa Presentation define el contrato HTTP y Domain conserva la semántica geométrica.
+
+Permanecen **solo dos pendientes materiales**:
+
+| ID | Pendiente | Cierre requerido |
+|---|---|---|
+| P-01 | Valor numérico del máximo seguro de celdas raster. | El plan técnico incluirá un benchmark reproducible con tamaños de entrada, resolución, costo de cálculo y tamaño de respuesta; a partir de él se fijará el límite antes de implementar el endpoint. No se asigna un número arbitrario. |
+| P-02 | La división original T1/T2/T3 no fue encontrada en las fuentes auditadas. | Recuperarla si existe. Esto no bloquea la definición funcional; un plan/tasks posterior podrá introducir una **«Descomposición técnica propuesta»**, sin presentarla como backlog histórico. |
+
+Riesgos conocidos que no abren otra decisión funcional de HU-015: HU-008 sigue fuera de la línea integrada y contradice el registro sin stock; ADR-002 §2.4 conserva esa regla histórica; los datos persistidos incompatibles se rechazan con `422`; la UI deberá preservar escala y accesibilidad al representar rejillas grandes. La elección de Canvas/SVG u otra técnica de dibujo pertenece al plan de implementación, conservando el contrato de resultado y el presupuesto fijado por P-01.
+
+El documento sigue en **Draft** para revisión humana. No se agregan migraciones, dependencias, rutas ejecutables, código frontend/backend, plan ni tareas en esta entrega.
+
+## Historial de estado
+
+- 13/10/2026 — **Draft**: auditoría de `728c1dd` y referencias remotas después de fetch; alcance recuperado de ADR-002 y propuesta delimitada. Sin pruebas ejecutadas de HU-015, implementación ni validación funcional nueva.
+- 13/10/2026 — **Draft**: revisión de decisiones propuestas sobre unidad por pieza, fuente persistida, `POST /api/optimization/rasterize`, respuesta por rangos, resolución, roles y criterios de aceptación. Pendiente de revisión humana.
+- 13/10/2026 — **Draft**: precisión final de ocupación conservadora, estado `PENDIENTE`, propiedad de capas y esquema por filas; quedan P-01 y P-02 para el equipo.
