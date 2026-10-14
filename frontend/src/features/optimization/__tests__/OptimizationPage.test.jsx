@@ -14,6 +14,9 @@ let persisted;
 
 beforeEach(() => {
   vi.resetAllMocks();
+  vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
+    fillRect: vi.fn(), setTransform: vi.fn(),
+  });
   persisted = structuredClone(order);
   listOrders.mockImplementation(async ({ estado }) => pageData(persisted.estado === estado ? [{ ...item, estado }] : []));
   getOrder.mockImplementation(async () => structuredClone(persisted));
@@ -131,17 +134,27 @@ test('raster loading evita doble envío y success muestra resumen técnico con c
   for (const label of ['Tipo de forma', 'Cantidad', 'Resolución', 'Filas', 'Columnas', 'Celdas ocupadas', 'Material', 'Espesor']) expect(within(result).getByText(label)).toBeVisible();
   expect(within(result).getByText('Cantidad').nextElementSibling).toHaveTextContent('5');
   expect(screen.getAllByRole('row')).toHaveLength(3);
-  expect(result.querySelector('canvas')).toBeNull();
+  expect(screen.getByRole('img', { name: 'Geometría original de la pieza #51' }).querySelector('rect')).toHaveAttribute('width', '10');
+  expect(screen.getByRole('img', { name: 'Máscara raster de la pieza #51' })).toBeVisible();
+  expect(document.querySelectorAll('canvas')).toHaveLength(1);
+  expect(screen.getAllByRole('img', { name: /Geometría original de la pieza/ })).toHaveLength(1);
 });
 
 test('422 recursos permite cambiar resolución y reintentar sin repetir start', async () => {
   rasterizePiece.mockRejectedValueOnce(error(422, 'Resolución demasiado fina para el límite de recursos.'));
-  await started(); choose(); calculate();
+  await started(); choose();
+  expect(screen.getByRole('img', { name: 'Geometría original de la pieza #51' })).toBeVisible();
+  expect(screen.getByText('Rasteriza la pieza seleccionada para visualizar su máscara.')).toBeVisible();
+  calculate();
   expect(await screen.findByRole('alert')).toHaveTextContent('Resolución demasiado fina');
+  expect(screen.getByRole('img', { name: 'Geometría original de la pieza #51' })).toBeVisible();
+  expect(screen.getByText('Rasteriza la pieza seleccionada para visualizar su máscara.')).toBeVisible();
+  expect(document.querySelectorAll('canvas')).toHaveLength(0);
   fireEvent.change(screen.getByLabelText('Resolución raster (mm/celda)'), { target: { value: '7.5' } });
   rasterizePiece.mockResolvedValueOnce({ ...raster, resolution_mm: 7.5 });
   calculate(); await screen.findByText('Rasterización completada');
   expect(rasterizePiece.mock.calls[1][0].resolutionMm).toBe(7.5);
+  expect(screen.getByRole('img', { name: 'Máscara raster de la pieza #51' })).toBeVisible();
   expect(startOptimization).toHaveBeenCalledOnce();
 });
 
@@ -151,6 +164,8 @@ test.each(['piece', 'resolution', 'order'])('cambiar %s limpia resultado previo'
   if (change === 'resolution') fireEvent.change(screen.getByLabelText('Resolución raster (mm/celda)'), { target: { value: '10' } });
   if (change === 'order') fireEvent.click(screen.getByRole('button', { name: 'Recuperar proceso iniciado' }));
   expect(screen.queryByText('Rasterización completada')).not.toBeInTheDocument();
+  expect(document.querySelectorAll('canvas')).toHaveLength(0);
+  if (change === 'piece') expect(screen.getByRole('img', { name: 'Geometría original de la pieza #52' }).querySelector('circle')).toHaveAttribute('r', '20');
 });
 
 test('una respuesta raster tardía no reaparece después de cambiar pieza', async () => {

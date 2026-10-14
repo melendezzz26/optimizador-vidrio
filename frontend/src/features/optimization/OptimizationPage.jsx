@@ -4,6 +4,7 @@ import { AppShell } from '../../shared/components/AppShell';
 import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
 import { EmptyState, FeedbackMessage, FieldError, LoadingState } from '../../shared/components/feedback';
 import { useOptimization } from './useOptimization';
+import { RasterComparison } from './RasterComparison';
 import './OptimizationPage.css';
 
 const SHAPES = { RECTANGULO: 'Rectángulo', CIRCUNFERENCIA: 'Circunferencia', POLIGONO_CONVEXO: 'Polígono convexo' };
@@ -24,6 +25,11 @@ function geometryLabel(piece) {
 function OptimizationWorkspace(props) {
   const flow = useOptimization(props);
   const order = flow.selection?.order;
+  const selectedPiece = order?.piezas.find(piece => String(piece.id_pieza) === flow.pieceId);
+  const rasterIsCurrent = Boolean(flow.raster && flow.raster.id_pedido === order?.id_pedido
+    && flow.raster.id_pieza === selectedPiece?.id_pieza);
+  const currentRaster = rasterIsCurrent ? flow.raster : null;
+  const previewGeometry = currentRaster?.geometria ?? selectedPiece?.geometria;
   const recovery = flow.scope === 'EN_OPTIMIZACION';
   return <PageCard className="optimization-page">
     <PageHeader title="Optimización" context="Preparación de piezas" icon={ScanLine}
@@ -130,6 +136,12 @@ function OptimizationWorkspace(props) {
         </dl>
         <p>La máscara corresponde a una pieza persistida. La cantidad indica las unidades previstas.</p>
       </section>}
+      {flow.canChoosePiece && selectedPiece && <RasterComparison
+        geometry={previewGeometry}
+        raster={currentRaster}
+        piece={selectedPiece}
+        rasterizing={flow.rasterizing}
+      />}
     </section>
   </PageCard>;
 }
