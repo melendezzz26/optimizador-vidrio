@@ -1,36 +1,38 @@
 import { canViewDashboard } from '../authentication';
+import { RefreshCw } from 'lucide-react';
 import { AppShell } from '../../shared/components/AppShell';
 import { PageCard, PageHeader } from '../../shared/components/PageLayout';
-import { EmptyState, FeedbackMessage, LoadingState } from '../../shared/components/feedback';
-import { DASHBOARD_SOURCES } from './dashboardModel';
+import { FeedbackMessage } from '../../shared/components/feedback';
 import { useDashboard } from './useDashboard';
-
-function SourceSummary({ source, data }) {
-  if (source === 'planchas') return <p>Registros activos con unidades: {data.activeRecords}. Unidades registradas activas: {data.activeUnits}.</p>;
-  if (source === 'retazos' || source === 'clients') return <p>Registros activos: {data.activeRecords}. Registros totales: {data.totalRecords}.</p>;
-  if (source === 'recentOrders') return <p>Registros en esta página: {data.items.length}. {data.orderDescription}</p>;
-  return <p>Total: {data.total}.</p>;
-}
+import { DashboardSummary } from './DashboardSummary';
+import { DashboardOrders } from './DashboardOrders';
+import { DashboardQuickActions } from './DashboardQuickActions';
+import './DashboardPage.css';
 
 function DashboardWorkspace(props) {
-  const { blocks, status, refresh } = useDashboard(props);
-  return <PageCard>
-    <PageHeader title="Inicio" context="NewGlass" description="Consulta la información operativa disponible para tu rol." />
-    <button type="button" className="ng-button" onClick={refresh} disabled={Object.values(blocks).some(block => block.status === 'loading')}>Actualizar datos</button>
-    {status === 'partial-error' && <FeedbackMessage variant="warning">Parte de la información no pudo cargarse. Los demás datos siguen disponibles.</FeedbackMessage>}
-    <div aria-label="Fuentes del dashboard">
-      {Object.entries(blocks).map(([source, block]) => <section key={source} aria-label={DASHBOARD_SOURCES[source]}>
-        <h2>{DASHBOARD_SOURCES[source]}</h2>
-        {block.status === 'loading' ? <LoadingState>Cargando {DASHBOARD_SOURCES[source].toLowerCase()}...</LoadingState>
-          : block.status === 'error' ? <FeedbackMessage variant="error">{block.error}</FeedbackMessage>
-            : block.status === 'empty' ? <EmptyState title="No hay registros para este resumen." />
-              : <SourceSummary source={source} data={block.data} />}
-      </section>)}
+  const { blocks, status, refresh, actions } = useDashboard(props);
+  const loading = Object.values(blocks).some(block => block.status === 'loading');
+  const failed = status === 'error' || status === 'partial-error';
+  return <PageCard className="dashboard-page">
+    <div className="dashboard-heading">
+      <PageHeader title="Inicio" context="NewGlass" description="Resumen operativo de la información disponible para tu rol." />
+      <button type="button" className="ng-button" onClick={refresh} disabled={loading} aria-busy={loading}>
+        <RefreshCw size={18} aria-hidden="true" />{failed ? 'Reintentar carga' : 'Actualizar datos'}
+      </button>
     </div>
+    {status === 'partial-error' && <FeedbackMessage variant="warning" title="Información parcial">
+      Algunas consultas no pudieron completarse. Cada bloque identifica su resultado; los datos válidos siguen disponibles.
+    </FeedbackMessage>}
+    {status === 'error' ? <FeedbackMessage variant="error" title="Información no disponible">
+      No se pudo cargar el resumen. Reintenta la carga; también puedes acceder a tus funciones habilitadas.
+    </FeedbackMessage> : <>
+      <DashboardSummary blocks={blocks} />
+      <DashboardOrders block={blocks.recentOrders} />
+    </>}
+    <DashboardQuickActions actions={actions} />
   </PageCard>;
 }
 
-// T1 intentionally supplies only the functional shell and textual data states.
 export function DashboardPage({ user, toolbar, ...props }) {
   return <AppShell activeItem="dashboard" user={user}>
     {toolbar}
