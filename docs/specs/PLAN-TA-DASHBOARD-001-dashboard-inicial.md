@@ -149,10 +149,10 @@ PBI completo posteriormente: UI final T2, 18 CA contrastados, integración/regre
 
 ### T2 — Interfaz Dashboard
 
-- [ ] Componer la UI final con resúmenes permitidos, pedidos en orden documentado, inventario y accesos rápidos por rol.
-- [ ] Presentar loading/empty/error/partial-error sin números ficticios y con recuperación comprensible.
-- [ ] Verificar responsive, teclado, foco, reduced motion y semántica accesible; reutilizar componentes/tokens.
-- [ ] Pruebas de componente de presentación y permisos; regresión del bloque y lint/build aplicables.
+- [x] Componer la UI final con resúmenes permitidos, pedidos en orden documentado, inventario y accesos rápidos por rol.
+- [x] Presentar loading/empty/error/partial-error sin números ficticios y con recuperación comprensible.
+- [x] Verificar responsive, teclado, foco, reduced motion y semántica accesible; reutilizar componentes/tokens.
+- [x] Pruebas de componente de presentación y permisos; regresión del bloque y lint/build aplicables.
 
 **Dependencia:** T1 estable. **Cierre:** interfaz completa sobre el modelo real; no atribuir todavía E2E/evidencia final.
 
@@ -170,3 +170,4 @@ PBI completo posteriormente: UI final T2, 18 CA contrastados, integración/regre
 
 - 14/10/2026 — Draft: planificación y TASKS derivadas de SPEC Approved `835c30d` y contratos de la base integrada `86972fd`. Backend innecesario; tareas en §12 conforme al PLAN previo. La implementación T1 fue solicitada expresamente; no se inventa aprobación técnica del PLAN ni se marca el PBI completo.
 - 14/10/2026 — T1 implementada y comprobada; estado documental del PLAN sigue Draft, revisión técnica humana pendiente. Resultados y matriz CA parcial en [evidencia técnica T1](../evidence/sprint-01/TA-DASHBOARD-001/t1-navegacion-datos.md). T2/T3 siguen sin ejecutar; SPEC conserva Approved.
+- 14/10/2026 — T2 implementada y comprobada mediante componentes y una inspección técnica aislada de layout con HTTP simulado, sin E2E real ni evidencia final del PBI. Resultados y matriz CA en [registro T2](../evidence/sprint-01/TA-DASHBOARD-001/t2-interfaz-dashboard.md). PLAN sigue Draft: **Human PLAN approval still pending**. SPEC Approved intacta; T3 pendiente.

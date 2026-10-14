@@ -15,6 +15,7 @@ function apiResponse(url) {
   if (path === '/api/inventory/tipos-vidrio') return response([]);
   if (path === '/api/clients') return response(clients);
   if (path === '/api/orders') return response(orderPage);
+  if (path === '/api/users' || path === '/api/users/roles') return response([]);
   throw new Error('Unexpected test request');
 }
 const storeSession = () => sessionStorage.setItem('optimizador.auth', JSON.stringify({ access_token: 'synthetic-session', usuario: actor }));
@@ -98,4 +99,17 @@ test('401 de datos usa logout global y retira el Dashboard', async () => {
   await screen.findByRole('heading', { name: 'Iniciar sesión' });
   expect(sessionStorage.getItem('optimizador.auth')).toBeNull();
   expect(screen.queryByRole('heading', { name: 'Inicio' })).not.toBeInTheDocument();
+});
+
+test.each([
+  ['Gestión de inventario', 'Gestión de inventario'],
+  ['Registro de pedidos', 'Registro de pedidos'],
+  ['Panel de roles', 'Panel de roles'],
+])('acceso rápido %s navega al módulo real desde App', async (quickLabel, sidebarLabel) => {
+  actor = dashboardUser('Administrador'); storeSession();
+  const user = userEvent.setup(); render(<App />);
+  await screen.findByRole('heading', { name: 'Inicio' });
+  await user.click(await screen.findByRole('button', { name: `Abrir ${quickLabel}`, exact: true }));
+  expect(screen.getByRole('button', { name: sidebarLabel, exact: true })).toHaveAttribute('aria-current', 'page');
+  expect(screen.queryByRole('heading', { name: 'Inicio', exact: true })).not.toBeInTheDocument();
 });
