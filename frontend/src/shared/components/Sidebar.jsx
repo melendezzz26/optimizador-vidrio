@@ -1,8 +1,9 @@
 import { useContext } from 'react';
-import { PackagePlus, Layers3, ShieldCheck } from 'lucide-react';
+import { PackagePlus, Layers3, ShieldCheck, ScanLine } from 'lucide-react';
 import { NavigationContext } from './NavigationContext';
 import {
   canManageOrders,
+  canExecuteOptimization,
   canManageUsers,
   canViewInventory,
 } from '../../features/authentication/permissions';
@@ -10,6 +11,7 @@ import './ui.css';
 
 const sections = [
   { id: 'orders', label: 'Registro de pedidos', icon: PackagePlus, canView: canManageOrders },
+  { id: 'optimization', label: 'Optimización', icon: ScanLine, canView: canExecuteOptimization },
   { id: 'inventory', label: 'Gestión de inventario', icon: Layers3, canView: canViewInventory },
   { id: 'users', label: 'Panel de roles', icon: ShieldCheck, canView: canManageUsers },
 ];

@@ -7,6 +7,7 @@ vi.mock('@formkit/auto-animate/react', () => ({ useAutoAnimate: () => [null] }))
 vi.mock('../../features/authentication', () => ({
   useSession: () => ({ session: { token: 'synthetic', usuario: { rol: 'Administrador' } }, isChecking: false }),
   canManageOrders: () => true,
+  canExecuteOptimization: () => true,
   canManageUsers: () => false,
   canViewInventory: () => false,
   SessionBar: () => null,

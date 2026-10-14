@@ -1,0 +1,22 @@
+.optimization-columns { display: grid; grid-template-columns: minmax(230px, 1fr) minmax(0, 2fr); gap: var(--ng-space-6); }
+.optimization-columns > section { min-width: 0; }
+.optimization-page h2 { font-size: 20px; margin: 0 0 var(--ng-space-4); }
+.optimization-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ng-space-2); margin: var(--ng-space-4) 0; }
+.optimization-actions .ng-button { padding-inline: var(--ng-space-3); }
+.optimization-orders { list-style: none; padding: 0; display: grid; gap: var(--ng-space-2); }
+.optimization-order.ng-button { width: 100%; display: grid; justify-content: start; text-align: left; overflow-wrap: anywhere; padding: var(--ng-space-3); }
+.optimization-order[aria-pressed='true'] { border: 2px solid var(--ng-primary-focus); background: var(--ng-action-tint); }
+.optimization-order small { font-weight: 400; }
+.optimization-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ng-space-4); }
+.optimization-facts dt { font-size: 13px; color: var(--ng-text-600); }
+.optimization-facts dd { margin: var(--ng-space-1) 0 0; font-weight: 600; overflow-wrap: anywhere; }
+.optimization-table-scroll { overflow-x: auto; }
+.optimization-pieces { width: 100%; border-collapse: collapse; font-size: 14px; }
+.optimization-pieces caption { text-align: left; font-weight: 600; padding-block: var(--ng-space-3); }
+.optimization-pieces th, .optimization-pieces td { text-align: left; vertical-align: top; padding: var(--ng-space-3); border-bottom: 1px solid var(--ng-border-subtle); }
+.optimization-pieces thead { background: var(--ng-background); }
+.optimization-pieces small { display: block; margin-top: var(--ng-space-2); overflow-wrap: anywhere; }
+.optimization-raster { border-top: 1px solid var(--ng-border-subtle); margin-top: var(--ng-space-6); padding-top: var(--ng-space-6); }
+.optimization-result { margin-top: var(--ng-space-6); }
+@media (max-width: 1100px) { .optimization-columns { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .optimization-facts { grid-template-columns: 1fr; } }
