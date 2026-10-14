@@ -435,6 +435,6 @@ export default function FormularioPedido({
   );
 
   return standalone
-    ? <AppShell activeItem="orders" user={user}>{toolbar}{content}</AppShell>
+    ? <AppShell activeItem={mode === 'create' ? 'new-order' : 'orders'} user={user}>{toolbar}{content}</AppShell>
     : content;
 }

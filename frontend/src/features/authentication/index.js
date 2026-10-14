@@ -5,6 +5,7 @@ export { useSession } from './useSession';
 export { getAccessToken } from './authApi';
 export {
 	canConfigureOptimizer,
+	canExecuteOptimization,
 	canManageOrders,
 	canManagePlanchas,
 	canManageRetazos,

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from 'react';
-import { ArrowRight, ArrowUpRight, Boxes, ClipboardList, FilePlus2, Layers3, Recycle, Scissors, Users } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Boxes, ClipboardList, FilePlus2, Layers3, Recycle, ScanLine, Scissors, Users } from 'lucide-react';
 import { AppShell } from '../../shared/components/AppShell';
 import { NavigationContext } from '../../shared/components/NavigationContext';
 import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
@@ -197,6 +197,7 @@ export function DashboardPage({
   user,
   canAccessOrders,
   canAccessInventory,
+  canAccessOptimization = false,
   canRegisterSheets,
   canRegisterOffcuts,
   onSessionExpired = NOOP,
@@ -257,6 +258,9 @@ export function DashboardPage({
     ...(canAccessOrders ? [
       { label: 'Nuevo pedido', description: 'Crear solicitud de corte', icon: FilePlus2, view: 'new-order' },
       { label: 'Ver pedidos', description: 'Consultar y administrar pedidos', icon: ClipboardList, view: 'orders' },
+    ] : []),
+    ...(canAccessOptimization ? [
+      { label: 'Ir al optimizador', description: 'Iniciar una optimización disponible', icon: ScanLine, view: 'optimization' },
     ] : []),
     ...(canAccessInventory ? [
       { label: 'Gestión de inventario', description: 'Consultar planchas y retazos', icon: Boxes, view: 'inventory' },

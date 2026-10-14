@@ -76,6 +76,7 @@ function renderDashboard(onNavigate = vi.fn(), data = makeDashboardData()) {
           token="dashboard-token"
           canAccessOrders
           canAccessInventory
+          canAccessOptimization
           canRegisterSheets
           canRegisterOffcuts
         />
@@ -119,6 +120,8 @@ test('navega desde los accesos rápidos y ofrece acciones reales por pedido', as
   expect(onNavigate).toHaveBeenCalledWith('register-retazo');
   await user.click(screen.getByRole('button', { name: /^Gestión de inventario Consultar planchas y retazos/ }));
   expect(onNavigate).toHaveBeenCalledWith('inventory');
+  await user.click(screen.getByRole('button', { name: /Ir al optimizador Iniciar una optimización disponible/ }));
+  expect(onNavigate).toHaveBeenCalledWith('optimization');
 
   await user.click(within(pendingRow).getByRole('button', { name: 'Ver pedido 184' }));
   expect(onNavigate).toHaveBeenCalledWith('orders', { order: { id: 184, mode: 'view' } });

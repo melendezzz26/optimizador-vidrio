@@ -25,10 +25,15 @@ test('módulos accesibles solo desde sidebar; header conserva identidad, rol y c
   expect(within(header).getByRole('button', { name: 'Cerrar sesión' })).toBeVisible();
   expect(within(header).getByText('Administrador')).toBeVisible();
   expect(within(header).queryByRole('navigation')).not.toBeInTheDocument();
-  for (const label of ['Registro de pedidos', 'Gestión de inventario', 'Panel de roles']) {
+  for (const label of ['Registro de pedidos', 'Optimización', 'Gestión de inventario', 'Panel de roles']) {
     expect(screen.getAllByRole('button', { name: label, exact: true })).toHaveLength(1);
     expect(within(sidebar).getByRole('button', { name: label, exact: true })).toBeEnabled();
   }
+  const newOrder = within(sidebar).getByRole('button', { name: 'Nuevo pedido', exact: true });
+  expect(newOrder).toBeEnabled();
+  expect(screen.getAllByRole('button', { name: 'Nuevo pedido', exact: true })).toHaveLength(2);
+  await user.click(newOrder);
+  expect(screen.getByRole('button', { name: 'Nuevo pedido', exact: true })).toHaveAttribute('aria-current', 'page');
   await user.click(within(sidebar).getByRole('button', { name: 'Gestión de inventario' }));
   expect(screen.getByRole('heading', { name: 'Gestión de Inventario' })).toBeVisible();
   expect(screen.getByRole('button', { name: 'Gestión de inventario', exact: true })).toHaveAttribute('aria-current', 'page');
@@ -45,4 +50,27 @@ test('sidebar respeta permisos del operario sin exponer Panel de roles', () => {
   state.role = 'Operario'; render(<App />);
   expect(screen.queryByRole('button', { name: 'Panel de roles' })).not.toBeInTheDocument();
   expect(screen.getByRole('button', { name: 'Gestión de inventario', exact: true })).toBeVisible();
+  expect(screen.getByRole('button', { name: 'Optimización', exact: true })).toBeVisible();
+});
+
+test.each(['Administrador', 'Operario'])('%s navega a Optimization por teclado sin cambiar subpath', async role => {
+  state.role = role;
+  window.history.replaceState({}, '', '/optimizador-vidrio/');
+  const user = userEvent.setup(); render(<App />);
+  const button = screen.getByRole('button', { name: 'Optimización', exact: true });
+  button.focus(); await user.keyboard('{Enter}');
+  expect(screen.getByRole('heading', { name: 'Optimización', exact: true })).toBeVisible();
+  expect(screen.getByRole('button', { name: 'Optimización', exact: true })).toHaveAttribute('aria-current', 'page');
+  expect(window.location.pathname).toBe('/optimizador-vidrio/');
+  expect(screen.getAllByRole('button', { name: 'Cerrar sesión' })).toHaveLength(1);
+  window.history.replaceState({}, '', '/');
+});
+
+test('Almacenero conserva Dashboard e Inventario sin exponer Optimization', async () => {
+  state.role = 'Almacenero'; render(<App />);
+  expect(screen.queryByRole('button', { name: 'Optimización' })).not.toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Dashboard operativo' })).toBeVisible();
+  expect(screen.getByRole('button', { name: 'Gestión de inventario', exact: true })).toBeVisible();
+  await userEvent.setup().click(screen.getByRole('button', { name: 'Gestión de inventario', exact: true }));
+  expect(screen.getByRole('heading', { name: 'Gestión de Inventario' })).toBeVisible();
 });
