@@ -18,6 +18,8 @@ No se añadieron dependencias. T3 no incorpora FF/BF/WF, stock, placement, aprov
 
 El 2026-10-14 se ejecutaron los seis casos existentes de frontend/tests/e2e/hu015-rasterization.spec.js despues de corregir el tamano visual de celda del Canvas. Resultado Playwright: 6 passed en 30.9 s; 0 failed, 0 skipped y 0 flaky. Los tres escenarios se ejecutaron en Chromium desktop y en el proyecto Chromium mobile: 3/3 por proyecto.
 
+La ejecucion real anterior fue una corrida explicita contra Supabase de pruebas con credenciales sinteticas provistas por el entorno. La coleccion E2E general de CI no configura credenciales externas de HU-015; Playwright omite explicitamente solo esta suite con el motivo `HU-015 real E2E requires configured synthetic test credentials`. Esa omision permite que CI recolecte y ejecute las demas suites, y no cuenta como una ejecucion E2E exitosa de HU-015 en CI. Si ambas variables `HU015_E2E_USERNAME` y `HU015_E2E_PASSWORD` estan configuradas, la suite HU-015 se ejecuta normalmente.
+
 El backend normal se inicio con el venv y la configuracion existentes del proyecto, conectado al host Supabase de la instancia de pruebas autorizada. /health/live y /health/ready respondieron 200. Vite se inicio con el script npm del proyecto en http://127.0.0.1:5173/ y uso el API local del puerto 8017. Playwright fue 1.63.0 y Chromium 153.0.8010.12.
 
 Comando: npm.cmd run test:e2e -- --config=./.hu015-t3-supabase.playwright.config.mjs tests/e2e/hu015-rasterization.spec.js. Se uso una configuracion Playwright temporal sin webServer ni globalTeardown para reutilizar los servicios existentes; no se uso PostgreSQL local, no se simularon respuestas y no se uso staging.
