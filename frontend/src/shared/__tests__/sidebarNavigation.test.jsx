@@ -18,6 +18,8 @@ afterEach(() => vi.unstubAllGlobals());
 test('módulos accesibles solo desde sidebar; header conserva identidad, rol y cierre de sesión', async () => {
   const user = userEvent.setup(); render(<App />);
   const sidebar = screen.getByRole('complementary', { name: 'Módulos de NewGlass' });
+  expect(screen.getByRole('heading', { name: 'Dashboard operativo' })).toBeVisible();
+  expect(within(sidebar).getByRole('button', { name: 'Dashboard', exact: true })).toHaveAttribute('aria-current', 'page');
   const header = screen.getByText('Ana Técnica').closest('header');
   expect(within(header).getAllByRole('button')).toHaveLength(1);
   expect(within(header).getByRole('button', { name: 'Cerrar sesión' })).toBeVisible();

@@ -1,0 +1,6 @@
+.orders-status { display: inline-block; padding: 3px var(--ng-space-3); border-radius: 999px; background: var(--ng-background); color: var(--ng-text-600); font-size: 12px; font-weight: 700; white-space: nowrap; }
+.orders-status--pendiente { background: #fef3c7; color: #92400e; }
+.orders-status--en_optimizacion { background: #e0e7ff; color: #3730a3; }
+.orders-status--optimizado { background: #dcfce7; color: #166534; }
+.orders-status--confirmado { background: #dbeafe; color: #1e40af; }
+.orders-status--cancelado { background: #fee2e2; color: #991b1b; }

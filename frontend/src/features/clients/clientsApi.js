@@ -22,7 +22,9 @@ async function request({ method = 'GET', body, params, signal, token } = {}) {
       409: 'Ya existe un cliente con ese tipo y número de documento. Búscalo para seleccionarlo.',
       422: 'Revisa los datos del cliente e inténtalo de nuevo.',
     }[response.status] || 'No se pudo completar la operación de clientes. Inténtalo otra vez.';
-    throw new Error(response.status === 422 && typeof data?.detail === 'string' ? data.detail : fallback);
+    const error = new Error(response.status === 422 && typeof data?.detail === 'string' ? data.detail : fallback);
+    error.status = response.status;
+    throw error;
   }
   if (method === 'GET' ? !Array.isArray(data) : response.status !== 201 || !Number.isInteger(data?.id_cliente)) {
     throw new Error('El servidor devolvió una respuesta inesperada. Inténtalo otra vez.');
@@ -33,4 +35,5 @@ async function request({ method = 'GET', body, params, signal, token } = {}) {
 export const searchClients = (value, mode, options) => request({
   ...options, params: new URLSearchParams({ [mode === 'document' ? 'document' : 'query']: value.trim() }),
 });
+export const listClients = (options) => request(options);
 export const createClient = (body, options) => request({ ...options, method: 'POST', body });

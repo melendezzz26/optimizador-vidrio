@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { PackagePlus, Layers3, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, PackagePlus, Layers3, ShieldCheck } from 'lucide-react';
 import { NavigationContext } from './NavigationContext';
 import {
   canManageOrders,
@@ -9,6 +9,7 @@ import {
 import './ui.css';
 
 const sections = [
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, canView: (user) => canManageOrders(user) || canViewInventory(user) },
   { id: 'orders', label: 'Registro de pedidos', icon: PackagePlus, canView: canManageOrders },
   { id: 'inventory', label: 'Gestión de inventario', icon: Layers3, canView: canViewInventory },
   { id: 'users', label: 'Panel de roles', icon: ShieldCheck, canView: canManageUsers },

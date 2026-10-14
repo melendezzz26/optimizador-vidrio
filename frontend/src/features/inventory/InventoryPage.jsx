@@ -263,7 +263,7 @@ function InventoryTable({
   );
 }
 
-export function InventoryPage({ onSessionExpired, toolbar, user }) {
+export function InventoryPage({ onSessionExpired, toolbar, user, initialAction = null }) {
   const [activeTab, setActiveTab] = useState('planchas');
   const [filtersByTab, setFiltersByTab] = useState({
     planchas: { ...EMPTY_FILTERS }, retazos: { ...EMPTY_FILTERS },
@@ -316,6 +316,14 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
       });
     return () => { active = false; };
   }, [handleApiError]);
+
+  useEffect(() => {
+    if (isLoading || loadError || !initialAction) return;
+    if (initialAction === 'plancha' && canManagePlanchas(user)) openPlanchaForm();
+    if (initialAction === 'retazo' && canManageRetazos(user)) openRetazoForm();
+  // The route action is consumed when this page mounts; callbacks clear form feedback.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialAction, isLoading, loadError]);
 
   function openPlanchaForm() {
     if (isInventoryActionPending) return;

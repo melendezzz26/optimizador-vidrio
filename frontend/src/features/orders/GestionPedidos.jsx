@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Eye, FileEdit, Plus, Search, Trash2, X } fro
 import { AppShell } from '../../shared/components/AppShell';
 import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
 import { ConfirmDialog, EmptyState, FeedbackMessage, LoadingState } from '../../shared/components/feedback';
+import { OrderStatusBadge } from './OrderStatusBadge';
 import FormularioPedido from './FormularioPedido';
 import { cancelOrder, listOrders } from './ordersApi';
 import './GestionPedidos.css';
@@ -11,14 +12,6 @@ const PAGE_SIZE = 10;
 const EMPTY_FILTERS = { estado: '', cliente: '', fecha: '' };
 const NOOP = () => {};
 
-const STATUS_LABELS = {
-  PENDIENTE: 'Pendiente',
-  EN_OPTIMIZACION: 'En optimización',
-  OPTIMIZADO: 'Optimizado',
-  CONFIRMADO: 'Confirmado',
-  CANCELADO: 'Cancelado',
-};
-
 function formatDate(value) {
   const date = new Date(value);
   return Number.isNaN(date.getTime())
@@ -26,7 +19,7 @@ function formatDate(value) {
     : date.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
-export default function GestionPedidos({ token, user, toolbar, onSessionExpired = NOOP }) {
+export default function GestionPedidos({ token, user, toolbar, onSessionExpired = NOOP, requestedOrder = null }) {
   const [pedidos, setPedidos] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -110,6 +103,21 @@ export default function GestionPedidos({ token, user, toolbar, onSessionExpired 
     setIsFormSubmitting(false);
     setOrderModal({ mode, orderId });
   };
+
+  useEffect(() => {
+    if (!requestedOrder?.id) return;
+    if (requestedOrder.mode === 'cancel') {
+      if (isLoading) return;
+      const pendingOrder = pedidos.find((pedido) => (
+        pedido.id_pedido === requestedOrder.id && pedido.estado === 'PENDIENTE'
+      ));
+      if (pendingOrder) setOrderToCancel(pendingOrder);
+      return;
+    }
+    openOrderModal(requestedOrder.mode ?? 'view', requestedOrder.id, null);
+  // Navigation requests are immutable and change only when the dashboard selects a row action.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requestedOrder, isLoading, pedidos]);
 
   const closeOrderModal = () => {
     if (isFormSubmitting) return;
@@ -262,9 +270,7 @@ export default function GestionPedidos({ token, user, toolbar, onSessionExpired 
                     <th scope="row">#{pedido.id_pedido}</th>
                     <td>{formatDate(pedido.fecha_registro)}</td>
                     <td>{pedido.cliente || 'Consumidor final'}</td>
-                    <td><span className={`orders-status orders-status--${pedido.estado.toLowerCase()}`}>
-                      {STATUS_LABELS[pedido.estado] ?? pedido.estado}
-                    </span></td>
+                    <td><OrderStatusBadge status={pedido.estado} /></td>
                     <td>
                       <div className="orders-management-row-actions">
                         <button type="button" className="ng-button" aria-label={pedido.estado === 'PENDIENTE' ? `Editar pedido ${pedido.id_pedido}` : `Ver pedido ${pedido.id_pedido}`}
