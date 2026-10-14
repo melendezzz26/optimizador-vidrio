@@ -8,6 +8,7 @@ from app.modules.inventory.presentation.router import router as inventory_router
 from app.modules.users.presentation.router import router as users_router
 from app.modules.orders.presentation.router import router as orders_router
 from app.modules.clients.presentation.router import router as clients_router
+from app.modules.optimization.presentation.router import router as optimization_router
 
 app = FastAPI(
     title="Optimizador de Corte de Vidrio",
@@ -32,6 +33,7 @@ app.include_router(users_router)
 app.include_router(orders_router)
 # Rutas de consulta y alta de clientes (HU-012 T02)
 app.include_router(clients_router)
+app.include_router(optimization_router)
 app.include_router(health_router)
 
 
