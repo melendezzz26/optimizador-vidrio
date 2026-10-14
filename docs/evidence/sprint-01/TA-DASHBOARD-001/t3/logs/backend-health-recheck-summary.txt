@@ -1,0 +1,5 @@
+﻿Real backend process started by the user; not restarted by the agent
+GET /openapi.json   HTTP 200
+GET /health/live    HTTP 200
+GET /health/ready   HTTP 200 {"status":"ready"}
+Frontend Vite       HTTP 200 at http://127.0.0.1:5173/

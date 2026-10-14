@@ -13,6 +13,8 @@ test.beforeEach(async ({ page, baseURL }) => {
   await page.getByLabel('Usuario', { exact: true }).fill('O70000001')
   await page.getByLabel('Contraseña', { exact: true }).fill('Orders-test-2026!')
   await page.getByRole('button', { name: 'Ingresar', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Inicio', exact: true })).toHaveAttribute('aria-current', 'page')
+  await page.getByRole('button', { name: 'Registro de pedidos', exact: true }).click()
   const header = page.locator('header.session-bar')
   await expect(header.getByRole('button')).toHaveCount(1)
   await expect(header.getByRole('button', { name: 'Cerrar sesión' })).toBeVisible()

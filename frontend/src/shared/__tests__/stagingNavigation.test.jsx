@@ -10,6 +10,7 @@ vi.mock('../../features/authentication', () => ({
   canExecuteOptimization: () => true,
   canManageUsers: () => false,
   canViewInventory: () => false,
+  canViewDashboard: () => true,
   SessionBar: () => null,
   LoginForm: () => null,
 }))
@@ -23,10 +24,11 @@ test('Pages abre el editor dentro de pedidos sin abandonar el subpath', async ()
   window.history.replaceState({}, '', '/optimizador-vidrio/')
   vi.stubGlobal('fetch', vi.fn(async (url) => ({
     ok: true, status: 200,
-    json: async () => String(url).includes('tipos-vidrio') ? [] : { items: [], total: 0, total_pages: 0 },
+    json: async () => String(url).includes('/api/orders?') ? { items: [], total: 0, total_pages: 0, page: 1, limit: 10 } : [],
   })))
   const user = userEvent.setup()
   render(<App />)
+  await user.click(screen.getByRole('button', { name: 'Registro de pedidos', exact: true }))
   await user.click(await screen.findByRole('button', { name: 'Nuevo pedido', exact: true }))
   await screen.findByText('No hay piezas agregadas')
   await user.click(screen.getByRole('button', { name: 'Agregar pieza' }))

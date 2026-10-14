@@ -1,0 +1,7 @@
+﻿Command: npm.cmd run test:unit
+# tests 124
+# pass 124
+# fail 0
+# cancelled 0
+# skipped 0
+Exit code 0
