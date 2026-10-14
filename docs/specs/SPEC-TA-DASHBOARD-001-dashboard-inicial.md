@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Approved** |
+| Estado | **Verified** |
 | PBI relacionado | TA-DASHBOARD-001 — Dashboard inicial para usuarios de NewGlass |
 | Tipo | PBI funcional nuevo; independiente de HU-015 |
 | Responsable / Autor | Fabricio Melendez Quezada |
@@ -16,7 +16,7 @@
 | Base auditada | `origin/integration/sprint-01` — `86972fd779bae826909a401874f06d5b7dd2a3ed`, merge del PR #47 |
 | Convención | Archivo único `SPEC-<ID>-<tema>.md`, conforme a `SPEC-TEMPLATE.md` y `CONTRIBUTING.md`. |
 
-Esta SPEC registra el alcance funcional aprobado. No constituye implementación, PLAN, TASKS ni evidencia de pruebas ejecutadas del Dashboard. Se reutiliza la estructura de la plantilla y de las SPEC existentes; la revisión humana aprobada procede de la confirmación expresa del equipo, sin atribuirle una ejecución técnica anticipada.
+Esta SPEC conserva el alcance funcional aprobado. La implementación y verificación de sus criterios se registran en el PLAN y en la evidencia de cierre T3; esta transición no amplía retrospectivamente el alcance ni atribuye una aprobación de PR. Se reutiliza la estructura de la plantilla y de las SPEC existentes.
 
 ## 1. Objetivo
 
@@ -213,18 +213,18 @@ Las unitarias aislables siguen la suite vigente; las pruebas de componente usan 
 
 ## 11. Evidencias requeridas
 
-Evidencia futura, todavía no generada:
+La evidencia de cierre de esta versión queda registrada en [T3 integración, E2E y cierre](../evidence/sprint-01/TA-DASHBOARD-001/t3-integracion-e2e-cierre.md):
 
-- Resultados reales de pruebas unit/component con comandos, contexto y conteos.
-- Build frontend y lint correspondientes a la implementación final.
-- E2E del flujo crítico y resultados reales de refresh/logout/permisos; distinguir ejecuciones de colecciones y skips.
-- Captura auténtica o evidencia reproducible del Dashboard implementado, datos reales y estados relevantes, sin secretos ni datos personales innecesarios.
-- Trazabilidad **PBI TA-DASHBOARD-001 → SPEC aprobada → PLAN posterior → implementación → pruebas → evidencia → PR/revisión humana**.
+- Pruebas Dashboard component/unit, suite frontend, lint y build con comandos y resultados observados.
+- Siete E2E reales de Playwright contra frontend local, backend activo y la base Supabase de desarrollo configurada; comprende login por los tres roles, navegación permitida, refresh, logout y responsive. El escenario de error parcial se etiqueta como fallo controlado interceptado y no como error real del backend.
+- Capturas auténticas del Dashboard con datos de la API; los nombres de usuario y clientes se cubren en las imágenes para no publicar identificadores. Los valores operativos visibles proceden de las respuestas reales.
+- Trazabilidad **PBI TA-DASHBOARD-001 → SPEC Approved → PLAN Approved → implementación → pruebas → evidencia**. El PR continúa **Pending** y la revisión de PR/merge es un paso posterior.
 
-No se crea evidencia falsa ni se marca la funcionalidad Implemented/Verified anticipadamente. El cierre futuro requiere comprobar los CA sobre la implementación y su evidencia, además de revisión humana.
+El estado **Verified** refleja la comprobación de los CA contra implementación, pruebas y evidencia enumeradas; no afirma que haya un PR aprobado, merge o despliegue.
 
 Referencias de ingeniería: [CONTRIBUTING](../../CONTRIBUTING.md), [ADR-001](../adr/ADR-001-seleccion-arquitectura.md), [pruebas](../testing/README.md), [UI/UX](../ui-ux/README.md), [base visual](../ui-ux/inventario-base-visual.md), [feedback compartido](../ui-ux/feedback-compartido.md), [SPEC HU-001](SPEC-HU-001-inicio-login.md) y [SPEC HU-015](SPEC-HU-015-interfaz-rasterizacion.md). Las notas históricas de esos documentos se contrastan con el código integrado de la base indicada, no se convierten en nuevos contratos.
 
 ## Historial de estado
 
 - 14/10/2026 — **Approved**: creación documental de la SPEC TA-DASHBOARD-001 conforme a la revisión funcional previa **aprobada por Fabricio Danniel Aguilar Chávez**, confirmada por el equipo. Autor: Fabricio Melendez Quezada. Se registran 18 CA verificables y el alcance de consulta/navegación Sprint 1, con fuentes/permisos reales. Sin implementación, PLAN, TASKS, pruebas ejecutadas, evidencia nueva, push o PR en esta entrega.
+- 14/10/2026 — **Verified**: reviewer **Fabricio Danniel Aguilar Chávez**. Los 18 CA fueron contrastados con implementación y pruebas; CA-10 queda **VERIFIED_CONDITIONAL** por el orden de gestión que permite el contrato, mientras los demás criterios cumplen. Evidencia final: siete E2E reales (0 fallidos, omitidos o flaky), regresión 73 Dashboard / 124 unit / 369 componentes, lint y build PASS, más capturas revisadas. PR: **Pending**; no se afirma aprobación, merge ni deploy.

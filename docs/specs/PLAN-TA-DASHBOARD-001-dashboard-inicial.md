@@ -4,11 +4,11 @@
 
 | Campo | Valor |
 |---|---|
-| Estado del plan | **Draft — pendiente de revisión técnica humana** |
+| Estado del plan | **Approved** |
 | SPEC de referencia | [SPEC-TA-DASHBOARD-001-dashboard-inicial.md](SPEC-TA-DASHBOARD-001-dashboard-inicial.md), **Approved**, 18 CA |
 | Autor | Fabricio Melendez Quezada |
 | Reviewer de la SPEC | Fabricio Danniel Aguilar Chávez |
-| Reviewer del plan | Pendiente; no se atribuye aprobación del PLAN a la revisión de la SPEC. |
+| Reviewer del plan | Andro Joseph Quispe Cesias |
 | Base de planificación | `835c30d`, sobre `origin/integration/sprint-01` en `86972fd` (PR #47 integrado) |
 | Rama | `feature/TA-DASHBOARD-001` |
 | Fecha | 14/10/2026 |
@@ -122,7 +122,7 @@ T3: Playwright existente con navegador/backend/datos reales controlados; login d
 - Clientes no conserva status en errores actualmente; extensión mínima para 401 debe mantener mensajes/contratos de consumidores existentes.
 - Cambio del destino inicial modifica expectativas de pruebas de navegación: actualizar sus entradas al módulo explícitamente, sin eliminar aserciones anteriores.
 - HU-007/Orders y HU-012 E2E asumían Orders activo justo después de login. T1 adapta únicamente su entrada a Inicio → Pedidos, conservando cuerpos/aserciones; ejecución real y cierre E2E permanecen pendientes de T3.
-- PLAN no tiene aprobación técnica humana registrada; T1 se ejecuta por autorización explícita del equipo, conservando esa distinción.
+- La aprobación humana del PLAN quedó confirmada por Andro Joseph Quispe Cesias; el estado vigente es Approved. La evidencia T3 registra la finalización técnica sin cambiar al reviewer de la SPEC.
 
 Fuera de alcance: gráficos, alertas/umbrales, métricas futuras/M1/M2, FF/BF/WF, ejecución de optimización, stock compatible, placement, merma/aprovechamiento, mutaciones, migraciones, dashboard final T2, E2E/evidencia final T3, push/PR/merge/deploy.
 
@@ -158,11 +158,13 @@ PBI completo posteriormente: UI final T2, 18 CA contrastados, integración/regre
 
 ### T3 — Integración + E2E + evidencia
 
-- [ ] Auditar integración final y regresión; frontend unit/component/lint/build, backend solo si fue afectado.
-- [ ] E2E real login → Dashboard → función permitida, información real, refresh, logout y permisos; sin mocks de integración.
-- [ ] Contrastar individualmente los 18 CA, responsive/teclado y seguridad; corregir bloqueantes reales con regresión.
-- [ ] Generar evidencia auténtica y resultados reproducibles, limpiar fixtures/artefactos y preparar PR/revisión humana.
-- [ ] Actualizar estado SPEC únicamente según evidencia/revisión autorizada; no Verified automático por implementación.
+- [x] Auditar integración final y regresión frontend (Dashboard targeted, unit, component, lint y build); backend no fue afectado.
+- [x] E2E real login → Dashboard → función permitida, información real, refresh, logout y permisos; sin mocks en los happy paths.
+- [x] Contrastar individualmente los 18 CA, responsive/teclado y seguridad; corregir problemas reales de aserciones con regresión.
+- [x] Generar evidencia auténtica y resultados reproducibles; mantener únicamente las cuentas sintéticas autorizadas para el smoke posterior al despliegue.
+- [x] Actualizar la SPEC a Verified después de validar los CA y la regresión, conservando a Fabricio Danniel Aguilar Chávez como reviewer y PR Pending.
+
+**Estado T3:** siete E2E pasaron en Chromium 153.0.8010.12 contra Vite, el backend existente y la base Supabase de desarrollo configurada. Se verificaron los tres roles, navegación a Inventario, refresh con `/api/auth/me`, logout, responsive 1366/390 y un fallo parcial controlado (no una falla real del backend). Regresión final: 73 Dashboard, 124 unit, 369 componentes, lint y build PASS. Las capturas de producto redaccionan identidades; las cuentas E2E sintéticas quedan temporalmente activas para smoke posterior al despliegue. La matriz CA y la decisión documental constan en [evidencia T3](../evidence/sprint-01/TA-DASHBOARD-001/t3-integracion-e2e-cierre.md).
 
 **Dependencias:** T1/T2 completos. **Cierre:** flujo integrado probado, evidencia y revisión final; publicación solo cuando se autorice.
 
@@ -171,3 +173,6 @@ PBI completo posteriormente: UI final T2, 18 CA contrastados, integración/regre
 - 14/10/2026 — Draft: planificación y TASKS derivadas de SPEC Approved `835c30d` y contratos de la base integrada `86972fd`. Backend innecesario; tareas en §12 conforme al PLAN previo. La implementación T1 fue solicitada expresamente; no se inventa aprobación técnica del PLAN ni se marca el PBI completo.
 - 14/10/2026 — T1 implementada y comprobada; estado documental del PLAN sigue Draft, revisión técnica humana pendiente. Resultados y matriz CA parcial en [evidencia técnica T1](../evidence/sprint-01/TA-DASHBOARD-001/t1-navegacion-datos.md). T2/T3 siguen sin ejecutar; SPEC conserva Approved.
 - 14/10/2026 — T2 implementada y comprobada mediante componentes y una inspección técnica aislada de layout con HTTP simulado, sin E2E real ni evidencia final del PBI. Resultados y matriz CA en [registro T2](../evidence/sprint-01/TA-DASHBOARD-001/t2-interfaz-dashboard.md). PLAN sigue Draft: **Human PLAN approval still pending**. SPEC Approved intacta; T3 pendiente.
+- 2026-10-14 — T3 parcial: 73 Dashboard component tests, 124 unit, 369 component, lint y build PASS. Playwright descubrió 52 pruebas existentes en 6 archivos, pero ninguna spec Dashboard. El backend Supabase no inició porque el intérprete base de `backend/venv` no está disponible en este entorno; por ello no se ejecutó E2E real ni se actualizó la SPEC. Evidencia de bloqueo y salidas en [registro T3](../evidence/sprint-01/TA-DASHBOARD-001/t3-integracion-e2e-cierre.md). PLAN continúa Draft; **Human PLAN approval pending**.
+- 2026-10-14 — Actualización: el usuario confirmó aprobación del PLAN por Andro Joseph Quispe Cesias; estado vigente **Approved**. Reanudación T3 con backend iniciado por el usuario: `/openapi.json`, `/health/live`, `/health/ready` y Vite devolvieron HTTP 200. Se creó la spec E2E Dashboard (7 escenarios), colección exitosa y ejecución explícita resultó en 7 skipped por ausencia de credenciales, no PASS. Regresión: 73 Dashboard component, 124 unit, 369 component, lint y build PASS. E2E autenticado, capturas del producto y cierre de CA-18 siguen pendientes; SPEC conserva Approved.
+- 2026-10-14 — Cierre T3: el backend existente iniciado por el usuario se mantuvo en ejecución. Tras la autorización expresa se crearon tres cuentas sintéticas temporales por el caso de uso/repositorio de aplicación y el helper real de hashing; se verificaron logins y sesiones sin revelar credenciales. Los siete E2E reales pasaron, con capturas revisadas y redaccionadas. La regresión final pasó (73 Dashboard, 124 unit, 369 componentes, lint, build). Los 18 CA se contrastaron; CA-10 continúa VERIFIED_CONDITIONAL por el orden de gestión del contrato. Las cuentas permanecen activas para validación posterior al despliegue y deben retirarse después de esa comprobación.

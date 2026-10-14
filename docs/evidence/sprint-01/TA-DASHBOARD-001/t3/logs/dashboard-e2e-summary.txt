@@ -1,0 +1,11 @@
+﻿Command: npm.cmd run test:e2e -- --config=./playwright.dashboard.config.js tests/e2e/ta-dashboard.spec.js
+Playwright 1.63.0 · Chromium 153.0.8010.12
+Running 7 tests using 1 worker
+PASS Administrador: login, Dashboard, datos reales y navegación permitida
+PASS Operario: login, Dashboard, datos reales y navegación permitida
+PASS Almacenero: login, Dashboard, datos permitidos y navegación a Inventario
+PASS Refresh con GET /api/auth/me
+PASS Logout
+PASS Responsive 1366 y 390 sin overflow horizontal
+PASS CONTROLLED FAILURE SCENARIO — NOT REAL BACKEND FAILURE: error parcial
+7 passed · 0 failed · 0 skipped · 0 flaky · 37.6 s · exit 0
