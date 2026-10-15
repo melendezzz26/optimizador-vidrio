@@ -2,12 +2,19 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Implemented; verificación técnica frontend/fixture completada, revisión humana pendiente |
-| Responsable | Andro Q. |
-| Reviewer | Pendiente |
+| Estado SPEC frontend | **APPROVED** |
+| Implementación frontend | **COMPLETED WITH FIXTURES** |
+| Integración First Fit real | **PENDING** |
+| Responsable UI y visualización | Andro Q. |
+| Aprobación | Confirmada por indicación expresa del equipo comunicada el 2026-10-15; reviewer individual no indicado |
+| Responsable motor First Fit real | Fabricio Meléndez — motor **PENDIENTE** |
+| Responsable integración backend/frontend | Andro Q. — integración **PENDIENTE** |
+| Confirmación/persistencia real | Pendiente del contrato backend |
 | Base | ee4e704 |
 
 ## Objetivo y alcance
+
+La UI S1 Optimization está implementada. El fixture First Fit está implementado únicamente para desarrollo y validación visual, permitiendo avanzar en paralelo al motor desarrollado por Fabricio Meléndez. No representa un motor First Fit real terminado ni cálculo automático real de rotaciones terminado. Cuando el motor esté disponible, Andro Q. integrará backend y frontend. La aprobación de esta SPEC no equivale a solución de producción Verified: la integración real y la confirmación/persistencia siguen pendientes.
 
 Seleccionar 1..N pedidos pendientes, preparar grupos compatibles, visualizar progresivamente Primer ajuste con rotación automática recibida, métricas y diálogo de confirmación. Actualizar pendientes automáticamente, congelando cada ejecución. UI española y código nuevo inglés.
 
@@ -50,3 +57,5 @@ Solo frontend de Optimization, tests/config focal y docs. Backend intacto. E2E u
 ## Historial
 
 2026-10-15: auditoría y planificación previas al código en 665d42a; implementación y validación técnica del alcance fixture completadas. CA01–CA11 contrastados en la evidencia. Integración First Fit real y aprobación humana siguen pendientes, por lo que no se declara Verified de producto backend.
+
+2026-10-15, actualización del equipo: el estado vigente de la SPEC frontend pasa a **APPROVED**. **IMPLEMENTACIÓN FRONTEND = COMPLETED WITH FIXTURES**; **INTEGRACIÓN FIRST FIT REAL = PENDING**. Fabricio Meléndez desarrolla el motor; Andro Q. es responsable de integrarlo con esta UI cuando esté disponible. Se conserva el registro anterior como histórico y no se modifican resultados de pruebas. No se declara Verified de producción ni motor/rotaciones automáticas reales terminados.

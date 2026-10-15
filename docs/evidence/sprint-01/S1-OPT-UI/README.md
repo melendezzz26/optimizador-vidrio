@@ -1,6 +1,16 @@
 # S1-OPT-UI — Evidencia y entrega
 
-Fecha: 2026-10-15 (America/Bogota). Responsable del frente: Andro Q. Verificación técnica del frontend con fixtures; revisión humana pendiente.
+Fecha: 2026-10-15 (America/Bogota). Responsable UI y visualización: Andro Q. Estado vigente por indicación expresa del equipo: **SPEC = APPROVED**, **IMPLEMENTACIÓN FRONTEND = COMPLETED WITH FIXTURES**, **INTEGRACIÓN FIRST FIT REAL = PENDING**.
+
+## Estado vigente y sincronización con integration
+
+La UI está implementada; el fixture First Fit existe únicamente para desarrollo y validación visual. El motor First Fit real está **PENDIENTE**, a cargo de **Fabricio Meléndez**. La integración backend/frontend está **PENDIENTE**, a cargo de **Andro Q.** cuando el motor esté disponible. Confirmación y persistencia reales dependen del contrato backend. No se declara terminado First Fit real ni el cálculo automático real de rotaciones, ni se declara Verified una solución de producción sin integración.
+
+Se incorporó `cf84d73` (docs(HU-015): cerrar SPEC como verified) mediante merge normal desde origin/integration/sprint-01 a la feature, sin conflictos. El diff entrante afecta exclusivamente docs/specs/SPEC-HU-015-interfaz-rasterizacion.md (62 inserciones, 5 eliminaciones). El Verified de HU-015 no implica que S1 First Fit real esté Verified.
+
+La actualización propia afecta únicamente SPEC/PLAN/evidencia. Validación post-merge: inspección del diff, git diff --check y git status. No se repiten suites porque no cambió código frontend, backend, pruebas, dependencias ni configuración. Los resultados históricos siguientes permanecen intactos. La última validación previa al merge reportó 345 componentes completos, 132 unitarias, lint/build y 4 E2E S1 aprobados; no se atribuye una nueva ejecución a esta actualización documental.
+
+La nueva autorización sustituye la restricción histórica de publicación: mantener la rama feature publicada y sincronizar periódicamente mediante merge desde integration; **sin PR, rebase ni merge hacia integration**. En esta entrega se autoriza git push -u origin feature/S1-optimization-ui. El resultado efectivo del push se reporta tras ejecutarlo, no se anticipa como éxito aquí. Los apartados siguientes describen la entrega anterior y sus restricciones vigentes en aquel momento.
 
 ## Base y secuencia
 
