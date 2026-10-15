@@ -16,9 +16,15 @@ Riesgos: falta contrato backend de agrupación, geometría rotada, unidades de i
 
 ## Dependencia y siguiente fase
 
+Estado tras la ampliación: SPEC **APPROVED**, frontend **COMPLETED WITH FIXTURES**, vistas 2D y 3D **IMPLEMENTED**. Integración First Fit, rotación automática real y confirmación persistente **PENDING**. Fabricio Meléndez desarrollará e integrará el motor/rotaciones; Andro Q. prepara y conecta la UI coordinando el contrato. Validación actual: 141 unit, 351 component, 6 E2E, lint/build exit 0; [evidencia](../evidence/sprint-01/S1-OPT-UI/visualization-3d.md).
+
+Ampliación 3D autorizada: implementar proyección matemática SVG de geometría extruida (superficie/cantos), cámara con inclinación fija y yaw acotado. Sin dependencias adicionales: el alcance es inspección de resultados planos convexos, sin escena CAD, iluminación física ni operaciones sobre geometría. Separar modelo puro de contornos/proyección, visor interactivo y selección común de contenedor/vista. Mantener el SVG 2D actual y el raster HU-015.
+
+Secuencia: modelo puro + pruebas de transformaciones/inmutabilidad → visor/profundidad/grilla/leyenda → selector condicional y estado común → componentes y E2E mouse/touch/teclado/mobile → revisión de capturas → evidencia, commit y publicación de feature. No tocar backend/BD ni cerrar dependencias del motor. Mantener activo el entorno de revisión manual previo; ejecutar E2E en un puerto separado si está ocupado.
+
 - UI y visualización S1: implementadas por Andro Q., con fixture solo para desarrollo/validación visual.
 - Motor First Fit real: **PENDIENTE**, responsable Fabricio Meléndez. No se declara terminado el cálculo automático real de rotaciones.
 - Integración backend/frontend: **PENDIENTE**, responsable Andro Q. cuando el motor esté disponible. Acordar contratos de grupos, eventos públicos, origen/giro, dimensiones y métricas antes de sustituir adapters. stage_changed permanece opcional/interno.
 - Confirmación/persistencia real: pendiente del contrato backend; no fingir guardado ni descontar stock en frontend.
 - Validar la integración real cuando exista; no declarar la solución de producción Verified mientras esté pendiente. Los resultados frontend/fixture ya ejecutados conservan su estado y alcance.
-- Sincronización actual: cf84d73 cambia solo docs/specs/SPEC-HU-015-interfaz-rasterizacion.md. Inspección del diff, git diff --check y git status; no se repiten suites por un merge y ajuste exclusivamente documentales.
+- Sincronización previa: cf84d73 cambió solo docs/specs/SPEC-HU-015-interfaz-rasterizacion.md. En aquella entrega no se repitieron suites por el merge documental. Al iniciar la ampliación 3D desde 2d444c0, fetch no encontró commits nuevos de integration; no fue necesario otro merge. Esta ampliación sí ejecuta las suites frontend indicadas.

@@ -66,7 +66,7 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired }) {
         })}</ol>
         <p role="status">{state.placements.length} / {state.snapshot.total} piezas colocadas</p>
         <progress aria-label="Piezas colocadas" value={state.placements.length} max={state.snapshot.total} />
-        <PlacementCanvas snapshot={state.snapshot} placements={state.placements} />
+        <PlacementCanvas key={state.runId} snapshot={state.snapshot} placements={state.placements} />
         {rasterPiece && <details><summary>Inspeccionar geometría y raster de ejemplo · pieza #{rasterPiece.id_pieza}</summary>
           <RasterComparison geometry={rasterPiece.geometria} piece={rasterPiece} raster={{ ...state.snapshot.rasters[rasterPiece.id_pieza], tipo_forma: rasterPiece.tipo_forma, cantidad: rasterPiece.cantidad }} />
         </details>}

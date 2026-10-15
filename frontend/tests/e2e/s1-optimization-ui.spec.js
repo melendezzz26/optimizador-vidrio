@@ -74,3 +74,58 @@ test('new order appears automatically without changing running snapshot', async 
   await expect(page.getByRole('button', { name: 'Actualizar pedidos' })).toHaveCount(0);
   await capture(page, info.project.name, 'live');
 });
+
+test('2D/3D result inspection preserves state with bounded mouse, touch and keyboard yaw', async ({ page }, info) => {
+  const errors = []; page.on('pageerror', error => errors.push(error.message));
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.clock.install();
+  await login(page);
+  await expect(page.getByRole('button', { name: 'Ver en 3D' })).toHaveCount(0);
+  await page.getByRole('checkbox', { name: /#21/ }).check();
+  await page.getByRole('checkbox', { name: /#22/ }).check();
+  await page.getByRole('button', { name: 'Preparar optimización' }).click();
+  await expect(page.getByRole('button', { name: 'Ver en 3D' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Ejecutar First Fit', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Ver en 3D' })).toHaveCount(0);
+  await page.clock.runFor(6000);
+  await page.getByRole('button', { name: 'Ver en 3D', exact: true }).click();
+  const slider = page.getByRole('slider', { name: 'Giro horizontal de la vista 3D' });
+  await expect(slider).toHaveAttribute('aria-valuenow', '-24');
+  await expect(page.locator('[data-piece-3d]')).toHaveCount(3);
+  await expect(page.getByRole('list', { name: 'Piezas en la vista 3D' })).toContainText('rotación aplicada: 30°');
+  await slider.scrollIntoViewIfNeeded();
+  const box = await slider.boundingBox();
+  if (info.project.name === 'mobile') {
+    const cdp = await page.context().newCDPSession(page);
+    const y = box.y + box.height / 2;
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: box.x + box.width * 0.2, y }] });
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: box.x + box.width * 0.8, y }] });
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await expect(slider).not.toHaveAttribute('aria-valuenow', '-24');
+    await cdp.detach();
+  } else {
+    await page.mouse.move(box.x + box.width * 0.1, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width * 0.95, box.y + box.height / 2, { steps: 8 });
+    await page.mouse.up();
+    await expect(slider).toHaveAttribute('aria-valuenow', '90');
+  }
+  await slider.focus(); await page.keyboard.press('Home'); await page.keyboard.press('ArrowLeft');
+  await expect(slider).toHaveAttribute('aria-valuenow', '-90');
+  await page.keyboard.press('End'); await page.keyboard.press('ArrowRight');
+  await expect(slider).toHaveAttribute('aria-valuenow', '90');
+  await page.getByRole('button', { name: 'Restablecer vista' }).click();
+  await expect(slider).toHaveAttribute('aria-valuenow', '-24');
+  expect(await slider.evaluate(el => getComputedStyle(el).animationName)).toBe('none');
+  await page.getByRole('region', { name: 'Vista 3D del resultado' }).screenshot({ path: `${evidence}/${info.project.name}-3d.png`, animations: 'disabled' });
+  await page.getByLabel('Plancha o retazo').selectOption('retazo:8');
+  await expect(page.locator('[data-piece-3d="21:103:0"]')).toBeVisible();
+  await page.getByRole('region', { name: 'Vista 3D del resultado' }).screenshot({ path: `${evidence}/${info.project.name}-3d-retazo.png`, animations: 'disabled' });
+  await page.getByRole('button', { name: 'Ver en 2D', exact: true }).click();
+  await expect(page.getByLabel('Plancha o retazo')).toHaveValue('retazo:8');
+  await expect(page.getByRole('img', { name: 'Colocaciones en retazo #8' }).locator('circle')).toBeVisible();
+  await expect(page.getByText('4 / 4 piezas colocadas')).toBeVisible();
+  await expect(page.getByText('842 ms')).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  expect(errors).toEqual([]);
+});

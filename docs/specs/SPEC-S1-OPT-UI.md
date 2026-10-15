@@ -4,12 +4,15 @@
 |---|---|
 | Estado SPEC frontend | **APPROVED** |
 | Implementación frontend | **COMPLETED WITH FIXTURES** |
+| Vista 2D | **IMPLEMENTED** |
+| Vista 3D | **IMPLEMENTED** |
+| Rotación automática real calculada por motor | **PENDING** |
 | Integración First Fit real | **PENDING** |
 | Responsable UI y visualización | Andro Q. |
 | Aprobación | Confirmada por indicación expresa del equipo comunicada el 2026-10-15; reviewer individual no indicado |
 | Responsable motor First Fit real | Fabricio Meléndez — motor **PENDIENTE** |
 | Responsable integración backend/frontend | Andro Q. — integración **PENDIENTE** |
-| Confirmación/persistencia real | Pendiente del contrato backend |
+| Confirmación/persistencia real | **PENDING** — pendiente del contrato backend |
 | Base | ee4e704 |
 
 ## Objetivo y alcance
@@ -38,6 +41,21 @@ Estados: loading_orders, selection_ready, preparing, prepared, running, complete
 
 ## Criterios verificables
 
+### Ampliación aprobada: visualización 3D de resultados
+
+La vista 2D sigue siendo la referencia precisa. Una vez recibida al menos una colocación con contenedor/geometría visualizables, se habilitan «Ver en 2D» y «Ver en 3D»; antes no se muestra selector vacío. Cambiar vista conserva contenedor, snapshot, selección, progreso y métricas. Una nueva corrida vuelve a 2D.
+
+La vista 3D deriva de x_mm/y_mm/rotation_deg y geometrías/dimensiones del mismo snapshot, sin modificar datos ni resolver colocaciones. Representa superficie, cantos, profundidad ilustrativa (no espesor a escala), grilla de referencia y piezas identificadas por pedido/pieza/unidad/color. La superficie descubierta es área libre visual, no geometría calculada de retazos reutilizables. Mantiene acceso al inspector raster HU-015.
+
+Interacción: yaw alrededor del eje Y limitado a [-90°, +90°], inclinación fija, sin órbita libre ni zoom CAD. Arrastre horizontal mouse/touch, flechas izquierda/derecha, control accesible y «Restablecer vista». Sin inercia ni autorrotación; respetar reduced motion. Responsive desktop/mobile.
+
+- CA12: selector ausente sin colocaciones; presente al recibir resultado visualizable; 2D por defecto.
+- CA13: 2D↔3D conserva corrida, contenedor, métricas y snapshot; descartar/repetir no conserva una escena anterior.
+- CA14: rectángulo/círculo/polígono, pivote/giro recibido, profundidad y leyenda por unidad; datos originales inmutables.
+- CA15: yaw limitado para mouse/touch/teclado, reset, foco, reduced motion y ausencia de overflow en móvil.
+
+Motor First Fit real y cálculo automático real de rotaciones: **PENDING**, Fabricio Meléndez. Andro Q. prepara la UI y coordina su conexión a los resultados del motor con Fabricio cuando esté disponible. Confirmación persistente real: **PENDING**. Ninguna capacidad 3D cambia estos estados ni implica Verified de producción.
+
 - CA01: diseño compartido, responsive, teclado, foco, reduced motion; sin refresh manual normal, dropzone, drag & drop ni modo individual/agrupado.
 - CA02: pendientes exclusivamente, seleccionar uno/varios/todos/ninguno, contador, cliente y cantidad si existe; loading/empty/error/permiso.
 - CA03: altas automáticas no seleccionadas; bajas/cambio de estado depuran selección; error/reconexión; cancelación al desmontar.
@@ -55,6 +73,8 @@ Estados: loading_orders, selection_ready, preparing, prepared, running, complete
 Solo frontend de Optimization, tests/config focal y docs. Backend intacto. E2E usa sesión HTTP simulada, no valida autenticación/backend reales. Evidencia en docs/evidence/sprint-01/S1-OPT-UI. No atribuir aprobación humana ni pruebas no ejecutadas.
 
 ## Historial
+
+2026-10-15, ampliación 3D: implementada y validada la representación SVG proyectada del resultado, sin dependencias nuevas. El frontend queda preparado para recibir resultados según el contrato temporal documentado; Fabricio Meléndez desarrollará e integrará posteriormente el motor y las rotaciones automáticas reales, coordinando con Andro Q., responsable de preparar y conectar esta UI. No se declara solución de producción Verified. Evidencia y pruebas actuales: [visualization-3d.md](../evidence/sprint-01/S1-OPT-UI/visualization-3d.md).
 
 2026-10-15: auditoría y planificación previas al código en 665d42a; implementación y validación técnica del alcance fixture completadas. CA01–CA11 contrastados en la evidencia. Integración First Fit real y aprobación humana siguen pendientes, por lo que no se declara Verified de producto backend.
 

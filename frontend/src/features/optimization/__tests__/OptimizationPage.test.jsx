@@ -163,3 +163,30 @@ test('public-only stream renders progress, completed stages and confirmation wit
   click('Confirmar solución');
   expect(screen.getByRole('alertdialog')).toHaveTextContent('no guardará cambios');
 });
+
+test('3D toggles preserve the run, live snapshot and metrics; rerun and discard clear the previous scene', async () => {
+  const { source } = mount();
+  expect(screen.queryByRole('button', { name: 'Ver en 3D' })).not.toBeInTheDocument();
+  await prepare();
+  expect(screen.queryByRole('button', { name: 'Ver en 3D' })).not.toBeInTheDocument();
+  click('Ejecutar First Fit');
+  expect(screen.queryByRole('button', { name: 'Ver en 3D' })).not.toBeInTheDocument();
+  await act(async () => vi.advanceTimersByTimeAsync(80));
+  click('Ver en 3D');
+  act(() => source.emit({ type: 'upsert', order: newFixtureOrder }));
+  await act(async () => vi.advanceTimersByTimeAsync(1000));
+  expect(screen.getByText('4 / 4 piezas colocadas')).toBeVisible();
+  expect(screen.getByText(/Pedidos: #21, #22/)).toHaveTextContent('Piezas: 4');
+  expect(screen.getByText('842 ms')).toBeVisible();
+  click('Ver en 2D'); click('Ver en 3D');
+  expect(screen.getByText('842 ms')).toBeVisible();
+  expect(screen.getByRole('checkbox', { name: /#24/ })).not.toBeChecked();
+  click('Ejecutar nuevamente');
+  expect(screen.queryByRole('slider')).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Ver en 3D' })).not.toBeInTheDocument();
+  await act(async () => vi.advanceTimersByTimeAsync(1000));
+  expect(screen.getByRole('button', { name: 'Ver en 2D' })).toHaveAttribute('aria-pressed', 'true');
+  click('Ver en 3D'); click('Descartar');
+  expect(screen.queryByRole('button', { name: 'Ver en 3D' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('slider')).not.toBeInTheDocument();
+});

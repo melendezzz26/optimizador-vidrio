@@ -1,0 +1,23 @@
+npx.cmd : [WebServer] (node:1100) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+En línea: 2 Carácter: 129
++ ... T = '5187'; npx.cmd playwright test --config playwright.optimization. ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([WebServer] (no... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 1 worker
+
+(node:7308) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop] › tests\e2e\s1-optimization-ui.spec.js:24:1 › login, multiple selection, progressive First Fit, rotations, metrics and confirmation (8.6s)
+  ok 2 [desktop] › tests\e2e\s1-optimization-ui.spec.js:63:1 › new order appears automatically without changing running snapshot (2.2s)
+  ok 3 [desktop] › tests\e2e\s1-optimization-ui.spec.js:78:1 › 2D/3D result inspection preserves state with bounded mouse, touch and keyboard yaw (3.2s)
+(node:10380) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 4 [mobile] › tests\e2e\s1-optimization-ui.spec.js:24:1 › login, multiple selection, progressive First Fit, rotations, metrics and confirmation (7.5s)
+  ok 5 [mobile] › tests\e2e\s1-optimization-ui.spec.js:63:1 › new order appears automatically without changing running snapshot (2.0s)
+  ok 6 [mobile] › tests\e2e\s1-optimization-ui.spec.js:78:1 › 2D/3D result inspection preserves state with bounded mouse, touch and keyboard yaw (2.7s)
+
+  6 passed (34.4s)

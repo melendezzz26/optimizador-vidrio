@@ -1,5 +1,11 @@
 # S1-OPT-UI — Evidencia y entrega
 
+## Ampliación vigente: visualización 3D
+
+SPEC **APPROVED**; frontend **COMPLETED WITH FIXTURES**; vistas 2D y 3D **IMPLEMENTED**. Integración First Fit real, rotación automática real y confirmación persistente **PENDING**. Fabricio Meléndez desarrollará e integrará el motor/rotaciones; Andro Q. deja preparada y conecta esta UI coordinando el contrato. [Evidencia técnica 3D, archivos, límites y capturas](visualization-3d.md).
+
+Validación actual: **141 unit, 351 component (suite completa), 6 E2E**, lint y build exit 0. Los resultados y restricciones de las entregas anteriores que siguen abajo son históricos; no se reescriben sus logs. La política vigente permite publicar la feature sin PR. Las capturas de estados con resultados se actualizaron para mostrar el nuevo selector 2D/3D.
+
 Fecha: 2026-10-15 (America/Bogota). Responsable UI y visualización: Andro Q. Estado vigente por indicación expresa del equipo: **SPEC = APPROVED**, **IMPLEMENTACIÓN FRONTEND = COMPLETED WITH FIXTURES**, **INTEGRACIÓN FIRST FIT REAL = PENDING**.
 
 ## Estado vigente y sincronización con integration
