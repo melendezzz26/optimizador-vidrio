@@ -33,7 +33,35 @@ class Rol(Base):
     id_rol: Mapped[int] = mapped_column(Integer, primary_key=True)
     nombre: Mapped[str] = mapped_column(String(30), unique=True, nullable=False)
     descripcion: Mapped[str | None] = mapped_column(String(150))
+    
+class Permiso(Base):
+    """Acción que un rol puede tener autorizada (S1-RBAC). El código es `modulo.accion`."""
 
+    __tablename__ = "permisos"
+    __table_args__ = (
+        CheckConstraint("codigo ~ '^[a-z]+\\.[a-z]+$'", name="ck_permisos_codigo_formato"),
+        CheckConstraint("codigo LIKE modulo || '.%'", name="ck_permisos_modulo_coincide"),
+    )
+
+    id_permiso: Mapped[int] = mapped_column(Integer, primary_key=True)
+    codigo: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    modulo: Mapped[str] = mapped_column(String(30), nullable=False)
+    descripcion: Mapped[str] = mapped_column(String(150), nullable=False)
+
+
+class RolPermiso(Base):
+    """Permiso asignado a un rol. Es la fuente de verdad de la autorización (S1-RBAC)."""
+
+    __tablename__ = "rol_permisos"
+
+    id_rol: Mapped[int] = mapped_column(
+        ForeignKey("roles.id_rol", ondelete="CASCADE", name="fk_rol_permisos_rol"),
+        primary_key=True,
+    )
+    id_permiso: Mapped[int] = mapped_column(
+        ForeignKey("permisos.id_permiso", ondelete="CASCADE", name="fk_rol_permisos_permiso"),
+        primary_key=True,
+    )
 
 class Usuario(Base):
     __tablename__ = "usuarios"
