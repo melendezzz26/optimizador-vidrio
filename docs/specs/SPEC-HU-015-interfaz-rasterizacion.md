@@ -4,18 +4,25 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Reviewed** |
+| Estado | **Verified** |
 | PBI relacionado | HU-015 — Interfaz de rasterización; Sprint 1 |
 | Responsable / Autor | Fabricio Melendez |
-| Reviewer | Fabricio Aguilar |
+| Reviewer | Fabricio Danniel Aguilar Chávez |
 | Fecha de revisión | 13/10/2026 |
-| Decisión | Aprobada para implementación / planificación técnica. |
+| Decisión | Implementación revisada, aprobada e integrada mediante PR #47. |
+| Revisión humana final | Aprobada; confirmada por el equipo para este cierre. |
+| Fecha de cierre | 14/10/2026 |
+| Rama de implementación | `feature/HU-015-interfaz-rasterizacion` |
+| Base de integración | `integration/sprint-01` |
+| PR de implementación | [#47 — feat(HU-015): interfaz y rasterización de piezas para optimización](https://github.com/melendezzz26/optimizador-vidrio/pull/47) |
+| Último commit de la feature | `a4146551dcec4e5e46a77f803b4f378dbe21a4cd` |
+| Merge del PR | `86972fd779bae826909a401874f06d5b7dd2a3ed` |
 | Fecha de auditoría | 13/10/2026 |
 | Rama auditada | `integration/sprint-01` |
 | HEAD local inicial y remoto después de fetch | `728c1dd9020f6c562419620bbcaa1c1ca0545757` |
 | Convención | SPEC de archivo único, según `SPEC-TEMPLATE.md` y `CONTRIBUTING.md` |
 
-Documento de alcance con revisión humana completada y decisiones funcionales aprobadas por Fabricio Aguilar el 13/10/2026 para implementación / planificación técnica. No constituye implementación, plan técnico ni división de tareas aprobada. Se conservan las etiquetas **Propuesta para revisión** para distinguir las decisiones de diseño de los hechos auditados; la aprobación funcional no convierte los contratos propuestos en capacidades implementadas ni cierra los pendientes del plan técnico. No se ejecutaron pruebas, experimentos ni capturas para redactarlo.
+SPEC cerrada como **Verified** después de la implementación T1/T2/T3, su validación registrada y la revisión humana aprobada por Fabricio Danniel Aguilar Chávez, confirmada por el equipo. El cierre y sus fuentes se documentan en §17. Las secciones 1–16 conservan el alcance y la auditoría originales del 13/10/2026 sobre `728c1dd`; sus referencias a capacidades faltantes, propuestas y pendientes describen esa línea base histórica, no el estado integrado posterior al PR #47. No se reescriben retrospectivamente los criterios de aceptación ni el alcance. Esta actualización documental no vuelve a ejecutar pruebas, experimentos o capturas.
 
 ## 1. Contexto, fuente y problema
 
@@ -443,7 +450,56 @@ Permanecen **tres pendientes materiales**:
 
 Riesgos conocidos que no abren otra decisión funcional de HU-015: HU-008 sigue fuera de la línea integrada y contradice el registro sin stock; ADR-002 §2.4 conserva esa regla histórica; los datos persistidos incompatibles se rechazan con `422`; la UI deberá preservar escala y accesibilidad al representar rejillas grandes. La elección de Canvas/SVG u otra técnica de dibujo pertenece al plan de implementación, conservando el contrato de resultado y el presupuesto fijado por P-01.
 
-El documento queda en **Reviewed** tras la revisión humana de Fabricio Aguilar el 13/10/2026: aprobado para implementación / planificación técnica. No se agregan migraciones, dependencias, rutas ejecutables, código frontend/backend, plan ni tareas en esta entrega.
+Estado histórico de la entrega de definición del 13/10/2026: **Reviewed** tras la revisión humana de Fabricio Aguilar, aprobado para implementación / planificación técnica. En esa entrega no se agregaron migraciones, dependencias, rutas ejecutables, código frontend/backend, plan ni tareas. El cierre posterior consta en §17.
+
+## 17. Cierre verificado de HU-015 — 14/10/2026
+
+**Resultado:** implementación revisada, aprobada e integrada mediante [PR #47](https://github.com/melendezzz26/optimizador-vidrio/pull/47), desde `feature/HU-015-interfaz-rasterizacion` hacia `integration/sprint-01`. Reviewer: **Fabricio Danniel Aguilar Chávez**. La aprobación humana se registra conforme a la confirmación expresa del equipo para este cierre.
+
+Git y los metadatos públicos de GitHub confirman el merge `86972fd779bae826909a401874f06d5b7dd2a3ed`, realizado el **14/10/2026 a las 06:30:23 de Lima** (timestamp `merged_at` de GitHub). Su segundo padre es la punta publicada `a4146551dcec4e5e46a77f803b4f378dbe21a4cd`; el commit está incorporado en `origin/integration/sprint-01`. La implementación corresponde a T1 `0650450`, T2 `72bd2d7`, T3 `2f70ee1` y fix de colección CI `a414655`. La comparación del código frontend/backend entre esa punta y el merge no presenta diferencias.
+
+### 17.1 Validación y trazabilidad
+
+- [T1 — backend](../evidence/sprint-01/HU-015/t1-backend.md): focalizada final **100 passed, 1 warning, 0 skipped**; concurrencia PostgreSQL, CAS/rollback, permisos, contratos y ausencia de escrituras excluidas. Regresión completa histórica **1564 passed, 1 warning**, con posterior validación focalizada de los cambios finales; no se presenta como una nueva corrida completa.
+- [Benchmark y política técnica](../evidence/sprint-01/HU-015/benchmark-limite.md): mediciones reproducibles y presupuesto aplicado antes del cálculo/serialización. P-01 queda concretado en políticas técnicas de protección, sin convertirlas en restricciones funcionales nuevas del negocio.
+- [T2 — interfaz](../evidence/sprint-01/HU-015/t2-frontend.md): selección, permisos, Orders, start 200/409, reconciliación incierta, recuperación, errores y cantidad como atributo; regresión Orders **101 passed**.
+- [T3 — visualización/E2E](../evidence/sprint-01/HU-015/t3-visualizacion-e2e.md): **70 focalizadas, 124 unitarias, 296 componentes**, lint/build PASS; **6 E2E reales post-fix, 0 failed, 0 skipped, 0 flaky**, Playwright 1.63.0 / Chromium 153.0.8010.12 contra Supabase de pruebas, con fixtures limpiados. La corrección de escala `resolution_mm × pixels_per_mm` tiene regresión de componente y validación real posterior. Los seis E2E no incluyen 409, cubierto por T1/T2.
+- [CI del PR #47](https://github.com/melendezzz26/optimizador-vidrio/actions/runs/38556535398): checks **backend, frontend y e2e completados con success**, consultados para este cierre. HU-015 real E2E se omite expresamente si faltan sus credenciales externas; un skip de CI no se cuenta como PASS del flujo HU-015. Su corrida real está respaldada por la evidencia T3 separada.
+- Evidencia visual local complementaria: **16 PNG T1, 8 PNG T2 y 9 PNG T3** bajo la estructura NewGlass-Notion; no forma parte del commit documental ni sustituye las pruebas.
+
+La matriz siguiente contrasta los criterios originales de §13 con el código y pruebas integrados. No atribuye todos los criterios a los seis E2E.
+
+| CA | Resultado | Evidencia principal |
+|---|---|---|
+| CA-01 | Cumple | Filtros/paginación y selección sin transición en T2; estados rechazados en API T1. |
+| CA-02 | Cumple | Detalle persistido y filas por pieza/material en componentes T2 y E2E T3. |
+| CA-03 | Cumple | Casos de uso/puerto Orders y API de tres formas T1; rechazo de geometría enviada por cliente. |
+| CA-04 | Cumple | Unit T1 comprueba una llamada para cantidad 5; componentes/E2E muestran una máscara y cantidad. |
+| CA-05 | Cumple | Schemas/API T1 y validación finita positiva de UI T2. |
+| CA-06 | Cumple | Benchmark, preflight y pruebas de límite/inmediatamente superior T1; 422/retry real T3. |
+| CA-07 | Cumple | Doble envío/loading en componentes T2; E2E recupera y rasteriza sin otro start. |
+| CA-08 | Cumple | Resumen y previews SVG/Canvas; regresión matemática de escala y E2E/PNG post-fix T3. |
+| CA-09 | Cumple | E2E T3 verifica 800×600 a 5: 160×120/19 200; pieza 1×10: 1×2. |
+| CA-10 | Cumple | Serialización lossless >53 bits y filas vacías T1; spans end-exclusive T3 y polígono negativo E2E. |
+| CA-11 | Cumple | Pruebas de respuestas tardías y cambios de pedido/pieza/resolución T2. |
+| CA-12 | Cumple | Errores seguros API/transporte T1/T2 y 422/retry real T3. |
+| CA-13 | Cumple | Empty/inconsistencia en componentes T2; inicio inválido con rollback T1. |
+| CA-14 | Cumple | API crea/inicia/rasteriza sin stock en T1; fixtures E2E T3 sin stock. |
+| CA-15 | Cumple | CAS/transacción y carreras PostgreSQL T1; start explícito, validación y ausencia de escrituras de inventario. |
+| CA-16 | Cumple | API 401/403 y rol vigente T1; navegación/permiso T2. |
+| CA-17 | Cumple | Relectura de piezas/contexto T2 y uso de geometría efectiva de la respuesta T3; 404 API T1. |
+| CA-18 | Cumple | Labels/resumen textual en componentes T3; teclado/foco y viewports 1440/1024/800 en E2E real. |
+| CA-19 | Cumple | Determinismo del dominio (`test_same_input_gives_same_mask`) y serialización fiel T1; geometría efectiva identificada. No se atribuye un test repetido de endpoint a T3. |
+| CA-20 | Cumple | API/integración T1 verifica ausencia de optimizaciones/ejecuciones/métricas/inventario; cleanup E2E. |
+| CA-21 | Cumple | API T1 devuelve 404 para pieza inexistente sin rasterizar. |
+| CA-22 | Cumple | API T1 devuelve 404 para pieza ajena sin revelar geometría. |
+| CA-23 | Cumple | Geometría corrupta/no soportada produce 422 seguro en API T1. |
+
+### 17.2 Cierre de pendientes y límites conservados
+
+P-02 no se transforma retrospectivamente en un backlog histórico recuperado: la división T1/T2/T3 se concretó en el PLAN aprobado y su implementación. P-03 queda resuelto mediante start explícito, CAS/validación/commit o rollback en Orders y cálculos individuales sin transición, con pruebas de concurrencia y reconciliación. PLAN permanece **Approved**, sin modificaciones en este cierre; no se crea ni modifica TASKS.
+
+Se conservan las limitaciones declaradas: presupuestos técnicos conservadores de recursos, medición local sin garantía de SLA/RSS y defecto de redondeo preexistente del dominio para ciertos radios fraccionarios, tratado con 422 seguro y registrado en T1 para seguimiento separado. No se amplía el alcance a FF/BF/WF, stock compatible, placement, aprovechamiento, merma ni confirmación de solución. No se afirma certificación WCAG. No hay pruebas obligatorias fallidas registradas en la validación final ni bloqueantes de HU-015 pendientes para este cierre aprobado.
 
 ## Historial de estado
 
@@ -452,3 +508,4 @@ El documento queda en **Reviewed** tras la revisión humana de Fabricio Aguilar 
 - 13/10/2026 — **Draft**: precisión final de ocupación conservadora, estado `PENDIENTE`, propiedad de capas y esquema por filas; quedan P-01 y P-02 para el equipo.
 - 13/10/2026 — **Draft**: ajuste final de estados: inicio explícito válido `PENDIENTE → EN_OPTIMIZACION`, separado de rasterización por pieza y sin transición por consulta o error previo; una máscara por tipo de pieza persistida sin duplicar por cantidad. Se conservan 23 criterios de aceptación y se añade P-03 para el plan técnico. Esta regla sustituye la decisión anterior de mantener el pedido `PENDIENTE` al iniciar el proceso. Sin implementación ni pruebas ejecutadas.
 - 13/10/2026 — **Reviewed**: revisión humana completada por **Fabricio Aguilar**; decisiones funcionales aprobadas para implementación / planificación técnica. Autor: Fabricio Melendez. Se aprueba el flujo `PENDIENTE → Iniciar optimización → EN_OPTIMIZACION → rasterización por pieza`, con validación y aceptación del backend antes de la transición; una máscara por geometría persistida, reutilizable según cantidad. HU-015 no ejecuta todavía FF/BF/WF, no consume stock ni alcanza los estados `OPTIMIZADO`/`CONFIRMADO`. Se conservan los 23 criterios de aceptación y los pendientes materiales. Sin implementación ni verificación funcional de HU-015 en este cierre.
+- 14/10/2026 — **Verified**: cierre formal **Reviewed → Verified** autorizado tras revisión humana aprobada por **Fabricio Danniel Aguilar Chávez**, confirmada por el equipo, e integración del [PR #47](https://github.com/melendezzz26/optimizador-vidrio/pull/47) en `86972fd779bae826909a401874f06d5b7dd2a3ed`, desde la feature `a4146551dcec4e5e46a77f803b4f378dbe21a4cd`. Los 23 CA tienen evidencia de implementación/pruebas conforme a §17; checks del PR backend/frontend/e2e exitosos y E2E real HU-015 respaldado separadamente. Únicamente documentación: sin nueva ejecución de pruebas, cambios de código, PLAN/TASKS ni deploy.
