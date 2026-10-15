@@ -4,8 +4,6 @@
   sus códigos viven en el código.
 - ASIGNACION_INICIAL: datos de carga inicial (equivalentes a la matriz previa).
   NO es la fuente de verdad: la autorización consulta la tabla rol_permisos.
-- PERMISOS / tiene_permiso: matriz anterior. Se retira en T03, cuando
-  require_permission pase a consultar la base.
 """
 from dataclasses import dataclass
 
@@ -47,78 +45,3 @@ ASIGNACION_INICIAL: dict[str, frozenset[str]] = {
         "optimization.view", "optimization.execute", "optimization.confirm",
     }),
 }
-
-ROLES = {
-    "ADMINISTRADOR": "Administrador",
-    "ALMACENERO": "Almacenero",
-    "OPERARIO": "Operario",
-}
-
-
-PERMISOS = {
-    "GESTIONAR_USUARIOS": {
-        "Administrador",
-    },
-
-    "CONSULTAR_TIPOS_VIDRIO": {
-        "Administrador",
-        "Almacenero",
-        "Operario",
-    },
-
-    "GESTIONAR_TIPOS_VIDRIO": {
-        "Administrador",
-        "Almacenero",
-    },
-
-    "CONSULTAR_STOCK": {
-        "Administrador",
-        "Almacenero",
-        "Operario",
-    },
-
-    "GESTIONAR_PLANCHAS": {
-        "Administrador",
-        "Almacenero",
-    },
-
-    "GESTIONAR_RETAZOS": {
-        "Administrador",
-        "Almacenero",
-    },
-
-    "GESTIONAR_PEDIDOS": {
-        "Administrador",
-        "Operario",
-    },
-
-    "GESTIONAR_PIEZAS": {
-        "Administrador",
-        "Operario",
-    },
-
-    "EJECUTAR_OPTIMIZACION": {
-        "Administrador",
-        "Operario",
-    },
-
-    "CONSULTAR_RESULTADOS": {
-        "Administrador",
-        "Almacenero",
-        "Operario",
-    },
-
-    "CONFIGURAR_OPTIMIZADOR": {
-        "Administrador",
-    },
-}
-
-
-def tiene_permiso(rol: str, permiso: str) -> bool:
-    """
-    Verifica si un rol tiene permitido realizar una acción.
-    """
-
-    roles_permitidos = PERMISOS.get(permiso, set())
-
-    return rol in roles_permitidos

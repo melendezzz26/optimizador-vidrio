@@ -8,8 +8,9 @@ from app.modules.authentication.presentation.dependencies import (
 )
 from app.modules.users.application.ports import UserRepository
 
-# Permiso de la matriz que protege todas las rutas del módulo (RN-01).
-require_user_management = require_permission("GESTIONAR_USUARIOS")
+# Permisos del catálogo (S1-RBAC): consultar y gestionar usuarios.
+require_users_view = require_permission("users.view")
+require_user_management = require_permission("users.manage")
 
 
 def get_user_repository(db: Session = Depends(get_database_session)) -> UserRepository:

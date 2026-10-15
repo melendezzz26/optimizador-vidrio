@@ -83,6 +83,15 @@ def main():
             """), {"now": datetime.now(timezone.utc)})
             connection.execute(sa.text("SELECT setval(pg_get_serial_sequence('clientes', 'id_cliente'), 42)"))
 
+
+        # S1-RBAC: los roles se crean después de la migración, igual que con seed.py,
+        # así que la asignación inicial de permisos se carga aquí.
+        from sqlalchemy.orm import Session
+        from app.modules.authentication.infrastructure.permission_seed import seed_permissions
+
+        with Session(engine) as db:
+            seed_permissions(db)
+
         for command in ("heads", "current"):
             result = _run([sys.executable, "-m", "alembic", command], env=os.environ)
             print(f"python -m alembic {command}\n{result.stdout}{result.stderr}", flush=True)

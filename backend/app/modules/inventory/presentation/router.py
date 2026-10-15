@@ -74,7 +74,7 @@ def handle_domain_exceptions():
 def create_tipo_vidrio(
     data: TipoVidrioCreate,
     service: InventoryService = Depends(get_inventory_service),
-    _ = Depends(require_permission("GESTIONAR_TIPOS_VIDRIO"))
+    _ = Depends(require_permission("inventory.manage"))
 ):
     dto = CreateTipoVidrio(nombre=data.nombre, descripcion=data.descripcion)
     with handle_domain_exceptions():
@@ -83,7 +83,7 @@ def create_tipo_vidrio(
 @router.get("/tipos-vidrio", response_model=list[TipoVidrioResponse], status_code=status.HTTP_200_OK)
 def list_tipos_vidrio(
     service: InventoryService = Depends(get_inventory_service),
-    _ = Depends(require_permission("CONSULTAR_TIPOS_VIDRIO"))
+    _ = Depends(require_permission("inventory.view"))
 ):
     with handle_domain_exceptions():
         return service.list_tipos_vidrio()
@@ -94,7 +94,7 @@ def list_tipos_vidrio(
 def create_plancha(
     data: PlanchaCreate,
     service: InventoryService = Depends(get_inventory_service),
-    _ = Depends(require_permission("GESTIONAR_PLANCHAS"))
+    _ = Depends(require_permission("inventory.manage"))
 ):
     dto = CreatePlancha(
         ancho_mm=data.ancho_mm, alto_mm=data.alto_mm, espesor_mm=data.espesor_mm,
@@ -106,7 +106,7 @@ def create_plancha(
 @router.get("/planchas", response_model=list[PlanchaResponse], status_code=status.HTTP_200_OK)
 def list_planchas(
     service: InventoryService = Depends(get_inventory_service),
-    _ = Depends(require_permission("CONSULTAR_STOCK"))
+    _ = Depends(require_permission("inventory.view"))
 ):
     with handle_domain_exceptions():
         return service.list_planchas()
@@ -120,7 +120,7 @@ def list_planchas(
         401: _http_detail_response("No autenticado.", "Debes iniciar sesión."),
         403: _http_detail_response(
             "Sin permiso para consultar stock.",
-            "No tienes el permiso: CONSULTAR_STOCK",
+            "No tienes permiso para realizar esta acción.",
         ),
         404: _http_detail_response("Plancha inexistente.", "Plancha inexistente."),
         422: _validation_response("Validación del parámetro de ruta o del identificador."),
@@ -129,7 +129,7 @@ def list_planchas(
 def list_plancha_movements(
     id_plancha: int,
     service: InventoryService = Depends(get_inventory_service),
-    _ = Depends(require_permission("CONSULTAR_STOCK")),
+    _ = Depends(require_permission("inventory.view")),
 ):
     with handle_domain_exceptions():
         movements = service.list_plancha_movements(id_plancha)
@@ -143,7 +143,7 @@ def update_plancha(
     id_plancha: int,
     data: PlanchaPatch,
     service: InventoryService = Depends(get_inventory_service),
-    _ = Depends(require_permission("GESTIONAR_PLANCHAS"))
+    _ = Depends(require_permission("inventory.manage"))
 ):
     dump = data.model_dump(exclude_unset=True)
     if not dump:
@@ -168,7 +168,7 @@ def update_plancha(
         401: _http_detail_response("No autenticado.", "Debes iniciar sesión."),
         403: _http_detail_response(
             "Sin permiso para gestionar planchas.",
-            "No tienes el permiso: GESTIONAR_PLANCHAS",
+            "No tienes permiso para realizar esta acción.",
         ),
         404: _http_detail_response("Plancha inexistente.", "Plancha inexistente."),
         409: _http_detail_response(
@@ -182,7 +182,7 @@ def writeoff_plancha(
     id_plancha: int,
     data: BajaPlanchaRequest,
     service: InventoryService = Depends(get_inventory_service),
-    actor: AuthenticatedUser = Depends(require_permission("GESTIONAR_PLANCHAS")),
+    actor: AuthenticatedUser = Depends(require_permission("inventory.manage")),
 ):
     with handle_domain_exceptions():
         command = BajaManual(
@@ -208,7 +208,7 @@ def writeoff_plancha(
 def create_retazo(
     data: RetazoCreate,
     service: InventoryService = Depends(get_inventory_service),
-    _ = Depends(require_permission("GESTIONAR_RETAZOS"))
+    _ = Depends(require_permission("inventory.manage"))
 ):
     dto = CreateRetazo(
         codigo=data.codigo, espesor_mm=data.espesor_mm,
@@ -220,7 +220,7 @@ def create_retazo(
 @router.get("/retazos", response_model=list[RetazoResponse], status_code=status.HTTP_200_OK)
 def list_retazos(
     service: InventoryService = Depends(get_inventory_service),
-    _ = Depends(require_permission("CONSULTAR_STOCK"))
+    _ = Depends(require_permission("inventory.view"))
 ):
     with handle_domain_exceptions():
         return service.list_retazos()
@@ -234,7 +234,7 @@ def list_retazos(
         401: _http_detail_response("No autenticado.", "Debes iniciar sesión."),
         403: _http_detail_response(
             "Sin permiso para consultar stock.",
-            "No tienes el permiso: CONSULTAR_STOCK",
+            "No tienes permiso para realizar esta acción.",
         ),
         404: _http_detail_response("Retazo inexistente.", "Retazo inexistente."),
         422: _validation_response("Validación del parámetro de ruta o del identificador."),
@@ -243,7 +243,7 @@ def list_retazos(
 def list_retazo_movements(
     id_retazo: int,
     service: InventoryService = Depends(get_inventory_service),
-    _ = Depends(require_permission("CONSULTAR_STOCK")),
+    _ = Depends(require_permission("inventory.view")),
 ):
     with handle_domain_exceptions():
         movements = service.list_retazo_movements(id_retazo)
@@ -257,7 +257,7 @@ def update_retazo(
     id_retazo: int,
     data: RetazoPatch,
     service: InventoryService = Depends(get_inventory_service),
-    _ = Depends(require_permission("GESTIONAR_RETAZOS"))
+    _ = Depends(require_permission("inventory.manage"))
 ):
     dump = data.model_dump(exclude_unset=True)
     if not dump:
@@ -286,7 +286,7 @@ def update_retazo(
         401: _http_detail_response("No autenticado.", "Debes iniciar sesión."),
         403: _http_detail_response(
             "Sin permiso para gestionar retazos.",
-            "No tienes el permiso: GESTIONAR_RETAZOS",
+            "No tienes permiso para realizar esta acción.",
         ),
         404: _http_detail_response("Retazo inexistente.", "Retazo inexistente."),
         409: _http_detail_response(
@@ -300,7 +300,7 @@ def writeoff_retazo(
     id_retazo: int,
     data: BajaManualRequest,
     service: InventoryService = Depends(get_inventory_service),
-    actor: AuthenticatedUser = Depends(require_permission("GESTIONAR_RETAZOS")),
+    actor: AuthenticatedUser = Depends(require_permission("inventory.manage")),
 ):
     with handle_domain_exceptions():
         command = BajaManual(

@@ -30,7 +30,7 @@ class OptimizationRoute(APIRoute):
 
 
 router = APIRouter(prefix="/api/optimization", tags=["Optimización"], route_class=OptimizationRoute)
-execute_permission = require_permission("EJECUTAR_OPTIMIZACION")
+execute_permission = require_permission("optimization.execute")
 
 
 def invoke(operation):

@@ -176,6 +176,12 @@ def seed_writeoff_actor(engine):
             ) VALUES (1,'12345678','Admin','Inventory','A12345678','hash',1,CURRENT_TIMESTAMP)"""
         )
 
+    # S1-RBAC: las rutas HTTP reales leen los permisos del Administrador de rol_permisos.
+    from app.modules.authentication.infrastructure.permission_seed import seed_permissions
+
+    with Session(engine) as db:
+        seed_permissions(db)
+
 
 def create_writeoff_resources(repo):
     with repo.transaction():
