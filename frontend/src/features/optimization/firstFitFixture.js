@@ -84,12 +84,12 @@ export function fixtureEvents(snapshot) {
   return events;
 }
 
-export function createFixtureEventSource(snapshot, { delayMs = 220, schedule = setTimeout, cancel = clearTimeout } = {}) {
+export function createFixtureEventSource(snapshot, { delayMs = 220, schedule = setTimeout, cancel = clearTimeout, includeInternalStages = true } = {}) {
   let timer, stopped = false;
   return {
     subscribe(listener, runId) {
       stopped = false;
-      const events = fixtureEvents(snapshot);
+      const events = fixtureEvents(snapshot).filter(event => includeInternalStages || event.type !== 'stage_changed');
       let index = 0;
       function next() {
         if (stopped || index >= events.length) return;

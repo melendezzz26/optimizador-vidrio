@@ -46,6 +46,8 @@ export function optimizationReducer(state, action) {
       if (state.status !== 'running' || event.run_id !== state.runId) return state;
       switch (event.type) {
         case 'optimization_started': return state;
+        // Optional UI/fixture telemetry, never required by the public backend contract.
+        // Public group/metrics/completion events advance the UI without this event.
         case 'stage_changed': return STAGES.some(([id]) => id === event.stage) ? { ...state, stage: event.stage } : state;
         case 'group_started': return { ...state, activeGroup: event.group_id, stage: 'first_fit' };
         case 'piece_started': return { ...state, activePiece: event.id_pieza };

@@ -145,3 +145,21 @@ test('polling restart ignores late response from disposed StrictMode lifecycle',
   expect(currentListener.mock.calls[0][0].orders).toEqual([newFixtureOrder]);
   expect(request).toHaveBeenCalledTimes(2); source.dispose();
 });
+
+test('public-only stream renders progress, completed stages and confirmation without internal stage events', async () => {
+  const adapter = createFixtureAdapter({ delayMs: 10, includeInternalStages: false });
+  mount(fixtureOrders, adapter);
+  await prepare(); click('Ejecutar First Fit');
+  await act(async () => vi.advanceTimersByTimeAsync(40));
+  expect(screen.getByText('1 / 4 piezas colocadas')).toBeVisible();
+  expect(document.querySelectorAll('[data-placement]')).toHaveLength(1);
+  const stages = screen.getByRole('list', { name: 'Etapas de optimización' });
+  expect(within(stages).getByText('Ejecutando First Fit').closest('li')).toHaveAttribute('aria-current', 'step');
+  await act(async () => vi.advanceTimersByTimeAsync(1000));
+  expect(screen.getByText('4 / 4 piezas colocadas')).toBeVisible();
+  expect(within(stages).getAllByText('Completado')).toHaveLength(6);
+  expect(within(stages).queryByText('Pendiente')).not.toBeInTheDocument();
+  expect(screen.getByText('842 ms')).toBeVisible();
+  click('Confirmar solución');
+  expect(screen.getByRole('alertdialog')).toHaveTextContent('no guardará cambios');
+});

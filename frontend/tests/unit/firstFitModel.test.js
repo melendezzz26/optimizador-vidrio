@@ -61,3 +61,21 @@ test('discard cancels run identity and missing metrics cannot complete', () => {
   assert.equal(event(s, 'piece_placed', placement).placements.length, 0);
   assert.equal(event(running(), 'optimization_completed').status, 'failed');
 });
+
+test('public events alone advance progress, metrics and completion without stage_changed', () => {
+  let s = event(running(), 'optimization_started');
+  assert.equal(s.stage, 'preparing_orders');
+  s = event(s, 'group_started', { group_id: 'g' });
+  assert.equal(s.stage, 'first_fit');
+  s = event(s, 'piece_started', { id_pieza: 101 });
+  s = event(s, 'piece_placed', placement);
+  s = event(s, 'piece_placed', { ...placement, unit_index: 1 });
+  s = event(s, 'group_completed', { group_id: 'g' });
+  assert.equal(s.placements.length, 2);
+  assert.deepEqual(s.completedGroups, ['g']);
+  s = event(s, 'metrics_calculated', { metrics: { placed: 2, total: 2 } });
+  assert.equal(s.stage, 'calculating_metrics');
+  s = event(s, 'optimization_completed');
+  assert.equal(s.status, 'completed');
+  assert.equal(s.metrics.placed, 2);
+});
