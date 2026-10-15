@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Draft; implementación autorizada por encargo, revisión humana pendiente |
+| Estado | Implemented; verificación técnica frontend/fixture completada, revisión humana pendiente |
 | Responsable | Andro Q. |
 | Reviewer | Pendiente |
 | Base | ee4e704 |
@@ -44,3 +44,7 @@ Estados: loading_orders, selection_ready, preparing, prepared, running, complete
 ## Impacto y evidencia
 
 Solo frontend de Optimization, tests/config focal y docs. Backend intacto. E2E usa sesión HTTP simulada, no valida autenticación/backend reales. Evidencia en docs/evidence/sprint-01/S1-OPT-UI. No atribuir aprobación humana ni pruebas no ejecutadas.
+
+## Historial
+
+2026-10-15: auditoría y planificación previas al código en 665d42a; implementación y validación técnica del alcance fixture completadas. CA01–CA11 contrastados en la evidencia. Integración First Fit real y aprobación humana siguen pendientes, por lo que no se declara Verified de producto backend.
