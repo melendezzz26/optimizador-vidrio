@@ -64,17 +64,25 @@ class SqlRunRepository:
         return OptimizationRun(optimization_id=row.id_optimizacion, status=RunStatus.RUNNING, result=result)
 
     def get(self, optimization_id):
-        row = self.session.get(Optimizacion, optimization_id)
-        if row is None:
+        # One statement snapshot: never mix a parent read before completion with
+        # an execution read after completion under PostgreSQL READ COMMITTED.
+        pair = self.session.execute(select(Optimizacion, EjecucionOptimizacion).outerjoin(
+            EjecucionOptimizacion, (EjecucionOptimizacion.id_optimizacion == Optimizacion.id_optimizacion)
+            & (EjecucionOptimizacion.metodo == "FF"))
+            .where(Optimizacion.id_optimizacion == optimization_id)).first()
+        if pair is None:
             raise RunError("NOT_FOUND", "No se encontró la optimización.")
-        execution = self.session.scalar(select(EjecucionOptimizacion).where(
-            EjecucionOptimizacion.id_optimizacion == optimization_id, EjecucionOptimizacion.metodo == "FF"))
-        if execution is None or execution.patron_resultado is None:
+        row, execution = pair
+        if execution is None or not isinstance(execution.patron_resultado, dict) or execution.patron_resultado.get("snapshot_version") != 1:
             raise RunError("NOT_FOUND", "La corrida histórica no tiene un resultado FF versionado.")
         result = decode(execution.patron_resultado)
         links = tuple(self.session.scalars(select(OptimizacionPedido.id_pedido)
                       .where(OptimizacionPedido.id_optimizacion == optimization_id).order_by(OptimizacionPedido.id_pedido)))
-        if links != result.problem.order_ids:
+        expected_execution_state = {"EN_EJECUCION": "EN_EJECUCION", "COMPLETADA": "COMPLETADA",
+                                    "SIN_SOLUCION": "COMPLETADA", "FALLIDA": "FALLIDA"}[row.estado]
+        expected_selection = execution.id_ejecucion if row.estado == "COMPLETADA" else None
+        if (links != result.problem.order_ids or execution.estado != expected_execution_state
+                or execution.completo != result.complete or row.id_ejecucion_seleccionada != expected_selection):
             raise RunError("INTERNAL_ERROR", "La trazabilidad de la corrida requiere revisión.")
         return OptimizationRun(optimization_id=optimization_id, status=RunStatus(row.estado), result=result)
 
@@ -160,7 +168,11 @@ class SqlRunUnitOfWork:
     def __exit__(self, exc_type, exc, traceback):
         try:
             if exc_type is None:
-                self.session.commit()
+                try:
+                    self.session.commit()
+                except Exception:
+                    self.session.rollback()
+                    raise
             else:
                 self.session.rollback()
         finally:

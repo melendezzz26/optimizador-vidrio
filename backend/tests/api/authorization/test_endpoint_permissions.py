@@ -62,6 +62,8 @@ class _FailingDependency:
 def client_with(monkeypatch):
     """Cliente cuyo rol de prueba tiene exactamente los permisos indicados."""
     from app.modules.optimization.presentation.run_routes import get_run_unit_of_work
+    from app.modules.optimization.presentation.run_auth import get_run_user_reader, get_run_permission_reader
+    from app.modules.authentication.presentation.dependencies import get_user_reader
     from app.modules.clients.presentation.dependencies import get_client_repository
     from app.modules.inventory.presentation.dependencies import get_inventory_service
     from app.modules.users.presentation.dependencies import (
@@ -74,6 +76,8 @@ def client_with(monkeypatch):
         app.dependency_overrides[get_permission_reader] = (
             lambda: InMemoryPermissionReader({ROLE: frozenset(permissions)})
         )
+        app.dependency_overrides[get_run_user_reader] = app.dependency_overrides[get_user_reader]
+        app.dependency_overrides[get_run_permission_reader] = app.dependency_overrides[get_permission_reader]
         for dependency in (get_inventory_service, get_user_repository, get_client_repository,
                            get_role_permission_repository, get_run_unit_of_work):
             app.dependency_overrides[dependency] = _FailingDependency

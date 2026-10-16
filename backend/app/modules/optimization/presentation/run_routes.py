@@ -7,12 +7,12 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import StreamingResponse
 from fastapi.routing import APIRoute
 
-from app.modules.authentication.presentation.dependencies import require_permission
 from ..application.runs import AcceptRun
 from ..application.errors import RunError
 from .run_schemas import RunRequestV1, RunResponseV1
 from .run_serialization import run_response
-from .run_stream import LiveRunStream
+from .run_stream import LiveRunStream, RunStreamingResponse
+from .run_auth import run_permission
 
 logger = logging.getLogger(__name__)
 
@@ -56,17 +56,17 @@ router = APIRouter(prefix="/runs", route_class=RunRoute)
 
 @router.post("", status_code=201, response_class=StreamingResponse,
     responses={201:{"content":{"application/x-ndjson":{}}}})
-def start_run(request: RunRequestV1, user=Depends(require_permission("optimization.execute")),
+def start_run(request: RunRequestV1, user=Depends(run_permission("optimization.execute")),
               unit_of_work=Depends(get_run_unit_of_work), calculator=Depends(get_run_calculator)):
     accepted = AcceptRun(unit_of_work).execute(request.order_ids, user.user_id)
-    return StreamingResponse(LiveRunStream(unit_of_work, calculator).lines(accepted), status_code=201,
+    return RunStreamingResponse(LiveRunStream(unit_of_work, calculator).lines(accepted), status_code=201,
         media_type="application/x-ndjson", headers={"Location":f"/api/optimization/runs/{accepted.optimization_id}",
                                                  "Cache-Control":"no-cache", "X-Accel-Buffering":"no"})
 
 
 @router.get("/{id_optimizacion}", response_model=RunResponseV1)
 def get_run(id_optimizacion: Annotated[int, Path(gt=0, le=2147483647)],
-            user=Depends(require_permission("optimization.view")), unit_of_work=Depends(get_run_unit_of_work)):
+            user=Depends(run_permission("optimization.view")), unit_of_work=Depends(get_run_unit_of_work)):
     with unit_of_work() as uow:
         run = uow.runs.get(id_optimizacion)
     return run_response(run)

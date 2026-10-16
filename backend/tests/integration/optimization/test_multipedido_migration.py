@@ -73,3 +73,33 @@ def test_constraints_and_no_loss(session_factory, prepared, kind):
 
 # Reuse synthetic data without coupling production modules.
 from .test_runs import prepared  # noqa: E402,F401
+
+
+def test_orphan_history_aborts_upgrade_without_partial_ddl(session_factory,prepared):
+    from app.models import Optimizacion
+    from datetime import datetime, timezone
+    actor,ids,_=prepared
+    engine=session_factory.kw['bind']
+    assert downgrade(engine,PREVIOUS).returncode==0
+    with session_factory() as s:
+        row=Optimizacion(fecha_inicio=datetime.now(timezone.utc),estado='FALLIDA',id_pedido=ids[0],
+            id_configuracion=1,id_usuario_ejecutor=actor,criterio_seleccion_version='legacy')
+        s.add(row)
+        s.commit()
+        identifier=row.id_optimizacion
+    try:
+        # Corrupt ONLY the owned synthetic DB, reproducing an imported orphan.
+        with engine.begin() as c:
+            c.exec_driver_sql('SET LOCAL session_replication_role = replica')
+            c.execute(sa.text('UPDATE optimizaciones SET id_pedido=999999 WHERE id_optimizacion=:id'),{'id':identifier})
+        failed=upgrade(engine,REVISION)
+        assert failed.returncode!=0
+        with engine.connect() as c:
+            assert c.scalar(sa.text('SELECT version_num FROM alembic_version'))==PREVIOUS
+            assert not sa.inspect(c).has_table('optimizacion_pedidos')
+            assert c.scalar(sa.text('SELECT id_pedido FROM optimizaciones WHERE id_optimizacion=:id'),{'id':identifier})==999999
+    finally:
+        with engine.begin() as c:
+            c.execute(sa.text('UPDATE optimizaciones SET id_pedido=:order WHERE id_optimizacion=:id'),{'id':identifier,'order':ids[0]})
+        restored=upgrade(engine,REVISION)
+        assert restored.returncode==0,restored.stderr

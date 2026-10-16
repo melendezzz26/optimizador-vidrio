@@ -36,7 +36,7 @@ with patch.dict(sys.modules, {"app.shared.database": isolated_base}):
 
 
 NOW = datetime(2026, 10, 5, 12, 30, tzinfo=timezone.utc)
-HEAD = "s1rbac01a2b3"
+HEAD = "s1opt02b4c6d"
 
 
 @pytest.mark.parametrize("geometry", [

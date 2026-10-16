@@ -200,6 +200,11 @@ def test_multimaterial_groups_and_live_materials(run_api,session_factory):
     assert {e['data']['material_source'] for e in events if e['event']=='piece_placed'} == {'PLANCHA','RETAZO'}
     canonical = client.get(response.headers['location'],headers=headers).json()
     assert canonical['estado']=='COMPLETADA' and len(canonical['groups'])==2
+    with session_factory() as s:
+        assert s.get(Retazo,9).estado is True
+        assert s.get(Retazo,9).area_mm2==8
+        assert s.get(Plancha,5).cantidad==2
+        assert s.scalar(select(func.count()).select_from(MovimientoInventario))==0
 
 
 @pytest.mark.parametrize('capability',['optimization.view','optimization.execute'])
@@ -248,3 +253,114 @@ def test_preflight_internal_error_is_sanitized(run_api,monkeypatch):
     assert response.status_code==500
     assert ErrorResponseV1.model_validate(response.json()).detail.code=='INTERNAL_ERROR'
     assert 'PRIVATE' not in response.text
+
+
+@pytest.mark.parametrize("asgi_version",["2.0","2.4"])
+def test_real_asgi_disconnect_is_cooperative_and_durable(run_api,session_factory,asgi_version):
+    client,ids,headers,uow,_=run_api
+    async def disconnect_request():
+        disconnected=asyncio.Event()
+        body_sent=False
+        async def receive():
+            nonlocal body_sent
+            if not body_sent:
+                body_sent=True
+                return {'type':'http.request','body':json.dumps({'order_ids':ids}).encode(),'more_body':False}
+            await disconnected.wait()
+            return {'type':'http.disconnect'}
+        async def send(message):
+            if message['type']=='http.response.body' and b'"event":"piece_placed"' in message.get('body',b''):
+                if asgi_version=='2.4':
+                    raise OSError('Client closed connection')
+                disconnected.set()
+                await asyncio.sleep(0)  # Allow the ASGI disconnect listener to cancel delivery.
+        scope={'type':'http','asgi':{'version':'3.0','spec_version':asgi_version},'http_version':'1.1',
+            'method':'POST','scheme':'http','path':BASE,'raw_path':BASE.encode(),'query_string':b'',
+            'headers':[(b'content-type',b'application/json'),(b'authorization',headers['Authorization'].encode())],
+            'client':('127.0.0.1',10000),'server':('testserver',80),'root_path':''}
+        if asgi_version=='2.4':
+            from starlette.requests import ClientDisconnect
+            with pytest.raises(ClientDisconnect):
+                await asyncio.wait_for(app(scope,receive,send),timeout=10)
+        else:
+            await asyncio.wait_for(app(scope,receive,send),timeout=10)
+        # Cancellation may return before the producer's independent failure commit.
+        for _ in range(100):
+            with session_factory() as s:
+                parent=s.scalar(select(Optimizacion))
+                if parent.estado=='FALLIDA':
+                    return parent.id_optimizacion
+            await asyncio.sleep(0.02)
+        pytest.fail('Disconnect did not record durable failure')
+    identifier=asyncio.run(disconnect_request())
+    with uow() as tx:
+        failed=tx.runs.get(identifier)
+    assert failed.status.value=='FALLIDA'
+    assert not failed.confirmable
+    with session_factory() as s:
+        assert [s.get(Pedido,i).estado for i in ids]==['EN_OPTIMIZACION']*2
+        assert s.get(Plancha,5).cantidad==2
+        assert s.scalar(select(func.count()).select_from(MovimientoInventario))==0
+
+
+def test_browser_can_read_location_for_canonical_result(run_api):
+    client,ids,headers,*_=run_api
+    response=client.post(BASE,json={'order_ids':ids},headers={**headers,'Origin':'http://localhost:5173'})
+    assert response.status_code==201
+    assert response.headers['access-control-allow-origin']=='http://localhost:5173'
+    assert 'Location' in response.headers['access-control-expose-headers']
+    assert response.headers['location'].startswith(BASE+'/')
+
+
+def test_rotated_placement_geometry_is_durable_and_used_without_second_rotation(run_api,session_factory):
+    client,ids,headers,*_=run_api
+    with session_factory() as s:
+        piece=s.scalar(select(Pieza).where(Pieza.id_pedido==ids[0]))
+        piece.geometria={'type':'RECTANGULO','width_mm':3,'height_mm':1}
+        piece.area_mm2=3
+        sheet=s.get(Plancha,5)
+        sheet.ancho_mm,sheet.alto_mm=2,4
+        s.commit()
+    response=client.post(BASE,json={'order_ids':ids[:1]},headers=headers)
+    events=parse(response)
+    live=[e['data'] for e in events if e['event']=='piece_placed']
+    assert len(live)==2
+    assert all(Decimal(p['rotation_deg'])==90 for p in live)
+    assert all(p['geometria']=={'type':'RECTANGULO','width_mm':1.0,'height_mm':3.0} for p in live)
+    assert [Decimal(p['x_mm']) for p in live]==[0,1]
+    final=client.get(response.headers['location'],headers=headers).json()
+    assert final['estado']=='COMPLETADA' and final['metrics_available']
+    assert final['placements'][0]['geometria']==live[0]['geometria']
+    assert Decimal(final['metrics']['area_piezas_colocadas_mm2'])==6
+    assert Decimal(final['metrics']['retazo_recuperable_mm2'])==2
+
+
+def test_authorization_db_session_ends_before_stream_calculation(run_api,session_factory,monkeypatch):
+    from app.modules.authentication.presentation.dependencies import get_database_session
+    client,ids,headers,uow,calculator=run_api
+    opened=[]
+    closed=[]
+    original_override=app.dependency_overrides[get_database_session]
+    def tracked_session():
+        with session_factory() as s:
+            opened.append(s)
+            try:
+                yield s
+            finally:
+                s.close()
+                closed.append(s)
+    original_calculate=calculator.execute
+    observed=[]
+    def calculate(*args,**kwargs):
+        assert opened and closed==opened
+        assert all(not s.in_transaction() for s in opened)
+        observed.append(True)
+        return original_calculate(*args,**kwargs)
+    app.dependency_overrides[get_database_session]=tracked_session
+    monkeypatch.setattr(calculator,'execute',calculate)
+    try:
+        response=client.post(BASE,json={'order_ids':ids},headers=headers)
+        assert parse(response)[-1]['event']=='optimization_completed'
+        assert observed==[True]
+    finally:
+        app.dependency_overrides[get_database_session]=original_override

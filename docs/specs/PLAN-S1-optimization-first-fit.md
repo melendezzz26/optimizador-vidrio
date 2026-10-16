@@ -772,5 +772,52 @@ Fallo de cálculo, guardado y desconexión son códigos distintos. Se intenta ma
 FALLIDA en transacción independiente, conservando placements diagnósticos y sin
 reset automático de pedidos. Un terminal ya confirmado en BD nunca se sobrescribe
 por un fallo tardío de entrega. Caída DB/proceso antes de guardar fallo requiere
-reconciliación explícita; no se promete stream reanudable. T10 histórico (estados)
-refuerza estas garantías en el bloque final. Evidencia `phase4-ndjson.md`.
+reconciliación explícita; no se promete stream reanudable. El bloque final de estados
+(T8 y parte de T12 históricos) refuerza estas garantías; T10 confirmación continúa excluido. Evidencia `phase4-ndjson.md`.
+
+### Cierre del bloque backend solicitado: estados, atomicidad y regresión
+
+| Tarea histórica | Avance de esta sesión |
+|---|---|
+| T6 asociación/migración | Completada; una head después de RBAC, backfill, downgrade condicionado y rollback de DDL ante historia huérfana. |
+| T7 aceptación/configuración/UoW | Completada; batch caller-owned sin commits escalares de Orders. |
+| T8 patrón/métricas/terminales | Completada; resultado durable + N estados en una transacción, inventario intacto. |
+| T9 rutas/NDJSON | Completada; eventos vivos T1 y GET canónico con RBAC dinámico. |
+| T10 confirmación | NO iniciada. Sin decrementos, consumo, movimientos ni creación de retazos. |
+| T11 concurrencia de confirmación | NO iniciada. |
+| T12 recuperación/errores/regresión | Solo fallos, cancelación, permisos y regresión de este bloque. Reconciliación administrativa no expuesta/implementada. |
+| T13 integración/cierre global | Pendiente de confirmación e integración conjunta UI; no Verified ni PR. |
+
+Matrices de estado: inicio→EN_OPTIMIZACION; resultado completo→OPTIMIZADO;
+SIN_SOLUCION controlado→PENDIENTE para todo el lote; FALLIDA conserva pedidos
+EN_OPTIMIZACION para diagnóstico/reconciliación explícita. Resultados terminales
+no pueden recalcularse ni ser sobrescritos por desconexión tardía. El GET lee
+padre+ejecución en un JOIN (snapshot coherente READ COMMITTED), verifica estados,
+completitud/selección y asociación. Corridas históricas sin snapshot v1 devuelven
+404 seguro. El UoW hace rollback explícito incluso ante error del propio commit.
+
+Pruebas de inyección después del flush SQL verifican rollback de patrones,
+materiales propuestos, métricas y todos los pedidos, tanto completo como parcial.
+StreamingResponse especializado cierra el generador bajo shield en cancelación
+ASGI 2.0 y OSError ASGI 2.4; evita dejar productor suspendido en acknowledgement.
+El cierre es cooperativo entre hitos; no hay interrupción por celda ni un nuevo
+sistema de reconciliación automática. CORS expone Location para GET desde navegador.
+
+Evidencia: `phase5-states.md`, logs y captura HTTP/PostgreSQL real del ejemplo
+4 unidades/2 pedidos. Se mantienen SPEC Reviewed y PLAN Approved. La suite global
+actualiza solamente expectativas de nueva tabla/head en fixtures existentes;
+ninguna regla propia de Orders o Inventory fue cambiada.
+
+La dependencia de autorización de las rutas `/runs` usa `scope="function"` de
+FastAPI 0.141.1 (versión ya fijada en requirements). El wiring `run_auth.py`
+reutiliza sin cambios los lectores, autenticación y `require_permission` públicos;
+no duplica decisiones ni matriz de roles. Cierra la sesión RBAC antes de enviar
+headers/ejecutar el productor, evitando una transacción de lectura durante todo
+el stream. Una prueba observa el cierre efectivo antes de calcular. Endpoints
+históricos y módulo RBAC permanecen sin modificaciones propias.
+
+Verificación final del bloque: **551 passed** focal (53.24s) y **1900 passed**
+backend completo (199.17s), una advertencia conocida Starlette/httpx, cero skips
+con PostgreSQL obligatorio. Única head `s1opt02b4c6d`. Captura real 13 eventos y
+GET aceptados por parser UI4a3c9c1 en chunks7bytes. Evidencia `phase5-states.md`.
+Inventario intacto; la sesión termina antes de T10/T11. Sin PR ni integración UI.

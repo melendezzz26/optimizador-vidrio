@@ -5,6 +5,8 @@ engine cannot advance to the next milestone before the consumer resumes. All
 serialization/backpressure is inside the callback excluded by the engine clock.
 """
 import asyncio
+import anyio
+from fastapi.responses import StreamingResponse
 import logging
 from datetime import datetime, timezone
 from queue import Queue, Empty, Full
@@ -19,6 +21,18 @@ from .run_serialization import (config_response, unit_reference, placement_respo
                                 progress_response, run_response)
 
 logger = logging.getLogger(__name__)
+
+
+class RunStreamingResponse(StreamingResponse):
+    async def stream_response(self, send):
+        try:
+            await super().stream_response(send)
+        finally:
+            # ASGI cancellation can happen in send(), while the generator is
+            # suspended at yield. async-for does not close it in that case.
+            # Shield cleanup so disconnect reaches the producer immediately.
+            with anyio.CancelScope(shield=True):
+                await self.body_iterator.aclose()
 
 
 class LiveRunStream:
