@@ -62,3 +62,8 @@ def rasterize_order_piece(request: RasterizeRequest, user=Depends(execute_permis
         # compacta es exactamente la medida por el benchmark.
         return Response(raster_response(result).model_dump_json(), media_type="application/json")
     return invoke(calculate)
+
+
+# New T1 transport is isolated from the historical HU-015 error contract.
+from .run_routes import router as run_router  # noqa: E402
+router.include_router(run_router)

@@ -43,6 +43,9 @@ ENDPOINTS = [
     ("DELETE", "/api/orders/1", "orders.cancel"),
     ("POST", "/api/optimization/start", "optimization.execute"),
     ("POST", "/api/optimization/rasterize", "optimization.execute"),
+    ("POST", "/api/optimization/runs", "optimization.execute"),
+    ("GET", "/api/optimization/runs/1", "optimization.view"),
+    ("POST", "/api/optimization/runs/1/confirm", "optimization.confirm"),
     ("GET", "/api/roles", "roles.view"),
     ("GET", "/api/permissions", "roles.view"),
     ("PUT", "/api/roles/1/permissions", "roles.manage"),
@@ -59,6 +62,9 @@ class _FailingDependency:
 @pytest.fixture
 def client_with(monkeypatch):
     """Cliente cuyo rol de prueba tiene exactamente los permisos indicados."""
+    from app.modules.optimization.presentation.run_routes import get_run_unit_of_work
+    from app.modules.optimization.presentation.run_auth import get_run_user_reader, get_run_permission_reader
+    from app.modules.authentication.presentation.dependencies import get_user_reader
     from app.modules.clients.presentation.dependencies import get_client_repository
     from app.modules.inventory.presentation.dependencies import get_inventory_service
     from app.modules.users.presentation.dependencies import (
@@ -71,8 +77,10 @@ def client_with(monkeypatch):
         app.dependency_overrides[get_permission_reader] = (
             lambda: InMemoryPermissionReader({ROLE: frozenset(permissions)})
         )
+        app.dependency_overrides[get_run_user_reader] = app.dependency_overrides[get_user_reader]
+        app.dependency_overrides[get_run_permission_reader] = app.dependency_overrides[get_permission_reader]
         for dependency in (get_inventory_service, get_user_repository, get_client_repository,
-                           get_role_permission_repository):
+                           get_role_permission_repository, get_run_unit_of_work):
             app.dependency_overrides[dependency] = _FailingDependency
         return TestClient(app, raise_server_exceptions=False)
 
@@ -87,8 +95,7 @@ def call(client, method, path):
 def test_endpoint_map_uses_only_catalog_codes_and_covers_every_code_with_an_endpoint():
     used = {code for _, _, code in ENDPOINTS}
     assert used <= CODIGOS
-    # Códigos sin endpoint todavía: llegan con resultados y confirmación de optimización.
-    assert CODIGOS - used == {"optimization.view", "optimization.confirm"}
+    assert CODIGOS - used == set()
 
 
 @pytest.mark.parametrize("method, path, code", ENDPOINTS)

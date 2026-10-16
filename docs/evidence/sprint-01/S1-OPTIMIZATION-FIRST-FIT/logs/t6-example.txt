@@ -1,0 +1,358 @@
+SMALL
+{
+  "complete": true,
+  "total_units": 3,
+  "placed_units": 3,
+  "elapsed_domain_ms": 0.676,
+  "config": {
+    "resolution_mm": 1,
+    "angular_step_deg": 90,
+    "margin_mm": 0,
+    "separation_mm": 0
+  },
+  "placements": [
+    {
+      "material_source": "PLANCHA",
+      "material_id": 5,
+      "stock_unit_index": 1,
+      "id_tipo_vidrio": 7,
+      "espesor_mm": "6",
+      "id_pedido": 21,
+      "id_pieza": 101,
+      "unit_index": 1,
+      "x_mm": "0",
+      "y_mm": "0",
+      "rotation_deg": "0",
+      "resolution_mm": "1",
+      "geometria": {
+        "type": "RECTANGULO",
+        "width_mm": 2.0,
+        "height_mm": 2.0
+      }
+    },
+    {
+      "material_source": "PLANCHA",
+      "material_id": 5,
+      "stock_unit_index": 1,
+      "id_tipo_vidrio": 7,
+      "espesor_mm": "6",
+      "id_pedido": 21,
+      "id_pieza": 101,
+      "unit_index": 2,
+      "x_mm": "2",
+      "y_mm": "0",
+      "rotation_deg": "0",
+      "resolution_mm": "1",
+      "geometria": {
+        "type": "RECTANGULO",
+        "width_mm": 2.0,
+        "height_mm": 2.0
+      }
+    },
+    {
+      "material_source": "PLANCHA",
+      "material_id": 5,
+      "stock_unit_index": 1,
+      "id_tipo_vidrio": 7,
+      "espesor_mm": "6",
+      "id_pedido": 21,
+      "id_pieza": 101,
+      "unit_index": 3,
+      "x_mm": "0",
+      "y_mm": "2",
+      "rotation_deg": "0",
+      "resolution_mm": "1",
+      "geometria": {
+        "type": "RECTANGULO",
+        "width_mm": 2.0,
+        "height_mm": 2.0
+      }
+    }
+  ],
+  "milestones": [
+    "group_started",
+    "piece_started",
+    "piece_placed",
+    "piece_started",
+    "piece_placed",
+    "piece_started",
+    "piece_placed",
+    "group_completed"
+  ]
+}
+ACTUAL RASTER LAYOUT
+AABB
+AABB
+CC..
+CC..
+REPRESENTATIVE: 12 units, 60x30 material grid, 5-degree search
+{
+  "complete": true,
+  "total_units": 12,
+  "placed_units": 12,
+  "elapsed_domain_ms": 18.982,
+  "config": {
+    "resolution_mm": 10,
+    "angular_step_deg": 5,
+    "margin_mm": 0,
+    "separation_mm": 0
+  },
+  "placements": [
+    {
+      "material_source": "PLANCHA",
+      "material_id": 5,
+      "stock_unit_index": 1,
+      "id_tipo_vidrio": 7,
+      "espesor_mm": "6",
+      "id_pedido": 21,
+      "id_pieza": 101,
+      "unit_index": 1,
+      "x_mm": "0",
+      "y_mm": "0",
+      "rotation_deg": "0",
+      "resolution_mm": "10",
+      "geometria": {
+        "type": "RECTANGULO",
+        "width_mm": 100.0,
+        "height_mm": 50.0
+      }
+    },
+    {
+      "material_source": "PLANCHA",
+      "material_id": 5,
+      "stock_unit_index": 1,
+      "id_tipo_vidrio": 7,
+      "espesor_mm": "6",
+      "id_pedido": 21,
+      "id_pieza": 101,
+      "unit_index": 2,
+      "x_mm": "100",
+      "y_mm": "0",
+      "rotation_deg": "0",
+      "resolution_mm": "10",
+      "geometria": {
+        "type": "RECTANGULO",
+        "width_mm": 100.0,
+        "height_mm": 50.0
+      }
+    },
+    {
+      "material_source": "PLANCHA",
+      "material_id": 5,
+      "stock_unit_index": 1,
+      "id_tipo_vidrio": 7,
+      "espesor_mm": "6",
+      "id_pedido": 21,
+      "id_pieza": 101,
+      "unit_index": 3,
+      "x_mm": "200",
+      "y_mm": "0",
+      "rotation_deg": "0",
+      "resolution_mm": "10",
+      "geometria": {
+        "type": "RECTANGULO",
+        "width_mm": 100.0,
+        "height_mm": 50.0
+      }
+    },
+    {
+      "material_source": "PLANCHA",
+      "material_id": 5,
+      "stock_unit_index": 1,
+      "id_tipo_vidrio": 7,
+      "espesor_mm": "6",
+      "id_pedido": 21,
+      "id_pieza": 101,
+      "unit_index": 4,
+      "x_mm": "300",
+      "y_mm": "0",
+      "rotation_deg": "0",
+      "resolution_mm": "10",
+      "geometria": {
+        "type": "RECTANGULO",
+        "width_mm": 100.0,
+        "height_mm": 50.0
+      }
+    },
+    {
+      "material_source": "PLANCHA",
+      "material_id": 5,
+      "stock_unit_index": 1,
+      "id_tipo_vidrio": 7,
+      "espesor_mm": "6",
+      "id_pedido": 21,
+      "id_pieza": 101,
+      "unit_index": 5,
+      "x_mm": "400",
+      "y_mm": "0",
+      "rotation_deg": "0",
+      "resolution_mm": "10",
+      "geometria": {
+        "type": "RECTANGULO",
+        "width_mm": 100.0,
+        "height_mm": 50.0
+      }
+    },
+    {
+      "material_source": "PLANCHA",
+      "material_id": 5,
+      "stock_unit_index": 1,
+      "id_tipo_vidrio": 7,
+      "espesor_mm": "6",
+      "id_pedido": 21,
+      "id_pieza": 101,
+      "unit_index": 6,
+      "x_mm": "500",
+      "y_mm": "0",
+      "rotation_deg": "0",
+      "resolution_mm": "10",
+      "geometria": {
+        "type": "RECTANGULO",
+        "width_mm": 100.0,
+        "height_mm": 50.0
+      }
+    },
+    {
+      "material_source": "PLANCHA",
+      "material_id": 5,
+      "stock_unit_index": 1,
+      "id_tipo_vidrio": 7,
+      "espesor_mm": "6",
+      "id_pedido": 21,
+      "id_pieza": 101,
+      "unit_index": 7,
+      "x_mm": "0",
+      "y_mm": "50",
+      "rotation_deg": "0",
+      "resolution_mm": "10",
+      "geometria": {
+        "type": "RECTANGULO",
+        "width_mm": 100.0,
+        "height_mm": 50.0
+      }
+    },
+    {
+      "material_source": "PLANCHA",
+      "material_id": 5,
+      "stock_unit_index": 1,
+      "id_tipo_vidrio": 7,
+      "espesor_mm": "6",
+      "id_pedido": 21,
+      "id_pieza": 101,
+      "unit_index": 8,
+      "x_mm": "100",
+      "y_mm": "50",
+      "rotation_deg": "0",
+      "resolution_mm": "10",
+      "geometria": {
+        "type": "RECTANGULO",
+        "width_mm": 100.0,
+        "height_mm": 50.0
+      }
+    },
+    {
+      "material_source": "PLANCHA",
+      "material_id": 5,
+      "stock_unit_index": 1,
+      "id_tipo_vidrio": 7,
+      "espesor_mm": "6",
+      "id_pedido": 21,
+      "id_pieza": 101,
+      "unit_index": 9,
+      "x_mm": "200",
+      "y_mm": "50",
+      "rotation_deg": "0",
+      "resolution_mm": "10",
+      "geometria": {
+        "type": "RECTANGULO",
+        "width_mm": 100.0,
+        "height_mm": 50.0
+      }
+    },
+    {
+      "material_source": "PLANCHA",
+      "material_id": 5,
+      "stock_unit_index": 1,
+      "id_tipo_vidrio": 7,
+      "espesor_mm": "6",
+      "id_pedido": 21,
+      "id_pieza": 101,
+      "unit_index": 10,
+      "x_mm": "300",
+      "y_mm": "50",
+      "rotation_deg": "0",
+      "resolution_mm": "10",
+      "geometria": {
+        "type": "RECTANGULO",
+        "width_mm": 100.0,
+        "height_mm": 50.0
+      }
+    },
+    {
+      "material_source": "PLANCHA",
+      "material_id": 5,
+      "stock_unit_index": 1,
+      "id_tipo_vidrio": 7,
+      "espesor_mm": "6",
+      "id_pedido": 21,
+      "id_pieza": 101,
+      "unit_index": 11,
+      "x_mm": "400",
+      "y_mm": "50",
+      "rotation_deg": "0",
+      "resolution_mm": "10",
+      "geometria": {
+        "type": "RECTANGULO",
+        "width_mm": 100.0,
+        "height_mm": 50.0
+      }
+    },
+    {
+      "material_source": "PLANCHA",
+      "material_id": 5,
+      "stock_unit_index": 1,
+      "id_tipo_vidrio": 7,
+      "espesor_mm": "6",
+      "id_pedido": 21,
+      "id_pieza": 101,
+      "unit_index": 12,
+      "x_mm": "500",
+      "y_mm": "50",
+      "rotation_deg": "0",
+      "resolution_mm": "10",
+      "geometria": {
+        "type": "RECTANGULO",
+        "width_mm": 100.0,
+        "height_mm": 50.0
+      }
+    }
+  ],
+  "milestones": [
+    "group_started",
+    "piece_started",
+    "piece_placed",
+    "piece_started",
+    "piece_placed",
+    "piece_started",
+    "piece_placed",
+    "piece_started",
+    "piece_placed",
+    "piece_started",
+    "piece_placed",
+    "piece_started",
+    "piece_placed",
+    "piece_started",
+    "piece_placed",
+    "piece_started",
+    "piece_placed",
+    "piece_started",
+    "piece_placed",
+    "piece_started",
+    "piece_placed",
+    "piece_started",
+    "piece_placed",
+    "piece_started",
+    "piece_placed",
+    "group_completed"
+  ]
+}

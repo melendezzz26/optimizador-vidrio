@@ -1,0 +1,11 @@
+{
+  "ui_head": "4a3c9c1cd244780f8a1d97f1a527cd1fdebcf760",
+  "ndjson_events": 19,
+  "chunk_bytes": 7,
+  "orders_confirmed": 2,
+  "physical_units_consumed": 3,
+  "valid_remnants_created": 1,
+  "canonical_confirmed": true,
+  "canonical_confirmable": false,
+  "frontend_modified": false
+}
