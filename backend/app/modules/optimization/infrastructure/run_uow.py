@@ -34,6 +34,10 @@ class SqlOrdersBatch:
             raise RunError("NOT_FOUND", "No se encontraron todos los pedidos seleccionados.")
         return rows
 
+    def require_state(self, order_ids, expected):
+        if any(o.estado != expected for o in self._lock(order_ids)):
+            raise RunError("STATE_CONFLICT", "El estado del lote ha cambiado.")
+
     def transition(self, order_ids, expected, target):
         rows = self._lock(order_ids)
         if any(o.estado != expected for o in rows):
@@ -84,7 +88,12 @@ class SqlRunRepository:
         if (links != result.problem.order_ids or execution.estado != expected_execution_state
                 or execution.completo != result.complete or row.id_ejecucion_seleccionada != expected_selection):
             raise RunError("INTERNAL_ERROR", "La trazabilidad de la corrida requiere revisión.")
-        return OptimizationRun(optimization_id=optimization_id, status=RunStatus(row.estado), result=result)
+        confirmation = execution.patron_resultado.get("confirmation")
+        if confirmation is not None and (confirmation.get("receipt_version") != 1
+                or confirmation.get("receipt", {}).get("optimization_id") != optimization_id):
+            raise RunError("INTERNAL_ERROR", "La confirmación persistida requiere revisión.")
+        return OptimizationRun(optimization_id=optimization_id, status=RunStatus(row.estado), result=result,
+                               confirmed=confirmation is not None)
 
 
     def residual_limits(self, optimization_id):
@@ -163,6 +172,8 @@ class SqlRunUnitOfWork:
         self.session = self.session_factory()
         self.orders = SqlOrdersBatch(self.session)
         self.runs = SqlRunRepository(self.session)
+        from .confirmation_adapter import SqlConfirmationRepository
+        self.confirmation = SqlConfirmationRepository(self.session, self.runs)
         return self
 
     def __exit__(self, exc_type, exc, traceback):

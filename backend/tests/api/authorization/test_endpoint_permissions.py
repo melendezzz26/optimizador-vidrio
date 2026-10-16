@@ -45,6 +45,7 @@ ENDPOINTS = [
     ("POST", "/api/optimization/rasterize", "optimization.execute"),
     ("POST", "/api/optimization/runs", "optimization.execute"),
     ("GET", "/api/optimization/runs/1", "optimization.view"),
+    ("POST", "/api/optimization/runs/1/confirm", "optimization.confirm"),
     ("GET", "/api/roles", "roles.view"),
     ("GET", "/api/permissions", "roles.view"),
     ("PUT", "/api/roles/1/permissions", "roles.manage"),
@@ -94,8 +95,7 @@ def call(client, method, path):
 def test_endpoint_map_uses_only_catalog_codes_and_covers_every_code_with_an_endpoint():
     used = {code for _, _, code in ENDPOINTS}
     assert used <= CODIGOS
-    # Códigos sin endpoint todavía: llegan con resultados y confirmación de optimización.
-    assert CODIGOS - used == {"optimization.confirm"}
+    assert CODIGOS - used == set()
 
 
 @pytest.mark.parametrize("method, path, code", ENDPOINTS)

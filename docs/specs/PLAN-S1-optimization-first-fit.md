@@ -821,3 +821,49 @@ backend completo (199.17s), una advertencia conocida Starlette/httpx, cero skips
 con PostgreSQL obligatorio. Única head `s1opt02b4c6d`. Captura real 13 eventos y
 GET aceptados por parser UI4a3c9c1 en chunks7bytes. Evidencia `phase5-states.md`.
 Inventario intacto; la sesión termina antes de T10/T11. Sin PR ni integración UI.
+
+## Ejecución T10/T11 — confirmación real backend
+
+Base `f4dd5a5fcd574037e055873d75bafcf15cdbf771`. T10 y T11 backend completados:
+ConfirmRun/puerto/UoW caller-owned, revalidación de patrón y stock, locks PostgreSQL,
+consumo físico por fila, ledger CONSUMO_OPTIMIZACION, residual validado y TODOS los
+pedidos CONFIRMADO en un único commit. No commit de módulos externos. Corrida
+conserva COMPLETADA; recibo en JSONB existente permite confirmed=true y
+confirmable=false. No nueva columna ni migración; única head s1opt02b4c6d.
+
+POST `/api/optimization/runs/{id}/confirm` sin body usa optimization.confirm real.
+T1 sigue igual. Repetición→409 ALREADY_CONFIRMED (§12), jamás doble consumo.
+Stock/estado conflictivo→409; no confirmable/manipulado→422;500 seguro con rollback.
+Índices físicos distinguen unidades del snapshot; consumo de plancha agrega su
+conteo y revalida cantidad actual suficiente. Retazo cuenta una vez y se consulta
+ledger bajo su lock para impedir reconsumo incluso ante reactivación externa.
+
+Se reutiliza el algoritmo residual existente (§8), sin ejecutar FF ni recolocar.
+Contorno debe coincidir con original+rotación, y layout/propuestas deben reproducirse.
+Se aplican ancho/alto mínimos EFECTIVOS congelados. Persistencia reutiliza geometría
+Inventory y HALF_UP a0.01 de NUMERIC18,2; una geometría no persistible se omite con
+razón técnica y se ajustan recuperable/merma a lo materializado. No mínimo de área
+independiente inventado: su política continúa pendiente y no se oculta.
+Códigos técnicos de retazo FF-{run}-{P|R}{material}-{unit}, <=40, trazables por
+id_ejecucion_origen y recibo; colisión se rechaza con rollback, nunca overwrite.
+
+Locks: corrida→FF→asociaciones→pedidos ASC→planchas ASC→retazos ASC, y propuestas
+de su ejecución. Carreras A/B/C/D demostradas con dos conexiones y pg_stat_activity/
+pg_blocking_pids reales; dos POST simultáneos dan200/409. Triggers de PostgreSQL
+prueban rollback después de stock/movimientos/residuales/recibo/pedidos, más
+conflictos de stock mixto. No mocks de locking/commit como prueba de atomicidad.
+
+Pruebas:169 passed focal (14.02s);1976 passed backend completo (208.58s), una
+advertencia conocida Starlette/httpx, cero fallos/skips con PostgreSQL obligatorio.
+Subconjuntos globales: Optimization516, Inventory497, Orders150, RBAC API95;
+HU015 API41 + inicio concurrente histórico7. Código frontend/Orders/Inventory/RBAC
+sin cambios propios; sus regresiones verdes. No Supabase.
+
+Evidencias: `confirmation.md`, `confirmation-audit.md`, `confirmation-api.md`,
+`confirmation-concurrency.md`, `confirmation-rollback.md`, logs, proofs JSON de
+locks reales y ejemplo HTTP/stock antes/después. El parser UI4a3c9c1 se observa
+solo lectura y acepta19 eventos, confirmación de2 pedidos/3 físicas/1 residual y
+GET confirmed=true. No integración UI ni PR. CA20–25 y confirm de CA26 avanzados;
+CA28 backend HTTP cubierto, E2E visual conjunto pendiente. Reconciliación
+administrativa T12 y cierre T13 siguen fuera de este bloque. SPEC Reviewed /
+PLAN Approved; NO Verified.
