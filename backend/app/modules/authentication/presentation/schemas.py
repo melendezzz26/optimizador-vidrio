@@ -13,6 +13,9 @@ class PublicUser(BaseModel):
     username: str
     nombre: str
     rol: str
+    # Permisos efectivos del rol (S1-RBAC). Solo sirven para mostrar u ocultar
+    # opciones: el backend vuelve a validar cada petición.
+    permisos: list[str]
 
 
 class LoginResponse(BaseModel):
@@ -25,3 +28,4 @@ class SessionInfo(BaseModel):
     id_usuario: int
     username: str
     rol: str
+    permisos: list[str]

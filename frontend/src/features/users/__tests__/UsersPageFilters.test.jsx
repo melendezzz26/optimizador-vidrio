@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { UsersPage } from '../UsersPage';
 import { listRoles, listUsers } from '../usersApi';
+import { withPermissions } from '../../authentication/__tests__/permissionFixtures';
 
 vi.mock('../usersApi', () => ({
   listRoles: vi.fn(),
@@ -21,7 +22,7 @@ const roles = [
 ];
 
 async function renderLoadedPage() {
-  render(<UsersPage currentUser={admin} onSessionExpired={vi.fn()} toolbar={null} />);
+  render(<UsersPage currentUser={withPermissions(admin)} onSessionExpired={vi.fn()} toolbar={null} />);
   await screen.findByText('F70303030');
 }
 
@@ -72,7 +73,7 @@ describe('UsersPage — búsqueda y filtros (HU-003 T04)', () => {
 
   it('sin usuarios registrados no muestra los filtros', async () => {
     listUsers.mockResolvedValue([]);
-    render(<UsersPage currentUser={admin} onSessionExpired={vi.fn()} toolbar={null} />);
+    render(<UsersPage currentUser={withPermissions(admin)} onSessionExpired={vi.fn()} toolbar={null} />);
     expect(await screen.findByText('Aún no hay usuarios registrados')).toBeInTheDocument();
     expect(screen.queryByLabelText('Buscar')).not.toBeInTheDocument();
   });

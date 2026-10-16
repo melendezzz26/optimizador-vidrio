@@ -23,7 +23,7 @@ const roles = {
     password: process.env.TA_DASHBOARD_E2E_OPERATOR_PASSWORD,
     action: 'Gestión de inventario',
     moduleHeading: 'Gesti\u00f3n de Inventario',
-    forbidden: ['Panel de roles'],
+    forbidden: ['Administración'],
   },
   warehouse: {
     label: 'Almacenero',
@@ -31,7 +31,7 @@ const roles = {
     password: process.env.TA_DASHBOARD_E2E_WAREHOUSE_PASSWORD,
     action: 'Gestión de inventario',
     moduleHeading: 'Gestión de Inventario',
-    forbidden: ['Registro de pedidos', 'Panel de roles'],
+    forbidden: ['Registro de pedidos', 'Administración'],
   },
 };
 

@@ -36,7 +36,7 @@ with patch.dict(sys.modules, {"app.shared.database": isolated_base}):
 
 
 NOW = datetime(2026, 10, 5, 12, 30, tzinfo=timezone.utc)
-HEAD = "ta036a1b2c3d"
+HEAD = "s1rbac01a2b3"
 
 
 @pytest.mark.parametrize("geometry", [
@@ -175,6 +175,12 @@ def seed_writeoff_actor(engine):
                 id_usuario,dni,nombres,apellidos,usuario,password_hash,id_rol,fecha_creacion
             ) VALUES (1,'12345678','Admin','Inventory','A12345678','hash',1,CURRENT_TIMESTAMP)"""
         )
+
+    # S1-RBAC: las rutas HTTP reales leen los permisos del Administrador de rol_permisos.
+    from app.modules.authentication.infrastructure.permission_seed import seed_permissions
+
+    with Session(engine) as db:
+        seed_permissions(db)
 
 
 def create_writeoff_resources(repo):

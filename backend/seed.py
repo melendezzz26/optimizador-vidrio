@@ -1,5 +1,6 @@
 from app.shared.database import SessionLocal
 from app.models import Rol
+from app.modules.authentication.infrastructure.permission_seed import seed_permissions
 
 
 def crear_roles():
@@ -25,6 +26,9 @@ def crear_roles():
 
         db.commit()
         print("Roles registrados correctamente.")
+        
+        seed_permissions(db)
+        print("Permisos de roles registrados correctamente.")
 
     finally:
         db.close()

@@ -35,12 +35,14 @@ def password_hash(password) -> str:
 
 @pytest.fixture
 def session_factory():
-    """Base SQLite en memoria con las tablas usuarios y roles del modelo real.
+    """Base SQLite en memoria con usuarios, roles y permisos del modelo real.
 
     Las tablas se copian de app.models para que las pruebas sigan al modelo.
     Se omiten las restricciones CHECK porque usan sintaxis propia de PostgreSQL.
+    Los roles reciben la asignación inicial de permisos (S1-RBAC).
     """
-    from app.models import Rol, Usuario
+    from app.models import Permiso, Rol, RolPermiso, Usuario
+    from app.modules.authentication.infrastructure.permission_seed import seed_permissions
 
     engine = create_engine(
         "sqlite://",
@@ -48,7 +50,7 @@ def session_factory():
         poolclass=StaticPool,
     )
     metadata = MetaData()
-    for table in (Rol.__table__, Usuario.__table__):
+    for table in (Rol.__table__, Usuario.__table__, Permiso.__table__, RolPermiso.__table__):
         copy = table.to_metadata(metadata)
         for constraint in [c for c in copy.constraints if isinstance(c, CheckConstraint)]:
             copy.constraints.discard(constraint)
@@ -58,6 +60,7 @@ def session_factory():
     with factory() as db:
         db.add_all([Rol(id_rol=role_id, nombre=name) for name, role_id in ROLE_IDS.items()])
         db.commit()
+        seed_permissions(db)
     yield factory
     engine.dispose()
 

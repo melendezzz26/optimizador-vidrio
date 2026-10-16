@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { UsersPage } from '../UsersPage';
 import { createUser, listRoles, listUsers, updateUser } from '../usersApi';
+import { withPermissions } from '../../authentication/__tests__/permissionFixtures';
 
 vi.mock('../usersApi', () => ({
   listRoles: vi.fn(),
@@ -15,7 +16,7 @@ const carlos = { id_usuario: 2, usuario: 'F70303030', nombres: 'Carlos', apellid
 const roles = [{ id_rol: 1, nombre: 'Administrador' }, { id_rol: 3, nombre: 'Operario' }];
 
 async function renderLoadedPage() {
-  render(<UsersPage currentUser={admin} onSessionExpired={vi.fn()} toolbar={null} />);
+  render(<UsersPage currentUser={withPermissions(admin)} onSessionExpired={vi.fn()} toolbar={null} />);
   await screen.findByText('F70303030');
 }
 

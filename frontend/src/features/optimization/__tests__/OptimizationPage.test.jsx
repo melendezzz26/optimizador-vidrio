@@ -4,6 +4,7 @@ import { OptimizationPage } from '../OptimizationPage';
 import { getOrder, listOrderMaterials, listOrders } from '../../orders/ordersApi';
 import { rasterizePiece, startOptimization } from '../optimizationApi';
 import { deferred, item, order, raster } from './fixtures';
+import { withPermissions } from '../../authentication/__tests__/permissionFixtures'
 
 vi.mock('../../orders/ordersApi', () => ({ getOrder: vi.fn(), listOrders: vi.fn(), listOrderMaterials: vi.fn() }));
 vi.mock('../optimizationApi', () => ({ rasterizePiece: vi.fn(), startOptimization: vi.fn() }));
@@ -30,7 +31,7 @@ beforeEach(() => {
 
 function renderPage(role = 'Operario') {
   const onSessionExpired = vi.fn();
-  const rendered = render(<OptimizationPage user={{ ...user, rol: role }} token="test-token" onSessionExpired={onSessionExpired} />);
+  const rendered = render(<OptimizationPage user={withPermissions({ ...user, rol: role })} token="test-token" onSessionExpired={onSessionExpired} />);
   return { ...rendered, onSessionExpired };
 }
 async function select() {

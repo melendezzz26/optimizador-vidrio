@@ -7,6 +7,9 @@ import sqlalchemy as sa
 from tests.integration.postgres_support import BACKEND, _run, new_database, upgrade
 from tests.integration.test_hu014_movement_migration import _seed_resources, _insert_movement
 
+# Se fija la revisión (no "head") para que la prueba no dependa de migraciones posteriores.
+REVISION = "ta036a1b2c3d"
+
 
 def downgrade(engine):
     return _run([sys.executable, "-m", "alembic", "downgrade", "fa014e1a2b3c"], cwd=BACKEND,
@@ -21,7 +24,7 @@ def test_upgrade_preserves_unknown_history_and_allows_partial_writeoffs(isolated
             _seed_resources(connection)
             _insert_movement(connection, event="BAJA_ROTURA", plancha=1)
             _insert_movement(connection, event="BAJA_ROTURA", retazo=1)
-        assert upgrade(engine, "head").returncode == 0
+        assert upgrade(engine, REVISION).returncode == 0
         quantity_column = next(column for column in sa.inspect(engine).get_columns("movimientos_inventario")
                                if column["name"] == "cantidad_afectada")
         assert quantity_column["nullable"] is True  # Unknown history remains readable.
@@ -49,7 +52,7 @@ def test_upgrade_preserves_unknown_history_and_allows_partial_writeoffs(isolated
 
 def test_empty_database_supports_safe_downgrade_and_reupgrade(isolated_postgres):
     with new_database(isolated_postgres) as engine:
-        assert upgrade(engine, "head").returncode == 0
+        assert upgrade(engine, REVISION).returncode == 0
         result = downgrade(engine)
         assert result.returncode == 0, result.stderr
-        assert upgrade(engine, "head").returncode == 0
+        assert upgrade(engine, REVISION).returncode == 0

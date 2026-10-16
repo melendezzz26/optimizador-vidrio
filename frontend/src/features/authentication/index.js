@@ -9,8 +9,13 @@ export {
 	canManageOrders,
 	canManagePlanchas,
 	canManageRetazos,
+	canManageRoles,
 	canManageUsers,
+	canViewAdministration,
 	canViewInventory,
 	canViewDashboard,
 	canViewResults,
+	canViewRoles,
+	canViewUsers,
+	hasPermission,
 } from './permissions';

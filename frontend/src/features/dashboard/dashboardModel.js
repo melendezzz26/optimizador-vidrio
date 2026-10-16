@@ -1,4 +1,4 @@
-import { canManageOrders, canManageUsers, canViewDashboard, canViewInventory } from '../authentication/permissions';
+import { canManageOrders, canViewAdministration, canViewDashboard, canViewInventory } from '../authentication/permissions';
 
 export const DASHBOARD_SOURCES = {
   planchas: 'Planchas',
@@ -28,7 +28,7 @@ export function getDashboardActions(user) {
   return [
     ...(canViewInventory(user) ? [{ view: 'inventory', label: 'Gestión de inventario' }] : []),
     ...(canManageOrders(user) ? [{ view: 'orders', label: 'Registro de pedidos' }] : []),
-    ...(canManageUsers(user) ? [{ view: 'users', label: 'Panel de roles' }] : []),
+    ...(canViewAdministration(user) ? [{ view: 'users', label: 'Administración' }] : []),
   ];
 }
 
