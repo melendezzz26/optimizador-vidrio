@@ -198,12 +198,12 @@ type OptimizationStartedDataV1 = {
   metodo: "FF";
   order_ids: number[];
   total_units: number;
-  groups: Array<{ id_tipo_vidrio: number; espesor_mm: number }>;
+  groups: Array<{ id_tipo_vidrio: number; espesor_mm: string }>;
   configuracion: {
-    resolucion_raster_mm: number;
-    margen_mm: number;
-    separacion_mm: number;
-    paso_angular_grados: number;
+    resolucion_raster_mm: string;
+    margen_mm: string;
+    separacion_mm: string;
+    paso_angular_grados: string;
   };
 };
 ```
@@ -371,6 +371,181 @@ Estimación de curso: `1 SP = 6 horas`. Los SP son propuesta, no registro de hor
 - **Criterios verificables:** nombres/campos snake_case, unidades mm/mm²/ms/grados; progress_pct derivado; parseo NDJSON por líneas; API sin defaults cliente; estados normal y stream failure documentados; UI puede comenzar sin migración.
 - **Pruebas mínimas:** pruebas de schema/serialización de fixtures contractuales; no mocks de motor se requieren para fijar envelope.
 - **Evidencia esperada:** ejemplo versionado request, 8 eventos, result, confirm y matriz de errores; mensaje de integración a rama `S1-optimization-ui`.
+
+#### T1 — Contrato v1 concretado (16/10/2026)
+
+Fuentes de implementación del contrato:
+
+- [Modelo puro e inmutable](../../backend/app/modules/optimization/domain/problem.py).
+- [DTO de observación de corrida y progreso](../../backend/app/modules/optimization/application/dto.py).
+- [Schemas v1](../../backend/app/modules/optimization/presentation/run_schemas.py) y
+  [adaptación modelo → wire](../../backend/app/modules/optimization/presentation/run_serialization.py).
+- [Ejemplos JSON versionados para UI](../../backend/tests/api/optimization/fixtures/s1_contract_v1.json).
+  Son fixtures ilustrativas, no resultados observados de un motor ni evidencia de streaming.
+
+Esta concreción implementa solamente estructuras, invariantes y serialización de T1.
+No registra rutas `/runs`, no codifica ni transmite NDJSON, no prepara/expande/ordena
+unidades, no rota ni ejecuta FF y no cambia persistencia. T2 y posteriores permanecen
+pendientes. La aprobación general de este PLAN se conserva; no equivale a una nueva
+aprobación humana de la implementación T1.
+
+**Auditoría y reutilización.** No existe una clase `Rasterizer`: los puntos públicos
+son las funciones de `rasterizer.py`. Se conservan `RasterMask`, esas funciones,
+`SheetLayout`, `PlacementCheck`, `RasterizedPiece`, `OptimizationOrders`, los casos
+de uso escalares, adaptador Orders, schemas, serialización, guards y rutas HU-015.
+El `placement.py` actual valida geometría y devuelve un layout; no representa una
+asignación con identidad. Por eso `problem.Placement` compone `PieceUnit` y
+`StockCandidate` más posición/orientación, sin añadir trazabilidad a `SheetLayout`.
+Los schemas geométricos de HU-015 se reutilizan en los nuevos schemas.
+
+**Modelo interno (nombres ingleses).**
+
+| Tipo | Contenido e invariantes de T1 |
+|---|---|
+| `OptimizationConfig` | Cuatro parámetros efectivos `Decimal`, obligatorios, sin defaults. Resolución positiva, margen/separación no negativos y paso en `(0,360]`. |
+| `PieceUnit` | `order_id`, `piece_id`, `unit_index>=1`, `glass_type_id`, `thickness_mm`, `geometry`, `area_mm2`. Identidad `(piece_id, unit_index)`; `shape_type` deriva de la geometría y `material_key` de tipo/espesor. No se expande cantidad. |
+| `StockCandidate` | Enum `MaterialSource.REMNANT=RETAZO` / `SHEET=PLANCHA`, `material_id`, `physical_unit_index>=1`, tipo/espesor, geometría y área. Identidad `(source, material_id, physical_unit_index)`. Retazo siempre índice 1. Plancha rectangular; dos índices pueden representar una misma fila sin generar nuevos IDs. |
+| `MaterialGroup` | Tipo/espesor, unidades y candidatos como tuplas; verifica compatibilidad y rechaza identidades repetidas. No agrupa ni ordena entradas por sí mismo. |
+| `OptimizationProblem` | IDs explícitos, config y grupos. Rechaza selección/grupos/unidades duplicados, pedidos no cubiertos y snapshots contradictorios de una misma pieza. Conserva el orden recibido: la preparación corresponde a T2. |
+| `Placement` | Referencias inmutables `piece`/`stock`, `x_mm`, `y_mm`, `rotation_deg` y `geometry` orientada/local. No duplica los IDs contenidos en sus referencias; la serialización los expone. Compatibilidad y ángulo `[0,360)` validados. La aceptación geométrica sigue siendo responsabilidad de `SheetLayout`. |
+| `OptimizationResult` | Problema, placements únicos, métricas y tiempo opcionales; `method=FF`, contadores, `complete`, unidades sin colocar y materiales usados se derivan. No puede lograr completitud contando dos veces una unidad. |
+| `OptimizationMetrics` | Contenedor validado de los valores posteriores R4, sin ejecutar fórmulas ni extraer residuos. No permite porcentaje fuera de `[0,100]`, áreas negativas ni denominador cero. |
+| `OptimizationRun` / `Progress` | Estado de observación `EN_EJECUCION/COMPLETADA/SIN_SOLUCION/FALLIDA`, confirmación y elegibilidad; progreso derivado de colocadas/total. No son entidades ORM ni casos de uso de transición. |
+
+Geometría: snapshot copiado y congelado recursivamente (`MappingProxyType` y tuplas),
+manteniendo números `int/float` canónicos compatibles con el raster vigente. No
+rerasteriza ni renormaliza coordenadas. No reemplaza la validación de geometría
+persistida de Orders/Inventory. Espesor, áreas, parámetros, posiciones y ángulos
+nuevos usan `Decimal`; no aceptan conversión implícita desde float. El puente de
+T3 al raster existente convertirá explícitamente lo imprescindible después de su
+preflight, sin cambiar TA-005/006/007 ni reducir precisión de snapshots originales.
+
+**Precisión y nombres wire.** Se mantienen los nombres snake_case de §§9/14:
+`id_optimizacion`, `id_pedido`, `id_pieza`, `id_tipo_vidrio`, `espesor_mm`,
+`metodo`, `estado`, `completo`, `configuracion`. Las medidas Decimal se transmiten
+como **strings decimales JSON**, coherente con `espesor_mm` de HU-015; la UI no debe
+presuponer `number`. Los cuatro parámetros del ejemplo TypeScript de §9 se han
+precisado como strings. Coordenadas del contorno canónico conservan el contrato
+geométrico numérico existente. IDs, índices, contadores y milisegundos son enteros;
+`schema_version` es 1. No se cuantizan medidas ni se calculan métricas en T1.
+
+Se usa **`physical_unit_index` en Domain** y **`stock_unit_index` en wire**, conservando
+el nombre ya acordado con UI en el PLAN; el adaptador realiza un mapeo explícito
+uno a uno. No hay dos índices distintos ni se confunde ninguno con `material_id`.
+
+**Inicio y configuración.** `RunRequestV1={order_ids: int[]}` exige IDs positivos,
+distintos y al menos uno; rechaza extras. No recibe geometría, método ni parámetros
+cliente. Los cuatro parámetros provienen del snapshot backend vigente y se
+publican en `optimization_started` y GET. Esto fija la fuente de configuración,
+sin implementar todavía su proveedor o validación transaccional.
+
+**Eventos.** `OptimizationEventV1` es una unión discriminada por `event`; todos
+requieren `{schema_version:1, sequence>=1, event, id_optimizacion, occurred_at, data}`.
+`occurred_at` es ISO 8601 UTC con zona explícita. `sequence` comienza en 1 y aumenta
+por cada evento de la corrida; la secuencia completa será validada por T9.
+
+| Evento | Payload v1 concretado |
+|---|---|
+| `optimization_started` | `metodo=FF`, `order_ids`, `total_units` global, claves `groups`, `configuracion`. |
+| `group_started` | `id_tipo_vidrio`, `espesor_mm`, `total_units` del grupo. |
+| `piece_started` | Pedido/pieza/unidad, clave material y contadores globales con `progress_pct`. |
+| `piece_placed` | Campos de `PlacementV1`: trazabilidad completa, `stock_unit_index`, X/Y/ángulo, `resolution_mm`, `geometria` orientada/local; contadores globales y `material:StockV1` con geometría/área del material para pintar sin otra consulta. |
+| `group_completed` | Clave material, contadores/progreso **del grupo**, `result_url` de GET como referencia durable de sus placements. GET durante cálculo es un snapshot, no promete persistir cada evento. |
+| `metrics_calculated` | `metrics_available` y `metrics:MetricsV1\|null`. Sin material usado, false/null. |
+| `optimization_completed` | `estado=COMPLETADA\|SIN_SOLUCION`, `completo`, contadores/progreso globales y `result_url`. Se emite también para fin normal sin solución; nunca implica confirmación. |
+| `optimization_failed` | `estado=FALLIDA`, `code`, `message` seguro y `result_url`. Códigos: `CALCULATION_FAILED`, `EXECUTION_INTERRUPTED`, `RESULT_SAVE_FAILED`. |
+
+`progress_pct` se deriva como Decimal de `placed_units / total_units * 100` y se
+serializa como string, sin acumular intentos ni redondear a un porcentaje falso.
+Los schemas rechazan discrepancias con los contadores. El adapter HTTP futuro
+deberá construir mensajes seguros: nunca serializar directamente una excepción.
+El fixture separa siete eventos del camino exitoso de un octavo tipo de evento
+alternativo de fallo; no se emiten ambos terminales para una misma corrida.
+
+El transporte futuro usa `application/x-ndjson`: un JSON UTF-8 por línea terminada
+en `\n`. Un chunk de red puede contener media línea, varias líneas o dividir un
+carácter UTF-8. UI debe usar decodificación incremental, acumular texto, separar
+por salto de línea y parsear solo líneas completas; al terminar, un fragmento
+incompleto o ausencia de terminal requiere consultar GET y no fabricar éxito.
+La implementación/parsing de transporte pertenece a T9/UI, no a T1. No hay
+reanudación ni reejecución automática por reconexión. Se conservan `201`/`Location`
+para aceptación futura; tras headers, fallo por evento y consulta durable, sin
+cambiar HTTP ni aplicar reset de `SIN_SOLUCION` a un crash.
+
+**GET reconstruible (`RunResponseV1`).** Incluye ID, estado, método, pedidos,
+configuración, `groups` con **todas las unidades solicitadas** y geometría original,
+`placements`, `materials_used` (cada unidad física usada una sola vez),
+`unplaced_units`, contadores/progreso, `completo`, `metrics_available`, métricas
+nullable, `tiempo_computacional_ms` nullable, `confirmed` y `confirmable`.
+Cada placement conserva contorno ya orientado, local a su bounding box, más X/Y
+y resolución; se dibuja trasladando ese contorno sin recalcular FF ni rotarlo de
+nuevo. Material conserva geometría útil y área: no se sustituye un retazo irregular
+por AABB. Origen en esquina superior izquierda del material normalizado, Y hacia
+abajo, mm y grados. T3 producirá el contorno orientado/local; T1 solo lo representa.
+La geometría original puede contener coordenadas negativas, como en HU-015.
+
+Unidades sin placement se identifican por pedido/pieza/índice y clave material;
+`reason=PENDING` en ejecución, `NO_FIT` en SIN_SOLUCION, `INTERRUPTED` en FALLIDA.
+`completo` expresa cobertura geométrica, mientras `estado` expresa estado durable;
+ni siquiera 100% observado habilita confirmar hasta estado COMPLETADA. `confirmed`
+es observación derivada de la confirmación posterior, no una columna nueva;
+`confirmable` es elegibilidad de snapshot y no sustituye revalidación bajo locks.
+Después de confirmar, el estado de corrida conserva COMPLETADA y confirmable=false.
+
+`MetricsV1`: `aprovechamiento_pct`, `merma_mm2`, `planchas_nuevas_usadas`,
+`retazo_recuperable_mm2`, `area_material_total_mm2`, `area_piezas_colocadas_mm2`,
+`tiempo_computacional_ms`. El tiempo también se expone en GET cuando se midió una
+corrida sin métricas disponibles. Métricas disponibles requieren los siete campos;
+sin cálculo aún, el modelo permite null y no inventa ceros. Los cálculos y
+restricciones finales de persistencia siguen en T8.
+
+**Confirmación.** `POST /runs/{id_optimizacion}/confirm` no recibe body. El
+identificador proviene del path y no acepta patrón/materiales del cliente.
+`ConfirmResponseV1` incluye `{schema_version:1,id_optimizacion,confirmed:true,orders,
+materials_consumed,remnants_created}`. Cada pedido lleva estado CONFIRMADO; consumo
+enumera identidades físicas `(material_source,material_id,stock_unit_index)` sin
+duplicados; el backend futuro agregará por fila para descontar cantidades. Cada
+retazo creado incluye su ID, identidad del material fuente, posición local X/Y,
+geometría rectangular exacta y área. Lista vacía si no se genera geometría válida.
+Este schema no confirma ni consume inventario.
+
+**Errores futuros (`ErrorResponseV1`).** Forma estable
+`{"detail":{"code":"STOCK_CONFLICT","message":"…"}}`; mensajes seguros y sin SQL,
+stack ni datos sensibles. Los errores de validación de rutas nuevas se adaptarán
+a esta forma en T9. No cambia el `detail` histórico de HU-015.
+
+| HTTP | Códigos | Operación/semántica |
+|---|---|---|
+| 401 | `UNAUTHENTICATED` | Sesión ausente/vencida. |
+| 403 | `FORBIDDEN` | Capacidad no concedida. |
+| 404 | `NOT_FOUND` | Pedido del lote o corrida ausente; nunca inicio parcial. |
+| 409 | `STATE_CONFLICT`, `CONFIG_CONFLICT` | Inicio con estados/configuración conflictivos. |
+| 409 | `STOCK_CONFLICT`, `ALREADY_CONFIRMED`, `STATE_CONFLICT` | Confirmación con stock/estados cambiados o repetida; rollback total. |
+| 422 | `INVALID_INPUT`, `NOT_CONFIRMABLE` | Cuerpo/datos inválidos o resultado incompleto/no confirmable. |
+| 500 | `INTERNAL_ERROR` | Fallo antes de headers o confirmación revertida; mensaje general. |
+| Tras headers | Evento `optimization_failed` | Estado HTTP sin cambios; GET permite observar FALLIDA o estado pendiente de reconciliación si falla infraestructura. |
+
+**Permisos puente y pendientes de integración.** `/start` y `/rasterize` conservan
+`EJECUTAR_OPTIMIZACION`. Las capacidades futuras `.view/.execute/.confirm` y su
+traducción temporal siguen pendientes con RBAC (§13): no se activan rutas nuevas
+ni se conceden permisos por inferencia. UI puede desarrollar el consumer sobre
+estos fixtures; los controles reales deberán esperar el guard backend acordado.
+El contrato batch caller-owned de Orders descrito en §3 sigue pendiente de acuerdo
+cross-branch; T1 no simula ese acuerdo ni introduce un port transaccional sin dueño.
+
+Antes de T3/revisión siguiente: revisar el mapeo `physical_unit_index` →
+`stock_unit_index`, strings Decimal, composición de placement y contorno orientado
+local; cerrar el contrato batch de Orders y el puente RBAC antes de sus adaptadores.
+El mínimo independiente de área recuperable no existe en Configuracion: permanece
+pendiente de decisión humana, sin default inventado ni proveedor nuevo en T1.
+
+Mensaje de integración preparado para `S1-optimization-ui`: «Contrato S1 v1 en
+`run_schemas.py`, ejemplos en `fixtures/s1_contract_v1.json`. Inicio solo order_ids;
+medidas Decimal como strings; siete eventos de éxito y terminal alternativo de
+fallo; placements con contorno orientado/local y stock_unit_index; GET canónico;
+confirm sin body y conflicto 409. Endpoints, transporte y guards nuevos aún no
+implementados». Este texto queda disponible para el equipo; no se envía mediante
+herramientas de mensajería en esta tarea.
 
 ### T2 — Problem normalization, expansión y grupos deterministas (1.5 SP)
 
