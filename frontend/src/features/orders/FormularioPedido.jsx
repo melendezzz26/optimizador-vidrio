@@ -42,8 +42,6 @@ function pieceFromResponse(piece, index, localId) {
   return {
     id: localId,
     nombre: `Pieza ${index + 1}`,
-    tipo_vidrio_id: String(piece.id_tipo_vidrio),
-    espesor: String(piece.espesor_mm),
     tipo_forma: piece.tipo_forma,
     cantidad: piece.cantidad,
     dimensiones: piece.tipo_forma === 'POLIGONO_CONVEXO'
@@ -56,48 +54,31 @@ function positiveNumber(value) {
   return value !== '' && Number.isFinite(Number(value)) && Number(value) > 0;
 }
 
-function validationMessage(piece, field) {
-  if (field === 'material' && !piece.tipo_vidrio_id) return 'Selecciona un material.';
-  if (field === 'espesor' && !positiveNumber(piece.espesor)) return 'Selecciona un espesor válido.';
-  if (field === 'cantidad' && (!Number.isInteger(Number(piece.cantidad)) || Number(piece.cantidad) <= 0)) {
-    return 'Ingresa una cantidad entera mayor que 0.';
-  }
-  if (field === 'width_mm' && !positiveNumber(piece.dimensiones.width_mm)) return 'Ingresa un ancho mayor que 0.';
-  if (field === 'height_mm' && !positiveNumber(piece.dimensiones.height_mm)) return 'Ingresa un alto mayor que 0.';
-  if (field === 'radius_mm' && !positiveNumber(piece.dimensiones.radius_mm)) return 'Ingresa un radio mayor que 0.';
-  return '';
-}
-
-function buildPayload(pieces) {
-  return {
-    piezas: pieces.map((piece) => {
+function buildPayload(materialGroups) {
+  const piezas = [];
+  materialGroups.forEach((group) => {
+    group.piezas.forEach((piece) => {
       const base = {
         tipo_forma: piece.tipo_forma,
-        id_tipo_vidrio: Number(piece.tipo_vidrio_id),
-        espesor_mm: Number(piece.espesor),
+        id_tipo_vidrio: Number(group.tipo_vidrio_id),
+        espesor_mm: Number(group.espesor),
         cantidad: Number(piece.cantidad),
       };
       if (piece.tipo_forma === 'RECTANGULO') {
-        return { ...base, width_mm: Number(piece.dimensiones.width_mm), height_mm: Number(piece.dimensiones.height_mm) };
+        piezas.push({ ...base, width_mm: Number(piece.dimensiones.width_mm), height_mm: Number(piece.dimensiones.height_mm) });
+      } else if (piece.tipo_forma === 'CIRCUNFERENCIA') {
+        piezas.push({ ...base, radius_mm: Number(piece.dimensiones.radius_mm) });
+      } else {
+        piezas.push({ ...base, vertices_mm: piece.dimensiones.vertices ?? [] });
       }
-      if (piece.tipo_forma === 'CIRCUNFERENCIA') {
-        return { ...base, radius_mm: Number(piece.dimensiones.radius_mm) };
-      }
-      return { ...base, vertices_mm: piece.dimensiones.vertices ?? [] };
-    }),
-  };
+    });
+  });
+  return { piezas };
 }
 
 export default function FormularioPedido({
-  token,
-  idPedido = null,
-  onCerrar = null,
-  onSuccess,
-  onSubmittingChange,
-  mode = 'create',
-  standalone = false,
-  user,
-  toolbar,
+  token, idPedido = null, onCerrar = null, onSuccess, onSubmittingChange,
+  mode = 'create', standalone = false, user, toolbar,
 }) {
   const [tiposDisponibles, setTiposDisponibles] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
@@ -109,11 +90,15 @@ export default function FormularioPedido({
   const [loadError, setLoadError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [estadoPedido, setEstadoPedido] = useState('PENDIENTE');
-  const [piezas, setPiezas] = useState([]);
+  
+  const [materialGroups, setMaterialGroups] = useState([]);
+  const initialSnapshotRef = useRef(null);
+
   const [touched, setTouched] = useState({});
   const [piezaEnEdicion, setPiezaEnEdicion] = useState(null);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
   const [listaAnimada] = useAutoAnimate();
+  const nextGroupIdRef = useRef(0);
   const nextPieceIdRef = useRef(0);
   const submittingRef = useRef(false);
   const formId = useId();
@@ -122,9 +107,22 @@ export default function FormularioPedido({
   const editorDialogRef = useRef(null);
   const editorCloseRef = useRef(null);
   const editorTriggerRef = useRef(null);
+  
   const editing = idPedido !== null && idPedido !== undefined;
   const creating = !editing && mode === 'create';
   const readOnly = editing && estadoPedido !== 'PENDIENTE';
+
+  // Solo se bloquean campos por estar guardando o ser solo lectura.
+  // La validación del cliente ocultará la sección entera.
+  const disableEditing = readOnly || isSubmitting;
+
+  const createEmptyPiece = () => ({
+    id: nextPieceIdRef.current++,
+    nombre: '', 
+    cantidad: 1,
+    tipo_forma: 'RECTANGULO',
+    dimensiones: { width_mm: '', height_mm: '' },
+  });
 
   useEffect(() => {
     const controller = new AbortController();
@@ -139,10 +137,41 @@ export default function FormularioPedido({
         ]);
         if (controller.signal.aborted) return;
         setTiposDisponibles(materials.filter((material) => material.estado !== false));
+        
         if (order) {
           setEstadoPedido(order.estado);
           nextPieceIdRef.current = 0;
-          setPiezas(order.piezas.map((piece, index) => pieceFromResponse(piece, index, nextPieceIdRef.current++)));
+          nextGroupIdRef.current = 0;
+
+          const groupsMap = new Map();
+          order.piezas.forEach((piece, index) => {
+            const key = `${piece.id_tipo_vidrio}-${piece.espesor_mm}`;
+            if (!groupsMap.has(key)) {
+              groupsMap.set(key, {
+                id: `group-${nextGroupIdRef.current++}`,
+                tipo_vidrio_id: String(piece.id_tipo_vidrio),
+                espesor: String(piece.espesor_mm),
+                piezas: []
+              });
+            }
+            groupsMap.get(key).piezas.push(pieceFromResponse(piece, index, nextPieceIdRef.current++));
+          });
+          
+          const groups = Array.from(groupsMap.values());
+          let globalPieceIndex = 1;
+          groups.forEach(group => {
+            group.piezas.forEach(piece => { piece.nombre = `Pieza ${globalPieceIndex++}`; });
+          });
+
+          setMaterialGroups(groups);
+          initialSnapshotRef.current = JSON.parse(JSON.stringify(groups));
+        } else if (creating) {
+          setMaterialGroups([{
+            id: `group-${nextGroupIdRef.current++}`,
+            tipo_vidrio_id: '',
+            espesor: '',
+            piezas: [{ ...createEmptyPiece(), nombre: 'Pieza 1' }]
+          }]);
         }
       } catch (error) {
         if (error.name === 'AbortError' || controller.signal.aborted) return;
@@ -157,101 +186,142 @@ export default function FormularioPedido({
   }, [editing, idPedido, token, catalogAttempt]);
 
   useEffect(() => {
-    if (piezaEnEdicion === null) return undefined;
+    if (!piezaEnEdicion) return undefined;
     const trigger = editorTriggerRef.current;
     editorCloseRef.current?.focus();
     return () => trigger?.focus?.();
   }, [piezaEnEdicion]);
 
-  const actualizarPieza = useCallback((id, field, value) => {
-    setPiezas((current) => current.map((piece) => {
-      if (piece.id !== id) return piece;
-      if (field === 'tipo_vidrio_id') return { ...piece, tipo_vidrio_id: value, espesor: '' };
-      if (field === 'espesor') return { ...piece, espesor: value };
-      if (field === 'cantidad') return { ...piece, cantidad: value === '' ? '' : Number(value) };
-      if (field === 'tipo_forma') {
-        const dimensiones = value === 'RECTANGULO' ? { width_mm: '', height_mm: '' }
-          : value === 'CIRCUNFERENCIA' ? { radius_mm: '' } : { vertices: [] };
-        return { ...piece, tipo_forma: value, dimensiones };
-      }
-      if (field === 'dimensiones') return { ...piece, dimensiones: value };
-      return { ...piece, dimensiones: { ...piece.dimensiones, [field]: value } };
+  const recalculatePieceNames = (groups) => {
+    let index = 1;
+    return groups.map(group => ({
+      ...group,
+      piezas: group.piezas.map(piece => ({ ...piece, nombre: `Pieza ${index++}` }))
+    }));
+  };
+
+  const addMaterialGroup = () => {
+    setMaterialGroups(curr => recalculatePieceNames([...curr, {
+      id: `group-${nextGroupIdRef.current++}`, tipo_vidrio_id: '', espesor: '', piezas: [createEmptyPiece()]
+    }]));
+  };
+
+  const removeMaterialGroup = (groupId) => setMaterialGroups(curr => recalculatePieceNames(curr.filter(g => g.id !== groupId)));
+
+  const updateMaterialGroup = (groupId, field, value) => {
+    setMaterialGroups(curr => curr.map(group => {
+      if (group.id !== groupId) return group;
+      if (field === 'tipo_vidrio_id') return { ...group, tipo_vidrio_id: value, espesor: '' };
+      return { ...group, [field]: value };
+    }));
+  };
+
+  const addPieceToGroup = (groupId) => {
+    setMaterialGroups(curr => recalculatePieceNames(curr.map(group => {
+      if (group.id !== groupId) return group;
+      return { ...group, piezas: [...group.piezas, createEmptyPiece()] };
+    })));
+  };
+
+  const removePiece = (groupId, pieceId) => {
+    setMaterialGroups(curr => recalculatePieceNames(curr.map(group => {
+      if (group.id !== groupId) return group;
+      return { ...group, piezas: group.piezas.filter(p => p.id !== pieceId) };
+    })));
+  };
+
+  const updatePiece = useCallback((groupId, pieceId, field, value) => {
+    setMaterialGroups(curr => curr.map(group => {
+      if (group.id !== groupId) return group;
+      const updatedPiezas = group.piezas.map(piece => {
+        if (piece.id !== pieceId) return piece;
+        if (field === 'cantidad') return { ...piece, cantidad: value === '' ? '' : Number(value) };
+        if (field === 'tipo_forma') {
+          const dimensiones = value === 'RECTANGULO' ? { width_mm: '', height_mm: '' }
+            : value === 'CIRCUNFERENCIA' ? { radius_mm: '' } : { vertices: [] };
+          return { ...piece, tipo_forma: value, dimensiones };
+        }
+        if (field === 'dimensiones') return { ...piece, dimensiones: value };
+        return { ...piece, dimensiones: { ...piece.dimensiones, [field]: value } };
+      });
+      return { ...group, piezas: updatedPiezas };
     }));
   }, []);
 
-  function addPiece() {
-    const id = nextPieceIdRef.current++;
-    setPiezas((current) => [...current, {
-      id,
-      nombre: `Pieza ${current.length + 1}`,
-      tipo_vidrio_id: '',
-      espesor: '',
-      cantidad: 1,
-      tipo_forma: 'RECTANGULO',
-      dimensiones: { width_mm: '', height_mm: '' },
-    }]);
-  }
-
-  function removePiece(id) {
-    setPiezas((current) => current.filter((piece) => piece.id !== id)
-      .map((piece, index) => ({ ...piece, nombre: `Pieza ${index + 1}` })));
-  }
-
-  function openEditor(id) {
+  function openEditor(groupId, pieceId) {
     editorTriggerRef.current = document.activeElement;
-    setPiezaEnEdicion(id);
+    setPiezaEnEdicion({ groupId, pieceId });
   }
 
-  function handleEditorKeyDown(event) {
-    if (event.key === 'Escape') {
-      event.stopPropagation();
-      setPiezaEnEdicion(null);
-      return;
-    }
-    if (event.key !== 'Tab') return;
-    const dialog = editorDialogRef.current;
-    const controls = [...dialog.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')];
-    if (!controls.length) {
-      event.preventDefault();
-      return;
-    }
-    const first = controls[0];
-    const last = controls[controls.length - 1];
-    if (!dialog.contains(document.activeElement)) {
-      event.preventDefault();
-      first.focus();
-    } else if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
+  function handleCancelAction() {
+    if (editing) {
+      setMaterialGroups(JSON.parse(JSON.stringify(initialSnapshotRef.current)));
+      setIsCancelDialogOpen(false);
+      if (onCerrar) onCerrar();
+    } else {
+      setMaterialGroups([{ id: `group-${nextGroupIdRef.current++}`, tipo_vidrio_id: '', espesor: '', piezas: [{ ...createEmptyPiece(), nombre: 'Pieza 1' }] }]);
+      setSelectedClient(null);
+      setClientFormKey((key) => key + 1);
+      setErrorGlobal('');
+      setSuccessMessage('');
+      setIsCancelDialogOpen(false);
     }
   }
 
-  function fieldProps(piece, field) {
-    const id = `${formId}-piece-${piece.id}-${field}`;
+  function fieldProps(identifier, field, value) {
+    const id = `${formId}-${identifier}-${field}`;
     const errorId = `${id}-error`;
-    const error = touched[`${piece.id}:${field}`] ? validationMessage(piece, field) : '';
+    let error = '';
+    
+    if (touched[`${identifier}:${field}`]) {
+       // Ahora evalúa el valor real antes de tirar error
+       if (field === 'material' && !value) error = 'Selecciona un material.';
+       else if (field === 'espesor' && !positiveNumber(value)) error = 'Selecciona un espesor válido.';
+       else if (field === 'cantidad' && (!Number.isInteger(Number(value)) || Number(value) <= 0)) error = 'Ingresa una cantidad entera mayor que 0.';
+       else if (field === 'width_mm' && !positiveNumber(value)) error = 'Ingresa un ancho mayor que 0.';
+       else if (field === 'height_mm' && !positiveNumber(value)) error = 'Ingresa un alto mayor que 0.';
+       else if (field === 'radius_mm' && !positiveNumber(value)) error = 'Ingresa un radio mayor que 0.';
+    }
+
     return {
       id,
       'aria-invalid': error ? 'true' : undefined,
       'aria-describedby': error ? errorId : undefined,
-      onBlur: () => setTouched((current) => ({ ...current, [`${piece.id}:${field}`]: true })),
+      onBlur: () => setTouched((current) => ({ ...current, [`${identifier}:${field}`]: true })),
       error: error ? <FieldError id={errorId}>{error}</FieldError> : null,
     };
   }
 
+  const getThicknesses = (materialId) => tiposDisponibles.find(
+    (type) => String(type.id_tipo_vidrio) === String(materialId),
+  )?.espesores_mm ?? [];
+
+  const getUsedThicknesses = (groupId, materialId) => {
+    return materialGroups
+      .filter(g => g.id !== groupId && String(g.tipo_vidrio_id) === String(materialId) && g.espesor)
+      .map(g => String(g.espesor));
+  };
+
+  const isMaterialFullyUsed = (groupId, materialId) => {
+    const available = getThicknesses(materialId);
+    const used = getUsedThicknesses(groupId, materialId);
+    return available.length > 0 && available.every(t => used.includes(String(t)));
+  };
+
   function isValid() {
-    if ((creating && !selectedClient) || loadError || !piezas.length) return false;
-    return piezas.every((piece) => {
-      if (!piece.tipo_vidrio_id || !positiveNumber(piece.espesor)
-        || !Number.isInteger(Number(piece.cantidad)) || Number(piece.cantidad) <= 0) return false;
-      if (piece.tipo_forma === 'RECTANGULO') {
-        return positiveNumber(piece.dimensiones.width_mm) && positiveNumber(piece.dimensiones.height_mm);
-      }
-      if (piece.tipo_forma === 'CIRCUNFERENCIA') return positiveNumber(piece.dimensiones.radius_mm);
-      return validateConvexPolygon(piece.dimensiones.vertices).isValid;
+    if ((creating && !selectedClient) || loadError || !materialGroups.length) return false;
+    
+    const uniqueKeys = new Set(materialGroups.filter(g => g.tipo_vidrio_id && g.espesor).map(g => `${g.tipo_vidrio_id}-${g.espesor}`));
+    if (uniqueKeys.size !== materialGroups.filter(g => g.tipo_vidrio_id && g.espesor).length) return false;
+
+    return materialGroups.every(group => {
+      if (!group.tipo_vidrio_id || !positiveNumber(group.espesor) || !group.piezas.length) return false;
+      return group.piezas.every((piece) => {
+        if (!Number.isInteger(Number(piece.cantidad)) || Number(piece.cantidad) <= 0) return false;
+        if (piece.tipo_forma === 'RECTANGULO') return positiveNumber(piece.dimensiones.width_mm) && positiveNumber(piece.dimensiones.height_mm);
+        if (piece.tipo_forma === 'CIRCUNFERENCIA') return positiveNumber(piece.dimensiones.radius_mm);
+        return validateConvexPolygon(piece.dimensiones.vertices).isValid;
+      });
     });
   }
 
@@ -263,7 +333,7 @@ export default function FormularioPedido({
     setErrorGlobal('');
     setSuccessMessage('');
     try {
-      const payload = buildPayload(piezas);
+      const payload = buildPayload(materialGroups);
       const result = editing
         ? await updateOrder(idPedido, payload, { token })
         : await createOrder({ ...payload, id_cliente: selectedClient.id_cliente }, { token });
@@ -271,7 +341,7 @@ export default function FormularioPedido({
       onSuccess?.(editing ? 'update' : 'create', result);
       if (onCerrar) onCerrar();
       else if (!editing) {
-        setPiezas([]);
+        setMaterialGroups([{ id: `group-${nextGroupIdRef.current++}`, tipo_vidrio_id: '', espesor: '', piezas: [{ ...createEmptyPiece(), nombre: 'Pieza 1' }] }]);
         setSelectedClient(null);
         setClientFormKey((key) => key + 1);
       }
@@ -284,19 +354,9 @@ export default function FormularioPedido({
     }
   }
 
-  const getThicknesses = (materialId) => tiposDisponibles.find(
-    (type) => String(type.id_tipo_vidrio) === String(materialId),
-  )?.espesores_mm ?? [];
-
   const content = (
     <>
-      {standalone && <PageHeader
-        context={editing ? 'Gestión de pedidos' : 'Registro de pedido'}
-        title={editing ? `Pedido #${idPedido}` : 'Nuevo pedido'}
-        description={editing ? 'Revisa o actualiza las piezas del pedido.' : 'Configura el material, espesor y medidas de cada pieza requerida.'}
-        titleId={titleId}
-        icon={PackagePlus}
-      />}
+      {standalone && <PageHeader context={editing ? 'Gestión de pedidos' : 'Registro de pedido'} title={editing ? `Pedido #${idPedido}` : 'Nuevo pedido'} description={editing ? 'Revisa o actualiza las piezas del pedido.' : 'Configura el material, espesor y medidas de cada pieza requerida.'} titleId={titleId} icon={PackagePlus} />}
       <PageCard as="section" aria-labelledby={standalone ? titleId : undefined}>
         {isLoading && <LoadingState>{editing ? 'Cargando pedido…' : 'Cargando materiales…'}</LoadingState>}
         {errorGlobal && <FeedbackMessage variant="error" title="No se pudo completar la operación">{errorGlobal}</FeedbackMessage>}
@@ -306,98 +366,173 @@ export default function FormularioPedido({
 
         {!isLoading && (!loadError || creating) && <>
           {creating && <OrderClientSelector key={clientFormKey} value={selectedClient} onChange={setSelectedClient} disabled={isSubmitting} token={token} />}
+          
           <section className="orders-section">
             <div className="orders-section__header">
               <div>
-                <h2>Piezas del pedido</h2>
-                <p className="orders-section__description">{readOnly ? 'Detalle de las piezas solicitadas.' : 'Agrega y configura todas las piezas del pedido.'}</p>
+                <h2>Materiales y piezas</h2>
+                <p className="orders-section__description">
+                  {readOnly ? 'Detalle de las piezas solicitadas.' : 'Agrupa las piezas por tipo de vidrio y espesor.'}
+                </p>
               </div>
-              {!readOnly && <button type="button" className="ng-button ng-button--primary" onClick={addPiece} disabled={isSubmitting}>
-                <Plus size={18} /> Agregar pieza
-              </button>}
             </div>
 
-            <div ref={listaAnimada}>
-              {!piezas.length ? <EmptyState title="No hay piezas agregadas" description={readOnly ? 'Este pedido no contiene piezas.' : 'Haz clic en «Agregar pieza» para comenzar.'} /> : (
-                <div className="orders-pieces">
-                  {piezas.map((piece, index) => {
-                    const ids = Object.fromEntries(['material', 'espesor', 'forma', 'cantidad', 'ancho', 'alto', 'radio']
-                      .map((field) => [field, `${formId}-piece-${piece.id}-${field}`]));
-                    const materialField = fieldProps(piece, 'material');
-                    const thicknessField = fieldProps(piece, 'espesor');
-                    const quantityField = fieldProps(piece, 'cantidad');
-                    return <div className="orders-piece" key={piece.id}>
-                      <div className="orders-piece__header">
-                        <div className="orders-piece__identity">
-                          <div className="orders-piece__index">{index + 1}</div>
-                          <div className="orders-piece__details"><strong>{piece.nombre}</strong><span>Material y geometría propios</span></div>
+            <div ref={listaAnimada} className="orders-materials">
+              {/* Bloqueo visual: Oculta la lista si se está creando y no hay cliente seleccionado */}
+              {creating && !selectedClient ? (
+                <EmptyState 
+                  title="Falta seleccionar cliente" 
+                  description="Busca y selecciona un cliente en la parte superior para habilitar la configuración de piezas." 
+                />
+              ) : !materialGroups.length ? (
+                <EmptyState 
+                  title="No hay materiales agregados" 
+                  description="Haz clic en «Agregar otro material» para comenzar." 
+                />
+              ) : (
+                materialGroups.map((group) => {
+                  const materialField = fieldProps(group.id, 'material', group.tipo_vidrio_id);
+                  const thicknessField = fieldProps(group.id, 'espesor', group.espesor);
+
+                  return (
+                    <div className="orders-material-group" key={group.id}>
+                      <div className="orders-material-group__header">
+                        <div className="orders-material-group__fields">
+                          <div className="orders-field" style={{ width: '180px' }}>
+                            <label htmlFor={materialField.id}>Tipo de vidrio</label>
+                            <select {...materialField} value={group.tipo_vidrio_id} onChange={(e) => updateMaterialGroup(group.id, 'tipo_vidrio_id', e.target.value)} disabled={disableEditing} className="ng-control orders-control">
+                              <option value="">Seleccionar…</option>
+                              {tiposDisponibles.map((type) => {
+                                const fullyUsed = isMaterialFullyUsed(group.id, type.id_tipo_vidrio);
+                                return (
+                                  <option key={type.id_tipo_vidrio} value={type.id_tipo_vidrio} disabled={fullyUsed}>
+                                    {type.nombre} {fullyUsed ? '(En uso)' : ''}
+                                  </option>
+                                );
+                              })}
+                            </select>
+                            {materialField.error}
+                          </div>
+                          <div className="orders-field" style={{ width: '160px' }}>
+                            <label htmlFor={thicknessField.id}>Espesor del vidrio (mm)</label>
+                            <select {...thicknessField} value={group.espesor} onChange={(e) => updateMaterialGroup(group.id, 'espesor', e.target.value)} disabled={disableEditing || !group.tipo_vidrio_id} className="ng-control orders-control">
+                              <option value="">Espesor…</option>
+                              {getThicknesses(group.tipo_vidrio_id).map((thickness) => {
+                                const isUsed = getUsedThicknesses(group.id, group.tipo_vidrio_id).includes(String(thickness));
+                                return (
+                                  <option key={thickness} value={thickness} disabled={isUsed}>
+                                    {thickness} mm {isUsed ? '(En uso)' : ''}
+                                  </option>
+                                );
+                              })}
+                            </select>
+                            {thicknessField.error}
+                          </div>
                         </div>
-                        {!readOnly && <button type="button" className="orders-remove-button" onClick={() => removePiece(piece.id)} aria-label={`Eliminar ${piece.nombre}`} disabled={isSubmitting}>
-                          <Trash2 size={18} />
-                        </button>}
+                        {!readOnly && materialGroups.length > 1 && (
+                          <button type="button" className="ng-button ng-button--danger" onClick={() => removeMaterialGroup(group.id)} disabled={disableEditing}>
+                            <Trash2 size={16} /> Eliminar material
+                          </button>
+                        )}
                       </div>
-                      <div className="orders-fields-row orders-fields-row--configuration">
-                        <div className="orders-field">
-                          <label htmlFor={ids.material}>Material</label>
-                          <select {...materialField} value={piece.tipo_vidrio_id} onChange={(event) => actualizarPieza(piece.id, 'tipo_vidrio_id', event.target.value)} disabled={readOnly || isSubmitting} className="ng-control orders-control orders-control--material">
-                            <option value="">Seleccionar…</option>
-                            {tiposDisponibles.map((type) => <option key={type.id_tipo_vidrio} value={type.id_tipo_vidrio}>{type.nombre}</option>)}
-                          </select>{materialField.error}
+
+                      <div className="orders-material-group__body">
+                        <div className="orders-pieces-list">
+                          {group.piezas.map((piece) => {
+                            const quantityField = fieldProps(piece.id, 'cantidad', piece.cantidad);
+                            
+                            return (
+                              <div className="orders-piece" key={piece.id}>
+                                <div className="orders-piece__header">
+                                  <div className="orders-piece__identity">
+                                    <div className="orders-piece__index">{piece.nombre.replace('Pieza ', '')}</div>
+                                    <div className="orders-piece__details"><strong>{piece.nombre}</strong><span>Atributos de corte</span></div>
+                                  </div>
+                                  {!readOnly && (
+                                    <button type="button" className="orders-remove-button" onClick={() => removePiece(group.id, piece.id)} aria-label="Eliminar pieza" disabled={disableEditing || (materialGroups.length === 1 && group.piezas.length === 1)}>
+                                      <Trash2 size={18} />
+                                    </button>
+                                  )}
+                                </div>
+                                
+                                <div className="orders-fields-row">
+                                  <div className="orders-field">
+                                    <label htmlFor={`forma-${piece.id}`}>Forma</label>
+                                    <select id={`forma-${piece.id}`} value={piece.tipo_forma} onChange={(e) => {
+                                      updatePiece(group.id, piece.id, 'tipo_forma', e.target.value);
+                                      if (e.target.value === 'POLIGONO_CONVEXO') openEditor(group.id, piece.id);
+                                    }} disabled={disableEditing} className="ng-control orders-control orders-control--shape">
+                                      <option value="RECTANGULO">Rectángulo</option>
+                                      <option value="CIRCUNFERENCIA">Círculo</option>
+                                      <option value="POLIGONO_CONVEXO">Polígono convexo</option>
+                                    </select>
+                                  </div>
+
+                                  {piece.tipo_forma === 'RECTANGULO' && ['width_mm', 'height_mm'].map((field) => {
+                                    const label = field === 'width_mm' ? 'Ancho (mm)' : 'Alto (mm)';
+                                    const props = fieldProps(piece.id, field, piece.dimensiones[field]);
+                                    return <div className="orders-field" key={field}>
+                                      <label htmlFor={props.id}>{label}</label>
+                                      <input {...props} id={props.id} type="number" min="0" step="any" placeholder={label} value={piece.dimensiones[field]} onChange={(e) => updatePiece(group.id, piece.id, field, e.target.value)} disabled={disableEditing} className="ng-control orders-control orders-control--dimension" />
+                                      {props.error}
+                                    </div>;
+                                  })}
+
+                                  {piece.tipo_forma === 'CIRCUNFERENCIA' && (() => {
+                                    const props = fieldProps(piece.id, 'radius_mm', piece.dimensiones.radius_mm);
+                                    return <div className="orders-field">
+                                      <label htmlFor={props.id}>Radio (mm)</label>
+                                      <input {...props} id={props.id} type="number" min="0" step="any" placeholder="Radio (mm)" value={piece.dimensiones.radius_mm} onChange={(e) => updatePiece(group.id, piece.id, 'radius_mm', e.target.value)} disabled={disableEditing} className="ng-control orders-control orders-control--dimension" />
+                                      {props.error}
+                                    </div>;
+                                  })()}
+
+                                  {piece.tipo_forma === 'POLIGONO_CONVEXO' && (
+                                    <div className="orders-polygon-status">
+                                      {piece.dimensiones.vertices?.length ? <span className="orders-polygon-status__complete">✓ Figura configurada</span> : <span className="orders-polygon-status__pending">Falta configurar</span>}
+                                      <button type="button" className="ng-button orders-editor-open" onClick={() => openEditor(group.id, piece.id)} disabled={disableEditing}>{readOnly ? 'Ver figura' : 'Editar figura'}</button>
+                                    </div>
+                                  )}
+
+                                  <div className="orders-field">
+                                    <label htmlFor={quantityField.id}>Cantidad</label>
+                                    <input {...quantityField} id={quantityField.id} type="number" min="1" step="1" placeholder="Cant." value={piece.cantidad} onChange={(e) => updatePiece(group.id, piece.id, 'cantidad', e.target.value)} disabled={disableEditing} className="ng-control orders-control orders-control--quantity" />
+                                    {quantityField.error}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
                         </div>
-                        <div className="orders-field">
-                          <label htmlFor={ids.espesor}>Espesor</label>
-                          <select {...thicknessField} value={piece.espesor} onChange={(event) => actualizarPieza(piece.id, 'espesor', event.target.value)} disabled={readOnly || isSubmitting || !piece.tipo_vidrio_id} className="ng-control orders-control orders-control--thickness">
-                            <option value="">Espesor…</option>
-                            {getThicknesses(piece.tipo_vidrio_id).map((thickness) => <option key={thickness} value={thickness}>{thickness} mm</option>)}
-                          </select>{thicknessField.error}
-                        </div>
-                        <div className="orders-field">
-                          <label htmlFor={ids.forma}>Forma</label>
-                          <select id={ids.forma} value={piece.tipo_forma} onChange={(event) => {
-                            actualizarPieza(piece.id, 'tipo_forma', event.target.value);
-                            if (event.target.value === 'POLIGONO_CONVEXO') openEditor(piece.id);
-                          }} disabled={readOnly || isSubmitting} className="ng-control orders-control orders-control--shape">
-                            <option value="RECTANGULO">Rectángulo / Cuadrado</option>
-                            <option value="CIRCUNFERENCIA">Círculo</option>
-                            <option value="POLIGONO_CONVEXO">Polígono convexo</option>
-                          </select>
-                        </div>
-                        <div className="orders-field">
-                          <label htmlFor={ids.cantidad}>Cant.</label>
-                          <input {...quantityField} id={ids.cantidad} type="number" min="1" step="1" value={piece.cantidad} onChange={(event) => actualizarPieza(piece.id, 'cantidad', event.target.value)} disabled={readOnly || isSubmitting} className="ng-control orders-control orders-control--quantity" />{quantityField.error}
-                        </div>
+                        
+                        {!readOnly && (
+                          <div style={{ marginTop: '12px' }}>
+                            <button type="button" className="ng-button" onClick={() => addPieceToGroup(group.id)} disabled={disableEditing}>
+                              <Plus size={16} /> Agregar pieza
+                            </button>
+                          </div>
+                        )}
                       </div>
-                      <div className="orders-fields-row orders-fields-row--measurements">
-                        {piece.tipo_forma === 'RECTANGULO' && ['width_mm', 'height_mm'].map((field) => {
-                          const label = field === 'width_mm' ? 'Ancho (mm)' : 'Alto (mm)';
-                          const fieldId = ids[field === 'width_mm' ? 'ancho' : 'alto'];
-                          const props = fieldProps(piece, field);
-                          return <div className="orders-field" key={field}>
-                            <label htmlFor={fieldId}>{label}</label>
-                            <input {...props} id={fieldId} type="number" min="0" step="any" value={piece.dimensiones[field]} onChange={(event) => actualizarPieza(piece.id, field, event.target.value)} disabled={readOnly || isSubmitting} className="ng-control orders-control orders-control--dimension" />{props.error}
-                          </div>;
-                        })}
-                        {piece.tipo_forma === 'CIRCUNFERENCIA' && (() => {
-                          const props = fieldProps(piece, 'radius_mm');
-                          return <div className="orders-field"><label htmlFor={ids.radio}>Radio (mm)</label>
-                            <input {...props} id={ids.radio} type="number" min="0" step="any" value={piece.dimensiones.radius_mm} onChange={(event) => actualizarPieza(piece.id, 'radius_mm', event.target.value)} disabled={readOnly || isSubmitting} className="ng-control orders-control orders-control--dimension" />{props.error}
-                          </div>;
-                        })()}
-                        {piece.tipo_forma === 'POLIGONO_CONVEXO' && <div className="orders-polygon-status">
-                          {piece.dimensiones.vertices?.length ? <span className="orders-polygon-status__complete">✓ Geometría cargada</span> : <span className="orders-polygon-status__pending">Falta dibujar</span>}
-                          <button type="button" className="ng-button orders-editor-open" onClick={() => openEditor(piece.id)} disabled={isSubmitting}>{readOnly ? 'Ver dibujo' : 'Editar dibujo'}</button>
-                        </div>}
-                      </div>
-                    </div>;
-                  })}
-                </div>
+                    </div>
+                  );
+                })
               )}
             </div>
+
+            {/* Oculta el botón "+ Agregar otro material" si no hay cliente */}
+            {!readOnly && !(creating && !selectedClient) && (
+              <div className="orders-add-material-wrap">
+                <button type="button" className="ng-button" onClick={addMaterialGroup} disabled={isSubmitting}>
+                  <Plus size={18} /> Agregar otro material
+                </button>
+              </div>
+            )}
           </section>
 
+          {/* ... resto sin cambios ... */}
           {creating && !selectedClient && <p id={`${formId}-client-help`}>Selecciona un cliente para guardar el pedido.</p>}
           <ActionBar>
-            {onCerrar && <button type="button" className="ng-button" onClick={onCerrar} disabled={isSubmitting}><X size={18} /> Cerrar</button>}
+            {onCerrar && <button type="button" className="ng-button" onClick={() => setIsCancelDialogOpen(true)} disabled={isSubmitting}><X size={18} /> Cancelar</button>}
             {standalone && creating && <button type="button" className="ng-button" onClick={() => setIsCancelDialogOpen(true)} disabled={isSubmitting}><X size={18} /> Cancelar</button>}
             {!readOnly && <button type="button" className="ng-button ng-button--primary" onClick={saveOrder} aria-describedby={creating && !selectedClient ? `${formId}-client-help` : undefined} disabled={!isValid() || isSubmitting}>
               {isSubmitting ? <Loader2 size={18} className="ng-loading-icon" /> : <Save size={18} />}
@@ -407,24 +542,24 @@ export default function FormularioPedido({
         </>}
       </PageCard>
 
-      <ConfirmDialog open={isCancelDialogOpen} title="¿Limpiar el pedido?" confirmLabel="Limpiar pedido"
-        onConfirm={() => { setPiezas([]); setSelectedClient(null); setClientFormKey((key) => key + 1); setErrorGlobal(''); setSuccessMessage(''); setIsCancelDialogOpen(false); }}
+      <ConfirmDialog open={isCancelDialogOpen} title={editing ? "¿Cancelar edición?" : "¿Limpiar el pedido?"} confirmLabel={editing ? "Sí, cancelar" : "Limpiar pedido"}
+        onConfirm={handleCancelAction}
         onCancel={() => setIsCancelDialogOpen(false)}>
-        <p>Se quitarán todas las piezas agregadas y la selección del cliente. Esta acción no se puede deshacer.</p>
+        <p>{editing ? "Se descartarán los cambios no guardados." : "Se quitarán todas las piezas y la selección del cliente. Esta acción no se puede deshacer."}</p>
       </ConfirmDialog>
 
       {piezaEnEdicion !== null && <div className="orders-editor-backdrop">
-        <div ref={editorDialogRef} className="orders-editor-dialog" role="dialog" aria-modal="true" aria-labelledby={editorTitleId} tabIndex={-1} onKeyDown={handleEditorKeyDown}>
+        <div ref={editorDialogRef} className="orders-editor-dialog" role="dialog" aria-modal="true" aria-labelledby={editorTitleId} tabIndex={-1}>
           <div className="orders-editor-dialog__header">
             <h3 id={editorTitleId}>Dibujar Polígono Convexo</h3>
             <button ref={editorCloseRef} type="button" className="orders-editor-dialog__close" aria-label="Cerrar editor de polígono" onClick={() => setPiezaEnEdicion(null)}><X size={24} aria-hidden="true" /></button>
           </div>
           <div className="orders-editor-dialog__content">
             <CustomPieceEditor
-              initialState={piezas.find((piece) => piece.id === piezaEnEdicion)?.dimensiones?.rawState}
+              initialState={materialGroups.find(g => g.id === piezaEnEdicion.groupId)?.piezas.find(p => p.id === piezaEnEdicion.pieceId)?.dimensiones?.rawState}
               disabled={readOnly}
               onGuardarVertices={(dimensions) => {
-                if (!readOnly) actualizarPieza(piezaEnEdicion, 'dimensiones', dimensions);
+                if (!readOnly) updatePiece(piezaEnEdicion.groupId, piezaEnEdicion.pieceId, 'dimensiones', dimensions);
                 setPiezaEnEdicion(null);
               }}
             />
@@ -434,7 +569,5 @@ export default function FormularioPedido({
     </>
   );
 
-  return standalone
-    ? <AppShell activeItem="orders" user={user}>{toolbar}{content}</AppShell>
-    : content;
+  return standalone ? <AppShell activeItem="orders" user={user}>{toolbar}{content}</AppShell> : content;
 }
