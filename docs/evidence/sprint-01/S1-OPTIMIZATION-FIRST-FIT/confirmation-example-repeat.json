@@ -1,0 +1,9 @@
+{
+  "http_status": 409,
+  "body": {
+    "detail": {
+      "code": "ALREADY_CONFIRMED",
+      "message": "La optimización ya fue confirmada."
+    }
+  }
+}

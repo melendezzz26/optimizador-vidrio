@@ -22,6 +22,7 @@ app.add_middleware(
     allow_credentials=False,
     allow_methods=["GET", "POST", "PATCH", "DELETE", "PUT"],
     allow_headers=["Authorization", "Content-Type"],
+    expose_headers=["Location"],
 )
 
 # Rutas de autenticaciÃ³n (HU-001)
