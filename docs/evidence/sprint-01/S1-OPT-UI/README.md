@@ -117,3 +117,11 @@ Estado anterior documentado en auditoría: botón Actualizar pedidos, panel Pedi
 | Alta automática | [live](desktop-live.png) | [live](mobile-live.png) |
 
 Inspección visual realizada sobre desktop-result, mobile-confirm y mobile-raster. No se observó deformación ni desbordamiento horizontal. En capturas fullPage el backdrop fijo del diálogo cubre el viewport visible; no representa un overlay de altura completa del documento.
+
+## Integración RBAC y contrato T1 (16/10/2026)
+
+La rama UI incorpora integration c4c5e5c mediante merge normal, conserva las vistas
+de Quispe y alinea fixtures/parser/DTO a core 3aca3c8 sin integrar su backend.
+Se restaura el flujo y cobertura HU-015. [Evidencia, logs y dependencias](contract-v1/README.md).
+No cambia el estado de las SPEC ni se afirma integración de persistencia, NDJSON
+o confirmación reales.

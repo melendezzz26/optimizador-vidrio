@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { beforeEach, expect, test, vi } from 'vitest';
 import { PlacementCanvas } from '../PlacementCanvas';
-import { fixtureEvents, prepareFixture } from '../firstFitFixture';
+import { fixturePlacements, prepareFixture } from '../firstFitFixture';
 import { DEFAULT_YAW } from '../placementScene';
 
 beforeEach(() => {
@@ -11,7 +11,7 @@ beforeEach(() => {
 });
 const data = () => {
   const snapshot = prepareFixture([21, 22]);
-  return { snapshot, placements: fixtureEvents(snapshot).filter(e => e.type === 'piece_placed') };
+  return { snapshot, placements: fixturePlacements(snapshot) };
 };
 function open3D() { fireEvent.click(screen.getByRole('button', { name: 'Ver en 3D' })); return screen.getByRole('slider', { name: 'Giro horizontal de la vista 3D' }); }
 
@@ -29,7 +29,7 @@ test('switching view keeps material, yaw and immutable placements; each piece is
   render(<PlacementCanvas {...props} />);
   fireEvent.change(screen.getByLabelText('Grupo del resultado'), { target: { value: '2:5.5' } });
   const slider = open3D();
-  expect(screen.getByLabelText('Plancha o retazo')).toHaveValue('plancha:16');
+  expect(screen.getByLabelText('Plancha o retazo')).toHaveValue('PLANCHA:16:1');
   expect(screen.getByRole('list', { name: 'Piezas en la vista 3D' })).toHaveTextContent('Pieza #103 · unidad 1');
   fireEvent.keyDown(slider, { key: 'ArrowRight' });
   fireEvent.click(screen.getByRole('button', { name: 'Ver en 2D' }));

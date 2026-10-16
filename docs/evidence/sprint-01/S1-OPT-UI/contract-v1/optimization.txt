@@ -1,0 +1,21 @@
+
+> frontend@0.0.0 test:component
+> vitest run src/features/optimization
+
+
+ RUN  v5.0.3 /workspace/optimizador-vidrio/frontend
+
+
+ Test Files  7 passed (7)
+      Tests  108 passed (108)
+   Start at  16:58:52
+   Duration  7.24s (tests 63%, environment 23%, transform 7%, import 4%, setup 4%)
+
+    Isolate  7 workers spawned · ~715ms startup each (spawn + environment, per file)
+             at least ~954ms faster with isolate: false — reuses workers across files instead of one per file
+
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

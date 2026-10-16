@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { OptimizationPage } from '../OptimizationPage';
+import shared from '../contractV1Fixture.json';
 import { withPermissions } from '../../authentication/__tests__/permissionFixtures';
 import { createFixturePendingOrdersSource, createPendingOrdersSource } from '../pendingOrdersSource';
 import { createFixtureAdapter, fixtureOrders, newFixtureOrder, prepareFixture, sheetToContainer } from '../firstFitFixture';
@@ -49,14 +50,14 @@ test('groups, progressive placements, arbitrary rotations, metrics and honest co
   expect(document.querySelector('.first-fit-groups')).toHaveTextContent('Templado · 6 mm'); expect(document.querySelector('.first-fit-groups')).toHaveTextContent('Bronce · 5.5 mm');
   click('Ejecutar First Fit');
   expect(screen.getByText('0 / 4 piezas colocadas')).toBeVisible();
-  await act(async () => vi.advanceTimersByTimeAsync(80));
+  await act(async () => vi.advanceTimersByTimeAsync(40));
   expect(screen.getByText('1 / 4 piezas colocadas')).toBeVisible();
   expect(document.querySelectorAll('[data-placement]')).toHaveLength(1);
   await act(async () => vi.advanceTimersByTimeAsync(1000));
   expect(screen.getByText('4 / 4 piezas colocadas')).toBeVisible();
   expect(screen.getByRole('heading', { name: 'Resultado First Fit' })).toBeVisible();
   expect(screen.getByRole('list', { name: 'Detalle de colocaciones' })).toHaveTextContent('rotación aplicada: 90°');
-  expect(document.querySelector('[data-placement="22:104:0"]')).toHaveAttribute('transform', 'translate(2000 150) rotate(30) translate(0 0)');
+  expect(document.querySelector('[data-placement="22:104:1"]')).toHaveAttribute('transform', 'translate(2000 150)');
   fireEvent.change(screen.getByLabelText('Grupo del resultado'), { target: { value: '2:5.5' } });
   expect(screen.getByRole('img', { name: 'Colocaciones en plancha #16' }).querySelector('circle')).toHaveAttribute('r', '240');
   expect(screen.getByText('842 ms')).toBeVisible();
@@ -85,10 +86,10 @@ test('rerun clears placements, discard cancels queued events', async () => {
   expect(screen.getByText('2 pedidos seleccionados')).toBeVisible();
 });
 test('failed stream can retry', async () => {
-  let listener, id;
-  const adapter = { ...createFixtureAdapter(), createEventSource: () => ({ subscribe(fn, runId) { listener = fn; id = runId; }, dispose: vi.fn() }) };
+  let listener;
+  const adapter = { ...createFixtureAdapter(), createEventSource: () => ({ subscribe(fn) { listener = fn; }, dispose: vi.fn() }) };
   mount(fixtureOrders, adapter); await prepare(); click('Ejecutar First Fit');
-  act(() => listener({ type: 'optimization_failed', run_id: id, message: 'Fallo del proceso' }));
+  act(() => listener({ ...shared.failed_event, sequence: 1, id_optimizacion: 301, data: { ...shared.failed_event.data, message: 'Fallo del proceso' } }));
   expect(screen.getByRole('alert')).toHaveTextContent('Fallo del proceso');
   click('Ejecutar nuevamente'); expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 });
@@ -172,7 +173,7 @@ test('3D toggles preserve the run, live snapshot and metrics; rerun and discard 
   expect(screen.queryByRole('button', { name: 'Ver en 3D' })).not.toBeInTheDocument();
   click('Ejecutar First Fit');
   expect(screen.queryByRole('button', { name: 'Ver en 3D' })).not.toBeInTheDocument();
-  await act(async () => vi.advanceTimersByTimeAsync(80));
+  await act(async () => vi.advanceTimersByTimeAsync(40));
   click('Ver en 3D');
   act(() => source.emit({ type: 'upsert', order: newFixtureOrder }));
   await act(async () => vi.advanceTimersByTimeAsync(1000));

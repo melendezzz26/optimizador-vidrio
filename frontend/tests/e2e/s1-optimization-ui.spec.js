@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-const evidence = '../docs/evidence/sprint-01/S1-OPT-UI';
+const evidence = '../docs/evidence/sprint-01/S1-OPT-UI/contract-v1/screenshots';
 async function login(page) {
-  const user = { id_usuario: 1, username: 'O12345678', nombre: 'Operario de ejemplo', rol: 'Operario' };
+  const user = { id_usuario: 1, username: 'O12345678', nombre: 'Operario de ejemplo', rol: 'Operario', permisos: ['inventory.view', 'orders.view', 'optimization.view', 'optimization.execute', 'optimization.confirm'] };
   await page.route('**/api/**', async route => {
     const path = new URL(route.request().url()).pathname;
     if (route.request().method() !== 'GET' && path !== '/api/auth/login') throw new Error('Unexpected mutation: ' + path);
@@ -33,14 +33,14 @@ test('login, multiple selection, progressive First Fit, rotations, metrics and c
   await expect(page.locator('.first-fit-groups').getByText('Templado · 6 mm', { exact: true })).toBeVisible();
   await capture(page, info.project.name, 'groups');
   await page.getByRole('button', { name: 'Ejecutar First Fit', exact: true }).click();
-  await expect(page.locator('[data-placement="21:101:0"]')).toBeVisible();
+  await expect(page.locator('[data-placement="21:101:1"]')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Resultado First Fit' })).toHaveCount(0);
   await capture(page, info.project.name, 'progress');
   await expect(page.getByRole('heading', { name: 'Resultado First Fit' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Confirmar solución', exact: true })).toBeVisible();
   await expect(page.getByText('4 / 4 piezas colocadas')).toBeVisible();
-  await expect(page.locator('[data-placement="21:102:0"]')).toHaveAttribute('transform', /rotate\(90\)/);
-  await expect(page.locator('[data-placement="22:104:0"]')).toHaveAttribute('transform', /rotate\(30\)/);
+  await expect(page.locator('[data-placement="21:102:1"]')).toHaveAttribute('transform', 'translate(1400 80)');
+  await expect(page.locator('[data-placement="22:104:1"]')).toHaveAttribute('transform', 'translate(2000 150)');
   const scale = await page.locator('.first-fit-sheet').evaluate(svg => { const m = svg.getScreenCTM(); return [m.a, m.d]; });
   expect(scale[0]).toBeCloseTo(scale[1], 5);
   await capture(page, info.project.name, 'result');
@@ -119,10 +119,10 @@ test('2D/3D result inspection preserves state with bounded mouse, touch and keyb
   expect(await slider.evaluate(el => getComputedStyle(el).animationName)).toBe('none');
   await page.getByRole('region', { name: 'Vista 3D del resultado' }).screenshot({ path: `${evidence}/${info.project.name}-3d.png`, animations: 'disabled' });
   await page.getByLabel('Grupo del resultado').selectOption('2:5.5');
-  await expect(page.locator('[data-piece-3d="21:103:0"]')).toBeVisible();
+  await expect(page.locator('[data-piece-3d="21:103:1"]')).toBeVisible();
   await page.getByRole('region', { name: 'Vista 3D del resultado' }).screenshot({ path: `${evidence}/${info.project.name}-3d-bronce.png`, animations: 'disabled' });
   await page.getByRole('button', { name: 'Ver en 2D', exact: true }).click();
-  await expect(page.getByLabel('Plancha o retazo')).toHaveValue('plancha:16');
+  await expect(page.getByLabel('Plancha o retazo')).toHaveValue('PLANCHA:16:1');
   await expect(page.getByRole('img', { name: 'Colocaciones en plancha #16' }).locator('circle')).toBeVisible();
   await expect(page.getByText('4 / 4 piezas colocadas')).toBeVisible();
   await expect(page.getByText('842 ms')).toBeVisible();
@@ -156,7 +156,7 @@ test('automatic material groups, raster before execution, isolated modes and zoo
   await result.getByRole('button', { name: 'Ajustar 2D' }).click();
   await result.getByLabel('Grupo del resultado').selectOption('2:5.5');
   await expect(result.locator('[data-placement]')).toHaveCount(1);
-  await expect(result.locator('[data-placement="21:103:0"]')).toBeVisible();
+  await expect(result.locator('[data-placement="21:103:1"]')).toBeVisible();
   await result.getByRole('button', { name: 'Ver en 3D' }).click();
   await expect(result.locator('[data-piece-3d]')).toHaveCount(1);
   await result.getByRole('button', { name: 'Acercar 3D' }).click();

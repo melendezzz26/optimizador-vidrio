@@ -1,3 +1,4 @@
+import { renderNumber } from './runContract.js';
 import { getGeometryBounds } from './visualizationGeometry.js';
 import { containerKey, placementKey } from './optimizationModel.js';
 
@@ -17,7 +18,9 @@ export function placementColors(snapshot, placement) {
 // is display-only; canonical geometry and the backend raster are never changed.
 export function placedOutline(geometry, placement = { x_mm: 0, y_mm: 0, rotation_deg: 0 }) {
   const bounds = getGeometryBounds(geometry);
-  if (!bounds || ![placement.x_mm, placement.y_mm, placement.rotation_deg].every(Number.isFinite)) return [];
+  if (!bounds) return [];
+  let x, y;
+  try { x = renderNumber(placement.x_mm); y = renderNumber(placement.y_mm); renderNumber(placement.rotation_deg); } catch { return []; }
   let points;
   if (geometry.type === 'RECTANGULO') points = [[0, 0], [bounds.width, 0], [bounds.width, bounds.height], [0, bounds.height]];
   else if (geometry.type === 'CIRCUNFERENCIA') points = Array.from({ length: 96 }, (_, i) => {
@@ -25,11 +28,7 @@ export function placedOutline(geometry, placement = { x_mm: 0, y_mm: 0, rotation
     return [Math.cos(angle) * geometry.radius_mm, Math.sin(angle) * geometry.radius_mm];
   });
   else points = geometry.vertices_mm;
-  const cosine = Math.cos(radians(placement.rotation_deg)), sine = Math.sin(radians(placement.rotation_deg));
-  return points.map(([x, y]) => {
-    const localX = x - bounds.minX, localY = y - bounds.minY;
-    return [placement.x_mm + localX * cosine - localY * sine, placement.y_mm + localX * sine + localY * cosine];
-  });
+  return points.map(([px, py]) => [x + px - bounds.minX, y + py - bounds.minY]);
 }
 
 export function createPlacementScene(snapshot, container, placements) {
@@ -38,12 +37,11 @@ export function createPlacementScene(snapshot, container, placements) {
   const outline = placedOutline(container.geometry);
   if (!outline.length) return null;
   const pieces = placements.filter(p => containerKey(p) === containerKey(container)).flatMap(placement => {
-    const piece = snapshot.orders.find(o => o.id_pedido === placement.id_pedido)?.piezas.find(p => p.id_pieza === placement.id_pieza);
-    const points = placedOutline(piece?.geometria, placement);
+    const points = placedOutline(placement.geometria, placement);
     if (!points.length) return [];
     const key = placementKey(placement);
     const [color, edge] = placementColors(snapshot, placement);
-    return [{ key, placement, points, color, edge, label: `#${placement.id_pieza} · ${placement.unit_index + 1}` }];
+    return [{ key, placement, points, color, edge, label: `#${placement.id_pieza} · ${placement.unit_index}` }];
   });
   const target = Math.max(width, height) / 12;
   const power = 10 ** Math.floor(Math.log10(target));

@@ -3,7 +3,7 @@ import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { OptimizationPage } from '../OptimizationPage';
 import { withPermissions } from '../../authentication/__tests__/permissionFixtures';
 import { createFixturePendingOrdersSource } from '../pendingOrdersSource';
-import { createFixtureAdapter, fixtureOrders, fixtureEvents, prepareFixture } from '../firstFitFixture';
+import { createFixtureAdapter, fixtureOrders, fixturePlacements, prepareFixture } from '../firstFitFixture';
 import { PlacementCanvas } from '../PlacementCanvas';
 import { RasterInspection } from '../RasterInspection';
 
@@ -31,7 +31,7 @@ test('selection previews groups immediately and preparation exposes all masks be
 
 test('result modes isolate groups, keep snapshot and allow zoom/grid inspection and empty remnant', () => {
   const snapshot = prepareFixture([21, 22]); const before = JSON.stringify(snapshot);
-  const placements = fixtureEvents(snapshot).filter(e => e.type === 'piece_placed');
+  const placements = fixturePlacements(snapshot);
   render(<PlacementCanvas snapshot={snapshot} placements={placements} />);
   expect(document.querySelectorAll('[data-placement]')).toHaveLength(3);
   expect(screen.getByLabelText('Plancha o retazo').options).toHaveLength(1);
@@ -53,14 +53,14 @@ test('result modes isolate groups, keep snapshot and allow zoom/grid inspection 
   expect(screen.getByLabelText('Ampliación raster')).toHaveTextContent('400 %'); expect(screen.getByRole('button', { name: 'Acercar raster' })).toBeDisabled();
   click('Ver en 3D'); expect(screen.getByLabelText('Ampliación 3D')).toHaveTextContent('150 %');
   click('Restablecer vista'); expect(screen.getByLabelText('Ampliación 3D')).toHaveTextContent('100 %');
-  click('Ver en 2D'); fireEvent.change(screen.getByLabelText('Plancha o retazo'), { target: { value: 'retazo:8' } });
+  click('Ver en 2D'); fireEvent.change(screen.getByLabelText('Plancha o retazo'), { target: { value: 'RETAZO:8:1' } });
   expect(document.querySelectorAll('[data-placement]')).toHaveLength(0);
   expect(screen.getByText('Las piezas aparecerán al recibir sus colocaciones.')).toBeVisible();
   expect(JSON.stringify(snapshot)).toBe(before);
 });
 
 test('rendering rejects incompatible imported placements and hides result modes for unplaced group', () => {
-  const snapshot = prepareFixture([21, 22]); const placements = fixtureEvents(snapshot).filter(e => e.type === 'piece_placed');
+  const snapshot = prepareFixture([21, 22]); const placements = fixturePlacements(snapshot);
   render(<PlacementCanvas snapshot={snapshot} placements={[placements[0], { ...placements[3], group_id: '1:6', material_id: 15 }]} />);
   expect(document.querySelectorAll('[data-placement]')).toHaveLength(1);
   fireEvent.change(screen.getByLabelText('Grupo del resultado'), { target: { value: '2:5.5' } });

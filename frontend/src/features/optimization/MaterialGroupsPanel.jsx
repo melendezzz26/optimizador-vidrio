@@ -11,11 +11,11 @@ export function MaterialGroupsPanel({ groups, unresolved, snapshot, completedGro
     <p>Compatibilidad visual por material y espesor. {snapshot ? 'Selección preparada; la ejecución conserva este snapshot.' : 'Vista previa automática de la selección; preparación final pendiente.'}</p>
     {!!unresolved.length && <p role="status">Falta detalle de material, espesor o cantidad en pedidos {unresolved.map(n => `#${n}`).join(', ')}. No se presupone compatibilidad.</p>}
     <ul className="first-fit-groups">{groups.map(g => {
-      const sheet = g.containers.find(c => c.material_source === 'plancha');
+      const sheet = g.containers.find(c => c.material_source === 'PLANCHA');
       return <li key={g.id}><strong>{g.name} · {g.thickness} mm</strong>
         <span>{g.units.length} piezas · pedidos {g.orders.map(n => `#${n}`).join(', ')}</span>
         <span>{sheet ? `Plancha base #${sheet.material_id} · ${sheet.material_width_mm} × ${sheet.material_height_mm} mm` : 'Plancha base pendiente del contrato/configuración real'}</span>
-        <span>Estado: {completedGroups.includes(g.id) ? 'Optimizado' : snapshot && sheet && groupRasterReady(snapshot, g) ? 'Listo' : 'Pendiente'}</span>
+        <span>Estado: {completedGroups.includes(g.id) ? 'Evaluado' : snapshot && sheet && groupRasterReady(snapshot, g) ? 'Listo' : 'Pendiente'}</span>
       </li>;
     })}</ul>
     {snapshot && group && <section aria-labelledby={`${id}-raster`}>

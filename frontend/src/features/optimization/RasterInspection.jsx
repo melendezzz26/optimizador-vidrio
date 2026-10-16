@@ -2,6 +2,7 @@ import { useId, useState } from 'react';
 import { InspectionViewport } from './InspectionViewport';
 import { RasterComparison } from './RasterComparison';
 import { pieceRaster, validInspectionRaster } from './rasterInspectionModel';
+import { stockKey, unitKey } from './runContract.js';
 
 export function RasterInspection({ snapshot, group, placements = [], preparation = false }) {
   const id = useId();
@@ -32,7 +33,7 @@ export function RasterInspection({ snapshot, group, placements = [], preparation
         </svg>
       </InspectionViewport>
       <p>Azul: celdas ocupadas. Blanco: celdas vacías. Máscara local de la pieza antes del giro; no es una máscara global de la plancha ni un retazo calculado.</p>
-      {placements.filter(p => p.id_pedido === piece.orderId && p.id_pieza === piece.id_pieza).map(p => <p key={p.unit_index}>Unidad {p.unit_index + 1}: x {p.x_mm} mm · y {p.y_mm} mm · giro recibido {p.rotation_deg}°</p>)}
+      {placements.filter(p => p.id_pedido === piece.orderId && p.id_pieza === piece.id_pieza).map(p => <p key={`${stockKey(p)}:${unitKey(p)}`}>Unidad {p.unit_index}: x {p.x_mm} mm · y {p.y_mm} mm · giro recibido {p.rotation_deg}° · {p.material_source} #{p.material_id}, unidad física {p.stock_unit_index}</p>)}
       <details><summary>Comparar geometría y raster HU-015 · pieza #{piece.id_pieza}</summary>
         <RasterComparison geometry={piece.geometria} piece={piece} raster={{ ...raster, tipo_forma: piece.tipo_forma, cantidad: piece.cantidad }} />
       </details>

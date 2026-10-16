@@ -3,7 +3,7 @@ import {
   LoginForm,
   SessionBar,
   canManageOrders,
-  canExecuteOptimization,
+  canViewResults,
   canViewAdministration,
   canViewInventory,
   canViewDashboard,
@@ -46,7 +46,7 @@ function App() {
   const allowedViews = [
     canViewDashboard(session.usuario) && 'dashboard',
     showOrdersOption && 'orders',
-    canExecuteOptimization(session.usuario) && 'optimization',
+    canViewResults(session.usuario) && 'optimization',
     showInventoryOption && 'inventory',
     showUsersOption && 'users',
   ].filter(Boolean);

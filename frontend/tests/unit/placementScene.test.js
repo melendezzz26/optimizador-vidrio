@@ -6,9 +6,9 @@ const rectangle = { type: 'RECTANGULO', width_mm: 600, height_mm: 400 };
 const scene = { width: 3300, height: 2140 };
 const close = (a, b) => assert.ok(Math.abs(a - b) < 1e-8, `${a} != ${b}`);
 
-test('3D uses exactly the 2D local pivot, mm translation and 90 degree rotation', () => {
+test('3D translates oriented geometry once and never reapplies received rotation', () => {
   const points = placedOutline(rectangle, { x_mm: 1400, y_mm: 80, rotation_deg: 90 });
-  [[1400, 80], [1400, 680], [1000, 680], [1000, 80]].forEach((p, i) => p.forEach((value, axis) => close(points[i][axis], value)));
+  [[1400, 80], [2000, 80], [2000, 480], [1400, 480]].forEach((p, i) => p.forEach((value, axis) => close(points[i][axis], value)));
 });
 test('arbitrary piece rotation preserves lengths and does not mutate negative polygon coordinates', () => {
   const geometry = Object.freeze({ type: 'POLIGONO_CONVEXO', vertices_mm: Object.freeze([Object.freeze([-10, -20]), Object.freeze([90, -20]), Object.freeze([-10, 80])]) });
@@ -39,13 +39,13 @@ test('projection preserves physical proportions under common scaling of all dime
   close(a.x, b.x); close(a.y, b.y); close(a.depth, b.depth);
 });
 test('scene filters material source plus ID, keeps colors stable and leaves snapshot untouched', () => {
-  const container = { material_source: 'plancha', material_id: 1, material_width_mm: 3300, material_height_mm: 2140, geometry: { type: 'RECTANGULO', width_mm: 3300, height_mm: 2140 } };
-  const unit = { id_pedido: 21, id_pieza: 101, unit_index: 0 };
+  const container = { material_source: 'PLANCHA', stock_unit_index: 1, material_id: 1, material_width_mm: 3300, material_height_mm: 2140, geometry: { type: 'RECTANGULO', width_mm: 3300, height_mm: 2140 } };
+  const unit = { id_pedido: 21, id_pieza: 101, unit_index: 1 };
   const snapshot = { groups: [{ units: [unit] }], orders: [{ id_pedido: 21, piezas: [{ id_pieza: 101, geometria: rectangle }] }] };
-  const placement = { ...unit, material_source: 'plancha', material_id: 1, x_mm: 100, y_mm: 100, rotation_deg: 30 };
+  const placement = { ...unit, material_source: 'PLANCHA', stock_unit_index: 1, material_id: 1, geometria: rectangle, x_mm: 100, y_mm: 100, rotation_deg: 30 };
   const original = JSON.stringify({ snapshot, container, placement });
   const first = createPlacementScene(snapshot, container, [placement]);
-  const second = createPlacementScene(snapshot, container, [{ ...placement, material_source: 'retazo' }, placement]);
+  const second = createPlacementScene(snapshot, container, [{ ...placement, material_source: 'RETAZO', stock_unit_index: 1 }, placement]);
   assert.equal(first.pieces.length, 1); assert.deepEqual(first.pieces, second.pieces);
   assert.equal(first.gridStep, 500);
   assert.equal(JSON.stringify({ snapshot, container, placement }), original);

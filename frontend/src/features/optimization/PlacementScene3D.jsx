@@ -32,7 +32,7 @@ export function PlacementScene3D({ snapshot, container, placements, yaw, onYawCh
   }
   return <section className="placement-3d" aria-label="Vista 3D del resultado">
     <header className="placement-3d-heading"><div><span className="placement-3d-eyebrow">INSPECCIÓN ESPACIAL</span>
-      <h3>{container.material_source === 'plancha' ? 'Plancha' : 'Retazo'} #{container.material_id} · {container.material_name}</h3>
+      <h3>{container.material_source === 'PLANCHA' ? 'Plancha' : 'Retazo'} #{container.material_id} · unidad {container.stock_unit_index} · {container.material_name}</h3>
       <p>{container.espesor_mm} mm registrados · profundidad visual ilustrativa</p></div>
       <button type="button" className="ng-button" onClick={() => { onYawChange(DEFAULT_YAW); onZoomChange(1); }}>Restablecer vista</button>
     </header>
@@ -90,7 +90,7 @@ export function PlacementScene3D({ snapshot, container, placements, yaw, onYawCh
     <p className="placement-3d-note">La superficie descubierta representa área libre visual, no retazos reutilizables calculados. Consulta medidas y posiciones precisas en 2D.</p>
     <ul className="placement-3d-legend" aria-label="Piezas en la vista 3D">{scene.pieces.map(piece => <li key={piece.key}>
       <span className="placement-3d-swatch" style={{ backgroundColor: piece.color, borderColor: piece.edge }} aria-hidden="true" />
-      <span><strong>Pieza #{piece.placement.id_pieza} · unidad {piece.placement.unit_index + 1}</strong>
+      <span><strong>Pieza #{piece.placement.id_pieza} · unidad {piece.placement.unit_index}</strong>
         <small>Pedido #{piece.placement.id_pedido} · rotación aplicada: {piece.placement.rotation_deg}°</small></span>
     </li>)}</ul>
     {!scene.pieces.length && <p>No hay piezas colocadas todavía en este contenedor.</p>}

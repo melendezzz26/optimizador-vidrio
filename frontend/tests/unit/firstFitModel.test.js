@@ -1,81 +1,76 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { initialOptimization, optimizationReducer as reduce } from '../../src/features/optimization/optimizationModel.js';
-const orders = [{ id_pedido: 21, estado: 'PENDIENTE', piezas: [{ id_pieza: 101, cantidad: 2, id_tipo_vidrio: 1, espesor_mm: 6 }] }];
-const snapshot = { orders, groups: [{ id: '1:6', containers: [{ material_source: 'plancha', material_id: 15, espesor_mm: 6, id_tipo_vidrio: 1 }], units: [0, 1].map(unit_index => ({ id_pedido: 21, id_pieza: 101, unit_index })) }] };
+import { scenarioFixture, eventsForRun } from '../../src/features/optimization/runFixtures.js';
+import { resultSnapshot } from '../../src/features/optimization/runContract.js';
+const result = scenarioFixture();
+const snapshot = resultSnapshot(result);
+const orders = snapshot.orders.map(o => ({ ...o, estado: 'PENDIENTE' }));
 function running() {
   let s = reduce(initialOptimization, { type: 'orders_received', orders });
-  s = reduce(s, { type: 'select', ids: [21] });
-  s = reduce(s, { type: 'preparing' });
-  s = reduce(s, { type: 'prepared', snapshot });
+  s = reduce(s, { type: 'select', ids: [10, 11] });
+  s = reduce(s, { type: 'preparing' }); s = reduce(s, { type: 'prepared', snapshot });
   return reduce(s, { type: 'run', runId: 'a' });
 }
-const event = (state, type, extra = {}) => reduce(state, { type: 'event', event: { type, run_id: 'a', ...extra } });
-const placement = { id_pedido: 21, id_pieza: 101, unit_index: 0, group_id: '1:6', material_source: 'plancha', material_id: 15, x_mm: 10, y_mm: 20, rotation_deg: 37.5 };
-test('placement deduplicates units and preserves arbitrary rotation', () => {
-  let s = event(running(), 'piece_placed', placement);
-  s = event(s, 'piece_placed', placement);
-  assert.equal(s.placements.length, 1); assert.equal(s.placements[0].rotation_deg, 37.5);
-  s = event(s, 'piece_placed', { ...placement, unit_index: 1 });
+const apply = (s, event, runId = 'a') => reduce(s, { type: 'event', event, runId });
+const played = name => eventsForRun(scenarioFixture(name)).reduce((s, e) => apply(s, e), running());
+test('wire events preserve 1-based units, physical stock and decimal strings; duplicate sequence ignored', () => {
+  let s = running(); const events = eventsForRun(result);
+  for (const event of events.slice(0, 6)) s = apply(s, event);
   assert.equal(s.placements.length, 2);
+  assert.deepEqual(s.placements.map(p => p.unit_index), [1, 2]);
+  assert.deepEqual(s.placements.map(p => p.stock_unit_index), [1, 2]);
+  assert.equal(s.placements[1].rotation_deg, '90');
+  assert.equal(apply(s, events[5]).placements.length, 2);
 });
-test('group, stage, metrics and completion events', () => {
-  let s = event(running(), 'optimization_started');
-  s = event(s, 'stage_changed', { stage: 'sorting_pieces' }); assert.equal(s.stage, 'sorting_pieces');
-  s = event(s, 'group_started', { group_id: '1:6' }); assert.equal(s.activeGroup, '1:6');
-  s = event(s, 'piece_started', { id_pieza: 101 }); assert.equal(s.activePiece, 101);
-  s = event(s, 'group_completed', { group_id: '1:6' }); assert.deepEqual(s.completedGroups, ['1:6']);
-  s = event(s, 'metrics_calculated', { metrics: { placed: 1, total: 2 } });
-  s = event(s, 'optimization_completed'); assert.equal(s.status, 'completed'); assert.equal(s.metrics.placed, 1);
-  assert.equal(event(s, 'optimization_failed').status, 'completed');
+test('terminal with nullable metrics is not a failure; confirmation waits for canonical GET', () => {
+  const s = played('complete'); assert.equal(s.estado, 'COMPLETADA'); assert.equal(s.status, 'completed');
+  assert.equal(s.metrics, null); assert.equal(s.confirmable, false);
+  const loaded = reduce(s, { type: 'result', result }); assert.equal(loaded.confirmable, true);
 });
-test('failed and retry reject stale events and clear old placements', () => {
-  let s = event(running(), 'piece_placed', placement);
-  s = event(s, 'optimization_failed', { message: 'Interrumpida' }); assert.equal(s.status, 'failed');
-  s = reduce(s, { type: 'run', runId: 'b' }); assert.equal(s.placements.length, 0);
-  assert.equal(event(s, 'piece_placed', placement).placements.length, 0);
+test('SIN_SOLUCION retains diagnostic placements and cannot confirm', () => {
+  const s = played('incomplete'); assert.equal(s.estado, 'SIN_SOLUCION'); assert.equal(s.placements.length, 3);
+  assert.equal(s.placed_units, 3); assert.equal(s.total_units, 4); assert.equal(s.confirmable, false);
 });
-test('live updates reconcile selection but preserve deep run snapshot', () => {
-  const s = running();
-  assert.notEqual(s.snapshot.orders, orders);
-  const next = reduce(s, { type: 'orders_received', orders: [{ id_pedido: 24, estado: 'PENDIENTE' }] });
-  assert.deepEqual(next.selected, []); assert.equal(next.snapshot.orders[0].id_pedido, 21);
-  assert.equal(next.snapshot.orders[0].piezas[0].cantidad, 2);
+test('failed event shows safe error, canonical confirmed snapshot disables confirmation', () => {
+  const s = played('failed'); assert.equal(s.estado, 'FALLIDA'); assert.equal(s.status, 'failed');
+  assert.match(s.error, /No se pudo completar/);
+  const loaded = reduce(initialOptimization, { type: 'result', result: scenarioFixture('confirmed') });
+  assert.equal(loaded.confirmed, true); assert.equal(loaded.confirmable, false);
 });
-test('non-pending excluded, new orders unselected and preparation invalidated', () => {
-  let s = reduce(initialOptimization, { type: 'orders_received', orders: [...orders, { id_pedido: 22, estado: 'CANCELADO' }] });
-  assert.equal(s.orders.length, 1);
-  s = reduce(s, { type: 'select', ids: [21, 22] }); assert.deepEqual(s.selected, [21]);
-  s = reduce(s, { type: 'preparing' });
-  s = reduce(s, { type: 'orders_received', orders: [] });
-  s = reduce(s, { type: 'prepared', snapshot }); assert.equal(s.snapshot, null);
-});
-test('invalid placement fails without polluting canvas', () => {
-  for (const patch of [{ rotation_deg: NaN }, { unit_index: -1 }, { material_id: 999 }, { id_pieza: 999 }]) {
-    const s = event(running(), 'piece_placed', { ...placement, ...patch });
-    assert.equal(s.status, 'failed'); assert.equal(s.placements.length, 0);
+test('sequence gaps, mismatched correlation and malformed placement fail without polluting canvas', () => {
+  const events = eventsForRun(result);
+  for (const mutation of [e => ({ ...e, sequence: 9 }), e => ({ ...e, id_optimizacion: 999 }),
+    e => ({ ...e, data: { ...e.data, unit_index: 0 } }), e => ({ ...e, data: { ...e.data, material_source: 'plancha' } })]) {
+    let s = events.slice(0, 3).reduce((s, e) => apply(s, e), running());
+    s = apply(s, mutation(events[3])); assert.equal(s.status, 'failed'); assert.equal(s.placements.length, 0);
   }
 });
-test('discard cancels run identity and missing metrics cannot complete', () => {
-  const s = reduce(running(), { type: 'discard' }); assert.equal(s.snapshot, null); assert.equal(s.runId, null);
-  assert.equal(event(s, 'piece_placed', placement).placements.length, 0);
-  assert.equal(event(running(), 'optimization_completed').status, 'failed');
+test('retry and discard reject stale lifecycle events', () => {
+  let s = played('failed'); s = reduce(s, { type: 'run', runId: 'b' });
+  assert.equal(s.placements.length, 0);
+  assert.equal(apply(s, eventsForRun(result)[0]).optimizationId, null);
+  s = reduce(s, { type: 'discard' }); assert.equal(s.snapshot, null); assert.equal(s.runId, null);
 });
-
-test('public events alone advance progress, metrics and completion without stage_changed', () => {
-  let s = event(running(), 'optimization_started');
-  assert.equal(s.stage, 'preparing_orders');
-  s = event(s, 'group_started', { group_id: '1:6' });
-  assert.equal(s.stage, 'first_fit');
-  s = event(s, 'piece_started', { id_pieza: 101 });
-  s = event(s, 'piece_placed', placement);
-  s = event(s, 'piece_placed', { ...placement, unit_index: 1 });
-  s = event(s, 'group_completed', { group_id: '1:6' });
-  assert.equal(s.placements.length, 2);
-  assert.deepEqual(s.completedGroups, ['1:6']);
-  s = event(s, 'metrics_calculated', { metrics: { placed: 2, total: 2 } });
-  assert.equal(s.stage, 'calculating_metrics');
-  s = event(s, 'optimization_completed');
-  assert.equal(s.status, 'completed');
-  assert.equal(s.metrics.placed, 2);
+test('live updates reconcile selection but preserve run snapshot', () => {
+  const s = running();
+  const next = reduce(s, { type: 'orders_received', orders: [] });
+  assert.deepEqual(next.selected, []); assert.equal(next.snapshot.orders.length, 2);
+  assert.equal(next.snapshot.groups[0].units.length, 3);
+});
+test('new orders are unselected, non-pending excluded and preparation invalidated', () => {
+  let s = reduce(initialOptimization, { type: 'orders_received', orders: [...orders, { id_pedido: 99, estado: 'CANCELADO' }] });
+  s = reduce(s, { type: 'select', ids: [10, 11, 99] }); assert.deepEqual(s.selected, [10, 11]);
+  s = reduce(s, { type: 'preparing' }); s = reduce(s, { type: 'orders_received', orders: [] });
+  assert.equal(reduce(s, { type: 'prepared', snapshot }).snapshot, null);
+});
+test('group-scoped completion does not replace global progress', () => {
+  let s = running();
+  for (const event of eventsForRun(result)) {
+    s = apply(s, event);
+    if (event.event === 'group_completed' && event.data.id_tipo_vidrio === 8) {
+      assert.equal(event.data.placed_units, 1); assert.equal(s.placed_units, 4);
+    }
+  }
+  assert.equal(s.progress_pct, '100');
 });

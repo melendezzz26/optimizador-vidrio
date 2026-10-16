@@ -12,7 +12,7 @@ GroupRasterInspection.test.jsx también usa el helper de permisos. No se conserv
 mocks de la antigua página de rasterización dentro de pruebas del nuevo flujo FF;
 la cobertura HU-015 se revisa por separado en la adaptación contractual siguiente.
 
-Antes del commit de sincronización: unit 147 passed, component 380 passed (35 files),
+Antes del commit de sincronización: unit 147 passed, component 379 passed (35 files),
 lint/build exit 0. Logs adjuntos. Primer intento de component durante la resolución
 vio marcadores de conflicto; la ejecución final aislada completa es rbac-component.txt.
 No se oculta un fallo funcional ni se eliminan pruebas para lograr el resultado.
