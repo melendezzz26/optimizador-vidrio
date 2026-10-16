@@ -678,7 +678,7 @@ confunden con el vertical slice puro de esta sesión.
 | T3 preparación (T2 histórica) | Ejecutada; 22 focalizadas, 308 regresión aprobadas | [T3](../evidence/sprint-01/S1-OPTIMIZATION-FIRST-FIT/t3-preparation.md) |
 | T4 stock (T5 histórica) | Ejecutada; 8 focalizadas y 743 regresión aprobadas | [T4](../evidence/sprint-01/S1-OPTIMIZATION-FIRST-FIT/t4-stock.md) |
 | T5 rotación (T3 histórica) | Ejecutada; 25 focalizadas y 348 regresión aprobadas | [T5](../evidence/sprint-01/S1-OPTIMIZATION-FIRST-FIT/t5-rotation.md) |
-| T6 motor (T4 histórica) | Pendiente | — |
+| T6 motor (T4 histórica) | Ejecutada; 26 focalizadas, 374 Optimization y 1709 backend aprobadas | [T6](../evidence/sprint-01/S1-OPTIMIZATION-FIRST-FIT/t6-first-fit.md) |
 
 No se afirma aceptación integral, cierre ni verificación de la SPEC. El baseline
 E2E histórico es 20 passed / 4 failed Orders (HTTP 422), fuera de esta rama.
@@ -690,3 +690,22 @@ permisos dinámicos; no se duplica. Refs observados por tarea se guardan en evid
 Decisión técnica T4: adapter sobre DTO/lecturas públicas InventoryRepository; dos lecturas de catálogo dentro de una read_transaction por consulta lógica de grupo, cache exclusivo por corrida. No se importa Inventory Infrastructure ni se inventa consulta SQL cross-module. Filtrado exacto y orden fecha DESC/ID DESC conservan §7. Ver evidencia T4 para coste y evolución futura del port.
 
 Decisiones técnicas T5: precisión RN-04 de TA-005/006 explícita en contorno devuelto; bridge Decimal/config con round-trip exacto y coordenadas aritméticas con error máximo de conversión 1e-12 mm antes de redondeo a 6 decimales. Excesos de rango/presupuesto producen error, nunca placement supuesto. Presupuestos por máscara iguales a HU-015 y máximo técnico de 10000 orientaciones. Cache por corrida y deduplicación solo por máscara completa, no AABB. Ver evidencia T5 para límites conocidos del raster histórico.
+
+Decisiones técnicas T6: motor puro con candidato → orientación → fila → columna;
+conserva el suborden del provider y acepta primera combinación válida. Layout
+independiente por identidad física, máscaras compartidas inmutables. Distancias
+Decimal usan ceil racional exacto antes del puente TA-007 (incluido sub-epsilon).
+Hitos internos tipados, sin HTTP. Resultado parcial conserva placements diagnósticos
+y no habilita confirmación en T1. No se calcula métrica ni se cambia estado durable.
+El puente Application recibe snapshots persistidos existentes, sin inventar batch
+transaccional. El test de integración demuestra dos pedidos persistidos y cuatro
+placements sobre dos unidades de plancha sin consumo ni cambios de estado.
+Ejemplos ejecutados y logs completos están en evidencia T6. Regresión final:
+1709 passed, 1 warning; una sola Alembic head ta036a1b2c3d. No se integran otras
+ramas, no se implementa frontend y no se modifica el estado Reviewed de SPEC.
+
+Próxima revisión de Fabricio: revisar los cuatro commits/evidencias del vertical
+slice y coordinar con Orders/RBAC/UI las APIs batch, guards y mapeo al contrato v1
+antes de habilitar endpoints. La migración, persistencia/métricas, streaming,
+estados, confirmación y concurrencia permanecen pendientes según sus tareas
+históricas; este avance no equivale al cierre de Sprint ni SPEC Verified.
