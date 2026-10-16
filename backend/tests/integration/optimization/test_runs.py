@@ -10,7 +10,7 @@ from app.models import (Configuracion, Pedido, Pieza, Optimizacion, Optimizacion
                         EjecucionOptimizacion, Plancha, MovimientoInventario)
 from app.modules.orders.infrastructure.repositories import SQLAlchemyOrderRepository
 from app.modules.optimization.application.runs import AcceptRun
-from app.modules.optimization.application.errors import RunError
+from app.modules.optimization.application.errors import RunError, ResultSaveFailed
 from app.modules.optimization.infrastructure.run_uow import SqlRunUnitOfWork
 
 
@@ -202,7 +202,7 @@ def test_final_save_failure_rolls_back_result_and_all_states(session_factory, pr
             raise RuntimeError('synthetic save error')
     event.listen(session_factory.class_, 'before_flush', fail)
     try:
-        with pytest.raises(RuntimeError):
+        with pytest.raises(ResultSaveFailed):
             CalculateRun(uow, InventoryStockAdapter(SqlAlchemyInventoryRepository(session_factory))).execute(run.optimization_id)
     finally:
         event.remove(session_factory.class_, 'before_flush', fail)

@@ -22,3 +22,11 @@ class RunError(Exception):
     def __init__(self, code: str, message: str):
         super().__init__(message)
         self.code, self.message = code, message
+
+
+class ResultSaveFailed(Exception):
+    pass
+
+
+class ExecutionInterrupted(Exception):
+    pass

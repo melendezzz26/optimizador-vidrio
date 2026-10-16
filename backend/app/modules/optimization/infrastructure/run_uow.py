@@ -3,6 +3,7 @@
 The legacy scalar Orders start method commits internally and is deliberately
 not used. Geometry rules remain in Orders' public persisted-piece validator.
 """
+from dataclasses import replace
 from datetime import datetime, timezone
 from sqlalchemy import select
 from app.models import Pedido, Pieza, Configuracion, Optimizacion, OptimizacionPedido, EjecucionOptimizacion, MaterialUtilizado, MetricaEjecucion
@@ -123,6 +124,27 @@ class SqlRunRepository:
                 retazo_recuperable_mm2=m.recoverable_remnant_mm2, planchas_nuevas_usadas=m.new_sheets_used,
                 tiempo_computacional_ms=result.computation_time_ms))
         return OptimizationRun(optimization_id=optimization_id, status=RunStatus(row.estado), result=result)
+
+
+    def fail(self, optimization_id, code, placements=()):
+        row = self.session.scalar(select(Optimizacion).where(Optimizacion.id_optimizacion == optimization_id).with_for_update())
+        if row is None:
+            raise RunError("NOT_FOUND", "No se encontró la optimización.")
+        if row.estado != "EN_EJECUCION":
+            return self.get(optimization_id)  # A late disconnect cannot overwrite a committed terminal result.
+        original = self.get(optimization_id)
+        stocks = {p.stock.identity: p.stock for p in placements}
+        problem = replace(original.result.problem, groups=tuple(replace(g, stock_candidates=tuple(
+            s for s in stocks.values() if s.material_key == g.key)) for g in original.result.problem.groups))
+        result = OptimizationResult(problem=problem, placements=tuple(placements))
+        execution = self._execution(optimization_id)
+        row.estado, execution.estado = "FALLIDA", "FALLIDA"
+        row.fecha_fin = execution.fecha_fin = datetime.now(timezone.utc)
+        row.id_ejecucion_seleccionada = None
+        execution.completo = result.complete
+        execution.patron_resultado = {**execution.patron_resultado, **encode(result), "failure_code": code}
+        # Orders stay EN_OPTIMIZACION: explicit reconciliation, never automatic NO_FIT.
+        return OptimizationRun(optimization_id=optimization_id, status=RunStatus.FAILED, result=result)
 
 
 class SqlRunUnitOfWork:

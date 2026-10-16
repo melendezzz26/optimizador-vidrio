@@ -752,3 +752,25 @@ y estados no diverjan: completo→OPTIMIZADO; incompleto→PENDIENTE, todos o ni
 El bloque estados posterior reforzará fallos/reconciliación y pruebas de rollback;
 no se publica una fase intermedia con resultado terminal y pedidos inconsistentes.
 Evidencia `phase3-results.md`. SPEC Reviewed / PLAN Approved sin cambios de estado.
+
+### API y progreso real (T9 histórico)
+
+`POST /api/optimization/runs` acepta el lote con RBAC `optimization.execute`,
+confirma inicio antes de headers y devuelve 201/Location + NDJSON v1.
+`GET /api/optimization/runs/{id}` requiere `optimization.view` y reconstruye
+el snapshot. Los schemas/fixtures T1 permanecen iguales; HU-015 conserva start y
+rasterize y sus errores históricos. Confirmación no se registra como endpoint.
+
+`LiveRunStream` adapta callbacks del motor mediante un productor/cola acotada a
+un evento y acknowledgement por entrega. Se inicia al consumir la respuesta,
+sin transacción abierta durante cálculo. No replay ni eventos por celda/ángulo.
+El reloj excluye todo el callback, incluida serialización/backpressure. Cada
+piece_placed lleva geometría ya orientada y stock físico completo; contadores de
+grupo son locales al grupo y contadores de pieza/terminales globales.
+
+Fallo de cálculo, guardado y desconexión son códigos distintos. Se intenta marcar
+FALLIDA en transacción independiente, conservando placements diagnósticos y sin
+reset automático de pedidos. Un terminal ya confirmado en BD nunca se sobrescribe
+por un fallo tardío de entrega. Caída DB/proceso antes de guardar fallo requiere
+reconciliación explícita; no se promete stream reanudable. T10 histórico (estados)
+refuerza estas garantías en el bloque final. Evidencia `phase4-ndjson.md`.

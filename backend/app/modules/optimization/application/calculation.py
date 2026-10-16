@@ -2,7 +2,7 @@
 from dataclasses import replace
 from time import perf_counter_ns
 
-from .errors import RunError
+from .errors import RunError, ResultSaveFailed
 from .stock import with_compatible_stock
 from .dto import RunStatus
 from ..domain.first_fit import FirstFitOptimizer
@@ -35,5 +35,8 @@ class CalculateRun:
         result, residuals = calculate_metrics(result, minimum_width, minimum_height)
         duration = max(0, (self.clock() - started - paused) // 1_000_000)
         result = replace(result, computation_time_ms=duration)
-        with self.unit_of_work() as uow:
-            return uow.runs.save_result(optimization_id, result, residuals)
+        try:
+            with self.unit_of_work() as uow:
+                return uow.runs.save_result(optimization_id, result, residuals)
+        except Exception as exc:
+            raise ResultSaveFailed("No se pudo guardar el resultado.") from exc
