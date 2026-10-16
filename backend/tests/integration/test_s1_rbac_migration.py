@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from sqlalchemy.orm import sessionmaker
 
 from tests.integration.postgres_support import BACKEND, _run, new_database, upgrade
-from tests.model_contracts import current_metadata
+from tests.model_contracts import historical_metadata
 
 PREVIOUS = "ta036a1b2c3d"
 REVISION = "s1rbac01a2b3"
@@ -68,7 +68,7 @@ def test_schema_matches_current_models(isolated_postgres):
         with engine.connect() as connection:
             assert compare_metadata(MigrationContext.configure(connection, opts={
                 "compare_type": True, "compare_server_default": True,
-            }), current_metadata()) == []
+            }), historical_metadata(REVISION)) == []
 
 
 @pytest.mark.parametrize("code, module", [

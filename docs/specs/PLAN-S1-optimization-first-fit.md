@@ -709,3 +709,23 @@ slice y coordinar con Orders/RBAC/UI las APIs batch, guards y mapeo al contrato 
 antes de habilitar endpoints. La migración, persistencia/métricas, streaming,
 estados, confirmación y concurrencia permanecen pendientes según sus tareas
 históricas; este avance no equivale al cierre de Sprint ni SPEC Verified.
+
+## Avance backend posterior a First Fit — integración y multipedido
+
+- Integración RBAC `c4c5e5c` incorporada mediante merge `2cd5d0e`, sin conflictos;
+  473 pruebas verdes. Evidencia `phase1-rbac-merge.md`.
+- Persistencia multipedido (T6 histórico y aceptación T7): asociación explícita,
+  snapshot JSONB versionado y UoW caller-owned. Orders mantiene sus reglas y casos
+  de uso; el adaptador batch Optimization reutiliza su validador público.
+- Decisión técnica autorizada para esta sesión: evolución no destructiva de §5.
+  Se conserva `id_pedido` legado (primer ID ascendente en corridas nuevas), sin
+  usarlo para consultar/transicionar el lote. La asociación es la fuente del lote.
+  El downgrade rechaza datos multipedido antes de DDL. Retiro legado pendiente.
+- Head real auditada tras RBAC: `s1rbac01a2b3`; nueva revisión lineal
+  `s1opt02b4c6d`. Se actualiza el diseño BD y se congela el contrato ORM histórico
+  RBAC para conservar su prueba de migración en la revisión que realmente evalúa.
+- Inicio: un commit para configuración válida, todos los pedidos/piezas válidos,
+  corrida/asociaciones/FF/snapshot y N transiciones. Sin stock reservado/consumido.
+- La autorización usa RBAC incorporado; las rutas nuevas se expondrán en el
+  bloque API, sin abrir temporalmente un endpoint sin guards.
+- Evidencia y comandos: `phase2-multipedido.md`. SPEC permanece Reviewed y PLAN Approved.

@@ -32,8 +32,12 @@ def historical_metadata(revision):
         "b4d5e6f7a8c9",
         "1c8754481a08",
         "d6e7f8a9b0c1",
+        "s1rbac01a2b3",
     }:
         raise ValueError("No hay contrato histórico para esta revisión")
+
+    if revision == "s1rbac01a2b3":
+        return _load(BACKEND / "tests/contracts/s1rbac_models.py")
 
     if revision == "d6e7f8a9b0c1":
         return _load(BACKEND / "tests/contracts/hu006_models.py")

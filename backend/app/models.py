@@ -232,6 +232,8 @@ class Pedido(Base):
     )
 
 
+    optimizacion_vinculos: Mapped[list["OptimizacionPedido"]] = relationship(back_populates="pedido", passive_deletes="all")
+
 class Pieza(Base):
     __tablename__ = "piezas"
     __table_args__ = (
@@ -327,6 +329,21 @@ class Optimizacion(Base):
         back_populates="optimizacion",
         passive_deletes="all",
     )
+
+
+    pedido_vinculos: Mapped[list["OptimizacionPedido"]] = relationship(back_populates="optimizacion", passive_deletes="all")
+
+
+class OptimizacionPedido(Base):
+    __tablename__ = "optimizacion_pedidos"
+    __table_args__ = (
+        PrimaryKeyConstraint("id_optimizacion", "id_pedido", name="pk_optimizacion_pedidos"),
+        Index("ix_optimizacion_pedidos_pedido", "id_pedido", "id_optimizacion"),
+    )
+    id_optimizacion: Mapped[int] = mapped_column(ForeignKey("optimizaciones.id_optimizacion", name="fk_optimizacion_pedidos_optimizacion"), nullable=False)
+    id_pedido: Mapped[int] = mapped_column(ForeignKey("pedidos.id_pedido", name="fk_optimizacion_pedidos_pedido"), nullable=False)
+    optimizacion: Mapped["Optimizacion"] = relationship(back_populates="pedido_vinculos")
+    pedido: Mapped["Pedido"] = relationship(back_populates="optimizacion_vinculos")
 
 
 _EVENTOS_MOVIMIENTO_INVENTARIO = "'BAJA_ROTURA', 'BAJA_MERMA', 'BAJA_ERROR_REGISTRO', 'BAJA_RETIRO', 'CONSUMO_OPTIMIZACION'"
