@@ -677,7 +677,7 @@ confunden con el vertical slice puro de esta sesión.
 |---|---|---|
 | T3 preparación (T2 histórica) | Ejecutada; 22 focalizadas, 308 regresión aprobadas | [T3](../evidence/sprint-01/S1-OPTIMIZATION-FIRST-FIT/t3-preparation.md) |
 | T4 stock (T5 histórica) | Ejecutada; 8 focalizadas y 743 regresión aprobadas | [T4](../evidence/sprint-01/S1-OPTIMIZATION-FIRST-FIT/t4-stock.md) |
-| T5 rotación (T3 histórica) | Pendiente | — |
+| T5 rotación (T3 histórica) | Ejecutada; 25 focalizadas y 348 regresión aprobadas | [T5](../evidence/sprint-01/S1-OPTIMIZATION-FIRST-FIT/t5-rotation.md) |
 | T6 motor (T4 histórica) | Pendiente | — |
 
 No se afirma aceptación integral, cierre ni verificación de la SPEC. El baseline
@@ -688,3 +688,5 @@ convergencia futura, sin alterar unilateralmente el contrato v1. RBAC incorpora
 permisos dinámicos; no se duplica. Refs observados por tarea se guardan en evidencia.
 
 Decisión técnica T4: adapter sobre DTO/lecturas públicas InventoryRepository; dos lecturas de catálogo dentro de una read_transaction por consulta lógica de grupo, cache exclusivo por corrida. No se importa Inventory Infrastructure ni se inventa consulta SQL cross-module. Filtrado exacto y orden fecha DESC/ID DESC conservan §7. Ver evidencia T4 para coste y evolución futura del port.
+
+Decisiones técnicas T5: precisión RN-04 de TA-005/006 explícita en contorno devuelto; bridge Decimal/config con round-trip exacto y coordenadas aritméticas con error máximo de conversión 1e-12 mm antes de redondeo a 6 decimales. Excesos de rango/presupuesto producen error, nunca placement supuesto. Presupuestos por máscara iguales a HU-015 y máximo técnico de 10000 orientaciones. Cache por corrida y deduplicación solo por máscara completa, no AABB. Ver evidencia T5 para límites conocidos del raster histórico.
