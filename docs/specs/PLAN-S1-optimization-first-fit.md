@@ -663,3 +663,26 @@ herramientas de mensajería en esta tarea.
 |---|---|---|
 | 16/10/2026 | Draft | PLAN técnico y TASKS derivados de SPEC Reviewed. Auditoría de rama, capas, Orders/Inventory, modelos, configuración, endpoints, raster y Alembic; definición de asociación multipedido, DTO normalizado, stock, First Fit row-major, NDJSON v1, persistencia, métricas, límites transaccionales, confirmación y ruta crítica. No se implementó código ni se ejecutaron pruebas para este PLAN. Revisión humana del PLAN pendiente. |
 | 16/10/2026 | Approved | Fabricio Danniel Aguilar Chávez revisó y aprobó técnicamente este PLAN para implementación. Se aprueban la descomposición técnica, sus contratos, decisiones de arquitectura/persistencia/transacciones, estrategia de pruebas y TASKS. No se atribuyen implementación, pruebas ejecutadas ni evidencia de producto. |
+
+## Avance autónomo T3–T6 (numeración de sesión, 16/10/2026)
+
+Se conserva el PLAN **Approved**, la SPEC **Reviewed** y la numeración histórica.
+La instrucción de sesión redefine los identificadores operativos: T3 sesión = T2
+histórica (preparación), T4 sesión = T5 histórica (stock), T5 sesión = T3 histórica
+(rotación), T6 sesión = T4 histórica (motor). La migración T6 histórica y los
+bloques de persistencia/streaming/estados/confirmación siguen excluidos; no se
+confunden con el vertical slice puro de esta sesión.
+
+| Tarea de sesión | Estado | Evidencia |
+|---|---|---|
+| T3 preparación (T2 histórica) | Ejecutada; 22 focalizadas, 308 regresión aprobadas | [T3](../evidence/sprint-01/S1-OPTIMIZATION-FIRST-FIT/t3-preparation.md) |
+| T4 stock (T5 histórica) | Pendiente | — |
+| T5 rotación (T3 histórica) | Pendiente | — |
+| T6 motor (T4 histórica) | Pendiente | — |
+
+No se afirma aceptación integral, cierre ni verificación de la SPEC. El baseline
+E2E histórico es 20 passed / 4 failed Orders (HTTP 422), fuera de esta rama.
+La rama Orders dd10ec0 ya envía material/espesor por pieza; integrar y verificar
+corresponde a su dueño. UI fixture diverge de T1 en casing, nombres y Decimal:
+convergencia futura, sin alterar unilateralmente el contrato v1. RBAC incorpora
+permisos dinámicos; no se duplica. Refs observados por tarea se guardan en evidencia.
