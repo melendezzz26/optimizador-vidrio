@@ -6,6 +6,7 @@ import jwt
 import pytest
 from sqlalchemy import update
 
+from app.core.permissions import ASIGNACION_INICIAL
 from app.models import Usuario
 from app.modules.authentication.presentation.dependencies import get_user_reader
 from app.shared.security import create_access_token
@@ -55,6 +56,7 @@ def test_valid_login_returns_token_and_user(client, users, password):
         "username": ADMIN,
         "nombre": "Fabiola Quispe",
         "rol": "Administrador",
+        "permisos": sorted(ASIGNACION_INICIAL["Administrador"]),
     }
 
 
@@ -190,6 +192,7 @@ def test_me_returns_the_current_user(client, users, password):
         "id_usuario": users[WAREHOUSE],
         "username": WAREHOUSE,
         "rol": "Almacenero",
+        "permisos": ["inventory.manage", "inventory.view", "optimization.view"],
     }
 
 

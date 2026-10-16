@@ -6,7 +6,7 @@ from app.modules.authentication.presentation.dependencies import (
     get_database_session,
     require_permission,
 )
-from app.modules.users.application.ports import UserRepository
+from app.modules.users.application.ports import RolePermissionRepository, UserRepository
 
 # Permisos del catálogo (S1-RBAC): consultar y gestionar usuarios.
 require_users_view = require_permission("users.view")
@@ -22,3 +22,12 @@ def get_user_repository(db: Session = Depends(get_database_session)) -> UserRepo
     )
 
     return SqlAlchemyUserRepository(db)
+
+
+def get_role_permission_repository(db: Session = Depends(get_database_session)) -> RolePermissionRepository:
+    """Único punto donde se elige la implementación real del repositorio de permisos por rol."""
+    from app.modules.users.infrastructure.sqlalchemy_role_permission_repository import (
+        SqlAlchemyRolePermissionRepository,
+    )
+
+    return SqlAlchemyRolePermissionRepository(db)

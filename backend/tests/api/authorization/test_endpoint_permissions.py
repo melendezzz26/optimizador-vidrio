@@ -43,6 +43,9 @@ ENDPOINTS = [
     ("DELETE", "/api/orders/1", "orders.cancel"),
     ("POST", "/api/optimization/start", "optimization.execute"),
     ("POST", "/api/optimization/rasterize", "optimization.execute"),
+    ("GET", "/api/roles", "roles.view"),
+    ("GET", "/api/permissions", "roles.view"),
+    ("PUT", "/api/roles/1/permissions", "roles.manage"),
 ]
 
 
@@ -58,14 +61,18 @@ def client_with(monkeypatch):
     """Cliente cuyo rol de prueba tiene exactamente los permisos indicados."""
     from app.modules.clients.presentation.dependencies import get_client_repository
     from app.modules.inventory.presentation.dependencies import get_inventory_service
-    from app.modules.users.presentation.dependencies import get_user_repository
+    from app.modules.users.presentation.dependencies import (
+        get_role_permission_repository,
+        get_user_repository,
+    )
 
     def _client(permissions: set[str]) -> TestClient:
         use_in_memory_accounts(app)
         app.dependency_overrides[get_permission_reader] = (
             lambda: InMemoryPermissionReader({ROLE: frozenset(permissions)})
         )
-        for dependency in (get_inventory_service, get_user_repository, get_client_repository):
+        for dependency in (get_inventory_service, get_user_repository, get_client_repository,
+                           get_role_permission_repository):
             app.dependency_overrides[dependency] = _FailingDependency
         return TestClient(app, raise_server_exceptions=False)
 
@@ -80,8 +87,8 @@ def call(client, method, path):
 def test_endpoint_map_uses_only_catalog_codes_and_covers_every_code_with_an_endpoint():
     used = {code for _, _, code in ENDPOINTS}
     assert used <= CODIGOS
-    # Códigos sin endpoint todavía: llegan con roles (siguiente commit) y con resultados/confirmación.
-    assert CODIGOS - used == {"roles.view", "roles.manage", "optimization.view", "optimization.confirm"}
+    # Códigos sin endpoint todavía: llegan con resultados y confirmación de optimización.
+    assert CODIGOS - used == {"optimization.view", "optimization.confirm"}
 
 
 @pytest.mark.parametrize("method, path, code", ENDPOINTS)

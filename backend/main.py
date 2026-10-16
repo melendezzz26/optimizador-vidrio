@@ -6,6 +6,7 @@ from app.shared.observability.health import router as health_router
 from app.modules.authentication.presentation.router import router as authentication_router
 from app.modules.inventory.presentation.router import router as inventory_router
 from app.modules.users.presentation.router import router as users_router
+from app.modules.users.presentation.roles_router import router as roles_router
 from app.modules.orders.presentation.router import router as orders_router
 from app.modules.clients.presentation.router import router as clients_router
 from app.modules.optimization.presentation.router import router as optimization_router
@@ -29,6 +30,8 @@ app.include_router(authentication_router)
 app.include_router(inventory_router)
 # Rutas de gestiÃ³n de usuarios (HU-003)
 app.include_router(users_router)
+# Rutas de roles y permisos configurables (S1-RBAC)
+app.include_router(roles_router)
 # Rutas de pedidos (HU-007)
 app.include_router(orders_router)
 # Rutas de consulta y alta de clientes (HU-012 T02)
