@@ -65,7 +65,7 @@ def seed(scenario):
                 paso_angular_grados=90, ancho_min_retazo_mm=10, alto_min_retazo_mm=10,
                 vigente=True, id_usuario_creacion=user.id_usuario, fecha_creacion=now))
         types, sheets, remnants = [], [], []
-        for i in range(2 if scenario == 'multimaterial' else 1):
+        for i in range(2 if scenario in ('multimaterial', 'combined') else 1):
             glass = TipoVidrio(nombre=f'E2E-{scenario}-{suffix}-{i}', estado=True)
             db.add(glass); db.flush()
             thickness = 6 if i == 0 else 4
@@ -74,7 +74,7 @@ def seed(scenario):
             types.append({'id_tipo_vidrio': glass.id_tipo_vidrio, 'espesor_mm': thickness})
             width, height = (40, 70) if scenario == 'rotated' else (50, 50) if scenario == 'incomplete' else (100, 50)
             sheet = Plancha(ancho_mm=width, alto_mm=height, espesor_mm=thickness,
-                cantidad=4 if scenario == 'multiunit' else 1, estado=True,
+                cantidad=4 if scenario == 'multiunit' else 2 if scenario == 'combined' and i == 0 else 1, estado=True,
                 fecha_registro=now, id_tipo_vidrio=glass.id_tipo_vidrio)
             db.add(sheet); db.flush()
             sheets.append(sheet.id_plancha)
@@ -88,5 +88,5 @@ def seed(scenario):
 
 
 if __name__ == '__main__':
-    assert sys.argv[1] in {'single', 'multiple', 'multimaterial', 'multiunit', 'remnant', 'incomplete', 'conflict', 'rbac', 'rotated'}
+    assert sys.argv[1] in {'single', 'multiple', 'multimaterial', 'multiunit', 'remnant', 'incomplete', 'conflict', 'rbac', 'rotated', 'combined'}
     print(json.dumps(seed(sys.argv[1])))

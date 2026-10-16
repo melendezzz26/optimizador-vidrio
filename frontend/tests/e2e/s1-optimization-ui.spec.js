@@ -155,3 +155,18 @@ test('E2E9 rotación real: contorno orientado se traduce una sola vez en 2D y 3D
   await capture(page, info, 'oriented-3d');
   await confirm(page, data, result, info);
 });
+
+test('E2E10 CA-28 conjunto: dos pedidos, dos materiales, cantidad y unidades físicas reales', async ({ page }, info) => {
+  const data = await setup(page, 'combined'); await login(page, data.actors.all); await open(page);
+  const { result } = await run(page, data, info);
+  expect(result.order_ids).toEqual(data.orders); expect(data.orders).toHaveLength(2);
+  expect(result.groups).toHaveLength(2); expect(result.placed_units).toBe(6); expect(result.completo).toBe(true);
+  expect(new Set(result.placements.map(p => p.id_pedido))).toEqual(new Set(data.orders));
+  expect(result.materials_used.map(stockKey)).toEqual([
+    `PLANCHA:${data.sheets[0]}:1`, `PLANCHA:${data.sheets[0]}:2`, `PLANCHA:${data.sheets[1]}:1`,
+  ]);
+  await page.getByLabel('Plancha o retazo', { exact: true }).selectOption(`PLANCHA:${data.sheets[0]}:2`);
+  await expect(page.locator('[data-placement]')).toHaveCount(2);
+  const after = await confirm(page, data, result, info);
+  expect(after.sheets.map(s => s.cantidad)).toEqual([0, 0]);
+});

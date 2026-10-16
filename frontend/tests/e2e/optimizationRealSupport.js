@@ -32,9 +32,10 @@ export async function setup(page, scenario) {
   });
   const orders = [];
   const pieces = scenario === 'rotated' ? [rectangle(data.materials[0], 1, 70, 40)]
+    : scenario === 'combined' ? [rectangle(data.materials[0], 2), rectangle(data.materials[1])]
     : scenario === 'multimaterial' ? data.materials.map(m => rectangle(m))
       : [rectangle(data.materials[0], scenario === 'multiunit' ? 3 : ['remnant', 'incomplete'].includes(scenario) ? 2 : 1)];
-  for (let i = 0; i < (scenario === 'multiple' ? 2 : 1); i++) {
+  for (let i = 0; i < (['multiple', 'combined'].includes(scenario) ? 2 : 1); i++) {
     const response = await page.request.post(`${api}/api/orders`, { headers, data: { id_cliente: 41, piezas: pieces } });
     expect(response.status()).toBe(201);
     orders.push((await response.json()).id_pedido);
