@@ -1,5 +1,5 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-import { Check, Plus, MousePointer2, RotateCcw, Undo2 } from "lucide-react";
+import { Check, Plus, MousePointer2, RotateCcw, Undo2, MousePointerClick } from "lucide-react";
 import "./CustomPieceEditor.css";
 import { interiorAngles } from "./polygonMeasurements";
 import { fitVerticesToPreview } from "./geometryScaling";
@@ -9,11 +9,13 @@ import { buildConstrainedGeometry } from "./constrainedGeometry";
 
 const DRAWING_WIDTH = 800;
 const DRAWING_HEIGHT = 500;
+const VERTEX_HIT_RADIUS = 30;
 const formatLength = (value) => new Intl.NumberFormat("es", { maximumSignificantDigits: 8 }).format(value);
 
+// Hook para adaptar el lienzo al tamaño de la columna izquierda
 function useCanvasSize() {
   const ref = useRef(null);
-  const [size, setSize] = useState({ width: 560, height: 300 });
+  const [size, setSize] = useState({ width: 800, height: 480 });
   useEffect(() => {
     const observer = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
@@ -21,7 +23,7 @@ function useCanvasSize() {
         setSize((current) => current.width === width && current.height === height ? current : { width, height });
       }
     });
-    observer.observe(ref.current);
+    if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
   return [ref, size];
@@ -40,31 +42,31 @@ function SegmentField({ segment, active, onSelect, onChange, inputRef }) {
   return (
     <li className="custom-piece-editor__segment-row" data-active={active} onFocus={onSelect}>
       <button type="button" className="custom-piece-editor__segment-selector" aria-pressed={active}
-        aria-label={`Seleccionar segmento ${segment.id}`}
         onClick={() => { onSelect(); localRef.current?.focus(); }}>
         {segment.id}
       </button>
       <div className="custom-piece-editor__field">
-        <label className="custom-piece-editor__sr-only" htmlFor={id}>Longitud del segmento {segment.id} en milímetros</label>
+        <label className="custom-piece-editor__sr-only" htmlFor={id}>{segment.id}</label>
         <div className="custom-piece-editor__input-wrapper">
           <input ref={(node) => { localRef.current = node; if (inputRef) inputRef.current = node; }} id={id}
             className="custom-piece-editor__input" type="number" inputMode="decimal" step="any" required
             value={segment.lengthMm} onChange={updateValue} onBlur={() => setTouched(true)}
-            aria-invalid={Boolean(invalid)} aria-describedby={invalid ? `${id}-error` : undefined} placeholder="Longitud" />
-          <span className="custom-piece-editor__input-unit" aria-hidden="true">mm</span>
+            aria-invalid={Boolean(invalid)} placeholder="Longitud" />
+          <span className="custom-piece-editor__input-unit">mm</span>
         </div>
-        {invalid && <p id={`${id}-error`} className="custom-piece-editor__field-error" role="alert">
-          {segment.lengthMm === "" && !segment.badInput ? "Completa esta medida." : "Usa un número finito mayor que 0."}
-        </p>}
+        {invalid && <p className="custom-piece-editor__field-error">{segment.lengthMm === "" && !segment.badInput ? "Completa esta medida." : "Número > 0"}</p>}
       </div>
     </li>
   );
 }
 
-// Labels use CSS-pixel sizing in both SVG coordinate systems. On dense contours,
-// keep the active label first and omit colliding labels; all sides remain in the list.
-function SegmentOverlay({ points, activeSegmentIndex, measured, width, height, unitScale = 1 }) {
+// Overlay único para pintar segmentos, etiquetas in-situ y ángulos
+function SegmentOverlay({
+  points, angles, activeSegmentIndex, selectedVertexIndex, fixedVertices, onSelectVertex, width, height, unitScale = 1
+}) {
   const occupied = [];
+  const interactive = Boolean(onSelectVertex) && points.length > 3;
+
   const labels = points.map((start, index) => {
     const end = points[(index + 1) % points.length];
     const dx = end.x - start.x;
@@ -75,128 +77,155 @@ function SegmentOverlay({ points, activeSegmentIndex, measured, width, height, u
       x: Math.max(24 / unitScale, Math.min(width - 24 / unitScale, (start.x + end.x) / 2 + dy / length * 17 / unitScale)),
       y: Math.max(18 / unitScale, Math.min(height - 18 / unitScale, (start.y + end.y) / 2 - dx / length * 17 / unitScale)),
     };
-  }).sort((a, b) => Number(b.index === activeSegmentIndex) - Number(a.index === activeSegmentIndex));
+  });
+
   return (
     <g className="custom-piece-editor__segments" aria-hidden="true">
       {points.map((start, index) => {
         const end = points[(index + 1) % points.length];
         return <line key={index} x1={start.x} y1={start.y} x2={end.x} y2={end.y}
-          data-active={index === activeSegmentIndex} data-provisional={measured ? !measured[index] : false}
-          vectorEffect="non-scaling-stroke" />;
+          data-active={index === activeSegmentIndex} vectorEffect="non-scaling-stroke" />;
       })}
+      
       {labels.map(({ index, x, y }) => {
         if (occupied.some((label) => Math.abs(label.x - x) * unitScale < 44 && Math.abs(label.y - y) * unitScale < 26)) return null;
         occupied.push({ x, y });
         return <text key={index} x={x} y={y} textAnchor="middle" dominantBaseline="central"
-          style={{ fontSize: 13 / unitScale, strokeWidth: 5 / unitScale }} data-active={index === activeSegmentIndex}>S{index + 1}</text>;
+          style={{ fontSize: 14 / unitScale, strokeWidth: 5 / unitScale }} data-active={index === activeSegmentIndex}>S{index + 1}</text>;
       })}
-      {points.map((point, index) => <text key={`vertex-${index}`} x={point.x} y={Math.max(14 / unitScale, point.y - 12 / unitScale)}
-        className="custom-piece-editor__vertex-label" data-highlight={index === activeSegmentIndex}
-        style={{ fontSize: 12 / unitScale, strokeWidth: 4 / unitScale }} textAnchor="middle">V{index + 1}</text>)}
+      
+      {points.map((point, index) => {
+        const angleVal = angles[index] !== undefined && !Number.isNaN(angles[index]) ? `${Math.round(angles[index])}°` : '';
+        const labelText = angleVal ? `V${index + 1} (${angleVal})` : `V${index + 1}`;
+        const isSelected = index === selectedVertexIndex;
+        const isFixed = fixedVertices.includes(index);
+
+        return (
+          <g key={`vertex-group-${index}`} 
+             onClick={interactive ? (e) => { e.stopPropagation(); onSelectVertex(index); } : undefined}
+             style={{ cursor: interactive ? 'pointer' : 'default', pointerEvents: 'auto' }}>
+            <circle
+              cx={point.x} cy={point.y}
+              r={(isSelected ? 8 : isFixed ? 6 : 5) / unitScale}
+              className="custom-piece-editor__vertex-point"
+              data-selected={isSelected ? "true" : undefined}
+              data-fixed={isFixed ? "true" : undefined}
+            />
+            <text 
+              x={point.x} y={point.y - (14 / unitScale)}
+              className="custom-piece-editor__vertex-label"
+              data-selected={isSelected ? "true" : undefined}
+              data-fixed={isFixed ? "true" : undefined}
+              style={{ fontSize: (isSelected ? 14 : 12) / unitScale, strokeWidth: 4 / unitScale }} 
+              textAnchor="middle">
+              {labelText}
+            </text>
+          </g>
+        );
+      })}
     </g>
   );
 }
 
-function DimensionalPreview({ vertices, result, activeSegmentIndex }) {
-  const [canvasRef, size] = useCanvasSize();
-  const points = result.vertices_mm ? result.vertices_mm.map(([x, y]) => ({ x, y })) : vertices;
-  const geometry = fitVerticesToPreview(points, size.width, size.height, 38);
-  return (
-    <svg ref={canvasRef} className="custom-piece-editor__preview-canvas" viewBox={`0 0 ${size.width} ${size.height}`}
-      role="img" aria-label={`${result.status === "complete" ? "Vista dimensional completa" : "Vista dimensional provisional"}. Segmento S${activeSegmentIndex + 1} seleccionado.`}>
-      {geometry && <>
-        <polygon className="custom-piece-editor__preview-shape" points={geometry.points.map(({ x, y }) => `${x},${y}`).join(" ")}
-          vectorEffect="non-scaling-stroke" aria-hidden="true" />
-        <SegmentOverlay points={geometry.points} activeSegmentIndex={activeSegmentIndex} measured={result.measured}
-          width={size.width} height={size.height} />
-      </>}
-    </svg>
-  );
-}
-
+// Textos de error amigables
 function dimensionalError(result) {
-  switch (result.error) {
-    case "inequality": return "No se puede cerrar un polígono: el lado mayor debe ser menor que la suma de los demás lados.";
-    case "angle": return "El ángulo fijado debe ser un número finito mayor que 0 y menor que 180 grados.";
-    case "angle-configuration": return "No se encontró un polígono convexo cerrado con las medidas y ángulos ingresados. Revisa o libera una restricción, o cambia el boceto; las longitudes se conservan.";
-    case "constraint-limit": return "Puedes fijar como máximo n − 3 ángulos, en vértices diferentes.";
-    case "configuration": return "Selecciona una configuración geométrica disponible.";
-    case "shape-mismatch": return "Las medidas no corresponden al contorno. Cambia una longitud para escalar toda la figura conservando sus ángulos.";
-    case "drawing": return "Hay vértices consecutivos en el mismo punto. Deshaz o reinicia el dibujo para separar esos vértices.";
-    case "length": return "Revisa las medidas marcadas: cada longitud debe ser un número finito mayor que 0.";
-    case "numeric-range": return "No se pueden representar estas medidas con precisión numérica. Revisa la magnitud de los valores.";
-    default: return "No se logró cerrar la vista con este boceto y estas medidas. Revisa las longitudes o corrige el dibujo. Esto no determina su validez para corte.";
-  }
+  if (!result || !result.error) return "";
+  const msgs = {
+    "inequality": "Las medidas no cuadran: un lado es demasiado largo y la figura no alcanza a cerrarse.",
+    "angle": "El ángulo que ingresaste debe ser mayor a 0 y menor a 180 grados.",
+    "angle-configuration": "Las medidas y ángulos que fijaste chocan entre sí. Prueba cambiando una medida o liberando un ángulo.",
+    "constraint-limit": "Ya fijaste la cantidad máxima de ángulos permitidos para esta figura.",
+    "shape-mismatch": "Las medidas ingresadas deforman demasiado la figura original. Revisa si hay algún error de tipeo.",
+    "length": "Por favor, verifica que todas las medidas sean mayores a cero."
+  };
+  return msgs[result.error] || "No se pudo formar la figura con estas medidas. Revisa los valores ingresados.";
 }
 
-function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState, addLabel, helpText, onGeometryChange }) {
-  const instructionsId = useId();
-  const drawingHeadingId = useId();
-  const dimensionsHeadingId = useId();
-  const previewHeadingId = useId();
-  const correctionId = useId();
+export default function CustomPieceEditor({ onGuardarVertices, initialState, headerReady = true, disabled = false, title="Pieza personalizada", addLabel="Agregar pieza al pedido", helpText="Agrega la pieza y guarda el pedido para registrarla.", onGeometryChange }) {
+  const headingId = useId();
   const validationId = useId();
-  const validationHelpId = useId();
-  const validationMessageId = useId();
   const firstInputRef = useRef(null);
-  const drawingHeadingRef = useRef(null);
-  const dimensionsRef = useRef(null);
+  const angleInputRef = useRef(null);
   const closedWithKeyboard = useRef(false);
+  
   const [canvasRef, canvasSize] = useCanvasSize();
-
   const [drawing, setDrawing] = useState(initialState?.drawing || { vertices: [], isClosed: false });
   const [segments, setSegments] = useState(initialState?.segments || []);
   const [activeSegmentIndex, setActiveSegmentIndex] = useState(initialState?.segments ? 0 : null);
+  
+  const [selectedVertexIndex, setSelectedVertexIndex] = useState(() => {
+    const initialConstraints = initialState?.construction?.constraints;
+    return Array.isArray(initialConstraints) && initialConstraints.length > 0 ? initialConstraints[0].vertex : null;
+  });
+  
   const [construction, setConstruction] = useState(() => {
     const previous = initialState?.construction;
-    return { mode: previous?.mode === 'sketch' ? 'guided' : previous?.mode || (initialState?.drawing?.isClosed ? 'guided' : 'cyclic'),
-      angle: previous?.angle || '90', constraints: previous?.constraints ||
-        (previous?.mode === 'angle' ? [{ vertex: 1, angle: previous.angle }] : []) };
+    return {
+      mode: previous?.mode === 'sketch' || previous?.mode === 'angle' ? 'guided' : previous?.mode || (initialState?.drawing?.isClosed ? 'guided' : 'cyclic'),
+      angle: previous?.angle || '90',
+      constraints: previous?.constraints || [],
+    };
   });
 
   const { vertices, isClosed } = drawing;
+  
   const sketchValidation = useMemo(() => validateConvexPolygon(vertices.map(({ x, y }) => [x, y])), [vertices]);
   const result = useMemo(() => !isClosed ? null : buildConstrainedGeometry(segments, {
-    ...construction, mode: construction.constraints.length ? 'angles' : construction.mode === 'angle' ? 'guided' : construction.mode,
+    ...construction, mode: construction.constraints.length ? 'angles' : construction.mode,
     drawing: vertices.map(({ x, y }) => [x, y]),
-  }),
-  [vertices, isClosed, segments, construction]);
+  }), [vertices, isClosed, segments, construction]);
+  
   const validation = useMemo(() => isClosed && !sketchValidation.isValid ? sketchValidation :
     validateConvexPolygon(result?.status === "complete" ? result.vertices_mm : null), [result, isClosed, sketchValidation]);
+  
   const validationRejected = !validation.isValid && validation.reason !== "INCOMPLETE";
   const measuredCount = segments.filter((segment) => !segment.badInput && isPositiveLength(segment.lengthMm)).length;
   const dimensionsReady = result?.status === "complete";
-  const canAdd = isClosed && dimensionsReady && validation.reason === "VALID" &&
-    Boolean(result?.vertices_mm) && headerReady && Boolean(onGuardarVertices) && !disabled;
-  const hasMeasurements = segments.some(({ lengthMm, badInput }) => lengthMm !== "" || badInput);
-  const activeSegment = segments[activeSegmentIndex];
-  const activeLength = activeSegment && isPositiveLength(activeSegment.lengthMm) && !activeSegment.badInput
-    ? `${formatLength(Number(activeSegment.lengthMm))} mm · Medida ingresada`
-    : result?.lengths ? `≈ ${formatLength(result.lengths[activeSegmentIndex])} mm · Estimación provisional` : "Sin medida real";
-  const angles = useMemo(() => {
-    try { return result?.vertices_mm ? interiorAngles(result.vertices_mm) : []; } catch { return []; }
-  }, [result]);
-  const drawingPoints = vertices.map(({ x, y }) => `${x},${y}`).join(" ");
+  const canAdd = isClosed && dimensionsReady && validation.reason === "VALID" && Boolean(result?.vertices_mm) && headerReady && !disabled;
+  
+  const angles = useMemo(() => { try { return result?.vertices_mm ? interiorAngles(result.vertices_mm) : []; } catch { return []; } }, [result]);
+  const fixedVertices = useMemo(() => construction.constraints.map((item) => item.vertex), [construction.constraints]);
+  const maxConstraints = Math.max(0, vertices.length - 3);
+  const isLimitReached = construction.constraints.length >= maxConstraints;
 
   useEffect(() => {
     if (!isClosed) return;
     if (closedWithKeyboard.current) firstInputRef.current?.focus();
-    else dimensionsRef.current?.scrollIntoView({ block: "nearest", behavior: "instant" });
   }, [isClosed]);
 
   useEffect(() => {
-    if (onGeometryChange) onGeometryChange(dimensionsReady && validation.isValid ? result.vertices_mm : null);
-  }, [onGeometryChange, dimensionsReady, validation.isValid, result]);
+    if (selectedVertexIndex !== null && angleInputRef.current) angleInputRef.current.focus();
+  }, [selectedVertexIndex, construction.constraints.length]);
+
+  // --- LÓGICA DEL LIENZO ÚNICO ---
+  let displayPoints = vertices;
+  let unitScale = canvasSize.width / DRAWING_WIDTH;
+  let isProvisional = false;
+
+  if (isClosed) {
+    const sourcePoints = result?.vertices_mm ? result.vertices_mm.map(([x,y]) => ({x, y})) : vertices;
+    const geometry = fitVerticesToPreview(sourcePoints, canvasSize.width, canvasSize.height, 40);
+    if (geometry) {
+      displayPoints = geometry.points;
+      unitScale = 1; 
+    }
+    isProvisional = !dimensionsReady;
+  }
+
+  const drawingPointsString = displayPoints.map(({ x, y }) => `${x},${y}`).join(" ");
+
+  function selectVertex(vertexIndex) {
+    if (disabled || !isClosed || vertices.length <= 3) return;
+    setSelectedVertexIndex(vertexIndex);
+    setActiveSegmentIndex(vertexIndex);
+  }
 
   function addVertex(event) {
     if (disabled || event.button !== 0 || isClosed) return;
     const screenMatrix = event.currentTarget.getScreenCTM();
     if (!screenMatrix) return;
     const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(screenMatrix.inverse());
-    if (point.x < 0 || point.x > DRAWING_WIDTH || point.y < 0 || point.y > DRAWING_HEIGHT) return;
-    setDrawing((current) => current.isClosed ? current : {
-      ...current, vertices: [...current.vertices, { x: point.x, y: point.y }],
-    });
+    setDrawing((current) => ({ ...current, vertices: [...current.vertices, { x: point.x, y: point.y }] }));
   }
 
   function closePolygon(event) {
@@ -204,224 +233,251 @@ function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState,
     closedWithKeyboard.current = event.detail === 0;
     setSegments(createSegments(vertices));
     setActiveSegmentIndex(0);
+    setSelectedVertexIndex(null);
     setDrawing((current) => ({ ...current, isClosed: true }));
-  }
-
-  function undoVertex() {
-    setConstruction({ mode: 'cyclic', angle: '90', constraints: [] });
-    setSegments([]);
-    setActiveSegmentIndex(null);
-    setDrawing((current) => ({ vertices: current.vertices.slice(0, -1), isClosed: false }));
-    if (vertices.length === 1) drawingHeadingRef.current?.focus({ preventScroll: true });
   }
 
   function resetDrawing() {
     setConstruction({ mode: 'cyclic', angle: '90', constraints: [] });
-    setSegments([]);
-    setActiveSegmentIndex(null);
+    setSegments([]); setActiveSegmentIndex(null); setSelectedVertexIndex(null);
     setDrawing({ vertices: [], isClosed: false });
-    drawingHeadingRef.current?.focus({ preventScroll: true });
   }
 
   function updateSegment(index, lengthMm, badInput) {
-    setSegments((current) => current.map((segment) => segment.index === index ? { ...segment, lengthMm, badInput } : segment));
+    setSegments((current) => current.map((s) => s.index === index ? { ...s, lengthMm, badInput } : s));
   }
 
-  function toggleAngle(vertex) {
-    setActiveSegmentIndex(vertex);
-    setConstruction(current => ({ ...current, constraints: current.constraints.some(item => item.vertex === vertex)
-      ? current.constraints.filter(item => item.vertex !== vertex)
-      : current.constraints.length < vertices.length - 3
-        ? [...current.constraints, { vertex, angle: String(angles[vertex] ?? 90) }] : current.constraints }));
+  function handleAngleFix(vertex, angleValue) {
+    setConstruction(current => {
+      const isFixed = current.constraints.some(c => c.vertex === vertex);
+      let newConstraints = [...current.constraints];
+      
+      if (isFixed) {
+        newConstraints = newConstraints.map(c => c.vertex === vertex ? { vertex, angle: angleValue } : c);
+      } else {
+        if (newConstraints.length >= maxConstraints) return current;
+        newConstraints.push({ vertex, angle: angleValue });
+      }
+      return { ...current, constraints: newConstraints };
+    });
   }
 
-  function updateAngle(vertex, angle) {
-    setConstruction(current => ({ ...current, angle: vertex === 1 ? angle : current.angle,
-      constraints: current.constraints.map(item => item.vertex === vertex ? { vertex, angle } : item) }));
-  }
-
-  function addPiece() {
-    if (!canAdd) return;
-
-    if (onGuardarVertices) {
-      onGuardarVertices({
-        // Vértices físicos para la base de datos
-        vertices: result.vertices_mm.map((point) => [...point]),
-        // Memoria gráfica para poder volver a editar
-        rawState: {
-          drawing: { vertices: drawing.vertices, isClosed: drawing.isClosed },
-          segments: segments,
-          construction: { ...construction, constraints: construction.constraints.map(item => ({ ...item })) },
-        }
-      });
-    }
-    resetDrawing();
+  function unfixAngle(vertex) {
+    setConstruction(current => ({
+      ...current, constraints: current.constraints.filter(c => c.vertex !== vertex)
+    }));
   }
 
   return (
-    <div className="custom-piece-editor__content" data-closed={isClosed}>
-      <section className="custom-piece-editor__workspace" aria-labelledby={drawingHeadingId}>
-        <div className="custom-piece-editor__workspace-header">
-          <h3 id={drawingHeadingId} ref={drawingHeadingRef} tabIndex={-1}>
-            <span className="custom-piece-editor__step" aria-hidden="true">1</span>Dibujo original
-          </h3>
-          <div className="custom-piece-editor__status" role="status" aria-atomic="true">
-            <strong data-closed={isClosed}>{isClosed ? "Polígono cerrado" : "Polígono abierto"}</strong>
-            <span>{vertices.length} {vertices.length === 1 ? "vértice" : "vértices"}</span>
-          </div>
-        </div>
-        <div className="custom-piece-editor__surface">
-          <span className="custom-piece-editor__canvas-label">Boceto · Sin escala física</span>
-          {/* Inherited T01 limitation: full keyboard drawing remains outside T02. */}
-          <svg ref={canvasRef} className="custom-piece-editor__canvas" viewBox={`0 0 ${DRAWING_WIDTH} ${DRAWING_HEIGHT}`}
-            role="img" aria-label="Lienzo del dibujo original, sin escala física"
-            aria-describedby={isClosed ? correctionId : instructionsId} data-closed={isClosed} onClick={addVertex}>
-            <g className="custom-piece-editor__drawing" aria-hidden="true">
-              {isClosed ? <polygon points={drawingPoints} /> : <polyline points={drawingPoints} />}
-              {vertices.map((vertex, index) => <circle key={index} cx={vertex.x} cy={vertex.y} r="4" />)}
-            </g>
-            {isClosed && <SegmentOverlay points={vertices} activeSegmentIndex={activeSegmentIndex}
-              width={DRAWING_WIDTH} height={DRAWING_HEIGHT} unitScale={canvasSize.width / DRAWING_WIDTH} />}
-          </svg>
-          {!vertices.length && <div className="custom-piece-editor__empty" aria-hidden="true">
-            <MousePointer2 size={24} strokeWidth={1.5} /><strong>Haz clic para comenzar</strong>
-            <span>Marca los vértices siguiendo el contorno de la pieza.</span>
-          </div>}
-        </div>
-        <div className="custom-piece-editor__toolbar" role="group" aria-label="Herramientas de dibujo">
-          <button type="button" className="custom-piece-editor__button" disabled={!vertices.length} onClick={undoVertex}
-            aria-label="Deshacer último vértice" title="Deshacer último vértice" aria-describedby={isClosed ? correctionId : undefined}>
-            <Undo2 size={16} aria-hidden="true" /> Deshacer
-          </button>
-          <button type="button" className="custom-piece-editor__button custom-piece-editor__button--quiet" disabled={!vertices.length}
-            onClick={resetDrawing} aria-label="Reiniciar dibujo" aria-describedby={isClosed ? correctionId : undefined}>
-            <RotateCcw size={16} aria-hidden="true" /> Reiniciar
-          </button>
-          {!isClosed ? <button type="button" className="custom-piece-editor__button custom-piece-editor__button--primary"
-            disabled={vertices.length < 3} onClick={closePolygon} aria-describedby={instructionsId}>
-            <Check size={16} aria-hidden="true" /> Cerrar polígono
-          </button> : <span className="custom-piece-editor__closed-feedback"><Check size={16} aria-hidden="true" /> Contorno cerrado</span>}
-        </div>
-        {!isClosed ? <p id={instructionsId} className="custom-piece-editor__instructions">
-          {vertices.length < 3
-            ? `Falta${vertices.length === 2 ? "" : "n"} ${3 - vertices.length} ${vertices.length === 2 ? "vértice" : "vértices"} para cerrar. Deshacer elimina el último punto.`
-            : "Puedes seguir dibujando o cerrar el polígono para medir cada lado."}
-        </p> : <p id={correctionId} className="custom-piece-editor__correction-note">
-          Deshacer reabre y elimina el último vértice. Reiniciar borra el dibujo.
-          {hasMeasurements && " Ambas acciones borran las medidas ingresadas."}
-        </p>}
-      </section>
-      <section ref={dimensionsRef} className="custom-piece-editor__dimensions" aria-labelledby={dimensionsHeadingId}>
-        <h3 id={dimensionsHeadingId}><span className="custom-piece-editor__step" aria-hidden="true">2</span>Dimensiones por segmento</h3>
-        {!isClosed ? <p className="custom-piece-editor__section-help">Cierra el polígono para identificar sus lados e ingresar sus longitudes en milímetros.</p> : <>
-          <label className="custom-piece-editor__configuration">Configuración geométrica
-            <select value={construction.mode} disabled={construction.constraints.length > 0} onChange={event => setConstruction(current => ({ ...current, mode: event.target.value,
-              constraints: event.target.value === 'angle' ? [{ vertex: 1, angle: current.angle }] : current.constraints }))}>
-              <option value="cyclic">{vertices.length === 3 ? 'Triángulo por tres lados' : 'Lados independientes · polígono cíclico'}</option>
-              {vertices.length === 4 && <option value="angle">Lados independientes · ángulo fijado en V2</option>}
-              <option value="guided">Usar boceto como punto de partida</option>
-            </select>
-          </label>
-          {construction.constraints.length > 0 && <p className="custom-piece-editor__section-help">Libera los ángulos fijados para cambiar la configuración de partida.</p>}
-          <p className="custom-piece-editor__section-help">{construction.constraints.length
-            ? 'Las longitudes y los ángulos fijados definen restricciones de la forma final. El boceto orienta la búsqueda, sin medir ángulos exactos.'
-            : construction.mode === 'guided' ? 'Todos los lados son independientes. El boceto orienta la búsqueda de una forma convexa; no fija ángulos exactos.'
-            : vertices.length === 3 ? 'Ingresa los tres lados. Los ángulos se calculan a partir del triángulo resultante.'
-            : construction.mode === 'angle' ? 'Ingresa los cuatro lados y fija el ángulo entre S1 y S2 para definir la forma.'
-            : 'Las longitudes no definen una única forma. Esta configuración coloca todos los vértices sobre una circunferencia para construir un polígono convexo. El boceto indica el número y orden de los lados; la vista dimensional muestra la forma final.'}</p>
-          <p className="custom-piece-editor__progress" role="status" aria-atomic="true">{measuredCount} de {segments.length} medidas ingresadas</p>
-          <ol className="custom-piece-editor__segment-list">
-            {segments.map((segment) => <SegmentField key={segment.id} segment={segment} active={activeSegmentIndex === segment.index}
-              inputRef={segment.index === 0 ? firstInputRef : undefined} onSelect={() => setActiveSegmentIndex(segment.index)}
-              onChange={(value, badInput) => updateSegment(segment.index, value, badInput)} />)}
-          </ol>
-          <p className="custom-piece-editor__section-help">El lado seleccionado se resalta en ambos dibujos. Cada longitud se edita de forma independiente.</p>
-        </>}
-      </section>
-      {isClosed && <section className="custom-piece-editor__preview" aria-labelledby={previewHeadingId}>
-        <div className="custom-piece-editor__preview-header">
-          <h3 id={previewHeadingId}><span className="custom-piece-editor__step" aria-hidden="true">3</span>Vista dimensional</h3>
-          <p className="custom-piece-editor__preview-status" data-ready={dimensionsReady} role="status" aria-atomic="true">
-            {dimensionsReady ? "Vista dimensional completa" : "Vista dimensional provisional"}
-            {result.status === "error" && " · Cierre pendiente"}
-          </p>
-        </div>
-        <p className="custom-piece-editor__section-help">
-          {`${measuredCount} de ${segments.length} lados medidos. ${dimensionsReady ? 'Geometría final según la configuración elegida.' : 'Completa todos los lados y revisa las restricciones para construir la geometría final.'}`}
-        </p>
-        <div className="custom-piece-editor__preview-surface">
-          {result.status === "error" ? <div className="custom-piece-editor__preview-placeholder">
-            <p className="custom-piece-editor__geometry-error" role="alert">{dimensionalError(result)}</p>
-          </div> : <DimensionalPreview vertices={vertices} result={result} activeSegmentIndex={activeSegmentIndex} />}
-        </div>
-        <div className="custom-piece-editor__preview-caption">
-          <p className="custom-piece-editor__active-length"><strong>{activeSegment?.id}</strong><span>{activeLength}</span></p>
-          <p className="custom-piece-editor__preview-note">{!dimensionsReady && "Trazo discontinuo: sin medida real. "}Cuadrícula de referencia, sin escala en mm.</p>
-        </div>
-        <p className="custom-piece-editor__section-help">Los vértices finales definen la forma guardada. Los ángulos se calculan desde esos vértices.</p>
-      </section>}
-      {isClosed && (angles.length > 0 || construction.constraints.length > 0 || (vertices.length > 3 && measuredCount === vertices.length)) && <section className="custom-piece-editor__angles" aria-label="Ángulos interiores">
-        <h3>Ángulos interiores</h3>
-        <p>Puedes fijar hasta {vertices.length - 3} ángulos para definir la forma.</p>
-        <p role="status">Restricciones de forma: {construction.constraints.length} de {vertices.length - 3} utilizadas</p>
-        <ol>{vertices.map((_, index) => {
-          const fixed = construction.constraints.find(item => item.vertex === index);
-          return <li key={index} data-active={activeSegmentIndex === index}>
-            {fixed ? <label>Ángulo interior fijado en V{index + 1} (grados)
-              <input type="number" step="any" required value={fixed.angle}
-                aria-invalid={!isPositiveLength(fixed.angle) || Number(fixed.angle) >= 180}
-                onFocus={() => setActiveSegmentIndex(index)} onChange={event => updateAngle(index, event.target.value)} /> Fijado
-            </label> : <span>V{index + 1}: {angles[index] === undefined ? '—' : `${formatLength(angles[index])}°`} Calculado</span>}
-            <span> (entre S{index || vertices.length} y S{index + 1}) </span>
-            {vertices.length > 3 && <button type="button" onClick={() => toggleAngle(index)}
-              disabled={!fixed && construction.constraints.length >= vertices.length - 3}
-              aria-label={`${fixed ? 'Liberar' : 'Fijar'} ángulo V${index + 1}`}>
-              {fixed ? 'Liberar ángulo' : 'Fijar ángulo'}
-            </button>}
-          </li>;
-        })}</ol>
-      </section>}
-      <section className="custom-piece-editor__next-step" aria-labelledby={validationId}>
-        <div>
-          <h3 id={validationId}><span className="custom-piece-editor__step" aria-hidden="true">4</span>Validación geométrica</h3>
-          <div
-            role={validationRejected ? "alert" : "status"}
-            aria-label="Resultado de validación geométrica"
-            aria-atomic="true"
-          >
-            <p
-              id={validationMessageId}
-              className="custom-piece-editor__validation-message"
-              data-valid={validation.isValid}
-              data-rejected={validationRejected}
-            >
-              {validation.message}
-            </p>
-          </div>
-          {validationRejected && <p>Revisa las medidas o deshaz el dibujo para corregir el contorno.</p>}
-          <p id={validationHelpId}>{headerReady
-            ? helpText
-            : "Selecciona el tipo de vidrio y el espesor en Nuevo pedido para agregar piezas."}</p>
-        </div>
-        {!onGeometryChange && <button type="button" className="custom-piece-editor__button custom-piece-editor__button--add" disabled={!canAdd} onClick={addPiece} aria-describedby={`${validationMessageId} ${validationHelpId}`}>
-          <Plus size={16} aria-hidden="true" /> {addLabel}
-        </button>}
-      </section>
-    </div>
-  );
-}
+    <section className="custom-piece-editor" aria-labelledby={headingId}>
+      <div className="custom-piece-editor__header">
+        <h2 id={headingId}>{title}</h2>
+      </div>
 
-export default function CustomPieceEditor({ onGuardarVertices, initialState, headerReady = true, disabled = false,
-  title = "Pieza personalizada", addLabel = "Agregar pieza al pedido",
-  helpText = "Agrega la pieza y guarda el pedido para registrarla.", onGeometryChange,
-}) {
-  const headingId = useId();
-  return <section className="custom-piece-editor" aria-labelledby={headingId}>
-    <header className="custom-piece-editor__header"><h2 id={headingId}>{title}</h2>
-      <p>Traza los lados, ingresa sus medidas y elige la configuración de la forma final.</p></header>
-    <fieldset className="custom-piece-editor__fieldset" disabled={disabled}>
-      <PolygonCanvas onGuardarVertices={onGuardarVertices} initialState={initialState} headerReady={headerReady} disabled={disabled} addLabel={addLabel} helpText={helpText} onGeometryChange={onGeometryChange} />
-    </fieldset>
-    {!onGeometryChange && <p className="custom-piece-editor__notice">Las piezas agregadas se registran al guardar el pedido.</p>}
-  </section>;
+      <fieldset className="custom-piece-editor__fieldset" disabled={disabled}>
+        
+        <div className="custom-piece-editor__split-layout">
+          
+          {/* --- COLUMNA IZQUIERDA: LIENZO Y VALIDACIÓN --- */}
+          <div className="custom-piece-editor__canvas-pane">
+            <div className="custom-piece-editor__toolbar">
+              {!isClosed ? (
+                <button type="button" className="custom-piece-editor__button custom-piece-editor__button--primary" disabled={vertices.length < 3} onClick={closePolygon}>
+                  <Check size={16} /> Cerrar polígono
+                </button>
+              ) : (
+                <span style={{ color: 'var(--editor-success)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Check size={16} /> Geometría calculada
+                </span>
+              )}
+              <button type="button" className="custom-piece-editor__button" disabled={!vertices.length} onClick={() => setDrawing(c => ({...c, vertices: c.vertices.slice(0, -1)}))} style={{ marginLeft: 'auto', display: isClosed ? 'none' : 'flex' }}>
+                <Undo2 size={16} /> Deshacer
+              </button>
+              <button type="button" className="custom-piece-editor__button" disabled={!vertices.length} onClick={resetDrawing}>
+                <RotateCcw size={16} /> Reiniciar
+              </button>
+            </div>
+
+            <div className="custom-piece-editor__surface" ref={canvasRef}>
+              <span className="custom-piece-editor__canvas-label">
+                {!isClosed ? "Boceto libre" : isProvisional ? "Vista Dimensional (Calculando...)" : "Vista Dimensional Exacta"}
+              </span>
+              <svg className="custom-piece-editor__canvas" viewBox={`0 0 ${isClosed ? canvasSize.width : DRAWING_WIDTH} ${isClosed ? canvasSize.height : DRAWING_HEIGHT}`}
+                data-closed={isClosed} onClick={addVertex}>
+                <g className="custom-piece-editor__drawing" aria-hidden="true">
+                  {isClosed ? (
+                    <polygon points={drawingPointsString} data-provisional={isProvisional} />
+                  ) : (
+                    <>
+                      <polyline points={drawingPointsString} />
+                      {vertices.map((vertex, index) => <circle key={index} cx={vertex.x} cy={vertex.y} r="5" className="custom-piece-editor__vertex-point" />)}
+                    </>
+                  )}
+                </g>
+                {/* Dibuja las etiquetas y hace la magia del in-situ */}
+                {isClosed && (
+                  <SegmentOverlay
+                    points={displayPoints} angles={angles} activeSegmentIndex={activeSegmentIndex}
+                    selectedVertexIndex={selectedVertexIndex} fixedVertices={fixedVertices}
+                    onSelectVertex={vertices.length > 3 ? selectVertex : null}
+                    width={canvasSize.width} height={canvasSize.height} unitScale={unitScale}
+                  />
+                )}
+              </svg>
+              {!vertices.length && (
+                <div className="custom-piece-editor__empty" aria-hidden="true">
+                  <MousePointer2 size={24} strokeWidth={1.5} /><strong>Haz clic para comenzar</strong>
+                  <span>Imagina la forma de tu vidrio y marca cada esquina.</span>
+                </div>
+              )}
+            </div>
+
+            {/* NUEVO LUGAR PARA LA VALIDACIÓN GEOMÉTRICA */}
+            {isClosed && (
+              <div className="custom-piece-editor__validation-box">
+                <h3 id={validationId}>Validación geométrica</h3>
+                <div role={validationRejected ? "alert" : "status"} aria-atomic="true">
+                  {result?.status === "error" ? (
+                    <p className="custom-piece-editor__geometry-error">{dimensionalError(result)}</p>
+                  ) : validationRejected ? (
+                    <p className="custom-piece-editor__geometry-error">{validation.message || "La figura dibujada tiene cruces o ángulos inválidos."}</p>
+                  ) : validation.isValid && isClosed && dimensionsReady ? (
+                    <p className="custom-piece-editor__validation-message" data-valid="true">
+                      ✓ Geometría validada y lista.
+                    </p>
+                  ) : (
+                    <p className="custom-piece-editor__validation-message" style={{ color: 'var(--editor-muted)' }}>
+                      Pendiente de completar dimensiones.
+                    </p>
+                  )}
+                </div>
+                {!dimensionsReady && !validationRejected && result?.status !== "error" && (
+                  <p className="custom-piece-editor__validation-hint">{headerReady ? helpText : "Selecciona el tipo de vidrio y el espesor en Nuevo pedido para agregar piezas."}</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* --- COLUMNA DERECHA: CONTROLES --- */}
+          <div className="custom-piece-editor__controls-pane">
+            {!isClosed ? (
+              <div className="custom-piece-editor__instruction-panel">
+                <h3>Paso 1: Dibujar contorno</h3>
+                <p style={{ color: 'var(--editor-muted)', fontSize: '14px', lineHeight: '1.5' }}>
+                  Haz clic en el lienzo vacío para marcar las esquinas de tu pieza. 
+                  Sigue el borde en orden hasta formar la figura completa. No te preocupes por el tamaño, las medidas se ingresan en el siguiente paso.
+                </p>
+                <p style={{ marginTop: '12px' }}><strong>Faltan {Math.max(0, 3 - vertices.length)} vértices</strong> para poder cerrar la figura.</p>
+              </div>
+            ) : (
+              <>
+                <div className="custom-piece-editor__measurements-panel">
+                  <h3>Paso 2: Medidas y Ángulos</h3>
+                  
+                  {vertices.length === 3 ? (
+                    <p style={{ color: 'var(--editor-muted)', fontSize: '13px', lineHeight: '1.5', marginBottom: '8px' }}>
+                      Ingresa la medida de los 3 lados. Al ser un triángulo, la figura tomará su forma correcta automáticamente sin necesidad de fijar ángulos.
+                    </p>
+                  ) : (
+                    <p style={{ color: 'var(--editor-muted)', fontSize: '13px', lineHeight: '1.5', marginBottom: '8px' }}>
+                      Ingresa las medidas de cada lado. Para que esta figura de {vertices.length} lados tome su forma exacta, <strong>puedes fijar hasta {maxConstraints} {maxConstraints === 1 ? 'ángulo' : 'ángulos'}</strong> haciendo clic en las esquinas del dibujo.
+                    </p>
+                  )}
+                  
+                  <div className="custom-piece-editor__configuration">
+                    <label style={{ fontSize: '13px', fontWeight: '600', color: 'var(--editor-navy)' }}>Comportamiento de la figura</label>
+                    <select value={construction.mode} disabled={construction.constraints.length > 0} onChange={e => setConstruction(c => ({...c, mode: e.target.value}))}>
+                      <option value="cyclic">{vertices.length === 3 ? 'Triángulo (Automático)' : 'Polígono Cíclico (Automático)'}</option>
+                      <option value="guided">Guiado por mi boceto inicial</option>
+                    </select>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
+                    <span style={{ fontSize: '13px', color: 'var(--editor-navy)', fontWeight: '650' }}>Lados de la pieza</span>
+                    <span style={{ fontSize: '12px', color: 'var(--editor-muted)' }}>{measuredCount} / {segments.length} completados</span>
+                  </div>
+
+                  <ol className="custom-piece-editor__segment-list">
+                    {segments.map((segment) => <SegmentField key={segment.id} segment={segment} active={activeSegmentIndex === segment.index}
+                      inputRef={segment.index === 0 ? firstInputRef : undefined} onSelect={() => setActiveSegmentIndex(segment.index)}
+                      onChange={(value, badInput) => updateSegment(segment.index, value, badInput)} />)}
+                  </ol>
+                  
+                  {/* LISTA DINÁMICA DE MÚLTIPLES ÁNGULOS */}
+                  {vertices.length > 3 && (
+                    <div className="custom-piece-editor__angles-panel">
+                      <h4>
+                        <span>Ángulos interiores <MousePointerClick size={14} style={{ display: 'inline', verticalAlign: 'middle', marginLeft: '4px' }}/></span>
+                        <span style={{ fontSize: '12px', color: 'var(--editor-muted)', fontWeight: 'normal' }}>{construction.constraints.length} / {maxConstraints} fijados</span>
+                      </h4>
+                      
+                      {construction.constraints.length === 0 && selectedVertexIndex === null ? (
+                        <p style={{ fontSize: '12px', color: 'var(--editor-muted)', margin: 0, lineHeight: '1.5' }}>
+                          Haz clic en las esquinas del dibujo (V1, V2...) para fijar un ángulo exacto si la pieza lo requiere.
+                        </p>
+                      ) : (
+                        <ul className="custom-piece-editor__angle-list">
+                          {vertices.map((_, index) => {
+                            const fixed = construction.constraints.find(c => c.vertex === index);
+                            const isSelected = selectedVertexIndex === index;
+                            
+                            if (!fixed && !isSelected) return null;
+                            
+                            const displayAngleValue = fixed 
+                              ? fixed.angle 
+                              : (angles[index] !== undefined && !Number.isNaN(angles[index]) 
+                                  ? Number(angles[index].toFixed(2)) 
+                                  : "");
+
+                            return (
+                              <li key={index} className="custom-piece-editor__vertex-input-group" data-active={isSelected ? "true" : undefined}>
+                                <span>V{index + 1}</span>
+                                <input
+                                  ref={isSelected ? angleInputRef : null}
+                                  type="number" step="any" placeholder="Ángulo"
+                                  value={displayAngleValue}
+                                  onChange={(e) => handleAngleFix(index, e.target.value)}
+                                  onFocus={() => { setActiveSegmentIndex(index); setSelectedVertexIndex(index); }}
+                                  disabled={!fixed && isLimitReached}
+                                />
+                                {fixed ? (
+                                  <button type="button" data-active="true" onClick={() => unfixAngle(index)}>Liberar</button>
+                                ) : (
+                                  <button 
+                                    type="button" 
+                                    disabled={isLimitReached}
+                                    onClick={() => handleAngleFix(index, String(angles[index] !== undefined && !Number.isNaN(angles[index]) ? Number(angles[index].toFixed(2)) : 90))}
+                                  >
+                                    Fijar
+                                  </button>
+                                )}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* BOTÓN AL FINAL DE LA COLUMNA DE CONTROLES */}
+                {!onGeometryChange && (
+                  <div style={{ marginTop: 'auto', paddingTop: '16px' }}>
+                    <button type="button" className="custom-piece-editor__button--add" disabled={!canAdd} onClick={() => {
+                      if (onGuardarVertices) onGuardarVertices({
+                        vertices: result.vertices_mm.map((point) => [...point]),
+                        rawState: { drawing: { vertices: drawing.vertices, isClosed: drawing.isClosed }, segments, construction }
+                      });
+                    }}>
+                      <Plus size={18} /> {addLabel}
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      </fieldset>
+    </section>
+  );
 }
