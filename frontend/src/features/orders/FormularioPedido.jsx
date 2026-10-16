@@ -90,7 +90,7 @@ export default function FormularioPedido({
   const [loadError, setLoadError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [estadoPedido, setEstadoPedido] = useState('PENDIENTE');
-  
+
   const [materialGroups, setMaterialGroups] = useState([]);
   const initialSnapshotRef = useRef(null);
 
@@ -107,7 +107,7 @@ export default function FormularioPedido({
   const editorDialogRef = useRef(null);
   const editorCloseRef = useRef(null);
   const editorTriggerRef = useRef(null);
-  
+
   const editing = idPedido !== null && idPedido !== undefined;
   const creating = !editing && mode === 'create';
   const readOnly = editing && estadoPedido !== 'PENDIENTE';
@@ -116,7 +116,7 @@ export default function FormularioPedido({
 
   const createEmptyPiece = () => ({
     id: nextPieceIdRef.current++,
-    nombre: '', 
+    nombre: '',
     cantidad: 1,
     tipo_forma: 'RECTANGULO',
     dimensiones: { width_mm: '', height_mm: '' },
@@ -135,7 +135,7 @@ export default function FormularioPedido({
         ]);
         if (controller.signal.aborted) return;
         setTiposDisponibles(materials.filter((material) => material.estado !== false));
-        
+
         if (order) {
           setEstadoPedido(order.estado);
           nextPieceIdRef.current = 0;
@@ -154,7 +154,7 @@ export default function FormularioPedido({
             }
             groupsMap.get(key).piezas.push(pieceFromResponse(piece, index, nextPieceIdRef.current++));
           });
-          
+
           const groups = Array.from(groupsMap.values());
           let globalPieceIndex = 1;
           groups.forEach(group => {
@@ -270,7 +270,7 @@ export default function FormularioPedido({
     const id = `${formId}-${identifier}-${field}`;
     const errorId = `${id}-error`;
     let error = '';
-    
+
     if (touched[`${identifier}:${field}`]) {
        if (field === 'material' && !value) error = 'Selecciona un material.';
        else if (field === 'espesor' && !positiveNumber(value)) error = 'Selecciona un espesor válido.';
@@ -307,7 +307,7 @@ export default function FormularioPedido({
 
   function isValid() {
     if ((creating && !selectedClient) || loadError || !materialGroups.length) return false;
-    
+
     const uniqueKeys = new Set(materialGroups.filter(g => g.tipo_vidrio_id && g.espesor).map(g => `${g.tipo_vidrio_id}-${g.espesor}`));
     if (uniqueKeys.size !== materialGroups.filter(g => g.tipo_vidrio_id && g.espesor).length) return false;
 
@@ -363,7 +363,7 @@ export default function FormularioPedido({
 
         {!isLoading && (!loadError || creating) && <>
           {creating && <OrderClientSelector key={clientFormKey} value={selectedClient} onChange={setSelectedClient} disabled={isSubmitting} token={token} />}
-          
+
           <section className="orders-section">
             <div className="orders-section__header">
               <div>
@@ -376,20 +376,20 @@ export default function FormularioPedido({
 
             <div ref={listaAnimada} className="orders-materials">
               {creating && !selectedClient ? (
-                <EmptyState 
-                  title="Falta seleccionar cliente" 
-                  description="Busca y selecciona un cliente en la parte superior para habilitar la configuración de piezas." 
+                <EmptyState
+                  title="Falta seleccionar cliente"
+                  description="Busca y selecciona un cliente en la parte superior para habilitar la configuración de piezas."
                 />
               ) : !materialGroups.length ? (
-                <EmptyState 
-                  title="No hay materiales agregados" 
-                  description="Haz clic en «Agregar otro material» para comenzar." 
+                <EmptyState
+                  title="No hay materiales agregados"
+                  description="Haz clic en «Agregar otro material» para comenzar."
                 />
               ) : (
                 materialGroups.map((group) => {
                   const materialField = fieldProps(group.id, 'material', group.tipo_vidrio_id);
                   const thicknessField = fieldProps(group.id, 'espesor', group.espesor);
-                  
+
                   // NUEVA REGLA ESTRICTA: ¿Falta seleccionar vidrio o espesor en este grupo?
                   const isMaterialMissing = !group.tipo_vidrio_id || !group.espesor;
                   // Si falta material o el formulario está bloqueado, se deshabilita todo.
@@ -441,7 +441,7 @@ export default function FormularioPedido({
                         <div className="orders-pieces-list">
                           {group.piezas.map((piece) => {
                             const quantityField = fieldProps(piece.id, 'cantidad', piece.cantidad);
-                            
+
                             return (
                               <div className="orders-piece" key={piece.id}>
                                 <div className="orders-piece__header">
@@ -455,14 +455,14 @@ export default function FormularioPedido({
                                     </button>
                                   )}
                                 </div>
-                                
+
                                 <div className="orders-fields-row">
                                   <div className="orders-field">
                                     <label htmlFor={`forma-${piece.id}`}>Forma</label>
                                     <select id={`forma-${piece.id}`} value={piece.tipo_forma} onChange={(e) => {
                                       updatePiece(group.id, piece.id, 'tipo_forma', e.target.value);
                                       if (e.target.value === 'POLIGONO_CONVEXO') openEditor(group.id, piece.id);
-                                    }} 
+                                    }}
                                     disabled={disablePieceEditing} /* BLOQUEADO SI FALTA MATERIAL */
                                     className="ng-control orders-control orders-control--shape">
                                       <option value="RECTANGULO">Rectángulo</option>
@@ -476,7 +476,7 @@ export default function FormularioPedido({
                                     const props = fieldProps(piece.id, field, piece.dimensiones[field]);
                                     return <div className="orders-field" key={field}>
                                       <label htmlFor={props.id}>{label}</label>
-                                      <input {...props} id={props.id} type="number" min="0" step="any" placeholder={label} value={piece.dimensiones[field]} onChange={(e) => updatePiece(group.id, piece.id, field, e.target.value)} 
+                                      <input {...props} id={props.id} type="number" min="0" step="any" placeholder={label} value={piece.dimensiones[field]} onChange={(e) => updatePiece(group.id, piece.id, field, e.target.value)}
                                       disabled={disablePieceEditing} /* BLOQUEADO SI FALTA MATERIAL */
                                       className="ng-control orders-control orders-control--dimension" />
                                       {props.error}
@@ -487,7 +487,7 @@ export default function FormularioPedido({
                                     const props = fieldProps(piece.id, 'radius_mm', piece.dimensiones.radius_mm);
                                     return <div className="orders-field">
                                       <label htmlFor={props.id}>Radio (mm)</label>
-                                      <input {...props} id={props.id} type="number" min="0" step="any" placeholder="Radio (mm)" value={piece.dimensiones.radius_mm} onChange={(e) => updatePiece(group.id, piece.id, 'radius_mm', e.target.value)} 
+                                      <input {...props} id={props.id} type="number" min="0" step="any" placeholder="Radio (mm)" value={piece.dimensiones.radius_mm} onChange={(e) => updatePiece(group.id, piece.id, 'radius_mm', e.target.value)}
                                       disabled={disablePieceEditing} /* BLOQUEADO SI FALTA MATERIAL */
                                       className="ng-control orders-control orders-control--dimension" />
                                       {props.error}
@@ -505,10 +505,10 @@ export default function FormularioPedido({
                                       ) : (
                                         <span className="orders-polygon-status__pending">Falta configurar</span>
                                       )}
-                                      <button 
-                                        type="button" 
-                                        className="ng-button orders-editor-open" 
-                                        onClick={() => openEditor(group.id, piece.id)} 
+                                      <button
+                                        type="button"
+                                        className="ng-button orders-editor-open"
+                                        onClick={() => openEditor(group.id, piece.id)}
                                         disabled={disablePieceEditing} /* BLOQUEADO SI FALTA MATERIAL */
                                       >
                                         {readOnly ? 'Ver figura' : 'Editar figura'}
@@ -518,7 +518,7 @@ export default function FormularioPedido({
 
                                   <div className="orders-field">
                                     <label htmlFor={quantityField.id}>Cantidad</label>
-                                    <input {...quantityField} id={quantityField.id} type="number" min="1" step="1" placeholder="Cant." value={piece.cantidad} onChange={(e) => updatePiece(group.id, piece.id, 'cantidad', e.target.value)} 
+                                    <input {...quantityField} id={quantityField.id} type="number" min="1" step="1" placeholder="Cant." value={piece.cantidad} onChange={(e) => updatePiece(group.id, piece.id, 'cantidad', e.target.value)}
                                     disabled={disablePieceEditing} /* BLOQUEADO SI FALTA MATERIAL */
                                     className="ng-control orders-control orders-control--quantity" />
                                     {quantityField.error}
@@ -528,10 +528,10 @@ export default function FormularioPedido({
                             );
                           })}
                         </div>
-                        
+
                         {!readOnly && (
                           <div style={{ marginTop: '12px' }}>
-                            <button type="button" className="ng-button" onClick={() => addPieceToGroup(group.id)} 
+                            <button type="button" className="ng-button" onClick={() => addPieceToGroup(group.id)}
                             disabled={disableEditing || isMaterialMissing} /* BLOQUEADO SI FALTA MATERIAL */>
                               <Plus size={16} /> Agregar pieza
                             </button>

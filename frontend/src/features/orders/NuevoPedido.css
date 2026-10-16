@@ -110,11 +110,11 @@
 .orders-fields-row {
   display: flex;
   align-items: flex-end;
-  flex-wrap: nowrap; 
+  flex-wrap: nowrap;
   gap: var(--ng-space-4) var(--ng-space-6);
   /* Añadimos padding arriba (4px), derecha (4px), abajo (8px) para que el focus no se corte, y mantenemos el padding izquierdo original */
   padding: 4px 4px 8px var(--ng-space-12);
-  overflow-x: auto; 
+  overflow-x: auto;
 }
 
 .orders-field {

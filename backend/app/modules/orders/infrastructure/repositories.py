@@ -137,7 +137,7 @@ class SQLAlchemyOrderRepository(OrderRepositoryPort):
 
         stmt = stmt.order_by(
             orden_prioridad.asc(),
-            Pedido.fecha_registro.desc(), 
+            Pedido.fecha_registro.desc(),
             Pedido.id_pedido.desc(),
         ).offset(offset).limit(limit)
         rows = self.session.execute(stmt).all()

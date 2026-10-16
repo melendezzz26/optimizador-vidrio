@@ -86,14 +86,14 @@ function SegmentOverlay({
         return <line key={index} x1={start.x} y1={start.y} x2={end.x} y2={end.y}
           data-active={index === activeSegmentIndex} vectorEffect="non-scaling-stroke" />;
       })}
-      
+
       {labels.map(({ index, x, y }) => {
         if (occupied.some((label) => Math.abs(label.x - x) * unitScale < 44 && Math.abs(label.y - y) * unitScale < 26)) return null;
         occupied.push({ x, y });
         return <text key={index} x={x} y={y} textAnchor="middle" dominantBaseline="central"
           style={{ fontSize: 14 / unitScale, strokeWidth: 5 / unitScale }} data-active={index === activeSegmentIndex}>S{index + 1}</text>;
       })}
-      
+
       {points.map((point, index) => {
         const angleVal = angles[index] !== undefined && !Number.isNaN(angles[index]) ? `${Math.round(angles[index])}°` : '';
         const labelText = angleVal ? `V${index + 1} (${angleVal})` : `V${index + 1}`;
@@ -101,7 +101,7 @@ function SegmentOverlay({
         const isFixed = fixedVertices.includes(index);
 
         return (
-          <g key={`vertex-group-${index}`} 
+          <g key={`vertex-group-${index}`}
              onClick={interactive ? (e) => { e.stopPropagation(); onSelectVertex(index); } : undefined}
              style={{ cursor: interactive ? 'pointer' : 'default', pointerEvents: 'auto' }}>
             <circle
@@ -111,12 +111,12 @@ function SegmentOverlay({
               data-selected={isSelected ? "true" : undefined}
               data-fixed={isFixed ? "true" : undefined}
             />
-            <text 
+            <text
               x={point.x} y={point.y - (14 / unitScale)}
               className="custom-piece-editor__vertex-label"
               data-selected={isSelected ? "true" : undefined}
               data-fixed={isFixed ? "true" : undefined}
-              style={{ fontSize: (isSelected ? 14 : 12) / unitScale, strokeWidth: 4 / unitScale }} 
+              style={{ fontSize: (isSelected ? 14 : 12) / unitScale, strokeWidth: 4 / unitScale }}
               textAnchor="middle">
               {labelText}
             </text>
@@ -147,17 +147,17 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
   const firstInputRef = useRef(null);
   const angleInputRef = useRef(null);
   const closedWithKeyboard = useRef(false);
-  
+
   const [canvasRef, canvasSize] = useCanvasSize();
   const [drawing, setDrawing] = useState(initialState?.drawing || { vertices: [], isClosed: false });
   const [segments, setSegments] = useState(initialState?.segments || []);
   const [activeSegmentIndex, setActiveSegmentIndex] = useState(initialState?.segments ? 0 : null);
-  
+
   const [selectedVertexIndex, setSelectedVertexIndex] = useState(() => {
     const initialConstraints = initialState?.construction?.constraints;
     return Array.isArray(initialConstraints) && initialConstraints.length > 0 ? initialConstraints[0].vertex : null;
   });
-  
+
   const [construction, setConstruction] = useState(() => {
     const previous = initialState?.construction;
     return {
@@ -168,21 +168,21 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
   });
 
   const { vertices, isClosed } = drawing;
-  
+
   const sketchValidation = useMemo(() => validateConvexPolygon(vertices.map(({ x, y }) => [x, y])), [vertices]);
   const result = useMemo(() => !isClosed ? null : buildConstrainedGeometry(segments, {
     ...construction, mode: construction.constraints.length ? 'angles' : construction.mode,
     drawing: vertices.map(({ x, y }) => [x, y]),
   }), [vertices, isClosed, segments, construction]);
-  
+
   const validation = useMemo(() => isClosed && !sketchValidation.isValid ? sketchValidation :
     validateConvexPolygon(result?.status === "complete" ? result.vertices_mm : null), [result, isClosed, sketchValidation]);
-  
+
   const validationRejected = !validation.isValid && validation.reason !== "INCOMPLETE";
   const measuredCount = segments.filter((segment) => !segment.badInput && isPositiveLength(segment.lengthMm)).length;
   const dimensionsReady = result?.status === "complete";
   const canAdd = isClosed && dimensionsReady && validation.reason === "VALID" && Boolean(result?.vertices_mm) && headerReady && !disabled;
-  
+
   const angles = useMemo(() => { try { return result?.vertices_mm ? interiorAngles(result.vertices_mm) : []; } catch { return []; } }, [result]);
   const fixedVertices = useMemo(() => construction.constraints.map((item) => item.vertex), [construction.constraints]);
   const maxConstraints = Math.max(0, vertices.length - 3);
@@ -207,7 +207,7 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
     const geometry = fitVerticesToPreview(sourcePoints, canvasSize.width, canvasSize.height, 40);
     if (geometry) {
       displayPoints = geometry.points;
-      unitScale = 1; 
+      unitScale = 1;
     }
     isProvisional = !dimensionsReady;
   }
@@ -251,7 +251,7 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
     setConstruction(current => {
       const isFixed = current.constraints.some(c => c.vertex === vertex);
       let newConstraints = [...current.constraints];
-      
+
       if (isFixed) {
         newConstraints = newConstraints.map(c => c.vertex === vertex ? { vertex, angle: angleValue } : c);
       } else {
@@ -275,9 +275,9 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
       </div>
 
       <fieldset className="custom-piece-editor__fieldset" disabled={disabled}>
-        
+
         <div className="custom-piece-editor__split-layout">
-          
+
           {/* --- COLUMNA IZQUIERDA: LIENZO Y VALIDACIÓN --- */}
           <div className="custom-piece-editor__canvas-pane">
             <div className="custom-piece-editor__toolbar">
@@ -364,7 +364,7 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
               <div className="custom-piece-editor__instruction-panel">
                 <h3>Paso 1: Dibujar contorno</h3>
                 <p style={{ color: 'var(--editor-muted)', fontSize: '14px', lineHeight: '1.5' }}>
-                  Haz clic en el lienzo vacío para marcar las esquinas de tu pieza. 
+                  Haz clic en el lienzo vacío para marcar las esquinas de tu pieza.
                   Sigue el borde en orden hasta formar la figura completa. No te preocupes por el tamaño, las medidas se ingresan en el siguiente paso.
                 </p>
                 <p style={{ marginTop: '12px' }}><strong>Faltan {Math.max(0, 3 - vertices.length)} vértices</strong> para poder cerrar la figura.</p>
@@ -373,7 +373,7 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
               <>
                 <div className="custom-piece-editor__measurements-panel">
                   <h3>Paso 2: Medidas y Ángulos</h3>
-                  
+
                   {vertices.length === 3 ? (
                     <p style={{ color: 'var(--editor-muted)', fontSize: '13px', lineHeight: '1.5', marginBottom: '8px' }}>
                       Ingresa la medida de los 3 lados. Al ser un triángulo, la figura tomará su forma correcta automáticamente sin necesidad de fijar ángulos.
@@ -383,7 +383,7 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
                       Ingresa las medidas de cada lado. Para que esta figura de {vertices.length} lados tome su forma exacta, <strong>puedes fijar hasta {maxConstraints} {maxConstraints === 1 ? 'ángulo' : 'ángulos'}</strong> haciendo clic en las esquinas del dibujo.
                     </p>
                   )}
-                  
+
                   <div className="custom-piece-editor__configuration">
                     <label style={{ fontSize: '13px', fontWeight: '600', color: 'var(--editor-navy)' }}>Comportamiento de la figura</label>
                     <select value={construction.mode} disabled={construction.constraints.length > 0} onChange={e => setConstruction(c => ({...c, mode: e.target.value}))}>
@@ -402,7 +402,7 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
                       inputRef={segment.index === 0 ? firstInputRef : undefined} onSelect={() => setActiveSegmentIndex(segment.index)}
                       onChange={(value, badInput) => updateSegment(segment.index, value, badInput)} />)}
                   </ol>
-                  
+
                   {/* LISTA DINÁMICA DE MÚLTIPLES ÁNGULOS */}
                   {vertices.length > 3 && (
                     <div className="custom-piece-editor__angles-panel">
@@ -410,7 +410,7 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
                         <span>Ángulos interiores <MousePointerClick size={14} style={{ display: 'inline', verticalAlign: 'middle', marginLeft: '4px' }}/></span>
                         <span style={{ fontSize: '12px', color: 'var(--editor-muted)', fontWeight: 'normal' }}>{construction.constraints.length} / {maxConstraints} fijados</span>
                       </h4>
-                      
+
                       {construction.constraints.length === 0 && selectedVertexIndex === null ? (
                         <p style={{ fontSize: '12px', color: 'var(--editor-muted)', margin: 0, lineHeight: '1.5' }}>
                           Haz clic en las esquinas del dibujo (V1, V2...) para fijar un ángulo exacto si la pieza lo requiere.
@@ -420,13 +420,13 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
                           {vertices.map((_, index) => {
                             const fixed = construction.constraints.find(c => c.vertex === index);
                             const isSelected = selectedVertexIndex === index;
-                            
+
                             if (!fixed && !isSelected) return null;
-                            
-                            const displayAngleValue = fixed 
-                              ? fixed.angle 
-                              : (angles[index] !== undefined && !Number.isNaN(angles[index]) 
-                                  ? Number(angles[index].toFixed(2)) 
+
+                            const displayAngleValue = fixed
+                              ? fixed.angle
+                              : (angles[index] !== undefined && !Number.isNaN(angles[index])
+                                  ? Number(angles[index].toFixed(2))
                                   : "");
 
                             return (
@@ -443,8 +443,8 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
                                 {fixed ? (
                                   <button type="button" data-active="true" onClick={() => unfixAngle(index)}>Liberar</button>
                                 ) : (
-                                  <button 
-                                    type="button" 
+                                  <button
+                                    type="button"
                                     disabled={isLimitReached}
                                     onClick={() => handleAngleFix(index, String(angles[index] !== undefined && !Number.isNaN(angles[index]) ? Number(angles[index].toFixed(2)) : 90))}
                                   >
