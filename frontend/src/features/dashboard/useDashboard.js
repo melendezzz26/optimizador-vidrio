@@ -6,7 +6,7 @@ import {
 } from './dashboardModel';
 
 const NOOP = () => {};
-const matches = (snapshot, context) => snapshot && ['userId', 'role', 'token', 'version'].every(key => snapshot[key] === context[key]);
+const matches = (snapshot, context) => snapshot && ['userId', 'permissionsKey', 'token', 'version'].every(key => snapshot[key] === context[key]);
 const safeError = error => error instanceof DashboardDataError ? error.message
   : error.status === 403 ? 'No tienes permiso para consultar esta información.'
     : 'No se pudo cargar esta información. Inténtalo otra vez.';
@@ -14,16 +14,17 @@ const safeError = error => error instanceof DashboardDataError ? error.message
 export function useDashboard({ user, token, onSessionExpired = NOOP }) {
   const [version, setVersion] = useState(0);
   const [snapshot, setSnapshot] = useState(null);
-  const role = user?.rol;
+  // S1-RBAC: las fuentes dependen de los permisos de la sesión, no del nombre del rol.
+  const permissionsKey = (user?.permisos ?? []).join(',');
   const userId = user?.id_usuario;
-  const context = { userId, role, token, version };
+  const context = { userId, permissionsKey, token, version };
   const blocks = matches(snapshot, context) ? snapshot.blocks : createDashboardBlocks(user);
 
   useEffect(() => {
     const controller = new AbortController();
     let active = true;
-    const currentContext = { userId, role, token, version };
-    const currentUser = { rol: role };
+    const currentContext = { userId, permissionsKey, token, version };
+    const currentUser = { permisos: permissionsKey ? permissionsKey.split(',') : [] };
     const initialBlocks = createDashboardBlocks(currentUser);
     const sources = getDashboardSources(currentUser);
     const publish = (source, block) => {
@@ -54,7 +55,7 @@ export function useDashboard({ user, token, onSessionExpired = NOOP }) {
         });
     }
     return () => { active = false; controller.abort(); };
-  }, [userId, role, token, version, onSessionExpired]);
+  }, [userId, permissionsKey, token, version, onSessionExpired]);
 
   return { blocks, status: getDashboardStatus(blocks), actions: getDashboardActions(user), refresh: () => setVersion(value => value + 1) };
 }

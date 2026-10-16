@@ -1,5 +1,6 @@
+import { withPermissions } from '../../authentication/__tests__/permissionFixtures';
 // Synthetic contract fixtures only; never imported by application code.
-export const dashboardUser = (rol = 'Operario') => ({ id_usuario: 11, username: 'O70000001', nombre: 'Persona de prueba', rol });
+export const dashboardUser = (rol = 'Operario') => withPermissions({ id_usuario: 11, username: 'O70000001', nombre: 'Persona de prueba', rol });
 export const orderItem = { id_pedido: 42, fecha_registro: '2026-10-14T11:00:00Z', estado: 'PENDIENTE', cliente: 'Cliente sintético' };
 export const orderPage = { items: [orderItem], total: 23, page: 1, limit: 5, total_pages: 5 };
 export const planchas = [

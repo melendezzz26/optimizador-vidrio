@@ -4,7 +4,7 @@ import { NavigationContext } from './NavigationContext';
 import {
   canManageOrders,
   canExecuteOptimization,
-  canManageUsers,
+  canViewAdministration,
   canViewInventory,
   canViewDashboard,
 } from '../../features/authentication/permissions';
@@ -15,7 +15,7 @@ const sections = [
   { id: 'orders', label: 'Registro de pedidos', icon: PackagePlus, canView: canManageOrders },
   { id: 'optimization', label: 'Optimización', icon: ScanLine, canView: canExecuteOptimization },
   { id: 'inventory', label: 'Gestión de inventario', icon: Layers3, canView: canViewInventory },
-  { id: 'users', label: 'Panel de roles', icon: ShieldCheck, canView: canManageUsers },
+  { id: 'users', label: 'Administración', icon: ShieldCheck, canView: canViewAdministration },
 ];
 
 export function Sidebar({ activeItem, user }) {

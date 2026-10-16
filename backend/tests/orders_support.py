@@ -4,6 +4,8 @@ from datetime import datetime, timezone
 import sqlalchemy as sa
 from sqlalchemy.orm import sessionmaker
 
+from app.modules.authentication.infrastructure.permission_seed import seed_permissions
+
 from tests.integration.postgres_support import new_database, upgrade
 
 
@@ -34,4 +36,7 @@ def session_factory(orders_database):
         session.add(Cliente(id_cliente=41, nombre_razon_social="Cliente de prueba", estado=True,
                             fecha_registro=datetime.now(timezone.utc)))
         session.commit()
+        
+        # S1-RBAC: TRUNCATE roles ... CASCADE vacía rol_permisos; se recarga la asignación inicial.
+        seed_permissions(session)
     return factory

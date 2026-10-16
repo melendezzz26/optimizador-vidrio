@@ -2,6 +2,7 @@ import { act, cleanup, render, screen, waitFor, within } from '@testing-library/
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { InventoryPage } from '../InventoryPage'
+import { withPermissions } from '../../authentication/__tests__/permissionFixtures'
 
 const catalog = [{ id_tipo_vidrio: 1, nombre: 'Incoloro', estado: true, espesores_mm: [6] }]
 const plancha = {
@@ -59,7 +60,7 @@ async function renderInventory({
     .mockResolvedValueOnce(response(planchas))
     .mockResolvedValueOnce(response(retazos))
   const user = userEvent.setup()
-  render(<InventoryPage user={{ id_usuario: 4, nombre: 'Almacén', rol }} onSessionExpired={onSessionExpired} />)
+  render(<InventoryPage user={withPermissions({ id_usuario: 4, nombre: 'Almacén', rol })} onSessionExpired={onSessionExpired} />)
   await screen.findByText(`Mostrando 1 de 1 planchas`)
   return { user, onSessionExpired }
 }
