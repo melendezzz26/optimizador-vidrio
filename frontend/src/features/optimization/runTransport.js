@@ -1,7 +1,6 @@
 import { buildRunRequest, parseConfirmation, parseRun, readNdjson, RunContractError } from './runContract.js';
 
-// The caller supplies operations once the backend exists. No endpoint or fetch
-// is enabled by this interface, and confirmation receives only the run ID.
+// Parsing and lifecycle are shared by the real HTTP adapter and test adapters.
 export function createRunTransport({ prepare, open, load, confirm } = {}) {
   const pending = () => { throw new Error('Esta operación está pendiente de integración backend.'); };
   return {
@@ -13,15 +12,17 @@ export function createRunTransport({ prepare, open, load, confirm } = {}) {
       let active = true;
       const controller = new AbortController();
       return {
-        subscribe(listener, failed) {
+        subscribe(listener, failed, accepted) {
           (async () => {
             try {
-              for await (const event of readNdjson(await (open ?? pending)(dto, { signal: controller.signal }))) {
+              const chunks = await (open ?? pending)(dto, { signal: controller.signal });
+              if (active && chunks.optimizationId) accepted?.(chunks.optimizationId);
+              for await (const event of readNdjson(chunks)) {
                 if (!active) break;
                 listener(event);
               }
-            } catch {
-              if (active) failed?.(new RunContractError());
+            } catch (error) {
+              if (active) failed?.(Number.isInteger(error.status) ? error : new RunContractError());
             }
           })();
         },

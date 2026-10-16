@@ -14,7 +14,7 @@ export function MaterialGroupsPanel({ groups, unresolved, snapshot, completedGro
       const sheet = g.containers.find(c => c.material_source === 'PLANCHA');
       return <li key={g.id}><strong>{g.name} · {g.thickness} mm</strong>
         <span>{g.units.length} piezas · pedidos {g.orders.map(n => `#${n}`).join(', ')}</span>
-        <span>{sheet ? `Plancha base #${sheet.material_id} · ${sheet.material_width_mm} × ${sheet.material_height_mm} mm` : 'Plancha base pendiente del contrato/configuración real'}</span>
+        <span>{sheet ? `Plancha base #${sheet.material_id} · ${sheet.material_width_mm} × ${sheet.material_height_mm} mm` : 'El servidor asignará el material durante la ejecución'}</span>
         <span>Estado: {completedGroups.includes(g.id) ? 'Evaluado' : snapshot && sheet && groupRasterReady(snapshot, g) ? 'Listo' : 'Pendiente'}</span>
       </li>;
     })}</ul>

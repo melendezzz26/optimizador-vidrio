@@ -10,7 +10,7 @@ export function useFirstFit({ source, adapter, onSessionExpired, result }) {
   const activeRun = useRef(null);
   const busy = useRef(false);
   useEffect(() => {
-    const version = lifecycle.current;
+    const invalidate = () => { lifecycle.current++; };
     const unsubscribe = source.subscribe(event => {
       if (event.type === 'orders') dispatch({ type: 'orders_received', orders: event.orders });
       else {
@@ -19,7 +19,7 @@ export function useFirstFit({ source, adapter, onSessionExpired, result }) {
       }
     });
     source.load();
-    return () => { lifecycle.current = version + 1; unsubscribe(); source.dispose(); stream.current?.dispose(); activeRun.current = null; };
+    return () => { invalidate(); unsubscribe(); source.dispose(); stream.current?.dispose(); activeRun.current = null; };
   }, [source, onSessionExpired]);
   useEffect(() => { if (result) dispatch({ type: 'result', result }); }, [result]);
   async function prepare() {
@@ -31,6 +31,7 @@ export function useFirstFit({ source, adapter, onSessionExpired, result }) {
       const snapshot = await adapter.prepare(buildRunRequest(state.selected));
       if (version === lifecycle.current) dispatch({ type: 'prepared', snapshot });
     } catch (error) {
+      if (error.status === 401) onSessionExpired?.();
       if (version === lifecycle.current) dispatch({ type: 'prepare_failed', message: error.message });
     } finally { busy.current = false; }
   }
@@ -48,11 +49,17 @@ export function useFirstFit({ source, adapter, onSessionExpired, result }) {
         if (['optimization_completed', 'optimization_failed'].includes(event.event) && adapter.loadResult) {
           Promise.resolve().then(() => adapter.loadResult(event.id_optimizacion, { resultUrl: event.data.result_url }))
             .then(result => { if (runId === activeRun.current) dispatch({ type: 'result', result, runId }); })
-            .catch(() => { if (runId === activeRun.current) dispatch({ type: 'result_error', message: 'No se pudo recuperar el resultado. La confirmación sigue deshabilitada.' }); });
+            .catch(error => {
+              if (error.status === 401) onSessionExpired?.();
+              if (runId === activeRun.current) dispatch({ type: 'result_error', message: 'No se pudo recuperar el resultado. La confirmación sigue deshabilitada.' });
+            });
         }
       };
       stream.current.subscribe(accept, error => {
+        if (error.status === 401) onSessionExpired?.();
         if (runId === activeRun.current) dispatch({ type: 'connection_failed', message: error.message });
+      }, optimizationId => {
+        if (runId === activeRun.current) dispatch({ type: 'accepted', optimizationId, runId });
       });
     } catch (error) { dispatch({ type: 'connection_failed', message: error.message }); }
   }
@@ -62,9 +69,24 @@ export function useFirstFit({ source, adapter, onSessionExpired, result }) {
     try {
       const result = await adapter.loadResult(state.optimizationId, { resultUrl: state.resultUrl });
       if (version === lifecycle.current && run === activeRun.current) dispatch({ type: 'result', result });
-    } catch {
+    } catch (error) {
+      if (error.status === 401) onSessionExpired?.();
       if (version === lifecycle.current && run === activeRun.current) dispatch({ type: 'result_error', message: 'No se pudo recuperar el resultado.' });
     }
   }
-  return { state, prepare, run, discard, recover, confirmed: () => dispatch({ type: 'confirmed' }), select: ids => dispatch({ type: 'select', ids }) };
+  async function load(id) {
+    if (busy.current || state.status === 'running') return;
+    busy.current = true;
+    stream.current?.dispose(); activeRun.current = null;
+    const version = ++lifecycle.current;
+    dispatch({ type: 'loading_result' });
+    try {
+      const result = await adapter.loadResult(id);
+      if (version === lifecycle.current) dispatch({ type: 'result', result });
+    } catch (error) {
+      if (error.status === 401) onSessionExpired?.();
+      if (version === lifecycle.current) dispatch({ type: 'result_error', message: error.message });
+    } finally { busy.current = false; }
+  }
+  return { state, prepare, run, discard, recover, load, confirmed: () => dispatch({ type: 'confirmed' }), select: ids => dispatch({ type: 'select', ids }) };
 }

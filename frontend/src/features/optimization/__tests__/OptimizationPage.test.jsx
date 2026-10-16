@@ -1,10 +1,11 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
+import * as ordersApi from '../../orders/ordersApi';
 import { OptimizationPage } from '../OptimizationPage';
 import shared from '../contractV1Fixture.json';
 import { withPermissions } from '../../authentication/__tests__/permissionFixtures';
 import { createFixturePendingOrdersSource, createPendingOrdersSource } from '../pendingOrdersSource';
-import { createFixtureAdapter, fixtureOrders, newFixtureOrder, prepareFixture, sheetToContainer } from '../firstFitFixture';
+import { createFixtureAdapter, fixtureOrders, fixtureRun, newFixtureOrder, prepareFixture, sheetToContainer } from '../firstFitFixture';
 const user = withPermissions({ rol: 'Operario', nombre: 'Operario local' });
 beforeEach(() => {
   vi.useFakeTimers();
@@ -93,6 +94,22 @@ test('failed stream can retry', async () => {
   expect(screen.getByRole('alert')).toHaveTextContent('Fallo del proceso');
   click('Ejecutar nuevamente'); expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 });
+
+test('accepted Location ID remains recoverable after a stream failure without reexecuting First Fit', async () => {
+  const adapter = { ...createFixtureAdapter(),
+    createEventSource: vi.fn(() => ({ subscribe(event, failed, accepted) {
+      accepted(301); failed(new Error('Flujo interrumpido'));
+    }, dispose: vi.fn() })),
+    loadResult: vi.fn(async () => fixtureRun(prepareFixture([21, 22]))),
+  };
+  mount(fixtureOrders, adapter); await prepare(); click('Ejecutar First Fit');
+  expect(screen.getByText('Corrida #301')).toBeVisible();
+  expect(screen.getByRole('alert')).toHaveTextContent('Flujo interrumpido');
+  await act(async () => click('Recuperar resultado'));
+  expect(adapter.loadResult).toHaveBeenCalledExactlyOnceWith(301, { resultUrl: null });
+  expect(screen.getByText('4 / 4 piezas colocadas')).toBeVisible();
+  expect(adapter.createEventSource).toHaveBeenCalledOnce();
+});
 test('empty and permission prevent execution and reads', () => {
   const view = mount([]); expect(screen.getByText('No hay pedidos pendientes.')).toBeVisible(); view.unmount();
   const source = { load: vi.fn() };
@@ -109,11 +126,15 @@ test('loading, 401, no mutation and unmount cleanup', () => {
   expect(expired).toHaveBeenCalledOnce(); expect(screen.getByRole('alert')).toHaveTextContent('Sesión vencida');
   view.unmount(); expect(source.dispose).toHaveBeenCalledOnce();
 });
-test('real adapter preparation reports pending backend instead of synthetic success', async () => {
+test('real adapter prepares persisted pieces without starting a run or inventing stock', async () => {
+  const read = vi.spyOn(ordersApi, 'getOrder').mockImplementation(async id => structuredClone(fixtureOrders.find(o => o.id_pedido === id)));
+  const fetch = vi.spyOn(globalThis, 'fetch');
   const source = createFixturePendingOrdersSource(fixtureOrders);
   render(<OptimizationPage user={user} source={source} />); await prepare();
-  expect(screen.getByRole('alert')).toHaveTextContent('pendiente del contrato backend');
-  expect(screen.queryByRole('button', { name: 'Ejecutar First Fit' })).not.toBeInTheDocument();
+  expect(read).toHaveBeenCalledTimes(2);
+  expect(fetch).not.toHaveBeenCalled();
+  expect(screen.getByRole('button', { name: 'Ejecutar First Fit' })).toBeEnabled();
+  expect(document.querySelectorAll('[data-placement]')).toHaveLength(0);
 });
 test('inventory dimensions override all commercial assumptions', () => {
   expect(sheetToContainer({ id_plancha: 5, ancho_mm: '1234', alto_mm: '5678', espesor_mm: '5.5' }, 'Bronce')).toMatchObject({ material_width_mm: 1234, material_height_mm: 5678 });

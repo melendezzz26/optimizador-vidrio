@@ -58,7 +58,8 @@ export function PlacementCanvas({ snapshot, placements }) {
           transform={`translate(${p.x_mm} ${p.y_mm})`}>
           <title>Pedido #{p.id_pedido} · Pieza #{p.id_pieza} · unidad {p.unit_index} · rotación aplicada: {p.rotation_deg}°</title>
           <g transform={`translate(${-b.minX} ${-b.minY})`}><Shape geometry={p.geometria} /></g>
-          <text x={b.width / 2} y={b.height / 2} textAnchor="middle" dominantBaseline="middle">#{p.id_pieza}</text>
+          <text x={b.width / 2} y={b.height / 2} textAnchor="middle" dominantBaseline="middle"
+            style={{ fontSize: Math.min(60, b.height / 4, b.width / (String(p.id_pieza).length + 1)) }}>#{p.id_pieza}</text>
         </g>;
       })}
     </svg>

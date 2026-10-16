@@ -14,6 +14,14 @@ function running() {
 }
 const apply = (s, event, runId = 'a') => reduce(s, { type: 'event', event, runId });
 const played = name => eventsForRun(scenarioFixture(name)).reduce((s, e) => apply(s, e), running());
+test('canonical recovery preserves a safe failure message without inventing a PENDIENTE transition', () => {
+  const failed = played('failed');
+  const recovered = reduce(failed, { type: 'result', result: scenarioFixture('failed') });
+  assert.equal(recovered.estado, 'FALLIDA'); assert.equal(recovered.confirmable, false);
+  assert.equal(recovered.error, failed.error); assert.ok(recovered.error);
+  const loaded = reduce(initialOptimization, { type: 'result', result: scenarioFixture('failed') });
+  assert.equal(loaded.estado, 'FALLIDA'); assert.match(loaded.error, /La corrida falló/);
+});
 test('wire events preserve 1-based units, physical stock and decimal strings; duplicate sequence ignored', () => {
   let s = running(); const events = eventsForRun(result);
   for (const event of events.slice(0, 6)) s = apply(s, event);

@@ -1,4 +1,6 @@
 .optimization-columns { display: grid; grid-template-columns: minmax(230px, 1fr) minmax(0, 2fr); gap: var(--ng-space-6); }
+.first-fit-result-lookup { display: flex; flex-wrap: wrap; align-items: end; gap: var(--ng-space-3); margin-block: var(--ng-space-4); }
+.first-fit-result-lookup label { display: grid; gap: var(--ng-space-2); max-width: 100%; }
 .optimization-columns > section { min-width: 0; }
 .optimization-page h2 { font-size: 20px; margin: 0 0 var(--ng-space-4); }
 .optimization-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ng-space-2); margin: var(--ng-space-4) 0; }

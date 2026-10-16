@@ -34,6 +34,9 @@ export function optimizationReducer(state, action) {
 }
 function reduce(state, action) {
   switch (action.type) {
+    case 'accepted': return state.status === 'running' && action.runId === state.runId
+      ? { ...state, optimizationId: action.optimizationId } : state;
+    case 'loading_result': return { ...initialOptimization, orders: state.orders, connection: state.connection, status: 'loading_result' };
     case 'orders_received': {
       const orders = action.orders.filter(o => o.estado === 'PENDIENTE');
       const selected = state.selected.filter(id => orders.some(o => o.id_pedido === id));
@@ -65,7 +68,7 @@ function reduce(state, action) {
         completedGroups: [], stage: 'preparing_orders', error: '', availableAtStart: state.orders.map(o => o.id_pedido) };
     case 'discard': return { ...initialOptimization, orders: state.orders, selected: state.selected, connection: state.connection, status: 'selection_ready' };
     case 'connection_failed': return { ...state, status: 'failed', error: action.message, confirmable: false };
-    case 'result_error': return { ...state, error: action.message, confirmable: false };
+    case 'result_error': return { ...state, status: state.status === 'loading_result' ? 'failed' : state.status, error: action.message, confirmable: false };
     case 'confirmed': return { ...state, confirmed: true, confirmable: false };
     case 'result': {
       if (action.runId && action.runId !== state.runId) return state;
@@ -76,7 +79,8 @@ function reduce(state, action) {
         completedGroups: dto.estado === 'EN_EJECUCION' ? [] : dto.groups.map(groupKey),
         placed_units: dto.placed_units, total_units: dto.total_units, progress_pct: dto.progress_pct,
         completo: dto.completo, metrics_available: dto.metrics_available, metrics: dto.metrics ?? null,
-        confirmable: dto.confirmable, confirmed: dto.confirmed, error: '',
+        confirmable: dto.confirmable, confirmed: dto.confirmed,
+        error: dto.estado === 'FALLIDA' ? state.error || 'La corrida falló. Consulta el resultado antes de iniciar otra ejecución.' : '',
         stage: dto.estado === 'COMPLETADA' ? 'completed' : state.stage };
     }
     case 'event': {

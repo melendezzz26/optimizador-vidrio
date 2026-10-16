@@ -16,7 +16,7 @@ export function RasterInspection({ snapshot, group, placements = [], preparation
   return <section className="raster-inspection" aria-label={preparation ? 'Preparación raster del grupo' : 'Máscaras del grupo'}>
     <h3>{group.name} · {group.thickness} mm · {preparation ? 'Preparación raster' : 'Inspección de máscaras'}</h3>
     <p>A mayor resolución raster, mayor costo computacional.</p>
-    <p>{snapshot.fixture ? 'Máscaras de ejemplo precargadas; no se ejecuta el rasterizador real.' : 'Máscaras recibidas del adaptador de preparación.'}</p>
+    <p>{snapshot.fixture ? 'Máscaras de ejemplo precargadas; no se ejecuta el rasterizador real.' : ready ? 'Máscara recibida del servidor.' : 'Esta corrida entrega contornos y resolución; no incluye máscaras de celdas. La rasterización de piezas está disponible en su pestaña.'}</p>
     <label htmlFor={`${id}-piece`}>Pieza para inspeccionar</label>
     <select id={`${id}-piece`} className="ng-control" value={piece?.key ?? ''} onChange={e => setChosen(e.target.value)}>
       {pieces.map(p => <option key={p.key} value={p.key}>Pedido #{p.orderId} · Pieza #{p.id_pieza} · {p.cantidad} unidades</option>)}

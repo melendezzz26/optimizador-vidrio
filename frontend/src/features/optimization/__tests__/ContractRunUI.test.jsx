@@ -106,3 +106,39 @@ test('discard prevents a late canonical recovery from restoring a previous run',
   await act(async () => resolve(scenarioFixture()));
   expect(screen.queryByRole('region', { name: 'Colocaciones First Fit' })).not.toBeInTheDocument();
 });
+
+test('view-only user can query a durable run and retry a failed GET without execution', async () => {
+  const loadResult = vi.fn().mockRejectedValueOnce(new Error('Corrida inexistente'))
+    .mockResolvedValueOnce(scenarioFixture('confirmed'));
+  render(<OptimizationPage user={user(view)} source={createFixturePendingOrdersSource([])} adapter={{ loadResult }} />);
+  fireEvent.change(screen.getByLabelText('ID de optimización'), { target: { value: '101' } });
+  await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Consultar resultado' })));
+  expect(screen.getByRole('alert')).toHaveTextContent('Corrida inexistente');
+  expect(screen.getByRole('button', { name: 'Consultar resultado' })).toBeEnabled();
+  await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Consultar resultado' })));
+  expect(loadResult).toHaveBeenNthCalledWith(2, 101);
+  expect(screen.getByText('Solución ya confirmada.')).toBeVisible();
+  expect(screen.queryByRole('button', { name: 'Preparar optimización' })).not.toBeInTheDocument();
+});
+
+test('successful confirmation refreshes canonical flags and inventory-dependent metrics through GET', async () => {
+  const confirm = vi.fn().mockResolvedValue(shared.confirmation);
+  const loadResult = vi.fn().mockResolvedValue(scenarioFixture('confirmed'));
+  mount('complete', [...view, 'optimization.confirm'], { confirm, loadResult });
+  fireEvent.click(screen.getByRole('button', { name: 'Confirmar solución' }));
+  await act(async () => fireEvent.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Confirmar solución' })));
+  expect(confirm).toHaveBeenCalledExactlyOnceWith(101);
+  expect(loadResult).toHaveBeenCalledExactlyOnceWith(101, { resultUrl: null });
+  expect(screen.getByText('Solución ya confirmada.')).toBeVisible();
+  expect(screen.queryByRole('button', { name: 'Confirmar solución' })).not.toBeInTheDocument();
+});
+
+test('a 409 disables repeat confirmation and never restarts the algorithm', async () => {
+  const confirm = vi.fn().mockRejectedValue(Object.assign(new Error('Stock cambió'), { status: 409, code: 'STOCK_CONFLICT' }));
+  const createEventSource = vi.fn();
+  mount('complete', [...view, 'optimization.confirm'], { confirm, createEventSource });
+  fireEvent.click(screen.getByRole('button', { name: 'Confirmar solución' }));
+  await act(async () => fireEvent.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Confirmar solución' })));
+  expect(screen.getByRole('button', { name: 'Confirmar solución' })).toBeDisabled();
+  expect(createEventSource).not.toHaveBeenCalled(); expect(confirm).toHaveBeenCalledOnce();
+});

@@ -1,5 +1,6 @@
 import process from 'node:process';
 import { expect, test } from '@playwright/test';
+import { capture } from './optimizationRealSupport.js';
 
 const apiOrigin = 'http://127.0.0.1:8017';
 const username = process.env.HU015_E2E_USERNAME?.trim();
@@ -51,7 +52,7 @@ async function tabTo(page, locator) {
   await expect(locator).toBeFocused();
 }
 
-test('HU-015: flujo real de pieza cantidad 5, raster, recuperación, resolución y responsive', async ({ page, baseURL }) => {
+test('HU-015: flujo real de pieza cantidad 5, raster, recuperación, resolución y responsive', async ({ page, baseURL }, info) => {
   test.skip(!hasHu015Credentials, 'HU-015 real E2E requires configured synthetic test credentials');
   const order = await createPersistedOrder(page, [
     { tipo_forma: 'RECTANGULO', cantidad: 5, ...glass, width_mm: 800, height_mm: 600 },
@@ -141,6 +142,7 @@ test('HU-015: flujo real de pieza cantidad 5, raster, recuperación, resolución
   await expect(geometryImage.locator('rect')).toHaveAttribute('width', '800');
   await expect(geometryImage.locator('rect')).toHaveAttribute('height', '600');
   await expect(maskImage).toBeVisible();
+  await capture(page, info, 'raster-rectangle', resultRegion);
   await expect(page.getByText(/cantidad 5\./i)).toHaveCount(1);
   await expect(geometryImage).toHaveCount(1);
   await expect(maskImage).toHaveCount(1);
@@ -202,7 +204,7 @@ test('HU-015: flujo real de pieza cantidad 5, raster, recuperación, resolución
   expect(startStatuses).toHaveLength(startsBeforeRecovery);
 });
 
-test('HU-015: CIRCUNFERENCIA se compara con la máscara real del backend', async ({ page, baseURL }) => {
+test('HU-015: CIRCUNFERENCIA se compara con la máscara real del backend', async ({ page, baseURL }, info) => {
   test.skip(!hasHu015Credentials, 'HU-015 real E2E requires configured synthetic test credentials');
   const order = await createPersistedOrder(page, [
     { tipo_forma: 'CIRCUNFERENCIA', cantidad: 2, ...glass, radius_mm: 30 },
@@ -224,12 +226,13 @@ test('HU-015: CIRCUNFERENCIA se compara con la máscara real del backend', async
   await expect(svg.locator('circle')).toHaveAttribute('cx', '0');
   await expect(svg.locator('circle')).toHaveAttribute('cy', '0');
   await expect(page.getByRole('img', { name: `Máscara raster de la pieza #${piece.id_pieza}` })).toBeVisible();
+  await capture(page, info, 'raster-circle', page.getByRole('region', { name: 'Resultado técnico raster' }));
   await expect(page.getByText(/cantidad 2\./i)).toHaveCount(1);
   await expect(svg).toHaveCount(1);
   await expect(page.getByRole('img', { name: `Máscara raster de la pieza #${piece.id_pieza}` })).toHaveCount(1);
 });
 
-test('HU-015: POLIGONO_CONVEXO conserva vertices_mm negativos y columnas sobre 53', async ({ page, baseURL }) => {
+test('HU-015: POLIGONO_CONVEXO conserva vertices_mm negativos y columnas sobre 53', async ({ page, baseURL }, info) => {
   test.skip(!hasHu015Credentials, 'HU-015 real E2E requires configured synthetic test credentials');
   const vertices = [[-150, -50], [150, -50], [150, 50], [-150, 50]];
   const order = await createPersistedOrder(page, [
@@ -251,6 +254,7 @@ test('HU-015: POLIGONO_CONVEXO conserva vertices_mm negativos y columnas sobre 5
   const result = await response.json();
   expect(result.columns).toBeGreaterThan(53);
   expect(result.geometria.vertices_mm).toEqual(vertices);
+  await capture(page, info, 'raster-polygon', page.getByRole('region', { name: 'Resultado técnico raster' }));
   const svg = page.getByRole('img', { name: `Geometría original de la pieza #${piece.id_pieza}` });
   await expect(svg.locator('polygon')).toHaveAttribute('points', '-150,-50 150,-50 150,50 -150,50');
   await expect(page.getByRole('img', { name: `Máscara raster de la pieza #${piece.id_pieza}` })).toBeVisible();
