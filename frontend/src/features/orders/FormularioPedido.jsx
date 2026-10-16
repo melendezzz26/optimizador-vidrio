@@ -112,8 +112,6 @@ export default function FormularioPedido({
   const creating = !editing && mode === 'create';
   const readOnly = editing && estadoPedido !== 'PENDIENTE';
 
-  // Solo se bloquean campos por estar guardando o ser solo lectura.
-  // La validación del cliente ocultará la sección entera.
   const disableEditing = readOnly || isSubmitting;
 
   const createEmptyPiece = () => ({
@@ -274,7 +272,6 @@ export default function FormularioPedido({
     let error = '';
     
     if (touched[`${identifier}:${field}`]) {
-       // Ahora evalúa el valor real antes de tirar error
        if (field === 'material' && !value) error = 'Selecciona un material.';
        else if (field === 'espesor' && !positiveNumber(value)) error = 'Selecciona un espesor válido.';
        else if (field === 'cantidad' && (!Number.isInteger(Number(value)) || Number(value) <= 0)) error = 'Ingresa una cantidad entera mayor que 0.';
@@ -378,7 +375,6 @@ export default function FormularioPedido({
             </div>
 
             <div ref={listaAnimada} className="orders-materials">
-              {/* Bloqueo visual: Oculta la lista si se está creando y no hay cliente seleccionado */}
               {creating && !selectedClient ? (
                 <EmptyState 
                   title="Falta seleccionar cliente" 
@@ -393,6 +389,11 @@ export default function FormularioPedido({
                 materialGroups.map((group) => {
                   const materialField = fieldProps(group.id, 'material', group.tipo_vidrio_id);
                   const thicknessField = fieldProps(group.id, 'espesor', group.espesor);
+                  
+                  // NUEVA REGLA ESTRICTA: ¿Falta seleccionar vidrio o espesor en este grupo?
+                  const isMaterialMissing = !group.tipo_vidrio_id || !group.espesor;
+                  // Si falta material o el formulario está bloqueado, se deshabilita todo.
+                  const disablePieceEditing = disableEditing || isMaterialMissing;
 
                   return (
                     <div className="orders-material-group" key={group.id}>
@@ -461,7 +462,9 @@ export default function FormularioPedido({
                                     <select id={`forma-${piece.id}`} value={piece.tipo_forma} onChange={(e) => {
                                       updatePiece(group.id, piece.id, 'tipo_forma', e.target.value);
                                       if (e.target.value === 'POLIGONO_CONVEXO') openEditor(group.id, piece.id);
-                                    }} disabled={disableEditing} className="ng-control orders-control orders-control--shape">
+                                    }} 
+                                    disabled={disablePieceEditing} /* BLOQUEADO SI FALTA MATERIAL */
+                                    className="ng-control orders-control orders-control--shape">
                                       <option value="RECTANGULO">Rectángulo</option>
                                       <option value="CIRCUNFERENCIA">Círculo</option>
                                       <option value="POLIGONO_CONVEXO">Polígono convexo</option>
@@ -473,7 +476,9 @@ export default function FormularioPedido({
                                     const props = fieldProps(piece.id, field, piece.dimensiones[field]);
                                     return <div className="orders-field" key={field}>
                                       <label htmlFor={props.id}>{label}</label>
-                                      <input {...props} id={props.id} type="number" min="0" step="any" placeholder={label} value={piece.dimensiones[field]} onChange={(e) => updatePiece(group.id, piece.id, field, e.target.value)} disabled={disableEditing} className="ng-control orders-control orders-control--dimension" />
+                                      <input {...props} id={props.id} type="number" min="0" step="any" placeholder={label} value={piece.dimensiones[field]} onChange={(e) => updatePiece(group.id, piece.id, field, e.target.value)} 
+                                      disabled={disablePieceEditing} /* BLOQUEADO SI FALTA MATERIAL */
+                                      className="ng-control orders-control orders-control--dimension" />
                                       {props.error}
                                     </div>;
                                   })}
@@ -482,21 +487,40 @@ export default function FormularioPedido({
                                     const props = fieldProps(piece.id, 'radius_mm', piece.dimensiones.radius_mm);
                                     return <div className="orders-field">
                                       <label htmlFor={props.id}>Radio (mm)</label>
-                                      <input {...props} id={props.id} type="number" min="0" step="any" placeholder="Radio (mm)" value={piece.dimensiones.radius_mm} onChange={(e) => updatePiece(group.id, piece.id, 'radius_mm', e.target.value)} disabled={disableEditing} className="ng-control orders-control orders-control--dimension" />
+                                      <input {...props} id={props.id} type="number" min="0" step="any" placeholder="Radio (mm)" value={piece.dimensiones.radius_mm} onChange={(e) => updatePiece(group.id, piece.id, 'radius_mm', e.target.value)} 
+                                      disabled={disablePieceEditing} /* BLOQUEADO SI FALTA MATERIAL */
+                                      className="ng-control orders-control orders-control--dimension" />
                                       {props.error}
                                     </div>;
                                   })()}
 
                                   {piece.tipo_forma === 'POLIGONO_CONVEXO' && (
                                     <div className="orders-polygon-status">
-                                      {piece.dimensiones.vertices?.length ? <span className="orders-polygon-status__complete">✓ Figura configurada</span> : <span className="orders-polygon-status__pending">Falta configurar</span>}
-                                      <button type="button" className="ng-button orders-editor-open" onClick={() => openEditor(group.id, piece.id)} disabled={disableEditing}>{readOnly ? 'Ver figura' : 'Editar figura'}</button>
+                                      {piece.dimensiones.vertices?.length ? (
+                                        <span className="orders-polygon-status__complete">✓ Figura configurada</span>
+                                      ) : isMaterialMissing ? (
+                                        <span className="orders-polygon-status__pending" style={{ color: 'var(--editor-error)' }}>
+                                          Falta material
+                                        </span>
+                                      ) : (
+                                        <span className="orders-polygon-status__pending">Falta configurar</span>
+                                      )}
+                                      <button 
+                                        type="button" 
+                                        className="ng-button orders-editor-open" 
+                                        onClick={() => openEditor(group.id, piece.id)} 
+                                        disabled={disablePieceEditing} /* BLOQUEADO SI FALTA MATERIAL */
+                                      >
+                                        {readOnly ? 'Ver figura' : 'Editar figura'}
+                                      </button>
                                     </div>
                                   )}
 
                                   <div className="orders-field">
                                     <label htmlFor={quantityField.id}>Cantidad</label>
-                                    <input {...quantityField} id={quantityField.id} type="number" min="1" step="1" placeholder="Cant." value={piece.cantidad} onChange={(e) => updatePiece(group.id, piece.id, 'cantidad', e.target.value)} disabled={disableEditing} className="ng-control orders-control orders-control--quantity" />
+                                    <input {...quantityField} id={quantityField.id} type="number" min="1" step="1" placeholder="Cant." value={piece.cantidad} onChange={(e) => updatePiece(group.id, piece.id, 'cantidad', e.target.value)} 
+                                    disabled={disablePieceEditing} /* BLOQUEADO SI FALTA MATERIAL */
+                                    className="ng-control orders-control orders-control--quantity" />
                                     {quantityField.error}
                                   </div>
                                 </div>
@@ -507,7 +531,8 @@ export default function FormularioPedido({
                         
                         {!readOnly && (
                           <div style={{ marginTop: '12px' }}>
-                            <button type="button" className="ng-button" onClick={() => addPieceToGroup(group.id)} disabled={disableEditing}>
+                            <button type="button" className="ng-button" onClick={() => addPieceToGroup(group.id)} 
+                            disabled={disableEditing || isMaterialMissing} /* BLOQUEADO SI FALTA MATERIAL */>
                               <Plus size={16} /> Agregar pieza
                             </button>
                           </div>
@@ -519,7 +544,6 @@ export default function FormularioPedido({
               )}
             </div>
 
-            {/* Oculta el botón "+ Agregar otro material" si no hay cliente */}
             {!readOnly && !(creating && !selectedClient) && (
               <div className="orders-add-material-wrap">
                 <button type="button" className="ng-button" onClick={addMaterialGroup} disabled={isSubmitting}>
@@ -529,7 +553,6 @@ export default function FormularioPedido({
             )}
           </section>
 
-          {/* ... resto sin cambios ... */}
           {creating && !selectedClient && <p id={`${formId}-client-help`}>Selecciona un cliente para guardar el pedido.</p>}
           <ActionBar>
             {onCerrar && <button type="button" className="ng-button" onClick={() => setIsCancelDialogOpen(true)} disabled={isSubmitting}><X size={18} /> Cancelar</button>}

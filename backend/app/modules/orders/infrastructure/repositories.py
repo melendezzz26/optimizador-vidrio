@@ -148,7 +148,7 @@ class SQLAlchemyOrderRepository(OrderRepositoryPort):
                 "id_pedido": order.id_pedido,
                 "fecha_registro": order.fecha_registro,
                 "estado": order.estado,
-                "cliente": cliente_nombre or "Consumidor Final" # Por si el id_cliente es nulo
+                "cliente": cliente_nombre
             })
 
         return {"total": total, "items": items}
