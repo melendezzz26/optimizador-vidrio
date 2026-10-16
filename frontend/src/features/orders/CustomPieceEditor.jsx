@@ -9,6 +9,7 @@ import { buildConstrainedGeometry } from "./constrainedGeometry";
 
 const DRAWING_WIDTH = 800;
 const DRAWING_HEIGHT = 500;
+const VERTEX_HIT_RADIUS = 24;
 const formatLength = (value) => new Intl.NumberFormat("es", { maximumSignificantDigits: 8 }).format(value);
 
 function useCanvasSize() {
@@ -63,8 +64,19 @@ function SegmentField({ segment, active, onSelect, onChange, inputRef }) {
 
 // Labels use CSS-pixel sizing in both SVG coordinate systems. On dense contours,
 // keep the active label first and omit colliding labels; all sides remain in the list.
-function SegmentOverlay({ points, activeSegmentIndex, measured, width, height, unitScale = 1 }) {
+function SegmentOverlay({
+  points,
+  activeSegmentIndex,
+  selectedVertexIndex = null,
+  fixedVertices = [],
+  onSelectVertex = null,
+  measured,
+  width,
+  height,
+  unitScale = 1,
+}) {
   const occupied = [];
+  const interactiveVertices = Boolean(onSelectVertex) && points.length > 3;
   const labels = points.map((start, index) => {
     const end = points[(index + 1) % points.length];
     const dx = end.x - start.x;
@@ -90,14 +102,32 @@ function SegmentOverlay({ points, activeSegmentIndex, measured, width, height, u
         return <text key={index} x={x} y={y} textAnchor="middle" dominantBaseline="central"
           style={{ fontSize: 13 / unitScale, strokeWidth: 5 / unitScale }} data-active={index === activeSegmentIndex}>S{index + 1}</text>;
       })}
-      {points.map((point, index) => <text key={`vertex-${index}`} x={point.x} y={Math.max(14 / unitScale, point.y - 12 / unitScale)}
-        className="custom-piece-editor__vertex-label" data-highlight={index === activeSegmentIndex}
-        style={{ fontSize: 12 / unitScale, strokeWidth: 4 / unitScale }} textAnchor="middle">V{index + 1}</text>)}
+      {points.map((point, index) => (
+        <text
+          key={`vertex-${index}`}
+          x={point.x}
+          y={Math.max(14 / unitScale, point.y - 12 / unitScale)}
+          className="custom-piece-editor__vertex-label"
+          data-vertex={index + 1}
+          data-interactive={interactiveVertices ? "true" : undefined}
+          data-highlight={index === activeSegmentIndex || index === selectedVertexIndex}
+          data-selected={index === selectedVertexIndex ? "true" : undefined}
+          data-fixed={fixedVertices.includes(index) ? "true" : undefined}
+          style={{ fontSize: 12 / unitScale, strokeWidth: 4 / unitScale }}
+          textAnchor="middle"
+          onClick={interactiveVertices ? (event) => {
+            event.stopPropagation();
+            onSelectVertex(index);
+          } : undefined}
+        >
+          V{index + 1}
+        </text>
+      ))}
     </g>
   );
 }
 
-function DimensionalPreview({ vertices, result, activeSegmentIndex }) {
+function DimensionalPreview({ vertices, result, activeSegmentIndex, selectedVertexIndex, fixedVertices, onSelectVertex }) {
   const [canvasRef, size] = useCanvasSize();
   const points = result.vertices_mm ? result.vertices_mm.map(([x, y]) => ({ x, y })) : vertices;
   const geometry = fitVerticesToPreview(points, size.width, size.height, 38);
@@ -107,8 +137,16 @@ function DimensionalPreview({ vertices, result, activeSegmentIndex }) {
       {geometry && <>
         <polygon className="custom-piece-editor__preview-shape" points={geometry.points.map(({ x, y }) => `${x},${y}`).join(" ")}
           vectorEffect="non-scaling-stroke" aria-hidden="true" />
-        <SegmentOverlay points={geometry.points} activeSegmentIndex={activeSegmentIndex} measured={result.measured}
-          width={size.width} height={size.height} />
+        <SegmentOverlay
+          points={geometry.points}
+          activeSegmentIndex={activeSegmentIndex}
+          selectedVertexIndex={selectedVertexIndex}
+          fixedVertices={fixedVertices}
+          onSelectVertex={onSelectVertex}
+          measured={result.measured}
+          width={size.width}
+          height={size.height}
+        />
       </>}
     </svg>
   );
@@ -141,17 +179,24 @@ function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState,
   const firstInputRef = useRef(null);
   const drawingHeadingRef = useRef(null);
   const dimensionsRef = useRef(null);
+  const angleInputRefs = useRef({});
   const closedWithKeyboard = useRef(false);
   const [canvasRef, canvasSize] = useCanvasSize();
 
   const [drawing, setDrawing] = useState(initialState?.drawing || { vertices: [], isClosed: false });
   const [segments, setSegments] = useState(initialState?.segments || []);
   const [activeSegmentIndex, setActiveSegmentIndex] = useState(initialState?.segments ? 0 : null);
+  const [selectedVertexIndex, setSelectedVertexIndex] = useState(() => {
+    const initialConstraints = initialState?.construction?.constraints;
+    return Array.isArray(initialConstraints) && initialConstraints.length > 0 ? initialConstraints[0].vertex : null;
+  });
   const [construction, setConstruction] = useState(() => {
     const previous = initialState?.construction;
-    return { mode: previous?.mode === 'sketch' ? 'guided' : previous?.mode || (initialState?.drawing?.isClosed ? 'guided' : 'cyclic'),
-      angle: previous?.angle || '90', constraints: previous?.constraints ||
-        (previous?.mode === 'angle' ? [{ vertex: 1, angle: previous.angle }] : []) };
+    return {
+      mode: previous?.mode === 'sketch' || previous?.mode === 'angle' ? 'guided' : previous?.mode || (initialState?.drawing?.isClosed ? 'guided' : 'cyclic'),
+      angle: previous?.angle || '90',
+      constraints: previous?.constraints || (previous?.mode === 'angle' ? [{ vertex: 1, angle: previous.angle }] : []),
+    };
   });
 
   const { vertices, isClosed } = drawing;
@@ -176,6 +221,7 @@ function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState,
   const angles = useMemo(() => {
     try { return result?.vertices_mm ? interiorAngles(result.vertices_mm) : []; } catch { return []; }
   }, [result]);
+  const fixedVertices = useMemo(() => construction.constraints.map((item) => item.vertex), [construction.constraints]);
   const drawingPoints = vertices.map(({ x, y }) => `${x},${y}`).join(" ");
 
   useEffect(() => {
@@ -185,15 +231,61 @@ function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState,
   }, [isClosed]);
 
   useEffect(() => {
+    if (selectedVertexIndex === null) return;
+    const input = angleInputRefs.current[selectedVertexIndex];
+    if (input) input.focus();
+  }, [selectedVertexIndex, construction.constraints.length]);
+
+  useEffect(() => {
     if (onGeometryChange) onGeometryChange(dimensionsReady && validation.isValid ? result.vertices_mm : null);
   }, [onGeometryChange, dimensionsReady, validation.isValid, result]);
 
+  // T03: Selección directa de un vértice para ingresar/fijar su ángulo
+  function selectVertex(vertexIndex) {
+    if (disabled || !isClosed || vertices.length <= 3) return;
+    setSelectedVertexIndex(vertexIndex);
+    setActiveSegmentIndex(vertexIndex);
+    const defaultAngle = String(
+      angles[vertexIndex] !== undefined ? Number(angles[vertexIndex].toFixed(2)) : 90
+    );
+    setConstruction((current) => {
+      if (current.constraints.some((item) => item.vertex === vertexIndex)) {
+        return current;
+      }
+      const maxConstraints = vertices.length - 3;
+      if (current.constraints.length < maxConstraints) {
+        return {
+          ...current,
+          constraints: [...current.constraints, { vertex: vertexIndex, angle: defaultAngle }],
+        };
+      }
+      if (maxConstraints === 1) {
+        return {
+          ...current,
+          constraints: [{ vertex: vertexIndex, angle: defaultAngle }],
+        };
+      }
+      return current;
+    });
+  }
+
   function addVertex(event) {
-    if (disabled || event.button !== 0 || isClosed) return;
+    if (disabled || event.button !== 0) return;
     const screenMatrix = event.currentTarget.getScreenCTM();
     if (!screenMatrix) return;
     const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(screenMatrix.inverse());
     if (point.x < 0 || point.x > DRAWING_WIDTH || point.y < 0 || point.y > DRAWING_HEIGHT) return;
+
+    if (isClosed) {
+      if (vertices.length > 3) {
+        const hitIndex = vertices.findIndex(
+          (v) => Math.hypot(point.x - v.x, point.y - v.y) <= VERTEX_HIT_RADIUS
+        );
+        if (hitIndex !== -1) selectVertex(hitIndex);
+      }
+      return;
+    }
+
     setDrawing((current) => current.isClosed ? current : {
       ...current, vertices: [...current.vertices, { x: point.x, y: point.y }],
     });
@@ -204,6 +296,7 @@ function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState,
     closedWithKeyboard.current = event.detail === 0;
     setSegments(createSegments(vertices));
     setActiveSegmentIndex(0);
+    setSelectedVertexIndex(null);
     setDrawing((current) => ({ ...current, isClosed: true }));
   }
 
@@ -211,6 +304,7 @@ function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState,
     setConstruction({ mode: 'cyclic', angle: '90', constraints: [] });
     setSegments([]);
     setActiveSegmentIndex(null);
+    setSelectedVertexIndex(null);
     setDrawing((current) => ({ vertices: current.vertices.slice(0, -1), isClosed: false }));
     if (vertices.length === 1) drawingHeadingRef.current?.focus({ preventScroll: true });
   }
@@ -219,6 +313,7 @@ function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState,
     setConstruction({ mode: 'cyclic', angle: '90', constraints: [] });
     setSegments([]);
     setActiveSegmentIndex(null);
+    setSelectedVertexIndex(null);
     setDrawing({ vertices: [], isClosed: false });
     drawingHeadingRef.current?.focus({ preventScroll: true });
   }
@@ -229,15 +324,24 @@ function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState,
 
   function toggleAngle(vertex) {
     setActiveSegmentIndex(vertex);
-    setConstruction(current => ({ ...current, constraints: current.constraints.some(item => item.vertex === vertex)
-      ? current.constraints.filter(item => item.vertex !== vertex)
-      : current.constraints.length < vertices.length - 3
-        ? [...current.constraints, { vertex, angle: String(angles[vertex] ?? 90) }] : current.constraints }));
+    setSelectedVertexIndex(vertex);
+    setConstruction(current => ({
+      ...current,
+      constraints: current.constraints.some(item => item.vertex === vertex)
+        ? current.constraints.filter(item => item.vertex !== vertex)
+        : current.constraints.length < vertices.length - 3
+          ? [...current.constraints, { vertex, angle: String(angles[vertex] !== undefined ? Number(angles[vertex].toFixed(2)) : 90) }]
+          : current.constraints,
+    }));
   }
 
   function updateAngle(vertex, angle) {
-    setConstruction(current => ({ ...current, angle: vertex === 1 ? angle : current.angle,
-      constraints: current.constraints.map(item => item.vertex === vertex ? { vertex, angle } : item) }));
+    setSelectedVertexIndex(vertex);
+    setConstruction(current => ({
+      ...current,
+      angle: vertex === 1 ? angle : current.angle,
+      constraints: current.constraints.map(item => item.vertex === vertex ? { vertex, angle } : item),
+    }));
   }
 
   function addPiece() {
@@ -278,10 +382,35 @@ function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState,
             aria-describedby={isClosed ? correctionId : instructionsId} data-closed={isClosed} onClick={addVertex}>
             <g className="custom-piece-editor__drawing" aria-hidden="true">
               {isClosed ? <polygon points={drawingPoints} /> : <polyline points={drawingPoints} />}
-              {vertices.map((vertex, index) => <circle key={index} cx={vertex.x} cy={vertex.y} r="4" />)}
+              {vertices.map((vertex, index) => (
+                <circle
+                  key={index}
+                  cx={vertex.x}
+                  cy={vertex.y}
+                  r={isClosed && vertices.length > 3 ? (selectedVertexIndex === index ? 7 : 5) : 4}
+                  className="custom-piece-editor__vertex-point"
+                  data-vertex={index + 1}
+                  data-selected={isClosed && selectedVertexIndex === index ? "true" : undefined}
+                  data-fixed={isClosed && fixedVertices.includes(index) ? "true" : undefined}
+                  onClick={isClosed && vertices.length > 3 ? (event) => {
+                    event.stopPropagation();
+                    selectVertex(index);
+                  } : undefined}
+                />
+              ))}
             </g>
-            {isClosed && <SegmentOverlay points={vertices} activeSegmentIndex={activeSegmentIndex}
-              width={DRAWING_WIDTH} height={DRAWING_HEIGHT} unitScale={canvasSize.width / DRAWING_WIDTH} />}
+            {isClosed && (
+              <SegmentOverlay
+                points={vertices}
+                activeSegmentIndex={activeSegmentIndex}
+                selectedVertexIndex={selectedVertexIndex}
+                fixedVertices={fixedVertices}
+                onSelectVertex={vertices.length > 3 ? selectVertex : null}
+                width={DRAWING_WIDTH}
+                height={DRAWING_HEIGHT}
+                unitScale={canvasSize.width / DRAWING_WIDTH}
+              />
+            )}
           </svg>
           {!vertices.length && <div className="custom-piece-editor__empty" aria-hidden="true">
             <MousePointer2 size={24} strokeWidth={1.5} /><strong>Haz clic para comenzar</strong>
@@ -309,26 +438,27 @@ function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState,
         </p> : <p id={correctionId} className="custom-piece-editor__correction-note">
           Deshacer reabre y elimina el último vértice. Reiniciar borra el dibujo.
           {hasMeasurements && " Ambas acciones borran las medidas ingresadas."}
+          {vertices.length > 3 && " Haz clic directamente sobre un vértice (V1, V2…) para fijar su ángulo."}
         </p>}
       </section>
       <section ref={dimensionsRef} className="custom-piece-editor__dimensions" aria-labelledby={dimensionsHeadingId}>
         <h3 id={dimensionsHeadingId}><span className="custom-piece-editor__step" aria-hidden="true">2</span>Dimensiones por segmento</h3>
         {!isClosed ? <p className="custom-piece-editor__section-help">Cierra el polígono para identificar sus lados e ingresar sus longitudes en milímetros.</p> : <>
           <label className="custom-piece-editor__configuration">Configuración geométrica
-            <select value={construction.mode} disabled={construction.constraints.length > 0} onChange={event => setConstruction(current => ({ ...current, mode: event.target.value,
-              constraints: event.target.value === 'angle' ? [{ vertex: 1, angle: current.angle }] : current.constraints }))}>
+            <select value={construction.mode} disabled={construction.constraints.length > 0} onChange={event => setConstruction(current => ({
+              ...current,
+              mode: event.target.value,
+            }))}>
               <option value="cyclic">{vertices.length === 3 ? 'Triángulo por tres lados' : 'Lados independientes · polígono cíclico'}</option>
-              {vertices.length === 4 && <option value="angle">Lados independientes · ángulo fijado en V2</option>}
               <option value="guided">Usar boceto como punto de partida</option>
             </select>
           </label>
           {construction.constraints.length > 0 && <p className="custom-piece-editor__section-help">Libera los ángulos fijados para cambiar la configuración de partida.</p>}
           <p className="custom-piece-editor__section-help">{construction.constraints.length
-            ? 'Las longitudes y los ángulos fijados definen restricciones de la forma final. El boceto orienta la búsqueda, sin medir ángulos exactos.'
-            : construction.mode === 'guided' ? 'Todos los lados son independientes. El boceto orienta la búsqueda de una forma convexa; no fija ángulos exactos.'
+            ? 'Las longitudes y los ángulos fijados en los vértices seleccionados definen la forma final.'
+            : construction.mode === 'guided' ? 'Todos los lados son independientes. El boceto orienta la búsqueda de una forma convexa; puedes hacer clic en un vértice para fijar su ángulo.'
             : vertices.length === 3 ? 'Ingresa los tres lados. Los ángulos se calculan a partir del triángulo resultante.'
-            : construction.mode === 'angle' ? 'Ingresa los cuatro lados y fija el ángulo entre S1 y S2 para definir la forma.'
-            : 'Las longitudes no definen una única forma. Esta configuración coloca todos los vértices sobre una circunferencia para construir un polígono convexo. El boceto indica el número y orden de los lados; la vista dimensional muestra la forma final.'}</p>
+            : 'Las longitudes no definen una única forma. Esta configuración coloca todos los vértices sobre una circunferencia o permite hacer clic directamente sobre un vértice para fijar su ángulo.'}</p>
           <p className="custom-piece-editor__progress" role="status" aria-atomic="true">{measuredCount} de {segments.length} medidas ingresadas</p>
           <ol className="custom-piece-editor__segment-list">
             {segments.map((segment) => <SegmentField key={segment.id} segment={segment} active={activeSegmentIndex === segment.index}
@@ -352,7 +482,16 @@ function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState,
         <div className="custom-piece-editor__preview-surface">
           {result.status === "error" ? <div className="custom-piece-editor__preview-placeholder">
             <p className="custom-piece-editor__geometry-error" role="alert">{dimensionalError(result)}</p>
-          </div> : <DimensionalPreview vertices={vertices} result={result} activeSegmentIndex={activeSegmentIndex} />}
+          </div> : (
+            <DimensionalPreview
+              vertices={vertices}
+              result={result}
+              activeSegmentIndex={activeSegmentIndex}
+              selectedVertexIndex={selectedVertexIndex}
+              fixedVertices={fixedVertices}
+              onSelectVertex={vertices.length > 3 ? selectVertex : null}
+            />
+          )}
         </div>
         <div className="custom-piece-editor__preview-caption">
           <p className="custom-piece-editor__active-length"><strong>{activeSegment?.id}</strong><span>{activeLength}</span></p>
@@ -360,19 +499,32 @@ function PolygonCanvas({ onGuardarVertices, headerReady, disabled, initialState,
         </div>
         <p className="custom-piece-editor__section-help">Los vértices finales definen la forma guardada. Los ángulos se calculan desde esos vértices.</p>
       </section>}
-      {isClosed && (angles.length > 0 || construction.constraints.length > 0 || (vertices.length > 3 && measuredCount === vertices.length)) && <section className="custom-piece-editor__angles" aria-label="Ángulos interiores">
+      {isClosed && (angles.length > 0 || construction.constraints.length > 0 || selectedVertexIndex !== null || (vertices.length > 3 && measuredCount === vertices.length)) && <section className="custom-piece-editor__angles" aria-label="Ángulos interiores">
         <h3>Ángulos interiores</h3>
-        <p>Puedes fijar hasta {vertices.length - 3} ángulos para definir la forma.</p>
+        <p>Haz clic directamente sobre un vértice en el dibujo o usa la lista para fijar hasta {vertices.length - 3} ángulos.</p>
+        {selectedVertexIndex !== null && (
+          <p role="status">Vértice V{selectedVertexIndex + 1} seleccionado</p>
+        )}
         <p role="status">Restricciones de forma: {construction.constraints.length} de {vertices.length - 3} utilizadas</p>
         <ol>{vertices.map((_, index) => {
           const fixed = construction.constraints.find(item => item.vertex === index);
-          return <li key={index} data-active={activeSegmentIndex === index}>
+          const isSelected = selectedVertexIndex === index;
+          return <li key={index} data-active={activeSegmentIndex === index} data-selected={isSelected ? "true" : undefined}>
             {fixed ? <label>Ángulo interior fijado en V{index + 1} (grados)
-              <input type="number" step="any" required value={fixed.angle}
+              <input
+                ref={(node) => { angleInputRefs.current[index] = node; }}
+                type="number"
+                step="any"
+                required
+                value={fixed.angle}
                 aria-invalid={!isPositiveLength(fixed.angle) || Number(fixed.angle) >= 180}
-                onFocus={() => setActiveSegmentIndex(index)} onChange={event => updateAngle(index, event.target.value)} /> Fijado
+                onFocus={() => {
+                  setActiveSegmentIndex(index);
+                  setSelectedVertexIndex(index);
+                }}
+                onChange={event => updateAngle(index, event.target.value)}
+              /> Fijado
             </label> : <span>V{index + 1}: {angles[index] === undefined ? '—' : `${formatLength(angles[index])}°`} Calculado</span>}
-            <span> (entre S{index || vertices.length} y S{index + 1}) </span>
             {vertices.length > 3 && <button type="button" onClick={() => toggleAngle(index)}
               disabled={!fixed && construction.constraints.length >= vertices.length - 3}
               aria-label={`${fixed ? 'Liberar' : 'Fijar'} ángulo V${index + 1}`}>

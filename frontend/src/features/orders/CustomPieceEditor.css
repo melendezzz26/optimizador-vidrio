@@ -591,3 +591,40 @@
 .custom-piece-editor__configuration input { width: 100%; min-width: 0; padding: 10px; border: 1px solid #94a3b8; border-radius: 6px; font: inherit; background: white; color: #182230; }
 .custom-piece-editor__configuration span { font-size: 13px; }
 .custom-piece-editor__configuration :focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
+
+/* --- T03: VÉRTICES INTERACTIVOS EN SVG --- */
+.custom-piece-editor__canvas[data-closed="true"] .custom-piece-editor__vertex-point,
+.custom-piece-editor__vertex-label[data-interactive="true"] {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.custom-piece-editor__vertex-point {
+  transition: r 120ms ease, fill 120ms ease, stroke 120ms ease;
+}
+
+.custom-piece-editor__canvas[data-closed="true"] .custom-piece-editor__vertex-point:hover {
+  fill: var(--editor-cyan);
+}
+
+.custom-piece-editor__vertex-point[data-fixed="true"] {
+  fill: var(--editor-cyan);
+  stroke: var(--editor-surface);
+  stroke-width: 2;
+}
+
+.custom-piece-editor__vertex-point[data-selected="true"] {
+  fill: var(--editor-blue);
+  stroke: var(--editor-surface);
+  stroke-width: 2.5;
+}
+
+.custom-piece-editor__vertex-label[data-selected="true"] {
+  fill: var(--editor-blue);
+  font-weight: 800;
+}
+
+.custom-piece-editor__angles li[data-selected="true"] {
+  background: var(--editor-hover);
+  outline: 1px solid var(--editor-cyan);
+}
