@@ -2,6 +2,14 @@ from dataclasses import dataclass
 from typing import Callable, Protocol
 
 from ..domain.raster_mask import RasterMask
+from ..domain.problem import StockCandidate
+from decimal import Decimal
+
+
+class CompatibleStockProvider(Protocol):
+    """Read-only logical lookup, ordered remnants then sheets; no reservation."""
+
+    def list_compatible(self, group_key: tuple[int, Decimal]) -> tuple[StockCandidate, ...]: ...
 
 
 class OptimizationOrders(Protocol):
