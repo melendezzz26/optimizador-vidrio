@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { UsersPage } from '../UsersPage';
 import { listRoles, listUsers, updateUser } from '../usersApi';
+import { withPermissions } from '../../authentication/__tests__/permissionFixtures';
 
 vi.mock('../usersApi', () => ({
   listRoles: vi.fn(),
@@ -17,7 +18,7 @@ const carlos = {
 };
 
 function renderPage() {
-  return render(<UsersPage currentUser={admin} onSessionExpired={vi.fn()} toolbar={null} />);
+  return render(<UsersPage currentUser={withPermissions(admin)} onSessionExpired={vi.fn()} toolbar={null} />);
 }
 
 describe('UsersPage — feedback compartido (TA-034)', () => {

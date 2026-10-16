@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { OptimizationPage } from '../OptimizationPage';
+import { withPermissions } from '../../authentication/__tests__/permissionFixtures';
 import { createFixturePendingOrdersSource } from '../pendingOrdersSource';
 import { createFixtureAdapter, fixtureOrders, fixtureEvents, prepareFixture } from '../firstFitFixture';
 import { PlacementCanvas } from '../PlacementCanvas';
@@ -11,7 +12,7 @@ afterEach(() => { vi.useRealTimers(); vi.restoreAllMocks(); });
 const click = (name, scope = screen) => fireEvent.click(scope.getByRole('button', { name, exact: true }));
 test('selection previews groups immediately and preparation exposes all masks before any result', async () => {
   const source = createFixturePendingOrdersSource(fixtureOrders);
-  render(<OptimizationPage user={{ rol: 'Operario' }} source={source} adapter={createFixtureAdapter()} />);
+  render(<OptimizationPage user={withPermissions({ rol: 'Operario' })} source={source} adapter={createFixtureAdapter()} />);
   fireEvent.click(screen.getByLabelText('Seleccionar todos'));
   const groups = screen.getByRole('region', { name: 'Grupos detectados' });
   expect(groups).toHaveTextContent('Plancha base #15'); expect(groups).toHaveTextContent('Plancha base #16');
@@ -78,7 +79,7 @@ test('execution waits for complete raster preparation instead of silently runnin
   const snapshot = prepareFixture([21, 22]); delete snapshot.rasters[103];
   const source = createFixturePendingOrdersSource(fixtureOrders);
   const adapter = { ...createFixtureAdapter(), prepare: async () => snapshot };
-  render(<OptimizationPage user={{ rol: 'Operario' }} source={source} adapter={adapter} />);
+  render(<OptimizationPage user={withPermissions({ rol: 'Operario' })} source={source} adapter={adapter} />);
   fireEvent.click(screen.getByLabelText('Seleccionar todos'));
   await act(async () => click('Preparar optimización'));
   expect(screen.getByRole('button', { name: 'Ejecutar First Fit', exact: true })).toBeDisabled();
@@ -89,7 +90,7 @@ test('execution waits for complete raster preparation instead of silently runnin
 test('prepared masks and groups stay fixed when live order details change during execution', async () => {
   vi.useFakeTimers();
   const source = createFixturePendingOrdersSource(fixtureOrders);
-  render(<OptimizationPage user={{ rol: 'Operario' }} source={source} adapter={createFixtureAdapter({ delayMs: 10 })} />);
+  render(<OptimizationPage user={withPermissions({ rol: 'Operario' })} source={source} adapter={createFixtureAdapter({ delayMs: 10 })} />);
   fireEvent.click(screen.getByLabelText('Seleccionar todos'));
   await act(async () => click('Preparar optimización')); click('Ejecutar First Fit');
   const changed = structuredClone(fixtureOrders[0]); changed.piezas[0].espesor_mm = 10;

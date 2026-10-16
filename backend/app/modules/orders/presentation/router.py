@@ -38,13 +38,16 @@ class OrderRoute(APIRoute):
 router = APIRouter(prefix="/api/orders", tags=["Pedidos"], route_class=OrderRoute)
 logger = logging.getLogger(__name__)
 
-permiso_gestionar_pedidos = require_permission("GESTIONAR_PEDIDOS")
+permiso_ver_pedidos = require_permission("orders.view")
+permiso_crear_pedidos = require_permission("orders.create")
+permiso_editar_pedidos = require_permission("orders.update")
+permiso_cancelar_pedidos = require_permission("orders.cancel")
 
 @router.post("", response_model=CreateOrderResponse, status_code=status.HTTP_201_CREATED)
 
 def create_order(
     request: CreateOrderRequest,
-    user: AuthenticatedUser = Depends(permiso_gestionar_pedidos),
+    user: AuthenticatedUser = Depends(permiso_crear_pedidos),
     use_case: CreateOrderUseCase = Depends(get_create_order_use_case),
 ):
     try:
@@ -70,7 +73,7 @@ def list_orders(
     estado: Optional[str] = Query(None, description="Filtrar por estado del pedido"),
     cliente: Optional[str] = Query(None, description="Filtrar por nombre de cliente"),
     fecha: Optional[date] = Query(None, description="Filtrar por fecha exacta (YYYY-MM-DD)"),
-    user: AuthenticatedUser = Depends(permiso_gestionar_pedidos),
+    user: AuthenticatedUser = Depends(permiso_ver_pedidos),
     use_case: ListOrdersUseCase = Depends(get_list_orders_use_case)
 ):
     try:
@@ -82,7 +85,7 @@ def list_orders(
 @router.get("/{id_pedido}", response_model=OrderResponse)
 def get_order(
     id_pedido: int = Path(gt=0, le=2147483647),
-    user: AuthenticatedUser = Depends(permiso_gestionar_pedidos),
+    user: AuthenticatedUser = Depends(permiso_ver_pedidos),
     use_case: GetOrderUseCase = Depends(get_order_use_case),
 ):
     try:
@@ -97,7 +100,7 @@ def get_order(
 def update_order(
     request: UpdateOrderRequest,
     id_pedido: int = Path(gt=0, le=2147483647),
-    user: AuthenticatedUser = Depends(permiso_gestionar_pedidos),
+    user: AuthenticatedUser = 	Depends(permiso_editar_pedidos),
     use_case: UpdateOrderUseCase = Depends(get_update_order_use_case),
 ):
     try:
@@ -119,7 +122,7 @@ def update_order(
 @router.delete("/{id_pedido}", status_code=status.HTTP_200_OK)
 def delete_order(
     id_pedido: int = Path(gt=0, le=2147483647),
-    user: AuthenticatedUser = Depends(permiso_gestionar_pedidos),
+    user: AuthenticatedUser = Depends(permiso_cancelar_pedidos),
     use_case: CancelOrderUseCase = Depends(get_cancel_order_use_case),
 ):
     try:

@@ -50,7 +50,7 @@ test.each(['Administrador', 'Almacenero', 'Operario'])('login real de componente
   const paths = fetch.mock.calls.map(([url]) => new URL(url).pathname);
   expect(paths.includes('/api/orders')).toBe(role !== 'Almacenero');
   expect(paths.includes('/api/clients')).toBe(role !== 'Almacenero');
-  expect(screen.queryByRole('button', { name: 'Panel de roles', exact: true }) !== null).toBe(role === 'Administrador');
+  expect(screen.queryByRole('button', { name: 'Administración', exact: true }) !== null).toBe(role === 'Administrador');
 });
 test('restaura sesión con me antes de consultar Dashboard y utiliza el rol vigente', async () => {
   actor = dashboardUser('Administrador'); storeSession();
@@ -104,7 +104,7 @@ test('401 de datos usa logout global y retira el Dashboard', async () => {
 test.each([
   ['Gestión de inventario', 'Gestión de inventario'],
   ['Registro de pedidos', 'Registro de pedidos'],
-  ['Panel de roles', 'Panel de roles'],
+  ['Administración', 'Administración'],
 ])('acceso rápido %s navega al módulo real desde App', async (quickLabel, sidebarLabel) => {
   actor = dashboardUser('Administrador'); storeSession();
   const user = userEvent.setup(); render(<App />);

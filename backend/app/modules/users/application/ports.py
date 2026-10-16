@@ -2,6 +2,7 @@
 from collections.abc import Callable
 from datetime import datetime
 from typing import Protocol
+from app.modules.users.domain.role_permissions import PermissionInfo, RoleWithPermissions
 
 from app.modules.users.domain.user import NewUser, Role, User, UserChanges
 
@@ -32,6 +33,21 @@ class UserRepository(Protocol):
         """Aplica los cambios. Lanza UserNotFoundError si el usuario no existe."""
         ...
 
+class RolePermissionRepository(Protocol):
+    """Almacén de los permisos de cada rol (S1-RBAC)."""
+
+    def list_roles(self) -> list[RoleWithPermissions]:
+        ...
+
+    def find_role(self, role_id: int) -> RoleWithPermissions | None:
+        ...
+
+    def list_permissions(self) -> list[PermissionInfo]:
+        ...
+
+    def replace_permissions(self, role_id: int, codes: frozenset[str]) -> RoleWithPermissions:
+        """Reemplaza todos los permisos del rol en una sola transacción (RN-07)."""
+        ...
 
 # Recibe la contraseña y devuelve su hash.
 PasswordHasher = Callable[[str], str]

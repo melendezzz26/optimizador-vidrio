@@ -1,9 +1,10 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { OptimizationPage } from '../OptimizationPage';
+import { withPermissions } from '../../authentication/__tests__/permissionFixtures';
 import { createFixturePendingOrdersSource, createPendingOrdersSource } from '../pendingOrdersSource';
 import { createFixtureAdapter, fixtureOrders, newFixtureOrder, prepareFixture, sheetToContainer } from '../firstFitFixture';
-const user = { rol: 'Operario', nombre: 'Operario local' };
+const user = withPermissions({ rol: 'Operario', nombre: 'Operario local' });
 beforeEach(() => {
   vi.useFakeTimers();
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({ fillRect: vi.fn(), setTransform: vi.fn() });

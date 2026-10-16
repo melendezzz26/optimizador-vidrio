@@ -37,8 +37,6 @@ router = APIRouter(
     prefix="/api/clients",
     tags=["Clientes"],
     route_class=ClientRoute,
-    # Preparación de pedidos: misma protección vigente que Orders, sin permisos nuevos.
-    dependencies=[Depends(require_permission("GESTIONAR_PEDIDOS"))],
 )
 
 
@@ -60,7 +58,11 @@ def client_errors_as_http():
 
 
 @router.post("", response_model=ClientResponse, status_code=status.HTTP_201_CREATED)
-def create_client(data: ClientCreateRequest, repository: ClientRepository = Depends(get_client_repository)):
+def create_client(
+    data: ClientCreateRequest,
+    repository: ClientRepository = Depends(get_client_repository),
+    _=Depends(require_permission("orders.create")),
+):
     with client_errors_as_http():
         client = use_cases.create_client(
             CreateClientData(
@@ -79,6 +81,7 @@ def list_clients(
     document: str | None = Query(default=None, description="Número de documento exacto."),
     query: str | None = Query(default=None, description="Parte del nombre, sin distinguir mayúsculas."),
     repository: ClientRepository = Depends(get_client_repository),
+        _=Depends(require_permission("orders.view")),
 ):
     with client_errors_as_http():
         return [ClientResponse.from_domain(client) for client in use_cases.list_clients(

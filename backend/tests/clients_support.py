@@ -2,6 +2,8 @@
 import pytest
 from sqlalchemy.orm import sessionmaker
 
+from app.modules.authentication.infrastructure.permission_seed import seed_permissions
+
 from tests.integration.postgres_support import new_database, upgrade
 
 
@@ -26,4 +28,7 @@ def session_factory(clients_database):
         session.add_all([Rol(id_rol=i, nombre=name) for i, name in
                          [(1, "Administrador"), (2, "Almacenero"), (3, "Operario")]])
         session.commit()
+        
+        # S1-RBAC: TRUNCATE roles ... CASCADE vacía rol_permisos; se recarga la asignación inicial.
+        seed_permissions(session)
     return factory
