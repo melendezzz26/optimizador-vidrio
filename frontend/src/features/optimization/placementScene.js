@@ -8,6 +8,10 @@ const COLORS = [
   ['#a8c9f8', '#285da8'], ['#9bd9cf', '#176f66'], ['#c8bbef', '#665099'],
   ['#f2cf8e', '#91651d'], ['#e9b5ca', '#91466a'], ['#99d4e7', '#296e86'],
 ];
+export function placementColors(snapshot, placement) {
+  const index = Math.max(0, snapshot.groups.flatMap(g => g.units ?? []).findIndex(unit => placementKey(unit) === placementKey(placement)));
+  return COLORS[index % COLORS.length];
+}
 
 // The same normalized local pivot used by the precise 2D SVG. Circle tessellation
 // is display-only; canonical geometry and the backend raster are never changed.
@@ -33,14 +37,12 @@ export function createPlacementScene(snapshot, container, placements) {
   if (![width, height].every(n => Number.isFinite(n) && n > 0)) return null;
   const outline = placedOutline(container.geometry);
   if (!outline.length) return null;
-  const units = snapshot.groups.flatMap(g => g.units ?? []);
   const pieces = placements.filter(p => containerKey(p) === containerKey(container)).flatMap(placement => {
     const piece = snapshot.orders.find(o => o.id_pedido === placement.id_pedido)?.piezas.find(p => p.id_pieza === placement.id_pieza);
     const points = placedOutline(piece?.geometria, placement);
     if (!points.length) return [];
     const key = placementKey(placement);
-    const index = Math.max(0, units.findIndex(unit => placementKey(unit) === key));
-    const [color, edge] = COLORS[index % COLORS.length];
+    const [color, edge] = placementColors(snapshot, placement);
     return [{ key, placement, points, color, edge, label: `#${placement.id_pieza} · ${placement.unit_index + 1}` }];
   });
   const target = Math.max(width, height) / 12;

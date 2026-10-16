@@ -9,7 +9,9 @@ import { createDemoOrdersSource, createFixtureAdapter, unavailableOptimizationAd
 import { STAGES, pieceCount } from './optimizationModel';
 import { useFirstFit } from './useFirstFit';
 import { PlacementCanvas } from './PlacementCanvas';
-import { RasterComparison } from './RasterComparison';
+import { detectMaterialGroups } from './materialGroups';
+import { MaterialGroupsPanel } from './MaterialGroupsPanel';
+import { groupRasterReady } from './rasterInspectionModel';
 import './OptimizationPage.css';
 
 function OptimizationWorkspace({ source, adapter, onSessionExpired }) {
@@ -20,7 +22,8 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired }) {
   const locked = ['preparing', 'running'].includes(state.status);
   const fresh = state.runId ? state.orders.filter(o => !state.availableAtStart?.includes(o.id_pedido)).length : 0;
   const stageIndex = STAGES.findIndex(([id]) => id === state.stage);
-  const rasterPiece = state.snapshot?.orders.flatMap(o => o.piezas).find(p => state.snapshot.rasters?.[p.id_pieza]);
+  const preview = detectMaterialGroups(state.orders.filter(o => state.selected.includes(o.id_pedido)), adapter.resolveMaterial);
+  const rasterReady = state.snapshot?.groups.length > 0 && state.snapshot.groups.every(g => groupRasterReady(state.snapshot, g));
   async function confirm() {
     setDialog(false);
     try {
@@ -42,7 +45,8 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired }) {
         <ul className="first-fit-orders" aria-label="Pedidos pendientes">{state.orders.map(order => <li key={order.id_pedido}>
           <label><input type="checkbox" disabled={locked || state.connection !== 'connected'} checked={state.selected.includes(order.id_pedido)}
             onChange={e => reset(() => flow.select(e.target.checked ? [...state.selected, order.id_pedido] : state.selected.filter(id => id !== order.id_pedido)))} />
-            <span><strong>#{order.id_pedido} · {order.cliente}</strong><small>{order.piezas ? `${pieceCount([order])} piezas` : 'Cantidad disponible al consultar el detalle'}</small></span>
+            <span><strong>#{order.id_pedido} · {order.cliente}</strong><small>{order.piezas ? `${pieceCount([order])} piezas` : 'Cantidad disponible al consultar el detalle'}</small>
+              <small>{order.piezas ? detectMaterialGroups([order], adapter.resolveMaterial).groups.map(g => `${g.name} · ${g.thickness} mm`).join(' / ') : 'Material y espesor pendientes del detalle'}</small></span>
             <span className="first-fit-badge">Pendiente</span></label>
         </li>)}</ul>
       </>}
@@ -52,24 +56,24 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired }) {
     </section>
     {state.error && <FeedbackMessage variant="error">{state.error}</FeedbackMessage>}
     {state.status === 'preparing' && <LoadingState>Preparando pedidos y grupos…</LoadingState>}
+    {(state.selected.length > 0 || state.snapshot) && <MaterialGroupsPanel groups={state.snapshot?.groups ?? preview.groups}
+      unresolved={state.snapshot ? [] : preview.unresolved} snapshot={state.snapshot} completedGroups={state.snapshot ? state.completedGroups : []} />}
     {state.snapshot && <section className="first-fit-section" aria-labelledby="groups-title">
       <h2 id="groups-title">Selección actual</h2>
       <p>Pedidos: {state.snapshot.orders.map(o => `#${o.id_pedido}`).join(', ')} · Piezas: {state.snapshot.total} · Grupos detectados: {state.snapshot.groups.length}</p>
-      <ul className="first-fit-groups">{state.snapshot.groups.map(g => <li key={g.id}><strong>{g.name} · {g.thickness} mm</strong>
-        <span>{g.units.length} piezas · pedidos {g.orders.map(id => `#${id}`).join(', ')}</span>
-        {state.completedGroups.includes(g.id) && <span>Completado</span>}</li>)}</ul>
-      {state.status === 'prepared' && <ActionBar><button className="ng-button ng-button--primary" onClick={flow.run}>Ejecutar First Fit</button></ActionBar>}
+      {state.status === 'prepared' && <ActionBar><button className="ng-button ng-button--primary" disabled={!rasterReady} onClick={flow.run}>Ejecutar First Fit</button>
+        {!rasterReady && <p role="status">Preparación pendiente: faltan máscaras válidas de algunas piezas.</p>}</ActionBar>}
       {state.runId && <>
+        <h2>Progreso de optimización</h2>
+        {state.snapshot.fixture && <p>Simulación de etapas y rotaciones; integración del motor real pendiente.</p>}
         <ol className="first-fit-stages" aria-label="Etapas de optimización">{STAGES.map(([id, label], i) => {
           const status = state.status === 'completed' || i < stageIndex ? 'Completado' : i === stageIndex ? state.status === 'failed' ? 'Error' : 'Activo' : 'Pendiente';
           return <li key={id} aria-current={status === 'Activo' ? 'step' : undefined}><span>{label}</span><small>{status}</small></li>;
         })}</ol>
+        {state.status === 'failed' && <p role="status">Optimización fallida</p>}
         <p role="status">{state.placements.length} / {state.snapshot.total} piezas colocadas</p>
         <progress aria-label="Piezas colocadas" value={state.placements.length} max={state.snapshot.total} />
         <PlacementCanvas key={state.runId} snapshot={state.snapshot} placements={state.placements} />
-        {rasterPiece && <details><summary>Inspeccionar geometría y raster de ejemplo · pieza #{rasterPiece.id_pieza}</summary>
-          <RasterComparison geometry={rasterPiece.geometria} piece={rasterPiece} raster={{ ...state.snapshot.rasters[rasterPiece.id_pieza], tipo_forma: rasterPiece.tipo_forma, cantidad: rasterPiece.cantidad }} />
-        </details>}
       </>}
       {state.metrics && <section aria-labelledby="result-title"><h2 id="result-title">Resultado First Fit</h2>
         <dl className="optimization-facts">{[

@@ -1,5 +1,7 @@
 # Ampliación 3D — evidencia técnica
 
+Registro de la entrega f538eeb. El refinamiento posterior de grupos, planchas base e inspección raster está en [groups-raster.md](groups-raster.md); se conservan aquí las pruebas y decisiones de esta entrega histórica.
+
 Fecha: 2026-10-15. Alcance exclusivo frontend y fixtures.
 
 | Frente | Estado |

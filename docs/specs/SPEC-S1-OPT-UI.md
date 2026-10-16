@@ -6,6 +6,8 @@
 | Implementación frontend | **COMPLETED WITH FIXTURES** |
 | Vista 2D | **IMPLEMENTED** |
 | Vista 3D | **IMPLEMENTED** |
+| Agrupación visual por material/espesor | **IMPLEMENTED** |
+| Preparación raster previa | **IMPLEMENTED** |
 | Rotación automática real calculada por motor | **PENDING** |
 | Integración First Fit real | **PENDING** |
 | Responsable UI y visualización | Andro Q. |
@@ -16,6 +18,20 @@
 | Base | ee4e704 |
 
 ## Objetivo y alcance
+
+### Refinamiento aprobado: grupos y preparación raster
+
+Agrupar automáticamente la selección por ID de material y espesor numérico, desglosando pedidos que contienen materiales diferentes. Mostrar pedidos/unidades, plancha base de una fuente desacoplada y estado por grupo. No inferir compatibilidad cuando faltan datos. Validar pertenencia pieza/unidad/grupo y material del contenedor en cada colocación. Navegar un grupo y un contenedor a la vez, sin mezclar grupos en 2D/3D/raster.
+
+Preparación raster explícita antes de ejecutar: máscaras recibidas/fixture, tamaño de celda, estado y advertencia de costo computacional. No rasterizar ni optimizar geometría real en frontend. Tras colocaciones válidas habilitar modos 2D/3D/máscara; inspección raster local por pieza claramente diferenciada de una máscara global de plancha, que requiere contrato backend. Zoom acotado, ajuste y celdas visibles; desplazamiento del plano ampliado. Conservar snapshot, live, acciones y eventos públicos (stage_changed opcional).
+
+Criterios CA16–CA19: agrupación automática y aislamiento, raster previo, inspección/zoom en tres modos y conservación de navegación/snapshot. Motor, agrupación final, rotaciones y persistencia reales continúan PENDING a cargo de Fabricio Meléndez; Andro Q. prepara la UI.
+
+Contrato temporal de grupo: id = materialId:espesor numérico, units con pedido/pieza/índice, containers con ID/fuente, dimensiones, geometría, id_tipo_vidrio y espesor_mm. Un contenedor no pertenece a grupos incompatibles. La UI valida estos campos y pertenencia antes de aceptar/dibujar colocaciones; no verifica factibilidad geométrica. `resolveMaterial(id)` es la fuente desacoplada de nombres/stock para la vista previa; la fuente fixture nunca se utiliza para pedidos reales.
+
+Preparación: snapshot.rasters admite clave pedido:pieza (preferida) o id_pieza (compatibilidad actual HU-015). Máscaras recibidas mediante resolution_mm, columns, row_count y spans_by_row; se validan dimensiones, resolución y límites de spans. Faltas/errores mantienen preparación pendiente y deshabilitan ejecución. No se modifica resolución localmente: las máscaras fixture son explícitas a 100 mm/celda, sin rasterizador frontend.
+
+Resultado: una plancha base por grupo fixture (Templado 6 mm #15; Bronce 5.5 mm #16), retazo #8 disponible solo dentro de Bronce, sin colocaciones en esta corrida. El retazo es inventario sintético preexistente, nunca sobrante calculado. Zoom 100–400% en cada modo; 2D/raster usan desplazamiento nativo accesible, 3D amplía la cámara manteniendo yaw limitado. Cambio de modo conserva snapshot, grupo, contenedor y métricas; zoom 2D/raster vuelve a ajuste al desmontar el panel, zoom/yaw 3D se conservan hasta restablecer o nueva corrida.
 
 La UI S1 Optimization está implementada. El fixture First Fit está implementado únicamente para desarrollo y validación visual, permitiendo avanzar en paralelo al motor desarrollado por Fabricio Meléndez. No representa un motor First Fit real terminado ni cálculo automático real de rotaciones terminado. Cuando el motor esté disponible, Andro Q. integrará backend y frontend. La aprobación de esta SPEC no equivale a solución de producción Verified: la integración real y la confirmación/persistencia siguen pendientes.
 
@@ -37,7 +53,7 @@ Convención temporal: contenedor origen superior izquierdo, +x derecha, +y abajo
 
 Dimensiones: siempre inventario ancho_mm/alto_mm en adaptador de plancha. Fixture contiene inventario sintético rotulado; no tabla comercial ni fallback. Retazos incluyen geometría real del contenedor. RasterComparison conserva raster HU-015 sin reemplazarlo; la simulación muestra máscaras explícitas cuando disponibles.
 
-Estados: loading_orders, selection_ready, preparing, prepared, running, completed, failed. Etapas: preparing_orders, grouping_materials, rasterizing, sorting_pieces, first_fit, calculating_metrics. Terminales no aceptan eventos tardíos; nuevo run_id al repetir. Descartar cancela stream y limpia resultado. Confirmar abre ConfirmDialog y comunica que no se guardó si falta endpoint.
+Estados: loading_orders, selection_ready, preparing, prepared, running, completed, failed. Timeline: preparing_orders, grouping_materials, rasterizing, sorting_pieces, first_fit, evaluating_rotations, calculating_metrics y completed; fallo explícito aparte. Es simulación/hitos inferidos, no telemetría real de rotaciones. stage_changed sigue opcional. Terminales no aceptan eventos tardíos; nuevo run_id al repetir. Descartar cancela stream y limpia resultado. Confirmar abre ConfirmDialog y comunica que no se guardó si falta endpoint.
 
 ## Criterios verificables
 
@@ -61,7 +77,7 @@ Motor First Fit real y cálculo automático real de rotaciones: **PENDING**, Fab
 - CA03: altas automáticas no seleccionadas; bajas/cambio de estado depuran selección; error/reconexión; cancelación al desmontar.
 - CA04: preparación muestra pedidos, unidades y grupos por material/espesor; no inventa contrato backend.
 - CA05: snapshot inmutable durante corrida y aviso de pedidos nuevos para siguiente ejecución.
-- CA06: ocho eventos requeridos, seis etapas textuales, progreso y colocaciones idempotentes; retry sin duplicar ni aceptar eventos antiguos.
+- CA06: ocho eventos públicos, ocho hitos textuales y fallo explícito, progreso y colocaciones idempotentes; retry sin duplicar ni aceptar eventos antiguos.
 - CA07: rectángulo, círculo y polígono convexo; 0/90/30 grados; contenedores navegables, escala uniforme y origen documentado.
 - CA08: dimensiones de inventario sin estándares inventados; fuente, material, espesor, pedido/pieza/rotación visibles.
 - CA09: métricas solo de eventos: colocadas/total, pedidos, grupos, retazos, planchas, aprovechamiento, merma, tiempo.

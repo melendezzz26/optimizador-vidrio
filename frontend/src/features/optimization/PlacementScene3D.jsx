@@ -1,6 +1,7 @@
 import { useId, useMemo, useRef } from 'react';
 import { createPlacementScene, clampYaw, DEFAULT_YAW, extrudedSides, projectPoint, projectedPath } from './placementScene';
 import './PlacementScene3D.css';
+import { ZoomControls } from './InspectionViewport';
 
 const SURFACE = 18;
 const PIECE_TOP = 25;
@@ -13,7 +14,7 @@ function Dimension({ start, end, label, scene, yaw }) {
   </g>;
 }
 
-export function PlacementScene3D({ snapshot, container, placements, yaw, onYawChange }) {
+export function PlacementScene3D({ snapshot, container, placements, yaw, onYawChange, zoom = 1, onZoomChange = () => {} }) {
   const id = useId();
   const drag = useRef(null);
   const scene = useMemo(() => createPlacementScene(snapshot, container, placements), [snapshot, container, placements]);
@@ -33,9 +34,10 @@ export function PlacementScene3D({ snapshot, container, placements, yaw, onYawCh
     <header className="placement-3d-heading"><div><span className="placement-3d-eyebrow">INSPECCIÓN ESPACIAL</span>
       <h3>{container.material_source === 'plancha' ? 'Plancha' : 'Retazo'} #{container.material_id} · {container.material_name}</h3>
       <p>{container.espesor_mm} mm registrados · profundidad visual ilustrativa</p></div>
-      <button type="button" className="ng-button" onClick={() => onYawChange(DEFAULT_YAW)}>Restablecer vista</button>
+      <button type="button" className="ng-button" onClick={() => { onYawChange(DEFAULT_YAW); onZoomChange(1); }}>Restablecer vista</button>
     </header>
     <p id={`${id}-help`} className="placement-3d-help">Arrastra horizontalmente o usa las flechas ← →. Giro limitado a −90° / +90°; inclinación fija.</p>
+    <ZoomControls label="3D" zoom={zoom} onChange={onZoomChange} />
     <div className="placement-3d-viewport" role="slider" tabIndex={0} aria-label="Giro horizontal de la vista 3D"
       aria-describedby={`${id}-help`} aria-valuemin={-90} aria-valuemax={90} aria-valuenow={yaw} aria-valuetext={`${yaw} grados`} aria-orientation="horizontal"
       onKeyDown={event => {
@@ -54,7 +56,7 @@ export function PlacementScene3D({ snapshot, container, placements, yaw, onYawCh
         const start = drag.current;
         if (start?.id === event.pointerId) onYawChange(clampYaw(Math.round(start.yaw + (event.clientX - start.x) / start.width * 180)));
       }} onPointerUp={release} onPointerCancel={release} onLostPointerCapture={() => { drag.current = null; }}>
-      <svg className="placement-3d-svg" viewBox={scene.viewBox.join(' ')} aria-hidden="true" focusable="false">
+      <svg className="placement-3d-svg" viewBox={scene.viewBox.map(n => n / zoom).join(' ')} aria-hidden="true" focusable="false">
         <defs>
           <linearGradient id={`${id}-glass`} x1="0" y1="0" x2="1" y2="1"><stop stopColor="#f3fbff" /><stop offset="0.55" stopColor="#dceef4" /><stop offset="1" stopColor="#bdd9e4" /></linearGradient>
           <filter id={`${id}-shadow`} x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="15" /></filter>

@@ -27,13 +27,13 @@ test('view switch only appears once a visualizable placement exists, defaults to
 test('switching view keeps material, yaw and immutable placements; each piece is identified', () => {
   const props = data(); const before = JSON.stringify(props);
   render(<PlacementCanvas {...props} />);
-  fireEvent.change(screen.getByLabelText('Plancha o retazo'), { target: { value: 'retazo:8' } });
+  fireEvent.change(screen.getByLabelText('Grupo del resultado'), { target: { value: '2:5.5' } });
   const slider = open3D();
-  expect(screen.getByLabelText('Plancha o retazo')).toHaveValue('retazo:8');
+  expect(screen.getByLabelText('Plancha o retazo')).toHaveValue('plancha:16');
   expect(screen.getByRole('list', { name: 'Piezas en la vista 3D' })).toHaveTextContent('Pieza #103 · unidad 1');
   fireEvent.keyDown(slider, { key: 'ArrowRight' });
   fireEvent.click(screen.getByRole('button', { name: 'Ver en 2D' }));
-  expect(screen.getByRole('img', { name: 'Colocaciones en retazo #8' }).querySelector('circle')).toHaveAttribute('r', '240');
+  expect(screen.getByRole('img', { name: 'Colocaciones en plancha #16' }).querySelector('circle')).toHaveAttribute('r', '240');
   expect(open3D()).toHaveAttribute('aria-valuenow', String(DEFAULT_YAW + 5));
   expect(JSON.stringify(props)).toBe(before);
 });

@@ -1,5 +1,15 @@
 # Compatibilidad de eventos y regresión HU-015
 
+## Refinamiento vigente de grupos y raster previo
+
+Se conserva el contrato público de ocho eventos y stage_changed opcional. El timeline tiene ahora ocho hitos (incluye evaluación simulada de rotaciones y finalización), más fallo explícito. La regresión public-only sigue pasando sin eventos internos; no prueba un cálculo real de rotaciones.
+
+La preparación ahora muestra máscaras por pieza antes de ejecutar, valida límites de spans y bloquea ejecución si faltan máscaras válidas. RasterComparison/GeometryPreview/RasterPreview de HU-015 se conservan y se acceden desde la inspección ampliada. RasterComparison usa IDs únicos para coexistir en preparación y resultado. Las máscaras locales del fixture (100 mm/celda) son datos explícitos ilustrativos, no resultados de un rasterizador frontend ni máscaras globales de colocación. La fuente admite clave pedido:pieza preferida y mantiene id_pieza como fallback.
+
+El fixture Bronce utiliza su plancha base #16; retazo #8 queda como alternativa del mismo grupo sin colocaciones. Esto sustituye el escenario anterior que colocaba el círculo sobre el retazo. La regresión actual comprueba que un contenedor vacío no hereda piezas del grupo ni de otra plancha. Los logs/capturas históricos 3d-retazo se conservan como históricos.
+
+La cobertura API/PostgreSQL descrita abajo no se modifica ni ejecuta. E2E frontend fixture continúa sin sustituir integración real navegador→backend. [Validación actual](groups-raster.md).
+
 Ajuste posterior al cierre inicial, 2026-10-15, rama feature/S1-optimization-ui. Working tree limpio al iniciar. Sin cambios de backend, BD, migraciones ni contratos HTTP.
 
 ## Eventos públicos e internos

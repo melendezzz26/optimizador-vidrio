@@ -72,5 +72,5 @@
 .optimization-page summary { cursor: pointer; padding: var(--ng-space-3); }
 .optimization-page :focus-visible { outline: 3px solid var(--ng-primary-focus); outline-offset: 3px; }
 @keyframes first-fit-arrive { from { opacity: 0; } to { opacity: 1; } }
-@media (max-width: 600px) { .first-fit-stages { grid-template-columns: 1fr 1fr; } .first-fit-badge { display: none; } }
+@media (max-width: 600px) { .first-fit-stages { grid-template-columns: 1fr 1fr; } .first-fit-orders label { flex-wrap: wrap; } }
 @media (prefers-reduced-motion: reduce) { .first-fit-piece { animation: none; } .first-fit-orders label { transition: none; } }

@@ -2,7 +2,10 @@ import { useId, useState } from 'react';
 import { containerKey, placementKey } from './optimizationModel';
 import { getGeometryBounds } from './visualizationGeometry';
 import { PlacementScene3D } from './PlacementScene3D';
-import { DEFAULT_YAW } from './placementScene';
+import { DEFAULT_YAW, placementColors } from './placementScene';
+import { placementMatchesGroup } from './materialGroups';
+import { InspectionViewport } from './InspectionViewport';
+import { RasterInspection } from './RasterInspection';
 
 function Shape({ geometry }) {
   if (geometry.type === 'RECTANGULO') return <rect width={geometry.width_mm} height={geometry.height_mm} />;
@@ -12,17 +15,26 @@ function Shape({ geometry }) {
 export function PlacementCanvas({ snapshot, placements }) {
   const titleId = useId();
   const [chosen, setChosen] = useState('');
+  const [chosenGroup, setChosenGroup] = useState('');
   const [view, setView] = useState('2d');
   const [yaw, setYaw] = useState(DEFAULT_YAW);
-  const containers = snapshot.groups.flatMap(g => g.containers);
+  const [zoom3d, setZoom3d] = useState(1);
+  const group = snapshot.groups.find(g => g.id === chosenGroup) ?? snapshot.groups[0];
+  const containers = group?.containers ?? [];
   const container = containers.find(c => containerKey(c) === chosen) ?? containers[0];
   if (!container) return null;
-  const visible = placements.filter(p => containerKey(p) === containerKey(container));
+  const compatible = placements.filter(p => p.group_id === group.id && placementMatchesGroup(snapshot, p));
+  const visible = compatible.filter(p => containerKey(p) === containerKey(container));
   const bounds = getGeometryBounds(container.geometry);
-  const canVisualize = placements.some(p => containers.some(c => containerKey(c) === containerKey(p)
+  const canVisualize = compatible.some(p => containers.some(c => containerKey(c) === containerKey(p)
     && c.material_width_mm > 0 && c.material_height_mm > 0 && getGeometryBounds(c.geometry))
     && getGeometryBounds(snapshot.orders.find(o => o.id_pedido === p.id_pedido)?.piezas.find(piece => piece.id_pieza === p.id_pieza)?.geometria));
   return <section className="first-fit-canvas" aria-label="Colocaciones First Fit">
+    <div className="first-fit-group-select"><label htmlFor={`${titleId}-group`}>Grupo del resultado</label>
+      <select id={`${titleId}-group`} className="ng-control" value={group.id} onChange={e => { setChosenGroup(e.target.value); setChosen(''); }}>
+        {snapshot.groups.map(g => <option key={g.id} value={g.id}>{g.name} · {g.thickness} mm</option>)}
+      </select></div>
+    <p>Grupo: {group.name} · {group.thickness} mm · pedidos {group.orders.map(id => `#${id}`).join(', ')}</p>
     <label htmlFor={titleId}>Plancha o retazo</label>
     <select id={titleId} className="ng-control" value={containerKey(container)} onChange={e => setChosen(e.target.value)}>
       {containers.map(c => <option key={containerKey(c)} value={containerKey(c)}>{c.material_source === 'plancha' ? 'Plancha' : 'Retazo'} #{c.material_id} · {c.material_name} · {c.espesor_mm} mm</option>)}
@@ -31,16 +43,19 @@ export function PlacementCanvas({ snapshot, placements }) {
     {canVisualize && <div className="placement-view-switch" role="group" aria-label="Vista del resultado">
       <button type="button" className="ng-button" aria-pressed={view === '2d'} onClick={() => setView('2d')}>Ver en 2D</button>
       <button type="button" className="ng-button" aria-pressed={view === '3d'} onClick={() => setView('3d')}>Ver en 3D</button>
+      <button type="button" className="ng-button" aria-pressed={view === 'raster'} onClick={() => setView('raster')}>Ver máscara raster</button>
     </div>}
-    {view === '3d' && canVisualize ? <PlacementScene3D snapshot={snapshot} container={container} placements={placements} yaw={yaw} onYawChange={setYaw} /> : <>
+    {view === 'raster' && canVisualize ? <RasterInspection key={group.id} snapshot={snapshot} group={group} placements={visible} />
+      : view === '3d' && canVisualize ? <PlacementScene3D snapshot={snapshot} container={container} placements={visible} yaw={yaw} onYawChange={setYaw} zoom={zoom3d} onZoomChange={setZoom3d} /> : <>
+    <InspectionViewport label="2D">
     <svg className="first-fit-sheet" viewBox={`0 0 ${container.material_width_mm} ${container.material_height_mm}`}
       preserveAspectRatio="xMidYMid meet" role="img" aria-label={`Colocaciones en ${container.material_source} #${container.material_id}`}>
       <g className="first-fit-container" transform={`translate(${-bounds.minX} ${-bounds.minY})`}><Shape geometry={container.geometry} /></g>
       {visible.map(p => {
         const piece = snapshot.orders.find(o => o.id_pedido === p.id_pedido).piezas.find(item => item.id_pieza === p.id_pieza);
         const b = getGeometryBounds(piece.geometria);
-        const color = snapshot.orders.findIndex(o => o.id_pedido === p.id_pedido) % 2;
-        return <g key={placementKey(p)} data-placement={placementKey(p)} className={`first-fit-piece first-fit-piece--${color}`}
+        const [color, edge] = placementColors(snapshot, p);
+        return <g key={placementKey(p)} data-placement={placementKey(p)} className="first-fit-piece" style={{ fill: color, stroke: edge }}
           transform={`translate(${p.x_mm} ${p.y_mm}) rotate(${p.rotation_deg}) translate(${-b.minX} ${-b.minY})`}>
           <title>Pedido #{p.id_pedido} · Pieza #{p.id_pieza} · unidad {p.unit_index + 1} · rotación aplicada: {p.rotation_deg}°</title>
           <Shape geometry={piece.geometria} />
@@ -48,8 +63,10 @@ export function PlacementCanvas({ snapshot, placements }) {
         </g>;
       })}
     </svg>
-    <ul className="first-fit-legend" aria-label="Leyenda de pedidos">{snapshot.orders.map((o, i) => <li key={o.id_pedido}>
-      <span className={`first-fit-swatch first-fit-swatch--${i % 2}`} aria-hidden="true" />Pedido #{o.id_pedido}
+    </InspectionViewport>
+    <p>Superficie descubierta: área libre visual; no retazos exactos calculados.</p>
+    <ul className="first-fit-legend" aria-label="Leyenda de pedidos">{visible.map(p => <li key={placementKey(p)}>
+      <span className="first-fit-swatch" style={{ background: placementColors(snapshot, p)[0], border: `1px solid ${placementColors(snapshot, p)[1]}` }} aria-hidden="true" />Pedido #{p.id_pedido} · Pieza #{p.id_pieza} · unidad {p.unit_index + 1}
     </li>)}</ul>
     <ul aria-label="Detalle de colocaciones">{visible.map(p => <li key={placementKey(p)}>Pedido #{p.id_pedido} · Pieza #{p.id_pieza} · unidad {p.unit_index + 1} · rotación aplicada: {p.rotation_deg}°</li>)}</ul>
     {!visible.length && <p>Las piezas aparecerán al recibir sus colocaciones.</p>}

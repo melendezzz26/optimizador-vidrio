@@ -1,7 +1,9 @@
+import { placementMatchesGroup } from './materialGroups.js';
 export const STAGES = [
-  ['preparing_orders', 'Preparando pedidos'], ['grouping_materials', 'Agrupando materiales'],
-  ['rasterizing', 'Rasterizando / preparando geometrías'], ['sorting_pieces', 'Ordenando piezas'],
-  ['first_fit', 'Ejecutando First Fit'], ['calculating_metrics', 'Calculando métricas'],
+  ['preparing_orders', 'Preparando pedidos'], ['grouping_materials', 'Agrupando por material y espesor'],
+  ['rasterizing', 'Generando máscara raster'], ['sorting_pieces', 'Ordenando piezas'],
+  ['first_fit', 'Ejecutando First Fit'], ['evaluating_rotations', 'Evaluando rotaciones'], ['calculating_metrics', 'Calculando métricas'],
+  ['completed', 'Optimización completada'],
 ];
 export const initialOptimization = {
   status: 'loading_orders', orders: [], selected: [], connection: 'loading', orderError: '',
@@ -58,7 +60,8 @@ export function optimizationReducer(state, action) {
           const group = state.snapshot.groups.find(g => g.id === event.group_id);
           if (!piece || !Number.isInteger(event.unit_index) || event.unit_index < 0 || event.unit_index >= piece.cantidad
             || ![event.x_mm, event.y_mm, event.rotation_deg].every(Number.isFinite)
-            || !group?.containers.some(c => containerKey(c) === containerKey(event))) {
+            || !group?.containers.some(c => containerKey(c) === containerKey(event))
+            || !placementMatchesGroup(state.snapshot, event)) {
             return { ...state, status: 'failed', error: 'Se recibió una colocación incompatible con esta ejecución.' };
           }
           return { ...state, placements: [...state.placements, event] };

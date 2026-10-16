@@ -1,5 +1,6 @@
 import { createFixturePendingOrdersSource } from './pendingOrdersSource';
 import { pieceCount } from './optimizationModel';
+import { detectMaterialGroups } from './materialGroups';
 
 const rectangle = (width_mm, height_mm) => ({ type: 'RECTANGULO', width_mm, height_mm });
 const piece = (id_pieza, id_tipo_vidrio, espesor_mm, geometria) => ({ id_pieza, id_tipo_vidrio, espesor_mm, geometria, cantidad: 1, tipo_forma: geometria.type });
@@ -20,13 +21,22 @@ export function sheetToContainer(sheet, materialName) {
   const width = Number(sheet.ancho_mm), height = Number(sheet.alto_mm);
   if (![width, height].every(n => Number.isFinite(n) && n > 0)) throw new Error('La plancha no tiene dimensiones registradas válidas.');
   return { material_source: 'plancha', material_id: sheet.id_plancha, material_width_mm: width,
-    material_height_mm: height, geometry: rectangle(width, height), material_name: materialName, espesor_mm: Number(sheet.espesor_mm) };
+    material_height_mm: height, geometry: rectangle(width, height), material_name: materialName, id_tipo_vidrio: sheet.id_tipo_vidrio, espesor_mm: Number(sheet.espesor_mm) };
 }
 const containers = {
   '1:6': sheetToContainer(fixtureSheet, 'Templado'),
   '2:5.5': { material_source: 'retazo', material_id: 8, material_width_mm: 1600, material_height_mm: 1000,
     geometry: rectangle(1600, 1000), material_name: 'Bronce', espesor_mm: 5.5 },
 };
+// Decoupled, synthetic inventory source. No commercial defaults for real orders.
+export function fixtureMaterialSource(id) {
+  if (id === '1:6') return { name: 'Templado', containers: [containers[id]] };
+  if (id === '2:5.5') return { name: 'Bronce', containers: [
+    sheetToContainer({ id_plancha: 16, ancho_mm: 1600, alto_mm: 1000, id_tipo_vidrio: 2, espesor_mm: 5.5 }, 'Bronce'),
+    { ...containers[id], id_tipo_vidrio: 2 },
+  ] };
+  return null;
+}
 const placements = {
   101: { x_mm: 80, y_mm: 80, rotation_deg: 0 },
   102: { x_mm: 1400, y_mm: 80, rotation_deg: 90 },
@@ -46,17 +56,20 @@ const area = geometry => {
 export function prepareFixture(ids, available = [...fixtureOrders, newFixtureOrder]) {
   const orders = structuredClone(available.filter(o => ids.includes(o.id_pedido) && o.estado === 'PENDIENTE'));
   if (!orders.length || orders.length !== ids.length) throw new Error('Selecciona pedidos pendientes válidos.');
-  const groups = [];
-  for (const order of orders) for (const p of order.piezas) {
-    const id = `${p.id_tipo_vidrio}:${Number(p.espesor_mm)}`;
-    let group = groups.find(g => g.id === id);
-    if (!group) { group = { id, name: containers[id].material_name, thickness: p.espesor_mm, orders: [], units: [], containers: [containers[id]] }; groups.push(group); }
-    if (!group.orders.includes(order.id_pedido)) group.orders.push(order.id_pedido);
-    for (let unit_index = 0; unit_index < p.cantidad; unit_index++) group.units.push({ id_pedido: order.id_pedido, id_pieza: p.id_pieza, unit_index });
-  }
-  // Small explicit HU-015-compatible rectangle mask; no raster algorithm in UI.
-  const rasters = { 101: { resolution_mm: 200, columns: 4, row_count: 3, occupied_cells: 12,
-    spans_by_row: [0, 1, 2].map(row => ({ row, runs: [[0, 4]] })) } };
+  const { groups, unresolved } = detectMaterialGroups(orders, fixtureMaterialSource);
+  if (unresolved.length || groups.some(g => !g.containers.length)) throw new Error('Falta material, espesor o plancha base en la fuente de demostración.');
+  // Explicit, illustrative HU-015 span masks. No rasterization algorithm in UI.
+  const mask = (columns, runs) => ({ resolution_mm: 100, columns, row_count: runs.length,
+    occupied_cells: runs.reduce((n, [start, end]) => n + end - start, 0),
+    spans_by_row: runs.map((run, row) => ({ row, runs: [run] })) });
+  const availableRasters = {
+    101: mask(8, Array.from({ length: 6 }, () => [0, 8])),
+    102: mask(6, Array.from({ length: 4 }, () => [0, 6])),
+    103: mask(5, [[1, 4], [0, 5], [0, 5], [0, 5], [1, 4]]),
+    104: mask(5, [[0, 5], [0, 5], [0, 5], [1, 4]]),
+    105: mask(5, [[0, 5], [0, 5], [0, 5]]),
+  };
+  const rasters = Object.fromEntries(orders.flatMap(o => o.piezas.map(p => [p.id_pieza, availableRasters[p.id_pieza]])));
   return structuredClone({ orders, groups, rasters, total: pieceCount(orders), fixture: true });
 }
 
@@ -75,7 +88,7 @@ export function fixtureEvents(snapshot) {
   const materialArea = snapshot.groups.reduce((n, g) => n + area(g.containers[0].geometry), 0);
   const usedArea = snapshot.orders.reduce((n, o) => n + o.piezas.reduce((s, p) => s + area(p.geometria) * p.cantidad, 0), 0);
   const utilization = Number((usedArea / materialArea * 100).toFixed(1));
-  events.push({ type: 'stage_changed', stage: 'calculating_metrics' }, { type: 'metrics_calculated', metrics: {
+  events.push({ type: 'stage_changed', stage: 'evaluating_rotations' }, { type: 'stage_changed', stage: 'calculating_metrics' }, { type: 'metrics_calculated', metrics: {
     placed: snapshot.total, total: snapshot.total, orders: snapshot.orders.length, groups: snapshot.groups.length,
     remnants: snapshot.groups.filter(g => g.containers[0].material_source === 'retazo').length,
     sheets: snapshot.groups.filter(g => g.containers[0].material_source === 'plancha').length,
@@ -107,7 +120,7 @@ export const unavailableOptimizationAdapter = {
   async confirm() { throw new Error('No se guardó la solución: el endpoint de confirmación todavía no está disponible. No se modificó el inventario.'); },
 };
 export function createFixtureAdapter(options) {
-  return { isFixture: true, prepare: async ids => prepareFixture(ids), createEventSource: snapshot => createFixtureEventSource(snapshot, options),
+  return { isFixture: true, resolveMaterial: fixtureMaterialSource, prepare: async ids => prepareFixture(ids), createEventSource: snapshot => createFixtureEventSource(snapshot, options),
     confirm: unavailableOptimizationAdapter.confirm };
 }
 export function createDemoOrdersSource() {

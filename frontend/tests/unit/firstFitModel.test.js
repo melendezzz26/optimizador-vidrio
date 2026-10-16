@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { initialOptimization, optimizationReducer as reduce } from '../../src/features/optimization/optimizationModel.js';
-const orders = [{ id_pedido: 21, estado: 'PENDIENTE', piezas: [{ id_pieza: 101, cantidad: 2 }] }];
-const snapshot = { orders, groups: [{ id: 'g', containers: [{ material_source: 'plancha', material_id: 15 }] }] };
+const orders = [{ id_pedido: 21, estado: 'PENDIENTE', piezas: [{ id_pieza: 101, cantidad: 2, id_tipo_vidrio: 1, espesor_mm: 6 }] }];
+const snapshot = { orders, groups: [{ id: '1:6', containers: [{ material_source: 'plancha', material_id: 15, espesor_mm: 6, id_tipo_vidrio: 1 }], units: [0, 1].map(unit_index => ({ id_pedido: 21, id_pieza: 101, unit_index })) }] };
 function running() {
   let s = reduce(initialOptimization, { type: 'orders_received', orders });
   s = reduce(s, { type: 'select', ids: [21] });
@@ -11,7 +11,7 @@ function running() {
   return reduce(s, { type: 'run', runId: 'a' });
 }
 const event = (state, type, extra = {}) => reduce(state, { type: 'event', event: { type, run_id: 'a', ...extra } });
-const placement = { id_pedido: 21, id_pieza: 101, unit_index: 0, group_id: 'g', material_source: 'plancha', material_id: 15, x_mm: 10, y_mm: 20, rotation_deg: 37.5 };
+const placement = { id_pedido: 21, id_pieza: 101, unit_index: 0, group_id: '1:6', material_source: 'plancha', material_id: 15, x_mm: 10, y_mm: 20, rotation_deg: 37.5 };
 test('placement deduplicates units and preserves arbitrary rotation', () => {
   let s = event(running(), 'piece_placed', placement);
   s = event(s, 'piece_placed', placement);
@@ -22,9 +22,9 @@ test('placement deduplicates units and preserves arbitrary rotation', () => {
 test('group, stage, metrics and completion events', () => {
   let s = event(running(), 'optimization_started');
   s = event(s, 'stage_changed', { stage: 'sorting_pieces' }); assert.equal(s.stage, 'sorting_pieces');
-  s = event(s, 'group_started', { group_id: 'g' }); assert.equal(s.activeGroup, 'g');
+  s = event(s, 'group_started', { group_id: '1:6' }); assert.equal(s.activeGroup, '1:6');
   s = event(s, 'piece_started', { id_pieza: 101 }); assert.equal(s.activePiece, 101);
-  s = event(s, 'group_completed', { group_id: 'g' }); assert.deepEqual(s.completedGroups, ['g']);
+  s = event(s, 'group_completed', { group_id: '1:6' }); assert.deepEqual(s.completedGroups, ['1:6']);
   s = event(s, 'metrics_calculated', { metrics: { placed: 1, total: 2 } });
   s = event(s, 'optimization_completed'); assert.equal(s.status, 'completed'); assert.equal(s.metrics.placed, 1);
   assert.equal(event(s, 'optimization_failed').status, 'completed');
@@ -65,14 +65,14 @@ test('discard cancels run identity and missing metrics cannot complete', () => {
 test('public events alone advance progress, metrics and completion without stage_changed', () => {
   let s = event(running(), 'optimization_started');
   assert.equal(s.stage, 'preparing_orders');
-  s = event(s, 'group_started', { group_id: 'g' });
+  s = event(s, 'group_started', { group_id: '1:6' });
   assert.equal(s.stage, 'first_fit');
   s = event(s, 'piece_started', { id_pieza: 101 });
   s = event(s, 'piece_placed', placement);
   s = event(s, 'piece_placed', { ...placement, unit_index: 1 });
-  s = event(s, 'group_completed', { group_id: 'g' });
+  s = event(s, 'group_completed', { group_id: '1:6' });
   assert.equal(s.placements.length, 2);
-  assert.deepEqual(s.completedGroups, ['g']);
+  assert.deepEqual(s.completedGroups, ['1:6']);
   s = event(s, 'metrics_calculated', { metrics: { placed: 2, total: 2 } });
   assert.equal(s.stage, 'calculating_metrics');
   s = event(s, 'optimization_completed');

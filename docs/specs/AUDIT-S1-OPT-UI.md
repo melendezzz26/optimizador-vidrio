@@ -1,5 +1,9 @@
 # Auditoría S1 Optimization UI
 
+## Revisión de grupos/raster sobre f538eeb
+
+2026-10-15: rama feature/S1-optimization-ui y árbol limpio confirmados antes de cambios; fetch origin --prune sin commits nuevos de integration. Se revisaron OptimizationPage, firstFitFixture, reducer, PlacementCanvas, escena 3D, HU-015 y sus pruebas. Hallazgos: agrupación solo tras preparar, selector global de contenedores, pertenencia de pieza a grupo no validada, un único raster accesible después de iniciar y ausencia de zoom. Refinamiento aprobado en SPEC/PLAN/TASKS: separar vista previa, preparación raster y resultados por grupo; conservar adapters y compatibilidad pública. No backend/BD.
+
 Fecha: 2026-10-15. Rama `feature/S1-optimization-ui`, HEAD/base remota `ee4e704`.
 Antes de cambios: git status limpio, rama correcta, rango HEAD..origin/integration/sprint-01 vacío. Fetch realizado; mismas condiciones después. No se cambió integration.
 

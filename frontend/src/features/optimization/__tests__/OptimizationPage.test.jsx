@@ -45,7 +45,7 @@ test('live add, state change, removal, error and reconnection reconcile selectio
 });
 test('groups, progressive placements, arbitrary rotations, metrics and honest confirmation', async () => {
   mount(); await prepare();
-  expect(screen.getByText('Templado · 6 mm')).toBeVisible(); expect(screen.getByText('Bronce · 5.5 mm')).toBeVisible();
+  expect(document.querySelector('.first-fit-groups')).toHaveTextContent('Templado · 6 mm'); expect(document.querySelector('.first-fit-groups')).toHaveTextContent('Bronce · 5.5 mm');
   click('Ejecutar First Fit');
   expect(screen.getByText('0 / 4 piezas colocadas')).toBeVisible();
   await act(async () => vi.advanceTimersByTimeAsync(80));
@@ -56,8 +56,8 @@ test('groups, progressive placements, arbitrary rotations, metrics and honest co
   expect(screen.getByRole('heading', { name: 'Resultado First Fit' })).toBeVisible();
   expect(screen.getByRole('list', { name: 'Detalle de colocaciones' })).toHaveTextContent('rotación aplicada: 90°');
   expect(document.querySelector('[data-placement="22:104:0"]')).toHaveAttribute('transform', 'translate(2000 150) rotate(30) translate(0 0)');
-  fireEvent.change(screen.getByLabelText('Plancha o retazo'), { target: { value: 'retazo:8' } });
-  expect(screen.getByRole('img', { name: 'Colocaciones en retazo #8' }).querySelector('circle')).toHaveAttribute('r', '240');
+  fireEvent.change(screen.getByLabelText('Grupo del resultado'), { target: { value: '2:5.5' } });
+  expect(screen.getByRole('img', { name: 'Colocaciones en plancha #16' }).querySelector('circle')).toHaveAttribute('r', '240');
   expect(screen.getByText('842 ms')).toBeVisible();
   click('Confirmar solución');
   const dialog = screen.getByRole('alertdialog'); expect(dialog).toHaveTextContent('puede modificar las existencias disponibles');
@@ -157,7 +157,7 @@ test('public-only stream renders progress, completed stages and confirmation wit
   expect(within(stages).getByText('Ejecutando First Fit').closest('li')).toHaveAttribute('aria-current', 'step');
   await act(async () => vi.advanceTimersByTimeAsync(1000));
   expect(screen.getByText('4 / 4 piezas colocadas')).toBeVisible();
-  expect(within(stages).getAllByText('Completado')).toHaveLength(6);
+  expect(within(stages).getAllByText('Completado')).toHaveLength(8);
   expect(within(stages).queryByText('Pendiente')).not.toBeInTheDocument();
   expect(screen.getByText('842 ms')).toBeVisible();
   click('Confirmar solución');

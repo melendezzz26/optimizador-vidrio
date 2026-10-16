@@ -1,5 +1,14 @@
 # TASKS-S1-OPT-UI
 
+## Refinamiento de grupos y raster
+
+- [x] T16 Agrupación automática por material/espesor, fuente de planchas y validación de pertenencia.
+- [x] T17 Preparación raster previa y máscaras explícitas por pieza fixture.
+- [x] T18 Navegación por grupo, tres modos y zoom/inspección sin perder snapshot.
+- [x] T19 Regresiones, suites frontend completas y evidencia; publicación registrada en la entrega Git.
+
+Validación de este refinamiento: 147 unit, 357 component (33 archivos), 8 E2E focales, lint/build exit 0. Resultados y límites en [groups-raster.md](../evidence/sprint-01/S1-OPT-UI/groups-raster.md); los registros inferiores corresponden a entregas anteriores.
+
 - [x] T01 Alinear OptimizationPage a NewGlass (CA01).
 - [x] T02 Selección múltiple de pendientes (CA02).
 - [x] T03 Actualización automática y reconciliación (CA03/05).

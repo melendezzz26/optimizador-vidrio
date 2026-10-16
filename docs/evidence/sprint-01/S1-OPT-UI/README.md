@@ -1,6 +1,12 @@
 # S1-OPT-UI — Evidencia y entrega
 
-## Ampliación vigente: visualización 3D
+## Entrega vigente: grupos, raster previo e inspección
+
+SPEC **APPROVED**, frontend **COMPLETED WITH FIXTURES**. Agrupación visual por material/espesor, preparación raster previa y vistas 2D/3D **IMPLEMENTED**. Motor real, agrupación final, rotaciones reales y confirmación persistente **PENDING**. Fabricio Meléndez desarrolla el motor; Andro Q. prepara y conecta la UI.
+
+[Informe actual, contratos, decisiones y capturas](groups-raster.md): 147 pruebas unitarias, 357 componentes y 8 E2E aprobados; lint/build correctos. Las secciones siguientes conservan los resultados históricos. En el escenario vigente cada grupo utiliza su propia plancha base; la inspección raster es local por pieza y permite zoom/celdas, sin fingir una máscara global de plancha.
+
+## Entrega anterior: visualización 3D
 
 SPEC **APPROVED**; frontend **COMPLETED WITH FIXTURES**; vistas 2D y 3D **IMPLEMENTED**. Integración First Fit real, rotación automática real y confirmación persistente **PENDING**. Fabricio Meléndez desarrollará e integrará el motor/rotaciones; Andro Q. deja preparada y conecta esta UI coordinando el contrato. [Evidencia técnica 3D, archivos, límites y capturas](visualization-3d.md).
 
