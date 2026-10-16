@@ -4,7 +4,7 @@ import {
   SessionBar,
   canManageOrders,
   canExecuteOptimization,
-  canManageUsers,
+  canViewAdministration,
   canViewInventory,
   canViewDashboard,
   useSession,
@@ -20,7 +20,7 @@ import './App.css';
 
 function App() {
   
-  const { session, isChecking, notice, signIn, signOut } = useSession();
+ const { session, isChecking, notice, signIn, signOut, refresh } = useSession();
   const [view, setView] = useState('dashboard');
   const handleSignOut = useCallback(message => {
     setView('dashboard');
@@ -42,7 +42,7 @@ function App() {
 
   const showOrdersOption = canManageOrders(session.usuario);
   const showInventoryOption = canViewInventory(session.usuario);
-  const showUsersOption = canManageUsers(session.usuario);
+  const showUsersOption = canViewAdministration(session.usuario);
   const allowedViews = [
     canViewDashboard(session.usuario) && 'dashboard',
     showOrdersOption && 'orders',
@@ -61,7 +61,7 @@ function App() {
   if (currentView === 'dashboard') {
     page = <DashboardPage user={session.usuario} token={session.token || session.access_token} onSessionExpired={handleSignOut} toolbar={toolbar} />;
   } else if (currentView === 'users') {
-    page = <UsersPage currentUser={session.usuario} onSessionExpired={handleSignOut} toolbar={toolbar} />;
+    page = <UsersPage currentUser={session.usuario} onSessionExpired={handleSignOut} toolbar={toolbar} onPermissionsChanged={refresh} />;
   } else if (currentView === 'optimization') {
     page = <OptimizationPage user={session.usuario} token={session.token || session.access_token} onSessionExpired={handleSignOut} toolbar={toolbar} />;
   } else if (currentView === 'inventory') {

@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { ShieldCheck, UserPlus } from 'lucide-react';
 import { AppShell } from '../../shared/components/AppShell';
 import { PageCard, PageHeader } from '../../shared/components/PageLayout';
 import { useManagementView } from '../../shared/hooks/useManagementView';
 import { ConfirmDialog, EmptyState, FeedbackMessage, LoadingState } from '../../shared/components/feedback';
+import { canManageRoles, canManageUsers, canViewRoles, canViewUsers } from '../authentication/permissions';
+import { RolePermissionsPanel } from './RolePermissionsPanel';
 import { UserForm } from './UserForm';
 import { UsersFilters } from './UsersFilters';
 import { UsersTable } from './UsersTable';
@@ -11,13 +13,30 @@ import { EMPTY_USER_FILTERS, filterUsers } from './userFilters';
 import { createUser, listRoles, listUsers, updateUser } from './usersApi';
 import './users.css';
 
-// Pantalla de gestión de usuarios dentro de la base visual compartida.
+// Pestañas de Administración (S1-RBAC). Cada una aparece solo con su permiso de vista.
+const ADMIN_TABS = [
+  { id: 'users', label: 'Usuarios', title: 'Gestión de usuarios', canView: canViewUsers,
+    description: 'Busca usuarios, asígnales un rol y activa o desactiva su acceso.' },
+  { id: 'roles', label: 'Roles y permisos', title: 'Roles y permisos', canView: canViewRoles,
+    description: 'Elige un rol y marca los permisos que tendrá en el sistema.' },
+];
+
+// Pantalla de Administración dentro de la base visual compartida.
 // currentUser es la cuenta con la sesión iniciada; toolbar, lo que la
 // aplicación quiera mostrar sobre el contenido (sesión y cambio de sección).
-export function UsersPage({ currentUser, onSessionExpired, toolbar }) {
+// onPermissionsChanged vuelve a pedir la sesión cuando cambian los permisos del propio rol.
+export function UsersPage({ currentUser, onSessionExpired, toolbar, onPermissionsChanged }) {
+  const tabs = ADMIN_TABS.filter((tab) => tab.canView(currentUser));
+  const [activeTab, setActiveTab] = useState(() => tabs[0]?.id ?? 'users');
+  const tabRefs = useRef({});
+  const tabsId = useId();
+  const showUsers = activeTab === 'users' && canViewUsers(currentUser);
+  const canLoadUsers = canViewUsers(currentUser);
+  const canEditUsers = canManageUsers(currentUser);
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // Sin users.view no se consulta la lista de usuarios: no hay nada que cargar.
+  const [isLoading, setIsLoading] = useState(() => canViewUsers(currentUser));
   const [loadError, setLoadError] = useState('');
   const [pendingUserId, setPendingUserId] = useState(null);
   const [tableError, setTableError] = useState('');
@@ -42,6 +61,7 @@ export function UsersPage({ currentUser, onSessionExpired, toolbar }) {
   }, [onSessionExpired]);
 
   useEffect(() => {
+    if (!canLoadUsers) return undefined;
     let active = true;
     Promise.all([listRoles(), listUsers()])
       .then(([loadedRoles, loadedUsers]) => {
@@ -52,7 +72,7 @@ export function UsersPage({ currentUser, onSessionExpired, toolbar }) {
       .catch((error) => { if (active) setLoadError(handleApiError(error).message); })
       .finally(() => { if (active) setIsLoading(false); });
     return () => { active = false; };
-  }, [handleApiError]);
+  }, [handleApiError, canLoadUsers]);
 
   function replaceUser(updated) {
     setUsers((current) => current.map((user) => (user.id_usuario === updated.id_usuario ? updated : user)));
@@ -125,22 +145,61 @@ export function UsersPage({ currentUser, onSessionExpired, toolbar }) {
     openEdit(user);
   }
 
+  // Patrón accesible de pestañas (igual que Inventario): flechas, Inicio y Fin.
+  function handleTabKeyDown(event, tabId) {
+    const index = tabs.findIndex((tab) => tab.id === tabId);
+    let next = null;
+    if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+    if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+    if (event.key === 'Home') next = 0;
+    if (event.key === 'End') next = tabs.length - 1;
+    if (next === null) return;
+    event.preventDefault();
+    setActiveTab(tabs[next].id);
+    tabRefs.current[tabs[next].id]?.focus();
+  }
+
+  const currentTab = tabs.find((tab) => tab.id === activeTab) ?? ADMIN_TABS[0];
+
   return (
     <AppShell activeItem="roles" user={currentUser}>
       {toolbar}
 
-      <PageHeader context="Panel de roles" title="Gestión de usuarios" titleId={pageTitleId}
+      <PageHeader context="Administración" title={currentTab.title} titleId={pageTitleId}
         icon={ShieldCheck}
-        description="Busca usuarios, asígnales un rol y activa o desactiva su acceso." />
+        description={currentTab.description}>
+        <div className="admin-tabs" role="tablist" aria-label="Administración">
+          {tabs.map((tab) => (
+            <button key={tab.id} type="button" role="tab" className="admin-tab"
+              id={`${tabsId}-tab-${tab.id}`}
+              aria-selected={activeTab === tab.id}
+              tabIndex={activeTab === tab.id ? 0 : -1}
+              ref={(element) => { tabRefs.current[tab.id] = element; }}
+              onClick={() => setActiveTab(tab.id)}
+              onKeyDown={(event) => handleTabKeyDown(event, tab.id)}>
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </PageHeader>
 
-      {isLoading && <PageCard><LoadingState>Cargando usuarios…</LoadingState></PageCard>}
-      {loadError && (
+      {activeTab === 'roles' && canViewRoles(currentUser) && (
+        <RolePermissionsPanel
+          currentUser={currentUser}
+          canManage={canManageRoles(currentUser)}
+          onApiError={handleApiError}
+          onOwnRoleChanged={onPermissionsChanged}
+        />
+      )}
+
+      {showUsers && isLoading && <PageCard><LoadingState>Cargando usuarios…</LoadingState></PageCard>}
+      {showUsers && loadError && (
         <PageCard>
           <FeedbackMessage variant="error" title="No se pudieron cargar los usuarios">{loadError}</FeedbackMessage>
         </PageCard>
       )}
 
-      {!isLoading && !loadError && isFormOpen && (
+      {showUsers && !isLoading && !loadError && isFormOpen && (
         <UserForm
           key={editingUser ? editingUser.id_usuario : 'new'}
           roles={roles}
@@ -151,14 +210,16 @@ export function UsersPage({ currentUser, onSessionExpired, toolbar }) {
         />
       )}
 
-      {!isLoading && !loadError && isListVisible && (
+      {showUsers && !isLoading && !loadError && isListVisible && (
         <PageCard as="section" className="users-list" aria-labelledby={listTitleId}>
           <div className="users-list-header">
             <h2 id={listTitleId}>Usuarios registrados</h2>
-            <button className="ng-button ng-button--primary" type="button" onClick={startCreating}>
-              <UserPlus size={18} aria-hidden="true" />
-              Nuevo usuario
-            </button>
+            {canEditUsers && (
+              <button className="ng-button ng-button--primary" type="button" onClick={startCreating}>
+                <UserPlus size={18} aria-hidden="true" />
+                Nuevo usuario
+              </button>
+            )}
           </div>
           {feedback && <FeedbackMessage variant={feedback.variant}>{feedback.message}</FeedbackMessage>}
           {tableError && (
@@ -167,7 +228,7 @@ export function UsersPage({ currentUser, onSessionExpired, toolbar }) {
           {users.length === 0 ? (
             <EmptyState
               title="Aún no hay usuarios registrados"
-              description="Usa «Nuevo usuario» para registrar el primero."
+              description={canEditUsers ? 'Usa «Nuevo usuario» para registrar el primero.' : ''}
             />
           ) : (
             <>
@@ -191,6 +252,7 @@ export function UsersPage({ currentUser, onSessionExpired, toolbar }) {
                   users={visibleUsers}
                   currentUserId={currentUser.id_usuario}
                   pendingUserId={pendingUserId}
+                  canManage={canEditUsers}
                   onEdit={startEditing}
                   onToggleStatus={handleToggleStatus}
                 />

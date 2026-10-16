@@ -2,6 +2,7 @@ import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { InventoryPage } from '../InventoryPage'
+import { withPermissions } from '../../authentication/__tests__/permissionFixtures'
 
 const catalogo = [
   {
@@ -63,12 +64,12 @@ async function renderInventory(onSessionExpired = vi.fn(), retazoRows = [], plan
 
   render(
     <InventoryPage
-      user={{
+      user={withPermissions({
         id_usuario: 4,
         username: 'A00000001',
         nombre: 'Cuenta Prueba Almacen',
         rol: 'Almacenero',
-      }}
+      })}
       toolbar={<div>Toolbar</div>}
       onSessionExpired={onSessionExpired}
     />,
@@ -183,7 +184,7 @@ describe('TA-011 — estados de carga de Inventario', () => {
       .mockImplementationOnce(() => new Promise((resolve) => { resolvePlanchas = resolve }))
       .mockResolvedValueOnce(response([]))
     const user = userEvent.setup()
-    render(<InventoryPage user={{ rol: 'Almacenero' }} onSessionExpired={vi.fn()} />)
+    render(<InventoryPage user={withPermissions({ rol: 'Almacenero' })} onSessionExpired={vi.fn()} />)
 
     expect(screen.getByRole('status')).toHaveTextContent('Cargando inventario...')
     expect(screen.queryByText('No hay planchas registradas.')).not.toBeInTheDocument()
@@ -200,7 +201,7 @@ describe('TA-011 — estados de carga de Inventario', () => {
   test('un fallo de red muestra error de carga sin presentarlo como inventario vacío', async () => {
     fetch.mockRejectedValue(new TypeError('offline'))
     const onSessionExpired = vi.fn()
-    render(<InventoryPage user={{ rol: 'Almacenero' }} onSessionExpired={onSessionExpired} />)
+    render(<InventoryPage user={withPermissions({ rol: 'Almacenero' })} onSessionExpired={onSessionExpired} />)
 
     const alert = await screen.findByRole('alert')
     expect(alert).toBeVisible()

@@ -38,7 +38,7 @@ test.each(['Administrador', 'Almacenero', 'Operario'])('%s recibe únicamente re
   const shortcuts = section('Accesos rápidos');
   expect(within(shortcuts).getByRole('button', { name: 'Abrir Gestión de inventario' })).toBeEnabled();
   expect(within(shortcuts).queryByRole('button', { name: 'Abrir Registro de pedidos' }) !== null).toBe(role !== 'Almacenero');
-  expect(within(shortcuts).queryByRole('button', { name: 'Abrir Panel de roles' }) !== null).toBe(role === 'Administrador');
+  expect(within(shortcuts).queryByRole('button', { name: 'Abrir Administración' }) !== null).toBe(role === 'Administrador');
   expect(screen.queryByRole('region', { name: 'Clientes registrados', exact: true }) !== null).toBe(role !== 'Almacenero');
   expect(screen.queryByRole('region', { name: 'Pedidos pendientes', exact: true }) !== null).toBe(role !== 'Almacenero');
   if (role === 'Almacenero') expect(loadDashboardSource.mock.calls.map(([source]) => source)).toEqual(['planchas', 'retazos']);
