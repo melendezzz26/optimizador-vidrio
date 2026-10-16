@@ -47,6 +47,7 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired, user, result
       if (error.status === 409) setConfirmationConflict(true);
       setConfirmation(error.status === 409
         ? error.code === 'ALREADY_CONFIRMED' ? 'Esta corrida ya fue confirmada (409). Recupera el resultado.'
+          : error.code === 'STATE_CONFLICT' ? 'La corrida o sus pedidos cambiaron (409). Recupera el resultado antes de continuar.'
           : 'El inventario cambió (409). La corrida no pudo confirmarse; revisa el stock antes de preparar una nueva selección.'
         : error.message);
     } finally { setConfirming(false); }

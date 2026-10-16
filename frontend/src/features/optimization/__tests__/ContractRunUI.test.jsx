@@ -142,3 +142,13 @@ test('a 409 disables repeat confirmation and never restarts the algorithm', asyn
   expect(screen.getByRole('button', { name: 'Confirmar solución' })).toBeDisabled();
   expect(createEventSource).not.toHaveBeenCalled(); expect(confirm).toHaveBeenCalledOnce();
 });
+
+test('STATE_CONFLICT distinguishes a changed run/order state from a stock conflict', async () => {
+  const confirm = vi.fn().mockRejectedValue(Object.assign(new Error('Estado cambió'), { status: 409, code: 'STATE_CONFLICT' }));
+  mount('complete', [...view, 'optimization.confirm'], { confirm });
+  fireEvent.click(screen.getByRole('button', { name: 'Confirmar solución' }));
+  await act(async () => fireEvent.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Confirmar solución' })));
+  expect(screen.getByText(/La corrida o sus pedidos cambiaron \(409\)/)).toBeVisible();
+  expect(screen.queryByText(/El inventario cambió/)).not.toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Confirmar solución' })).toBeDisabled();
+});
