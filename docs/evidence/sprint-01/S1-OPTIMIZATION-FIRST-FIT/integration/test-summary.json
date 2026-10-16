@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-16",
+  "tested_code": "c5baa8aff7e932ca4c33a0477f4d16f7a04b362d",
+  "backend": {
+    "passed": 1976,
+    "failed": 0,
+    "skipped": 0,
+    "warnings": 1,
+    "subsets_not_additive": {
+      "rbac_api": 95,
+      "inventory": 497,
+      "optimization": 516,
+      "hu015_api": 41,
+      "orders": 150,
+      "hu015_start_concurrency": 7
+    }
+  },
+  "frontend": {
+    "unit_passed": 159,
+    "component_passed": 446,
+    "lint_exit": 0,
+    "build_exit": 0
+  },
+  "e2e": {
+    "passed": 85,
+    "failed": 0,
+    "skipped": 1,
+    "by_file": {
+      "hu007-custom-piece.spec.js": {
+        "passed": 30
+      },
+      "hu007-order-integration.spec.js": {
+        "passed": 6
+      },
+      "hu012-client-order.spec.js": {
+        "passed": 4
+      },
+      "hu014-inventory-writeoff.spec.js": {
+        "passed": 3,
+        "skipped": 1
+      },
+      "hu015-rasterization.spec.js": {
+        "passed": 6
+      },
+      "s1-optimization-ui.spec.js": {
+        "passed": 20
+      },
+      "ta-dashboard.spec.js": {
+        "passed": 14
+      },
+      "ta036-retazo-personalizado.spec.js": {
+        "passed": 2
+      }
+    },
+    "by_project": {
+      "chromium-desktop": {
+        "passed": 43
+      },
+      "chromium-mobile": {
+        "passed": 42,
+        "skipped": 1
+      }
+    },
+    "additional_focused_runs": {
+      "optimization_hu015_passed": 24,
+      "stock_navigation_passed": 6,
+      "final_conflict_rbac_passed": 6
+    },
+    "note": "Focused runs overlap full suite; do not add as unique scenarios.",
+    "full_suite_code": "daad72a45b1270b47c2559c4da65f488183fd584",
+    "final_change": "Feedback STATE_CONFLICT revalidated by component/unit/lint/build and 6 real E2E; no backend or algorithm change."
+  },
+  "screenshots_retained": 55
+}

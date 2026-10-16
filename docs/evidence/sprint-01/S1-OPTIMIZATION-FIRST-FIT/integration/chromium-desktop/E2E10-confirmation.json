@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id_optimizacion": 10,
+  "confirmed": true,
+  "orders": [
+    {
+      "id_pedido": 19,
+      "estado": "CONFIRMADO"
+    },
+    {
+      "id_pedido": 20,
+      "estado": "CONFIRMADO"
+    }
+  ],
+  "materials_consumed": [
+    {
+      "material_source": "PLANCHA",
+      "material_id": 712,
+      "stock_unit_index": 1
+    },
+    {
+      "material_source": "PLANCHA",
+      "material_id": 712,
+      "stock_unit_index": 2
+    },
+    {
+      "material_source": "PLANCHA",
+      "material_id": 713,
+      "stock_unit_index": 1
+    }
+  ],
+  "remnants_created": []
+}

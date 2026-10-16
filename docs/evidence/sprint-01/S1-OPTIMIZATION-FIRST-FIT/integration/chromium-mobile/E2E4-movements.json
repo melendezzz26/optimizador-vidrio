@@ -1,0 +1,14 @@
+[
+  {
+    "id_movimiento": 16,
+    "id_plancha": 718,
+    "id_retazo": null,
+    "tipo_evento": "CONSUMO_OPTIMIZACION",
+    "motivo": "Confirmación First Fit de optimización 14.",
+    "observacion": "stock_unit_index=1,2",
+    "id_usuario": 69,
+    "fecha": "2026-10-16T19:52:24.429653Z",
+    "id_optimizacion": 14,
+    "cantidad_afectada": 2
+  }
+]

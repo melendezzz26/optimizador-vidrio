@@ -1,0 +1,8 @@
+{
+  "database": "owned loopback PostgreSQL",
+  "dialect": "postgresql",
+  "version": "17.11 (Debian 17.11-0+deb13u1)",
+  "alembic_heads": [
+    "s1opt02b4c6d"
+  ]
+}
