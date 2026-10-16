@@ -115,3 +115,99 @@ def test_multimaterial_snapshot_is_detached(session_factory, prepared):
         s.commit()
     with uow() as tx:
         assert tx.runs.get(run.optimization_id).result.total_units == 4
+
+
+@pytest.mark.parametrize('availability,placed,complete', [(2, 4, True), (1, 2, False), (0, 0, False)])
+def test_durable_results_metrics_physical_stock_and_no_consumption(session_factory, prepared, availability, placed, complete, monkeypatch):
+    from app.models import MaterialUtilizado, MetricaEjecucion, Retazo
+    from app.modules.optimization.application.calculation import CalculateRun
+    from app.modules.inventory.infrastructure.repository import SqlAlchemyInventoryRepository
+    from app.modules.optimization.infrastructure.stock_adapter import InventoryStockAdapter
+    from app.modules.optimization.presentation.run_serialization import run_response
+    actor, ids, uow = prepared
+    with session_factory() as s:
+        s.get(Plancha, 5).cantidad = availability
+        s.commit()
+    accepted = AcceptRun(uow).execute(ids, actor)
+    provider = InventoryStockAdapter(SqlAlchemyInventoryRepository(session_factory))
+    run = CalculateRun(uow, provider).execute(accepted.optimization_id)
+    assert run.result.placed_units == placed and run.result.complete is complete
+    assert run.confirmable is complete
+    assert run.result.computation_time_ms >= 0
+    # Canonical load must work with both algorithm and live source data unavailable.
+    monkeypatch.setattr('app.modules.optimization.domain.first_fit.FirstFitOptimizer.optimize', lambda *a, **k: pytest.fail('GET reran FF'))
+    with uow() as tx:
+        loaded = tx.runs.get(run.optimization_id)
+    assert loaded == run
+    wire = run_response(loaded).model_dump(mode='json')
+    assert wire['metrics_available'] is bool(placed)
+    if placed:
+        assert wire['metrics']['aprovechamiento_pct'] == '100.000'
+        assert Decimal(wire['metrics']['merma_mm2']) == Decimal('0')
+        assert wire['metrics']['planchas_nuevas_usadas'] == availability
+    else:
+        assert wire['metrics'] is None
+    with session_factory() as s:
+        assert s.get(Plancha, 5).cantidad == availability
+        assert s.scalar(select(func.count()).select_from(MovimientoInventario)) == 0
+        assert s.scalar(select(func.count()).select_from(Retazo)) == 0
+        assert [s.get(Pedido, i).estado for i in ids] == ['OPTIMIZADO' if complete else 'PENDIENTE'] * 2
+        assert s.scalar(select(func.count()).select_from(MetricaEjecucion)) == bool(placed)
+        materials = s.scalars(select(MaterialUtilizado)).all()
+        assert len(materials) == bool(placed)
+        if materials:
+            assert materials[0].cantidad_utilizada == availability
+        row = s.get(Optimizacion, run.optimization_id)
+        assert (row.id_ejecucion_seleccionada is not None) is complete
+
+
+def test_decimal_coordinates_and_residual_proposal_are_lossless(session_factory, prepared):
+    from app.models import Retazo
+    from app.modules.optimization.application.calculation import CalculateRun
+    from app.modules.inventory.infrastructure.repository import SqlAlchemyInventoryRepository
+    from app.modules.optimization.infrastructure.stock_adapter import InventoryStockAdapter
+    actor, ids, uow = prepared
+    with session_factory() as s:
+        config = s.scalar(select(Configuracion))
+        config.resolucion_raster_mm = Decimal('0.125')
+        config.ancho_min_retazo_mm = config.alto_min_retazo_mm = Decimal('0.125')
+        piece = s.scalar(select(Pieza).where(Pieza.id_pedido == ids[0]))
+        piece.geometria = {'type': 'RECTANGULO', 'width_mm': 0.25, 'height_mm': 2}
+        piece.area_mm2 = Decimal('0.50')
+        s.commit()
+    accepted = AcceptRun(uow).execute(ids[:1], actor)
+    run = CalculateRun(uow, InventoryStockAdapter(SqlAlchemyInventoryRepository(session_factory))).execute(accepted.optimization_id)
+    assert [p.x_mm for p in run.result.placements] == [Decimal(0), Decimal('0.250')]
+    with uow() as tx:
+        assert tx.runs.get(run.optimization_id) == run
+    with session_factory() as s:
+        stored = s.scalar(select(EjecucionOptimizacion)).patron_resultado
+        residuals = stored['residual_rectangles']
+        assert len(residuals) == 1
+        assert Decimal(residuals[0]['x_mm']) == Decimal('0.500')
+        assert Decimal(residuals[0]['area_mm2']) == Decimal('7')
+        assert run.result.metrics.recoverable_remnant_mm2 == Decimal('7')
+        assert run.result.metrics.waste_mm2 == 0
+        assert s.scalar(select(func.count()).select_from(Retazo)) == 0
+
+
+def test_final_save_failure_rolls_back_result_and_all_states(session_factory, prepared):
+    from app.modules.optimization.application.calculation import CalculateRun
+    from app.modules.inventory.infrastructure.repository import SqlAlchemyInventoryRepository
+    from app.modules.optimization.infrastructure.stock_adapter import InventoryStockAdapter
+    actor, ids, uow = prepared
+    run = AcceptRun(uow).execute(ids, actor)
+    def fail(session, flush_context, instances):
+        if any(isinstance(o, Optimizacion) and o.estado == 'COMPLETADA' for o in session.dirty):
+            raise RuntimeError('synthetic save error')
+    event.listen(session_factory.class_, 'before_flush', fail)
+    try:
+        with pytest.raises(RuntimeError):
+            CalculateRun(uow, InventoryStockAdapter(SqlAlchemyInventoryRepository(session_factory))).execute(run.optimization_id)
+    finally:
+        event.remove(session_factory.class_, 'before_flush', fail)
+    with uow() as tx:
+        assert tx.runs.get(run.optimization_id) == run
+    with session_factory() as s:
+        assert [s.get(Pedido, i).estado for i in ids] == ['EN_OPTIMIZACION'] * 2
+        assert s.scalar(select(func.count()).select_from(MovimientoInventario)) == 0

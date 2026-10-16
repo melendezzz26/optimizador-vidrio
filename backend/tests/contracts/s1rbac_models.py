@@ -33,7 +33,7 @@ class Rol(Base):
     id_rol: Mapped[int] = mapped_column(Integer, primary_key=True)
     nombre: Mapped[str] = mapped_column(String(30), unique=True, nullable=False)
     descripcion: Mapped[str | None] = mapped_column(String(150))
-    
+
 class Permiso(Base):
     """Acción que un rol puede tener autorizada (S1-RBAC). El código es `modulo.accion`."""
 

@@ -5,11 +5,11 @@ not used. Geometry rules remain in Orders' public persisted-piece validator.
 """
 from datetime import datetime, timezone
 from sqlalchemy import select
-from app.models import Pedido, Pieza, Configuracion, Optimizacion, OptimizacionPedido, EjecucionOptimizacion
+from app.models import Pedido, Pieza, Configuracion, Optimizacion, OptimizacionPedido, EjecucionOptimizacion, MaterialUtilizado, MetricaEjecucion
 from ..application.dto import OptimizationRun, RunStatus
 from ..application.errors import RunError
-from ..domain.problem import OptimizationConfig, OptimizationResult
-from .run_snapshot import encode, decode
+from ..domain.problem import OptimizationConfig, OptimizationResult, MaterialSource
+from .run_snapshot import encode, decode, json_value
 
 
 class SqlOrdersBatch:
@@ -54,8 +54,12 @@ class SqlRunRepository:
         self.session.flush()
         self.session.add_all([OptimizacionPedido(id_optimizacion=row.id_optimizacion, id_pedido=i) for i in problem.order_ids])
         result = OptimizationResult(problem=problem, placements=())
+        config = self.session.get(Configuracion, configuration_id)
+        snapshot = {**encode(result), "configuration_version": config.version,
+                    "residual_minimum_width_mm": str(config.ancho_min_retazo_mm),
+                    "residual_minimum_height_mm": str(config.alto_min_retazo_mm)}
         self.session.add(EjecucionOptimizacion(id_optimizacion=row.id_optimizacion, metodo="FF", fecha_inicio=now,
-                                              estado="EN_EJECUCION", completo=False, patron_resultado=encode(result)))
+                                              estado="EN_EJECUCION", completo=False, patron_resultado=snapshot))
         return OptimizationRun(optimization_id=row.id_optimizacion, status=RunStatus.RUNNING, result=result)
 
     def get(self, optimization_id):
@@ -71,6 +75,53 @@ class SqlRunRepository:
                       .where(OptimizacionPedido.id_optimizacion == optimization_id).order_by(OptimizacionPedido.id_pedido)))
         if links != result.problem.order_ids:
             raise RunError("INTERNAL_ERROR", "La trazabilidad de la corrida requiere revisión.")
+        return OptimizationRun(optimization_id=optimization_id, status=RunStatus(row.estado), result=result)
+
+
+    def residual_limits(self, optimization_id):
+        from decimal import Decimal
+        execution = self._execution(optimization_id)
+        snapshot = execution.patron_resultado
+        return Decimal(snapshot["residual_minimum_width_mm"]), Decimal(snapshot["residual_minimum_height_mm"])
+
+    def _execution(self, optimization_id):
+        return self.session.scalar(select(EjecucionOptimizacion).where(
+            EjecucionOptimizacion.id_optimizacion == optimization_id, EjecucionOptimizacion.metodo == "FF"))
+
+    def save_result(self, optimization_id, result, residuals):
+        row = self.session.scalar(select(Optimizacion).where(Optimizacion.id_optimizacion == optimization_id).with_for_update())
+        if row is None:
+            raise RunError("NOT_FOUND", "No se encontró la optimización.")
+        if row.estado != "EN_EJECUCION":
+            raise RunError("STATE_CONFLICT", "La corrida ya ha finalizado.")
+        original = self.get(optimization_id)
+        # Only provider candidates may change after acceptance, never requested units/config.
+        if result.problem.order_ids != original.result.problem.order_ids or result.problem.config != original.result.problem.config or result.problem.units != original.result.problem.units:
+            raise RunError("STATE_CONFLICT", "El resultado no corresponde al snapshot aceptado.")
+        SqlOrdersBatch(self.session).transition(result.problem.order_ids, "EN_OPTIMIZACION",
+                                                "OPTIMIZADO" if result.complete else "PENDIENTE")
+        execution = self._execution(optimization_id)
+        now = datetime.now(timezone.utc)
+        row.estado = "COMPLETADA" if result.complete else "SIN_SOLUCION"
+        row.fecha_fin = execution.fecha_fin = now
+        execution.estado, execution.completo = "COMPLETADA", result.complete
+        execution.patron_resultado = {**execution.patron_resultado, **encode(result), "residual_rectangles": json_value(residuals)}
+        row.id_ejecucion_seleccionada = execution.id_ejecucion if result.complete else None
+        aggregated = {}
+        for material in result.materials_used:
+            key = material.source, material.material_id
+            aggregated[key] = aggregated.get(key, 0) + 1
+        for (source, identifier), quantity in aggregated.items():
+            self.session.add(MaterialUtilizado(id_ejecucion=execution.id_ejecucion,
+                id_plancha=identifier if source is MaterialSource.SHEET else None,
+                id_retazo=identifier if source is MaterialSource.REMNANT else None, cantidad_utilizada=quantity))
+        if result.metrics is not None:
+            m = result.metrics
+            self.session.add(MetricaEjecucion(id_ejecucion=execution.id_ejecucion,
+                area_material_total_mm2=m.material_area_mm2, area_piezas_colocadas_mm2=m.placed_piece_area_mm2,
+                aprovechamiento_pct=m.utilization_pct, merma_mm2=m.waste_mm2,
+                retazo_recuperable_mm2=m.recoverable_remnant_mm2, planchas_nuevas_usadas=m.new_sheets_used,
+                tiempo_computacional_ms=result.computation_time_ms))
         return OptimizationRun(optimization_id=optimization_id, status=RunStatus(row.estado), result=result)
 
 

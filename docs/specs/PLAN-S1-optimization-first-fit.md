@@ -729,3 +729,26 @@ históricas; este avance no equivale al cierre de Sprint ni SPEC Verified.
 - La autorización usa RBAC incorporado; las rutas nuevas se expondrán en el
   bloque API, sin abrir temporalmente un endpoint sin guards.
 - Evidencia y comandos: `phase2-multipedido.md`. SPEC permanece Reviewed y PLAN Approved.
+
+### Resultado durable / métricas (T8 histórico, bloque resultado)
+
+Implementados `CalculateRun`, `run_snapshot`, persistencia en las tablas existentes
+`EjecucionOptimizacion`, `MaterialUtilizado` (propuestas) y `MetricaEjecucion`.
+El snapshot conserva Decimal string, configuración/version y mínimos residuales,
+problema completo, candidatos, unidades solicitadas, geometrías orientadas,
+placements y rectángulos residuales verificables. GET posterior no ejecuta FF.
+
+`domain/metrics.py` implementa §8/§10: rectángulo máximo exacto libre por unidad
+usada, desempate aprobado y revalidación `SheetLayout.check`. No se crean retazos.
+Se aplican solo mínimos ancho/alto existentes; mínimo de área independiente sigue
+pendiente para confirmación y no se inventa. Aprovechamiento redondea HALF_UP a
+3 decimales de R4; áreas mantienen precisión en JSONB y PostgreSQL aplica NUMERIC
+R4 en su fila métrica. Merma excluye área recuperable respaldada por propuesta.
+Sin área usada no hay fila R4 y metrics=null. Tiempo entero wall-clock excluye
+lecturas DB/stock, callbacks/serialización/transporte y persistencia.
+
+La transacción final ya incluye las transiciones mínimas de §11 para que resultado
+y estados no diverjan: completo→OPTIMIZADO; incompleto→PENDIENTE, todos o ninguno.
+El bloque estados posterior reforzará fallos/reconciliación y pruebas de rollback;
+no se publica una fase intermedia con resultado terminal y pedidos inconsistentes.
+Evidencia `phase3-results.md`. SPEC Reviewed / PLAN Approved sin cambios de estado.
