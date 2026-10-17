@@ -1,3 +1,4 @@
+import { orderWorkState } from './workLabels';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getOrder, listOrderMaterials, listOrders } from '../orders/ordersApi';
 import { rasterizePiece, startOptimization } from './optimizationApi';
@@ -11,6 +12,7 @@ export function useOptimization({ token, onSessionExpired = NOOP }) {
   const [version, setVersion] = useState(0);
   const [list, setList] = useState({ items: [], totalPages: 0, loading: true, error: '' });
   const [materials, setMaterials] = useState([]);
+  const [materialStatus, setMaterialStatus] = useState('loading');
   const [materialWarning, setMaterialWarning] = useState('');
   const [selection, setSelection] = useState(null);
   const [starting, setStarting] = useState(false);
@@ -64,11 +66,12 @@ export function useOptimization({ token, onSessionExpired = NOOP }) {
     const controller = new AbortController();
     let active = true;
     listOrderMaterials({ token, signal: controller.signal })
-      .then(data => { if (active) setMaterials(data); })
+      .then(data => { if (active) { setMaterials(data); setMaterialStatus('ready'); } })
       .catch(error => {
         if (!active || error.name === 'AbortError') return;
         reportSession(error);
-        setMaterialWarning('No se pudo cargar el catálogo. Los materiales se identifican por su ID.');
+        setMaterialStatus('error');
+        setMaterialWarning('No se pudo consultar el catálogo de vidrios. Intenta actualizar la vista.');
       });
     return () => { active = false; controller.abort(); };
   }, [token, reportSession]);
@@ -102,10 +105,10 @@ export function useOptimization({ token, onSessionExpired = NOOP }) {
       if (order.id_pedido !== item.id_pedido || !Array.isArray(order.piezas)) throw new Error('El detalle recibido no es válido. Actualiza los datos.');
       setSelection({ item, order, loading: false, error: '', blocked: false, reconcile: false });
       if (reconcile) setFeedback({ variant: 'info', message: order.estado === 'EN_OPTIMIZACION'
-        ? 'El servidor confirmó que el pedido está EN OPTIMIZACIÓN. Puedes continuar sin repetir el inicio.'
+        ? 'El pedido ya está en preparación. Puedes continuar con sus piezas.'
         : order.estado === 'PENDIENTE'
-          ? 'El pedido sigue PENDIENTE. Puedes volver a iniciar explícitamente.'
-          : `El pedido está ${order.estado}. No se puede continuar con la rasterización.` });
+          ? 'El pedido sigue pendiente. Puedes volver a preparar su vista previa.'
+          : `El pedido está ${orderWorkState(order.estado)}. No se puede continuar con la vista previa.` });
     } catch (error) {
       if (!mounted.current || id !== detailRequest.current.id || error.name === 'AbortError') return;
       reportSession(error);
@@ -157,7 +160,7 @@ export function useOptimization({ token, onSessionExpired = NOOP }) {
       const result = await startOptimization(item.id_pedido, { token });
       if (mounted.current) {
         setSelection(current => ({ ...current, order: { ...current.order, estado: result.estado }, blocked: true }));
-        setFeedback({ variant: 'success', message: `Pedido #${item.id_pedido} iniciado. Se actualizarán sus piezas persistidas.` });
+        setFeedback({ variant: 'success', message: `Pedido #${item.id_pedido} iniciado. Puedes revisar sus piezas.` });
         refresh();
       }
       await readDetails(item);
@@ -207,7 +210,7 @@ export function useOptimization({ token, onSessionExpired = NOOP }) {
   }
 
   return {
-    scope, page, list, materials, materialWarning, selection, starting, feedback, pieceId, resolution,
+    scope, page, list, materials, materialStatus, materialWarning, selection, starting, feedback, pieceId, resolution,
     raster, rasterizing, rasterError, canStart, canChoosePiece, canRasterize, validResolution,
     refresh, selectOrder, changeScope, start, rasterize,
     goToPage(next) { setList(current => ({ ...current, loading: true, error: '' })); setPage(next); },

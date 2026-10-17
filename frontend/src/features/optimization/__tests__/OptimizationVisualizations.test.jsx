@@ -111,9 +111,9 @@ test('un raster de un millón de celdas dibuja por sus 1000 spans y mantiene el 
 
 test('raster sin datos ofrece estado vacío; con datos expone resumen accesible y un canvas', () => {
   const { rerender } = render(<RasterPreview raster={null} pieceId={51} frame={frame} />);
-  expect(screen.getByRole('status')).toHaveTextContent('Rasteriza la pieza seleccionada');
+  expect(screen.getByRole('status')).toHaveTextContent('Selecciona «Ver pieza»');
   rerender(<RasterPreview raster={{ ...raster, id_pieza: 51 }} pieceId={51} frame={frame} />);
-  const canvas = screen.getByRole('img', { name: 'Máscara raster de la pieza #51' });
+  const canvas = screen.getByRole('img', { name: 'Detalle del corte de la pieza #51' });
   expect(canvas).toBeVisible();
   expect(canvas).toHaveAttribute('aria-labelledby');
   expect(canvas).toHaveAttribute('aria-describedby');

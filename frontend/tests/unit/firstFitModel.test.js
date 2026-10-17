@@ -20,7 +20,7 @@ test('canonical recovery preserves a safe failure message without inventing a PE
   assert.equal(recovered.estado, 'FALLIDA'); assert.equal(recovered.confirmable, false);
   assert.equal(recovered.error, failed.error); assert.ok(recovered.error);
   const loaded = reduce(initialOptimization, { type: 'result', result: scenarioFixture('failed') });
-  assert.equal(loaded.estado, 'FALLIDA'); assert.match(loaded.error, /La corrida falló/);
+  assert.equal(loaded.estado, 'FALLIDA'); assert.match(loaded.error, /No se pudo calcular el corte/);
 });
 test('wire events preserve 1-based units, physical stock and decimal strings; duplicate sequence ignored', () => {
   let s = running(); const events = eventsForRun(result);

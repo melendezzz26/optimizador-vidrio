@@ -14,19 +14,19 @@ test('selection previews groups immediately and preparation exposes all masks be
   const source = createFixturePendingOrdersSource(fixtureOrders);
   render(<OptimizationPage user={withPermissions({ rol: 'Operario' })} source={source} adapter={createFixtureAdapter()} />);
   fireEvent.click(screen.getByLabelText('Seleccionar todos'));
-  const groups = screen.getByRole('region', { name: 'Grupos detectados' });
-  expect(groups).toHaveTextContent('Plancha base #15'); expect(groups).toHaveTextContent('Plancha base #16');
-  expect(groups).toHaveTextContent('3 piezas · pedidos #21, #22');
+  const groups = screen.getByRole('region', { name: 'Vidrios del pedido' });
+  expect(groups).toHaveTextContent('Plancha #15'); expect(groups).toHaveTextContent('Plancha #16');
+  expect(groups).toHaveTextContent('3 piezas · Pedidos #21 y #22');
   expect(screen.queryByRole('img', { name: /Celdas raster/ })).not.toBeInTheDocument();
-  await act(async () => click('Preparar optimización'));
-  expect(screen.getByRole('heading', { name: 'Preparación raster · antes de optimizar' })).toBeVisible();
-  expect(screen.getByRole('img', { name: 'Celdas raster de pieza #101' })).toBeVisible();
+  await act(async () => click('Revisar vidrios y piezas'));
+  expect(screen.getByRole('heading', { name: 'Vista previa del corte' })).toBeVisible();
+  expect(screen.getByRole('img', { name: 'Detalle de la pieza #101' })).toBeVisible();
   expect(screen.getByText(/Preparada · resolución: 100 mm por celda/)).toBeVisible();
   expect(screen.queryByRole('group', { name: 'Vista del resultado' })).not.toBeInTheDocument();
-  fireEvent.change(screen.getByLabelText('Grupo para preparar raster'), { target: { value: '2:5.5' } });
+  fireEvent.change(screen.getByLabelText('Vidrio de la vista previa'), { target: { value: '2:5.5' } });
   expect(screen.getByLabelText('Pieza para inspeccionar').options).toHaveLength(1);
-  expect(screen.getByRole('img', { name: 'Celdas raster de pieza #103' })).toBeVisible();
-  expect(screen.getByRole('button', { name: 'Ejecutar First Fit', exact: true })).toBeEnabled();
+  expect(screen.getByRole('img', { name: 'Detalle de la pieza #103' })).toBeVisible();
+  expect(screen.getByRole('button', { name: 'Calcular distribución', exact: true })).toBeEnabled();
 });
 
 test('result modes isolate groups, keep snapshot and allow zoom/grid inspection and empty remnant', () => {
@@ -40,17 +40,17 @@ test('result modes isolate groups, keep snapshot and allow zoom/grid inspection 
   click('Ajustar 2D'); expect(screen.getByLabelText('Ampliación 2D')).toHaveTextContent('100 %');
   click('Ver en 3D'); click('Acercar 3D');
   expect(screen.getByLabelText('Ampliación 3D')).toHaveTextContent('150 %');
-  fireEvent.change(screen.getByLabelText('Grupo del resultado'), { target: { value: '2:5.5' } });
+  fireEvent.change(screen.getByLabelText('Vidrio del resultado'), { target: { value: '2:5.5' } });
   expect(document.querySelectorAll('[data-piece-3d]')).toHaveLength(1);
   expect(screen.getByRole('list', { name: 'Piezas en la vista 3D' })).not.toHaveTextContent('Pedido #22');
-  click('Ver máscara raster');
-  expect(screen.getByLabelText('Grupo del resultado')).toHaveValue('2:5.5');
-  expect(screen.getByRole('img', { name: 'Celdas raster de pieza #103' })).toBeVisible();
-  click('Acercar raster'); expect(screen.getByLabelText('Ampliación raster')).toHaveTextContent('150 %');
+  click('Ver detalle de piezas');
+  expect(screen.getByLabelText('Vidrio del resultado')).toHaveValue('2:5.5');
+  expect(screen.getByRole('img', { name: 'Detalle de la pieza #103' })).toBeVisible();
+  click('Acercar del corte'); expect(screen.getByLabelText('Ampliación del corte')).toHaveTextContent('150 %');
   fireEvent.click(screen.getByLabelText('Mostrar celdas')); expect(document.querySelector('[data-raster-grid]')).toBeNull();
   fireEvent.click(screen.getByLabelText('Mostrar celdas')); expect(document.querySelector('[data-raster-grid]')).not.toBeNull();
-  for (let i = 0; i < 10; i++) click('Acercar raster');
-  expect(screen.getByLabelText('Ampliación raster')).toHaveTextContent('400 %'); expect(screen.getByRole('button', { name: 'Acercar raster' })).toBeDisabled();
+  for (let i = 0; i < 10; i++) click('Acercar del corte');
+  expect(screen.getByLabelText('Ampliación del corte')).toHaveTextContent('400 %'); expect(screen.getByRole('button', { name: 'Acercar del corte' })).toBeDisabled();
   click('Ver en 3D'); expect(screen.getByLabelText('Ampliación 3D')).toHaveTextContent('150 %');
   click('Restablecer vista'); expect(screen.getByLabelText('Ampliación 3D')).toHaveTextContent('100 %');
   click('Ver en 2D'); fireEvent.change(screen.getByLabelText('Plancha o retazo'), { target: { value: 'RETAZO:8:1' } });
@@ -63,7 +63,7 @@ test('rendering rejects incompatible imported placements and hides result modes 
   const snapshot = prepareFixture([21, 22]); const placements = fixturePlacements(snapshot);
   render(<PlacementCanvas snapshot={snapshot} placements={[placements[0], { ...placements[3], group_id: '1:6', material_id: 15 }]} />);
   expect(document.querySelectorAll('[data-placement]')).toHaveLength(1);
-  fireEvent.change(screen.getByLabelText('Grupo del resultado'), { target: { value: '2:5.5' } });
+  fireEvent.change(screen.getByLabelText('Vidrio del resultado'), { target: { value: '2:5.5' } });
   expect(screen.queryByRole('group', { name: 'Vista del resultado' })).not.toBeInTheDocument();
   expect(document.querySelectorAll('[data-placement]')).toHaveLength(0);
 });
@@ -71,7 +71,7 @@ test('rendering rejects incompatible imported placements and hides result modes 
 test('missing raster is explicit, never fabricated from geometry', () => {
   const snapshot = prepareFixture([21]); snapshot.rasters = {};
   render(<RasterInspection snapshot={snapshot} group={snapshot.groups[0]} />);
-  expect(screen.getByRole('status')).toHaveTextContent('no se recibió máscara');
+  expect(screen.getByRole('status')).toHaveTextContent('vista previa no disponible');
   expect(screen.queryByRole('img')).not.toBeInTheDocument();
 });
 
@@ -81,10 +81,10 @@ test('execution waits for complete raster preparation instead of silently runnin
   const adapter = { ...createFixtureAdapter(), prepare: async () => snapshot };
   render(<OptimizationPage user={withPermissions({ rol: 'Operario' })} source={source} adapter={adapter} />);
   fireEvent.click(screen.getByLabelText('Seleccionar todos'));
-  await act(async () => click('Preparar optimización'));
-  expect(screen.getByRole('button', { name: 'Ejecutar First Fit', exact: true })).toBeDisabled();
-  expect(screen.getByText(/faltan máscaras válidas/)).toBeVisible();
-  expect(document.querySelector('.first-fit-groups')).toHaveTextContent('Estado: Pendiente');
+  await act(async () => click('Revisar vidrios y piezas'));
+  expect(screen.getByRole('button', { name: 'Calcular distribución', exact: true })).toBeDisabled();
+  expect(screen.getByText(/Falta completar la vista previa/)).toBeVisible();
+  expect(document.querySelector('.first-fit-groups')).toHaveTextContent('Por revisar');
 });
 
 test('prepared masks and groups stay fixed when live order details change during execution', async () => {
@@ -92,10 +92,10 @@ test('prepared masks and groups stay fixed when live order details change during
   const source = createFixturePendingOrdersSource(fixtureOrders);
   render(<OptimizationPage user={withPermissions({ rol: 'Operario' })} source={source} adapter={createFixtureAdapter({ delayMs: 10 })} />);
   fireEvent.click(screen.getByLabelText('Seleccionar todos'));
-  await act(async () => click('Preparar optimización')); click('Ejecutar First Fit');
+  await act(async () => click('Revisar vidrios y piezas')); click('Calcular distribución');
   const changed = structuredClone(fixtureOrders[0]); changed.piezas[0].espesor_mm = 10;
   act(() => source.emit({ type: 'upsert', order: changed }));
-  const groups = within(screen.getByRole('region', { name: 'Grupos detectados' }));
+  const groups = within(screen.getByRole('region', { name: 'Vidrios del pedido' }));
   expect(groups.getByText('Templado · 6 mm', { selector: 'strong' })).toBeVisible();
   expect(groups.queryByText(/10 mm/)).not.toBeInTheDocument();
   await act(async () => vi.advanceTimersByTimeAsync(1000));

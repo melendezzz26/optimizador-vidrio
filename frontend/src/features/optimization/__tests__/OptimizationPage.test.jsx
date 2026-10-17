@@ -20,15 +20,15 @@ function mount(orders = fixtureOrders, adapter = createFixtureAdapter({ delayMs:
 const click = name => fireEvent.click(screen.getByRole('button', { name, exact: true }));
 async function prepare() {
   fireEvent.click(screen.getByLabelText('Seleccionar todos'));
-  await act(async () => click('Preparar optimización'));
+  await act(async () => click('Revisar vidrios y piezas'));
 }
-async function complete() { click('Ejecutar First Fit'); await act(async () => vi.advanceTimersByTimeAsync(1000)); }
+async function complete() { click('Calcular distribución'); await act(async () => vi.advanceTimersByTimeAsync(1000)); }
 
 test('single, multiple, all and deselection; no manual refresh or dropzone', () => {
   mount();
   expect(screen.queryByRole('button', { name: 'Actualizar pedidos' })).not.toBeInTheDocument();
   expect(screen.queryByText('Pedido seleccionado')).not.toBeInTheDocument();
-  expect(screen.getByRole('button', { name: 'Preparar optimización' })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Revisar vidrios y piezas' })).toBeDisabled();
   fireEvent.click(screen.getByRole('checkbox', { name: /#21/ })); expect(screen.getByText('1 pedidos seleccionados')).toBeVisible();
   fireEvent.click(screen.getByRole('checkbox', { name: /#22/ })); expect(screen.getByText('2 pedidos seleccionados')).toBeVisible();
   fireEvent.click(screen.getByLabelText('Seleccionar todos')); expect(screen.getByText('0 pedidos seleccionados')).toBeVisible();
@@ -49,29 +49,29 @@ test('live add, state change, removal, error and reconnection reconcile selectio
 test('groups, progressive placements, arbitrary rotations, metrics and honest confirmation', async () => {
   mount(); await prepare();
   expect(document.querySelector('.first-fit-groups')).toHaveTextContent('Templado · 6 mm'); expect(document.querySelector('.first-fit-groups')).toHaveTextContent('Bronce · 5.5 mm');
-  click('Ejecutar First Fit');
+  click('Calcular distribución');
   expect(screen.getByText('0 / 4 piezas colocadas')).toBeVisible();
   await act(async () => vi.advanceTimersByTimeAsync(40));
   expect(screen.getByText('1 / 4 piezas colocadas')).toBeVisible();
   expect(document.querySelectorAll('[data-placement]')).toHaveLength(1);
   await act(async () => vi.advanceTimersByTimeAsync(1000));
   expect(screen.getByText('4 / 4 piezas colocadas')).toBeVisible();
-  expect(screen.getByRole('heading', { name: 'Resultado First Fit' })).toBeVisible();
+  expect(screen.getByRole('heading', { name: 'Resultado del corte' })).toBeVisible();
   expect(screen.getByRole('list', { name: 'Detalle de colocaciones' })).toHaveTextContent('rotación aplicada: 90°');
   expect(document.querySelector('[data-placement="22:104:1"]')).toHaveAttribute('transform', 'translate(2000 150)');
-  fireEvent.change(screen.getByLabelText('Grupo del resultado'), { target: { value: '2:5.5' } });
+  fireEvent.change(screen.getByLabelText('Vidrio del resultado'), { target: { value: '2:5.5' } });
   expect(screen.getByRole('img', { name: 'Colocaciones en plancha #16' }).querySelector('circle')).toHaveAttribute('r', '240');
   expect(screen.getByText('842 ms')).toBeVisible();
-  click('Confirmar solución');
-  const dialog = screen.getByRole('alertdialog'); expect(dialog).toHaveTextContent('puede modificar las existencias disponibles');
+  click('Confirmar corte');
+  const dialog = screen.getByRole('alertdialog'); expect(dialog).toHaveTextContent('Se descontarán del inventario las planchas y retazos utilizados');
   expect(within(dialog).getByRole('button', { name: 'Cancelar' })).toHaveFocus();
   fireEvent.keyDown(dialog, { key: 'Escape' }); expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
-  click('Confirmar solución');
-  await act(async () => fireEvent.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Confirmar solución' })));
+  click('Confirmar corte');
+  await act(async () => fireEvent.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Confirmar corte' })));
   expect(screen.getByText(/No se guardó la solución/)).toBeVisible();
 });
 test('snapshot stays fixed after new pending order and removal during run', async () => {
-  const { source } = mount(); await prepare(); click('Ejecutar First Fit');
+  const { source } = mount(); await prepare(); click('Calcular distribución');
   act(() => source.emit({ type: 'upsert', order: newFixtureOrder }));
   act(() => source.emit({ type: 'remove', id: 21 }));
   expect(screen.getByText('1 nuevo pedido disponible para la siguiente ejecución.')).toBeVisible();
@@ -79,9 +79,9 @@ test('snapshot stays fixed after new pending order and removal during run', asyn
   await act(async () => vi.advanceTimersByTimeAsync(1000)); expect(screen.getByText('4 / 4 piezas colocadas')).toBeVisible();
 });
 test('rerun clears placements, discard cancels queued events', async () => {
-  mount(); await prepare(); await complete(); click('Ejecutar nuevamente');
+  mount(); await prepare(); await complete(); click('Preparar otro corte');
   expect(screen.getByText('0 / 4 piezas colocadas')).toBeVisible();
-  expect(screen.queryByRole('heading', { name: 'Resultado First Fit' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('heading', { name: 'Resultado del corte' })).not.toBeInTheDocument();
   click('Descartar'); await act(async () => vi.advanceTimersByTimeAsync(1000));
   expect(screen.queryByRole('img', { name: /Colocaciones en/ })).not.toBeInTheDocument();
   expect(screen.getByText('2 pedidos seleccionados')).toBeVisible();
@@ -89,10 +89,10 @@ test('rerun clears placements, discard cancels queued events', async () => {
 test('failed stream can retry', async () => {
   let listener;
   const adapter = { ...createFixtureAdapter(), createEventSource: () => ({ subscribe(fn) { listener = fn; }, dispose: vi.fn() }) };
-  mount(fixtureOrders, adapter); await prepare(); click('Ejecutar First Fit');
+  mount(fixtureOrders, adapter); await prepare(); click('Calcular distribución');
   act(() => listener({ ...shared.failed_event, sequence: 1, id_optimizacion: 301, data: { ...shared.failed_event.data, message: 'Fallo del proceso' } }));
   expect(screen.getByRole('alert')).toHaveTextContent('Fallo del proceso');
-  click('Ejecutar nuevamente'); expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  click('Preparar otro corte'); expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 });
 
 test('accepted Location ID remains recoverable after a stream failure without reexecuting First Fit', async () => {
@@ -102,8 +102,8 @@ test('accepted Location ID remains recoverable after a stream failure without re
     }, dispose: vi.fn() })),
     loadResult: vi.fn(async () => fixtureRun(prepareFixture([21, 22]))),
   };
-  mount(fixtureOrders, adapter); await prepare(); click('Ejecutar First Fit');
-  expect(screen.getByText('Corrida #301')).toBeVisible();
+  mount(fixtureOrders, adapter); await prepare(); click('Calcular distribución');
+  expect(screen.getByText('Trabajo #301')).toBeVisible();
   expect(screen.getByRole('alert')).toHaveTextContent('Flujo interrumpido');
   await act(async () => click('Recuperar resultado'));
   expect(adapter.loadResult).toHaveBeenCalledExactlyOnceWith(301, { resultUrl: null });
@@ -128,12 +128,14 @@ test('loading, 401, no mutation and unmount cleanup', () => {
 });
 test('real adapter prepares persisted pieces without starting a run or inventing stock', async () => {
   const read = vi.spyOn(ordersApi, 'getOrder').mockImplementation(async id => structuredClone(fixtureOrders.find(o => o.id_pedido === id)));
-  const fetch = vi.spyOn(globalThis, 'fetch');
+  const fetch = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify([{ id_tipo_vidrio: 1, nombre: 'Templado' }, { id_tipo_vidrio: 2, nombre: 'Bronce' }])));
   const source = createFixturePendingOrdersSource(fixtureOrders);
   render(<OptimizationPage user={user} source={source} />); await prepare();
   expect(read).toHaveBeenCalledTimes(2);
-  expect(fetch).not.toHaveBeenCalled();
-  expect(screen.getByRole('button', { name: 'Ejecutar First Fit' })).toBeEnabled();
+  expect(fetch).toHaveBeenCalledOnce();
+  expect(fetch.mock.calls[0][0]).toMatch(/\/inventory\/tipos-vidrio$/);
+  expect(fetch.mock.calls[0][1].method).toBe('GET');
+  expect(screen.getByRole('button', { name: 'Calcular distribución' })).toBeEnabled();
   expect(document.querySelectorAll('[data-placement]')).toHaveLength(0);
 });
 test('inventory dimensions override all commercial assumptions', () => {
@@ -172,18 +174,18 @@ test('polling restart ignores late response from disposed StrictMode lifecycle',
 test('public-only stream renders progress, completed stages and confirmation without internal stage events', async () => {
   const adapter = createFixtureAdapter({ delayMs: 10, includeInternalStages: false });
   mount(fixtureOrders, adapter);
-  await prepare(); click('Ejecutar First Fit');
+  await prepare(); click('Calcular distribución');
   await act(async () => vi.advanceTimersByTimeAsync(40));
   expect(screen.getByText('1 / 4 piezas colocadas')).toBeVisible();
   expect(document.querySelectorAll('[data-placement]')).toHaveLength(1);
   const stages = screen.getByRole('list', { name: 'Etapas de optimización' });
-  expect(within(stages).getByText('Ejecutando First Fit').closest('li')).toHaveAttribute('aria-current', 'step');
+  expect(within(stages).getByText('Calculando distribución').closest('li')).toHaveAttribute('aria-current', 'step');
   await act(async () => vi.advanceTimersByTimeAsync(1000));
   expect(screen.getByText('4 / 4 piezas colocadas')).toBeVisible();
   expect(within(stages).getAllByText('Completado')).toHaveLength(8);
   expect(within(stages).queryByText('Pendiente')).not.toBeInTheDocument();
   expect(screen.getByText('842 ms')).toBeVisible();
-  click('Confirmar solución');
+  click('Confirmar corte');
   expect(screen.getByRole('alertdialog')).toHaveTextContent('no guardará cambios');
 });
 
@@ -192,7 +194,7 @@ test('3D toggles preserve the run, live snapshot and metrics; rerun and discard 
   expect(screen.queryByRole('button', { name: 'Ver en 3D' })).not.toBeInTheDocument();
   await prepare();
   expect(screen.queryByRole('button', { name: 'Ver en 3D' })).not.toBeInTheDocument();
-  click('Ejecutar First Fit');
+  click('Calcular distribución');
   expect(screen.queryByRole('button', { name: 'Ver en 3D' })).not.toBeInTheDocument();
   await act(async () => vi.advanceTimersByTimeAsync(40));
   click('Ver en 3D');
@@ -204,7 +206,7 @@ test('3D toggles preserve the run, live snapshot and metrics; rerun and discard 
   click('Ver en 2D'); click('Ver en 3D');
   expect(screen.getByText('842 ms')).toBeVisible();
   expect(screen.getByRole('checkbox', { name: /#24/ })).not.toBeChecked();
-  click('Ejecutar nuevamente');
+  click('Preparar otro corte');
   expect(screen.queryByRole('slider')).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Ver en 3D' })).not.toBeInTheDocument();
   await act(async () => vi.advanceTimersByTimeAsync(1000));

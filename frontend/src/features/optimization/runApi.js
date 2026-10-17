@@ -17,8 +17,8 @@ export class RunApiError extends Error {
 const messages = {
   401: 'Tu sesión venció. Inicia sesión otra vez.',
   403: 'No tienes permiso para realizar esta operación.',
-  404: 'La corrida o alguno de los pedidos ya no está disponible.',
-  409: 'La corrida o el inventario cambió. Revisa el resultado antes de continuar.',
+  404: 'El trabajo o alguno de los pedidos ya no está disponible.',
+  409: 'El trabajo o las existencias cambiaron. Revisa el resultado antes de continuar.',
   422: 'No se puede completar la operación con los datos actuales.',
 };
 
@@ -40,16 +40,20 @@ export function createBackendRunAdapter({ token, fetchImpl = globalThis.fetch, r
       });
     } catch (error) {
       if (error.name === 'AbortError') throw error;
-      throw new RunApiError('No se pudo conectar con el servidor. Recupera el resultado antes de iniciar otra corrida.', 0, 'NETWORK_ERROR');
+      throw new RunApiError('No se pudo conectar. Consulta el resultado antes de preparar otro trabajo.', 0, 'NETWORK_ERROR');
     }
     if (!response.ok) {
       const data = await response.json().catch(() => null);
+      if (data?.detail?.code === 'CONFIG_CONFLICT') {
+        console.error('No se pudo iniciar el cálculo de corte', { status: response.status, code: data.detail.code, detail: data.detail.message });
+        throw new RunApiError('No se puede calcular el corte porque faltan los parámetros de trabajo. Solicita al administrador revisar la configuración.', response.status, 'CONFIG_CONFLICT');
+      }
       throw new RunApiError(data?.detail?.message ?? messages[response.status]
         ?? 'El servidor no pudo completar la operación.', response.status, data?.detail?.code);
     }
     if (!stream) return response.json();
     if (!response.headers.get('content-type')?.startsWith('application/x-ndjson') || !response.body) {
-      throw new RunApiError('El servidor no devolvió un flujo NDJSON. Consulta el resultado de la corrida.', response.status, 'INVALID_STREAM');
+      throw new RunApiError('No se pudo seguir el avance del trabajo. Consulta el resultado antes de continuar.', response.status, 'INVALID_STREAM');
     }
     const chunks = (async function* () {
       const reader = response.body.getReader();

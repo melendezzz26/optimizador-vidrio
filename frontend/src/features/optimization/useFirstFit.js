@@ -57,11 +57,11 @@ export function useFirstFit({ source, adapter, onSessionExpired, result }) {
       };
       stream.current.subscribe(accept, error => {
         if (error.status === 401) onSessionExpired?.();
-        if (runId === activeRun.current) dispatch({ type: 'connection_failed', message: error.message });
+        if (runId === activeRun.current) dispatch({ type: 'connection_failed', message: error.message, rejected: error.status >= 400 && error.status < 500 });
       }, optimizationId => {
         if (runId === activeRun.current) dispatch({ type: 'accepted', optimizationId, runId });
       });
-    } catch (error) { dispatch({ type: 'connection_failed', message: error.message }); }
+    } catch (error) { dispatch({ type: 'connection_failed', message: error.message, rejected: error.status >= 400 && error.status < 500 }); }
   }
   function discard() { activeRun.current = null; stream.current?.dispose(); lifecycle.current++; busy.current = false; dispatch({ type: 'discard' }); }
   async function recover() {

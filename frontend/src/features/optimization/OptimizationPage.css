@@ -76,3 +76,10 @@
 @keyframes first-fit-arrive { from { opacity: 0; } to { opacity: 1; } }
 @media (max-width: 600px) { .first-fit-stages { grid-template-columns: 1fr 1fr; } .first-fit-orders label { flex-wrap: wrap; } }
 @media (prefers-reduced-motion: reduce) { .first-fit-piece { animation: none; } .first-fit-orders label { transition: none; } }
+
+.optimization-workspace { margin-bottom: var(--ng-space-4); }
+.optimization-tools { display: flex; gap: var(--ng-space-2); flex-wrap: wrap; padding-bottom: var(--ng-space-3); border-bottom: 1px solid var(--ng-border-subtle); }
+.optimization-tools .ng-button[aria-pressed="true"] { background: var(--ng-action-tint); border-color: var(--ng-primary-focus); color: var(--ng-primary-focus); }
+.optimization-section-heading { margin-bottom: var(--ng-space-4); }
+.optimization-section-heading h2 { margin-top: 0; }
+.optimization-section-heading small { color: var(--ng-text-600); }

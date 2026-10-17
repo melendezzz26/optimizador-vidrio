@@ -2,9 +2,9 @@ import { placementMatchesGroup } from './materialGroups.js';
 import { groupKey, parseEvent, parseRun, resultSnapshot, stockKey, unitKey, visualPlacement, visualStock } from './runContract.js';
 export const STAGES = [
   ['preparing_orders', 'Preparando pedidos'], ['grouping_materials', 'Agrupando por material y espesor'],
-  ['rasterizing', 'Generando máscara raster'], ['sorting_pieces', 'Ordenando piezas'],
-  ['first_fit', 'Ejecutando First Fit'], ['evaluating_rotations', 'Evaluando rotaciones'], ['calculating_metrics', 'Calculando métricas'],
-  ['completed', 'Optimización completada'],
+  ['rasterizing', 'Preparando formas de corte'], ['sorting_pieces', 'Ordenando piezas'],
+  ['first_fit', 'Calculando distribución'], ['evaluating_rotations', 'Evaluando rotaciones'], ['calculating_metrics', 'Calculando aprovechamiento'],
+  ['completed', 'Distribución lista'],
 ];
 export const initialOptimization = {
   status: 'loading_orders', orders: [], selected: [], connection: 'loading', orderError: '',
@@ -67,7 +67,15 @@ function reduce(state, action) {
         metrics_available: false, confirmable: false, confirmed: false, resultUrl: null,
         completedGroups: [], stage: 'preparing_orders', error: '', availableAtStart: state.orders.map(o => o.id_pedido) };
     case 'discard': return { ...initialOptimization, orders: state.orders, selected: state.selected, connection: state.connection, status: 'selection_ready' };
-    case 'connection_failed': return { ...state, status: 'failed', error: action.message, confirmable: false };
+    case 'connection_failed': {
+      // A rejected POST has not created a run. Keep the reviewed work and allow
+      // an explicit retry; do not report server execution or leave progress active.
+      if (action.rejected && !state.optimizationId && state.sequence === 0) return {
+        ...state, status: 'prepared', error: action.message, runId: null, estado: null,
+        stage: null, placed_units: 0, progress_pct: '0', confirmable: false,
+      };
+      return { ...state, status: 'failed', stage: null, error: action.message, confirmable: false };
+    }
     case 'result_error': return { ...state, status: state.status === 'loading_result' ? 'failed' : state.status, error: action.message, confirmable: false };
     case 'confirmed': return { ...state, confirmed: true, confirmable: false };
     case 'result': {
@@ -80,7 +88,7 @@ function reduce(state, action) {
         placed_units: dto.placed_units, total_units: dto.total_units, progress_pct: dto.progress_pct,
         completo: dto.completo, metrics_available: dto.metrics_available, metrics: dto.metrics ?? null,
         confirmable: dto.confirmable, confirmed: dto.confirmed,
-        error: dto.estado === 'FALLIDA' ? state.error || 'La corrida falló. Consulta el resultado antes de iniciar otra ejecución.' : '',
+        error: dto.estado === 'FALLIDA' ? state.error || 'No se pudo calcular el corte. Consulta el resultado antes de preparar otro trabajo.' : '',
         stage: dto.estado === 'COMPLETADA' ? 'completed' : state.stage };
     }
     case 'event': {

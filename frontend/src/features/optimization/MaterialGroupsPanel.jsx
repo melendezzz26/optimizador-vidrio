@@ -1,26 +1,27 @@
 import { useId, useState } from 'react';
 import { RasterInspection } from './RasterInspection';
 import { groupRasterReady } from './rasterInspectionModel';
+import { groupOrdersLabel } from './workLabels';
 
 export function MaterialGroupsPanel({ groups, unresolved, snapshot, completedGroups }) {
   const id = useId();
   const [chosen, setChosen] = useState('');
   const group = groups.find(g => g.id === chosen) ?? groups[0];
   return <section className="first-fit-section" aria-labelledby={`${id}-title`}>
-    <h2 id={`${id}-title`}>Grupos detectados</h2>
-    <p>Compatibilidad visual por material y espesor. {snapshot ? 'Selección preparada; la ejecución conserva este snapshot.' : 'Vista previa automática de la selección; preparación final pendiente.'}</p>
-    {!!unresolved.length && <p role="status">Falta detalle de material, espesor o cantidad en pedidos {unresolved.map(n => `#${n}`).join(', ')}. No se presupone compatibilidad.</p>}
+    <h2 id={`${id}-title`}>Vidrios del pedido</h2>
+    <p>{snapshot ? 'Vidrios y piezas revisados. Ya puedes calcular la distribución.' : 'Revisa los pedidos para consultar sus vidrios, espesores y cantidades.'}</p>
+    {!!unresolved.length && <p role="status">Falta consultar el vidrio, espesor o cantidad de los pedidos {unresolved.map(n => `#${n}`).join(', ')}.</p>}
     <ul className="first-fit-groups">{groups.map(g => {
       const sheet = g.containers.find(c => c.material_source === 'PLANCHA');
       return <li key={g.id}><strong>{g.name} · {g.thickness} mm</strong>
-        <span>{g.units.length} piezas · pedidos {g.orders.map(n => `#${n}`).join(', ')}</span>
-        <span>{sheet ? `Plancha base #${sheet.material_id} · ${sheet.material_width_mm} × ${sheet.material_height_mm} mm` : 'El servidor asignará el material durante la ejecución'}</span>
-        <span>Estado: {completedGroups.includes(g.id) ? 'Evaluado' : snapshot && sheet && groupRasterReady(snapshot, g) ? 'Listo' : 'Pendiente'}</span>
+        <span>{g.units.length} {g.units.length === 1 ? 'pieza' : 'piezas'} · {groupOrdersLabel(g.orders)}</span>
+        <span>{sheet ? `Plancha #${sheet.material_id} · ${sheet.material_width_mm} × ${sheet.material_height_mm} mm` : 'El sistema elegirá una plancha o retazo disponible para realizar el corte.'}</span>
+        <span>{completedGroups.includes(g.id) ? 'Distribución calculada' : snapshot && (!snapshot.fixture || sheet && groupRasterReady(snapshot, g)) ? 'Listo para calcular' : 'Por revisar'}</span>
       </li>;
     })}</ul>
-    {snapshot && group && <section aria-labelledby={`${id}-raster`}>
-      <h2 id={`${id}-raster`}>Preparación raster · antes de optimizar</h2>
-      <div className="first-fit-group-select"><label htmlFor={`${id}-select`}>Grupo para preparar raster</label>
+    {snapshot && group && (snapshot.fixture || groupRasterReady(snapshot, group)) && <section aria-labelledby={`${id}-raster`}>
+      <h2 id={`${id}-raster`}>Vista previa del corte</h2>
+      <div className="first-fit-group-select"><label htmlFor={`${id}-select`}>Vidrio de la vista previa</label>
         <select className="ng-control" id={`${id}-select`} value={group.id} onChange={e => setChosen(e.target.value)}>
           {groups.map(g => <option key={g.id} value={g.id}>{g.name} · {g.thickness} mm</option>)}
         </select></div>

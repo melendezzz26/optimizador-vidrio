@@ -1,3 +1,4 @@
+import { calculationState } from '../../src/features/optimization/workLabels.js';
 import { expect } from '@playwright/test';
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -53,7 +54,7 @@ export async function login(page, credentials) {
 }
 export async function open(page) {
   await page.getByRole('button', { name: 'Optimización', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Optimización', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Optimización de corte', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Explorar demostración' })).toHaveCount(0);
 }
 export async function stock(page, data) {
@@ -76,10 +77,10 @@ export async function run(page, data, info) {
   const before = await stock(page, data);
   for (const id of data.orders) await page.getByRole('checkbox', { name: new RegExp(`^#${id} ·`) }).check();
   await capture(page, info, 'selection');
-  await page.getByRole('button', { name: 'Preparar optimización', exact: true }).click();
+  await page.getByRole('button', { name: 'Revisar vidrios y piezas', exact: true }).click();
   const post = page.waitForResponse(r => r.url() === `${api}/api/optimization/runs` && r.request().method() === 'POST');
   const get = page.waitForResponse(r => /^\/api\/optimization\/runs\/\d+$/.test(new URL(r.url()).pathname) && r.request().method() === 'GET');
-  await page.getByRole('button', { name: 'Ejecutar First Fit', exact: true }).click();
+  await page.getByRole('button', { name: 'Calcular distribución', exact: true }).click();
   const response = await post;
   expect(response.status()).toBe(201);
   expect(response.headers()['content-type']).toContain('application/x-ndjson');
@@ -100,26 +101,26 @@ export async function run(page, data, info) {
   const result = parseRun(await canonical.json());
   save(info, 'result.json', result); save(info, 'stock-before.json', before);
   expect(await stock(page, data)).toEqual(before);
-  await expect(page.getByText(`Estado del cálculo: ${result.estado}`, { exact: true })).toBeVisible();
+  await expect(page.getByText(`Estado del trabajo: ${calculationState(result.estado)}`, { exact: true })).toBeVisible();
   await expect(page.getByText(`${result.placed_units} / ${result.total_units} piezas colocadas`, { exact: true })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-  await capture(page, info, 'placements', page.getByRole('region', { name: 'Colocaciones First Fit', exact: true }));
+  await capture(page, info, 'placements', page.getByRole('region', { name: 'Distribución de piezas', exact: true }));
   await capture(page, info, 'progress-final', page.getByRole('list', { name: 'Etapas de optimización' }));
-  if (result.metrics_available) await capture(page, info, 'metrics', page.getByRole('region', { name: 'Resultado First Fit', exact: true }));
+  if (result.metrics_available) await capture(page, info, 'metrics', page.getByRole('region', { name: 'Resultado del corte', exact: true }));
   return { result, before, events };
 }
 export async function confirm(page, data, result, info) {
-  await page.getByRole('button', { name: 'Confirmar solución', exact: true }).click();
+  await page.getByRole('button', { name: 'Confirmar corte', exact: true }).click();
   const dialog = page.getByRole('alertdialog');
-  await expect(dialog).toContainText('actualizará el inventario');
+  await expect(dialog).toContainText('Se descontarán del inventario');
   await capture(page, info, 'confirmation');
   const post = page.waitForResponse(r => r.url() === `${api}/api/optimization/runs/${result.id_optimizacion}/confirm` && r.request().method() === 'POST');
-  await dialog.getByRole('button', { name: 'Confirmar solución', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Confirmar corte', exact: true }).click();
   const response = await post;
   expect(response.status()).toBe(200); expect(response.request().postData()).toBeNull();
   save(info, 'confirmation.json', await response.json());
-  await expect(page.getByText('Solución ya confirmada.', { exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Confirmar solución', exact: true })).toHaveCount(0);
+  await expect(page.getByText('Corte ya confirmado.', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Confirmar corte', exact: true })).toHaveCount(0);
   const canonical = await page.request.get(`${api}/api/optimization/runs/${result.id_optimizacion}`, { headers: data.headers });
   const dto = parseRun(await canonical.json());
   expect(dto.confirmed).toBe(true); expect(dto.confirmable).toBe(false);

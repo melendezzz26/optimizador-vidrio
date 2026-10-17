@@ -17,7 +17,7 @@ test('E2E1 N=1 real: progreso, placements, métricas, confirmación, stock y ped
   const { result, events } = await run(page, data, info);
   expect(result.completo).toBe(true); expect(result.metrics_available).toBe(true);
   expect(new Set(events.map(e => e.event))).toEqual(new Set(['optimization_started', 'group_started', 'piece_started', 'piece_placed', 'group_completed', 'metrics_calculated', 'optimization_completed']));
-  await expect(page.getByRole('heading', { name: 'Resultado First Fit' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Resultado del corte' })).toBeVisible();
   const after = await confirm(page, data, result, info);
   expect(after.sheets[0].cantidad).toBe(0);
   const repeated = await page.request.post(`${api}/api/optimization/runs/${result.id_optimizacion}/confirm`, { headers: data.headers });
@@ -52,7 +52,7 @@ test('E2E3 multimaterial real: layouts y métricas separados', async ({ page }, 
   const { result } = await run(page, data, info);
   expect(result.groups).toHaveLength(2); expect(result.materials_used).toHaveLength(2);
   for (const material of data.materials) {
-    await page.getByLabel('Grupo del resultado').selectOption(`${material.id_tipo_vidrio}:${material.espesor_mm}`);
+    await page.getByLabel('Vidrio del resultado').selectOption(`${material.id_tipo_vidrio}:${material.espesor_mm}`);
     await expect(page.locator('[data-placement]')).toHaveCount(1);
     await capture(page, info, `material-${material.id_tipo_vidrio}`);
   }
@@ -91,7 +91,7 @@ test('E2E6 SIN_SOLUCION real: diagnóstico, pedidos PENDIENTE y stock intacto', 
   expect(await orderStates(page, data)).toEqual(['PENDIENTE']); expect(await stock(page, data)).toEqual(before);
   save(info, 'stock-after.json', await stock(page, data));
   save(info, 'orders-after.json', { order_ids: data.orders, states: await orderStates(page, data) });
-  await expect(page.getByRole('button', { name: 'Confirmar solución', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Confirmar corte', exact: true })).toHaveCount(0);
   await capture(page, info, 'sin-solucion');
 });
 test('E2E7 409 real: stock cambiado, feedback y ninguna confirmación parcial', async ({ page }, info) => {
@@ -101,13 +101,13 @@ test('E2E7 409 real: stock cambiado, feedback y ninguna confirmación parcial', 
   expect(change.status()).toBe(200);
   const before = await stock(page, data);
   save(info, 'conflict-stock-before.json', before);
-  await page.getByRole('button', { name: 'Confirmar solución', exact: true }).click();
+  await page.getByRole('button', { name: 'Confirmar corte', exact: true }).click();
   const post = page.waitForResponse(r => r.url().endsWith(`/runs/${result.id_optimizacion}/confirm`) && r.request().method() === 'POST');
-  await page.getByRole('alertdialog').getByRole('button', { name: 'Confirmar solución', exact: true }).click();
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Confirmar corte', exact: true }).click();
   const response = await post; expect(response.status()).toBe(409);
   save(info, 'conflict.json', await response.json());
-  await expect(page.getByText(/El inventario cambió \(409\)/)).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Confirmar solución', exact: true })).toBeDisabled();
+  await expect(page.getByText(/El inventario cambió/)).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Confirmar corte', exact: true })).toBeDisabled();
   expect(await orderStates(page, data)).toEqual(['OPTIMIZADO']); expect(await stock(page, data)).toEqual(before);
   save(info, 'conflict-stock-after.json', await stock(page, data));
   save(info, 'orders-after.json', { order_ids: data.orders, states: await orderStates(page, data) });
@@ -125,21 +125,21 @@ test('E2E8 RBAC real: sin view, view, execute y confirm independientes', async (
   await page.getByRole('button', { name: 'Cerrar sesión', exact: true }).click();
   await login(page, data.actors.execute); await open(page);
   const { result } = await run(page, data, info);
-  await expect(page.getByRole('button', { name: 'Confirmar solución', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Confirmar corte', exact: true })).toHaveCount(0);
   const execute = await loginApi(page.request, data.actors.execute);
   expect((await page.request.post(`${api}/api/optimization/runs/${result.id_optimizacion}/confirm`, { headers: execute })).status()).toBe(403);
   await page.getByRole('button', { name: 'Cerrar sesión', exact: true }).click();
   await login(page, data.actors.view); await open(page);
-  await expect(page.getByRole('button', { name: 'Preparar optimización', exact: true })).toHaveCount(0);
-  await page.getByLabel('ID de optimización', { exact: true }).fill(String(result.id_optimizacion));
+  await expect(page.getByRole('button', { name: 'Revisar vidrios y piezas', exact: true })).toHaveCount(0);
+  await page.getByLabel('Número de trabajo', { exact: true }).fill(String(result.id_optimizacion));
   await page.getByRole('button', { name: 'Consultar resultado', exact: true }).click();
-  await expect(page.getByText('Estado del cálculo: COMPLETADA', { exact: true })).toBeVisible();
+  await expect(page.getByText('Estado del trabajo: Distribución lista', { exact: true })).toBeVisible();
   const view = await loginApi(page.request, data.actors.view);
   expect((await page.request.post(`${api}/api/optimization/runs`, { headers: view, data: { order_ids: data.orders } })).status()).toBe(403);
   await capture(page, info, 'view-only');
   await page.getByRole('button', { name: 'Cerrar sesión', exact: true }).click();
   await login(page, data.actors.confirm); await open(page);
-  await page.getByLabel('ID de optimización', { exact: true }).fill(String(result.id_optimizacion));
+  await page.getByLabel('Número de trabajo', { exact: true }).fill(String(result.id_optimizacion));
   await page.getByRole('button', { name: 'Consultar resultado', exact: true }).click();
   await confirm(page, data, result, info);
 });

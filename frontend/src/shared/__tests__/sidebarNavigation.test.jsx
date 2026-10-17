@@ -53,7 +53,7 @@ test.each(['Administrador', 'Operario'])('%s navega a Optimization por teclado s
   const user = userEvent.setup(); render(<App />);
   const button = screen.getByRole('button', { name: 'Optimización', exact: true });
   button.focus(); await user.keyboard('{Enter}');
-  expect(screen.getByRole('heading', { name: 'Optimización', exact: true })).toBeVisible();
+  expect(screen.getByRole('heading', { name: 'Optimización de corte', exact: true })).toBeVisible();
   expect(screen.getByRole('button', { name: 'Optimización', exact: true })).toHaveAttribute('aria-current', 'page');
   expect(window.location.pathname).toBe('/optimizador-vidrio/');
   expect(screen.getAllByRole('button', { name: 'Cerrar sesión' })).toHaveLength(1);
@@ -66,6 +66,6 @@ test('optimization.view permite consultar Optimization sin permiso de ejecución
   expect(screen.getByRole('heading', { name: 'Inicio' })).toBeVisible();
   expect(screen.getByRole('button', { name: 'Gestión de inventario', exact: true })).toBeVisible();
   await userEvent.setup().click(screen.getByRole('button', { name: 'Optimización' }));
-  expect(screen.getByRole('heading', { name: 'Optimización' })).toBeVisible();
-  expect(screen.queryByRole('button', { name: 'Preparar optimización' })).not.toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Optimización de corte' })).toBeVisible();
+  expect(screen.queryByRole('button', { name: 'Revisar vidrios y piezas' })).not.toBeInTheDocument();
 });

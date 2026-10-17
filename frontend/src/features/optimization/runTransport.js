@@ -2,7 +2,7 @@ import { buildRunRequest, parseConfirmation, parseRun, readNdjson, RunContractEr
 
 // Parsing and lifecycle are shared by the real HTTP adapter and test adapters.
 export function createRunTransport({ prepare, open, load, confirm } = {}) {
-  const pending = () => { throw new Error('Esta operación está pendiente de integración backend.'); };
+  const pending = () => { throw new Error('Esta operación no está disponible. Inténtalo más tarde.'); };
   return {
     prepare: request => (prepare ?? pending)(buildRunRequest(request.order_ids)),
     loadResult: async (id, options) => parseRun(await (load ?? pending)(id, options)),

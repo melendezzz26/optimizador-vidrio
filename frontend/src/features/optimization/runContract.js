@@ -5,7 +5,7 @@ const events = new Set(['optimization_started', 'group_started', 'piece_started'
   'group_completed', 'metrics_calculated', 'optimization_completed', 'optimization_failed']);
 const states = new Set(['EN_EJECUCION', 'COMPLETADA', 'SIN_SOLUCION', 'FALLIDA']);
 export class RunContractError extends Error {
-  constructor() { super('La respuesta de optimización no cumple el contrato v1. Recupera el resultado antes de continuar.'); }
+  constructor() { super('No se pudo interpretar el avance del trabajo. Consulta el resultado antes de continuar.'); }
 }
 function require(value) { if (!value) throw new RunContractError(); }
 const positiveId = n => Number.isSafeInteger(n) && n > 0;

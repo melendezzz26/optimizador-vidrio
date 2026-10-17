@@ -1,14 +1,15 @@
-import { ScanLine } from 'lucide-react';
-import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
+import { ActionBar, PageCard } from '../../shared/components/PageLayout';
 import { EmptyState, FeedbackMessage, FieldError, LoadingState } from '../../shared/components/feedback';
 import { useOptimization } from './useOptimization';
 import { RasterComparison } from './RasterComparison';
+import { orderWorkState } from './workLabels';
 import './OptimizationPage.css';
 
 const SHAPES = { RECTANGULO: 'Rectángulo', CIRCUNFERENCIA: 'Circunferencia', POLIGONO_CONVEXO: 'Polígono convexo' };
-const stateLabel = state => state === 'EN_OPTIMIZACION' ? 'EN OPTIMIZACIÓN' : state;
+const stateLabel = orderWorkState;
 const dateLabel = value => new Date(value).toLocaleDateString('es-PE');
-const materialLabel = (id, materials) => materials.find(material => material.id_tipo_vidrio === id)?.nombre ?? `Material #${id}`;
+const materialLabel = (id, flow) => flow.materials.find(material => String(material.id_tipo_vidrio) === String(id))?.nombre
+  ?? (flow.materialStatus === 'ready' ? `Material #${id}` : flow.materialStatus === 'error' ? 'Vidrio sin identificar' : 'Consultando vidrio?');
 
 function geometryLabel(piece) {
   const geometry = piece.geometria;
@@ -30,8 +31,8 @@ export function Hu015Rasterization(props) {
   const previewGeometry = currentRaster?.geometria ?? selectedPiece?.geometria;
   const recovery = flow.scope === 'EN_OPTIMIZACION';
   return <PageCard className="optimization-page">
-    <PageHeader title="Rasterización de piezas" context="Preparación de piezas" icon={ScanLine}
-      description="Inicia un pedido y comprueba la rasterización de sus piezas persistidas." />
+    <header className="optimization-section-heading"><h2>Vista previa de piezas</h2>
+      <p>Prepara un pedido y revisa la forma y las medidas de sus piezas antes del corte.</p></header>
     {flow.materialWarning && <FeedbackMessage variant="warning">{flow.materialWarning}</FeedbackMessage>}
     <div className="optimization-columns">
       <section aria-labelledby="optimization-orders-title">
@@ -72,55 +73,55 @@ export function Hu015Rasterization(props) {
             <div><dt>Cliente</dt><dd>{flow.selection.item.cliente ?? (order.id_cliente ? `Cliente #${order.id_cliente}` : 'Sin cliente asociado')}</dd></div>
             <div><dt>Fecha</dt><dd>{dateLabel(order.fecha_registro)}</dd></div>
             <div><dt>Estado</dt><dd>{stateLabel(order.estado)}</dd></div>
-            <div><dt>Piezas persistidas</dt><dd>{order.piezas.length}</dd></div>
+            <div><dt>Piezas del pedido</dt><dd>{order.piezas.length}</dd></div>
           </dl>
           {!order.piezas.length ? <FeedbackMessage variant="warning">El pedido no contiene piezas disponibles. No se puede iniciar la optimización.</FeedbackMessage>
             : <div className="optimization-table-scroll"><table className="optimization-pieces">
               <caption>Piezas del pedido #{order.id_pedido}</caption>
-              <thead><tr><th scope="col">Pieza</th><th scope="col">Forma / geometría</th><th scope="col">Cantidad</th><th scope="col">Material / espesor</th></tr></thead>
+              <thead><tr><th scope="col">Pieza</th><th scope="col">Forma y medidas</th><th scope="col">Cantidad</th><th scope="col">Vidrio y espesor</th></tr></thead>
               <tbody>{order.piezas.map(piece => <tr key={piece.id_pieza}>
                 <th scope="row">#{piece.id_pieza}</th>
                 <td>{SHAPES[piece.tipo_forma] ?? piece.tipo_forma}<small>{geometryLabel(piece)}</small></td>
                 <td>{piece.cantidad}</td>
-                <td>{materialLabel(piece.id_tipo_vidrio, flow.materials)}<small>{piece.espesor_mm} mm</small></td>
+                <td>{materialLabel(piece.id_tipo_vidrio, flow)}<small>{piece.espesor_mm} mm</small></td>
               </tr>)}</tbody>
             </table></div>}
-          {!['PENDIENTE', 'EN_OPTIMIZACION'].includes(order.estado) && <FeedbackMessage variant="warning">El estado actual del pedido no permite iniciar ni rasterizar piezas.</FeedbackMessage>}
+          {!['PENDIENTE', 'EN_OPTIMIZACION'].includes(order.estado) && <FeedbackMessage variant="warning">El estado actual del pedido no permite preparar la vista previa.</FeedbackMessage>}
         </>}
         {flow.feedback && <FeedbackMessage variant={flow.feedback.variant}>{flow.feedback.message}</FeedbackMessage>}
         {flow.selection?.blocked && !flow.selection.loading && <button type="button" className="ng-button" disabled={flow.starting} onClick={flow.reloadSelection}>Actualizar detalle del pedido</button>}
         <ActionBar><button type="button" className="ng-button ng-button--primary" disabled={!flow.canStart} aria-busy={flow.starting} onClick={flow.start}>
-          {flow.starting ? 'Iniciando optimización...' : 'Iniciar optimización'}
+          {flow.starting ? 'Preparando pedido...' : 'Preparar vista previa'}
         </button></ActionBar>
       </section>
     </div>
     <section className="optimization-raster" aria-labelledby="optimization-raster-title">
-      <h2 id="optimization-raster-title">Rasterización</h2>
-      {!flow.canChoosePiece && <p>La rasterización se habilita cuando el servidor confirma el pedido en EN OPTIMIZACIÓN y se cargan sus piezas.</p>}
+      <h2 id="optimization-raster-title">Vista de la pieza</h2>
+      {!flow.canChoosePiece && <p>Prepara un pedido para consultar la vista previa de sus piezas.</p>}
       <form onSubmit={flow.rasterize} noValidate>
         <div className="ng-field-grid">
-          <div className="ng-field"><label htmlFor="optimization-piece">Pieza persistida</label>
+          <div className="ng-field"><label htmlFor="optimization-piece">Pieza del pedido</label>
             <select id="optimization-piece" className="ng-control" value={flow.pieceId} disabled={!flow.canChoosePiece} onChange={event => flow.changePiece(event.target.value)}>
               <option value="">Selecciona una pieza</option>
               {order?.piezas.map(piece => <option key={piece.id_pieza} value={piece.id_pieza}>Pieza #{piece.id_pieza} · {SHAPES[piece.tipo_forma]} · Cantidad: {piece.cantidad}</option>)}
             </select>
           </div>
-          <div className="ng-field"><label htmlFor="optimization-resolution">Resolución raster (mm/celda)</label>
+          <div className="ng-field"><label htmlFor="optimization-resolution">Detalle de la vista (mm)</label>
             <input id="optimization-resolution" className="ng-control" type="number" min="0" step="any" required
               value={flow.resolution} disabled={!flow.canChoosePiece} onChange={event => flow.changeResolution(event.target.value)}
               aria-invalid={!flow.validResolution} aria-describedby={!flow.validResolution ? 'optimization-resolution-error' : 'optimization-resolution-help'} />
-            <p id="optimization-resolution-help">Introduce un número finito mayor que 0 mm/celda.</p>
-            <FieldError id="optimization-resolution-error">{!flow.validResolution && 'La resolución debe ser un número positivo y no puede estar vacía.'}</FieldError>
+            <p id="optimization-resolution-help">Usa una medida mayor que 0 mm. Una medida menor muestra más detalle y puede tardar más.</p>
+            <FieldError id="optimization-resolution-error">{!flow.validResolution && 'El detalle de la vista debe ser una medida mayor que 0.'}</FieldError>
           </div>
         </div>
         <ActionBar><button type="submit" className="ng-button ng-button--primary" disabled={!flow.canRasterize} aria-busy={flow.rasterizing}>
-          {flow.rasterizing ? 'Rasterizando pieza...' : 'Rasterizar pieza'}
+          {flow.rasterizing ? 'Preparando vista previa...' : 'Ver pieza'}
         </button></ActionBar>
       </form>
-      {flow.rasterizing && <LoadingState>Rasterizando pieza #{flow.pieceId} con resolución {flow.resolution} mm/celda...</LoadingState>}
+      {flow.rasterizing && <LoadingState>Preparando vista de la pieza #{flow.pieceId} con detalle de {flow.resolution} mm/celda...</LoadingState>}
       {flow.rasterError && <FeedbackMessage variant="error">{flow.rasterError}</FeedbackMessage>}
-      {flow.raster && <section className="optimization-result" aria-label="Resultado técnico raster">
-        <FeedbackMessage variant="success" title="Rasterización completada">Máscara raster recibida correctamente.</FeedbackMessage>
+      {flow.raster && <section className="optimization-result" aria-label="Detalle de la pieza">
+        <FeedbackMessage variant="success" title="Vista previa lista">La forma de la pieza está lista para revisar.</FeedbackMessage>
         <dl className="optimization-facts">
           <div><dt>Pedido / pieza</dt><dd>#{flow.raster.id_pedido} / #{flow.raster.id_pieza}</dd></div>
           <div><dt>Tipo de forma</dt><dd>{SHAPES[flow.raster.tipo_forma]}</dd></div>
@@ -129,10 +130,10 @@ export function Hu015Rasterization(props) {
           <div><dt>Filas</dt><dd>{flow.raster.row_count}</dd></div>
           <div><dt>Columnas</dt><dd>{flow.raster.columns}</dd></div>
           <div><dt>Celdas ocupadas</dt><dd>{flow.raster.occupied_cells}</dd></div>
-          <div><dt>Material</dt><dd>{materialLabel(flow.raster.id_tipo_vidrio, flow.materials)}</dd></div>
+          <div><dt>Vidrio</dt><dd>{materialLabel(flow.raster.id_tipo_vidrio, flow)}</dd></div>
           <div><dt>Espesor</dt><dd>{flow.raster.espesor_mm} mm</dd></div>
         </dl>
-        <p>La máscara corresponde a una pieza persistida. La cantidad indica las unidades previstas.</p>
+        <p>La vista muestra una pieza del pedido. La cantidad indica cuántas unidades se necesitan.</p>
       </section>}
       {flow.canChoosePiece && selectedPiece && <RasterComparison
         geometry={previewGeometry}

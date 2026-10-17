@@ -76,6 +76,6 @@ test('injected transport sends only selection and confirms by ID without functio
 });
 test('unconfigured transport performs no fabricated network operation', async () => {
   const transport = createRunTransport();
-  await assert.rejects(transport.loadResult(101), /pendiente/);
-  await assert.rejects(transport.confirm(101), /pendiente/);
+  await assert.rejects(transport.loadResult(101), /no está disponible/);
+  await assert.rejects(transport.confirm(101), /no está disponible/);
 });

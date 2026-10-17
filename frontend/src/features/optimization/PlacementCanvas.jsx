@@ -29,12 +29,12 @@ export function PlacementCanvas({ snapshot, placements }) {
   const canVisualize = compatible.some(p => containers.some(c => containerKey(c) === containerKey(p)
     && c.material_width_mm > 0 && c.material_height_mm > 0 && getGeometryBounds(c.geometry))
     && getGeometryBounds(p.geometria));
-  return <section className="first-fit-canvas" aria-label="Colocaciones First Fit">
-    <div className="first-fit-group-select"><label htmlFor={`${titleId}-group`}>Grupo del resultado</label>
+  return <section className="first-fit-canvas" aria-label="Distribución de piezas">
+    <div className="first-fit-group-select"><label htmlFor={`${titleId}-group`}>Vidrio del resultado</label>
       <select id={`${titleId}-group`} className="ng-control" value={group.id} onChange={e => { setChosenGroup(e.target.value); setChosen(''); }}>
         {snapshot.groups.map(g => <option key={g.id} value={g.id}>{g.name} · {g.thickness} mm</option>)}
       </select></div>
-    <p>Grupo: {group.name} · {group.thickness} mm · pedidos {group.orders.map(id => `#${id}`).join(', ')}</p>
+    <p>Vidrio: {group.name} · {group.thickness} mm · pedidos {group.orders.map(id => `#${id}`).join(', ')}</p>
     <label htmlFor={titleId}>Plancha o retazo</label>
     <select id={titleId} className="ng-control" value={containerKey(container)} onChange={e => setChosen(e.target.value)}>
       {containers.map(c => <option key={containerKey(c)} value={containerKey(c)}>{c.material_source === 'PLANCHA' ? 'Plancha' : 'Retazo'} #{c.material_id} · unidad {c.stock_unit_index} · {c.material_name ?? 'Material'} · {c.espesor_mm} mm</option>)}
@@ -43,7 +43,7 @@ export function PlacementCanvas({ snapshot, placements }) {
     {canVisualize && <div className="placement-view-switch" role="group" aria-label="Vista del resultado">
       <button type="button" className="ng-button" aria-pressed={view === '2d'} onClick={() => setView('2d')}>Ver en 2D</button>
       <button type="button" className="ng-button" aria-pressed={view === '3d'} onClick={() => setView('3d')}>Ver en 3D</button>
-      <button type="button" className="ng-button" aria-pressed={view === 'raster'} onClick={() => setView('raster')}>Ver máscara raster</button>
+      <button type="button" className="ng-button" aria-pressed={view === 'raster'} onClick={() => setView('raster')}>Ver detalle de piezas</button>
     </div>}
     {view === 'raster' && canVisualize ? <RasterInspection key={group.id} snapshot={snapshot} group={group} placements={visible} />
       : view === '3d' && canVisualize ? <PlacementScene3D snapshot={snapshot} container={container} placements={visible} yaw={yaw} onYawChange={setYaw} zoom={zoom3d} onZoomChange={setZoom3d} /> : <>
