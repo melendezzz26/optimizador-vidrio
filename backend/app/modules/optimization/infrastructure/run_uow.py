@@ -92,8 +92,17 @@ class SqlRunRepository:
         if confirmation is not None and (confirmation.get("receipt_version") != 1
                 or confirmation.get("receipt", {}).get("optimization_id") != optimization_id):
             raise RunError("INTERNAL_ERROR", "La confirmación persistida requiere revisión.")
+        from decimal import Decimal
+        from ..domain.metrics import ResidualRectangle
+        regions = execution.patron_resultado.get('residual_rectangles', [])
+        if confirmation is not None:
+            sources = {(r['source']['source'], r['source']['material_id'], r['source']['physical_unit_index'])
+                       for r in confirmation['receipt']['remnants_created']}
+            regions = [r for r in regions if (r['material_source'], r['material_id'], r['stock_unit_index']) in sources]
+        residuals = tuple(ResidualRectangle(**{k: Decimal(v) if k in (
+            'x_mm', 'y_mm', 'width_mm', 'height_mm', 'area_mm2') else v for k, v in r.items()}) for r in regions)
         return OptimizationRun(optimization_id=optimization_id, status=RunStatus(row.estado), result=result,
-                               confirmed=confirmation is not None)
+                               confirmed=confirmation is not None, residuals=residuals)
 
 
     def residual_limits(self, optimization_id):
@@ -140,7 +149,8 @@ class SqlRunRepository:
                 aprovechamiento_pct=m.utilization_pct, merma_mm2=m.waste_mm2,
                 retazo_recuperable_mm2=m.recoverable_remnant_mm2, planchas_nuevas_usadas=m.new_sheets_used,
                 tiempo_computacional_ms=result.computation_time_ms))
-        return OptimizationRun(optimization_id=optimization_id, status=RunStatus(row.estado), result=result)
+        return OptimizationRun(optimization_id=optimization_id, status=RunStatus(row.estado), result=result,
+                               residuals=tuple(residuals))
 
 
     def fail(self, optimization_id, code, placements=()):

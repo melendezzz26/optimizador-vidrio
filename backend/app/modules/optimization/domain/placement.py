@@ -8,6 +8,7 @@ Con margen y separación (T02), además debe quedar a esa distancia del borde
 del material y de las demás piezas. Todo se comprueba fila por fila con bits.
 """
 import math
+from functools import lru_cache
 from dataclasses import dataclass
 from enum import Enum
 
@@ -141,6 +142,57 @@ class SheetLayout:
         if any(placed & self.blocked[target] for target, placed in placed_rows):
             return PlacementCheck(False, PlacementIssue.SEPARATION)
         return VALID
+
+    def first_position(self, piece: RasterMask):
+        """Exact row/column First Fit, testing candidate columns in parallel bits.
+
+        Intersect usable, unblocked origins for every occupied piece-row run.
+        There is no heuristic skip, geometric relaxation or change of scan order.
+        Bounded memoization avoids per-cell objects and repeated row erosion.
+        """
+        if piece.resolution_mm != self.material.resolution_mm:
+            raise PlacementError("La pieza y el material deben tener la misma resolución.")
+        columns = self.material.columns - piece.columns + 1
+        rows = self.material.row_count - piece.row_count + 1
+        if columns <= 0 or rows <= 0:
+            return None
+        free = tuple(usable & ~blocked for usable, blocked in zip(self.usable, self.blocked))
+        all_origins = (1 << columns) - 1
+
+        @lru_cache(maxsize=256)
+        def origins(available, shape):
+            candidates = all_origins
+            # All windows of length n, computed with doubling intersections.
+            remaining = shape
+            offset = 0
+            while remaining:
+                zeros = (remaining & -remaining).bit_length() - 1
+                remaining >>= zeros
+                offset += zeros
+                length = (remaining ^ (remaining + 1)).bit_length() - 1
+                windows, covered = available, 1
+                while covered * 2 <= length:
+                    windows &= windows >> covered
+                    covered *= 2
+                if length > covered:
+                    windows &= windows >> (length - covered)
+                candidates &= windows >> offset
+                if not candidates:
+                    return 0
+                remaining >>= length
+                offset += length
+            return candidates
+
+        occupied_rows = tuple((offset, bits) for offset, bits in enumerate(piece.rows) if bits)
+        for row in range(rows):
+            candidates = all_origins
+            for offset, bits in occupied_rows:
+                candidates &= origins(free[row + offset], bits)
+                if not candidates:
+                    break
+            if candidates:
+                return row, (candidates & -candidates).bit_length() - 1
+        return None
 
     def place(self, piece: RasterMask, row: int, column: int) -> "SheetLayout":
         """Devuelve un nuevo estado con la pieza colocada; falla si la colocación no es válida."""

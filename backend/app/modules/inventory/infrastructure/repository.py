@@ -380,6 +380,32 @@ class SqlAlchemyInventoryRepository:
             Retazo.estado.desc(), Retazo.fecha_registro.desc(), Retazo.id_retazo.desc(),
         ).all()]
 
+    def get_retazo_origin(self, id_retazo: int) -> dict | None:
+        from app.models import EjecucionOptimizacion, OptimizacionPedido
+        session = self._require_session()
+        row = session.get(Retazo, id_retazo)
+        if row is None:
+            return None
+        result = dict(id_ejecucion_origen=row.id_ejecucion_origen,
+                      id_optimizacion=None, order_ids=[], source=None)
+        if row.id_ejecucion_origen is None:
+            return result
+        execution = session.get(EjecucionOptimizacion, row.id_ejecucion_origen)
+        if execution is None:
+            return result
+        result['id_optimizacion'] = execution.id_optimizacion
+        result['order_ids'] = [value[0] for value in session.query(OptimizacionPedido.id_pedido)
+            .filter(OptimizacionPedido.id_optimizacion == execution.id_optimizacion)
+            .order_by(OptimizacionPedido.id_pedido).all()]
+        snapshot = execution.patron_resultado if isinstance(execution.patron_resultado, dict) else {}
+        receipt = snapshot.get('confirmation', {}).get('receipt', {})
+        created = next((r for r in receipt.get('remnants_created', []) if r.get('remnant_id') == row.id_retazo), None)
+        if created:
+            source = created['source']
+            result['source'] = dict(material_source=source['source'], material_id=source['material_id'],
+                                    stock_unit_index=source['physical_unit_index'])
+        return result
+
     def list_retazo_movements(self, id_retazo: int) -> list[MovimientoInventarioData] | None:
         """Lista del más antiguo al más reciente; el ID ordena fechas iguales."""
         session = self._require_session()

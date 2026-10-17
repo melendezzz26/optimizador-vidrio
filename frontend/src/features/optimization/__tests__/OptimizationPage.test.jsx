@@ -1,290 +1,220 @@
-import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { beforeEach, expect, test, vi } from 'vitest';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
+import * as ordersApi from '../../orders/ordersApi';
 import { OptimizationPage } from '../OptimizationPage';
-import { getOrder, listOrderMaterials, listOrders } from '../../orders/ordersApi';
-import { rasterizePiece, startOptimization } from '../optimizationApi';
-import { deferred, item, order, raster } from './fixtures';
-import { withPermissions } from '../../authentication/__tests__/permissionFixtures'
-
-vi.mock('../../orders/ordersApi', () => ({ getOrder: vi.fn(), listOrders: vi.fn(), listOrderMaterials: vi.fn() }));
-vi.mock('../optimizationApi', () => ({ rasterizePiece: vi.fn(), startOptimization: vi.fn() }));
-const user = { rol: 'Operario', nombre: 'Operario local' };
-const error = (status, message = 'Error recuperable') => Object.assign(new Error(message), { status });
-const pageData = items => ({ items, total: items.length, total_pages: items.length ? 1 : 0, page: 1, limit: 10 });
-let persisted;
-
+import shared from '../contractV1Fixture.json';
+import { withPermissions } from '../../authentication/__tests__/permissionFixtures';
+import { createFixturePendingOrdersSource, createPendingOrdersSource } from '../pendingOrdersSource';
+import { createFixtureAdapter, fixtureOrders, fixtureRun, newFixtureOrder, prepareFixture, sheetToContainer } from '../firstFitFixture';
+const user = withPermissions({ rol: 'Operario', nombre: 'Operario local' });
 beforeEach(() => {
-  vi.resetAllMocks();
-  vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
-    fillRect: vi.fn(), setTransform: vi.fn(),
-  });
-  persisted = structuredClone(order);
-  listOrders.mockImplementation(async ({ estado }) => pageData(persisted.estado === estado ? [{ ...item, estado }] : []));
-  getOrder.mockImplementation(async () => structuredClone(persisted));
-  listOrderMaterials.mockResolvedValue([{ id_tipo_vidrio: 7, nombre: 'Vidrio claro' }, { id_tipo_vidrio: 8, nombre: 'Vidrio gris' }]);
-  startOptimization.mockImplementation(async () => {
-    persisted.estado = 'EN_OPTIMIZACION';
-    return { id_pedido: 27, estado: 'EN_OPTIMIZACION' };
-  });
-  rasterizePiece.mockResolvedValue(raster);
+  vi.useFakeTimers();
+  vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({ fillRect: vi.fn(), setTransform: vi.fn() });
+});
+afterEach(() => { vi.useRealTimers(); vi.restoreAllMocks(); });
+function mount(orders = fixtureOrders, adapter = createFixtureAdapter({ delayMs: 10 })) {
+  const source = createFixturePendingOrdersSource(orders);
+  const rendered = render(<OptimizationPage user={user} source={source} adapter={adapter} />);
+  return { source, adapter, ...rendered };
+}
+const click = name => fireEvent.click(screen.getByRole('button', { name, exact: true }));
+async function prepare() {
+  fireEvent.click(screen.getByLabelText('Seleccionar todos'));
+  await act(async () => click('Revisar vidrios y piezas'));
+}
+async function complete() { click('Calcular distribución'); await act(async () => vi.advanceTimersByTimeAsync(1000)); }
+
+test('single, multiple, all and deselection; no manual refresh or dropzone', () => {
+  mount();
+  expect(screen.queryByRole('button', { name: 'Actualizar pedidos' })).not.toBeInTheDocument();
+  expect(screen.queryByText('Pedido seleccionado')).not.toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Revisar vidrios y piezas' })).toBeDisabled();
+  fireEvent.click(screen.getByRole('checkbox', { name: /#21/ })); expect(screen.getByText('1 pedidos seleccionados')).toBeVisible();
+  fireEvent.click(screen.getByRole('checkbox', { name: /#22/ })); expect(screen.getByText('2 pedidos seleccionados')).toBeVisible();
+  fireEvent.click(screen.getByLabelText('Seleccionar todos')); expect(screen.getByText('0 pedidos seleccionados')).toBeVisible();
+  fireEvent.click(screen.getByLabelText('Seleccionar todos')); expect(screen.getByText('2 pedidos seleccionados')).toBeVisible();
+});
+test('live add, state change, removal, error and reconnection reconcile selection', () => {
+  const { source } = mount();
+  fireEvent.click(screen.getByLabelText('Seleccionar todos'));
+  act(() => source.emit({ type: 'upsert', order: newFixtureOrder }));
+  expect(screen.getByRole('checkbox', { name: /#21/ })).toBeChecked();
+  expect(screen.getByRole('checkbox', { name: /#24/ })).not.toBeChecked();
+  act(() => source.emit({ type: 'upsert', order: { ...fixtureOrders[0], estado: 'EN_OPTIMIZACION' } }));
+  expect(screen.queryByRole('checkbox', { name: /#21/ })).not.toBeInTheDocument();
+  act(() => source.emit({ type: 'remove', id: 22 })); expect(screen.getByText('0 pedidos seleccionados')).toBeVisible();
+  act(() => source.emit({ type: 'error' })); expect(screen.getByRole('alert')).toHaveTextContent('Conexión interrumpida');
+  act(() => source.emit({ type: 'reconnect' })); expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+});
+test('groups, progressive placements, arbitrary rotations, metrics and honest confirmation', async () => {
+  mount(); await prepare();
+  expect(document.querySelector('.first-fit-groups')).toHaveTextContent('Templado · 6 mm'); expect(document.querySelector('.first-fit-groups')).toHaveTextContent('Bronce · 5.5 mm');
+  click('Calcular distribución');
+  expect(screen.getByText('0 / 4 piezas colocadas')).toBeVisible();
+  await act(async () => vi.advanceTimersByTimeAsync(40));
+  expect(screen.getByText('1 / 4 piezas colocadas')).toBeVisible();
+  expect(document.querySelectorAll('[data-placement]')).toHaveLength(1);
+  await act(async () => vi.advanceTimersByTimeAsync(1000));
+  expect(screen.getByText('4 / 4 piezas colocadas')).toBeVisible();
+  expect(screen.getByRole('heading', { name: 'Resultado del corte' })).toBeVisible();
+  expect(screen.getByRole('list', { name: 'Detalle de colocaciones' })).toHaveTextContent('rotación aplicada: 90°');
+  expect(document.querySelector('[data-placement="22:104:1"]')).toHaveAttribute('transform', 'translate(2000 150)');
+  fireEvent.change(screen.getByLabelText('Vidrio del resultado'), { target: { value: '2:5.5' } });
+  expect(screen.getByRole('img', { name: 'Colocaciones en plancha #16' }).querySelector('circle')).toHaveAttribute('r', '240');
+  expect(screen.getByText('842 ms')).toBeVisible();
+  click('Confirmar corte');
+  const dialog = screen.getByRole('alertdialog'); expect(dialog).toHaveTextContent('Se descontarán del inventario las planchas y retazos utilizados');
+  expect(within(dialog).getByRole('button', { name: 'Cancelar' })).toHaveFocus();
+  fireEvent.keyDown(dialog, { key: 'Escape' }); expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
+  click('Confirmar corte');
+  await act(async () => fireEvent.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Confirmar corte' })));
+  expect(screen.getByText(/No se guardó la solución/)).toBeVisible();
+});
+test('snapshot stays fixed after new pending order and removal during run', async () => {
+  const { source } = mount(); await prepare(); click('Calcular distribución');
+  act(() => source.emit({ type: 'upsert', order: newFixtureOrder }));
+  act(() => source.emit({ type: 'remove', id: 21 }));
+  expect(screen.getByText('1 nuevo pedido disponible para la siguiente ejecución.')).toBeVisible();
+  expect(screen.getByText(/Pedidos: #21, #22/)).toHaveTextContent('Piezas: 4');
+  await act(async () => vi.advanceTimersByTimeAsync(1000)); expect(screen.getByText('4 / 4 piezas colocadas')).toBeVisible();
+});
+test('rerun clears placements, discard cancels queued events', async () => {
+  mount(); await prepare(); await complete(); click('Preparar otro corte');
+  expect(screen.getByText('0 / 4 piezas colocadas')).toBeVisible();
+  expect(screen.queryByRole('heading', { name: 'Resultado del corte' })).not.toBeInTheDocument();
+  click('Descartar'); await act(async () => vi.advanceTimersByTimeAsync(1000));
+  expect(screen.queryByRole('img', { name: /Colocaciones en/ })).not.toBeInTheDocument();
+  expect(screen.getByText('2 pedidos seleccionados')).toBeVisible();
+});
+test('failed stream can retry', async () => {
+  let listener;
+  const adapter = { ...createFixtureAdapter(), createEventSource: () => ({ subscribe(fn) { listener = fn; }, dispose: vi.fn() }) };
+  mount(fixtureOrders, adapter); await prepare(); click('Calcular distribución');
+  act(() => listener({ ...shared.failed_event, sequence: 1, id_optimizacion: 301, data: { ...shared.failed_event.data, message: 'Fallo del proceso' } }));
+  expect(screen.getByRole('alert')).toHaveTextContent('Fallo del proceso');
+  click('Preparar otro corte'); expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 });
 
-function renderPage(role = 'Operario') {
-  const onSessionExpired = vi.fn();
-  const rendered = render(<OptimizationPage user={withPermissions({ ...user, rol: role })} token="test-token" onSessionExpired={onSessionExpired} />);
-  return { ...rendered, onSessionExpired };
-}
-async function select() {
-  fireEvent.click(await screen.findByRole('button', { name: /Pedido #27/ }));
-  await screen.findByRole('table', { name: 'Piezas del pedido #27' });
-}
-async function started() {
-  renderPage(); await select();
-  fireEvent.click(screen.getByRole('button', { name: 'Iniciar optimización' }));
-  await waitFor(() => expect(screen.getByLabelText('Pieza persistida')).toBeEnabled());
-}
-function choose() { fireEvent.change(screen.getByLabelText('Pieza persistida'), { target: { value: '51' } }); }
-function calculate() { fireEvent.click(screen.getByRole('button', { name: 'Rasterizar pieza' })); }
-async function completed() { await started(); choose(); calculate(); await screen.findByText('Rasterización completada'); }
-
-test('loading inicial, filtro backend PENDIENTE y start bloqueado sin selección', async () => {
-  const pending = deferred(); listOrders.mockReturnValue(pending.promise);
-  renderPage();
+test('accepted Location ID remains recoverable after a stream failure without reexecuting First Fit', async () => {
+  const adapter = { ...createFixtureAdapter(),
+    createEventSource: vi.fn(() => ({ subscribe(event, failed, accepted) {
+      accepted(301); failed(new Error('Flujo interrumpido'));
+    }, dispose: vi.fn() })),
+    loadResult: vi.fn(async () => fixtureRun(prepareFixture([21, 22]))),
+  };
+  mount(fixtureOrders, adapter); await prepare(); click('Calcular distribución');
+  expect(screen.getByText('Trabajo #301')).toBeVisible();
+  expect(screen.getByRole('alert')).toHaveTextContent('Flujo interrumpido');
+  expect(screen.queryByText('Estado del trabajo: Procesando')).not.toBeInTheDocument();
+  expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+  expect(screen.getByRole('checkbox', { name: /#21/ })).toBeChecked();
+  await act(async () => click('Recuperar resultado'));
+  expect(adapter.loadResult).toHaveBeenCalledExactlyOnceWith(301, { resultUrl: null });
+  expect(screen.getByText('4 / 4 piezas colocadas')).toBeVisible();
+  expect(adapter.createEventSource).toHaveBeenCalledOnce();
+});
+test('empty and permission prevent execution and reads', () => {
+  const view = mount([]); expect(screen.getByText('No hay pedidos pendientes.')).toBeVisible(); view.unmount();
+  const source = { load: vi.fn() };
+  render(<OptimizationPage user={{ rol: 'Almacenero' }} source={source} />);
+  expect(screen.getByRole('alert')).toHaveTextContent('No tienes permiso'); expect(source.load).not.toHaveBeenCalled();
+});
+test('loading, 401, no mutation and unmount cleanup', () => {
+  let listener;
+  const source = { load: vi.fn(), subscribe(fn) { listener = fn; return vi.fn(); }, dispose: vi.fn() };
+  const expired = vi.fn();
+  const view = render(<OptimizationPage user={user} source={source} onSessionExpired={expired} />);
   expect(screen.getByText('Cargando pedidos...')).toBeVisible();
-  expect(screen.getByRole('button', { name: 'Iniciar optimización' })).toBeDisabled();
-  expect(listOrders).toHaveBeenCalledWith({ estado: 'PENDIENTE', page: 1, limit: 10 }, expect.objectContaining({ token: 'test-token', signal: expect.any(AbortSignal) }));
-  await act(async () => pending.resolve(pageData([])));
+  act(() => listener({ type: 'error', error: { status: 401, message: 'Sesión vencida' } }));
+  expect(expired).toHaveBeenCalledOnce(); expect(screen.getByRole('alert')).toHaveTextContent('Sesión vencida');
+  view.unmount(); expect(source.dispose).toHaveBeenCalledOnce();
+});
+test('real adapter prepares persisted pieces without starting a run or inventing stock', async () => {
+  const read = vi.spyOn(ordersApi, 'getOrder').mockImplementation(async id => structuredClone(fixtureOrders.find(o => o.id_pedido === id)));
+  const fetch = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify([{ id_tipo_vidrio: 1, nombre: 'Templado' }, { id_tipo_vidrio: 2, nombre: 'Bronce' }])));
+  const source = createFixturePendingOrdersSource(fixtureOrders);
+  render(<OptimizationPage user={user} source={source} />); await prepare();
+  expect(read).toHaveBeenCalledTimes(2);
+  expect(fetch).toHaveBeenCalledOnce();
+  expect(fetch.mock.calls[0][0]).toMatch(/\/inventory\/tipos-vidrio$/);
+  expect(fetch.mock.calls[0][1].method).toBe('GET');
+  expect(screen.getByRole('button', { name: 'Calcular distribución' })).toBeEnabled();
+  expect(document.querySelectorAll('[data-placement]')).toHaveLength(0);
+});
+test('inventory dimensions override all commercial assumptions', () => {
+  expect(sheetToContainer({ id_plancha: 5, ancho_mm: '1234', alto_mm: '5678', espesor_mm: '5.5' }, 'Bronce')).toMatchObject({ material_width_mm: 1234, material_height_mm: 5678 });
+  expect(() => sheetToContainer({ ancho_mm: null, alto_mm: 200 }, '')).toThrow();
+  expect(prepareFixture([21, 22]).total).toBe(4);
+});
+test('polling batches pages atomically, retries errors and cancels on dispose', async () => {
+  const request = vi.fn().mockResolvedValueOnce({ items: [fixtureOrders[0]], total_pages: 2 })
+    .mockResolvedValueOnce({ items: [fixtureOrders[1]], total_pages: 2 })
+    .mockRejectedValueOnce(new Error('Red'))
+    .mockResolvedValue({ items: [newFixtureOrder], total_pages: 1 });
+  const source = createPendingOrdersSource({ request, intervalMs: 50, token: 'local' }); const listener = vi.fn();
+  source.subscribe(listener); await source.load();
+  expect(listener).toHaveBeenCalledTimes(1); expect(listener.mock.calls[0][0].orders).toHaveLength(2);
+  expect(request).toHaveBeenCalledWith({ page: 2, limit: 100, estado: 'PENDIENTE' }, expect.objectContaining({ token: 'local' }));
+  await vi.advanceTimersByTimeAsync(50); expect(listener.mock.lastCall[0].type).toBe('error');
+  await vi.advanceTimersByTimeAsync(50); expect(listener.mock.lastCall[0].orders[0].id_pedido).toBe(24);
+  const signal = request.mock.lastCall[1].signal; source.dispose(); expect(signal.aborted).toBe(true);
+  await vi.advanceTimersByTimeAsync(500); expect(request).toHaveBeenCalledTimes(4);
 });
 
-test('estado vacío y actualización explícita recupera nuevos pendientes', async () => {
-  listOrders.mockResolvedValueOnce(pageData([]));
-  renderPage();
-  await screen.findByText('No hay pedidos pendientes disponibles para iniciar optimización.');
-  fireEvent.click(screen.getByRole('button', { name: 'Actualizar pedidos' }));
-  expect(await screen.findByRole('button', { name: /Pedido #27.*Cliente local/ })).toBeVisible();
+test('polling restart ignores late response from disposed StrictMode lifecycle', async () => {
+  let resolveOld;
+  const request = vi.fn().mockImplementationOnce(() => new Promise(resolve => { resolveOld = resolve; }))
+    .mockResolvedValueOnce({ items: [newFixtureOrder], total_pages: 1 });
+  const source = createPendingOrdersSource({ request });
+  const oldListener = vi.fn(); source.subscribe(oldListener); const first = source.load(); source.dispose();
+  const currentListener = vi.fn(); source.subscribe(currentListener); await source.load();
+  resolveOld({ items: fixtureOrders, total_pages: 2 }); await first;
+  expect(oldListener).not.toHaveBeenCalled(); expect(currentListener).toHaveBeenCalledOnce();
+  expect(currentListener.mock.calls[0][0].orders).toEqual([newFixtureOrder]);
+  expect(request).toHaveBeenCalledTimes(2); source.dispose();
 });
 
-test('selecciona pedido, consulta detalle y muestra una fila por pieza persistida y materiales por pieza', async () => {
-  renderPage(); await select();
-  expect(getOrder).toHaveBeenCalledWith(27, expect.objectContaining({ token: 'test-token' }));
-  const table = screen.getByRole('table');
-  expect(within(table).getAllByRole('row')).toHaveLength(3);
-  expect(within(table).getByRole('row', { name: /#51.*Rectángulo.*10 × 5 mm.*5.*Vidrio claro.*6.0 mm/ })).toBeVisible();
-  expect(within(table).getByText('Vidrio gris')).toBeVisible();
-  expect(screen.getByRole('button', { name: 'Iniciar optimización' })).toBeEnabled();
-  expect(screen.getByLabelText('Pieza persistida')).toBeDisabled();
-  expect(screen.getByLabelText('Resolución raster (mm/celda)')).toHaveValue(5);
-  expect(screen.getByRole('button', { name: 'Rasterizar pieza' })).toBeDisabled();
+test('public-only stream renders progress, completed stages and confirmation without internal stage events', async () => {
+  const adapter = createFixtureAdapter({ delayMs: 10, includeInternalStages: false });
+  mount(fixtureOrders, adapter);
+  await prepare(); click('Calcular distribución');
+  await act(async () => vi.advanceTimersByTimeAsync(40));
+  expect(screen.getByText('1 / 4 piezas colocadas')).toBeVisible();
+  expect(document.querySelectorAll('[data-placement]')).toHaveLength(1);
+  const stages = screen.getByRole('list', { name: 'Etapas de optimización' });
+  expect(within(stages).getByText('Calculando distribución').closest('li')).toHaveAttribute('aria-current', 'step');
+  await act(async () => vi.advanceTimersByTimeAsync(1000));
+  expect(screen.getByText('4 / 4 piezas colocadas')).toBeVisible();
+  expect(within(stages).getAllByText('Completado')).toHaveLength(8);
+  expect(within(stages).queryByText('Pendiente')).not.toBeInTheDocument();
+  expect(screen.getByText('842 ms')).toBeVisible();
+  click('Confirmar corte');
+  expect(screen.getByRole('alertdialog')).toHaveTextContent('no guardará cambios');
 });
 
-test('start loading impide doble envío y no anticipa EN OPTIMIZACIÓN', async () => {
-  const pending = deferred(); startOptimization.mockReturnValue(pending.promise);
-  renderPage(); await select();
-  fireEvent.doubleClick(screen.getByRole('button', { name: 'Iniciar optimización' }));
-  fireEvent.click(screen.getByRole('button', { name: 'Iniciar optimización' }));
-  const button = screen.getByRole('button', { name: 'Iniciando optimización...' });
-  fireEvent.click(button);
-  expect(button).toBeDisabled(); expect(startOptimization).toHaveBeenCalledOnce();
-  expect(screen.getByText('PENDIENTE', { selector: 'dd' })).toBeVisible();
-  expect(screen.getByLabelText('Pieza persistida')).toBeDisabled();
-  persisted.estado = 'EN_OPTIMIZACION';
-  await act(async () => pending.resolve({ id_pedido: 27, estado: 'EN_OPTIMIZACION' }));
-});
-
-test('200 conserva selección, actualiza estado, relee piezas y no rasteriza automáticamente', async () => {
-  await started();
-  expect(screen.getByRole('heading', { name: 'Pedido seleccionado #27' })).toBeVisible();
-  expect(screen.getByText('EN OPTIMIZACIÓN', { selector: 'dd' })).toBeVisible();
-  expect(screen.getByRole('button', { name: 'Iniciar optimización' })).toBeDisabled();
-  expect(await screen.findByText('No hay pedidos pendientes disponibles para iniciar optimización.')).toBeVisible();
-  expect(getOrder).toHaveBeenCalledTimes(2);
-  expect(rasterizePiece).not.toHaveBeenCalled();
-});
-
-test('409 informa conflicto, refresca pendientes y no concede un inicio local', async () => {
-  startOptimization.mockImplementation(async () => { persisted.estado = 'EN_OPTIMIZACION'; throw error(409); });
-  renderPage(); await select();
-  fireEvent.click(screen.getByRole('button', { name: 'Iniciar optimización' }));
-  expect(await screen.findByRole('alert')).toHaveTextContent('El pedido ya no está disponible');
-  await screen.findByText('No hay pedidos pendientes disponibles para iniciar optimización.');
-  expect(screen.getByText('PENDIENTE', { selector: 'dd' })).toBeVisible();
-  expect(screen.getByLabelText('Pieza persistida')).toBeDisabled();
-  expect(screen.getByRole('button', { name: 'Iniciar optimización' })).toBeDisabled();
-  expect(getOrder).toHaveBeenCalledTimes(1);
-});
-
-test.each(['', '0', '-1', 'Infinity', 'NaN'])('resolución inválida %s impide submit', async value => {
-  await started(); choose();
-  fireEvent.change(screen.getByLabelText('Resolución raster (mm/celda)'), { target: { value } });
-  expect(screen.getByLabelText('Resolución raster (mm/celda)')).toHaveAttribute('aria-invalid', 'true');
-  expect(screen.getByRole('button', { name: 'Rasterizar pieza' })).toBeDisabled();
-  fireEvent.submit(screen.getByRole('button', { name: 'Rasterizar pieza' }).closest('form'));
-  expect(rasterizePiece).not.toHaveBeenCalled();
-});
-
-test('raster loading evita doble envío y success muestra resumen técnico con cantidad 5', async () => {
-  const pending = deferred(); rasterizePiece.mockReturnValue(pending.promise);
-  await started(); choose(); calculate();
-  expect(screen.getByRole('button', { name: 'Rasterizando pieza...' })).toBeDisabled();
-  fireEvent.submit(screen.getByRole('button', { name: 'Rasterizando pieza...' }).closest('form'));
-  expect(rasterizePiece).toHaveBeenCalledOnce();
-  expect(rasterizePiece).toHaveBeenCalledWith({ idPedido: 27, idPieza: 51, resolutionMm: 5 }, expect.objectContaining({ token: 'test-token', signal: expect.any(AbortSignal) }));
-  await act(async () => pending.resolve(raster));
-  const result = screen.getByRole('region', { name: 'Resultado técnico raster' });
-  expect(within(result).getByText('Rasterización completada')).toBeVisible();
-  for (const label of ['Tipo de forma', 'Cantidad', 'Resolución', 'Filas', 'Columnas', 'Celdas ocupadas', 'Material', 'Espesor']) expect(within(result).getByText(label)).toBeVisible();
-  expect(within(result).getByText('Cantidad').nextElementSibling).toHaveTextContent('5');
-  expect(screen.getAllByRole('row')).toHaveLength(3);
-  expect(screen.getByRole('img', { name: 'Geometría original de la pieza #51' }).querySelector('rect')).toHaveAttribute('width', '10');
-  expect(screen.getByRole('img', { name: 'Máscara raster de la pieza #51' })).toBeVisible();
-  expect(document.querySelectorAll('canvas')).toHaveLength(1);
-  expect(screen.getAllByRole('img', { name: /Geometría original de la pieza/ })).toHaveLength(1);
-});
-
-test('422 recursos permite cambiar resolución y reintentar sin repetir start', async () => {
-  rasterizePiece.mockRejectedValueOnce(error(422, 'Resolución demasiado fina para el límite de recursos.'));
-  await started(); choose();
-  expect(screen.getByRole('img', { name: 'Geometría original de la pieza #51' })).toBeVisible();
-  expect(screen.getByText('Rasteriza la pieza seleccionada para visualizar su máscara.')).toBeVisible();
-  calculate();
-  expect(await screen.findByRole('alert')).toHaveTextContent('Resolución demasiado fina');
-  expect(screen.getByRole('img', { name: 'Geometría original de la pieza #51' })).toBeVisible();
-  expect(screen.getByText('Rasteriza la pieza seleccionada para visualizar su máscara.')).toBeVisible();
-  expect(document.querySelectorAll('canvas')).toHaveLength(0);
-  fireEvent.change(screen.getByLabelText('Resolución raster (mm/celda)'), { target: { value: '7.5' } });
-  rasterizePiece.mockResolvedValueOnce({ ...raster, resolution_mm: 7.5 });
-  calculate(); await screen.findByText('Rasterización completada');
-  expect(rasterizePiece.mock.calls[1][0].resolutionMm).toBe(7.5);
-  expect(screen.getByRole('img', { name: 'Máscara raster de la pieza #51' })).toBeVisible();
-  expect(startOptimization).toHaveBeenCalledOnce();
-});
-
-test.each(['piece', 'resolution', 'order'])('cambiar %s limpia resultado previo', async change => {
-  await completed();
-  if (change === 'piece') fireEvent.change(screen.getByLabelText('Pieza persistida'), { target: { value: '52' } });
-  if (change === 'resolution') fireEvent.change(screen.getByLabelText('Resolución raster (mm/celda)'), { target: { value: '10' } });
-  if (change === 'order') fireEvent.click(screen.getByRole('button', { name: 'Recuperar proceso iniciado' }));
-  expect(screen.queryByText('Rasterización completada')).not.toBeInTheDocument();
-  expect(document.querySelectorAll('canvas')).toHaveLength(0);
-  if (change === 'piece') expect(screen.getByRole('img', { name: 'Geometría original de la pieza #52' }).querySelector('circle')).toHaveAttribute('r', '20');
-});
-
-test('una respuesta raster tardía no reaparece después de cambiar pieza', async () => {
-  const pending = deferred(); rasterizePiece.mockReturnValue(pending.promise);
-  await started(); choose(); calculate();
-  const signal = rasterizePiece.mock.calls[0][1].signal;
-  fireEvent.change(screen.getByLabelText('Pieza persistida'), { target: { value: '52' } });
-  expect(signal.aborted).toBe(true);
-  await act(async () => pending.resolve(raster));
-  expect(screen.queryByText('Rasterización completada')).not.toBeInTheDocument();
-});
-
-test('ignora detalle tardío al seleccionar otro pedido', async () => {
-  const pending = deferred();
-  listOrders.mockResolvedValue(pageData([item, { ...item, id_pedido: 28 }]));
-  getOrder.mockReturnValueOnce(pending.promise).mockResolvedValueOnce({ ...order, id_pedido: 28, piezas: [] });
-  renderPage(); fireEvent.click(await screen.findByRole('button', { name: /Pedido #27/ }));
-  fireEvent.click(screen.getByRole('button', { name: /Pedido #28/ }));
-  await screen.findByText('El pedido no contiene piezas disponibles. No se puede iniciar la optimización.');
-  await act(async () => pending.resolve(order));
-  expect(screen.queryByRole('table')).not.toBeInTheDocument();
-  expect(screen.getByRole('heading', { name: 'Pedido seleccionado #28' })).toBeVisible();
-});
-
-test('recupera explícitamente EN_OPTIMIZACION por filtro y detalle sin POST start', async () => {
-  persisted.estado = 'EN_OPTIMIZACION'; renderPage();
-  fireEvent.click(screen.getByRole('button', { name: 'Recuperar proceso iniciado' }));
-  await select();
-  expect(listOrders).toHaveBeenLastCalledWith(expect.objectContaining({ estado: 'EN_OPTIMIZACION' }), expect.any(Object));
-  expect(screen.getByLabelText('Pieza persistida')).toBeEnabled();
-  expect(screen.getByRole('button', { name: 'Iniciar optimización' })).toBeDisabled();
-  expect(startOptimization).not.toHaveBeenCalled();
-});
-
-test.each(['EN_OPTIMIZACION', 'PENDIENTE', 'CANCELADO'])('inicio incierto consulta GET y reconcilia %s sin repetir POST', async state => {
-  startOptimization.mockImplementation(async () => { persisted.estado = state; throw error(0, 'Timeout'); });
-  renderPage(); await select();
-  fireEvent.click(screen.getByRole('button', { name: 'Iniciar optimización' }));
-  await waitFor(() => expect(getOrder).toHaveBeenCalledTimes(2));
-  await waitFor(() => expect(screen.queryByText('Iniciando optimización...')).not.toBeInTheDocument());
-  expect(startOptimization).toHaveBeenCalledOnce();
-  expect(screen.getByRole('button', { name: 'Iniciar optimización' }).disabled).toBe(state !== 'PENDIENTE');
-  expect(screen.getByLabelText('Pieza persistida').disabled).toBe(state !== 'EN_OPTIMIZACION');
-});
-
-test('si POST incierto y GET falla, oculta estado obsoleto, no afirma éxito y permite reconciliar explícitamente', async () => {
-  startOptimization.mockRejectedValue(error(0, 'Timeout del inicio.'));
-  getOrder.mockResolvedValueOnce(order).mockRejectedValueOnce(error(0, 'No se pudo consultar el pedido.'));
-  renderPage(); await select();
-  fireEvent.click(screen.getByRole('button', { name: 'Iniciar optimización' }));
-  expect(await screen.findByText('El inicio sigue sin confirmar y no se pudo consultar el pedido. Actualiza el detalle antes de continuar.')).toBeVisible();
-  expect(screen.getByRole('alert')).toHaveTextContent('No se pudo consultar el pedido.');
-  expect(screen.queryByText('PENDIENTE', { selector: 'dd' })).not.toBeInTheDocument();
-  expect(screen.getByLabelText('Pieza persistida')).toBeDisabled();
-  expect(screen.getByRole('button', { name: 'Iniciar optimización' })).toBeDisabled();
-  expect(startOptimization).toHaveBeenCalledOnce();
-
-  getOrder.mockResolvedValueOnce({ ...order, estado: 'EN_OPTIMIZACION' });
-  fireEvent.click(screen.getByRole('button', { name: 'Actualizar detalle del pedido' }));
-  await waitFor(() => expect(screen.getByLabelText('Pieza persistida')).toBeEnabled());
-  expect(startOptimization).toHaveBeenCalledOnce();
-});
-
-test('si falla detalle después de start confirmado reintenta GET, nunca POST', async () => {
-  getOrder.mockResolvedValueOnce(order).mockRejectedValueOnce(error(500, 'No se pudo consultar el detalle.'));
-  renderPage(); await select();
-  fireEvent.click(screen.getByRole('button', { name: 'Iniciar optimización' }));
-  await screen.findByText('No se pudo consultar el detalle.');
-  expect(screen.getByLabelText('Pieza persistida')).toBeDisabled();
-  fireEvent.click(screen.getByRole('button', { name: 'Actualizar detalle del pedido' }));
-  await waitFor(() => expect(screen.getByLabelText('Pieza persistida')).toBeEnabled());
-  expect(startOptimization).toHaveBeenCalledOnce();
-});
-
-test('fallo de catálogo conserva IDs y no bloquea el inicio', async () => {
-  listOrderMaterials.mockRejectedValue(error(500)); renderPage(); await select();
-  expect(screen.getByText(/Los materiales se identifican por su ID/)).toBeVisible();
-  expect(screen.getByText('Material #7')).toBeVisible();
-  expect(screen.getByRole('button', { name: 'Iniciar optimización' })).toBeEnabled();
-});
-
-test.each([401, 403, 404, 422])('start maneja %s sin transición falsa y 401 usa cierre global', async status => {
-  startOptimization.mockRejectedValue(error(status));
-  const { onSessionExpired } = renderPage(); await select();
-  fireEvent.click(screen.getByRole('button', { name: 'Iniciar optimización' }));
-  await screen.findByRole('alert');
-  expect(screen.getByLabelText('Pieza persistida')).toBeDisabled();
-  expect(onSessionExpired).toHaveBeenCalledTimes(status === 401 ? 1 : 0);
-});
-
-test.each([401, 403, 404, 409, 500])('raster maneja %s sin resultado obsoleto', async status => {
-  rasterizePiece.mockRejectedValue(error(status));
-  await started(); choose(); calculate();
-  expect(await screen.findByRole('alert')).toHaveTextContent('Error recuperable');
-  expect(screen.queryByText('Rasterización completada')).not.toBeInTheDocument();
-});
-
-test('paginación consulta page 2 conservando el filtro real', async () => {
-  listOrders.mockResolvedValue({ ...pageData([item]), total: 11, total_pages: 2 });
-  renderPage(); await screen.findByRole('button', { name: /Pedido #27/ });
-  fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
-  await waitFor(() => expect(listOrders).toHaveBeenLastCalledWith({ estado: 'PENDIENTE', page: 2, limit: 10 }, expect.any(Object)));
-});
-
-test('Almacenero no accede ni dispara consultas de Optimization', () => {
-  renderPage('Almacenero');
-  expect(screen.getByRole('alert')).toHaveTextContent('No tienes permiso');
-  expect(listOrders).not.toHaveBeenCalled();
-});
-
-test('al desmontar limpia contexto y no publica respuestas tardías', async () => {
-  const pending = deferred(); startOptimization.mockReturnValue(pending.promise);
-  const { unmount } = renderPage(); await select();
-  fireEvent.click(screen.getByRole('button', { name: 'Iniciar optimización' }));
-  unmount(); persisted.estado = 'EN_OPTIMIZACION';
-  await act(async () => pending.resolve({ id_pedido: 27, estado: 'EN_OPTIMIZACION' }));
-  expect(getOrder).toHaveBeenLastCalledWith(27, expect.any(Object));
-  renderPage();
-  expect(screen.queryByRole('table')).not.toBeInTheDocument();
-  expect(screen.queryByText('Rasterización completada')).not.toBeInTheDocument();
+test('3D toggles preserve the run, live snapshot and metrics; rerun and discard clear the previous scene', async () => {
+  const { source } = mount();
+  expect(screen.queryByRole('button', { name: 'Ver en 3D' })).not.toBeInTheDocument();
+  await prepare();
+  expect(screen.queryByRole('button', { name: 'Ver en 3D' })).not.toBeInTheDocument();
+  click('Calcular distribución');
+  expect(screen.queryByRole('button', { name: 'Ver en 3D' })).not.toBeInTheDocument();
+  await act(async () => vi.advanceTimersByTimeAsync(40));
+  click('Ver en 3D');
+  act(() => source.emit({ type: 'upsert', order: newFixtureOrder }));
+  await act(async () => vi.advanceTimersByTimeAsync(1000));
+  expect(screen.getByText('4 / 4 piezas colocadas')).toBeVisible();
+  expect(screen.getByText(/Pedidos: #21, #22/)).toHaveTextContent('Piezas: 4');
+  expect(screen.getByText('842 ms')).toBeVisible();
+  click('Ver en 2D'); click('Ver en 3D');
+  expect(screen.getByText('842 ms')).toBeVisible();
+  expect(screen.getByRole('checkbox', { name: /#24/ })).not.toBeChecked();
+  click('Preparar otro corte');
+  expect(screen.queryByRole('slider')).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Ver en 3D' })).not.toBeInTheDocument();
+  await act(async () => vi.advanceTimersByTimeAsync(1000));
+  expect(screen.getByRole('button', { name: 'Ver en 2D' })).toHaveAttribute('aria-pressed', 'true');
+  click('Ver en 3D'); click('Descartar');
+  expect(screen.queryByRole('button', { name: 'Ver en 3D' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('slider')).not.toBeInTheDocument();
 });

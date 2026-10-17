@@ -10,7 +10,7 @@ from typing import Callable, Literal
 from .placement import SheetLayout
 from .preparation import prepare_group_units
 from .problem import MaterialSource, OptimizationProblem, OptimizationResult, PieceUnit, Placement
-from .rotation import RasterCache, raster_number
+from .rotation import RasterCache, RasterPreparationError, raster_number
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -61,6 +61,7 @@ class FirstFitOptimizer:
         )) for group in sorted(problem.groups, key=lambda group: group.key))
         problem = replace(problem, order_ids=tuple(sorted(problem.order_ids)), groups=groups)
         cache, layouts, placements = RasterCache(), {}, []  # fresh per calculation
+        layout_bytes = 0
         total = len(problem.units)
 
         def emit(kind, group, unit=None, placement=None):
@@ -75,9 +76,9 @@ class FirstFitOptimizer:
                 orientations = cache.orientations(unit, problem.config.resolution_mm, problem.config.angular_step_deg)
                 accepted = None
                 for stock in group.stock_candidates:
-                    if stock.identity not in layouts:
-                        layouts[stock.identity] = _empty_layout(cache.material(stock, problem.config.resolution_mm), problem.config)
-                    layout = layouts[stock.identity]
+                    layout = layouts.get(stock.identity)
+                    if layout is None:
+                        layout = _empty_layout(cache.material(stock, problem.config.resolution_mm), problem.config)
                     for prepared in orientations:
                         orientation, mask = prepared.orientation, prepared.orientation.mask
                         # Negative bbox prefilter only: acceptance always uses real material bits.
@@ -85,20 +86,24 @@ class FirstFitOptimizer:
                         columns = layout.material.columns - mask.columns + 1
                         if rows <= 0 or columns <= 0:
                             continue
-                        for row in range(rows):
-                            for column in range(columns):
-                                if layout.check(mask, row, column).is_valid:
-                                    layouts[stock.identity] = layout.place(mask, row, column)
-                                    accepted = Placement(
-                                        piece=unit, stock=stock, x_mm=_coordinate(column, problem.config.resolution_mm),
-                                        y_mm=_coordinate(row, problem.config.resolution_mm),
-                                        rotation_deg=orientation.rotation_deg, geometry=orientation.geometry,
-                                    )
-                                    placements.append(accepted)
-                                    emit("piece_placed", group, unit, accepted)
-                                    break
-                            if accepted is not None:
-                                break
+                        position = layout.first_position(mask)
+                        if position is not None:
+                            row, column = position
+                            if stock.identity not in layouts:
+                                # Only USED layouts are retained. Failed candidate
+                                # trials never accumulate thousands of empty grids.
+                                estimate = layout.material.row_count * (40 + 4 * ((layout.material.columns + 29) // 30)) * 4
+                                if layout_bytes + estimate > 128 * 1024 * 1024:
+                                    raise RasterPreparationError('Internal cutting layouts exceed their 128 MiB budget.')
+                                layout_bytes += estimate
+                            layouts[stock.identity] = layout.place(mask, row, column)
+                            accepted = Placement(
+                                piece=unit, stock=stock, x_mm=_coordinate(column, problem.config.resolution_mm),
+                                y_mm=_coordinate(row, problem.config.resolution_mm),
+                                rotation_deg=orientation.rotation_deg, geometry=orientation.geometry,
+                            )
+                            placements.append(accepted)
+                            emit("piece_placed", group, unit, accepted)
                         if accepted is not None:
                             break
                     if accepted is not None:

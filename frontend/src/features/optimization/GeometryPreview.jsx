@@ -40,6 +40,6 @@ export function GeometryPreview({ geometry, pieceId, frame }) {
       <g transform={translation}>{shape}</g>
     </svg>
     <p className="optimization-preview__caption">{label}: {geometrySummary(geometry)}</p>
-    <p className="optimization-preview__legend"><span className="optimization-preview__legend-mark optimization-preview__legend-mark--outline" aria-hidden="true" /> Contorno persistido</p>
+    <p className="optimization-preview__legend"><span className="optimization-preview__legend-mark optimization-preview__legend-mark--outline" aria-hidden="true" /> Contorno de la pieza</p>
   </>;
 }

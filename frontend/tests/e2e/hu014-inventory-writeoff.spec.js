@@ -12,13 +12,22 @@ async function signInAndOpenInventory(page, username, password) {
   await expect(page.getByRole('heading', { name: 'Gestión de Inventario' })).toBeVisible()
 }
 
-test('HU-014: Almacenero registra una baja y consulta el movimiento persistido', async ({ page }, testInfo) => {
-  // Esta baja agota el saldo. Ejecutarla una vez evita que el segundo
-  // viewport reutilice el mismo fixture ya dado de baja.
-  test.skip(testInfo.project.name !== 'chromium-desktop', 'La mutación agota un recurso compartido entre viewports.')
+test('HU-014: Almacenero registra una baja y consulta el movimiento persistido', async ({ page }) => {
+  // Each viewport owns its stock, so both can exhaust it without sharing a mutation.
+  const login = await page.request.post(`${apiOrigin}/api/auth/login`, {
+    data: { username: 'A70000002', password: 'Inventory-test-2026!' },
+  })
+  expect(login.status()).toBe(200)
+  const created = await page.request.post(`${apiOrigin}/api/inventory/planchas`, {
+    headers: { Authorization: `Bearer ${(await login.json()).access_token}` },
+    data: { id_tipo_vidrio: 7, ancho_mm: 1000, alto_mm: 500, espesor_mm: 5.5, cantidad: 2 },
+  })
+  expect(created.status()).toBe(201)
+  const { id_plancha: planchaId } = await created.json()
 
   await signInAndOpenInventory(page, 'A70000002', 'Inventory-test-2026!')
-  await expect(page.getByRole('row', { name: /Material de prueba/ })).toContainText('Activo')
+  const planchaRow = page.getByRole('row').filter({ has: page.getByRole('button', { name: `Ver historial de plancha #${planchaId}`, exact: true }) })
+  await expect(planchaRow).toContainText('Activo')
 
   const historyButton = page.getByRole('button', {
     name: `Ver historial de plancha #${planchaId}`,
@@ -72,7 +81,6 @@ test('HU-014: Almacenero registra una baja y consulta el movimiento persistido',
   })
   await expect(page.getByText(/Baja registrada correctamente\. Movimiento #\d+\./)).toBeVisible()
 
-  const planchaRow = page.getByRole('row', { name: /Material de prueba/ })
   await expect(planchaRow).toBeVisible()
   await expect(planchaRow).toContainText('Inactivo')
   await expect(planchaRow.getByRole('button', {

@@ -16,7 +16,42 @@
 .orders-section__header h2 { margin: 0; font-size: 20px; font-weight: 600; }
 .orders-section__description { margin: var(--ng-space-1) 0 0; color: var(--ng-text-600); }
 
-.orders-pieces { display: grid; gap: var(--ng-space-3); }
+/* --- NUEVA JERARQUÍA POR MATERIAL --- */
+.orders-materials {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ng-space-3);
+}
+
+.orders-material-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ng-space-4);
+}
+
+/* Encabezado del material (fuera de la tarjeta blanca) */
+.orders-material-group__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--ng-space-4);
+  padding-bottom: var(--ng-space-2);
+  border-bottom: 2px solid var(--ng-border-subtle);
+}
+
+.orders-material-group__fields {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--ng-space-4);
+  flex-wrap: wrap;
+}
+
+/* --- TARJETA DE PIEZA ORIGINAL (Restaurada) --- */
+.orders-pieces-list {
+  display: grid;
+  gap: var(--ng-space-3);
+}
 
 .orders-piece {
   display: flex;
@@ -24,9 +59,7 @@
   gap: var(--ng-space-4);
   min-width: 0;
   padding: var(--ng-space-4);
-  border: 1px solid var(--ng-border-subtle);
-  border-radius: var(--ng-radius-control);
-  background: var(--ng-surface);
+  border-bottom: 1px solid var(--ng-border-subtle);
 }
 
 .orders-piece__header,
@@ -44,7 +77,7 @@
   height: 32px;
   flex: none;
   place-items: center;
-  border-radius: var(--ng-radius-control);
+  border-radius: 50%;
   background: var(--ng-action-tint);
   color: var(--ng-primary-focus);
   font-size: 14px;
@@ -71,12 +104,15 @@
 .orders-remove-button:hover { border-color: var(--ng-error); color: var(--ng-error); }
 .orders-remove-button:focus-visible { outline: 3px solid var(--ng-primary-focus); outline-offset: 2px; }
 
+/* --- FILA LINEAL DENTRO DE LA TARJETA --- */
 .orders-fields-row {
   display: flex;
-  align-items: end;
-  flex-wrap: wrap;
+  align-items: flex-end;
+  flex-wrap: nowrap;
   gap: var(--ng-space-4) var(--ng-space-6);
-  padding-left: var(--ng-space-12);
+  /* Añadimos padding arriba (4px), derecha (4px), abajo (8px) para que el focus no se corte, y mantenemos el padding izquierdo original */
+  padding: 4px 4px 8px var(--ng-space-12);
+  overflow-x: auto;
 }
 
 .orders-field {
@@ -89,17 +125,18 @@
 .orders-field > label { color: var(--ng-text-600); font-size: 13px; font-weight: 600; }
 
 .orders-control.ng-control { padding: var(--ng-space-2); font-size: 14px; }
-.orders-control.ng-control.orders-control--material { width: 140px; }
-.orders-control.ng-control.orders-control--thickness { width: 110px; }
+.orders-control.ng-control.orders-control--material { width: 180px; }
+.orders-control.ng-control.orders-control--thickness { width: 140px; }
 .orders-control.ng-control.orders-control--shape { width: 190px; }
-.orders-control.ng-control.orders-control--quantity { width: 76px; }
-.orders-control.ng-control.orders-control--dimension { width: 110px; }
+.orders-control.ng-control.orders-control--quantity { width: 90px; }
+.orders-control.ng-control.orders-control--dimension { width: 130px; }
 
 .orders-polygon-status {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: var(--ng-space-3);
+  padding-bottom: 4px;
 }
 
 .orders-polygon-status__complete,
@@ -108,76 +145,89 @@
 .orders-polygon-status__pending { color: #d97706; }
 .orders-editor-open { padding: var(--ng-space-2) var(--ng-space-3); font-size: 14px; }
 
-.orders-editor-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
+.orders-add-material-wrap {
+  margin-top: var(--ng-space-6);
   display: flex;
-  align-items: center;
   justify-content: center;
-  padding: var(--ng-space-4);
-  background: rgb(31 41 55 / 45%);
+}
+
+.orders-add-material-wrap .ng-button {
+  width: 100%;
+  border-style: dashed;
+}
+
+/* --- MODAL DEL EDITOR (Sin cambios) --- */
+.orders-editor-backdrop {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--ng-space-4); background: rgb(31 41 55 / 45%);
 }
 
 .orders-editor-dialog {
-  display: flex;
-  width: 90%;
-  max-width: 1000px;
-  height: 85vh;
-  flex-direction: column;
-  overflow: hidden;
+  display: flex; width: 90%; max-width: 1000px; height: 85vh;
+  flex-direction: column; overflow: hidden;
   border: 1px solid var(--ng-border-subtle);
   border-radius: var(--ng-radius-card);
-  background: var(--ng-surface);
-  color: var(--ng-text-900);
+  background: var(--ng-surface); color: var(--ng-text-900);
   box-shadow: var(--ng-shadow-dialog);
 }
 
 .orders-editor-dialog__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--ng-space-4);
-  padding: var(--ng-space-4) var(--ng-space-6);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--ng-space-4); padding: var(--ng-space-4) var(--ng-space-6);
   border-bottom: 1px solid var(--ng-border-subtle);
 }
 
 .orders-editor-dialog__header h3 { margin: 0; font-size: 20px; }
 .orders-editor-dialog__close {
-  display: grid;
-  width: 40px;
-  height: 40px;
-  flex: none;
-  place-items: center;
-  border: 1px solid transparent;
-  border-radius: var(--ng-radius-control);
-  background: transparent;
-  color: var(--ng-text-900);
-  cursor: pointer;
+  display: grid; width: 40px; height: 40px; flex: none; place-items: center;
+  border: 1px solid transparent; border-radius: var(--ng-radius-control);
+  background: transparent; color: var(--ng-text-900); cursor: pointer;
 }
 
 .orders-editor-dialog__close:hover { background: var(--ng-background); }
 .orders-editor-dialog__close:focus-visible { outline: 3px solid var(--ng-primary-focus); outline-offset: 2px; }
-
 .orders-editor-dialog__content { flex: 1; overflow: auto; padding: var(--ng-space-6); background: var(--ng-background); }
 
+/* --- RESPONSIVE --- */
 @media (max-width: 720px) {
   .orders-section__header { align-items: stretch; }
   .orders-section__header > .ng-button { width: 100%; }
-  .orders-fields-row { padding-left: 0; gap: var(--ng-space-3); }
+  .orders-fields-row { padding-left: 0; gap: var(--ng-space-3); flex-wrap: wrap; }
 }
 
 @media (max-width: 600px) {
   .orders-piece { padding: var(--ng-space-3); }
-  .orders-fields-row { align-items: stretch; }
-  .orders-fields-row--configuration > .orders-field { flex: 1 1 130px; }
-  .orders-fields-row--measurements > .orders-field { flex: 1 1 130px; }
+  .orders-editor-dialog { width: 96%; height: 92vh; }
+  .orders-editor-dialog__header { padding: var(--ng-space-3) var(--ng-space-4); }
+  .orders-editor-dialog__content { padding: var(--ng-space-4); }
   .orders-control.ng-control.orders-control--material,
   .orders-control.ng-control.orders-control--thickness,
   .orders-control.ng-control.orders-control--shape,
   .orders-control.ng-control.orders-control--quantity,
   .orders-control.ng-control.orders-control--dimension { width: 100%; }
-  .orders-editor-dialog { width: 96%; height: 92vh; }
-  .orders-editor-dialog__header { padding: var(--ng-space-3) var(--ng-space-4); }
-  .orders-editor-dialog__content { padding: var(--ng-space-4); }
+}
+
+.orders-material-group__title { margin: 0; font-size: 15px; }
+.orders-group-toggle {
+  display: flex; align-items: center; gap: var(--ng-space-3); width: 100%;
+  padding: var(--ng-space-4) var(--ng-space-2); border: 0;
+  border-bottom: 1px solid var(--ng-border-subtle); background: transparent;
+  color: var(--ng-text-900); text-align: left; font: inherit; cursor: pointer;
+}
+.orders-group-toggle > span:first-child { flex: 1; font-weight: 600; }
+.orders-group-toggle > span:nth-child(2), .orders-group-status { color: var(--ng-text-600); font-size: 13px; }
+.orders-group-toggle[aria-expanded="true"] > svg { transform: rotate(180deg); }
+.orders-group-toggle:focus-visible { outline: 3px solid var(--ng-primary-focus); outline-offset: 2px; }
+.orders-material-group__header { padding-top: var(--ng-space-4); border-bottom-width: 1px; }
+.orders-modal__content .orders-form-footer {
+  position: sticky; bottom: 0; z-index: 2;
+  background: var(--ng-surface); border-top: 1px solid var(--ng-border-subtle);
+  padding: var(--ng-space-3) 0;
+}
+.orders-form-footer .ng-action-bar { margin-top: 0; padding-top: 0; border-top: 0; }
+@media (max-width: 600px) {
+  .orders-group-toggle { flex-wrap: wrap; }
+  .orders-group-toggle > span:first-child { flex-basis: 65%; }
+  .orders-material-group__fields, .orders-material-group__fields .orders-field { width: 100% !important; }
 }

@@ -87,15 +87,13 @@ class RasterMask:
         runs = []
         column = 0
         while bits:
-            if bits & 1:
-                start = column
-                while bits & 1:
-                    bits >>= 1
-                    column += 1
-                runs.append((start, column))
-            else:
-                bits >>= 1
-                column += 1
+            zeros = (bits & -bits).bit_length() - 1
+            bits >>= zeros
+            column += zeros
+            ones = (bits ^ (bits + 1)).bit_length() - 1
+            runs.append((column, column + ones))
+            bits >>= ones
+            column += ones
         return tuple(runs)
         
     def is_occupied(self, row: int, column: int) -> bool:

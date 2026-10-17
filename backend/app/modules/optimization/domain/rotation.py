@@ -14,9 +14,18 @@ from .problem import PieceUnit, decimal_value, geometry_snapshot
 from .raster_mask import RasterMask, RasterizationError
 from .rasterizer import COORDINATE_DECIMALS, rasterize_geometry, rasterize_material
 
+INTERNAL_MAX_CELLS = 16_000_000
+INTERNAL_MAX_AXIS = 4000
+INTERNAL_MAX_DIMENSION_MM = 4000
+INTERNAL_CACHE_BYTES = 64 * 1024 * 1024
+
 
 class RasterPreparationError(ValueError):
     """Unsafe precision/range/budget: reject, never report a geometric NO_FIT."""
+
+
+class RasterExtentExceeded(RasterPreparationError):
+    """An oriented bounding box cannot fit any supported stock grid."""
 
 
 def raster_number(value: Decimal) -> float:
@@ -116,28 +125,44 @@ class OrientedUnit:
 
 class RasterCache:
     """One instance per calculation. Immutable masks may be shared across units."""
-    def __init__(self, *, max_cells=1_000_000, max_axis=2440, max_vertices=128):
+    # Internal bit rows, independent of HU-015's JSON preview budget. A maximum
+    # 4000x4000 mask occupies ~2.3 MB, not 16 million Python cell objects.
+    def __init__(self, *, max_cells=INTERNAL_MAX_CELLS, max_axis=INTERNAL_MAX_AXIS, max_vertices=128,
+                 max_cache_bytes=INTERNAL_CACHE_BYTES):
         self.max_cells, self.max_axis, self.max_vertices = max_cells, max_axis, max_vertices
+        self.max_cache_bytes, self._cache_bytes = max_cache_bytes, 0
         self._pieces = {}
         self._materials = {}
 
-    def _raster(self, geometry, resolution, *, material=False):
+    def check_geometry(self, geometry, resolution):
         width, height = bbox_dimensions(geometry)
         if width <= 0 or height <= 0:
             raise RasterPreparationError("Degenerate geometry after RN-04 normalization.")
         axes = [int((length / resolution).to_integral_value(rounding="ROUND_CEILING"))
                 for length in (width, height)]
-        if max(axes) > self.max_axis or axes[0] * axes[1] > self.max_cells:
-            raise RasterPreparationError("Raster exceeds the HU-015 per-mask resource limits.")
+        if max(width, height) > INTERNAL_MAX_DIMENSION_MM or max(axes) > self.max_axis or axes[0] * axes[1] > self.max_cells:
+            raise RasterExtentExceeded("Geometry exceeds the internal cutting budget (4000 mm / 4000 cells per axis, 16000000 cells).")
         if len(geometry.get("vertices_mm", ())) > self.max_vertices:
             raise RasterPreparationError("Too many geometry vertices.")
+        return axes
+
+    def _raster(self, geometry, resolution, *, material=False):
+        columns, rows = self.check_geometry(geometry, resolution)
+        # Conservative CPython int-row allocation bound, including tuple slots.
+        # Check BEFORE allocating and bound all retained orientations/materials.
+        estimated = rows * (32 + 4 * ((columns + 29) // 30) + 8) + 4096 + len(geometry.get('vertices_mm', ())) * 512
+        if self._cache_bytes + estimated > self.max_cache_bytes:
+            raise RasterPreparationError("Internal cutting raster cache exceeds its 64 MiB budget.")
         try:
-            return (rasterize_material if material else rasterize_geometry)(dict(geometry), raster_number(resolution))
+            mask = (rasterize_material if material else rasterize_geometry)(dict(geometry), raster_number(resolution))
+            self._cache_bytes += estimated
+            return mask
         except (RasterizationError, OverflowError) as error:
             raise RasterPreparationError("Geometry cannot be safely rasterized by TA-005/006.") from error
 
     def orientations(self, unit: PieceUnit, resolution, step) -> tuple[OrientedUnit, ...]:
         resolution = decimal_value(resolution, "resolution_mm", positive=True)
+        self.check_geometry(unit.geometry, resolution)
         angles = discrete_angles(step)
         if unit.shape_type == "CIRCUNFERENCIA":
             angles = (Decimal(0),)
@@ -146,6 +171,12 @@ class RasterCache:
             key = (_fingerprint(unit.geometry), resolution, angle)
             if key not in self._pieces:
                 geometry = oriented_geometry(unit.geometry, angle)
+                # An oriented bbox outside the supported stock grid cannot fit
+                # ANY valid stock. Skip it without discarding a valid 0/90° fit.
+                try:
+                    self.check_geometry(geometry, resolution)
+                except RasterExtentExceeded:
+                    continue
                 self._pieces[key] = Orientation(angle, geometry, self._raster(geometry, resolution))
             prepared = self._pieces[key]
             signature = (prepared.mask.columns, prepared.mask.rows)

@@ -4,8 +4,8 @@ import { fileURLToPath } from 'node:url';
 import { expect, test } from '@playwright/test';
 
 const appOrigin = 'http://127.0.0.1:5173';
-const apiOrigin = 'http://127.0.0.1:8000';
-const evidenceDir = fileURLToPath(new URL('../../../docs/evidence/sprint-01/TA-DASHBOARD-001/t3/screenshots/', import.meta.url));
+const apiOrigin = process.env.NEWGLASS_E2E_API_ORIGIN || 'http://127.0.0.1:8017';
+const evidenceDir = process.env.NEWGLASS_E2E_EVIDENCE_DIR || fileURLToPath(new URL('../../../docs/evidence/sprint-01/TA-DASHBOARD-001/t3/screenshots/', import.meta.url));
 mkdirSync(evidenceDir, { recursive: true });
 
 const roles = {

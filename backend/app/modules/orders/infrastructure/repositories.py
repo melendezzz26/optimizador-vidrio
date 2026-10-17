@@ -1,7 +1,7 @@
 from typing import List, Dict, Any, Callable
 from decimal import Decimal
 from sqlalchemy.orm import Session
-from sqlalchemy import select, null, func, cast, Date, delete, update
+from sqlalchemy import select, null, func, cast, Date, delete, update, case
 from datetime import datetime, timezone, date
 from app.models import Pedido, Pieza, TipoVidrio, TipoVidrioEspesor, Cliente
 from ..application.ports import OrderMutationResult, OrderRepositoryPort
@@ -126,9 +126,19 @@ class SQLAlchemyOrderRepository(OrderRepositoryPort):
         total = self.session.execute(count_stmt).scalar() or 0
 
         # 2. Obtenemos los registros con límite y offset
+        orden_prioridad = case(
+            (Pedido.estado == "PENDIENTE", 1),
+            (Pedido.estado == "EN_OPTIMIZACION", 2),
+            (Pedido.estado == "OPTIMIZADO", 3),
+            (Pedido.estado == "CONFIRMADO", 4),
+            (Pedido.estado == "CANCELADO", 5),
+            else_=6
+        )
+
         stmt = stmt.order_by(
-            (Pedido.estado == "CANCELADO").asc(),
-            Pedido.fecha_registro.desc(), Pedido.id_pedido.desc(),
+            orden_prioridad.asc(),
+            Pedido.fecha_registro.desc(),
+            Pedido.id_pedido.desc(),
         ).offset(offset).limit(limit)
         rows = self.session.execute(stmt).all()
 
@@ -138,7 +148,7 @@ class SQLAlchemyOrderRepository(OrderRepositoryPort):
                 "id_pedido": order.id_pedido,
                 "fecha_registro": order.fecha_registro,
                 "estado": order.estado,
-                "cliente": cliente_nombre or "Consumidor Final" # Por si el id_cliente es nulo
+                "cliente": cliente_nombre
             })
 
         return {"total": total, "items": items}

@@ -3,6 +3,7 @@ import {
   canManagePlanchas,
   canManageRetazos,
   canViewInventory,
+  canViewResults,
 } from '../authentication';
 import { AppShell } from '../../shared/components/AppShell';
 import { PageCard, PageHeader } from '../../shared/components/PageLayout';
@@ -263,7 +264,7 @@ function InventoryTable({
   );
 }
 
-export function InventoryPage({ onSessionExpired, toolbar, user }) {
+export function InventoryPage({ onSessionExpired, toolbar, user, onOpenCut }) {
   const [activeTab, setActiveTab] = useState('planchas');
   const [filtersByTab, setFiltersByTab] = useState({
     planchas: { ...EMPTY_FILTERS }, retazos: { ...EMPTY_FILTERS },
@@ -923,6 +924,9 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
       {historyTarget && (
         <MovementHistoryDialog
           resource={historyTarget.resource}
+          glassName={catalogo.find(type => type.id_tipo_vidrio === historyTarget.resource.id_tipo_vidrio)?.nombre}
+          canViewCut={canViewResults(user)}
+          onOpenCut={onOpenCut}
           kind={historyTarget.kind}
           movements={movementHistory}
           isLoading={isHistoryLoading}

@@ -46,15 +46,15 @@ export function RasterPreview({ raster, pieceId, frame, rasterizing = false }) {
   }, [frame, raster]);
 
   if (!raster || !frame) return <p className="optimization-preview__empty" role="status">
-    {rasterizing ? 'Rasterizando la pieza seleccionada...' : 'Rasteriza la pieza seleccionada para visualizar su máscara.'}
+    {rasterizing ? 'Preparando la vista de la pieza...' : 'Selecciona «Ver pieza» para preparar la vista previa.'}
   </p>;
 
-  const title = `Máscara raster de la pieza #${pieceId}`;
-  const description = `${raster.tipo_forma}; resolución ${raster.resolution_mm} mm por celda; ${raster.row_count} filas, ${raster.columns} columnas, ${raster.occupied_cells} celdas ocupadas; cantidad ${raster.cantidad}.`;
+  const title = `Detalle del corte de la pieza #${pieceId}`;
+  const description = `${({ RECTANGULO: 'Rectángulo', CIRCUNFERENCIA: 'Círculo', POLIGONO_CONVEXO: 'Polígono convexo' })[raster.tipo_forma] ?? 'Pieza'}; resolución ${raster.resolution_mm} mm por celda; ${raster.row_count} filas, ${raster.columns} columnas, ${raster.occupied_cells} celdas ocupadas; cantidad ${raster.cantidad}.`;
   return <>
     <div className="optimization-preview__canvas-viewport" ref={viewportRef}>
       <canvas ref={canvasRef} role="img" aria-labelledby={titleId} aria-describedby={descriptionId}>
-        La máscara contiene {raster.occupied_cells} celdas ocupadas.
+        La vista contiene {raster.occupied_cells} celdas ocupadas.
       </canvas>
     </div>
     <p id={descriptionId} className="optimization-preview__caption">{description}</p>

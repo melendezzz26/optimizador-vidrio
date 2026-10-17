@@ -27,10 +27,14 @@ test.beforeEach(async ({ page, baseURL }) => {
 })
 
 async function drawValid(page, points = [[100, 100], [400, 100], [400, 300], [100, 300]], sides = [300, 200, 300, 200]) {
-  await page.getByRole('button', { name: 'Agregar pieza', exact: true }).click()
-  const row = page.locator('.orders-piece').last()
-  await row.getByLabel('Material', { exact: true }).selectOption('7')
-  await row.getByLabel('Espesor', { exact: true }).selectOption('5.5')
+  const group = page.locator('.orders-material-group').first()
+  if (await group.getByLabel('Tipo de vidrio', { exact: true }).inputValue()) {
+    await group.getByRole('button', { name: 'Agregar pieza', exact: true }).click()
+  } else {
+    await group.getByLabel('Tipo de vidrio', { exact: true }).selectOption('7')
+    await group.getByLabel('Espesor del vidrio (mm)', { exact: true }).selectOption('5.5')
+  }
+  const row = group.locator('.orders-piece').last()
   await row.getByLabel('Forma', { exact: true }).selectOption('POLIGONO_CONVEXO')
   const canvas = page.getByRole('img', { name: /Lienzo del dibujo original/ })
   await canvas.scrollIntoViewIfNeeded()
@@ -46,7 +50,7 @@ async function drawValid(page, points = [[100, 100], [400, 100], [400, 300], [10
   for (const [index, value] of sides.entries()) {
     await page.getByRole('spinbutton', { name: `Longitud del segmento S${index + 1} en milímetros` }).fill(String(value))
   }
-  await expect(page.getByText('Geometría convexa validada.')).toBeVisible()
+  await expect(page.getByText('✓ Geometría validada y lista.')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Agregar pieza al pedido' })).toBeEnabled()
 }
 
@@ -59,8 +63,8 @@ test('lados independientes: POST y lectura real conservan triángulo, cuadrilát
   for (const item of cases) {
     await drawValid(page, item.points, item.sides)
     if (item.angle) {
-      await page.getByRole('combobox', { name: 'Configuración geométrica' }).selectOption('angle')
-      await page.getByRole('spinbutton', { name: /Ángulo interior fijado/ }).fill(String(item.angle))
+      await page.getByRole('button', { name: 'Seleccionar vértice V2' }).click()
+      await page.getByRole('spinbutton', { name: /Ángulo interior en/ }).fill(String(item.angle))
     }
     await page.getByRole('button', { name: 'Agregar pieza al pedido' }).click()
   }

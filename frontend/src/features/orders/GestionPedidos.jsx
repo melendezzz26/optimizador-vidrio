@@ -261,7 +261,7 @@ export default function GestionPedidos({ token, user, toolbar, onSessionExpired 
                   <tr key={pedido.id_pedido}>
                     <th scope="row">#{pedido.id_pedido}</th>
                     <td>{formatDate(pedido.fecha_registro)}</td>
-                    <td>{pedido.cliente || 'Consumidor final'}</td>
+                    <td>{pedido.cliente || '—'}</td>
                     <td><span className={`orders-status orders-status--${pedido.estado.toLowerCase()}`}>
                       {STATUS_LABELS[pedido.estado] ?? pedido.estado}
                     </span></td>

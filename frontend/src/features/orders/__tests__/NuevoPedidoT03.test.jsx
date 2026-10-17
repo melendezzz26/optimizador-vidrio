@@ -23,7 +23,7 @@ afterEach(() => vi.unstubAllGlobals());
 
 async function setup(selectClient = true) {
   render(<NuevoPedido token="test-token" />);
-  await screen.findByText('No hay piezas agregadas');
+  await screen.findByText('Falta seleccionar cliente');
   if (selectClient) {
     fireEvent.change(screen.getByLabelText('Nombre del cliente'), { target: { value: 'Norte' } });
     fireEvent.click(screen.getByRole('button', { name: 'Buscar', exact: true }));
@@ -33,12 +33,24 @@ async function setup(selectClient = true) {
 }
 
 async function addPiece(shape = 'RECTANGULO', material = '7', thickness = '5.5') {
-  fireEvent.click(screen.getByRole('button', { name: 'Agregar pieza', exact: true }));
-  const rows = screen.getAllByText(/^Pieza [0-9]+$/);
-  const row = rows.at(-1).closest('.orders-piece');
+  // Reuse the initial piece; subsequent pieces share the matching group.
+  let group = [...document.querySelectorAll('.orders-material-group')].find(node =>
+    within(node).getByLabelText('Tipo de vidrio').value === material &&
+    within(node).getByLabelText('Espesor del vidrio (mm)').value === thickness);
+  if (group) {
+    fireEvent.click(within(group).getByRole('button', { name: 'Agregar pieza', exact: true }));
+  } else {
+    const groups = [...document.querySelectorAll('.orders-material-group')];
+    group = groups.find(node => within(node).getByLabelText('Tipo de vidrio').value === '');
+    if (!group) {
+      fireEvent.click(screen.getByRole('button', { name: 'Agregar otro vidrio' }));
+      group = [...document.querySelectorAll('.orders-material-group')].at(-1);
+    }
+    fireEvent.change(within(group).getByLabelText('Tipo de vidrio'), { target: { value: material } });
+    fireEvent.change(within(group).getByLabelText('Espesor del vidrio (mm)'), { target: { value: thickness } });
+  }
+  const row = within(group).getAllByText(/^Pieza [0-9]+$/).at(-1).closest('.orders-piece');
   const fields = within(row);
-  fireEvent.change(fields.getByLabelText('Material'), { target: { value: material } });
-  fireEvent.change(fields.getByLabelText('Espesor'), { target: { value: thickness } });
   fireEvent.change(fields.getByLabelText('Forma'), { target: { value: shape } });
   if (shape === 'RECTANGULO') {
     fireEvent.change(fields.getByLabelText('Ancho (mm)'), { target: { value: '1000' } });
@@ -59,7 +71,7 @@ async function validPolygon(user) {
   for (const [index, value] of [300, 200, 300, 200].entries()) {
     fireEvent.change(screen.getByRole('spinbutton', { name: `Longitud del segmento S${index + 1} en milímetros` }), { target: { value: String(value) } });
   }
-  expect(screen.getByText('Geometría convexa validada.')).toBeVisible();
+  expect(screen.getByText('✓ Geometría validada y lista.')).toBeVisible();
   await user.click(screen.getByRole('button', { name: 'Agregar pieza al pedido' }));
 }
 
@@ -67,11 +79,11 @@ describe('HU-012 T03 con HU-006 multimaterial y HU-007 real', () => {
   test('guarda las tres formas y cantidades con cliente; excluye rawState', async () => {
     const user = await setup();
     const polygon = await addPiece('POLIGONO_CONVEXO');
-    fireEvent.change(polygon.getByLabelText('Cant.'), { target: { value: '3' } });
+    fireEvent.change(polygon.getByLabelText('Cantidad'), { target: { value: '3' } });
     await validPolygon(user);
     expect(screen.queryByRole('img', { name: /Lienzo del dibujo original/ })).not.toBeInTheDocument();
     const rectangle = await addPiece('RECTANGULO', '8', '4');
-    fireEvent.change(rectangle.getByLabelText('Cant.'), { target: { value: '2' } });
+    fireEvent.change(rectangle.getByLabelText('Cantidad'), { target: { value: '2' } });
     await addPiece('CIRCUNFERENCIA', '7', '6');
     expect(posts()).toHaveLength(0);
     fetch.mockResolvedValueOnce(response({ id_pedido: 44, id_cliente: 41, estado: 'PENDIENTE' }, 201));
@@ -91,24 +103,27 @@ describe('HU-012 T03 con HU-006 multimaterial y HU-007 real', () => {
     expect(saveButton()).toBeDisabled();
   }, 15000);
 
-  test.each([['7', '6'], ['8', '4']])('permite la pareja %s/%s por pieza sin POST anticipado', async (material, thickness) => {
+  test.each([['7', '6'], ['8', '4']])('permite la pareja %s/%s en otro grupo sin POST anticipado', async (material, thickness) => {
     await setup();
     await addPiece();
     await addPiece('CIRCUNFERENCIA', material, thickness);
+    const first = document.querySelector('.orders-group-toggle');
+    expect(first).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.setup().click(first);
     expect(screen.getByText('Pieza 1')).toBeVisible();
     expect(screen.getByText('Pieza 2')).toBeVisible();
     expect(saveButton()).toBeEnabled();
     expect(posts()).toHaveLength(0);
-    fireEvent.click(screen.getByRole('button', { name: 'Eliminar Pieza 2' }));
+    fireEvent.click(screen.getAllByRole('button', { name: 'Eliminar vidrio' })[1]);
     expect(saveButton()).toBeEnabled();
   });
 
   test('bloquea cantidades decimales y medidas no positivas', async () => {
     await setup();
     const fields = await addPiece();
-    fireEvent.change(fields.getByLabelText('Cant.'), { target: { value: '1.5' } });
+    fireEvent.change(fields.getByLabelText('Cantidad'), { target: { value: '1.5' } });
     expect(saveButton()).toBeDisabled();
-    fireEvent.change(fields.getByLabelText('Cant.'), { target: { value: '1' } });
+    fireEvent.change(fields.getByLabelText('Cantidad'), { target: { value: '1' } });
     for (const value of ['-1', '0']) {
       fireEvent.change(fields.getByLabelText('Ancho (mm)'), { target: { value } });
       expect(saveButton()).toBeDisabled();
@@ -117,7 +132,7 @@ describe('HU-012 T03 con HU-006 multimaterial y HU-007 real', () => {
     expect(posts()).toHaveLength(0);
   });
 
-  test('catálogo activo y geometría válida requeridos; eliminar última pieza bloquea', async () => {
+  test('catálogo activo y geometría válida requeridos; conserva la pieza mínima', async () => {
     const user = await setup();
     await addPiece('POLIGONO_CONVEXO');
     expect(screen.queryByRole('option', { name: 'Inactivo' })).not.toBeInTheDocument();
@@ -125,8 +140,10 @@ describe('HU-012 T03 con HU-006 multimaterial y HU-007 real', () => {
     await validPolygon(user);
     expect(saveButton()).toBeEnabled();
     expect(posts()).toHaveLength(0);
-    fireEvent.click(screen.getByRole('button', { name: 'Eliminar Pieza 1' }));
-    expect(saveButton()).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Eliminar pieza' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Eliminar pieza' }));
+    expect(screen.getByText('Pieza 1')).toBeVisible();
+    expect(saveButton()).toBeEnabled();
   });
 
   test('bloquea doble envío y edición mientras guarda', async () => {
@@ -139,8 +156,8 @@ describe('HU-012 T03 con HU-006 multimaterial y HU-007 real', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Guardando…' }));
     expect(posts()).toHaveLength(1);
     expect(screen.getByRole('button', { name: 'Guardando…' })).toBeDisabled();
-    expect(screen.getAllByLabelText('Material')[0]).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Eliminar Pieza 1' })).toBeDisabled();
+    expect(screen.getAllByLabelText('Tipo de vidrio')[0]).toBeDisabled();
+    expect(screen.getAllByRole('button', { name: 'Eliminar pieza' })[0]).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Cancelar', exact: true })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Cambiar cliente' })).toBeDisabled();
     expect(JSON.parse(posts()[0][1].body).piezas).toHaveLength(2);
@@ -170,7 +187,10 @@ describe('HU-012 T03 con HU-006 multimaterial y HU-007 real', () => {
     await screen.findByRole('alert');
     expect(saveButton()).toBeDisabled();
     fireEvent.click(screen.getByRole('button', { name: 'Reintentar catálogo' }));
-    await screen.findByText('No hay piezas agregadas');
+    await screen.findByText('Falta seleccionar cliente');
+    fireEvent.change(screen.getByLabelText('Nombre del cliente'), { target: { value: 'Norte' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Buscar', exact: true }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Seleccionar Vidrios Norte' }));
     await addPiece();
     expect(screen.getByRole('option', { name: 'Material de prueba' })).toBeInTheDocument();
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
@@ -178,20 +198,24 @@ describe('HU-012 T03 con HU-006 multimaterial y HU-007 real', () => {
 
   test('no guarda sin cliente, permite cambiarlo conservando las piezas', async () => {
     await setup(false);
-    await addPiece();
+    expect(screen.queryByText('Pieza 1')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Agregar otro vidrio' })).not.toBeInTheDocument();
     expect(saveButton()).toBeDisabled();
     fireEvent.click(saveButton());
     expect(posts()).toHaveLength(0);
     fireEvent.change(screen.getByLabelText('Nombre del cliente'), { target: { value: 'Norte' } });
     fireEvent.click(screen.getByRole('button', { name: 'Buscar', exact: true }));
     fireEvent.click(await screen.findByRole('button', { name: 'Seleccionar Vidrios Norte' }));
+    await addPiece();
     expect(saveButton()).toBeEnabled();
     fireEvent.click(screen.getByRole('button', { name: 'Cambiar cliente' }));
     expect(saveButton()).toBeDisabled();
-    expect(screen.getByText('Pieza 1')).toBeVisible();
+    expect(screen.getByText('Falta seleccionar cliente')).toBeVisible();
     fetch.mockResolvedValueOnce(response([{ ...client, id_cliente: 42, nombre_razon_social: 'Otro cliente' }]));
     fireEvent.click(screen.getByRole('button', { name: 'Buscar', exact: true }));
     fireEvent.click(await screen.findByRole('button', { name: 'Seleccionar Otro cliente' }));
+    expect(screen.getByLabelText('Ancho (mm)')).toHaveValue(1000);
+    expect(screen.getByLabelText('Tipo de vidrio')).toHaveValue('7');
     fetch.mockResolvedValueOnce(response({ id_pedido: 45, id_cliente: 42 }, 201));
     fireEvent.click(saveButton());
     await screen.findByText(/ID del pedido: 45/);

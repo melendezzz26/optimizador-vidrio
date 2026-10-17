@@ -1,8 +1,7 @@
 """Multipedido preflight. The unit of work owns exactly one commit/rollback."""
 from .errors import RunError
 from .preparation import prepare_persisted_problem
-from ..domain.rotation import discrete_angles, raster_number
-from .resource_policy import DEFAULT_RASTER_BUDGET
+from ..domain.rotation import RasterCache, discrete_angles
 
 
 class AcceptRun:
@@ -27,7 +26,7 @@ class AcceptRun:
                     geometry = dict(unit.geometry)
                     if unit.shape_type == "POLIGONO_CONVEXO":
                         geometry["vertices_mm"] = [list(p) for p in geometry["vertices_mm"]]
-                    DEFAULT_RASTER_BUDGET.check(geometry, raster_number(config.resolution_mm))
+                    RasterCache().check_geometry(geometry, config.resolution_mm)
             except ValueError as exc:
                 raise RunError("INVALID_INPUT", "Las piezas o parámetros exceden las condiciones válidas de cálculo.") from exc
             run = uow.runs.create(problem, configuration_id, actor_id)

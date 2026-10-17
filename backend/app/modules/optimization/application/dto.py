@@ -4,6 +4,7 @@ from decimal import Decimal
 from enum import Enum
 
 from ..domain.problem import OptimizationResult, positive_int
+from ..domain.metrics import ResidualRectangle
 
 
 class RunStatus(str, Enum):
@@ -34,6 +35,7 @@ class OptimizationRun:
     status: RunStatus
     result: OptimizationResult
     confirmed: bool = False
+    residuals: tuple[ResidualRectangle, ...] = ()
 
     def __post_init__(self):
         positive_int(self.optimization_id, "optimization_id")

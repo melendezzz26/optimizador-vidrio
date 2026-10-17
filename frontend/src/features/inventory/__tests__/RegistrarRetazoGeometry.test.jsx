@@ -23,7 +23,7 @@ async function draw(user) {
     await user.pointer({ target: canvas(), keys: '[MouseLeft]', coords: { clientX:x, clientY:y } })
   }
   await user.click(screen.getByRole('button',{name:'Cerrar polígono'}))
-  await user.selectOptions(screen.getByRole('combobox', { name: /Configuraci/ }), 'guided')
+  await user.selectOptions(screen.getByRole('combobox', { name: /Comportamiento/ }), 'guided')
   ;[600, Math.hypot(200,400), 600, Math.hypot(200,400)].forEach((value,i) =>
     fireEvent.change(screen.getByLabelText(`Longitud del segmento S${i+1} en milímetros`), { target:{value:String(value)} }))
 }
@@ -36,8 +36,8 @@ describe('TA-036: retazo con editor compartido', () => {
     }
     await user.click(screen.getByRole('button', { name: 'Cerrar polígono' }))
     for (const [i, value] of [120,73,91,108].entries()) fireEvent.change(screen.getByLabelText(`Longitud del segmento S${i+1} en milímetros`), { target: { value: String(value) } })
-    await user.selectOptions(screen.getByLabelText('Configuración geométrica'), 'angle')
-    fireEvent.change(screen.getByRole('spinbutton', { name: /Ángulo interior fijado/ }), { target: { value: '110' } })
+    await user.click(screen.getByRole('button', { name: 'Seleccionar vértice V2' }))
+    fireEvent.change(screen.getByRole('spinbutton', { name: /Ángulo interior en/ }), { target: { value: '110' } })
     await user.click(screen.getByRole('button', { name: 'Registrar retazo', exact: true }))
     await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce())
     const geometry = onSubmit.mock.calls[0][0].geometria
@@ -61,7 +61,7 @@ describe('TA-036: retazo con editor compartido', () => {
   test('reiniciar después de una figura válida invalida el payload anterior',async()=>{
     const {user,onSubmit}=await setup()
     await draw(user)
-    await user.click(screen.getByRole('button',{name:'Reiniciar dibujo'}))
+    await user.click(screen.getByRole('button',{name:'Reiniciar'}))
     await user.click(screen.getByRole('button',{name:'Registrar retazo',exact:true}))
     expect(onSubmit).not.toHaveBeenCalled()
     expect(screen.getByText('Cierra y dimensiona un polígono convexo válido en el editor.')).toBeVisible()
@@ -72,7 +72,7 @@ describe('TA-036: retazo con editor compartido', () => {
     render(<RegistrarRetazoForm catalogo={catalogo} mode="edit" onSubmit={onSubmit}
       initialValues={{codigo:'R-OLD',id_tipo_vidrio:1,espesor_mm:6,
         geometria:{type:'POLIGONO_CONVEXO',vertices_mm:[[0,0],[600,0],[800,400],[200,400]]}}} />)
-    expect(screen.getByText('Polígono cerrado')).toBeVisible()
+    expect(screen.getByRole('img', { name: 'Vista dimensional de la pieza' })).toHaveAttribute('data-closed', 'true')
     await user.click(screen.getByRole('button',{name:'Guardar cambios'}))
     await waitFor(()=>expect(onSubmit).toHaveBeenCalledOnce())
     const points=onSubmit.mock.calls[0][0].geometria.vertices_mm
