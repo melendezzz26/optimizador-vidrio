@@ -9,8 +9,6 @@ import { buildConstrainedGeometry } from "./constrainedGeometry";
 
 const DRAWING_WIDTH = 800;
 const DRAWING_HEIGHT = 500;
-const VERTEX_HIT_RADIUS = 30;
-const formatLength = (value) => new Intl.NumberFormat("es", { maximumSignificantDigits: 8 }).format(value);
 
 // Hook para adaptar el lienzo al tamaño de la columna izquierda
 function useCanvasSize() {
