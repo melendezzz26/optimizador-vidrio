@@ -104,6 +104,12 @@ Windows falló con código 101; la corrida final se realizó con los permisos lo
 necesarios. Los logs, JSON y capturas de verificación quedaron en el directorio
 temporal del sistema, sin regenerar la evidencia histórica del repositorio.
 
+En Windows también se observaron avisos `NO_COLOR`/`FORCE_COLOR` y
+`ConnectionResetError [WinError 10054]` del servidor local al cerrar conexiones.
+PowerShell los clasificó como `NativeCommandError` al redirigir stderr. Se
+verificó explícitamente `$LASTEXITCODE`: Playwright terminó con **código 0**,
+20/20 casos aprobados y `errors: []` en su informe JSON. No se silenciaron los avisos.
+
 Archivos entregados: [manifiesto final](S1-final-integration-files.txt).
 
 Commits funcionales: `94382d7` (seed), `e571939` (Orders), `3924f3c`
