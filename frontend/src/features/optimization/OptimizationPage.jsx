@@ -108,7 +108,8 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired, user, result
         <PlacementCanvas key={state.runId} snapshot={state.snapshot} placements={state.placements} />
       </>}
       {state.estado === 'SIN_SOLUCION' && <p role="status">No se encontró una distribución posible. Revisa las piezas que quedaron sin ubicar; no se puede confirmar este corte.</p>}
-      {state.estado && <p role="status">Estado del trabajo: {calculationState(state.estado)}</p>}
+      {state.estado && !(state.status === 'failed' && state.estado === 'EN_EJECUCION')
+        && <p role="status">Estado del trabajo: {calculationState(state.estado)}</p>}
       {state.confirmed && <p role="status">Corte ya confirmado.</p>}
       {['completed', 'no_solution'].includes(state.status) && !state.metrics_available && <p>El resumen del corte no está disponible.</p>}
       {state.metrics_available && state.metrics && <section aria-labelledby="result-title"><h2 id="result-title">Resultado del corte</h2>

@@ -105,6 +105,9 @@ test('accepted Location ID remains recoverable after a stream failure without re
   mount(fixtureOrders, adapter); await prepare(); click('Calcular distribución');
   expect(screen.getByText('Trabajo #301')).toBeVisible();
   expect(screen.getByRole('alert')).toHaveTextContent('Flujo interrumpido');
+  expect(screen.queryByText('Estado del trabajo: Procesando')).not.toBeInTheDocument();
+  expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+  expect(screen.getByRole('checkbox', { name: /#21/ })).toBeChecked();
   await act(async () => click('Recuperar resultado'));
   expect(adapter.loadResult).toHaveBeenCalledExactlyOnceWith(301, { resultUrl: null });
   expect(screen.getByText('4 / 4 piezas colocadas')).toBeVisible();
