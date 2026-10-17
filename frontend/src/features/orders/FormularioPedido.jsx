@@ -168,7 +168,7 @@ export default function FormularioPedido({
               groupsMap.set(key, {
                 id: `group-${nextGroupIdRef.current++}`,
                 tipo_vidrio_id: String(piece.id_tipo_vidrio),
-                espesor: String(piece.espesor_mm),
+                espesor: String(Number(piece.espesor_mm)),
                 piezas: []
               });
             }
@@ -325,7 +325,7 @@ export default function FormularioPedido({
   function isValid() {
     if ((creating && !selectedClient) || loadError || !materialGroups.length) return false;
 
-    const uniqueKeys = new Set(materialGroups.filter(g => g.tipo_vidrio_id && g.espesor).map(g => `${g.tipo_vidrio_id}-${g.espesor}`));
+    const uniqueKeys = new Set(materialGroups.filter(g => g.tipo_vidrio_id && g.espesor).map(g => `${g.tipo_vidrio_id}-${Number(g.espesor)}`));
     if (uniqueKeys.size !== materialGroups.filter(g => g.tipo_vidrio_id && g.espesor).length) return false;
 
     return materialGroups.every(groupComplete);

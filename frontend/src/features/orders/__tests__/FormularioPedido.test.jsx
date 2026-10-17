@@ -30,6 +30,21 @@ beforeEach(() => vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response(catal
 afterEach(() => vi.unstubAllGlobals());
 
 describe('FormularioPedido canónico', () => {
+  test('espesor persistido 6.0 coincide con opción de catálogo 6 y conserva 6 al guardar', async () => {
+    fetch.mockImplementation(async (url, options = {}) => {
+      if (String(url).includes('/tipos-vidrio')) return response(catalog);
+      if (options.method === 'PUT') return response({ id_pedido: 73 });
+      return response({ ...polygonOrder, piezas: [{ ...polygonOrder.piezas[0], espesor_mm: '6.0' }] });
+    });
+    render(<FormularioPedido token="test-token" idPedido={73} mode="edit" />);
+    fireEvent.click(await screen.findByRole('button', { name: /Templado · 6 mm.*2 piezas.*Completo/ }));
+    expect(screen.getByLabelText('Espesor del vidrio (mm)')).toHaveValue('6');
+    expect(screen.getByLabelText('Espesor del vidrio (mm)').selectedOptions[0]).toHaveTextContent('6 mm');
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar cambios' }));
+    await screen.findByText('Pedido actualizado correctamente.');
+    expect(JSON.parse(fetch.mock.calls.find(([, options]) => options.method === 'PUT')[1].body).piezas[0].espesor_mm).toBe(6);
+  });
+
   test('NuevoPedido queda como wrapper del modo crear', async () => {
     render(<NuevoPedido token="wrapper-token" />);
     expect(await screen.findByRole('heading', { name: 'Nuevo pedido' })).toBeVisible();
