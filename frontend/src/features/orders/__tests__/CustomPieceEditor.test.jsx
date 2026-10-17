@@ -336,7 +336,7 @@ describe('TA-036: vértices canónicos, escala y ángulos', () => {
     expect(after).not.toBe(preview)
     expect(canvas().querySelector('.custom-piece-editor__vertex-label')).toHaveTextContent('°')
     expect(button('Agregar pieza al pedido')).toBeEnabled()
-    expect(button('Agregar pieza al pedido')).toHaveAccessibleDescription('Agrega la pieza y guarda el pedido para registrarla.')
+    expect(button('Agregar pieza al pedido')).toHaveAccessibleDescription('✓ Geometría validada y lista. Agrega la pieza y guarda el pedido para registrarla.')
   })
 
   test.each(['0','-1'])('medida %s inválida bloquea guardar y anuncia error accesible', async (value) => {

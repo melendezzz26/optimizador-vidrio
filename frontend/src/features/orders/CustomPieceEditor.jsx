@@ -344,15 +344,15 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
                 <h3 id={validationId}>Validación geométrica</h3>
                 <div role={validationRejected ? "alert" : "status"} aria-atomic="true" aria-label="Resultado de validación geométrica">
                   {validationRejected ? (
-                    <p className="custom-piece-editor__geometry-error">{validation.message || "La figura dibujada tiene cruces o ángulos inválidos."}</p>
+                    <p id={`${validationId}-result`} className="custom-piece-editor__geometry-error">{validation.message || "La figura dibujada tiene cruces o ángulos inválidos."}</p>
                   ) : result?.status === "error" ? (
-                    <p className="custom-piece-editor__geometry-error">{dimensionalError(result)}</p>
+                    <p id={`${validationId}-result`} className="custom-piece-editor__geometry-error">{dimensionalError(result)}</p>
                   ) : validation.isValid && isClosed && dimensionsReady ? (
-                    <p className="custom-piece-editor__validation-message" data-valid="true">
+                    <p id={`${validationId}-result`} className="custom-piece-editor__validation-message" data-valid="true">
                       ✓ Geometría validada y lista.
                     </p>
                   ) : (
-                    <p className="custom-piece-editor__validation-message" style={{ color: 'var(--editor-muted)' }}>
+                    <p id={`${validationId}-result`} className="custom-piece-editor__validation-message" style={{ color: 'var(--editor-muted)' }}>
                       Pendiente de completar dimensiones.
                     </p>
                   )}
@@ -477,7 +477,7 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
                 {/* BOTÓN AL FINAL DE LA COLUMNA DE CONTROLES */}
                 {!onGeometryChange && (
                   <div style={{ marginTop: 'auto', paddingTop: '16px' }}>
-                    <button type="button" className="custom-piece-editor__button--add" aria-describedby={helpId} disabled={!canAdd} onClick={() => {
+                    <button type="button" className="custom-piece-editor__button--add" aria-describedby={`${validationId}-result ${helpId}`} disabled={!canAdd} onClick={() => {
                       if (onGuardarVertices) onGuardarVertices({
                         vertices: result.vertices_mm.map((point) => [...point]),
                         rawState: { drawing: { vertices: drawing.vertices, isClosed: drawing.isClosed }, segments, construction }
