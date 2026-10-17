@@ -56,7 +56,7 @@ def main():
 
         with engine.begin() as connection:
             connection.execute(sa.text(
-                "INSERT INTO roles(id_rol,nombre) VALUES (1,'Operario'), (2,'Almacenero')"
+                "INSERT INTO roles(id_rol,nombre) VALUES (1,'Operario'), (2,'Almacenero'), (3,'Administrador')"
             ))
             connection.execute(sa.text("""
                 INSERT INTO usuarios(dni,nombres,apellidos,usuario,password_hash,id_rol,fecha_creacion)
@@ -66,6 +66,10 @@ def main():
                 INSERT INTO usuarios(dni,nombres,apellidos,usuario,password_hash,id_rol,fecha_creacion)
                 VALUES ('70000002','Almacenero','Prueba','A70000002',:password,2,:now)
             """), {"password": hash_password("Inventory-test-2026!"), "now": datetime.now(timezone.utc)})
+            connection.execute(sa.text("""
+                INSERT INTO usuarios(dni,nombres,apellidos,usuario,password_hash,id_rol,fecha_creacion)
+                VALUES ('70000003','Administrador','Prueba','A70000003',:password,3,:now)
+            """), {"password": hash_password("Admin-test-2026!"), "now": datetime.now(timezone.utc)})
             connection.execute(sa.text("INSERT INTO tipos_vidrio(id_tipo_vidrio,nombre,estado) VALUES (7,'Material de prueba',true)"))
             connection.execute(sa.text("INSERT INTO tipos_vidrio_espesores VALUES (7,5.5),(7,6)"))
             connection.execute(sa.text("""

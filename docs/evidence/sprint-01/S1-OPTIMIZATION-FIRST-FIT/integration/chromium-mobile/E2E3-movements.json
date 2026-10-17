@@ -1,0 +1,26 @@
+[
+  {
+    "id_movimiento": 14,
+    "id_plancha": 716,
+    "id_retazo": null,
+    "tipo_evento": "CONSUMO_OPTIMIZACION",
+    "motivo": "Confirmación First Fit de optimización 13.",
+    "observacion": "stock_unit_index=1",
+    "id_usuario": 64,
+    "fecha": "2026-10-16T19:52:22.268930Z",
+    "id_optimizacion": 13,
+    "cantidad_afectada": 1
+  },
+  {
+    "id_movimiento": 15,
+    "id_plancha": 717,
+    "id_retazo": null,
+    "tipo_evento": "CONSUMO_OPTIMIZACION",
+    "motivo": "Confirmación First Fit de optimización 13.",
+    "observacion": "stock_unit_index=1",
+    "id_usuario": 64,
+    "fecha": "2026-10-16T19:52:22.269029Z",
+    "id_optimizacion": 13,
+    "cantidad_afectada": 1
+  }
+]

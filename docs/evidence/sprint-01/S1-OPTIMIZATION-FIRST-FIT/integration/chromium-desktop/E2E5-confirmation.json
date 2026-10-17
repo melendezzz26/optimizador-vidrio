@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "id_optimizacion": 5,
+  "confirmed": true,
+  "orders": [
+    {
+      "id_pedido": 14,
+      "estado": "CONFIRMADO"
+    }
+  ],
+  "materials_consumed": [
+    {
+      "material_source": "RETAZO",
+      "material_id": 5,
+      "stock_unit_index": 1
+    }
+  ],
+  "remnants_created": []
+}

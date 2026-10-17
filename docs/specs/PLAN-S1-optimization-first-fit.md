@@ -867,3 +867,29 @@ GET confirmed=true. No integración UI ni PR. CA20–25 y confirm de CA26 avanza
 CA28 backend HTTP cubierto, E2E visual conjunto pendiente. Reconciliación
 administrativa T12 y cierre T13 siguen fuera de este bloque. SPEC Reviewed /
 PLAN Approved; NO Verified.
+
+
+## Avance de integración conjunta — 16/10/2026
+
+Estado documental: **PLAN Approved / SPEC Reviewed**. No se promueve Verified.
+
+- Core `0e92572` incorporado y publicado en integration mediante `fe79530`, sin
+  conflictos. Alembic conserva una head `s1opt02b4c6d`, sobre RBAC `s1rbac01a2b3`.
+- Integration incorporada en UI mediante `dd35bc3`, preservando Quispe/RBAC/HU-015.
+- UI real: POST de corridas, stream NDJSON, GET durable y confirmación sin body.
+  Fixtures quedan para tests; Domain, Inventory y el algoritmo no cambian.
+- Evidencia sobre código `5fb7520`, prueba conjunta `daad72a` y feedback `c5baa8a`.
+  Backend completo 1976 passed; frontend 159 unit / 446 component; lint/build
+  correctos. E2E completo 85 passed / 1 omisión histórica HU-014 móvil.
+  Optimization real 20 passed; HU-015 real 6 passed. Revalidación posterior al
+  feedback de conflicto: 6 E2E pertinentes, todos verdes.
+- CA-28 tiene un caso único con dos pedidos, dos materiales, seis unidades y tres
+  unidades físicas, confirmado sobre PostgreSQL local con stock/estados coherentes.
+- No se reproduce el antiguo 422 de guardado Orders; no se modifica su funcionalidad
+  ni se integra su rama. No se crean migraciones ni se toca main.
+- T13 avanza en rama UI; **UI→integration y revisión humana siguen pendientes**.
+  No hay cierre documental final ni reconciliación administrativa nueva.
+- Se mantiene la falta de política independiente de área mínima residual. T1
+  entrega contornos/resolución FF; el raster real HU-015 conserva su flujo propio.
+
+Evidencia y comandos: [integration/README.md](../evidence/sprint-01/S1-OPTIMIZATION-FIRST-FIT/integration/README.md).

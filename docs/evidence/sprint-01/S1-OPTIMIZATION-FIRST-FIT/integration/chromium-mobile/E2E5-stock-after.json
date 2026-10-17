@@ -1,0 +1,31 @@
+{
+  "sheets": [
+    {
+      "id_plancha": 719,
+      "ancho_mm": "100.00",
+      "alto_mm": "50.00",
+      "espesor_mm": "6.0",
+      "cantidad": 1,
+      "estado": true,
+      "fecha_registro": "2026-10-16T19:52:23.191021Z",
+      "id_tipo_vidrio": 25
+    }
+  ],
+  "remnants": [
+    {
+      "id_retazo": 12,
+      "codigo": "E2E-5905f8cf55",
+      "espesor_mm": "6.0",
+      "geometria": {
+        "type": "RECTANGULO",
+        "width_mm": "100",
+        "height_mm": "50"
+      },
+      "area_mm2": "5000.00",
+      "estado": false,
+      "fecha_registro": "2026-10-16T19:52:23.191021Z",
+      "id_tipo_vidrio": 25,
+      "id_ejecucion_origen": null
+    }
+  ]
+}

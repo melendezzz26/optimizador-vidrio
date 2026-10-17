@@ -1,0 +1,6 @@
+{
+  "detail": {
+    "code": "STOCK_CONFLICT",
+    "message": "El stock utilizado cambió o ya no está disponible."
+  }
+}

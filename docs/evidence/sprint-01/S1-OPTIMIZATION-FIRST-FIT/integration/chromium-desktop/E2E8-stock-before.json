@@ -1,0 +1,15 @@
+{
+  "sheets": [
+    {
+      "id_plancha": 704,
+      "ancho_mm": "100.00",
+      "alto_mm": "50.00",
+      "espesor_mm": "6.0",
+      "cantidad": 1,
+      "estado": true,
+      "fecha_registro": "2026-10-16T19:53:29.258818Z",
+      "id_tipo_vidrio": 10
+    }
+  ],
+  "remnants": []
+}

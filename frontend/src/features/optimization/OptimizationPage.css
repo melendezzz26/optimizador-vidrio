@@ -1,4 +1,6 @@
 .optimization-columns { display: grid; grid-template-columns: minmax(230px, 1fr) minmax(0, 2fr); gap: var(--ng-space-6); }
+.first-fit-result-lookup { display: flex; flex-wrap: wrap; align-items: end; gap: var(--ng-space-3); margin-block: var(--ng-space-4); }
+.first-fit-result-lookup label { display: grid; gap: var(--ng-space-2); max-width: 100%; }
 .optimization-columns > section { min-width: 0; }
 .optimization-page h2 { font-size: 20px; margin: 0 0 var(--ng-space-4); }
 .optimization-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ng-space-2); margin: var(--ng-space-4) 0; }
@@ -39,3 +41,38 @@
 @media (max-width: 420px) { .optimization-preview__svg, .optimization-preview__canvas-viewport { height: 260px; } .optimization-preview__empty { min-height: 260px; } }
 @media (max-width: 1100px) { .optimization-columns { grid-template-columns: 1fr; } }
 @media (max-width: 600px) { .optimization-facts { grid-template-columns: 1fr; } }
+.first-fit-section { border-top: 1px solid var(--ng-border-subtle); margin-top: var(--ng-space-6); padding-top: var(--ng-space-6); }
+.first-fit-section-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--ng-space-3); }
+.first-fit-section-heading > span { font-size: 13px; color: var(--ng-text-600); }
+.first-fit-orders, .first-fit-groups { list-style: none; padding: 0; display: grid; gap: var(--ng-space-2); }
+.first-fit-orders label { display: flex; align-items: center; gap: var(--ng-space-3); padding: var(--ng-space-4); border: 1px solid var(--ng-border-subtle); border-radius: var(--ng-radius-control); cursor: pointer; transition: background 180ms; }
+.first-fit-orders label:has(input:checked) { background: var(--ng-action-tint); border-color: var(--ng-primary-action); }
+.first-fit-orders label > span:first-of-type { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.first-fit-orders small { display: block; color: var(--ng-text-600); }
+.first-fit-select-all { display: flex; gap: var(--ng-space-3); align-items: center; min-height: 44px; }
+.optimization-page input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--ng-primary-action); flex-shrink: 0; }
+.first-fit-badge { font-size: 12px; padding: 3px 10px; background: var(--ng-background); border-radius: 12px; }
+.first-fit-groups { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+.first-fit-groups li { display: grid; gap: var(--ng-space-2); padding: var(--ng-space-4); background: var(--ng-background); border-radius: var(--ng-radius-control); }
+.first-fit-stages { padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--ng-space-2); }
+.first-fit-stages li { border-left: 3px solid var(--ng-border-subtle); padding: var(--ng-space-2); font-size: 14px; }
+.first-fit-stages small { display: block; color: var(--ng-text-600); }
+.first-fit-stages [aria-current] { border-color: var(--ng-primary-action); background: var(--ng-action-tint); }
+.optimization-page progress { width: 100%; accent-color: var(--ng-primary-action); }
+.first-fit-canvas { margin: var(--ng-space-6) 0; }
+.first-fit-sheet { display: block; width: 100%; height: auto; max-height: 480px; background: var(--ng-background); border: 1px solid var(--ng-border-strong); }
+.first-fit-container { fill: var(--ng-surface); stroke: var(--ng-border-strong); stroke-width: 2; }
+.first-fit-piece { animation: first-fit-arrive 180ms ease-out; }
+.first-fit-piece rect, .first-fit-piece circle, .first-fit-piece polygon { stroke-width: 2; vector-effect: non-scaling-stroke; }
+.first-fit-piece--0 { fill: #dbeafe; stroke: #1d4ed8; }
+.first-fit-piece--1 { fill: #ccfbf1; stroke: #0f766e; }
+.first-fit-piece text { font-size: 60px; fill: #1f2937; stroke: none; }
+.first-fit-legend { display: flex; flex-wrap: wrap; gap: var(--ng-space-4); list-style: none; padding: 0; }
+.first-fit-swatch { display: inline-block; width: 14px; height: 14px; margin-right: 8px; }
+.first-fit-swatch--0 { background: #dbeafe; border: 2px solid #1d4ed8; }
+.first-fit-swatch--1 { background: #ccfbf1; border: 2px solid #0f766e; }
+.optimization-page summary { cursor: pointer; padding: var(--ng-space-3); }
+.optimization-page :focus-visible { outline: 3px solid var(--ng-primary-focus); outline-offset: 3px; }
+@keyframes first-fit-arrive { from { opacity: 0; } to { opacity: 1; } }
+@media (max-width: 600px) { .first-fit-stages { grid-template-columns: 1fr 1fr; } .first-fit-orders label { flex-wrap: wrap; } }
+@media (prefers-reduced-motion: reduce) { .first-fit-piece { animation: none; } .first-fit-orders label { transition: none; } }

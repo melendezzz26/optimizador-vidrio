@@ -1,0 +1,46 @@
+[WebServer] (node:71309) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:71324) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 24 tests using 2 workers
+
+(node:71350) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:71349) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   2 [chromium-desktop] › tests/e2e/hu015-rasterization.spec.js:207:1 › HU-015: CIRCUNFERENCIA se compara con la máscara real del backend (5.2s)
+  ✓   1 [chromium-desktop] › tests/e2e/hu015-rasterization.spec.js:55:1 › HU-015: flujo real de pieza cantidad 5, raster, recuperación, resolución y responsive (9.5s)
+  ✓   3 [chromium-desktop] › tests/e2e/hu015-rasterization.spec.js:235:1 › HU-015: POLIGONO_CONVEXO conserva vertices_mm negativos y columnas sobre 53 (5.8s)
+  ✓   4 [chromium-desktop] › tests/e2e/s1-optimization-ui.spec.js:15:1 › E2E1 N=1 real: progreso, placements, métricas, confirmación, stock y pedido (9.2s)
+  ✓   5 [chromium-desktop] › tests/e2e/s1-optimization-ui.spec.js:26:1 › E2E2 multipedido real: una corrida confirma todos (10.5s)
+  ✓   6 [chromium-desktop] › tests/e2e/s1-optimization-ui.spec.js:33:1 › E2E3 multimaterial real: layouts y métricas separados (10.2s)
+  ✓   7 [chromium-desktop] › tests/e2e/s1-optimization-ui.spec.js:44:1 › E2E4 plancha multiunidad real: 3 placements consumen 2 unidades (11.5s)
+  ✓   8 [chromium-desktop] › tests/e2e/s1-optimization-ui.spec.js:62:1 › E2E5 retazo primero real: dos piezas consumen un retazo una sola vez (9.7s)
+  ✓   9 [chromium-desktop] › tests/e2e/s1-optimization-ui.spec.js:69:1 › E2E6 SIN_SOLUCION real: diagnóstico, pedidos PENDIENTE y stock intacto (9.1s)
+  ✓  10 [chromium-desktop] › tests/e2e/s1-optimization-ui.spec.js:78:1 › E2E7 409 real: stock cambiado, feedback y ninguna confirmación parcial (10.3s)
+  ✓  11 [chromium-desktop] › tests/e2e/s1-optimization-ui.spec.js:96:1 › E2E8 RBAC real: sin view, view, execute y confirm independientes (12.7s)
+(node:72663) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  12 [chromium-desktop] › tests/e2e/s1-optimization-ui.spec.js:123:1 › E2E9 rotación real: contorno orientado se traduce una sola vez en 2D y 3D (6.6s)
+(node:72699) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  14 [chromium-mobile] › tests/e2e/hu015-rasterization.spec.js:207:1 › HU-015: CIRCUNFERENCIA se compara con la máscara real del backend (3.4s)
+  ✓  13 [chromium-mobile] › tests/e2e/hu015-rasterization.spec.js:55:1 › HU-015: flujo real de pieza cantidad 5, raster, recuperación, resolución y responsive (5.4s)
+  ✓  15 [chromium-mobile] › tests/e2e/hu015-rasterization.spec.js:235:1 › HU-015: POLIGONO_CONVEXO conserva vertices_mm negativos y columnas sobre 53 (3.2s)
+  ✓  16 [chromium-mobile] › tests/e2e/s1-optimization-ui.spec.js:15:1 › E2E1 N=1 real: progreso, placements, métricas, confirmación, stock y pedido (5.5s)
+  ✓  17 [chromium-mobile] › tests/e2e/s1-optimization-ui.spec.js:26:1 › E2E2 multipedido real: una corrida confirma todos (5.5s)
+  ✓  18 [chromium-mobile] › tests/e2e/s1-optimization-ui.spec.js:33:1 › E2E3 multimaterial real: layouts y métricas separados (5.2s)
+  ✓  19 [chromium-mobile] › tests/e2e/s1-optimization-ui.spec.js:44:1 › E2E4 plancha multiunidad real: 3 placements consumen 2 unidades (5.7s)
+  ✓  20 [chromium-mobile] › tests/e2e/s1-optimization-ui.spec.js:62:1 › E2E5 retazo primero real: dos piezas consumen un retazo una sola vez (5.3s)
+  ✓  21 [chromium-mobile] › tests/e2e/s1-optimization-ui.spec.js:69:1 › E2E6 SIN_SOLUCION real: diagnóstico, pedidos PENDIENTE y stock intacto (4.6s)
+  ✓  22 [chromium-mobile] › tests/e2e/s1-optimization-ui.spec.js:78:1 › E2E7 409 real: stock cambiado, feedback y ninguna confirmación parcial (4.9s)
+  ✓  24 [chromium-mobile] › tests/e2e/s1-optimization-ui.spec.js:123:1 › E2E9 rotación real: contorno orientado se traduce una sola vez en 2D y 3D (4.7s)
+  ✓  23 [chromium-mobile] › tests/e2e/s1-optimization-ui.spec.js:96:1 › E2E8 RBAC real: sin view, view, execute y confirm independientes (8.1s)
+
+  24 passed (1.7m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

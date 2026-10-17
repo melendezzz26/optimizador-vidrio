@@ -8,6 +8,7 @@ vi.mock('../../features/authentication', () => ({
   useSession: () => ({ session: { token: 'synthetic', usuario: { rol: 'Administrador' } }, isChecking: false }),
   canManageOrders: () => true,
   canExecuteOptimization: () => true,
+  canViewResults: () => true,
   canViewAdministration: () => false,
   canViewInventory: () => false,
   canViewDashboard: () => true,

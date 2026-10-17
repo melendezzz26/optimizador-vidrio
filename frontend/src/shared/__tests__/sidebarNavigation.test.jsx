@@ -60,9 +60,12 @@ test.each(['Administrador', 'Operario'])('%s navega a Optimization por teclado s
   window.history.replaceState({}, '', '/');
 });
 
-test('Almacenero entra a Inicio y conserva Inventory sin exponer Optimization', () => {
+test('optimization.view permite consultar Optimization sin permiso de ejecución', async () => {
   state.role = 'Almacenero'; render(<App />);
-  expect(screen.queryByRole('button', { name: 'Optimización' })).not.toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Optimización' })).toBeVisible();
   expect(screen.getByRole('heading', { name: 'Inicio' })).toBeVisible();
   expect(screen.getByRole('button', { name: 'Gestión de inventario', exact: true })).toBeVisible();
+  await userEvent.setup().click(screen.getByRole('button', { name: 'Optimización' }));
+  expect(screen.getByRole('heading', { name: 'Optimización' })).toBeVisible();
+  expect(screen.queryByRole('button', { name: 'Preparar optimización' })).not.toBeInTheDocument();
 });
