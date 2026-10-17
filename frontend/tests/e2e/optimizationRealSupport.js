@@ -27,7 +27,7 @@ export async function loginApi(request, credentials) {
   expect(response.status()).toBe(200);
   return { Authorization: `Bearer ${(await response.json()).access_token}` };
 }
-export async function setup(page, scenario) {
+export async function setup(page, scenario, { createOrders = true } = {}) {
   const data = JSON.parse(execFileSync('python', ['-m', 'tests.optimization_e2e_data', scenario], { cwd: backend, encoding: 'utf8' }));
   const headers = await loginApi(page.request, data.actors.all);
   const rectangle = (material, cantidad = 1, width_mm = 50, height_mm = 50) => ({
@@ -38,7 +38,7 @@ export async function setup(page, scenario) {
     : scenario === 'combined' ? [rectangle(data.materials[0], 2), rectangle(data.materials[1])]
     : scenario === 'multimaterial' ? data.materials.map(m => rectangle(m))
       : [rectangle(data.materials[0], scenario === 'multiunit' ? 3 : ['remnant', 'incomplete'].includes(scenario) ? 2 : 1)];
-  for (let i = 0; i < (['multiple', 'combined'].includes(scenario) ? 2 : 1); i++) {
+  for (let i = 0; i < (createOrders ? (['multiple', 'combined'].includes(scenario) ? 2 : 1) : 0); i++) {
     const response = await page.request.post(`${api}/api/orders`, { headers, data: { id_cliente: 41, piezas: pieces } });
     expect(response.status()).toBe(201);
     orders.push((await response.json()).id_pedido);

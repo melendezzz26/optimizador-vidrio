@@ -66,15 +66,15 @@ def seed(scenario):
                 vigente=True, id_usuario_creacion=user.id_usuario, fecha_creacion=now))
         types, sheets, remnants = [], [], []
         for i in range(2 if scenario in ('multimaterial', 'combined') else 1):
-            glass = TipoVidrio(nombre=f'E2E-{scenario}-{suffix}-{i}', estado=True)
+            glass = TipoVidrio(nombre=f'Bronce comercial {suffix}' if scenario == 'commercial' else f'E2E-{scenario}-{suffix}-{i}', estado=True)
             db.add(glass); db.flush()
             thickness = 6 if i == 0 else 4
             db.add(TipoVidrioEspesor(id_tipo_vidrio=glass.id_tipo_vidrio, espesor_mm=thickness))
             db.flush()
             types.append({'id_tipo_vidrio': glass.id_tipo_vidrio, 'espesor_mm': thickness})
-            width, height = (40, 70) if scenario == 'rotated' else (50, 50) if scenario == 'incomplete' else (100, 50)
+            width, height = (2140, 3300) if scenario == 'commercial' else (40, 70) if scenario == 'rotated' else (50, 50) if scenario == 'incomplete' else (100, 50)
             sheet = Plancha(ancho_mm=width, alto_mm=height, espesor_mm=thickness,
-                cantidad=4 if scenario == 'multiunit' else 2 if scenario == 'combined' and i == 0 else 1, estado=True,
+                cantidad=10 if scenario == 'commercial' else 4 if scenario == 'multiunit' else 2 if scenario == 'combined' and i == 0 else 1, estado=True,
                 fecha_registro=now, id_tipo_vidrio=glass.id_tipo_vidrio)
             db.add(sheet); db.flush()
             sheets.append(sheet.id_plancha)
@@ -88,5 +88,5 @@ def seed(scenario):
 
 
 if __name__ == '__main__':
-    assert sys.argv[1] in {'single', 'multiple', 'multimaterial', 'multiunit', 'remnant', 'incomplete', 'conflict', 'rbac', 'rotated', 'combined'}
+    assert sys.argv[1] in {'single', 'multiple', 'multimaterial', 'multiunit', 'remnant', 'incomplete', 'conflict', 'rbac', 'rotated', 'combined', 'commercial'}
     print(json.dumps(seed(sys.argv[1])))
