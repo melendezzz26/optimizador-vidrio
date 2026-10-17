@@ -22,7 +22,9 @@ function App() {
   
  const { session, isChecking, notice, signIn, signOut, refresh } = useSession();
   const [view, setView] = useState('dashboard');
+  const [originRunId, setOriginRunId] = useState(null);
   const handleSignOut = useCallback(message => {
+    setOriginRunId(null);
     setView('dashboard');
     signOut(message);
   }, [signOut]);
@@ -63,9 +65,9 @@ function App() {
   } else if (currentView === 'users') {
     page = <UsersPage currentUser={session.usuario} onSessionExpired={handleSignOut} toolbar={toolbar} onPermissionsChanged={refresh} />;
   } else if (currentView === 'optimization') {
-    page = <OptimizationPage user={session.usuario} token={session.token || session.access_token} onSessionExpired={handleSignOut} toolbar={toolbar} />;
+    page = <OptimizationPage initialRunId={originRunId} user={session.usuario} token={session.token || session.access_token} onSessionExpired={handleSignOut} toolbar={toolbar} />;
   } else if (currentView === 'inventory') {
-    page = <InventoryPage onSessionExpired={handleSignOut} toolbar={toolbar} user={session.usuario} />;
+    page = <InventoryPage onOpenCut={id => { setOriginRunId(id); setView('optimization'); }} onSessionExpired={handleSignOut} toolbar={toolbar} user={session.usuario} />;
   } else page = <GestionPedidos
     token={session.token || session.access_token}
     user={session.usuario}

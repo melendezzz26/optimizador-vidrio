@@ -70,3 +70,4 @@ export const writeoffRetazo = (idRetazo, payload) => request(`/retazos/${idRetaz
   body: payload,
 });
 export const getRetazoMovements = (idRetazo) => request(`/retazos/${idRetazo}/movimientos`);
+export const getRetazoOrigin = (idRetazo, options) => request(`/retazos/${encodeURIComponent(idRetazo)}/origen`, options);

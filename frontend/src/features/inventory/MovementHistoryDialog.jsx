@@ -1,5 +1,6 @@
 import { EmptyState, FeedbackMessage, LoadingState } from '../../shared/components/feedback';
 import { InventoryDialog } from './InventoryDialog';
+import { RemnantOrigin } from './RemnantOrigin';
 
 const EVENT_LABELS = {
   BAJA_ROTURA: 'Baja por rotura',
@@ -19,7 +20,7 @@ function formatDateTime(value) {
 }
 
 export function MovementHistoryDialog({
-  resource, kind, movements, isLoading, error, onRetry, onClose,
+  resource, kind, movements, isLoading, error, onRetry, onClose, glassName, onOpenCut, canViewCut,
 }) {
   const resourceId = kind === 'plancha' ? resource.id_plancha : resource.id_retazo;
   const description = kind === 'plancha'
@@ -29,6 +30,7 @@ export function MovementHistoryDialog({
   return (
     <InventoryDialog title={`Historial de movimientos · ${description}`} onClose={onClose}>
       <div className="inventory-dialog__body inventory-history">
+        {kind === 'retazo' && <RemnantOrigin key={resource.id_retazo} resource={resource} glassName={glassName} onOpenCut={onOpenCut} canViewCut={canViewCut} />}
         {isLoading && <LoadingState>Cargando historial de movimientos...</LoadingState>}
         {error && (
           <>
