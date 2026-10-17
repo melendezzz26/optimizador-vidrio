@@ -1,5 +1,7 @@
 # Optimization UI — integración RBAC y contrato T1
 
+> **Registro histórico.** Este documento conserva decisiones, cifras y límites de su entrega original. El estado vigente y los resultados integrados están en el [índice canónico](../README.md). Los logs supersedidos se consolidaron y las capturas enlazadas a integración son equivalentes de cobertura de una corrida posterior, no imágenes de este hito. Los originales se pueden recuperar desde `cbfa6ad` con el índice SHA256 de consolidación.
+
 Fecha: 16/10/2026 (Lima). Rama única de escritura: feature/S1-optimization-ui.
 Responsabilidad conservada: interfaz de Quispe. No se implementa backend ni se
 integra UI hacia integration. No PR, rebase ni force-push.
@@ -102,8 +104,10 @@ resolución, presupuesto raster, recuperación, teclado y responsive.
 | Playwright Optimization UI | 8 passed, escritorio/móvil, 0 skips |
 | Playwright HU-015 real | 6 passed, escritorio/móvil, 0 skips |
 
-Logs junto a esta evidencia. Las capturas en screenshots/ son generadas por esos
-E2E y no sustituyen las aserciones. No se sobrescriben las capturas históricas.
+Los conteos de esta entrega permanecen arriba y en el índice histórico. Los logs
+intermedios y las capturas repetidas se consolidaron en la evidencia real posterior;
+el índice SHA256 permite recuperar los originales desde `cbfa6ad`. Los reportes
+finales y sus límites están en el [índice canónico](../README.md).
 Warnings observados: NO_COLOR/FORCE_COLOR en Playwright; informaciones de rendimiento
 jsdom y actualización npm. Ninguno representa un fallo de producto.
 
@@ -111,7 +115,8 @@ Primeros intentos detectaron conflicto todavía sin resolver, mocks antiguos sin
 canViewResults, expectativa anterior de navegación por execute y un mock de lectura
 consumido al abrir primero la página FF. Se corrigieron fixtures/navegación y se
 restauró un modo inicial HU-015 testeable; no se borraron assertions para ocultar
-fallos. Los logs finales reemplazan esos intentos para describir el estado actual.
+fallos. Los resultados de esa entrega reemplazaron esos intentos; el estado actual se
+describe en el cierre integrado enlazado desde el índice canónico.
 
 ## Reproducción
 

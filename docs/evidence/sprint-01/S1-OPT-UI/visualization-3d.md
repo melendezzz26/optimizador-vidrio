@@ -1,5 +1,7 @@
 # Ampliación 3D — evidencia técnica
 
+> **Registro histórico.** Este documento conserva decisiones, cifras y límites de su entrega original. El estado vigente y los resultados integrados están en el [índice canónico](README.md). Los logs supersedidos se consolidaron y las capturas enlazadas a integración son equivalentes de cobertura de una corrida posterior, no imágenes de este hito. Los originales se pueden recuperar desde `cbfa6ad` con el índice SHA256 de consolidación.
+
 Registro de la entrega f538eeb. El refinamiento posterior de grupos, planchas base e inspección raster está en [groups-raster.md](groups-raster.md); se conservan aquí las pruebas y decisiones de esta entrega histórica.
 
 Fecha: 2026-10-15. Alcance exclusivo frontend y fixtures.
@@ -32,11 +34,11 @@ Node portátil 24.15.0, npm 11.9.0. Desde frontend, Node en PATH:
 
 | Comando | Resultado | Evidencia |
 |---|---|---|
-| npm run test:unit | 141 PASS, 0 fallos | [salida](3d-unit.txt) |
-| npm run test:component | Suite completa: 351 PASS, 32 archivos | [salida](3d-component.txt) |
-| npm run lint | exit 0 | [salida](3d-lint.txt) |
-| npm run build | exit 0, JS 416.01 kB / gzip 125.74 kB | [salida](3d-build.txt) |
-| npx playwright test --config playwright.optimization.config.js | 6 PASS, 34.4 s, desktop/mobile | [salida](3d-e2e.txt) |
+| npm run test:unit | 141 PASS, 0 fallos | [salida](../S1-OPTIMIZATION-FIRST-FIT/integration/final/README.md) |
+| npm run test:component | Suite completa: 351 PASS, 32 archivos | [salida](../S1-OPTIMIZATION-FIRST-FIT/integration/final/README.md) |
+| npm run lint | exit 0 | [salida](../S1-OPTIMIZATION-FIRST-FIT/integration/final/README.md) |
+| npm run build | exit 0, JS 416.01 kB / gzip 125.74 kB | [salida](../S1-OPTIMIZATION-FIRST-FIT/integration/final/README.md) |
+| npx playwright test --config playwright.optimization.config.js | 6 PASS, 34.4 s, desktop/mobile | [salida](../S1-OPTIMIZATION-FIRST-FIT/integration/final/README.md) |
 
 E2E con `$env:OPTIMIZATION_E2E_PORT='5187'`; la configuración permite puerto alternativo conservando 5186 por defecto. Se preserva el servidor/navegador de revisión manual en 5186. No se automatizó esa sesión manual. Advertencia NO_COLOR/FORCE_COLOR en E2E sin fallo (exit 0); PowerShell puede rotular stderr como NativeCommandError.
 
@@ -46,7 +48,7 @@ Capturas auténticas revisadas visualmente, con identificación de piezas y cota
 
 | Contenedor | Desktop | Mobile |
 |---|---|---|
-| Plancha | [3D](desktop-3d.png) | [3D](mobile-3d.png) |
+| Plancha | [3D](../S1-OPTIMIZATION-FIRST-FIT/integration/chromium-desktop/E2E4-3d-unit2.png) | [3D](../S1-OPTIMIZATION-FIRST-FIT/integration/chromium-mobile/E2E4-3d-unit2.png) |
 | Retazo/círculo | [3D](desktop-3d-retazo.png) | [3D](mobile-3d-retazo.png) |
 
 Las capturas de progreso, resultado, raster, modal y lista viva se actualizaron al incorporar el selector. Los logs históricos mantienen sus resultados originales. No se ejecutaron backend, PostgreSQL, migraciones ni E2E general que depende de ellos; no se valida integración real ni persistencia. Cobertura HU-015 real y comandos reproducibles permanecen documentados en [compatibility.md](compatibility.md).

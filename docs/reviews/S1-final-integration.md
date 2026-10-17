@@ -9,7 +9,7 @@ Destino previsto para revisión humana: `integration/sprint-01`. Sin push ni PR.
 - `86ed943` registra esa eliminación pendiente sin alterar el editor.
 - `ac13d9e` integra `origin/feature/S1-optimization-ui` mediante merge `--no-ff`, sin conflictos. Padres: `86ed943` y `70a6c36`.
 - Se conserva la autoría e historia de UI y Orders. No se realizó rebase, reset ni force push.
-- Los 350 archivos de evidencia incorporados por el merge se conservan; no se limpió ni regeneró la evidencia histórica.
+- Al terminar la integración funcional se conservaron los 350 archivos de evidencia incorporados por el merge. El saneamiento documental posterior se registra en la [auditoría de consolidación](S1-evidence-consolidation.md), con procedencia por SHA256 y equivalentes vigentes.
 
 ## Correcciones funcionales
 
@@ -43,6 +43,8 @@ No se cambió el contrato del payload ni el backend productivo. No se modificó 
 - Alembic: única head **`s1opt02b4c6d`**. Sin archivos de migración modificados.
 - `git diff --check`: OK, sin errores de whitespace.
 
+Las salidas finales se conservan en el [índice de resultados reproducibles](../evidence/sprint-01/S1-OPTIMIZATION-FIRST-FIT/integration/final/README.md). La consolidación documental no repite estas pruebas ni cambia su alcance.
+
 El baseline completo de backend aportado antes de esta sesión es **1976 passed, 1 warning**. No se presenta como una nueva ejecución. Los únicos archivos backend incorporados aquí son utilidades E2E del merge (`tests/e2e_server.py` y `tests/optimization_e2e_data.py`). La nueva verificación focalizada cubre unit/API/integration de Optimization.
 
 Entorno: Windows, Node/npm existentes, Chrome instalado, Python 3.11.9 del `backend/venv`, PostgreSQL temporal propiedad de las pruebas. El launcher Python de Microsoft Store requiere ejecución fuera del sandbox. Se usó `npm.cmd` por la política local de PowerShell, sin cambiar dicha política. No se reutilizaron servicios compartidos ni bases de datos de desarrollo.
@@ -53,7 +55,7 @@ La aplicación usa `createBackendRunAdapter`, los endpoints reales `/api/optimiz
 
 ## Archivos y revisión
 
-El manifiesto `S1-final-integration-files.txt` enumera los cambios desde `e24d39a`, incluida la documentación heredada del merge. Los commits de saneamiento están separados por corrección y cobertura. Los artefactos de ejecución no se incluyen en el repositorio.
+El manifiesto `S1-final-integration-files.txt` enumera los archivos existentes del diff final contra `origin/integration/sprint-01` (`fe79530`), incluida la documentación consolidada. El punto de partida funcional de la sesión fue `e24d39a`; las bajas de evidencia se auditan por separado. Los commits de saneamiento están separados por corrección y cobertura. Los artefactos de ejecución no se incluyen en el repositorio.
 
 Archivos saneados después del merge (rutas relativas a la raíz):
 

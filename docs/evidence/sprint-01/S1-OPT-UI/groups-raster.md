@@ -1,5 +1,7 @@
 # Grupos, preparación raster e inspección — entrega frontend
 
+> **Registro histórico.** Este documento conserva decisiones, cifras y límites de su entrega original. El estado vigente y los resultados integrados están en el [índice canónico](README.md). Los logs supersedidos se consolidaron y las capturas enlazadas a integración son equivalentes de cobertura de una corrida posterior, no imágenes de este hito. Los originales se pueden recuperar desde `cbfa6ad` con el índice SHA256 de consolidación.
+
 2026-10-15, America/Bogota. Rama feature/S1-optimization-ui.
 
 | Frente | Estado |
@@ -56,11 +58,11 @@ Node portátil 24.15.0/npm 11.9.0, sin cambios de dependencias. Desde frontend, 
 
 | Comando | Resultado | Log |
 |---|---|---|
-| npm run test:unit | 147 PASS, 0 fallos/skips | [unit](groups-unit.txt) |
-| npm run test:component | Suite completa: 357 PASS, 33 archivos | [component](groups-component.txt) |
-| npm run lint | exit 0 | [lint](groups-lint.txt) |
-| npm run build | exit 0; JS 426.13 kB, gzip 128.55 kB | [build](groups-build.txt) |
-| npx playwright test --config playwright.optimization.config.js | 8 PASS, desktop/mobile | [E2E](groups-e2e.txt) |
+| npm run test:unit | 147 PASS, 0 fallos/skips | [unit](../S1-OPTIMIZATION-FIRST-FIT/integration/final/README.md) |
+| npm run test:component | Suite completa: 357 PASS, 33 archivos | [component](../S1-OPTIMIZATION-FIRST-FIT/integration/final/README.md) |
+| npm run lint | exit 0 | [lint](../S1-OPTIMIZATION-FIRST-FIT/integration/final/README.md) |
+| npm run build | exit 0; JS 426.13 kB, gzip 128.55 kB | [build](../S1-OPTIMIZATION-FIRST-FIT/integration/final/README.md) |
+| npx playwright test --config playwright.optimization.config.js | 8 PASS, desktop/mobile | [E2E](../S1-OPTIMIZATION-FIRST-FIT/integration/final/README.md) |
 
 E2E con `$env:OPTIMIZATION_E2E_PORT='5187'`, solo Vite/Chrome y HTTP simulado, preservando puerto 5186 de revisión manual. Sin backend, PostgreSQL ni migraciones. NO_COLOR/FORCE_COLOR produce advertencia conocida, no fallo. PowerShell rotula stderr como NativeCommandError; el exit real del proceso fue 0.
 
@@ -72,10 +74,10 @@ No ejecutado: suites backend/BD, E2E general con PostgreSQL, integración real n
 
 | Escenario | Desktop | Mobile |
 |---|---|---|
-| Grupos y preparación | [grupos](desktop-groups.png) | [grupos](mobile-groups.png) |
+| Grupos y preparación | [grupos](../S1-OPTIMIZATION-FIRST-FIT/integration/chromium-desktop/E2E3-material-10.png) | [grupos](../S1-OPTIMIZATION-FIRST-FIT/integration/chromium-mobile/E2E3-material-22.png) |
 | Raster previo ampliado | [preparación](desktop-raster-preparation.png) | [preparación](mobile-raster-preparation.png) |
 | Resultado raster por grupo | [raster](desktop-raster-result.png) | [raster](mobile-raster-result.png) |
-| Plancha Bronce en 3D | [Bronce](desktop-3d-bronce.png) | [Bronce](mobile-3d-bronce.png) |
+| Plancha Bronce en 3D | [Bronce](../S1-OPTIMIZATION-FIRST-FIT/integration/chromium-desktop/E2E4-3d-unit2.png) | [Bronce](../S1-OPTIMIZATION-FIRST-FIT/integration/chromium-mobile/E2E4-3d-unit2.png) |
 
 Inspección visual de grupos desktop y resultado raster móvil: controles legibles, scroll contenido y modos distribuidos sin overflow de página. El raster ampliado recorta dentro del panel de forma intencional y permite desplazarse. Las capturas compartidas se actualizaron; los logs históricos y capturas 3d-retazo siguen documentando las entregas anteriores.
 

@@ -1,5 +1,7 @@
 # Compatibilidad de eventos y regresión HU-015
 
+> **Registro histórico.** Este documento conserva decisiones, cifras y límites de su entrega original. El estado vigente y los resultados integrados están en el [índice canónico](README.md). Los logs supersedidos se consolidaron y las capturas enlazadas a integración son equivalentes de cobertura de una corrida posterior, no imágenes de este hito. Los originales se pueden recuperar desde `cbfa6ad` con el índice SHA256 de consolidación.
+
 ## Refinamiento vigente de grupos y raster previo
 
 Se conserva el contrato público de ocho eventos y stage_changed opcional. El timeline tiene ahora ocho hitos (incluye evaluación simulada de rotaciones y finalización), más fallo explícito. La regresión public-only sigue pasando sin eventos internos; no prueba un cálculo real de rotaciones.
@@ -54,16 +56,16 @@ NEWGLASS_REQUIRE_POSTGRES=1 evita confundir ausencia de PostgreSQL con PASS por 
 
 ## Validación del ajuste
 
-Se registran los resultados nuevos en compatibility-*.txt; los logs del cierre anterior se conservan como antecedentes.
+Los resultados de este ajuste quedan resumidos abajo y en el índice histórico. Las salidas crudas intermedias fueron supersedidas por el cierre final; se recuperan por Git y SHA256.
 
 Ejecución nueva con Node 24.15.0/npm 11.9.0 portátil, desde frontend:
 
 | Comando | Resultado | Log |
 |---|---|---|
-| npm run test:unit | 132 PASS, 0 fallos/skips | [unit](compatibility-unit.txt) |
-| npm run test:component -- src/features/optimization | 46 PASS en 3 archivos | [component](compatibility-component.txt) |
-| npm run lint | exit 0, sin advertencias | [lint](compatibility-lint.txt) |
-| npm run build | exit 0 | [build](compatibility-build.txt) |
-| npx playwright test --config playwright.optimization.config.js | 4 PASS, 23.9 s, desktop/mobile | [E2E fixture](compatibility-e2e.txt) |
+| npm run test:unit | 132 PASS, 0 fallos/skips | [unit](../S1-OPTIMIZATION-FIRST-FIT/integration/final/README.md) |
+| npm run test:component -- src/features/optimization | 46 PASS en 3 archivos | [component](../S1-OPTIMIZATION-FIRST-FIT/integration/final/README.md) |
+| npm run lint | exit 0, sin advertencias | [lint](../S1-OPTIMIZATION-FIRST-FIT/integration/final/README.md) |
+| npm run build | exit 0 | [build](../S1-OPTIMIZATION-FIRST-FIT/integration/final/README.md) |
+| npx playwright test --config playwright.optimization.config.js | 4 PASS, 23.9 s, desktop/mobile | [E2E fixture](../S1-OPTIMIZATION-FIRST-FIT/integration/final/README.md) |
 
 El log E2E conserva la advertencia NO_COLOR/FORCE_COLOR de Node emitida por stderr; el proceso terminó con exit 0. Las capturas regeneradas sin cambio funcional de UI se descartaron para conservar las del cierre inicial. No se reejecutó la suite completa de componentes ajenos a Optimization ni la suite API/PostgreSQL; no se transfieren los resultados anteriores a esta ejecución. Diff check y búsqueda de marcadores verificados antes del commit local.

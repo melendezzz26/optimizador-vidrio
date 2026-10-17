@@ -1,5 +1,7 @@
 # Sincronización UI con RBAC
 
+> **Registro histórico.** Este documento conserva decisiones, cifras y límites de su entrega original. El estado vigente y los resultados integrados están en el [índice canónico](../README.md). Los logs supersedidos se consolidaron y las capturas enlazadas a integración son equivalentes de cobertura de una corrida posterior, no imágenes de este hito. Los originales se pueden recuperar desde `cbfa6ad` con el índice SHA256 de consolidación.
+
 UI inicial: e42829d8b695d97434542205871703106ca646f9.
 Base incorporada mediante merge normal: c4c5e5c (PR #50 RBAC).
 No hay commits posteriores al merge RBAC en la base observada.
@@ -13,8 +15,8 @@ mocks de la antigua página de rasterización dentro de pruebas del nuevo flujo 
 la cobertura HU-015 se revisa por separado en la adaptación contractual siguiente.
 
 Antes del commit de sincronización: unit 147 passed, component 379 passed (35 files),
-lint/build exit 0. Logs adjuntos. Primer intento de component durante la resolución
-vio marcadores de conflicto; la ejecución final aislada completa es rbac-component.txt.
+lint/build exit 0. Conteos conservados en el resumen histórico de UI. Primer intento de component durante la resolución
+vio marcadores de conflicto; los conteos finales de esa entrega se conservan en el resumen histórico RBAC del índice canónico.
 No se oculta un fallo funcional ni se eliminan pruebas para lograr el resultado.
 
 El diff entrante de RBAC contiene whitespace previo en backend/app/models.py,
