@@ -2,20 +2,22 @@ import { expect } from '@playwright/test';
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
+import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { parseRun, readNdjson } from '../../src/features/optimization/runContract.js';
 
 const backend = fileURLToPath(new URL('../../../backend/', import.meta.url));
-const evidence = fileURLToPath(new URL('../../../docs/evidence/sprint-01/S1-OPTIMIZATION-FIRST-FIT/integration/', import.meta.url));
+// Historical evidence is exported only when explicitly requested.
+const evidence = process.env.NEWGLASS_OPTIMIZATION_EVIDENCE_DIR;
 export const api = 'http://127.0.0.1:8017';
 const prefix = info => info.title.split(' ')[0].replace(/[^A-Za-z0-9_-]/g, '');
 export const save = (info, name, value) => {
-  const directory = path.join(evidence, info.project.name);
+  const directory = evidence ? path.join(evidence, info.project.name) : info.outputPath();
   mkdirSync(directory, { recursive: true });
   writeFileSync(path.join(directory, `${prefix(info)}-${name}`), typeof value === 'string' ? value : JSON.stringify(value, null, 2) + '\n');
 };
 export async function capture(page, info, name, target = page) {
-  const directory = path.join(evidence, info.project.name);
+  const directory = evidence ? path.join(evidence, info.project.name) : info.outputPath();
   mkdirSync(directory, { recursive: true });
   await target.screenshot({ path: path.join(directory, `${prefix(info)}-${name}.png`), animations: 'disabled' });
 }

@@ -23,6 +23,9 @@ test('E2E1 N=1 real: progreso, placements, métricas, confirmación, stock y ped
   const repeated = await page.request.post(`${api}/api/optimization/runs/${result.id_optimizacion}/confirm`, { headers: data.headers });
   expect(repeated.status()).toBe(409); expect(await stock(page, data)).toEqual(after);
   await page.getByRole('button', { name: 'Registro de pedidos', exact: true }).click();
+  // The list prioritizes pending orders; a confirmed order may be on another page.
+  await page.getByLabel('Estado', { exact: true }).selectOption('CONFIRMADO');
+  await page.getByRole('button', { name: 'Aplicar filtros', exact: true }).click();
   const orderRow = page.getByRole('row', { name: new RegExp(`^#${data.orders[0]}\\b`) });
   await expect(orderRow).toContainText('Confirmado');
   await capture(page, info, 'orders-confirmed', orderRow);
