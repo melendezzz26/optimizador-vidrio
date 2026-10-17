@@ -3,6 +3,9 @@
 Fecha: 2026-10-16 (America/Lima). Rama: `chore/S1-final-integration`.
 Complementa el [cierre funcional previo](S1-final-integration.md). Sin push ni PR.
 
+El [hardening comercial posterior](S1-commercial-cut-hardening.md) registra la
+corrección P0 del límite raster y la validación más reciente del corte completo.
+
 ## Configuración inicial reproducible
 
 El seed optativo utiliza los valores de `backend/tests/optimization_e2e_data.py`

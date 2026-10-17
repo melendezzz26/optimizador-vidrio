@@ -3,22 +3,49 @@ Rama: chore/S1-final-integration
 Base de comparación: origin/integration/sprint-01 (fe79530ffcd01241fed298a312571a29930c35c8)
 Punto anterior a consolidación documental: cbfa6ad
 Merge UI: ac13d9e (segundo padre: 70a6c36)
-Fecha: 2026-10-16 America/Lima
+Fecha: 2026-10-17 America/Lima
 
-179 archivos existentes en el diff final contra la base indicada.
-Incluye código integrado, documentación consolidada y hardening final (S1-final-hardening.md).
+211 archivos existentes en el diff final contra la base indicada.
+Incluye código integrado, documentación consolidada, seed y cierre P0 (S1-commercial-cut-hardening.md).
 Las bajas de evidencia se registran por separado en S1-evidence-consolidation-index.json.
+
 
 README.md
 backend/README.md
+backend/app/modules/inventory/application/ports.py
+backend/app/modules/inventory/application/service.py
+backend/app/modules/inventory/infrastructure/repository.py
+backend/app/modules/inventory/presentation/router.py
+backend/app/modules/optimization/application/dto.py
+backend/app/modules/optimization/application/resource_policy.py
+backend/app/modules/optimization/application/runs.py
+backend/app/modules/optimization/domain/first_fit.py
+backend/app/modules/optimization/domain/metrics.py
+backend/app/modules/optimization/domain/placement.py
+backend/app/modules/optimization/domain/raster_mask.py
+backend/app/modules/optimization/domain/rotation.py
 backend/app/modules/optimization/infrastructure/configuration_seed.py
+backend/app/modules/optimization/infrastructure/run_uow.py
+backend/app/modules/optimization/presentation/run_schemas.py
+backend/app/modules/optimization/presentation/run_serialization.py
 backend/app/modules/orders/infrastructure/repositories.py
+backend/scripts/benchmark_commercial_cutting.py
 backend/seed.py
+backend/tests/api/optimization/fixtures/s1_contract_v1.json
+backend/tests/api/optimization/test_commercial_cut.py
 backend/tests/e2e_server.py
 backend/tests/integration/optimization/test_configuration_seed.py
 backend/tests/optimization_e2e_data.py
+backend/tests/unit/optimization/test_commercial_raster.py
 docs/README.md
 docs/evidence/README.md
+docs/evidence/sprint-01/S1-COMMERCIAL-CUT/README.md
+docs/evidence/sprint-01/S1-COMMERCIAL-CUT/benchmark.json
+docs/evidence/sprint-01/S1-COMMERCIAL-CUT/chromium-desktop-2d.png
+docs/evidence/sprint-01/S1-COMMERCIAL-CUT/chromium-desktop-3d.png
+docs/evidence/sprint-01/S1-COMMERCIAL-CUT/chromium-desktop-remnant.png
+docs/evidence/sprint-01/S1-COMMERCIAL-CUT/chromium-mobile-remnant.png
+docs/evidence/sprint-01/S1-COMMERCIAL-CUT/scenario.json
 docs/evidence/sprint-01/S1-OPT-UI/README.md
 docs/evidence/sprint-01/S1-OPT-UI/compatibility.md
 docs/evidence/sprint-01/S1-OPT-UI/contract-v1/README.md
@@ -108,6 +135,7 @@ docs/evidence/sprint-01/S1-OPTIMIZATION-FIRST-FIT/integration/scenarios/E2E6.jso
 docs/evidence/sprint-01/S1-OPTIMIZATION-FIRST-FIT/integration/scenarios/E2E7.json
 docs/evidence/sprint-01/S1-OPTIMIZATION-FIRST-FIT/integration/scenarios/E2E8.json
 docs/evidence/sprint-01/S1-OPTIMIZATION-FIRST-FIT/integration/scenarios/E2E9.json
+docs/reviews/S1-commercial-cut-hardening.md
 docs/reviews/S1-evidence-consolidation-index.json
 docs/reviews/S1-evidence-consolidation.md
 docs/reviews/S1-final-hardening.md
@@ -122,7 +150,12 @@ docs/specs/TASKS-S1-OPT-UI.md
 frontend/playwright.hu015.config.js
 frontend/playwright.optimization.config.js
 frontend/src/App.jsx
+frontend/src/features/inventory/InventoryPage.jsx
+frontend/src/features/inventory/MovementHistoryDialog.jsx
+frontend/src/features/inventory/RemnantOrigin.jsx
 frontend/src/features/inventory/__tests__/RegistrarRetazoGeometry.test.jsx
+frontend/src/features/inventory/__tests__/RemnantOrigin.test.jsx
+frontend/src/features/inventory/inventoryApi.js
 frontend/src/features/optimization/GeometryPreview.jsx
 frontend/src/features/optimization/Hu015Rasterization.jsx
 frontend/src/features/optimization/InspectionViewport.css

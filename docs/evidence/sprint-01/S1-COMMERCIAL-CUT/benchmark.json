@@ -1,0 +1,139 @@
+{
+  "command": "python -m scripts.benchmark_commercial_cutting",
+  "method": "Time: perf_counter without tracing. Python heap: tracemalloc peak over 3 identical repeated calculations; retained bytes after GC. Windows process: GetProcessMemoryInfo peak working set, including interpreter and imports. Each calculation includes First Fit and metrics. No database.",
+  "script_sha256": "3e292e525859da470d03106f797aabd8c18ff925245bb4f4e86dbbc9ec45225f",
+  "cases": [
+    {
+      "width": 2140,
+      "height": 3300,
+      "resolution_mm": 1,
+      "cells": 7062000,
+      "mask_bytes": 1056040,
+      "mask_ms": 12.054,
+      "calculation_ms": 51.933,
+      "peak_python_bytes": 3266356,
+      "retained_python_bytes_after_3_runs": 984,
+      "peak_process_bytes": 32931840,
+      "placed": 8,
+      "positions": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "600",
+          "0",
+          "0"
+        ],
+        [
+          "1200",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "800",
+          "0"
+        ],
+        [
+          "600",
+          "800",
+          "0"
+        ],
+        [
+          "1200",
+          "800",
+          "0"
+        ],
+        [
+          "0",
+          "1600",
+          "0"
+        ],
+        [
+          "600",
+          "1600",
+          "0"
+        ]
+      ],
+      "residuals": [
+        {
+          "x": "0",
+          "y": "2400",
+          "width": "2140",
+          "height": "900"
+        }
+      ],
+      "utilization_pct": "54.376",
+      "waste_mm2": "1296000",
+      "recovered_mm2": "1926000"
+    },
+    {
+      "width": 4000,
+      "height": 4000,
+      "resolution_mm": 1,
+      "cells": 16000000,
+      "mask_bytes": 2272040,
+      "mask_ms": 14.865,
+      "calculation_ms": 76.374,
+      "peak_python_bytes": 6843444,
+      "retained_python_bytes_after_3_runs": 896,
+      "peak_process_bytes": 39325696,
+      "placed": 8,
+      "positions": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "600",
+          "0",
+          "0"
+        ],
+        [
+          "1200",
+          "0",
+          "0"
+        ],
+        [
+          "1800",
+          "0",
+          "0"
+        ],
+        [
+          "2400",
+          "0",
+          "0"
+        ],
+        [
+          "3000",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "800",
+          "0"
+        ],
+        [
+          "600",
+          "800",
+          "0"
+        ]
+      ],
+      "residuals": [
+        {
+          "x": "0",
+          "y": "1600",
+          "width": "4000",
+          "height": "2400"
+        }
+      ],
+      "utilization_pct": "24.000",
+      "waste_mm2": "2560000",
+      "recovered_mm2": "9600000"
+    }
+  ]
+}
