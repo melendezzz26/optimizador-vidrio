@@ -43,7 +43,7 @@ async function addPiece(shape = 'RECTANGULO', material = '7', thickness = '5.5')
     const groups = [...document.querySelectorAll('.orders-material-group')];
     group = groups.find(node => within(node).getByLabelText('Tipo de vidrio').value === '');
     if (!group) {
-      fireEvent.click(screen.getByRole('button', { name: 'Agregar otro material' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Agregar otro vidrio' }));
       group = [...document.querySelectorAll('.orders-material-group')].at(-1);
     }
     fireEvent.change(within(group).getByLabelText('Tipo de vidrio'), { target: { value: material } });
@@ -107,11 +107,14 @@ describe('HU-012 T03 con HU-006 multimaterial y HU-007 real', () => {
     await setup();
     await addPiece();
     await addPiece('CIRCUNFERENCIA', material, thickness);
+    const first = document.querySelector('.orders-group-toggle');
+    expect(first).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.setup().click(first);
     expect(screen.getByText('Pieza 1')).toBeVisible();
     expect(screen.getByText('Pieza 2')).toBeVisible();
     expect(saveButton()).toBeEnabled();
     expect(posts()).toHaveLength(0);
-    fireEvent.click(screen.getAllByRole('button', { name: 'Eliminar material' })[1]);
+    fireEvent.click(screen.getAllByRole('button', { name: 'Eliminar vidrio' })[1]);
     expect(saveButton()).toBeEnabled();
   });
 
@@ -196,7 +199,7 @@ describe('HU-012 T03 con HU-006 multimaterial y HU-007 real', () => {
   test('no guarda sin cliente, permite cambiarlo conservando las piezas', async () => {
     await setup(false);
     expect(screen.queryByText('Pieza 1')).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Agregar otro material' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Agregar otro vidrio' })).not.toBeInTheDocument();
     expect(saveButton()).toBeDisabled();
     fireEvent.click(saveButton());
     expect(posts()).toHaveLength(0);

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useEffectEvent, useId, useRef, useState } from 'react';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
-import { Loader2, PackagePlus, Plus, Save, Trash2, X } from 'lucide-react';
+import { ChevronDown, Loader2, PackagePlus, Plus, Save, Trash2, X } from 'lucide-react';
 import { AppShell } from '../../shared/components/AppShell';
 import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
 import { ConfirmDialog, EmptyState, FeedbackMessage, FieldError, LoadingState } from '../../shared/components/feedback';
@@ -54,6 +54,15 @@ function positiveNumber(value) {
   return value !== '' && Number.isFinite(Number(value)) && Number(value) > 0;
 }
 
+function groupComplete(group) {
+  return !!group.tipo_vidrio_id && positiveNumber(group.espesor) && group.piezas.length > 0 && group.piezas.every(piece => {
+    if (!Number.isInteger(Number(piece.cantidad)) || Number(piece.cantidad) <= 0) return false;
+    if (piece.tipo_forma === 'RECTANGULO') return positiveNumber(piece.dimensiones.width_mm) && positiveNumber(piece.dimensiones.height_mm);
+    if (piece.tipo_forma === 'CIRCUNFERENCIA') return positiveNumber(piece.dimensiones.radius_mm);
+    return validateConvexPolygon(piece.dimensiones.vertices).isValid;
+  });
+}
+
 function buildPayload(materialGroups) {
   const piezas = [];
   materialGroups.forEach((group) => {
@@ -92,6 +101,7 @@ export default function FormularioPedido({
   const [estadoPedido, setEstadoPedido] = useState('PENDIENTE');
 
   const [materialGroups, setMaterialGroups] = useState([]);
+  const [collapsedGroups, setCollapsedGroups] = useState([]);
   const initialSnapshotRef = useRef(null);
 
   const [touched, setTouched] = useState({});
@@ -172,6 +182,7 @@ export default function FormularioPedido({
           });
 
           setMaterialGroups(groups);
+          setCollapsedGroups(groups.filter(groupComplete).map(group => group.id));
           initialSnapshotRef.current = JSON.parse(JSON.stringify(groups));
         } else {
           initializeCreateForm();
@@ -204,6 +215,7 @@ export default function FormularioPedido({
   };
 
   const addMaterialGroup = () => {
+    setCollapsedGroups(current => [...new Set([...current, ...materialGroups.filter(groupComplete).map(group => group.id)])]);
     setMaterialGroups(curr => recalculatePieceNames([...curr, {
       id: `group-${nextGroupIdRef.current++}`, tipo_vidrio_id: '', espesor: '', piezas: [createEmptyPiece()]
     }]));
@@ -277,7 +289,7 @@ export default function FormularioPedido({
     let error = '';
 
     if (touched[`${identifier}:${field}`]) {
-       if (field === 'material' && !value) error = 'Selecciona un material.';
+       if (field === 'material' && !value) error = 'Selecciona un vidrio.';
        else if (field === 'espesor' && !positiveNumber(value)) error = 'Selecciona un espesor válido.';
        else if (field === 'cantidad' && (!Number.isInteger(Number(value)) || Number(value) <= 0)) error = 'Ingresa una cantidad entera mayor que 0.';
        else if (field === 'width_mm' && !positiveNumber(value)) error = 'Ingresa un ancho mayor que 0.';
@@ -316,15 +328,7 @@ export default function FormularioPedido({
     const uniqueKeys = new Set(materialGroups.filter(g => g.tipo_vidrio_id && g.espesor).map(g => `${g.tipo_vidrio_id}-${g.espesor}`));
     if (uniqueKeys.size !== materialGroups.filter(g => g.tipo_vidrio_id && g.espesor).length) return false;
 
-    return materialGroups.every(group => {
-      if (!group.tipo_vidrio_id || !positiveNumber(group.espesor) || !group.piezas.length) return false;
-      return group.piezas.every((piece) => {
-        if (!Number.isInteger(Number(piece.cantidad)) || Number(piece.cantidad) <= 0) return false;
-        if (piece.tipo_forma === 'RECTANGULO') return positiveNumber(piece.dimensiones.width_mm) && positiveNumber(piece.dimensiones.height_mm);
-        if (piece.tipo_forma === 'CIRCUNFERENCIA') return positiveNumber(piece.dimensiones.radius_mm);
-        return validateConvexPolygon(piece.dimensiones.vertices).isValid;
-      });
-    });
+    return materialGroups.every(groupComplete);
   }
 
   async function saveOrder() {
@@ -358,13 +362,13 @@ export default function FormularioPedido({
 
   const content = (
     <>
-      {standalone && <PageHeader context={editing ? 'Gestión de pedidos' : 'Registro de pedido'} title={editing ? `Pedido #${idPedido}` : 'Nuevo pedido'} description={editing ? 'Revisa o actualiza las piezas del pedido.' : 'Configura el material, espesor y medidas de cada pieza requerida.'} titleId={titleId} icon={PackagePlus} />}
+      {standalone && <PageHeader context={editing ? 'Gestión de pedidos' : 'Registro de pedido'} title={editing ? `Pedido #${idPedido}` : 'Nuevo pedido'} description={editing ? 'Revisa o actualiza las piezas del pedido.' : 'Selecciona el cliente y agrupa sus piezas por vidrio y espesor.'} titleId={titleId} icon={PackagePlus} />}
       <PageCard as="section" aria-labelledby={standalone ? titleId : undefined}>
         {isLoading && <LoadingState>{editing ? 'Cargando pedido…' : 'Cargando materiales…'}</LoadingState>}
         {errorGlobal && <FeedbackMessage variant="error" title="No se pudo completar la operación">{errorGlobal}</FeedbackMessage>}
         {loadError && creating && <button type="button" className="ng-button" onClick={() => setCatalogAttempt((attempt) => attempt + 1)}>Reintentar catálogo</button>}
         {successMessage && <FeedbackMessage variant="success">{successMessage}</FeedbackMessage>}
-        {readOnly && <FeedbackMessage variant="warning" title="Pedido en modo lectura">El estado {estadoPedido} no permite modificar sus piezas.</FeedbackMessage>}
+        {readOnly && <FeedbackMessage variant="warning" title="Pedido en modo lectura">El pedido ya está en preparación o fue procesado y no permite modificar sus piezas.</FeedbackMessage>}
 
         {!isLoading && (!loadError || creating) && <>
           {creating && <OrderClientSelector key={clientFormKey} value={selectedClient} onChange={setSelectedClient} disabled={isSubmitting} token={token} />}
@@ -372,7 +376,7 @@ export default function FormularioPedido({
           <section className="orders-section">
             <div className="orders-section__header">
               <div>
-                <h2>Materiales y piezas</h2>
+                <h2>Vidrios y piezas</h2>
                 <p className="orders-section__description">
                   {readOnly ? 'Detalle de las piezas solicitadas.' : 'Agrupa las piezas por tipo de vidrio y espesor.'}
                 </p>
@@ -387,8 +391,8 @@ export default function FormularioPedido({
                 />
               ) : !materialGroups.length ? (
                 <EmptyState
-                  title="No hay materiales agregados"
-                  description="Haz clic en «Agregar otro material» para comenzar."
+                  title="No hay vidrios agregados"
+                  description="Haz clic en «Agregar otro vidrio» para comenzar."
                 />
               ) : (
                 materialGroups.map((group) => {
@@ -400,8 +404,22 @@ export default function FormularioPedido({
                   // Si falta material o el formulario está bloqueado, se deshabilita todo.
                   const disablePieceEditing = disableEditing || isMaterialMissing;
 
+                  const collapsed = collapsedGroups.includes(group.id);
+                  const glass = tiposDisponibles.find(type => String(type.id_tipo_vidrio) === String(group.tipo_vidrio_id));
+                  const total = group.piezas.reduce((sum, piece) => sum + (positiveNumber(piece.cantidad) ? Number(piece.cantidad) : 0), 0);
+                  const summaryId = `${formId}-${group.id}-summary`;
+                  const bodyId = `${formId}-${group.id}-body`;
                   return (
-                    <div className="orders-material-group" key={group.id}>
+                    <section className="orders-material-group" key={group.id} aria-labelledby={summaryId}>
+                      <h3 className="orders-material-group__title"><button id={summaryId} type="button" className="orders-group-toggle"
+                        aria-expanded={!collapsed} aria-controls={bodyId}
+                        onClick={() => setCollapsedGroups(current => collapsed ? current.filter(id => id !== group.id) : [...current, group.id])}>
+                        <span>{glass?.nombre ?? 'Seleccionar vidrio'}{group.espesor ? ` · ${group.espesor} mm` : ''}</span>
+                        <span>{total} {total === 1 ? 'pieza' : 'piezas'}</span>
+                        <span className="orders-group-status">{groupComplete(group) ? 'Completo' : 'Por completar'}</span>
+                        <ChevronDown size={18} aria-hidden="true" />
+                      </button></h3>
+                      <div id={bodyId} hidden={collapsed}>
                       <div className="orders-material-group__header">
                         <div className="orders-material-group__fields">
                           <div className="orders-field" style={{ width: '180px' }}>
@@ -437,7 +455,7 @@ export default function FormularioPedido({
                         </div>
                         {!readOnly && materialGroups.length > 1 && (
                           <button type="button" className="ng-button ng-button--danger" onClick={() => removeMaterialGroup(group.id)} disabled={disableEditing}>
-                            <Trash2 size={16} /> Eliminar material
+                            <Trash2 size={16} /> Eliminar vidrio
                           </button>
                         )}
                       </div>
@@ -505,7 +523,7 @@ export default function FormularioPedido({
                                         <span className="orders-polygon-status__complete">✓ Figura configurada</span>
                                       ) : isMaterialMissing ? (
                                         <span className="orders-polygon-status__pending" style={{ color: 'var(--editor-error)' }}>
-                                          Falta material
+                                          Falta seleccionar vidrio y espesor
                                         </span>
                                       ) : (
                                         <span className="orders-polygon-status__pending">Falta configurar</span>
@@ -543,7 +561,8 @@ export default function FormularioPedido({
                           </div>
                         )}
                       </div>
-                    </div>
+                      </div>
+                    </section>
                   );
                 })
               )}
@@ -552,21 +571,21 @@ export default function FormularioPedido({
             {!readOnly && !(creating && !selectedClient) && (
               <div className="orders-add-material-wrap">
                 <button type="button" className="ng-button" onClick={addMaterialGroup} disabled={isSubmitting}>
-                  <Plus size={18} /> Agregar otro material
+                  <Plus size={18} /> Agregar otro vidrio
                 </button>
               </div>
             )}
           </section>
 
           {creating && !selectedClient && <p id={`${formId}-client-help`}>Selecciona un cliente para guardar el pedido.</p>}
-          <ActionBar>
+          <footer className="orders-form-footer"><ActionBar>
             {onCerrar && <button type="button" className="ng-button" onClick={() => setIsCancelDialogOpen(true)} disabled={isSubmitting}><X size={18} /> Cancelar</button>}
             {standalone && creating && <button type="button" className="ng-button" onClick={() => setIsCancelDialogOpen(true)} disabled={isSubmitting}><X size={18} /> Cancelar</button>}
             {!readOnly && <button type="button" className="ng-button ng-button--primary" onClick={saveOrder} aria-describedby={creating && !selectedClient ? `${formId}-client-help` : undefined} disabled={!isValid() || isSubmitting}>
               {isSubmitting ? <Loader2 size={18} className="ng-loading-icon" /> : <Save size={18} />}
               {isSubmitting ? 'Guardando…' : editing ? 'Guardar cambios' : 'Guardar pedido'}
             </button>}
-          </ActionBar>
+          </ActionBar></footer>
         </>}
       </PageCard>
 

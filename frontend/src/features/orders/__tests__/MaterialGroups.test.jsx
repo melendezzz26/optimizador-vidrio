@@ -72,7 +72,14 @@ test('distintas formas y cantidades comparten material; un segundo grupo persist
   change(within(circle).getByLabelText('Radio (mm)'), 25);
   change(within(circle).getByLabelText('Cantidad'), 3);
   expect(screen.getAllByLabelText('Tipo de vidrio')).toHaveLength(1);
-  fireEvent.click(screen.getByRole('button', { name: 'Agregar otro material' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Agregar otro vidrio' }));
+  const previous = within(groups()[0]).getByRole('button', { name: /Templado · 5.5 mm.*5 piezas.*Completo/ });
+  expect(previous).toHaveAttribute('aria-expanded', 'false');
+  expect(within(groups()[0]).getByLabelText('Radio (mm)')).not.toBeVisible();
+  fireEvent.click(previous);
+  expect(previous).toHaveAttribute('aria-expanded', 'true');
+  expect(within(groups()[0]).getByLabelText('Radio (mm)')).toHaveValue(25);
+  fireEvent.click(previous);
   expect(within(groups()[1]).getByLabelText('Cantidad')).toBeDisabled();
   expect(save()).toBeDisabled();
   material(groups()[1], 8, 4);
@@ -110,14 +117,14 @@ test('cambiar material limpia espesor y bloquea todas las piezas sin perder sus 
 test('impide repetir una combinación y libera su espesor al eliminar el grupo', async () => {
   await setup();
   material(groups()[0]);
-  fireEvent.click(screen.getByRole('button', { name: 'Agregar otro material' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Agregar otro vidrio' }));
   change(within(groups()[1]).getByLabelText('Tipo de vidrio'), 7);
   const thickness = within(groups()[1]).getByLabelText('Espesor del vidrio (mm)');
   expect(within(thickness).getByRole('option', { name: '5.5 mm (En uso)' })).toBeDisabled();
   change(thickness, 6);
-  fireEvent.click(screen.getByRole('button', { name: 'Agregar otro material' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Agregar otro vidrio' }));
   expect(within(groups()[2]).getByRole('option', { name: 'Templado (En uso)' })).toBeDisabled();
-  fireEvent.click(within(groups()[0]).getByRole('button', { name: 'Eliminar material' }));
+  fireEvent.click(within(groups()[0]).getByRole('button', { name: 'Eliminar vidrio' }));
   expect(within(groups()[1]).getByRole('option', { name: 'Templado' })).toBeEnabled();
   change(within(groups()[1]).getByLabelText('Tipo de vidrio'), 7);
   expect(within(groups()[1]).getByRole('option', { name: '5.5 mm' })).toBeEnabled();
@@ -156,7 +163,8 @@ test('un pedido optimizado permite inspeccionar el polígono sin editarlo', asyn
   }));
   const user = userEvent.setup();
   render(<FormularioPedido token="groups-token" idPedido={91} mode="view" />);
-  await user.click(await screen.findByRole('button', { name: 'Ver figura' }));
+  await user.click(await screen.findByRole('button', { name: /Templado · 5.5 mm.*1 pieza.*Completo/ }));
+  await user.click(screen.getByRole('button', { name: 'Ver figura' }));
   const dialog = screen.getByRole('dialog', { name: 'Dibujar Polígono Convexo' });
   expect(within(dialog).getByLabelText('Longitud del segmento S1 en milímetros')).toBeDisabled();
   expect(within(dialog).getByRole('button', { name: 'Agregar pieza al pedido' })).toBeDisabled();

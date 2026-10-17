@@ -40,7 +40,7 @@ async function setup() {
 function initialPiece() { return pieceRow(1) }
 
 async function addMaterial(user) {
-  await user.click(screen.getByRole('button', { name: 'Agregar otro material' }))
+  await user.click(screen.getByRole('button', { name: 'Agregar otro vidrio' }))
   return pieceRow(orderPieces().length)
 }
 

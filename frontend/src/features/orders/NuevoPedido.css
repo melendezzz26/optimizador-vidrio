@@ -20,7 +20,7 @@
 .orders-materials {
   display: flex;
   flex-direction: column;
-  gap: var(--ng-space-8);
+  gap: var(--ng-space-3);
 }
 
 .orders-material-group {
@@ -59,9 +59,7 @@
   gap: var(--ng-space-4);
   min-width: 0;
   padding: var(--ng-space-4);
-  border: 1px solid var(--ng-border-subtle);
-  border-radius: var(--ng-radius-control);
-  background: var(--ng-surface);
+  border-bottom: 1px solid var(--ng-border-subtle);
 }
 
 .orders-piece__header,
@@ -79,7 +77,7 @@
   height: 32px;
   flex: none;
   place-items: center;
-  border-radius: var(--ng-radius-control);
+  border-radius: 50%;
   background: var(--ng-action-tint);
   color: var(--ng-primary-focus);
   font-size: 14px;
@@ -208,4 +206,28 @@
   .orders-control.ng-control.orders-control--shape,
   .orders-control.ng-control.orders-control--quantity,
   .orders-control.ng-control.orders-control--dimension { width: 100%; }
+}
+
+.orders-material-group__title { margin: 0; font-size: 15px; }
+.orders-group-toggle {
+  display: flex; align-items: center; gap: var(--ng-space-3); width: 100%;
+  padding: var(--ng-space-4) var(--ng-space-2); border: 0;
+  border-bottom: 1px solid var(--ng-border-subtle); background: transparent;
+  color: var(--ng-text-900); text-align: left; font: inherit; cursor: pointer;
+}
+.orders-group-toggle > span:first-child { flex: 1; font-weight: 600; }
+.orders-group-toggle > span:nth-child(2), .orders-group-status { color: var(--ng-text-600); font-size: 13px; }
+.orders-group-toggle[aria-expanded="true"] > svg { transform: rotate(180deg); }
+.orders-group-toggle:focus-visible { outline: 3px solid var(--ng-primary-focus); outline-offset: 2px; }
+.orders-material-group__header { padding-top: var(--ng-space-4); border-bottom-width: 1px; }
+.orders-modal__content .orders-form-footer {
+  position: sticky; bottom: 0; z-index: 2;
+  background: var(--ng-surface); border-top: 1px solid var(--ng-border-subtle);
+  padding: var(--ng-space-3) 0;
+}
+.orders-form-footer .ng-action-bar { margin-top: 0; padding-top: 0; border-top: 0; }
+@media (max-width: 600px) {
+  .orders-group-toggle { flex-wrap: wrap; }
+  .orders-group-toggle > span:first-child { flex-basis: 65%; }
+  .orders-material-group__fields, .orders-material-group__fields .orders-field { width: 100% !important; }
 }

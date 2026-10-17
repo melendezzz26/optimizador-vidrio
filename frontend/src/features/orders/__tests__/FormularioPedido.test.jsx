@@ -75,7 +75,8 @@ describe('FormularioPedido canónico', () => {
     });
 
     render(<FormularioPedido token="edit-token" idPedido={73} mode="edit" />);
-    expect(await screen.findByText('✓ Figura configurada')).toBeVisible();
+    await user.click(await screen.findByRole('button', { name: /Templado · 5.5 mm.*2 piezas.*Completo/ }));
+    expect(screen.getByText('✓ Figura configurada')).toBeVisible();
     const row = screen.getByText('Pieza 1', { selector: 'strong' }).closest('.orders-piece');
     expect(within(row.closest('.orders-material-group')).getByLabelText('Tipo de vidrio')).toHaveValue('7');
     expect(within(row.closest('.orders-material-group')).getByLabelText('Espesor del vidrio (mm)')).toHaveValue('5.5');
