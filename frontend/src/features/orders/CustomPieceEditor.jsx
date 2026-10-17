@@ -40,19 +40,19 @@ function SegmentField({ segment, active, onSelect, onChange, inputRef }) {
   return (
     <li className="custom-piece-editor__segment-row" data-active={active} onFocus={onSelect}>
       <button type="button" className="custom-piece-editor__segment-selector" aria-pressed={active}
-        onClick={() => { onSelect(); localRef.current?.focus(); }}>
+        aria-label={`Seleccionar segmento ${segment.id}`} onClick={() => { onSelect(); localRef.current?.focus(); }}>
         {segment.id}
       </button>
       <div className="custom-piece-editor__field">
-        <label className="custom-piece-editor__sr-only" htmlFor={id}>{segment.id}</label>
+        <label className="custom-piece-editor__sr-only" htmlFor={id}>{`Longitud del segmento ${segment.id} en milímetros`}</label>
         <div className="custom-piece-editor__input-wrapper">
           <input ref={(node) => { localRef.current = node; if (inputRef) inputRef.current = node; }} id={id}
             className="custom-piece-editor__input" type="number" inputMode="decimal" step="any" required
             value={segment.lengthMm} onChange={updateValue} onBlur={() => setTouched(true)}
-            aria-invalid={Boolean(invalid)} placeholder="Longitud" />
+            aria-invalid={Boolean(invalid)} aria-describedby={invalid ? `${id}-error` : undefined} placeholder="Longitud" />
           <span className="custom-piece-editor__input-unit">mm</span>
         </div>
-        {invalid && <p className="custom-piece-editor__field-error">{segment.lengthMm === "" && !segment.badInput ? "Completa esta medida." : "Número > 0"}</p>}
+        {invalid && <p id={`${id}-error`} className="custom-piece-editor__field-error">{segment.lengthMm === "" && !segment.badInput ? "Completa esta medida." : "Número > 0"}</p>}
       </div>
     </li>
   );
@@ -142,6 +142,8 @@ function dimensionalError(result) {
 export default function CustomPieceEditor({ onGuardarVertices, initialState, headerReady = true, disabled = false, title="Pieza personalizada", addLabel="Agregar pieza al pedido", helpText="Agrega la pieza y guarda el pedido para registrarla.", onGeometryChange }) {
   const headingId = useId();
   const validationId = useId();
+  const configurationId = useId();
+  const helpId = useId();
   const firstInputRef = useRef(null);
   const angleInputRef = useRef(null);
   const closedWithKeyboard = useRef(false);
@@ -180,6 +182,11 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
   const measuredCount = segments.filter((segment) => !segment.badInput && isPositiveLength(segment.lengthMm)).length;
   const dimensionsReady = result?.status === "complete";
   const canAdd = isClosed && dimensionsReady && validation.reason === "VALID" && Boolean(result?.vertices_mm) && headerReady && !disabled;
+
+  // Inventory consumes live geometry, including invalidation of a previous result.
+  useEffect(() => {
+    onGeometryChange?.(canAdd ? result.vertices_mm.map(point => [...point]) : null);
+  }, [canAdd, result, onGeometryChange]);
 
   const angles = useMemo(() => { try { return result?.vertices_mm ? interiorAngles(result.vertices_mm) : []; } catch { return []; } }, [result]);
   const fixedVertices = useMemo(() => construction.constraints.map((item) => item.vertex), [construction.constraints]);
@@ -278,7 +285,7 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
 
           {/* --- COLUMNA IZQUIERDA: LIENZO Y VALIDACIÓN --- */}
           <div className="custom-piece-editor__canvas-pane">
-            <div className="custom-piece-editor__toolbar">
+            <div className="custom-piece-editor__toolbar" role="group" aria-label="Herramientas de dibujo">
               {!isClosed ? (
                 <button type="button" className="custom-piece-editor__button custom-piece-editor__button--primary" disabled={vertices.length < 3} onClick={closePolygon}>
                   <Check size={16} /> Cerrar polígono
@@ -301,6 +308,7 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
                 {!isClosed ? "Boceto libre" : isProvisional ? "Vista Dimensional (Calculando...)" : "Vista Dimensional Exacta"}
               </span>
               <svg className="custom-piece-editor__canvas" viewBox={`0 0 ${isClosed ? canvasSize.width : DRAWING_WIDTH} ${isClosed ? canvasSize.height : DRAWING_HEIGHT}`}
+                role="img" aria-label={isClosed ? "Vista dimensional de la pieza" : "Lienzo del dibujo original"}
                 data-closed={isClosed} onClick={addVertex}>
                 <g className="custom-piece-editor__drawing" aria-hidden="true">
                   {isClosed ? (
@@ -334,11 +342,11 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
             {isClosed && (
               <div className="custom-piece-editor__validation-box">
                 <h3 id={validationId}>Validación geométrica</h3>
-                <div role={validationRejected ? "alert" : "status"} aria-atomic="true">
-                  {result?.status === "error" ? (
-                    <p className="custom-piece-editor__geometry-error">{dimensionalError(result)}</p>
-                  ) : validationRejected ? (
+                <div role={validationRejected ? "alert" : "status"} aria-atomic="true" aria-label="Resultado de validación geométrica">
+                  {validationRejected ? (
                     <p className="custom-piece-editor__geometry-error">{validation.message || "La figura dibujada tiene cruces o ángulos inválidos."}</p>
+                  ) : result?.status === "error" ? (
+                    <p className="custom-piece-editor__geometry-error">{dimensionalError(result)}</p>
                   ) : validation.isValid && isClosed && dimensionsReady ? (
                     <p className="custom-piece-editor__validation-message" data-valid="true">
                       ✓ Geometría validada y lista.
@@ -383,8 +391,8 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
                   )}
 
                   <div className="custom-piece-editor__configuration">
-                    <label style={{ fontSize: '13px', fontWeight: '600', color: 'var(--editor-navy)' }}>Comportamiento de la figura</label>
-                    <select value={construction.mode} disabled={construction.constraints.length > 0} onChange={e => setConstruction(c => ({...c, mode: e.target.value}))}>
+                    <label htmlFor={configurationId} style={{ fontSize: '13px', fontWeight: '600', color: 'var(--editor-navy)' }}>Comportamiento de la figura</label>
+                    <select id={configurationId} value={construction.mode} disabled={construction.constraints.length > 0} onChange={e => setConstruction(c => ({...c, mode: e.target.value}))}>
                       <option value="cyclic">{vertices.length === 3 ? 'Triángulo (Automático)' : 'Polígono Cíclico (Automático)'}</option>
                       <option value="guided">Guiado por mi boceto inicial</option>
                     </select>
@@ -403,12 +411,17 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
 
                   {/* LISTA DINÁMICA DE MÚLTIPLES ÁNGULOS */}
                   {vertices.length > 3 && (
-                    <div className="custom-piece-editor__angles-panel">
+                    <div className="custom-piece-editor__angles-panel" role="region" aria-label="Ángulos interiores">
                       <h4>
                         <span>Ángulos interiores <MousePointerClick size={14} style={{ display: 'inline', verticalAlign: 'middle', marginLeft: '4px' }}/></span>
                         <span style={{ fontSize: '12px', color: 'var(--editor-muted)', fontWeight: 'normal' }}>{construction.constraints.length} / {maxConstraints} fijados</span>
                       </h4>
 
+                      <div aria-label="Seleccionar vértice">
+                        {vertices.map((_, index) => <button key={index} type="button"
+                          aria-label={`Seleccionar vértice V${index + 1}`} aria-pressed={selectedVertexIndex === index}
+                          onClick={() => selectVertex(index)}>V{index + 1}</button>)}
+                      </div>
                       {construction.constraints.length === 0 && selectedVertexIndex === null ? (
                         <p style={{ fontSize: '12px', color: 'var(--editor-muted)', margin: 0, lineHeight: '1.5' }}>
                           Haz clic en las esquinas del dibujo (V1, V2...) para fijar un ángulo exacto si la pieza lo requiere.
@@ -433,17 +446,20 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
                                 <input
                                   ref={isSelected ? angleInputRef : null}
                                   type="number" step="any" placeholder="Ángulo"
+                                  aria-label={`Ángulo interior en V${index + 1} (grados)`}
+                                  aria-invalid={Boolean(fixed && !(Number(fixed.angle) > 0 && Number(fixed.angle) < 180))}
                                   value={displayAngleValue}
                                   onChange={(e) => handleAngleFix(index, e.target.value)}
                                   onFocus={() => { setActiveSegmentIndex(index); setSelectedVertexIndex(index); }}
                                   disabled={!fixed && isLimitReached}
                                 />
                                 {fixed ? (
-                                  <button type="button" data-active="true" onClick={() => unfixAngle(index)}>Liberar</button>
+                                  <button type="button" aria-label={`Liberar ángulo V${index + 1}`} data-active="true" onClick={() => unfixAngle(index)}>Liberar</button>
                                 ) : (
                                   <button
                                     type="button"
                                     disabled={isLimitReached}
+                                    aria-label={`Fijar ángulo V${index + 1}`}
                                     onClick={() => handleAngleFix(index, String(angles[index] !== undefined && !Number.isNaN(angles[index]) ? Number(angles[index].toFixed(2)) : 90))}
                                   >
                                     Fijar
@@ -461,7 +477,7 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
                 {/* BOTÓN AL FINAL DE LA COLUMNA DE CONTROLES */}
                 {!onGeometryChange && (
                   <div style={{ marginTop: 'auto', paddingTop: '16px' }}>
-                    <button type="button" className="custom-piece-editor__button--add" disabled={!canAdd} onClick={() => {
+                    <button type="button" className="custom-piece-editor__button--add" aria-describedby={helpId} disabled={!canAdd} onClick={() => {
                       if (onGuardarVertices) onGuardarVertices({
                         vertices: result.vertices_mm.map((point) => [...point]),
                         rawState: { drawing: { vertices: drawing.vertices, isClosed: drawing.isClosed }, segments, construction }
@@ -469,6 +485,7 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
                     }}>
                       <Plus size={18} /> {addLabel}
                     </button>
+                    <p id={helpId}>{headerReady ? helpText : "Selecciona el tipo de vidrio y el espesor en Nuevo pedido para agregar piezas."}</p>
                   </div>
                 )}
               </>

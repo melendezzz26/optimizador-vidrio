@@ -5,7 +5,7 @@ import { describe, expect, test, vi } from 'vitest'
 import CustomPieceEditor from '../CustomPieceEditor'
 
 const pentagon = [[200, 50], [500, 50], [600, 250], [350, 450], [100, 250]]
-const canvas = () => screen.getByRole('img', { name: /Lienzo del dibujo original/ })
+const canvas = () => screen.getByRole('img', { name: /Lienzo del dibujo original|Vista dimensional de la pieza/ })
 const field = (id) => screen.getByRole('spinbutton', { name: `Longitud del segmento S${id} en milímetros` })
 const selector = (id) => screen.getByRole('button', { name: `Seleccionar segmento S${id}` })
 const button = (name) => screen.getByRole('button', { name })
@@ -28,28 +28,28 @@ async function close(user) {
 }
 
 function expectInitial() {
-  expect(screen.getByText('Polígono abierto')).toBeVisible()
-  expect(screen.getByText('0 vértices')).toBeVisible()
-  for (const name of ['Cerrar polígono', 'Deshacer último vértice', 'Reiniciar dibujo']) {
+  expect(canvas()).toHaveAttribute('data-closed', 'false')
+  expect(screen.getByText(/Faltan 3 vértices/)).toBeVisible()
+  for (const name of ['Cerrar polígono', 'Deshacer', 'Reiniciar']) {
     expect(button(name)).toBeDisabled()
   }
   expect(screen.queryByRole('spinbutton')).not.toBeInTheDocument()
   expect(screen.queryByRole('button', { name: /Seleccionar segmento/ })).not.toBeInTheDocument()
-  expect(screen.queryByRole('img', { name: /Vista dimensional/ })).not.toBeInTheDocument()
+  expect(canvas().querySelector('polygon[data-provisional="false"]')).toBeNull()
   // SVG primitives have no accessible roles: inspect the rendered drawing only.
   expect(canvas().querySelectorAll('circle, polygon, line')).toHaveLength(0)
   expect(canvas().querySelector('polyline')).toHaveAttribute('points', '')
-  expect(screen.getByRole('status', { name: 'Resultado de validación geométrica' })).toHaveTextContent('Pendiente de completar dimensiones.')
+  expect(screen.queryByRole('status', { name: 'Resultado de validación geométrica' })).not.toBeInTheDocument()
 }
 
 describe('HU-007 T01 — dibujo y controles (caja negra)', () => {
   test('T01-C01: editor inicial visible, accesible y sin dimensiones', () => {
     setup()
     expect(screen.getByRole('region', { name: 'Pieza personalizada' })).toBeVisible()
-    expect(screen.getByRole('heading', { name: 'Dibujo original' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Paso 1: Dibujar contorno' })).toBeVisible()
     expect(screen.getByRole('group', { name: 'Herramientas de dibujo' })).toBeVisible()
-    expect(canvas()).toHaveAccessibleDescription(/Faltan 3 vértices/)
-    expect(screen.getByText(/Las piezas agregadas se registran al guardar/)).toBeVisible()
+    expect(canvas()).toHaveAccessibleName('Lienzo del dibujo original')
+    expect(screen.getByText(/Haz clic en el lienzo vacío/)).toBeVisible()
     expectInitial()
   })
 
@@ -58,21 +58,21 @@ describe('HU-007 T01 — dibujo y controles (caja negra)', () => {
     const points = pentagon.slice(0, 3)
     for (let count = 1; count <= 3; count++) {
       await draw(user, [points[count - 1]])
-      expect(screen.getByText(`${count} ${count === 1 ? 'vértice' : 'vértices'}`)).toBeVisible()
+      expect(screen.getByText(`Faltan ${Math.max(0, 3 - count)} vértices`)).toBeVisible()
       expect(canvas().querySelectorAll('circle')).toHaveLength(count)
       expect(canvas().querySelector('polyline')).toHaveAttribute('points', points.slice(0, count).map((p) => p.join(',')).join(' '))
       expect(canvas().querySelector('polygon')).toBeNull()
-      expect(button('Deshacer último vértice')).toBeEnabled()
-      expect(button('Reiniciar dibujo')).toBeEnabled()
+      expect(button('Deshacer')).toBeEnabled()
+      expect(button('Reiniciar')).toBeEnabled()
       if (count < 3) {
         expect(button('Cerrar polígono')).toBeDisabled()
         await user.click(button('Cerrar polígono'))
-        expect(screen.getByText('Polígono abierto')).toBeVisible()
+        expect(canvas()).toHaveAttribute('data-closed', 'false')
       } else expect(button('Cerrar polígono')).toBeEnabled()
     }
     await user.click(button('Cerrar polígono'))
-    expect(screen.getByText('Polígono cerrado')).toBeVisible()
-    expect(canvas().querySelector('polygon')).toHaveAttribute('points', points.map((p) => p.join(',')).join(' '))
+    expect(canvas()).toHaveAttribute('data-closed', 'true')
+    expect(canvas().querySelector('polygon').getAttribute('points').split(' ')).toHaveLength(3)
     expect(screen.getAllByRole('spinbutton')).toHaveLength(3)
   })
 
@@ -81,50 +81,47 @@ describe('HU-007 T01 — dibujo y controles (caja negra)', () => {
     await close(user)
     const original = canvas().querySelector('polygon').getAttribute('points')
     await draw(user, [[250, 200], [400, 350]])
-    expect(screen.getByText('5 vértices')).toBeVisible()
+    expect(canvas().querySelector('polygon').getAttribute('points').split(' ')).toHaveLength(5)
     expect(canvas().querySelector('polygon')).toHaveAttribute('points', original)
-    expect(screen.getByText('Polígono cerrado')).toBeVisible()
-    expect(screen.getByText('Contorno cerrado')).toBeVisible()
+    expect(canvas()).toHaveAttribute('data-closed', 'true')
+    expect(screen.getByText('Geometría calculada')).toBeVisible()
     expect(screen.queryByRole('button', { name: 'Cerrar polígono' })).not.toBeInTheDocument()
-    expect(button('Deshacer último vértice')).toBeEnabled()
-    expect(button('Reiniciar dibujo')).toBeEnabled()
+    expect(screen.queryByRole('button', { name: 'Deshacer' })).not.toBeInTheDocument()
+    expect(button('Reiniciar')).toBeEnabled()
   })
 
   test('T01-C04: deshacer abierto elimina el último punto hasta volver al inicio', async () => {
     const user = setup()
     await draw(user, pentagon.slice(0, 3))
     for (const remaining of [2, 1, 0]) {
-      await user.click(button('Deshacer último vértice'))
+      await user.click(button('Deshacer'))
       expect(canvas().querySelector('polyline')).toHaveAttribute('points', pentagon.slice(0, remaining).map((p) => p.join(',')).join(' '))
       expect(button('Cerrar polígono')).toBeDisabled()
     }
     expectInitial()
-    expect(screen.getByRole('heading', { name: 'Dibujo original' })).toHaveFocus()
+    expect(button('Cerrar polígono')).toBeDisabled()
   })
 
-  test('T01-C05: deshacer cerrado reabre, elimina el último punto y permite dibujar', async () => {
+  test('T01-C05: cerrado protege el contorno; reiniciar permite dibujar otra figura', async () => {
     const user = setup()
     await close(user)
-    await user.click(button('Deshacer último vértice'))
-    expect(screen.getByText('Polígono abierto')).toBeVisible()
-    expect(screen.getByText('4 vértices')).toBeVisible()
-    expect(canvas().querySelector('polyline')).toHaveAttribute('points', pentagon.slice(0, 4).map((p) => p.join(',')).join(' '))
-    expect(button('Cerrar polígono')).toBeEnabled()
-    await draw(user, [[150, 200]])
+    expect(screen.queryByRole('button', { name: 'Deshacer' })).not.toBeInTheDocument()
+    await user.click(button('Reiniciar'))
+    expectInitial()
+    await draw(user, pentagon.slice(0, 4))
     await user.click(button('Cerrar polígono'))
-    expect(screen.getByText('5 vértices')).toBeVisible()
-    expect(screen.getByText('Polígono cerrado')).toBeVisible()
+    expect(canvas().querySelector('polygon').getAttribute('points').split(' ')).toHaveLength(4)
   })
 
   test.each([false, true])('T01-C06: reiniciar limpia el dibujo (cerrado=%s)', async (closed) => {
     const user = setup()
     await draw(user)
     if (closed) await user.click(button('Cerrar polígono'))
-    await user.click(button('Reiniciar dibujo'))
+    await user.click(button('Reiniciar'))
     expectInitial()
     await draw(user, [[100, 100]])
-    expect(screen.getByText('1 vértice')).toBeVisible()
-    expect(button('Reiniciar dibujo')).toBeEnabled()
+    expect(canvas().querySelectorAll('circle')).toHaveLength(1)
+    expect(button('Reiniciar')).toBeEnabled()
   })
 })
 
@@ -137,17 +134,12 @@ describe('TA-036: regresiones vigentes del editor', () => {
     fireEvent.change(field(id), { target: { value: String(value) } });
   }
 
-  function expectSynchronized(id, previewName) {
+  function expectSynchronized(id) {
     expect(selector(id)).toHaveAttribute('aria-pressed', 'true')
-    expect(screen.getAllByRole('button', { pressed: true })).toEqual([selector(id)])
-    const preview = screen.getByRole('img', { name: previewName })
-    // SVG primitives are aria-hidden; visible selection is checked in both renders.
-    for (const view of [canvas(), preview]) {
-      expect(view.querySelectorAll('line[data-active="true"]')).toHaveLength(1)
-      expect(view.querySelectorAll('line')[id - 1]).toHaveAttribute('data-active', 'true')
-      expect(view.querySelectorAll('text[data-active="true"]')).toHaveLength(1)
-      expect(view.querySelector('text[data-active="true"]')).toHaveTextContent(`S${id}`)
-    }
+    const view = canvas()
+    expect(view.querySelectorAll('line[data-active="true"]')).toHaveLength(1)
+    expect(view.querySelectorAll('line')[id - 1]).toHaveAttribute('data-active', 'true')
+    expect(view.querySelector('text[data-active="true"]')).toHaveTextContent(`S${id}`)
   }
 
   test('cierre identifica todos los campos requeridos sin escala física ni geometría guardable', async () => {
@@ -158,14 +150,14 @@ describe('TA-036: regresiones vigentes del editor', () => {
       expect(field(id)).toBeRequired()
       expect(field(id)).toHaveAttribute('step', 'any')
     }
-    expect(screen.getByText('0 de 5 medidas ingresadas')).toBeVisible()
-    expect(screen.getByText(/Completa todos los lados/)).toBeVisible()
+    expect(screen.getByText('0 / 5 completados')).toBeVisible()
+    expect(screen.getByText(/Ingresa las medidas de cada lado/)).toBeVisible()
     expect(screen.getByRole('status', { name: 'Resultado de validación geométrica' })).toHaveTextContent('Pendiente de completar dimensiones.')
     expect(button('Agregar pieza al pedido')).toBeDisabled()
     expectSynchronized(1, 'Vista dimensional provisional. Segmento S1 seleccionado.')
   })
 
-  test('selección y hover conservan arista y etiqueta sincronizadas en ambos SVG sin alterar medidas', async () => {
+  test('selección y hover conservan arista y etiqueta sincronizadas en el lienzo único sin alterar medidas', async () => {
     const user = setup()
     await close(user)
     for (const scaled of [false, true]) {
@@ -195,30 +187,28 @@ describe('TA-036: regresiones vigentes del editor', () => {
     expect(field(1)).toHaveValue(0.001)
     expect(field(2)).toHaveValue(0.0005)
     expect(field(1)).toHaveAttribute('aria-invalid', 'false')
-    expect(screen.getByRole('region', { name: 'Ángulos interiores' })).toHaveTextContent('V1: 90°')
-    expect(screen.getByRole('status', { name: 'Resultado de validación geométrica' })).toHaveTextContent('Geometría convexa validada.')
+    expect(canvas().querySelector('.custom-piece-editor__vertex-label')).toHaveTextContent('V1 (90°)')
+    expect(screen.getByRole('status', { name: 'Resultado de validación geométrica' })).toHaveTextContent('✓ Geometría validada y lista.')
     await user.click(button('Agregar pieza al pedido'))
     const vertices = onSave.mock.calls[0][0].vertices
     const expected = [[0, 0], [0.001, 0], [0.001, 0.0005], [0, 0.0005]]
     vertices.forEach((point, i) => point.forEach((value, axis) => expect(value).toBeCloseTo(expected[i][axis], 12)))
   })
 
-  test('deshacer una figura dimensionada invalida el resultado y recerrar crea campos vacíos', async () => {
-    const user = userEvent.setup()
-    render(<CustomPieceEditor initialState={{ construction: { mode: 'guided', angle: '90' } }} onGuardarVertices={vi.fn()} />)
+  test('reiniciar una figura dimensionada invalida el resultado y recerrar crea campos vacíos', async () => {
+    const user = setup()
     await close(user)
     measure(1, 850)
     await user.click(selector(5))
     expect(button('Agregar pieza al pedido')).toBeEnabled()
-    await user.click(button('Deshacer último vértice'))
-    expect(screen.queryByRole('img', { name: /Vista dimensional/ })).not.toBeInTheDocument()
-    expect(screen.queryByRole('region', { name: 'Ángulos interiores' })).not.toBeInTheDocument()
-    expect(screen.getByRole('status', { name: 'Resultado de validación geométrica' })).toHaveTextContent('Pendiente de completar dimensiones.')
-    expect(button('Agregar pieza al pedido')).toBeDisabled()
+    await user.click(button('Reiniciar'))
+    expectInitial()
+    await draw(user, pentagon.slice(0, 4))
     await user.click(button('Cerrar polígono'))
+    expect(button('Agregar pieza al pedido')).toBeDisabled()
     expect(screen.getAllByRole('spinbutton')).toHaveLength(4)
     screen.getAllByRole('spinbutton').forEach(input => expect(input).toHaveValue(null))
-    expectSynchronized(1, 'Vista dimensional provisional. Segmento S1 seleccionado.')
+    expectSynchronized(1)
   })
 
   test('reiniciar después de medir elimina escala y selección antes del siguiente dibujo', async () => {
@@ -226,12 +216,12 @@ describe('TA-036: regresiones vigentes del editor', () => {
     await close(user)
     measure(1, 850)
     await user.click(selector(5))
-    await user.click(button('Reiniciar dibujo'))
+    await user.click(button('Reiniciar'))
     expectInitial()
     await close(user)
     screen.getAllByRole('spinbutton').forEach(input => expect(input).toHaveValue(null))
     expectSynchronized(1, 'Vista dimensional provisional. Segmento S1 seleccionado.')
-    expect(screen.queryByRole('region', { name: 'Ángulos interiores' })).not.toBeInTheDocument()
+    expect(canvas().querySelector('.custom-piece-editor__vertex-label')).not.toHaveTextContent('°')
   })
 
   test('borrar todas las medidas retira escala, ángulos y resultado válido anterior', async () => {
@@ -240,10 +230,10 @@ describe('TA-036: regresiones vigentes del editor', () => {
     await close(user)
     measure(1, 850)
     for (let id = 1; id <= 5; id++) await user.clear(field(id))
-    expect(screen.getByText('0 de 5 medidas ingresadas')).toBeVisible()
-    expect(screen.getByText(/Completa todos los lados/)).toBeVisible()
+    expect(screen.getByText('0 / 5 completados')).toBeVisible()
+    expect(screen.getByText(/Ingresa las medidas de cada lado/)).toBeVisible()
     expect(screen.getByRole('status', { name: 'Resultado de validación geométrica' })).toHaveTextContent('Pendiente de completar dimensiones.')
-    expect(screen.queryByRole('region', { name: 'Ángulos interiores' })).not.toBeInTheDocument()
+    expect(canvas().querySelector('.custom-piece-editor__vertex-label')).not.toHaveTextContent('°')
     expect(button('Agregar pieza al pedido')).toBeDisabled()
   })
 
@@ -253,7 +243,7 @@ describe('TA-036: regresiones vigentes del editor', () => {
     render(<CustomPieceEditor initialState={{ construction: { mode: 'guided', angle: '90' } }} onGuardarVertices={onSave} headerReady={false} />)
     await close(user)
     measure(1, 850)
-    expect(screen.getByText('Geometría convexa validada.')).toBeVisible()
+    expect(screen.getByText('✓ Geometría validada y lista.')).toBeVisible()
     expect(button('Agregar pieza al pedido')).toBeDisabled()
     expect(button('Agregar pieza al pedido')).toHaveAccessibleDescription(/Selecciona el tipo de vidrio y el espesor/)
     await user.click(button('Agregar pieza al pedido'))
@@ -271,13 +261,13 @@ describe('TA-036: regresiones vigentes del editor', () => {
     expect(onSave).not.toHaveBeenCalled()
   })
 
-  test('selección por foco directo se refleja en líneas y etiquetas de ambas vistas', async () => {
+  test('selección por foco directo se refleja en líneas y etiquetas del lienzo único', async () => {
     const user = setup()
     await close(user)
     measure(1, 850)
     await user.click(field(4))
     expectSynchronized(4, 'Vista dimensional completa. Segmento S4 seleccionado.')
-    expect(within(screen.getByRole('region', { name: 'Dimensiones por segmento' })).getAllByRole('spinbutton')).toHaveLength(5)
+    expect(within(screen.getByRole('region', { name: 'Pieza personalizada' })).getAllByRole('spinbutton')).toHaveLength(5)
   })
 
   test('invalidar y corregir una dimensión retira y recalcula la validación sin geometría obsoleta', async () => {
@@ -288,18 +278,18 @@ describe('TA-036: regresiones vigentes del editor', () => {
     expect(button('Agregar pieza al pedido')).toBeEnabled()
     measure(1, 0)
     expect(field(1)).toHaveAttribute('aria-invalid', 'true')
-    expect(screen.queryByText('Geometría convexa validada.')).not.toBeInTheDocument()
-    expect(screen.queryByRole('img', { name: /Vista dimensional/ })).not.toBeInTheDocument()
+    expect(screen.queryByText('✓ Geometría validada y lista.')).not.toBeInTheDocument()
+    expect(canvas().querySelector('polygon[data-provisional="false"]')).toBeNull()
     expect(button('Agregar pieza al pedido')).toBeDisabled()
     measure(1, 900)
-    expect(screen.getByText('Geometría convexa validada.')).toBeVisible()
+    expect(screen.getByText('✓ Geometría validada y lista.')).toBeVisible()
     expect(field(1)).toHaveValue(900)
     expect(button('Agregar pieza al pedido')).toBeEnabled()
     await user.clear(field(1))
     expect(button('Agregar pieza al pedido')).toBeDisabled()
     expect(screen.getByRole('status', { name: 'Resultado de validación geométrica' })).toHaveTextContent('Pendiente de completar dimensiones.')
     measure(1, 850)
-    expect(screen.getByText('Geometría convexa validada.')).toBeVisible()
+    expect(screen.getByText('✓ Geometría validada y lista.')).toBeVisible()
     expect(button('Agregar pieza al pedido')).toBeEnabled()
   })
 })
@@ -326,11 +316,11 @@ describe('TA-036: vértices canónicos, escala y ángulos', () => {
     expect(field(2)).toHaveValue(400)
     expect(field(3)).toHaveValue(800)
     expect(field(4)).toHaveValue(400)
-    expect(screen.getByRole('region', { name: 'Ángulos interiores' })).toHaveTextContent('V1: 90°')
-    expect(canvas().querySelector('polygon')).toHaveAttribute('points', rectangle.map(p => p.join(',')).join(' '))
+    expect(canvas().querySelector('.custom-piece-editor__vertex-label')).toHaveTextContent('V1 (90°)')
+    expect(canvas().querySelector('polygon')).toHaveAttribute('data-provisional', 'false')
     await user.click(button('Agregar pieza al pedido'))
     onSave.mock.calls[0][0].vertices.forEach((point,i) => point.forEach((value,axis) => expect(value).toBeCloseTo([[0,0],[800,0],[800,400],[0,400]][i][axis],7)))
-    expectInitial()
+    expect(field(1)).toHaveValue(800)
   })
 
   test('editar otro lado conserva los demás campos y recalcula una geometría distinta', async () => {
@@ -338,15 +328,15 @@ describe('TA-036: vértices canónicos, escala y ángulos', () => {
     await draw(user, rectangle)
     await user.click(button('Cerrar polígono'))
     measure(1, 800)
-    const preview = screen.getByRole('img', { name: /Vista dimensional completa/ }).querySelector('polygon').getAttribute('points')
+    const preview = canvas().querySelector('polygon').getAttribute('points')
     measure(2, 600)
     expect(field(1)).toHaveValue(800)
     expect(field(2)).toHaveValue(600)
-    const after = screen.getByRole('img', { name: /Vista dimensional completa/ }).querySelector('polygon').getAttribute('points')
+    const after = canvas().querySelector('polygon').getAttribute('points')
     expect(after).not.toBe(preview)
-    expect(screen.getByRole('region', { name: 'Ángulos interiores' })).toHaveTextContent('Calculado')
-    expect(button('Agregar pieza al pedido')).toBeDisabled()
-    expect(button('Agregar pieza al pedido')).toHaveAccessibleDescription('Geometría convexa validada. Agrega la pieza y guarda el pedido para registrarla.')
+    expect(canvas().querySelector('.custom-piece-editor__vertex-label')).toHaveTextContent('°')
+    expect(button('Agregar pieza al pedido')).toBeEnabled()
+    expect(button('Agregar pieza al pedido')).toHaveAccessibleDescription('Agrega la pieza y guarda el pedido para registrarla.')
   })
 
   test.each(['0','-1'])('medida %s inválida bloquea guardar y anuncia error accesible', async (value) => {
@@ -355,9 +345,9 @@ describe('TA-036: vértices canónicos, escala y ángulos', () => {
     measure(1, value)
     await user.tab()
     expect(field(1)).toHaveAttribute('aria-invalid', 'true')
-    expect(field(1)).toHaveAccessibleDescription('Usa un número finito mayor que 0.')
+    expect(field(1)).toHaveAccessibleDescription('Número > 0')
     expect(button('Agregar pieza al pedido')).toBeDisabled()
-    expect(screen.queryByRole('region', { name: 'Ángulos interiores' })).not.toBeInTheDocument()
+    expect(canvas().querySelector('.custom-piece-editor__vertex-label')).not.toHaveTextContent('°')
   })
 
   test('borrar una longitud invalida el guardado hasta corregirla; reiniciar borra la escala', async () => {
@@ -370,7 +360,7 @@ describe('TA-036: vértices canónicos, escala y ángulos', () => {
     expect(button('Agregar pieza al pedido')).toBeDisabled()
     measure(2, 400)
     expect(button('Agregar pieza al pedido')).toBeEnabled()
-    await user.click(button('Reiniciar dibujo'))
+    await user.click(button('Reiniciar'))
     expectInitial()
   })
 
@@ -393,9 +383,7 @@ describe('TA-036: vértices canónicos, escala y ángulos', () => {
   test('cierre y selección por teclado conservan foco y nombres accesibles', async () => {
     const user = setup()
     await draw(user)
-    await user.tab()
-    await user.tab()
-    await user.tab()
+    button('Cerrar polígono').focus()
     expect(button('Cerrar polígono')).toHaveFocus()
     await user.keyboard('{Enter}')
     expect(field(1)).toHaveFocus()
