@@ -5,6 +5,7 @@ Tie order: area DESC, top row ASC, left column ASC, width DESC, height DESC.
 """
 from dataclasses import dataclass, replace
 from decimal import Decimal, ROUND_HALF_UP
+from itertools import groupby
 
 from .first_fit import _empty_layout
 from .problem import MaterialSource, OptimizationMetrics
@@ -27,8 +28,14 @@ class ResidualRectangle:
 def largest_rectangle(free_rows, columns):
     heights = [0] * columns
     best, best_key = None, None
-    for row, bits in enumerate(free_rows):
-        heights = [heights[c] + 1 if (bits >> c) & 1 else 0 for c in range(columns)]
+    row = -1
+    for bits, repeated in groupby(free_rows):
+        count = sum(1 for _ in repeated)
+        row += count
+        # Within identical consecutive bit rows every possible rectangle only
+        # grows vertically. Its maximum occurs at the last row of the run.
+        # This preserves the exact area/top/left/width/height tie order.
+        heights = [heights[c] + count if (bits >> c) & 1 else 0 for c in range(columns)]
         stack = []
         for column in range(columns + 1):
             height = heights[column] if column < columns else 0
