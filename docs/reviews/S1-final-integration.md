@@ -3,6 +3,10 @@
 Fecha: 2026-10-16 (America/Lima). Rama: `chore/S1-final-integration`.
 Destino previsto para revisión humana: `integration/sprint-01`. Sin push ni PR.
 
+Este informe conserva los resultados del cierre previo al hardening. Los ajustes
+posteriores de seed, lenguaje operativo y grupos plegables, junto con su nueva
+validación, se registran en el [hardening final](S1-final-hardening.md).
+
 ## Integración
 
 - Estado inicial: `e24d39a`, con Orders ya integrado y dos constantes sin uso eliminadas localmente.

@@ -5,13 +5,17 @@ Punto anterior a consolidación documental: cbfa6ad
 Merge UI: ac13d9e (segundo padre: 70a6c36)
 Fecha: 2026-10-16 America/Lima
 
-167 archivos existentes en el diff final contra la base indicada.
-Incluye código integrado previamente y documentación consolidada; este saneamiento solo modifica documentación.
+179 archivos existentes en el diff final contra la base indicada.
+Incluye código integrado, documentación consolidada y hardening final (S1-final-hardening.md).
 Las bajas de evidencia se registran por separado en S1-evidence-consolidation-index.json.
 
 README.md
+backend/README.md
+backend/app/modules/optimization/infrastructure/configuration_seed.py
 backend/app/modules/orders/infrastructure/repositories.py
+backend/seed.py
 backend/tests/e2e_server.py
+backend/tests/integration/optimization/test_configuration_seed.py
 backend/tests/optimization_e2e_data.py
 docs/README.md
 docs/evidence/README.md
@@ -106,6 +110,7 @@ docs/evidence/sprint-01/S1-OPTIMIZATION-FIRST-FIT/integration/scenarios/E2E8.jso
 docs/evidence/sprint-01/S1-OPTIMIZATION-FIRST-FIT/integration/scenarios/E2E9.json
 docs/reviews/S1-evidence-consolidation-index.json
 docs/reviews/S1-evidence-consolidation.md
+docs/reviews/S1-final-hardening.md
 docs/reviews/S1-final-integration-files.txt
 docs/reviews/S1-final-integration.md
 docs/specs/AUDIT-S1-OPT-UI.md
@@ -118,6 +123,7 @@ frontend/playwright.hu015.config.js
 frontend/playwright.optimization.config.js
 frontend/src/App.jsx
 frontend/src/features/inventory/__tests__/RegistrarRetazoGeometry.test.jsx
+frontend/src/features/optimization/GeometryPreview.jsx
 frontend/src/features/optimization/Hu015Rasterization.jsx
 frontend/src/features/optimization/InspectionViewport.css
 frontend/src/features/optimization/InspectionViewport.jsx
@@ -129,10 +135,13 @@ frontend/src/features/optimization/PlacementScene3D.css
 frontend/src/features/optimization/PlacementScene3D.jsx
 frontend/src/features/optimization/RasterComparison.jsx
 frontend/src/features/optimization/RasterInspection.jsx
+frontend/src/features/optimization/RasterPreview.jsx
 frontend/src/features/optimization/__tests__/ContractRunUI.test.jsx
+frontend/src/features/optimization/__tests__/CuttingWork.test.jsx
 frontend/src/features/optimization/__tests__/GroupRasterInspection.test.jsx
 frontend/src/features/optimization/__tests__/Hu015Rasterization.test.jsx
 frontend/src/features/optimization/__tests__/OptimizationPage.test.jsx
+frontend/src/features/optimization/__tests__/OptimizationVisualizations.test.jsx
 frontend/src/features/optimization/__tests__/PlacementScene3D.test.jsx
 frontend/src/features/optimization/__tests__/runApi.test.jsx
 frontend/src/features/optimization/contractV1Fixture.json
@@ -147,6 +156,9 @@ frontend/src/features/optimization/runContract.js
 frontend/src/features/optimization/runFixtures.js
 frontend/src/features/optimization/runTransport.js
 frontend/src/features/optimization/useFirstFit.js
+frontend/src/features/optimization/useGlassCatalog.js
+frontend/src/features/optimization/useOptimization.js
+frontend/src/features/optimization/workLabels.js
 frontend/src/features/orders/CustomPieceEditor.css
 frontend/src/features/orders/CustomPieceEditor.jsx
 frontend/src/features/orders/FormularioPedido.jsx
