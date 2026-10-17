@@ -25,8 +25,9 @@ test('retazo personalizado: editor compartido, POST real sin Decimal no serializ
   await page.getByRole('button',{name:'Cerrar polígono'}).click();
   const sides=[120,73,91,108];
   for(const [i,value] of sides.entries()) await page.getByLabel(`Longitud del segmento S${i+1} en milímetros`).fill(String(value));
+  await page.getByRole('button',{name:'Seleccionar vértice V2',exact:true}).click();
   await page.getByRole('button',{name:'Fijar ángulo V2',exact:true}).click();
-  await page.getByRole('spinbutton',{name:/Ángulo interior fijado en V2/}).fill('100');
+  await page.getByRole('spinbutton',{name:/Ángulo interior en V2/}).fill('100');
   const saved=page.waitForResponse(r=>r.url()===`${api}/api/inventory/retazos` && r.request().method()==='POST');
   await page.getByRole('button',{name:'Registrar retazo',exact:true}).last().click();
   const response=await saved; expect(response.status()).toBe(201);

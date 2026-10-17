@@ -15,15 +15,15 @@ test.beforeEach(async ({ page, baseURL }) => {
 });
 
 async function rectangle(page) {
-  await page.getByRole('button', { name: 'Agregar pieza', exact: true }).click();
-  await page.getByLabel('Material', { exact: true }).selectOption('7');
-  await page.getByLabel('Espesor', { exact: true }).selectOption('6');
+  await page.getByLabel('Tipo de vidrio', { exact: true }).selectOption('7');
+  await page.getByLabel('Espesor del vidrio (mm)', { exact: true }).selectOption('6');
   await page.getByLabel('Ancho (mm)', { exact: true }).fill('100');
   await page.getByLabel('Alto (mm)', { exact: true }).fill('200');
 }
 
 test('T03: alta contextual, bloqueo sin cliente, persistencia y lectura real', async ({ page }) => {
-  await rectangle(page);
+  await expect(page.getByText('Falta seleccionar cliente')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Agregar pieza', exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Guardar pedido' })).toBeDisabled();
   await page.getByRole('button', { name: 'Registrar nuevo cliente' }).click();
   await page.getByLabel('Nombre o razón social', { exact: true }).fill('Cliente nuevo E2E');
@@ -33,6 +33,7 @@ test('T03: alta contextual, bloqueo sin cliente, persistencia y lectura real', a
   expect(clientResponse.status()).toBe(201);
   const client = await clientResponse.json();
   await expect(page.getByLabel('Cliente seleccionado', { exact: true })).toContainText(client.nombre_razon_social);
+  await rectangle(page);
   const saved = page.waitForResponse((response) => response.url() === `${apiOrigin}/api/orders` && response.request().method() === 'POST');
   await page.getByRole('button', { name: 'Guardar pedido' }).click();
   const response = await saved;
@@ -77,6 +78,7 @@ test('T03: duplicado controlado, búsqueda documental y cambio a cliente inactiv
   await page.getByRole('button', { name: 'Seleccionar Cliente inactivo' }).click();
   await expect(page.getByLabel('Cliente seleccionado', { exact: true })).toContainText('Inactivo');
   await expect(page.getByText('Pieza 1', { exact: true })).toBeVisible();
+  await expect(page.getByLabel('Ancho (mm)')).toHaveValue('100');
   const saved = page.waitForResponse((response) => response.url() === `${apiOrigin}/api/orders` && response.request().method() === 'POST');
   await page.getByRole('button', { name: 'Guardar pedido' }).click();
   const response = await saved;
