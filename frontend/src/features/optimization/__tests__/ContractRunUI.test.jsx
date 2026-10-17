@@ -72,8 +72,8 @@ test('physical sheet units isolate 2D/3D placements; oriented 90-degree geometry
 });
 test('merma is shown in square millimeters using T1 metric names', () => {
   render(<OptimizationPage user={user(view)} result={shared.result} source={createFixturePendingOrdersSource([])} adapter={{}} />);
-  expect(screen.getByText('4950 mm²')).toBeVisible();
-  expect(screen.getByText('1 %')).toBeVisible(); expect(screen.getByText('3 ms')).toBeVisible();
+  expect(screen.getByText('4950 mm² · 99.000 %')).toBeVisible();
+  expect(screen.getByText('50.00 mm² · 1 %')).toBeVisible(); expect(screen.getByText('3 ms')).toBeVisible();
 });
 test('confirmation interface gets only the run ID and can represent HTTP 409 without stock writes', async () => {
   const confirm = vi.fn().mockRejectedValue(Object.assign(new Error('conflict'), { status: 409 }));

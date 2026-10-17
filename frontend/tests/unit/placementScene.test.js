@@ -25,8 +25,8 @@ test('circle display contour is centered at its normalized radius, with 96 bound
   assert.equal(points.length, 96);
   for (const [x, y] of points) close(Math.hypot(x - 300, y - 300), 240);
 });
-test('yaw never exceeds 180 degrees total and projection remains finite at limits', () => {
-  assert.equal(clampYaw(-2000), -90); assert.equal(clampYaw(2000), 90); assert.equal(clampYaw(NaN), DEFAULT_YAW);
+test('yaw supports a complete 360 degree orbit and projection remains finite at limits', () => {
+  assert.equal(clampYaw(-2000), -180); assert.equal(clampYaw(2000), 180); assert.equal(clampYaw(NaN), DEFAULT_YAW);
   for (const yaw of [-900, -90, -24, 0, 90, 900]) {
     const point = projectPoint([3300, 2140], 25, scene, yaw);
     assert.ok(Object.values(point).every(Number.isFinite));
@@ -34,9 +34,17 @@ test('yaw never exceeds 180 degrees total and projection remains finite at limit
   }
 });
 test('projection preserves physical proportions under common scaling of all dimensions', () => {
-  const a = projectPoint([800, 600], 18, scene, 30);
-  const b = projectPoint([1600, 1200], 18, { width: 6600, height: 4280 }, 30);
-  close(a.x, b.x); close(a.y, b.y); close(a.depth, b.depth);
+  for (const camera of [{ elevation: 5 }, { elevation: 48 }, { elevation: 90, panX: 120, panY: -40 }]) {
+    const a = projectPoint([800, 600], 18, scene, 30, camera);
+    const b = projectPoint([1600, 1200], 18, { width: 6600, height: 4280 }, 30, camera);
+    close(a.x, b.x); close(a.y, b.y); close(a.depth, b.depth);
+  }
+  const top = { elevation: 90 };
+  const center = projectPoint([500, 500], 0, { width: 1000, height: 1000 }, 0, top);
+  const x = projectPoint([600, 500], 0, { width: 1000, height: 1000 }, 0, top);
+  const y = projectPoint([500, 600], 0, { width: 1000, height: 1000 }, 0, top);
+  close(x.x - center.x, 100); close(x.y, center.y);
+  close(y.y - center.y, 100); close(y.x, center.x);
 });
 test('scene filters material source plus ID, keeps colors stable and leaves snapshot untouched', () => {
   const container = { material_source: 'PLANCHA', stock_unit_index: 1, material_id: 1, material_width_mm: 3300, material_height_mm: 2140, geometry: { type: 'RECTANGULO', width_mm: 3300, height_mm: 2140 } };
@@ -66,8 +74,8 @@ test('stable frame contains square and narrow inventory at every permitted yaw',
   for (const dimensions of [{ width: 1000, height: 1000 }, { width: 100, height: 5000 }, { width: 5000, height: 100 }]) {
     const input = { ...dimensions, gridStep: Math.max(dimensions.width, dimensions.height) / 10 };
     const [left, top, width, height] = sceneViewBox(input);
-    for (let yaw = -90; yaw <= 90; yaw++) for (const point of [[0, 0], [input.width, 0], [input.width, input.height], [0, input.height]]) {
-      const projected = projectPoint(point, 18, input, yaw);
+    for (let yaw = -180; yaw <= 180; yaw++) for (const elevation of [5, 48, 90]) for (const point of [[0, 0], [input.width, 0], [input.width, input.height], [0, input.height]]) {
+      const projected = projectPoint(point, 18, input, yaw, { elevation });
       assert.ok(projected.x >= left && projected.x <= left + width);
       assert.ok(projected.y >= top && projected.y <= top + height);
     }

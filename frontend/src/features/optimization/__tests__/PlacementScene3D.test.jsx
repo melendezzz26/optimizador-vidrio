@@ -15,6 +15,28 @@ const data = () => {
 };
 function open3D() { fireEvent.click(screen.getByRole('button', { name: 'Ver en 3D' })); return screen.getByRole('slider', { name: 'Giro horizontal de la vista 3D' }); }
 
+test('camera elevation, pan, zoom and presets change only the projection, never placements', () => {
+  const props = data(), original = JSON.stringify(props);
+  render(<PlacementCanvas {...props} />);
+  const camera = open3D();
+  const path = () => document.querySelector('[data-piece-3d] > path:last-of-type').getAttribute('d');
+  const first = path();
+  fireEvent.keyDown(camera, { key: 'PageDown' });
+  expect(screen.getByLabelText('Altura de cámara (Z)')).toHaveValue('43');
+  expect(path()).not.toBe(first);
+  const tilted = path();
+  fireEvent.keyDown(camera, { key: 'ArrowRight', shiftKey: true });
+  expect(path()).not.toBe(tilted);
+  fireEvent.wheel(camera, { deltaY: -100 });
+  expect(screen.getByLabelText('Ampliación 3D')).toHaveTextContent('125 %');
+  fireEvent.click(screen.getByRole('button', { name: 'Vista superior' }));
+  expect(screen.getByLabelText('Altura de cámara (Z)')).toHaveValue('90');
+  fireEvent.click(screen.getByRole('button', { name: 'Vista en perspectiva' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Centrar corte' }));
+  expect(path()).toBe(first);
+  expect(JSON.stringify(props)).toBe(original);
+});
+
 test('view switch only appears once a visualizable placement exists, defaults to precise 2D', () => {
   const { snapshot, placements } = data();
   const view = render(<PlacementCanvas snapshot={snapshot} placements={[]} />);
@@ -41,22 +63,23 @@ test('keyboard clamps yaw and reset restores only the visual camera', () => {
   render(<PlacementCanvas {...data()} />); const slider = open3D(); slider.focus();
   expect(slider).toHaveFocus();
   fireEvent.keyDown(slider, { key: 'End' }); fireEvent.keyDown(slider, { key: 'ArrowRight' });
-  expect(slider).toHaveAttribute('aria-valuenow', '90');
+  expect(slider).toHaveAttribute('aria-valuenow', '180');
   fireEvent.keyDown(slider, { key: 'Home' }); fireEvent.keyDown(slider, { key: 'ArrowLeft' });
-  expect(slider).toHaveAttribute('aria-valuenow', '-90');
+  expect(slider).toHaveAttribute('aria-valuenow', '-180');
   fireEvent.click(screen.getByRole('button', { name: 'Restablecer vista' }));
   expect(slider).toHaveAttribute('aria-valuenow', String(DEFAULT_YAW));
   expect(document.querySelectorAll('[data-piece-3d]')).toHaveLength(3);
 });
-test('horizontal pointer drag clamps, ignores vertical motion and stops on cancel', () => {
+test('pointer drag orbits, changes elevation and stops on cancel', () => {
   render(<PlacementCanvas {...data()} />); const slider = open3D();
   fireEvent.pointerDown(slider, { pointerId: 1, clientX: 100, clientY: 100, button: 0 });
   fireEvent.pointerMove(slider, { pointerId: 1, clientX: 100, clientY: 500 });
   expect(slider).toHaveAttribute('aria-valuenow', String(DEFAULT_YAW));
-  fireEvent.pointerMove(slider, { pointerId: 1, clientX: 3000 }); expect(slider).toHaveAttribute('aria-valuenow', '90');
-  fireEvent.pointerMove(slider, { pointerId: 1, clientX: -3000 }); expect(slider).toHaveAttribute('aria-valuenow', '-90');
+  expect(screen.getByLabelText('Altura de cámara (Z)')).toHaveValue('90');
+  fireEvent.pointerMove(slider, { pointerId: 1, clientX: 3000 }); expect(slider).toHaveAttribute('aria-valuenow', '180');
+  fireEvent.pointerMove(slider, { pointerId: 1, clientX: -3000 }); expect(slider).toHaveAttribute('aria-valuenow', '-180');
   fireEvent.pointerCancel(slider, { pointerId: 1 });
-  fireEvent.pointerMove(slider, { pointerId: 1, clientX: 400 }); expect(slider).toHaveAttribute('aria-valuenow', '-90');
+  fireEvent.pointerMove(slider, { pointerId: 1, clientX: 400 }); expect(slider).toHaveAttribute('aria-valuenow', '-180');
 });
 test('legend colors are stable across progressive updates and expose received rotations', () => {
   const props = data(); const view = render(<PlacementCanvas {...props} placements={props.placements.slice(0, 1)} />); open3D();

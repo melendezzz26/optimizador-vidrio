@@ -6,7 +6,7 @@
 .placement-3d-heading h3 { margin: 4px 0; font-size: 18px; }
 .placement-3d-heading p, .placement-3d-help, .placement-3d-note { color: var(--ng-text-600); font-size: 13px; margin: 0; }
 .placement-3d-help { padding: 0 var(--ng-space-6) var(--ng-space-4); }
-.placement-3d-viewport { position: relative; background: radial-gradient(ellipse at 50% 42%, #fff 0%, #edf3f8 72%, #e5edf5 100%); cursor: grab; touch-action: pan-y; user-select: none; border-block: 1px solid var(--ng-border-subtle); }
+.placement-3d-viewport { position: relative; background: radial-gradient(ellipse at 50% 42%, #fff 0%, #edf3f8 72%, #e5edf5 100%); cursor: grab; touch-action: none; user-select: none; border-block: 1px solid var(--ng-border-subtle); }
 .placement-3d-viewport:active { cursor: grabbing; }
 .placement-3d-svg { display: block; width: 100%; height: clamp(300px, 44vw, 520px); }
 .placement-3d-angle { position: absolute; right: 16px; bottom: 12px; border: 1px solid var(--ng-border-subtle); border-radius: 6px; background: rgb(255 255 255 / 92%); padding: 4px 10px; color: var(--ng-text-600); font-size: 12px; font-variant-numeric: tabular-nums; pointer-events: none; }
@@ -26,3 +26,7 @@
 @media (max-width: 600px) { .placement-3d-piece-label { font-size: 48px; } .placement-3d-dimension text { font-size: 44px; } }
 /* Scene changes are direct: no inertia, camera animation or auto-rotation. */
 @media (prefers-reduced-motion: reduce) { .placement-3d *, .placement-view-switch * { animation: none !important; transition: none !important; } }
+
+.placement-3d-tools { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-block: 12px; }
+.placement-3d-tools label { display: grid; gap: 4px; }
+.cut-area-legend { display: flex; flex-wrap: wrap; gap: 16px; padding-left: 20px; }

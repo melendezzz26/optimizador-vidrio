@@ -152,6 +152,16 @@ export function parseRun(raw) {
     && raw.confirmable === (raw.estado === 'COMPLETADA' && raw.completo && !raw.confirmed)
     && (raw.estado !== 'COMPLETADA' || raw.completo) && (raw.estado !== 'SIN_SOLUCION' || !raw.completo));
   require(!raw.metrics_available || stocks.size > 0);
+  if (raw.residual_regions !== undefined) {
+    require(Array.isArray(raw.residual_regions));
+    raw.residual_regions.forEach(r => {
+      const s = stocks.get(stockKey(r));
+      require(s); decimal(r.x_mm); decimal(r.y_mm); decimal(r.width_mm, true); decimal(r.height_mm, true); decimal(r.area_mm2, true);
+      const bounds = getGeometryBounds(s.geometria);
+      require(bounds && renderNumber(r.x_mm) + renderNumber(r.width_mm) <= bounds.width + 1e-6
+        && renderNumber(r.y_mm) + renderNumber(r.height_mm) <= bounds.height + 1e-6);
+    });
+  }
   return structuredClone(raw);
 }
 
@@ -173,7 +183,7 @@ export function resultSnapshot(dto) {
     id: groupKey(g), materialId: g.id_tipo_vidrio, name: `Material #${g.id_tipo_vidrio}`, thickness: g.espesor_mm,
     units: g.units, orders: [...new Set(g.units.map(u => u.id_pedido))],
     containers: dto.materials_used.filter(s => groupKey(s) === groupKey(g)).map(visualStock),
-  })), rasters: {} };
+  })), rasters: {}, residuals: dto.residual_regions ?? [] };
 }
 
 export function parseConfirmation(raw, id) {

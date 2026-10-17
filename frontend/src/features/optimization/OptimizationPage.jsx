@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ScanLine } from 'lucide-react';
 import { canExecuteOptimization, canViewResults, hasPermission } from '../authentication';
 import { AppShell } from '../../shared/components/AppShell';
@@ -115,8 +115,8 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired, user, result
       {state.metrics_available && state.metrics && <section aria-labelledby="result-title"><h2 id="result-title">Resultado del corte</h2>
         <dl className="optimization-facts">{[
           ['Piezas colocadas', `${state.placed_units} / ${state.total_units}`], ['Pedidos', state.snapshot.orders.length], ['Vidrios utilizados', state.snapshot.groups.length],
-          ['Planchas nuevas utilizadas', state.metrics.planchas_nuevas_usadas], ['Aprovechamiento obtenido', `${state.metrics.aprovechamiento_pct} %`],
-          ['Merma', `${state.metrics.merma_mm2} mm²`], ['Retazo recuperable', `${state.metrics.retazo_recuperable_mm2} mm²`], ['Tiempo', `${state.metrics.tiempo_computacional_ms} ms`],
+          ['Planchas nuevas utilizadas', state.metrics.planchas_nuevas_usadas], ['Área aprovechada', `${state.metrics.area_piezas_colocadas_mm2} mm² · ${state.metrics.aprovechamiento_pct} %`],
+          ['Merma no reutilizable', `${state.metrics.merma_mm2} mm² · ${(Number(state.metrics.merma_mm2) / Number(state.metrics.area_material_total_mm2) * 100).toFixed(3)} %`], ['Retazo reutilizable', `${state.metrics.retazo_recuperable_mm2} mm² · ${(Number(state.metrics.retazo_recuperable_mm2) / Number(state.metrics.area_material_total_mm2) * 100).toFixed(3)} %`], ['Tiempo', `${state.metrics.tiempo_computacional_ms} ms`],
         ].map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></section>}
       <ActionBar>
         <button className="ng-button" disabled={(!adapter.isFixture && state.status === 'running') || confirming} onClick={() => reset(flow.discard)}>Descartar</button>
@@ -134,9 +134,19 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired, user, result
   </>;
 }
 
-function OptimizationContent({ user, result, token, source: providedSource, adapter: providedAdapter, onSessionExpired }) {
+function OptimizationContent({ user, result, initialRunId, token, source: providedSource, adapter: providedAdapter, onSessionExpired }) {
   const source = useMemo(() => providedSource ?? (canExecuteOptimization(user) ? createPendingOrdersSource({ token }) : { load() {}, refresh() {}, subscribe() { return () => {}; }, dispose() {} }), [providedSource, token, user]);
   const adapter = useMemo(() => providedAdapter ?? createBackendRunAdapter({ token }), [providedAdapter, token]);
+  const [originResult, setOriginResult] = useState(null);
+  const [originError, setOriginError] = useState('');
+  useEffect(() => {
+    if (!initialRunId) return undefined;
+    let active = true;
+    adapter.loadResult(initialRunId).then(value => { if (active) setOriginResult(value); }).catch(error => {
+      if (active) { setOriginError(error.message); if (error.status === 401) onSessionExpired?.(); }
+    });
+    return () => { active = false; };
+  }, [adapter, initialRunId, onSessionExpired]);
   const catalog = useGlassCatalog({ token, enabled: !providedAdapter, onSessionExpired });
   return <PageCard className="optimization-page">
     <header className="optimization-section-heading"><h2>Distribución de corte</h2>
@@ -145,7 +155,9 @@ function OptimizationContent({ user, result, token, source: providedSource, adap
     {catalog.status === 'error' && !providedAdapter && <FeedbackMessage variant="warning">No se pudieron consultar los nombres de los vidrios. <button type="button" className="ng-button" onClick={catalog.retry}>Reintentar catálogo</button></FeedbackMessage>}
     {providedAdapter?.isFixture && <FeedbackMessage variant="warning">Datos de ejemplo para pruebas; no se modifica inventario.</FeedbackMessage>}
     {!providedSource && canExecuteOptimization(user) && <p>La lista de pedidos se actualiza automáticamente. Las existencias se descuentan al confirmar el corte.</p>}
-    <OptimizationWorkspace key={token} source={source} adapter={adapter} onSessionExpired={onSessionExpired} user={user} result={result} catalog={catalog} />
+    {originError && <FeedbackMessage variant="error">{originError}</FeedbackMessage>}
+    {initialRunId && !originResult && !originError ? <LoadingState>Consultando corte de origen...</LoadingState>
+      : <OptimizationWorkspace key={token} source={source} adapter={adapter} onSessionExpired={onSessionExpired} user={user} result={originResult ?? result} catalog={catalog} />}
   </PageCard>;
 }
 export function OptimizationPage({ user, toolbar, initialMode = 'first-fit', ...props }) {
