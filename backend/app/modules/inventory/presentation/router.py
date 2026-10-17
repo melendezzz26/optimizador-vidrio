@@ -252,6 +252,16 @@ def list_retazo_movements(
             for item in movements
         ]
 
+@router.get("/retazos/{id_retazo}/origen", status_code=status.HTTP_200_OK)
+def get_retazo_origin(
+    id_retazo: int,
+    service: InventoryService = Depends(get_inventory_service),
+    _ = Depends(require_permission("inventory.view")),
+):
+    with handle_domain_exceptions():
+        return service.get_retazo_origin(id_retazo)
+
+
 @router.patch("/retazos/{id_retazo}", response_model=RetazoResponse, status_code=status.HTTP_200_OK)
 def update_retazo(
     id_retazo: int,

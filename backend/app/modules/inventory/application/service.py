@@ -183,6 +183,14 @@ class InventoryService:
                 raise InventoryConflictError("El código de retazo ya existe.")
             return self._repository.save_retazo(replace(current, **changes))
 
+    def get_retazo_origin(self, id_retazo: int) -> dict:
+        identifier = _integer(id_retazo, "id_retazo")
+        with self._repository.read_transaction():
+            origin = self._repository.get_retazo_origin(identifier)
+            if origin is None:
+                raise InventoryNotFoundError("Retazo inexistente.")
+            return origin
+
     def writeoff_plancha(
         self, id_plancha: int, command: BajaManual, *, id_usuario: int,
     ) -> BajaInventarioResult:

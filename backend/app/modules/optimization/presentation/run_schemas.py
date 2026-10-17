@@ -147,6 +147,14 @@ class UnplacedUnitV1(UnitRefV1):
     reason: Literal["PENDING", "NO_FIT", "INTERRUPTED"]
 
 
+class ResidualRegionV1(StockRefV1):
+    x_mm: NonnegativeDecimal
+    y_mm: NonnegativeDecimal
+    width_mm: PositiveDecimal
+    height_mm: PositiveDecimal
+    area_mm2: PositiveDecimal
+
+
 class RunResponseV1(ProgressV1):
     schema_version: Literal[1]
     id_optimizacion: PositiveId
@@ -157,6 +165,7 @@ class RunResponseV1(ProgressV1):
     groups: Annotated[list[GroupV1], Field(min_length=1)]
     placements: list[PlacementV1]
     materials_used: list[StockV1]
+    residual_regions: list[ResidualRegionV1] = Field(default_factory=list)
     unplaced_units: list[UnplacedUnitV1]
     completo: bool
     metrics_available: bool
@@ -176,6 +185,17 @@ class RunResponseV1(ProgressV1):
         if {u.id_pedido for u in units} != set(self.order_ids):
             raise ValueError("Units must cover the selected orders.")
         stock_map = {(s.material_source, s.material_id, s.stock_unit_index): s for s in self.materials_used}
+        regions = set()
+        for region in self.residual_regions:
+            from ..domain.preparation import bbox_dimensions
+            key = region.material_source, region.material_id, region.stock_unit_index
+            stock = stock_map.get(key)
+            if stock is None or key in regions or region.area_mm2 != region.width_mm * region.height_mm:
+                raise ValueError('Residual regions require one exact rectangle per used physical stock unit.')
+            width, height = bbox_dimensions(stock.geometria.model_dump())
+            if region.x_mm + region.width_mm > width or region.y_mm + region.height_mm > height:
+                raise ValueError('Residual region exceeds its stock dimensions.')
+            regions.add(key)
         if len(stock_map) != len(self.materials_used):
             raise ValueError("Duplicate physical stock resources.")
         placed = set()
