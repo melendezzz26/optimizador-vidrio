@@ -25,14 +25,22 @@ test('Pages abre el editor dentro de pedidos sin abandonar el subpath', async ()
   window.history.replaceState({}, '', '/optimizador-vidrio/')
   vi.stubGlobal('fetch', vi.fn(async (url) => ({
     ok: true, status: 200,
-    json: async () => String(url).includes('/api/orders?') ? { items: [], total: 0, total_pages: 0, page: 1, limit: 10 } : [],
+    json: async () => {
+      if (String(url).includes('/api/orders?')) return { items: [], total: 0, total_pages: 0, page: 1, limit: 10 };
+      if (String(url).includes('/api/clients')) return [{ id_cliente: 41, nombre_razon_social: 'Cliente Pages', estado: true }];
+      return [{ id_tipo_vidrio: 7, nombre: 'Templado', estado: true, espesores_mm: [6] }];
+    },
   })))
   const user = userEvent.setup()
   render(<App />)
   await user.click(screen.getByRole('button', { name: 'Registro de pedidos', exact: true }))
   await user.click(await screen.findByRole('button', { name: 'Nuevo pedido', exact: true }))
-  await screen.findByText('No hay piezas agregadas')
-  await user.click(screen.getByRole('button', { name: 'Agregar pieza' }))
+  await screen.findByText('Falta seleccionar cliente')
+  await user.type(screen.getByLabelText('Nombre del cliente'), 'Pages')
+  await user.click(screen.getByRole('button', { name: 'Buscar', exact: true }))
+  await user.click(await screen.findByRole('button', { name: 'Seleccionar Cliente Pages' }))
+  await user.selectOptions(screen.getByLabelText('Tipo de vidrio'), '7')
+  await user.selectOptions(screen.getByLabelText('Espesor del vidrio (mm)'), '6')
   await user.selectOptions(screen.getByLabelText('Forma'), 'POLIGONO_CONVEXO')
   expect(screen.getByRole('dialog', { name: 'Dibujar Polígono Convexo' })).toBeVisible()
   expect(window.location.pathname).toBe('/optimizador-vidrio/')

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useEffect, useEffectEvent, useId, useRef, useState } from 'react';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { Loader2, PackagePlus, Plus, Save, Trash2, X } from 'lucide-react';
 import { AppShell } from '../../shared/components/AppShell';
@@ -122,6 +122,16 @@ export default function FormularioPedido({
     dimensiones: { width_mm: '', height_mm: '' },
   });
 
+  // Read current mode after loading without reloading or discarding the draft
+  // when presentation props change.
+  const initializeCreateForm = useEffectEvent(() => {
+    if (creating) setMaterialGroups([{
+      id: `group-${nextGroupIdRef.current++}`,
+      tipo_vidrio_id: '', espesor: '',
+      piezas: [{ ...createEmptyPiece(), nombre: 'Pieza 1' }],
+    }]);
+  });
+
   useEffect(() => {
     const controller = new AbortController();
     async function load() {
@@ -163,13 +173,8 @@ export default function FormularioPedido({
 
           setMaterialGroups(groups);
           initialSnapshotRef.current = JSON.parse(JSON.stringify(groups));
-        } else if (creating) {
-          setMaterialGroups([{
-            id: `group-${nextGroupIdRef.current++}`,
-            tipo_vidrio_id: '',
-            espesor: '',
-            piezas: [{ ...createEmptyPiece(), nombre: 'Pieza 1' }]
-          }]);
+        } else {
+          initializeCreateForm();
         }
       } catch (error) {
         if (error.name === 'AbortError' || controller.signal.aborted) return;
@@ -509,7 +514,7 @@ export default function FormularioPedido({
                                         type="button"
                                         className="ng-button orders-editor-open"
                                         onClick={() => openEditor(group.id, piece.id)}
-                                        disabled={disablePieceEditing} /* BLOQUEADO SI FALTA MATERIAL */
+                                        disabled={isSubmitting || isMaterialMissing}
                                       >
                                         {readOnly ? 'Ver figura' : 'Editar figura'}
                                       </button>
@@ -572,7 +577,21 @@ export default function FormularioPedido({
       </ConfirmDialog>
 
       {piezaEnEdicion !== null && <div className="orders-editor-backdrop">
-        <div ref={editorDialogRef} className="orders-editor-dialog" role="dialog" aria-modal="true" aria-labelledby={editorTitleId} tabIndex={-1}>
+        <div ref={editorDialogRef} className="orders-editor-dialog" role="dialog" aria-modal="true" aria-labelledby={editorTitleId} tabIndex={-1}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') {
+              event.stopPropagation();
+              setPiezaEnEdicion(null);
+            }
+            if (event.key === 'Tab') {
+              const controls = [...editorDialogRef.current.querySelectorAll('button:not(:disabled), input:not(:disabled), select:not(:disabled), [tabindex="0"]')]
+                .filter(element => element.style.display !== 'none');
+              const first = controls[0];
+              const last = controls.at(-1);
+              if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+              else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+            }
+          }}>
           <div className="orders-editor-dialog__header">
             <h3 id={editorTitleId}>Dibujar Polígono Convexo</h3>
             <button ref={editorCloseRef} type="button" className="orders-editor-dialog__close" aria-label="Cerrar editor de polígono" onClick={() => setPiezaEnEdicion(null)}><X size={24} aria-hidden="true" /></button>

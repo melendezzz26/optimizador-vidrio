@@ -33,28 +33,28 @@ describe('FormularioPedido canónico', () => {
   test('NuevoPedido queda como wrapper del modo crear', async () => {
     render(<NuevoPedido token="wrapper-token" />);
     expect(await screen.findByRole('heading', { name: 'Nuevo pedido' })).toBeVisible();
-    expect(screen.getByRole('button', { name: 'Agregar pieza' })).toBeEnabled();
+    expect(await screen.findByText('Falta seleccionar cliente')).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Agregar pieza' })).not.toBeInTheDocument();
     expect(fetch).toHaveBeenCalledTimes(1);
   });
 
   test('acepta medidas decimales positivas y anuncia errores de campo asociados', async () => {
     const user = userEvent.setup();
     render(<FormularioPedido token="decimal-token" standalone />);
-    await screen.findByText('No hay piezas agregadas');
+    await screen.findByText('Falta seleccionar cliente');
   fetch.mockResolvedValueOnce(response([{ id_cliente: 41, nombre_razon_social: 'Cliente prueba', estado: true }]))
   fireEvent.change(screen.getByLabelText('Nombre del cliente'), { target: { value: 'prueba' } })
   fireEvent.click(screen.getByRole('button', { name: 'Buscar', exact: true }))
   fireEvent.click(await screen.findByRole('button', { name: 'Seleccionar Cliente prueba' }))
 
-    await user.click(screen.getByRole('button', { name: 'Agregar pieza' }));
     const row = screen.getByText('Pieza 1', { selector: 'strong' }).closest('.orders-piece');
-    await user.selectOptions(within(row).getByLabelText('Material'), '7');
-    await user.selectOptions(within(row).getByLabelText('Espesor'), '5.5');
+    await user.selectOptions(within(row.closest('.orders-material-group')).getByLabelText('Tipo de vidrio'), '7');
+    await user.selectOptions(within(row.closest('.orders-material-group')).getByLabelText('Espesor del vidrio (mm)'), '5.5');
     fireEvent.change(within(row).getByLabelText('Ancho (mm)'), { target: { value: '10.5' } });
     fireEvent.change(within(row).getByLabelText('Alto (mm)'), { target: { value: '5.25' } });
     expect(screen.getByRole('button', { name: 'Guardar pedido' })).toBeEnabled();
 
-    const quantity = within(row).getByLabelText('Cant.');
+    const quantity = within(row).getByLabelText('Cantidad');
     fireEvent.change(quantity, { target: { value: '1.5' } });
     fireEvent.blur(quantity);
     const fieldError = await screen.findByText('Ingresa una cantidad entera mayor que 0.');
@@ -75,23 +75,23 @@ describe('FormularioPedido canónico', () => {
     });
 
     render(<FormularioPedido token="edit-token" idPedido={73} mode="edit" />);
-    expect(await screen.findByText('✓ Geometría cargada')).toBeVisible();
+    expect(await screen.findByText('✓ Figura configurada')).toBeVisible();
     const row = screen.getByText('Pieza 1', { selector: 'strong' }).closest('.orders-piece');
-    expect(within(row).getByLabelText('Material')).toHaveValue('7');
-    expect(within(row).getByLabelText('Espesor')).toHaveValue('5.5');
+    expect(within(row.closest('.orders-material-group')).getByLabelText('Tipo de vidrio')).toHaveValue('7');
+    expect(within(row.closest('.orders-material-group')).getByLabelText('Espesor del vidrio (mm)')).toHaveValue('5.5');
 
-    await user.click(within(row).getByRole('button', { name: 'Editar dibujo' }));
+    await user.click(within(row).getByRole('button', { name: 'Editar figura' }));
     const dialog = screen.getByRole('dialog', { name: 'Dibujar Polígono Convexo' });
     expect(dialog).toHaveAttribute('aria-modal', 'true');
     expect(screen.getByRole('button', { name: 'Cerrar editor de polígono' })).toHaveFocus();
-    expect(screen.getByText('Geometría convexa validada.')).toBeVisible();
+    expect(screen.getByText('✓ Geometría validada y lista.')).toBeVisible();
     const firstSide = screen.getByRole('spinbutton', { name: 'Longitud del segmento S1 en milímetros' });
     expect(firstSide).toHaveValue(300);
     fireEvent.change(firstSide, { target: { value: '320' } });
-    expect(screen.getByText('Geometría convexa validada.')).toBeVisible();
+    expect(screen.getByText('✓ Geometría validada y lista.')).toBeVisible();
     await user.click(screen.getByRole('button', { name: 'Agregar pieza al pedido' }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-    expect(within(row).getByRole('button', { name: 'Editar dibujo' })).toHaveFocus();
+    expect(within(row).getByRole('button', { name: 'Editar figura' })).toHaveFocus();
 
     await user.click(screen.getByRole('button', { name: 'Guardar cambios' }));
     expect(await screen.findByText('Pedido actualizado correctamente.')).toBeVisible();
