@@ -2,10 +2,74 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Annotated, Literal, Union
 
-from pydantic import BaseModel, Field, field_serializer
+from pydantic import BaseModel, Field, field_serializer, field_validator
+
+from app.modules.inventory.domain.writeoff import TipoEventoBajaManual
+
+# El historial muestra todos los valores persistibles; BajaManualRequest sigue
+# limitado a los cuatro eventos manuales.
+TipoEventoHistorial = Literal[
+    "BAJA_ROTURA",
+    "BAJA_MERMA",
+    "BAJA_ERROR_REGISTRO",
+    "BAJA_RETIRO",
+    "CONSUMO_OPTIMIZACION",
+]
 
 class BaseSchema(BaseModel):
     model_config = {"extra": "forbid"}
+
+
+class BajaManualRequest(BaseSchema):
+    """Payload público de baja; no permite enviar usuario ni fecha."""
+
+    tipo_evento: TipoEventoBajaManual
+    motivo: str = Field(min_length=1)
+    observacion: str | None = None
+
+    @field_validator("motivo")
+    @classmethod
+    def motivo_no_vacio(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("motivo debe explicar la baja y no puede estar vacío")
+        return value
+
+
+class MovimientoInventarioResponse(BaseSchema):
+    id_movimiento: int
+    id_plancha: int | None
+    id_retazo: int | None
+    tipo_evento: TipoEventoBajaManual
+    motivo: str
+    observacion: str | None
+    id_usuario: int
+    fecha: datetime
+    id_optimizacion: int | None
+    cantidad_afectada: int | None
+
+
+class MovimientoHistorialResponse(BaseSchema):
+    id_movimiento: int
+    id_plancha: int | None
+    id_retazo: int | None
+    tipo_evento: TipoEventoHistorial
+    motivo: str
+    observacion: str | None
+    id_usuario: int
+    fecha: datetime
+    id_optimizacion: int | None
+    cantidad_afectada: int | None
+
+
+class BajaManualResponse(BaseSchema):
+    estado: bool
+    cantidad: int | None = None
+    movimiento: MovimientoInventarioResponse
+
+
+class BajaPlanchaRequest(BajaManualRequest):
+    cantidad_afectada: int = Field(gt=0, strict=True)
 
 # --- Tipos de Vidrio ---
 
@@ -39,6 +103,12 @@ class Circunferencia(BaseSchema):
 class PoligonoConvexo(BaseSchema):
     type: Literal["POLIGONO_CONVEXO"]
     vertices_mm: list[tuple[Decimal, Decimal]] = Field(min_length=3)
+
+    @field_serializer("vertices_mm", when_used="json")
+    def serialize_vertices(self, vertices: list[tuple[Decimal, Decimal]]) -> list[list[int | float]]:
+        # JSON transport is numeric; validation and Python-mode DTOs retain Decimal.
+        return [[int(value) if value == value.to_integral_value() else float(value)
+                 for value in point] for point in vertices]
 
 Geometria = Annotated[
     Union[Rectangulo, Circunferencia, PoligonoConvexo],

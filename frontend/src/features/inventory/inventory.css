@@ -204,6 +204,48 @@
   white-space: nowrap;
 }
 
+.inventory-dialog-backdrop { z-index: 31; }
+.inventory-dialog {
+  width: 100%;
+  max-width: 760px;
+  max-height: calc(100vh - 2 * var(--ng-space-4));
+  overflow-y: auto;
+}
+.inventory-dialog__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ng-space-4);
+}
+.inventory-dialog__header h2 { min-width: 0; overflow-wrap: anywhere; }
+.inventory-dialog__close { flex: 0 0 auto; min-height: 40px; padding: var(--ng-space-2); }
+.inventory-dialog__body { display: grid; gap: var(--ng-space-4); margin-top: var(--ng-space-4); }
+.inventory-dialog__body > p { margin: 0; }
+.inventory-dialog__resource { color: var(--ng-text-600); }
+.inventory-dialog__textarea { min-height: 96px; resize: vertical; }
+.inventory-dialog__field-error { margin: var(--ng-space-2) 0 0; color: var(--ng-error); font-size: 14px; }
+.inventory-dialog .ng-action-bar { margin-top: 0; }
+.inventory-writeoff-summary,
+.inventory-history__details { display: grid; gap: var(--ng-space-3); margin: 0; }
+.inventory-writeoff-summary > div,
+.inventory-history__details > div {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.35fr) minmax(0, 1fr);
+  gap: var(--ng-space-3);
+  padding-bottom: var(--ng-space-3);
+  border-bottom: 1px solid var(--ng-border-subtle);
+}
+.inventory-writeoff-summary dt,
+.inventory-history__details dt { color: var(--ng-text-600); font-size: 14px; font-weight: 600; }
+.inventory-writeoff-summary dd,
+.inventory-history__details dd { margin: 0; overflow-wrap: anywhere; }
+.inventory-history__list { display: grid; gap: var(--ng-space-4); margin: 0; padding: 0; list-style: none; }
+.inventory-history__item { padding: var(--ng-space-4); border: 1px solid var(--ng-border-subtle); border-radius: var(--ng-radius-control); }
+.inventory-history__item article { display: grid; gap: var(--ng-space-4); }
+.inventory-history__header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: var(--ng-space-2); }
+.inventory-history__header h3 { margin: 0; font-size: 16px; }
+.inventory-history__header time { color: var(--ng-text-600); font-size: 14px; }
+
 @media (max-width: 720px) {
   .inventory-tabs { margin-top: var(--ng-space-4); }
   .inventory-list { margin-top: var(--ng-space-4); }
@@ -217,4 +259,9 @@
   .inventory-filters { grid-template-columns: minmax(0, 1fr); gap: var(--ng-space-3); }
   .inventory-filter-actions .ng-button { width: 100%; }
   .inventory-empty { padding: var(--ng-space-6) 0; }
+  .inventory-dialog { padding: var(--ng-space-4); }
+  .inventory-dialog .ng-action-bar { flex-direction: column-reverse; }
+  .inventory-dialog .ng-action-bar > .ng-button { width: 100%; }
+  .inventory-writeoff-summary > div,
+  .inventory-history__details > div { grid-template-columns: 1fr; gap: var(--ng-space-1); }
 }

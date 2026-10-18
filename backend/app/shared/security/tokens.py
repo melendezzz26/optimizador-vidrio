@@ -1,25 +1,16 @@
 """Creación y validación de los tokens JWT de acceso."""
-import os
 from datetime import datetime, timedelta, timezone
 
 import jwt
-from dotenv import load_dotenv
 
-load_dotenv()
+from app.shared.config import required_value, token_minutes
 
 ALGORITHM = "HS256"
 REQUIRED_CLAIMS = ["exp", "sub", "username", "rol"]
 MAX_USER_ID = 2_147_483_647  # límite de INTEGER en PostgreSQL
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-if not SECRET_KEY or not SECRET_KEY.strip():
-    raise RuntimeError(
-        "Configura SECRET_KEY en el entorno o en backend/.env antes de iniciar el backend."
-    )
-
-TOKEN_MINUTES = int(os.getenv("TOKEN_MINUTOS", "480"))  # jornada de 8 h
-if TOKEN_MINUTES <= 0:
-    raise RuntimeError("TOKEN_MINUTOS debe ser un entero positivo.")
+SECRET_KEY = required_value("SECRET_KEY")
+TOKEN_MINUTES = token_minutes()  # Por defecto, jornada de 8 h.
 
 
 def create_access_token(user_id: int, username: str, role: str) -> str:

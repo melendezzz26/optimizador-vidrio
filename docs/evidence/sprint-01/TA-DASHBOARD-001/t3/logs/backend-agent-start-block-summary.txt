@@ -1,0 +1,4 @@
+﻿Historical first attempt
+The agent could not create the backend process because the base Python configured by backend/venv resolved to WindowsApps in its execution context.
+The backend was not restarted or altered by that attempt.
+The user later started the normal backend process manually; see backend-health-recheck-summary.txt.

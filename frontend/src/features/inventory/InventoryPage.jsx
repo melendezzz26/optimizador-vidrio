@@ -1,18 +1,30 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
-import { canManagePlanchas, canManageRetazos } from '../authentication';
+import {
+  canManagePlanchas,
+  canManageRetazos,
+  canViewInventory,
+  canViewResults,
+} from '../authentication';
 import { AppShell } from '../../shared/components/AppShell';
 import { PageCard, PageHeader } from '../../shared/components/PageLayout';
+import { EmptyState, FeedbackMessage, LoadingState } from '../../shared/components/feedback';
 import RegistrarPlanchaForm from './RegistrarPlanchaForm';
 import RegistrarRetazoForm from './RegistrarRetazoForm';
 import {
   createPlancha,
   createRetazo,
   getPlanchas,
+  getPlanchaMovements,
   getRetazos,
+  getRetazoMovements,
   getTiposVidrio,
   updatePlancha,
   updateRetazo,
+  writeoffPlancha,
+  writeoffRetazo,
 } from './inventoryApi';
+import { MovementHistoryDialog } from './MovementHistoryDialog';
+import { WriteoffDialog } from './WriteoffDialog';
 import './inventory.css';
 
 const TABS = [
@@ -108,7 +120,16 @@ function StatusBadge({ active }) {
 }
 
 function InventoryTable({
-  kind, rows, typesById, canManage, onToggleStatus, onEditPlancha, onEditRetazo, pendingAction,
+  kind,
+  rows,
+  typesById,
+  canManage,
+  canViewHistory,
+  onEditPlancha,
+  onEditRetazo,
+  onWriteoff,
+  onViewHistory,
+  pendingAction,
 }) {
   if (kind === 'planchas') {
     return (
@@ -124,7 +145,7 @@ function InventoryTable({
               <th scope="col" className="inventory-number">Cantidad</th>
               <th scope="col">Estado</th>
               <th scope="col">Fecha de registro</th>
-              {canManage && <th scope="col">Acciones</th>}
+              {(canManage || canViewHistory) && <th scope="col">Acciones</th>}
             </tr>
           </thead>
           <tbody>
@@ -137,26 +158,35 @@ function InventoryTable({
                 <td className="inventory-number">{formatNumber(plancha.cantidad)}</td>
                 <td><StatusBadge active={plancha.estado} /></td>
                 <td>{formatDate(plancha.fecha_registro)}</td>
-                {canManage && (
+                {(canManage || canViewHistory) && (
                   <td>
                     <div className="inventory-row-actions">
-                      <button
-                        className="ng-button"
-                        type="button"
-                        disabled={pendingAction !== null}
-                        onClick={() => onEditPlancha(plancha)}
-                      >
-                        Editar
-                      </button>
-                      <button
-                        className="ng-button"
-                        type="button"
-                        disabled={pendingAction !== null}
-                        aria-busy={pendingAction?.id === plancha.id_plancha}
-                        onClick={() => onToggleStatus(plancha)}
-                      >
-                        {plancha.estado ? 'Desactivar' : 'Activar'}
-                      </button>
+                      {canViewHistory && (
+                        <button
+                          className="ng-button"
+                          type="button"
+                          disabled={pendingAction !== null}
+                          aria-label={`Ver historial de plancha #${plancha.id_plancha}`}
+                          onClick={() => onViewHistory(plancha)}
+                        >Historial</button>
+                      )}
+                      {canManage && (
+                        <>
+                          <button
+                            className="ng-button"
+                            type="button"
+                            disabled={pendingAction !== null}
+                            onClick={() => onEditPlancha(plancha)}
+                          >Editar</button>
+                          <button
+                            className="ng-button ng-button--danger"
+                            type="button"
+                            disabled={pendingAction !== null || !plancha.estado || plancha.cantidad <= 0}
+                            aria-label={`Dar de baja plancha #${plancha.id_plancha}`}
+                            onClick={() => onWriteoff(plancha)}
+                          >Dar de baja</button>
+                        </>
+                      )}
                     </div>
                   </td>
                 )}
@@ -181,7 +211,7 @@ function InventoryTable({
             <th scope="col" className="inventory-number">Área</th>
             <th scope="col">Estado</th>
             <th scope="col">Fecha de registro</th>
-            {canManage && <th scope="col">Acciones</th>}
+            {(canManage || canViewHistory) && <th scope="col">Acciones</th>}
           </tr>
         </thead>
         <tbody>
@@ -194,26 +224,35 @@ function InventoryTable({
               <td className="inventory-number">{formatNumber(retazo.area_mm2)} mm²</td>
               <td><StatusBadge active={retazo.estado} /></td>
               <td>{formatDate(retazo.fecha_registro)}</td>
-              {canManage && (
+              {(canManage || canViewHistory) && (
                 <td>
                   <div className="inventory-row-actions">
-                    <button
-                      className="ng-button"
-                      type="button"
-                      disabled={pendingAction !== null}
-                      onClick={() => onEditRetazo(retazo)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="ng-button"
-                      type="button"
-                      disabled={pendingAction !== null}
-                      aria-busy={pendingAction?.id === retazo.id_retazo}
-                      onClick={() => onToggleStatus(retazo)}
-                    >
-                      {retazo.estado ? 'Desactivar' : 'Activar'}
-                    </button>
+                    {canViewHistory && (
+                      <button
+                        className="ng-button"
+                        type="button"
+                        disabled={pendingAction !== null}
+                        aria-label={`Ver historial de retazo ${retazo.codigo}`}
+                        onClick={() => onViewHistory(retazo)}
+                      >Historial</button>
+                    )}
+                    {canManage && (
+                      <>
+                        <button
+                          className="ng-button"
+                          type="button"
+                          disabled={pendingAction !== null}
+                          onClick={() => onEditRetazo(retazo)}
+                        >Editar</button>
+                        <button
+                          className="ng-button ng-button--danger"
+                          type="button"
+                          disabled={pendingAction !== null}
+                          aria-label={`Dar de baja retazo ${retazo.codigo}`}
+                          onClick={() => onWriteoff(retazo)}
+                        >Dar de baja</button>
+                      </>
+                    )}
                   </div>
                 </td>
               )}
@@ -225,7 +264,7 @@ function InventoryTable({
   );
 }
 
-export function InventoryPage({ onSessionExpired, toolbar, user }) {
+export function InventoryPage({ onSessionExpired, toolbar, user, onOpenCut }) {
   const [activeTab, setActiveTab] = useState('planchas');
   const [filtersByTab, setFiltersByTab] = useState({
     planchas: { ...EMPTY_FILTERS }, retazos: { ...EMPTY_FILTERS },
@@ -244,9 +283,16 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
   const [operationWarning, setOperationWarning] = useState('');
   const [operationSuccess, setOperationSuccess] = useState('');
   const [pendingInventoryAction, setPendingInventoryAction] = useState(null);
+  const [writeoffTarget, setWriteoffTarget] = useState(null);
+  const [writeoffError, setWriteoffError] = useState('');
+  const [historyTarget, setHistoryTarget] = useState(null);
+  const [movementHistory, setMovementHistory] = useState([]);
+  const [isHistoryLoading, setIsHistoryLoading] = useState(false);
+  const [historyError, setHistoryError] = useState('');
   const titleId = useId();
   const tabPanelId = useId();
   const tabRefs = useRef({});
+  const historyRequestId = useRef(0);
   const isInventoryActionPending = pendingInventoryAction !== null;
 
   const handleApiError = useCallback((error) => {
@@ -509,62 +555,108 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
     }
   }
 
-  async function handleTogglePlanchaEstado(plancha) {
-    const targetState = !plancha.estado;
+  function openWriteoff(resource, kind) {
+    if (isInventoryActionPending) return;
     setOperationError('');
     setOperationWarning('');
     setOperationSuccess('');
-    setPendingInventoryAction({ entity: 'plancha', id: plancha.id_plancha, targetState });
+    setWriteoffError('');
+    setWriteoffTarget({ resource, kind });
+  }
+
+  function closeWriteoff() {
+    if (isInventoryActionPending) return;
+    setWriteoffTarget(null);
+    setWriteoffError('');
+  }
+
+  async function submitWriteoff(payload) {
+    if (!writeoffTarget || isInventoryActionPending) return;
+    const { resource, kind } = writeoffTarget;
+    const resourceId = kind === 'plancha' ? resource.id_plancha : resource.id_retazo;
+    setWriteoffError('');
+    setOperationError('');
+    setOperationWarning('');
+    setOperationSuccess('');
+    setPendingInventoryAction({ entity: kind, id: resourceId, operation: 'writeoff' });
+
     try {
-      try {
-        await updatePlancha(plancha.id_plancha, { estado: targetState });
-      } catch (error) {
-        setOperationError(handleApiError(error).message);
-        return;
+      let result;
+      if (kind === 'plancha') result = await writeoffPlancha(resourceId, payload);
+      else result = await writeoffRetazo(resourceId, payload);
+
+      if (kind === 'plancha') {
+        setPlanchas((current) => current.map((item) => (
+          item.id_plancha === resourceId ? { ...item, estado: result.estado, cantidad: result.cantidad } : item
+        )));
+      } else {
+        setRetazos((current) => current.map((item) => (
+          item.id_retazo === resourceId ? { ...item, estado: result.estado } : item
+        )));
       }
+      setWriteoffTarget(null);
+      setOperationSuccess(
+        `Baja registrada correctamente. Movimiento #${result.movimiento.id_movimiento}.`,
+      );
 
       try {
-        const updatedPlanchas = await getPlanchas();
-        setPlanchas(updatedPlanchas);
-        setActiveTab('planchas');
-        setOperationSuccess(`Plancha ${targetState ? 'activada' : 'desactivada'} correctamente.`);
+        const updatedRows = kind === 'plancha' ? await getPlanchas() : await getRetazos();
+        if (kind === 'plancha') setPlanchas(updatedRows);
+        else setRetazos(updatedRows);
       } catch (error) {
         handleApiError(error);
-        setActiveTab('planchas');
-        setOperationWarning('El estado de la plancha fue actualizado, pero no se pudo refrescar el listado.');
+        setOperationWarning('La baja se registró, pero no se pudo actualizar el listado.');
       }
+    } catch (error) {
+      const handledError = handleApiError(error);
+      const message = error.status === 0 || error.status >= 500
+        ? `No se pudo confirmar la baja. ${handledError.message}`
+        : handledError.message;
+      setWriteoffError(message);
     } finally {
       setPendingInventoryAction(null);
     }
   }
 
-  async function handleToggleRetazoEstado(retazo) {
-    const targetState = !retazo.estado;
-    setOperationError('');
-    setOperationWarning('');
-    setOperationSuccess('');
-    setPendingInventoryAction({ entity: 'retazo', id: retazo.id_retazo, targetState });
+  async function loadMovementHistory(resource, kind, requestId) {
+    setIsHistoryLoading(true);
+    setHistoryError('');
     try {
-      try {
-        await updateRetazo(retazo.id_retazo, { estado: targetState });
-      } catch (error) {
-        setOperationError(handleApiError(error).message);
-        return;
-      }
-
-      try {
-        const updatedRetazos = await getRetazos();
-        setRetazos(updatedRetazos);
-        setActiveTab('retazos');
-        setOperationSuccess(`Retazo ${targetState ? 'activado' : 'desactivado'} correctamente.`);
-      } catch (error) {
-        handleApiError(error);
-        setActiveTab('retazos');
-        setOperationWarning('El estado del retazo fue actualizado, pero no se pudo refrescar el listado.');
+      const resourceId = kind === 'plancha' ? resource.id_plancha : resource.id_retazo;
+      const movements = kind === 'plancha'
+        ? await getPlanchaMovements(resourceId)
+        : await getRetazoMovements(resourceId);
+      if (requestId === historyRequestId.current) setMovementHistory(movements);
+    } catch (error) {
+      if (requestId === historyRequestId.current) {
+        setHistoryError(handleApiError(error).message);
       }
     } finally {
-      setPendingInventoryAction(null);
+      if (requestId === historyRequestId.current) setIsHistoryLoading(false);
     }
+  }
+
+  function openMovementHistory(resource, kind) {
+    if (isInventoryActionPending) return;
+    const requestId = historyRequestId.current + 1;
+    historyRequestId.current = requestId;
+    setHistoryTarget({ resource, kind });
+    setMovementHistory([]);
+    setHistoryError('');
+    void loadMovementHistory(resource, kind, requestId);
+  }
+
+  function retryMovementHistory() {
+    if (!historyTarget) return;
+    const requestId = historyRequestId.current + 1;
+    historyRequestId.current = requestId;
+    void loadMovementHistory(historyTarget.resource, historyTarget.kind, requestId);
+  }
+
+  function closeMovementHistory() {
+    historyRequestId.current += 1;
+    setHistoryTarget(null);
+    setIsHistoryLoading(false);
   }
 
   const typesById = new Map(catalogo.map((tipo) => [Number(tipo.id_tipo_vidrio), tipo.nombre]));
@@ -580,7 +672,12 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
     (!filters.tipo || Number(row.id_tipo_vidrio) === Number(filters.tipo))
     && (!filters.espesor || Number(row.espesor_mm) === Number(filters.espesor))
     && (!filters.estado || row.estado === (filters.estado === 'activo'))
-  ));
+  )).sort((a, b) => {
+    const available = (row) => Number(row.estado && (activeTab !== 'planchas' || row.cantidad > 0));
+    return available(b) - available(a)
+      || new Date(b.fecha_registro) - new Date(a.fecha_registro)
+      || (b.id_plancha ?? b.id_retazo) - (a.id_plancha ?? a.id_retazo);
+  });
 
   function changeFilter(field, value) {
     setFiltersByTab((previous) => {
@@ -633,6 +730,7 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
   const canManageCurrentTab = activeTab === 'planchas'
     ? canManagePlanchas(user)
     : canManageRetazos(user);
+  const canViewCurrentHistory = canViewInventory(user);
 
   return (
     <AppShell activeItem="inventory" user={user}>
@@ -668,34 +766,27 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
 
       {isLoading && (
         <PageCard className="inventory-state" aria-busy="true">
-          <p className="inventory-status" role="status">Cargando inventario...</p>
+          <LoadingState>Cargando inventario...</LoadingState>
         </PageCard>
       )}
       {loadError && (
         <PageCard className="inventory-state">
-          <div className="inventory-error" role="alert">
-            <h2>No se pudo cargar el inventario</h2>
-            <p>{loadError}</p>
-          </div>
+          <FeedbackMessage variant="error" title="No se pudo cargar el inventario">{loadError}</FeedbackMessage>
         </PageCard>
       )}
 
       {operationSuccess && !showPlanchaForm && !showRetazoForm && (
-        <p className="inventory-feedback inventory-feedback--success" role="status" aria-live="polite">
-          {operationSuccess}
-        </p>
+        <FeedbackMessage variant="success">{operationSuccess}</FeedbackMessage>
       )}
 
       {operationError && (
-        <p className="inventory-feedback inventory-feedback--error" role="alert">{operationError}</p>
+        <FeedbackMessage variant="error" title="No se pudo completar la operación">{operationError}</FeedbackMessage>
       )}
 
       {operationWarning
         && (!showPlanchaForm || editingPlancha !== null)
         && (!showRetazoForm || editingRetazo !== null) && (
-        <p className="inventory-feedback inventory-feedback--warning" role="status" aria-live="polite">
-          {operationWarning}
-        </p>
+          <FeedbackMessage variant="warning">{operationWarning}</FeedbackMessage>
       )}
 
       {showPlanchaForm && activeTab === 'planchas' && (
@@ -792,26 +883,57 @@ export function InventoryPage({ onSessionExpired, toolbar, user }) {
             </div>
           )}
           {rows.length === 0 ? (
-            <div className="inventory-empty"><p className="inventory-status">{emptyMessage}</p></div>
+            <EmptyState title={emptyMessage} />
           ) : filteredRows.length === 0 ? (
-            <div className="inventory-empty" role="status">
-              <p>No hay resultados para los filtros seleccionados.</p>
-              <p className="inventory-status">Ajusta los filtros o usa «Limpiar filtros» para ver todo el listado.</p>
-            </div>
+            <EmptyState
+              kind="sin-resultados"
+              title="No hay resultados para los filtros seleccionados."
+              description="Ajusta los filtros o usa «Limpiar filtros» para ver todo el listado."
+            />
           ) : (
             <InventoryTable
               kind={activeTab}
               rows={filteredRows}
               typesById={typesById}
               canManage={canManageCurrentTab}
-              onToggleStatus={activeTab === 'planchas'
-                ? handleTogglePlanchaEstado : handleToggleRetazoEstado}
+              canViewHistory={canViewCurrentHistory}
               onEditPlancha={handleEditPlancha}
               onEditRetazo={handleEditRetazo}
+              onWriteoff={(resource) => openWriteoff(
+                resource, activeTab === 'planchas' ? 'plancha' : 'retazo',
+              )}
+              onViewHistory={(resource) => openMovementHistory(
+                resource, activeTab === 'planchas' ? 'plancha' : 'retazo',
+              )}
               pendingAction={pendingInventoryAction}
             />
           )}
         </PageCard>
+      )}
+      {writeoffTarget && (
+        <WriteoffDialog
+          resource={writeoffTarget.resource}
+          kind={writeoffTarget.kind}
+          typesById={typesById}
+          error={writeoffError}
+          isSubmitting={pendingInventoryAction?.operation === 'writeoff'}
+          onClose={closeWriteoff}
+          onSubmit={submitWriteoff}
+        />
+      )}
+      {historyTarget && (
+        <MovementHistoryDialog
+          resource={historyTarget.resource}
+          glassName={catalogo.find(type => type.id_tipo_vidrio === historyTarget.resource.id_tipo_vidrio)?.nombre}
+          canViewCut={canViewResults(user)}
+          onOpenCut={onOpenCut}
+          kind={historyTarget.kind}
+          movements={movementHistory}
+          isLoading={isHistoryLoading}
+          error={historyError}
+          onRetry={retryMovementHistory}
+          onClose={closeMovementHistory}
+        />
       )}
     </AppShell>
   );

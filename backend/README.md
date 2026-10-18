@@ -76,6 +76,36 @@ Esta preparación no crea tablas ni requiere ejecutar seed, `/db-test` o comando
 de migración Alembic. La divergencia de revisiones remotas sigue tratándose en
 su bloque de integración; no se resuelve durante la instalación del entorno.
 
+## Configuración inicial de corte para desarrollo/demo
+
+Con la base de destino autorizada en el entorno, desde `backend/`:
+
+```text
+python -m alembic upgrade head
+python seed.py
+python -m scripts.create_first_admin
+python seed.py --optimization-demo --responsable USUARIO_EXISTENTE
+```
+
+Si ya existe una cuenta activa, omitir la creación del primer administrador y
+usar su nombre de usuario en `--responsable`. El comando sin opciones conserva
+la carga habitual de roles/permisos; los parámetros demo son optativos. No se
+asume un ID de usuario ni se crean cuentas ficticias. En una base compartida,
+ejecutar únicamente con autorización y verificar el destino antes de migrar.
+
+Los parámetros provienen de `tests/optimization_e2e_data.py`, usado en los E2E
+finales: separación 0 mm, margen 0 mm, resolución 1 mm, paso angular 90° y tamaño
+mínimo de retazo 10 × 10 mm. Son una base reproducible de desarrollo/demo,
+no una recomendación de tolerancias de fabricación para todos los trabajos.
+
+El seed es idempotente y serializa intentos concurrentes: mantiene exactamente
+una versión vigente completa y no reemplaza sus valores. Si no hay vigente,
+inserta una versión nueva sin alterar filas históricas ni optimizaciones. Si hay
+varias vigentes o una vigente incompleta/inválida, falla e indica que debe
+revisarla el administrador. Si necesita crear y el responsable no existe o está
+inactivo, también falla sin crear datos. Puede ejecutarse dos veces para
+comprobar la idempotencia; no requiere INSERT manual ni nuevas migraciones.
+
 ## Primer Administrador
 
 La gestión de usuarios exige una sesión de Administrador, así que la primera

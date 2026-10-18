@@ -1,0 +1,13 @@
+{
+  "case": "external_stock_change",
+  "waiting": {
+    "pid": 46231,
+    "wait_event_type": "Lock",
+    "wait_event": "transactionid",
+    "blockers": [
+      46234
+    ],
+    "query": "SELECT planchas.id_plancha, planchas.ancho_mm, planchas.alto_mm, planchas.espesor_mm, planchas.cantidad, planchas.estado, planchas.fecha_registro, planchas.id_tipo_vidrio \nFROM planchas \nWHERE planchas.id_plancha IN ($1::INTEGER) ORDER BY planchas.id_plancha FOR UPDATE"
+  },
+  "outcome": 409
+}

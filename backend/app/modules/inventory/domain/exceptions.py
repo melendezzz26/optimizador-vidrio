@@ -14,4 +14,4 @@ class InventoryNotFoundError(LookupError):
 
 
 class InventoryConflictError(Exception):
-    """Un nombre o código de inventario ya está en uso."""
+    """Una operación entra en conflicto con el estado o unicidad de Inventory."""

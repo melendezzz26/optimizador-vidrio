@@ -1,9 +1,7 @@
 // Tabla de usuarios. No muestra el DNI (SPEC-HU-003, RN-09).
-export function UsersTable({ users, currentUserId, pendingUserId, onEdit, onToggleStatus }) {
-  if (users.length === 0) {
-    return <p className="users-hint">Todavía no hay usuarios registrados.</p>;
-  }
-
+// Recibe la lista ya filtrada; los estados vacíos los decide UsersPage.
+// Sin users.manage (canManage=false) la tabla es de solo consulta: no hay columna Acciones.
+export function UsersTable({ users, currentUserId, pendingUserId, onEdit, onToggleStatus, canManage = true }) {
   return (
     <div className="users-table-scroll">
       <table className="users-table">
@@ -14,7 +12,7 @@ export function UsersTable({ users, currentUserId, pendingUserId, onEdit, onTogg
             <th scope="col">Nombre</th>
             <th scope="col">Rol</th>
             <th scope="col">Estado</th>
-            <th scope="col">Acciones</th>
+            {canManage && <th scope="col">Acciones</th>}
           </tr>
         </thead>
         <tbody>
@@ -31,24 +29,26 @@ export function UsersTable({ users, currentUserId, pendingUserId, onEdit, onTogg
                     {user.estado ? 'Activo' : 'Inactivo'}
                   </span>
                 </td>
-                <td>
-                  <div className="users-row-actions">
-                    <button type="button" className="ng-button users-row-button"
-                      onClick={() => onEdit(user)} aria-label={`Editar a ${fullName}`}>
-                      Editar
-                    </button>
-                    {isOwnAccount ? (
-                      <span className="users-hint">Tu cuenta</span>
-                    ) : (
+                {canManage && (
+                  <td>
+                    <div className="users-row-actions">
                       <button type="button" className="ng-button users-row-button"
-                        onClick={() => onToggleStatus(user)}
-                        disabled={pendingUserId === user.id_usuario}
-                        aria-label={`${user.estado ? 'Desactivar' : 'Activar'} a ${fullName}`}>
-                        {user.estado ? 'Desactivar' : 'Activar'}
+                        onClick={() => onEdit(user)} aria-label={`Editar a ${fullName}`}>
+                        Editar
                       </button>
-                    )}
-                  </div>
-                </td>
+                      {isOwnAccount ? (
+                        <span className="users-hint">Tu cuenta</span>
+                      ) : (
+                        <button type="button" className="ng-button users-row-button"
+                          onClick={() => onToggleStatus(user)}
+                          disabled={pendingUserId === user.id_usuario}
+                          aria-label={`${user.estado ? 'Desactivar' : 'Activar'} a ${fullName}`}>
+                          {user.estado ? 'Desactivar' : 'Activar'}
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                )}
               </tr>
             );
           })}

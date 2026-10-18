@@ -1,15 +1,13 @@
-import os
 from collections.abc import Iterator
 
-from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
-load_dotenv()
+from app.shared.config import database_engine_options, database_url
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = database_url()
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL, **database_engine_options(DATABASE_URL))
 
 SessionLocal = sessionmaker(
     autocommit=False,

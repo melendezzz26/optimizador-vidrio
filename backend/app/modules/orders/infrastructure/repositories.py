@@ -1,10 +1,10 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Callable
 from decimal import Decimal
 from sqlalchemy.orm import Session
-from sqlalchemy import select, null
-from datetime import datetime, timezone
-from app.models import Pedido, Pieza, TipoVidrio, TipoVidrioEspesor
-from ..application.ports import OrderRepositoryPort
+from sqlalchemy import select, null, func, cast, Date, delete, update, case
+from datetime import datetime, timezone, date
+from app.models import Pedido, Pieza, TipoVidrio, TipoVidrioEspesor, Cliente
+from ..application.ports import OrderMutationResult, OrderRepositoryPort
 
 class SQLAlchemyOrderRepository(OrderRepositoryPort):
     def __init__(self, session: Session):
@@ -19,12 +19,13 @@ class SQLAlchemyOrderRepository(OrderRepositoryPort):
         result = self.session.execute(stmt).scalars().first()
         return result is not None
 
-    def create_order(self, id_usuario: int, piezas: List[Dict[str, Any]]) -> int:
+    def create_order(self, id_usuario: int, piezas: List[Dict[str, Any]], *, id_cliente: int) -> int:
         try:
             nuevo_pedido = Pedido(
                 fecha_registro=datetime.now(timezone.utc),
                 estado='PENDIENTE',
-                id_usuario_registro=id_usuario
+                id_usuario_registro=id_usuario,
+                id_cliente=id_cliente,
             )
             self.session.add(nuevo_pedido)
             self.session.flush()
@@ -57,6 +58,7 @@ class SQLAlchemyOrderRepository(OrderRepositoryPort):
         rows = self.session.execute(
             select(Pedido, Pieza).outerjoin(Pieza, Pieza.id_pedido == Pedido.id_pedido)
             .where(Pedido.id_pedido == id_pedido).order_by(Pieza.id_pieza)
+            .execution_options(populate_existing=True)
         ).all()
         if not rows:
             return None
@@ -66,6 +68,7 @@ class SQLAlchemyOrderRepository(OrderRepositoryPort):
             "fecha_registro": order.fecha_registro,
             "estado": order.estado,
             "id_usuario_registro": order.id_usuario_registro,
+            "id_cliente": order.id_cliente,
             "piezas": [{
                 "id_pieza": piece.id_pieza, "id_pedido": piece.id_pedido,
                 "id_tipo_vidrio": piece.id_tipo_vidrio, "espesor_mm": piece.espesor_mm,
@@ -74,3 +77,138 @@ class SQLAlchemyOrderRepository(OrderRepositoryPort):
                 "area_mm2": piece.area_mm2,
             } for _, piece in rows if piece is not None],
         }
+
+    def start_optimization(self, id_pedido: int, validate: Callable[[dict], None]) -> OrderMutationResult:
+        try:
+            # CAS obtiene el bloqueo de escritura de cabecera. Releer DESPUÉS
+            # evita validar piezas obsoletas si update/cancel ganó la carrera.
+            # El cambio tentativo nunca es visible sin validación y commit.
+            identifier = self.session.execute(
+                update(Pedido)
+                .where(Pedido.id_pedido == id_pedido, Pedido.estado == "PENDIENTE")
+                .values(estado="EN_OPTIMIZACION")
+                .returning(Pedido.id_pedido)
+                .execution_options(synchronize_session=False)
+            ).scalar_one_or_none()
+            if identifier is None:
+                exists = self.session.execute(
+                    select(Pedido.id_pedido).where(Pedido.id_pedido == id_pedido)
+                ).scalar_one_or_none()
+                self.session.rollback()
+                return (OrderMutationResult.NOT_FOUND if exists is None
+                        else OrderMutationResult.STATE_CONFLICT)
+            validate(self.get_order(id_pedido))
+            self.session.commit()
+            return OrderMutationResult.UPDATED
+        except Exception:
+            self.session.rollback()
+            raise
+
+    def list_orders(self, limit: int, offset: int, estado: str | None = None, cliente: str | None = None, fecha: date | None = None) -> dict:
+
+        conditions = []
+        if estado:
+            conditions.append(Pedido.estado == estado)
+        if fecha:
+            conditions.append(cast(Pedido.fecha_registro, Date) == fecha)
+        if cliente:
+            conditions.append(Cliente.nombre_razon_social.ilike(f"%{cliente}%"))
+
+        # Consulta base
+        stmt = select(Pedido, Cliente.nombre_razon_social).outerjoin(Cliente, Pedido.id_cliente == Cliente.id_cliente)
+        count_stmt = select(func.count(Pedido.id_pedido)).outerjoin(Cliente, Pedido.id_cliente == Cliente.id_cliente)
+
+        if conditions:
+            stmt = stmt.where(*conditions)
+            count_stmt = count_stmt.where(*conditions)
+
+        # 1. Obtenemos el total de registros (para la paginación)
+        total = self.session.execute(count_stmt).scalar() or 0
+
+        # 2. Obtenemos los registros con límite y offset
+        orden_prioridad = case(
+            (Pedido.estado == "PENDIENTE", 1),
+            (Pedido.estado == "EN_OPTIMIZACION", 2),
+            (Pedido.estado == "OPTIMIZADO", 3),
+            (Pedido.estado == "CONFIRMADO", 4),
+            (Pedido.estado == "CANCELADO", 5),
+            else_=6
+        )
+
+        stmt = stmt.order_by(
+            orden_prioridad.asc(),
+            Pedido.fecha_registro.desc(),
+            Pedido.id_pedido.desc(),
+        ).offset(offset).limit(limit)
+        rows = self.session.execute(stmt).all()
+
+        items = []
+        for order, cliente_nombre in rows:
+            items.append({
+                "id_pedido": order.id_pedido,
+                "fecha_registro": order.fecha_registro,
+                "estado": order.estado,
+                "cliente": cliente_nombre
+            })
+
+        return {"total": total, "items": items}
+
+    def update_order(self, id_pedido: int, piezas: List[Dict[str, Any]]) -> OrderMutationResult:
+        try:
+            # Lock and recheck in the same transaction as replacing the pieces.
+            order_state = self.session.execute(
+                select(Pedido.estado).where(Pedido.id_pedido == id_pedido).with_for_update()
+            ).scalar_one_or_none()
+            if order_state is None:
+                self.session.rollback()
+                return OrderMutationResult.NOT_FOUND
+            if order_state != "PENDIENTE":
+                self.session.rollback()
+                return OrderMutationResult.STATE_CONFLICT
+
+            # The row lock prevents a concurrent state transition until commit.
+            self.session.execute(delete(Pieza).where(Pieza.id_pedido == id_pedido))
+            self.session.flush()
+
+            # Insert the full replacement in the same transaction.
+            for p in piezas:
+                nueva_pieza = Pieza(
+                    id_tipo_vidrio=p['id_tipo_vidrio'],
+                    espesor_mm=p['espesor_mm'],
+                    tipo_forma=p['tipo_forma'],
+                    cantidad=p['cantidad'],
+                    dimensiones=p['dimensiones'] if p['dimensiones'] is not None else null(),
+                    geometria=p['geometria'],
+                    area_mm2=p['area_mm2'],
+                    id_pedido=id_pedido
+                )
+                self.session.add(nueva_pieza)
+
+            self.session.commit()
+            return OrderMutationResult.UPDATED
+        except Exception:
+            self.session.rollback()
+            raise
+
+    def cancel_order(self, id_pedido: int) -> OrderMutationResult:
+        try:
+            order_state = self.session.execute(
+                select(Pedido.estado).where(Pedido.id_pedido == id_pedido).with_for_update()
+            ).scalar_one_or_none()
+            if order_state is None:
+                self.session.rollback()
+                return OrderMutationResult.NOT_FOUND
+            if order_state != "PENDIENTE":
+                self.session.rollback()
+                return OrderMutationResult.STATE_CONFLICT
+
+            self.session.execute(
+                update(Pedido)
+                .where(Pedido.id_pedido == id_pedido)
+                .values(estado="CANCELADO")
+            )
+            self.session.commit()
+            return OrderMutationResult.UPDATED
+        except Exception:
+            self.session.rollback()
+            raise

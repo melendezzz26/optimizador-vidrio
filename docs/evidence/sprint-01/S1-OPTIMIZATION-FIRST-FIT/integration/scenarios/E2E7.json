@@ -1,0 +1,336 @@
+{
+  "scenario": "E2E7",
+  "provenance": {
+    "source_commit": "70a6c36",
+    "scope": "Capturas de integración real previas al saneamiento final de Orders; no son una nueva corrida.",
+    "note": "Cada viewport tiene IDs propios. No cruzar IDs entre escenarios ni bases temporales."
+  },
+  "viewports": {
+    "chromium-desktop": {
+      "browser-errors.json": [],
+      "conflict-stock-after.json": {
+        "sheets": [
+          {
+            "id_plancha": 702,
+            "ancho_mm": "100.00",
+            "alto_mm": "50.00",
+            "espesor_mm": "6.0",
+            "cantidad": 0,
+            "estado": false,
+            "fecha_registro": "2026-10-16T19:53:20.409598Z",
+            "id_tipo_vidrio": 8
+          }
+        ],
+        "remnants": []
+      },
+      "conflict-stock-before.json": {
+        "sheets": [
+          {
+            "id_plancha": 702,
+            "ancho_mm": "100.00",
+            "alto_mm": "50.00",
+            "espesor_mm": "6.0",
+            "cantidad": 0,
+            "estado": false,
+            "fecha_registro": "2026-10-16T19:53:20.409598Z",
+            "id_tipo_vidrio": 8
+          }
+        ],
+        "remnants": []
+      },
+      "conflict.json": {
+        "detail": {
+          "code": "STOCK_CONFLICT",
+          "message": "El stock utilizado cambió o ya no está disponible."
+        }
+      },
+      "movements.json": [],
+      "orders-after.json": {
+        "order_ids": [
+          1
+        ],
+        "states": [
+          "OPTIMIZADO"
+        ]
+      },
+      "result.json": {
+        "placed_units": 1,
+        "total_units": 1,
+        "progress_pct": "100",
+        "schema_version": 1,
+        "id_optimizacion": 1,
+        "estado": "COMPLETADA",
+        "metodo": "FF",
+        "order_ids": [
+          1
+        ],
+        "configuracion": {
+          "resolucion_raster_mm": "1.000",
+          "margen_mm": "0.00",
+          "separacion_mm": "0.00",
+          "paso_angular_grados": "90.00"
+        },
+        "groups": [
+          {
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "units": [
+              {
+                "id_tipo_vidrio": 8,
+                "espesor_mm": "6.0",
+                "id_pedido": 1,
+                "id_pieza": 1,
+                "unit_index": 1,
+                "tipo_forma": "RECTANGULO",
+                "geometria": {
+                  "type": "RECTANGULO",
+                  "width_mm": 50,
+                  "height_mm": 50
+                },
+                "area_mm2": "2500.00"
+              }
+            ]
+          }
+        ],
+        "placements": [
+          {
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "id_pedido": 1,
+            "id_pieza": 1,
+            "unit_index": 1,
+            "x_mm": "0.000",
+            "y_mm": "0.000",
+            "rotation_deg": "0.00",
+            "resolution_mm": "1.000",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 50,
+              "height_mm": 50
+            }
+          }
+        ],
+        "materials_used": [
+          {
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 100,
+              "height_mm": 50
+            },
+            "area_mm2": "5000.0000"
+          }
+        ],
+        "unplaced_units": [],
+        "completo": true,
+        "metrics_available": true,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 4
+        },
+        "tiempo_computacional_ms": 4,
+        "confirmed": false,
+        "confirmable": true
+      },
+      "runtime.json": {
+        "database": "owned loopback PostgreSQL",
+        "dialect": "postgresql",
+        "version": "17.11 (Debian 17.11-0+deb13u1)",
+        "alembic_heads": [
+          "s1opt02b4c6d"
+        ]
+      },
+      "stock-before.json": {
+        "sheets": [
+          {
+            "id_plancha": 702,
+            "ancho_mm": "100.00",
+            "alto_mm": "50.00",
+            "espesor_mm": "6.0",
+            "cantidad": 1,
+            "estado": true,
+            "fecha_registro": "2026-10-16T19:53:20.409598Z",
+            "id_tipo_vidrio": 8
+          }
+        ],
+        "remnants": []
+      },
+      "stream.ndjson": "{\"schema_version\":1,\"sequence\":1,\"id_optimizacion\":1,\"occurred_at\":\"2026-10-16T19:53:26.370523Z\",\"event\":\"optimization_started\",\"data\":{\"metodo\":\"FF\",\"order_ids\":[1],\"total_units\":1,\"groups\":[{\"id_tipo_vidrio\":8,\"espesor_mm\":\"6.0\"}],\"configuracion\":{\"resolucion_raster_mm\":\"1.000\",\"margen_mm\":\"0.00\",\"separacion_mm\":\"0.00\",\"paso_angular_grados\":\"90.00\"}}}\r\n{\"schema_version\":1,\"sequence\":2,\"id_optimizacion\":1,\"occurred_at\":\"2026-10-16T19:53:26.403071Z\",\"event\":\"group_started\",\"data\":{\"id_tipo_vidrio\":8,\"espesor_mm\":\"6.0\",\"total_units\":1}}\r\n{\"schema_version\":1,\"sequence\":3,\"id_optimizacion\":1,\"occurred_at\":\"2026-10-16T19:53:26.403673Z\",\"event\":\"piece_started\",\"data\":{\"placed_units\":0,\"total_units\":1,\"progress_pct\":\"0\",\"id_tipo_vidrio\":8,\"espesor_mm\":\"6.0\",\"id_pedido\":1,\"id_pieza\":1,\"unit_index\":1}}\r\n{\"schema_version\":1,\"sequence\":4,\"id_optimizacion\":1,\"occurred_at\":\"2026-10-16T19:53:26.406599Z\",\"event\":\"piece_placed\",\"data\":{\"placed_units\":1,\"total_units\":1,\"progress_pct\":\"100\",\"material_source\":\"PLANCHA\",\"material_id\":702,\"stock_unit_index\":1,\"id_tipo_vidrio\":8,\"espesor_mm\":\"6.0\",\"id_pedido\":1,\"id_pieza\":1,\"unit_index\":1,\"x_mm\":\"0.000\",\"y_mm\":\"0.000\",\"rotation_deg\":\"0.00\",\"resolution_mm\":\"1.000\",\"geometria\":{\"type\":\"RECTANGULO\",\"width_mm\":50.0,\"height_mm\":50.0},\"material\":{\"id_tipo_vidrio\":8,\"espesor_mm\":\"6.0\",\"material_source\":\"PLANCHA\",\"material_id\":702,\"stock_unit_index\":1,\"geometria\":{\"type\":\"RECTANGULO\",\"width_mm\":100,\"height_mm\":50},\"area_mm2\":\"5000.0000\"}}}\r\n{\"schema_version\":1,\"sequence\":5,\"id_optimizacion\":1,\"occurred_at\":\"2026-10-16T19:53:26.407267Z\",\"event\":\"group_completed\",\"data\":{\"placed_units\":1,\"total_units\":1,\"progress_pct\":\"100\",\"id_tipo_vidrio\":8,\"espesor_mm\":\"6.0\",\"result_url\":\"/api/optimization/runs/1\"}}\r\n{\"schema_version\":1,\"sequence\":6,\"id_optimizacion\":1,\"occurred_at\":\"2026-10-16T19:53:26.472065Z\",\"event\":\"metrics_calculated\",\"data\":{\"metrics_available\":true,\"metrics\":{\"aprovechamiento_pct\":\"50.000\",\"merma_mm2\":\"0.000000\",\"planchas_nuevas_usadas\":1,\"retazo_recuperable_mm2\":\"2500.000000\",\"area_material_total_mm2\":\"5000.0000\",\"area_piezas_colocadas_mm2\":\"2500.00\",\"tiempo_computacional_ms\":4}}}\r\n{\"schema_version\":1,\"sequence\":7,\"id_optimizacion\":1,\"occurred_at\":\"2026-10-16T19:53:26.472617Z\",\"event\":\"optimization_completed\",\"data\":{\"placed_units\":1,\"total_units\":1,\"progress_pct\":\"100\",\"estado\":\"COMPLETADA\",\"completo\":true,\"result_url\":\"/api/optimization/runs/1\"}}\r\n"
+    },
+    "chromium-mobile": {
+      "browser-errors.json": [],
+      "conflict-stock-after.json": {
+        "sheets": [
+          {
+            "id_plancha": 706,
+            "ancho_mm": "100.00",
+            "alto_mm": "50.00",
+            "espesor_mm": "6.0",
+            "cantidad": 0,
+            "estado": false,
+            "fecha_registro": "2026-10-16T19:53:42.296930Z",
+            "id_tipo_vidrio": 12
+          }
+        ],
+        "remnants": []
+      },
+      "conflict-stock-before.json": {
+        "sheets": [
+          {
+            "id_plancha": 706,
+            "ancho_mm": "100.00",
+            "alto_mm": "50.00",
+            "espesor_mm": "6.0",
+            "cantidad": 0,
+            "estado": false,
+            "fecha_registro": "2026-10-16T19:53:42.296930Z",
+            "id_tipo_vidrio": 12
+          }
+        ],
+        "remnants": []
+      },
+      "conflict.json": {
+        "detail": {
+          "code": "STOCK_CONFLICT",
+          "message": "El stock utilizado cambió o ya no está disponible."
+        }
+      },
+      "movements.json": [],
+      "orders-after.json": {
+        "order_ids": [
+          5
+        ],
+        "states": [
+          "OPTIMIZADO"
+        ]
+      },
+      "result.json": {
+        "placed_units": 1,
+        "total_units": 1,
+        "progress_pct": "100",
+        "schema_version": 1,
+        "id_optimizacion": 5,
+        "estado": "COMPLETADA",
+        "metodo": "FF",
+        "order_ids": [
+          5
+        ],
+        "configuracion": {
+          "resolucion_raster_mm": "1.000",
+          "margen_mm": "0.00",
+          "separacion_mm": "0.00",
+          "paso_angular_grados": "90.00"
+        },
+        "groups": [
+          {
+            "id_tipo_vidrio": 12,
+            "espesor_mm": "6.0",
+            "units": [
+              {
+                "id_tipo_vidrio": 12,
+                "espesor_mm": "6.0",
+                "id_pedido": 5,
+                "id_pieza": 5,
+                "unit_index": 1,
+                "tipo_forma": "RECTANGULO",
+                "geometria": {
+                  "type": "RECTANGULO",
+                  "width_mm": 50,
+                  "height_mm": 50
+                },
+                "area_mm2": "2500.00"
+              }
+            ]
+          }
+        ],
+        "placements": [
+          {
+            "material_source": "PLANCHA",
+            "material_id": 706,
+            "stock_unit_index": 1,
+            "id_tipo_vidrio": 12,
+            "espesor_mm": "6.0",
+            "id_pedido": 5,
+            "id_pieza": 5,
+            "unit_index": 1,
+            "x_mm": "0.000",
+            "y_mm": "0.000",
+            "rotation_deg": "0.00",
+            "resolution_mm": "1.000",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 50,
+              "height_mm": 50
+            }
+          }
+        ],
+        "materials_used": [
+          {
+            "id_tipo_vidrio": 12,
+            "espesor_mm": "6.0",
+            "material_source": "PLANCHA",
+            "material_id": 706,
+            "stock_unit_index": 1,
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 100,
+              "height_mm": 50
+            },
+            "area_mm2": "5000.0000"
+          }
+        ],
+        "unplaced_units": [],
+        "completo": true,
+        "metrics_available": true,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 3
+        },
+        "tiempo_computacional_ms": 3,
+        "confirmed": false,
+        "confirmable": true
+      },
+      "runtime.json": {
+        "database": "owned loopback PostgreSQL",
+        "dialect": "postgresql",
+        "version": "17.11 (Debian 17.11-0+deb13u1)",
+        "alembic_heads": [
+          "s1opt02b4c6d"
+        ]
+      },
+      "stock-before.json": {
+        "sheets": [
+          {
+            "id_plancha": 706,
+            "ancho_mm": "100.00",
+            "alto_mm": "50.00",
+            "espesor_mm": "6.0",
+            "cantidad": 1,
+            "estado": true,
+            "fecha_registro": "2026-10-16T19:53:42.296930Z",
+            "id_tipo_vidrio": 12
+          }
+        ],
+        "remnants": []
+      },
+      "stream.ndjson": "{\"schema_version\":1,\"sequence\":1,\"id_optimizacion\":5,\"occurred_at\":\"2026-10-16T19:53:47.576645Z\",\"event\":\"optimization_started\",\"data\":{\"metodo\":\"FF\",\"order_ids\":[5],\"total_units\":1,\"groups\":[{\"id_tipo_vidrio\":12,\"espesor_mm\":\"6.0\"}],\"configuracion\":{\"resolucion_raster_mm\":\"1.000\",\"margen_mm\":\"0.00\",\"separacion_mm\":\"0.00\",\"paso_angular_grados\":\"90.00\"}}}\r\n{\"schema_version\":1,\"sequence\":2,\"id_optimizacion\":5,\"occurred_at\":\"2026-10-16T19:53:47.597812Z\",\"event\":\"group_started\",\"data\":{\"id_tipo_vidrio\":12,\"espesor_mm\":\"6.0\",\"total_units\":1}}\r\n{\"schema_version\":1,\"sequence\":3,\"id_optimizacion\":5,\"occurred_at\":\"2026-10-16T19:53:47.598205Z\",\"event\":\"piece_started\",\"data\":{\"placed_units\":0,\"total_units\":1,\"progress_pct\":\"0\",\"id_tipo_vidrio\":12,\"espesor_mm\":\"6.0\",\"id_pedido\":5,\"id_pieza\":5,\"unit_index\":1}}\r\n{\"schema_version\":1,\"sequence\":4,\"id_optimizacion\":5,\"occurred_at\":\"2026-10-16T19:53:47.602020Z\",\"event\":\"piece_placed\",\"data\":{\"placed_units\":1,\"total_units\":1,\"progress_pct\":\"100\",\"material_source\":\"PLANCHA\",\"material_id\":706,\"stock_unit_index\":1,\"id_tipo_vidrio\":12,\"espesor_mm\":\"6.0\",\"id_pedido\":5,\"id_pieza\":5,\"unit_index\":1,\"x_mm\":\"0.000\",\"y_mm\":\"0.000\",\"rotation_deg\":\"0.00\",\"resolution_mm\":\"1.000\",\"geometria\":{\"type\":\"RECTANGULO\",\"width_mm\":50.0,\"height_mm\":50.0},\"material\":{\"id_tipo_vidrio\":12,\"espesor_mm\":\"6.0\",\"material_source\":\"PLANCHA\",\"material_id\":706,\"stock_unit_index\":1,\"geometria\":{\"type\":\"RECTANGULO\",\"width_mm\":100,\"height_mm\":50},\"area_mm2\":\"5000.0000\"}}}\r\n{\"schema_version\":1,\"sequence\":5,\"id_optimizacion\":5,\"occurred_at\":\"2026-10-16T19:53:47.605193Z\",\"event\":\"group_completed\",\"data\":{\"placed_units\":1,\"total_units\":1,\"progress_pct\":\"100\",\"id_tipo_vidrio\":12,\"espesor_mm\":\"6.0\",\"result_url\":\"/api/optimization/runs/5\"}}\r\n{\"schema_version\":1,\"sequence\":6,\"id_optimizacion\":5,\"occurred_at\":\"2026-10-16T19:53:47.659668Z\",\"event\":\"metrics_calculated\",\"data\":{\"metrics_available\":true,\"metrics\":{\"aprovechamiento_pct\":\"50.000\",\"merma_mm2\":\"0.000000\",\"planchas_nuevas_usadas\":1,\"retazo_recuperable_mm2\":\"2500.000000\",\"area_material_total_mm2\":\"5000.0000\",\"area_piezas_colocadas_mm2\":\"2500.00\",\"tiempo_computacional_ms\":3}}}\r\n{\"schema_version\":1,\"sequence\":7,\"id_optimizacion\":5,\"occurred_at\":\"2026-10-16T19:53:47.660051Z\",\"event\":\"optimization_completed\",\"data\":{\"placed_units\":1,\"total_units\":1,\"progress_pct\":\"100\",\"estado\":\"COMPLETADA\",\"completo\":true,\"result_url\":\"/api/optimization/runs/5\"}}\r\n"
+    }
+  }
+}

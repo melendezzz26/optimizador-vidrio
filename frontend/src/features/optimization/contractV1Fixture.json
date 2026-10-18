@@ -1,0 +1,52 @@
+{
+  "request": {"order_ids": [10]},
+  "result": {
+    "schema_version": 1,
+    "id_optimizacion": 101,
+    "estado": "COMPLETADA",
+    "metodo": "FF",
+    "order_ids": [10],
+    "configuracion": {"resolucion_raster_mm": "5", "margen_mm": "0", "separacion_mm": "0", "paso_angular_grados": "5"},
+    "groups": [{
+      "id_tipo_vidrio": 7, "espesor_mm": "6.00",
+      "units": [{"id_pedido": 10, "id_pieza": 27, "unit_index": 1, "id_tipo_vidrio": 7, "espesor_mm": "6.00", "tipo_forma": "RECTANGULO", "geometria": {"type": "RECTANGULO", "width_mm": 10, "height_mm": 5}, "area_mm2": "50.00"}]
+    }],
+    "placements": [{
+      "id_pedido": 10, "id_pieza": 27, "unit_index": 1, "id_tipo_vidrio": 7, "espesor_mm": "6.00",
+      "material_source": "PLANCHA", "material_id": 5, "stock_unit_index": 1,
+      "x_mm": "0", "y_mm": "0", "rotation_deg": "0", "resolution_mm": "5",
+      "geometria": {"type": "RECTANGULO", "width_mm": 10, "height_mm": 5}
+    }],
+    "residual_regions": [],
+    "materials_used": [{
+      "material_source": "PLANCHA", "material_id": 5, "stock_unit_index": 1,
+      "id_tipo_vidrio": 7, "espesor_mm": "6.00",
+      "geometria": {"type": "RECTANGULO", "width_mm": 100, "height_mm": 50}, "area_mm2": "5000"
+    }],
+    "unplaced_units": [],
+    "placed_units": 1, "total_units": 1, "progress_pct": "100", "completo": true,
+    "metrics_available": true,
+    "metrics": {"aprovechamiento_pct": "1", "merma_mm2": "4950", "planchas_nuevas_usadas": 1, "retazo_recuperable_mm2": "0", "area_material_total_mm2": "5000", "area_piezas_colocadas_mm2": "50.00", "tiempo_computacional_ms": 3},
+    "tiempo_computacional_ms": 3,
+    "confirmed": false, "confirmable": true
+  },
+  "success_events": [
+    {"schema_version": 1, "sequence": 1, "event": "optimization_started", "id_optimizacion": 101, "occurred_at": "2026-10-16T15:00:00Z", "data": {"metodo": "FF", "order_ids": [10], "total_units": 1, "groups": [{"id_tipo_vidrio": 7, "espesor_mm": "6.00"}], "configuracion": {"resolucion_raster_mm": "5", "margen_mm": "0", "separacion_mm": "0", "paso_angular_grados": "5"}}},
+    {"schema_version": 1, "sequence": 2, "event": "group_started", "id_optimizacion": 101, "occurred_at": "2026-10-16T15:00:00Z", "data": {"id_tipo_vidrio": 7, "espesor_mm": "6.00", "total_units": 1}},
+    {"schema_version": 1, "sequence": 3, "event": "piece_started", "id_optimizacion": 101, "occurred_at": "2026-10-16T15:00:00Z", "data": {"id_pedido": 10, "id_pieza": 27, "unit_index": 1, "id_tipo_vidrio": 7, "espesor_mm": "6.00", "placed_units": 0, "total_units": 1, "progress_pct": "0"}},
+    {"schema_version": 1, "sequence": 4, "event": "piece_placed", "id_optimizacion": 101, "occurred_at": "2026-10-16T15:00:00Z", "data": {
+      "id_pedido": 10, "id_pieza": 27, "unit_index": 1, "id_tipo_vidrio": 7, "espesor_mm": "6.00",
+      "material_source": "PLANCHA", "material_id": 5, "stock_unit_index": 1,
+      "x_mm": "0", "y_mm": "0", "rotation_deg": "0", "resolution_mm": "5",
+      "geometria": {"type": "RECTANGULO", "width_mm": 10, "height_mm": 5},
+      "material": {"material_source": "PLANCHA", "material_id": 5, "stock_unit_index": 1, "id_tipo_vidrio": 7, "espesor_mm": "6.00", "geometria": {"type": "RECTANGULO", "width_mm": 100, "height_mm": 50}, "area_mm2": "5000"},
+      "placed_units": 1, "total_units": 1, "progress_pct": "100"
+    }},
+    {"schema_version": 1, "sequence": 5, "event": "group_completed", "id_optimizacion": 101, "occurred_at": "2026-10-16T15:00:00Z", "data": {"id_tipo_vidrio": 7, "espesor_mm": "6.00", "placed_units": 1, "total_units": 1, "progress_pct": "100", "result_url": "/api/optimization/runs/101"}},
+    {"schema_version": 1, "sequence": 6, "event": "metrics_calculated", "id_optimizacion": 101, "occurred_at": "2026-10-16T15:00:00Z", "data": {"metrics_available": true, "metrics": {"aprovechamiento_pct": "1", "merma_mm2": "4950", "planchas_nuevas_usadas": 1, "retazo_recuperable_mm2": "0", "area_material_total_mm2": "5000", "area_piezas_colocadas_mm2": "50.00", "tiempo_computacional_ms": 3}}},
+    {"schema_version": 1, "sequence": 7, "event": "optimization_completed", "id_optimizacion": 101, "occurred_at": "2026-10-16T15:00:00Z", "data": {"estado": "COMPLETADA", "completo": true, "placed_units": 1, "total_units": 1, "progress_pct": "100", "result_url": "/api/optimization/runs/101"}}
+  ],
+  "failed_event": {"schema_version": 1, "sequence": 4, "event": "optimization_failed", "id_optimizacion": 101, "occurred_at": "2026-10-16T15:00:00Z", "data": {"code": "CALCULATION_FAILED", "message": "No se pudo completar el cálculo. Consulta el estado de la ejecución.", "estado": "FALLIDA", "result_url": "/api/optimization/runs/101"}},
+  "confirmation": {"schema_version": 1, "id_optimizacion": 101, "confirmed": true, "orders": [{"id_pedido": 10, "estado": "CONFIRMADO"}], "materials_consumed": [{"material_source": "PLANCHA", "material_id": 5, "stock_unit_index": 1}], "remnants_created": []},
+  "conflict": {"detail": {"code": "STOCK_CONFLICT", "message": "El inventario cambió. Ejecuta una nueva simulación."}}
+}

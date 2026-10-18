@@ -5,10 +5,17 @@ export { useSession } from './useSession';
 export { getAccessToken } from './authApi';
 export {
 	canConfigureOptimizer,
+	canExecuteOptimization,
 	canManageOrders,
 	canManagePlanchas,
 	canManageRetazos,
+	canManageRoles,
 	canManageUsers,
+	canViewAdministration,
 	canViewInventory,
+	canViewDashboard,
 	canViewResults,
+	canViewRoles,
+	canViewUsers,
+	hasPermission,
 } from './permissions';

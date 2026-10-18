@@ -197,3 +197,76 @@ def test_openapi():
     assert "/api/inventory/planchas/{id_plancha}" in paths
     assert "/api/inventory/retazos" in paths
     assert "/api/inventory/retazos/{id_retazo}" in paths
+
+
+def test_hu014_openapi_responses_and_success_schemas():
+    paths = app.openapi()["paths"]
+    cases = (
+        (
+            "/api/inventory/planchas/{id_plancha}/baja",
+            "post",
+            {"201", "401", "403", "404", "409", "422"},
+            "BajaManualResponse",
+            False,
+        ),
+        (
+            "/api/inventory/retazos/{id_retazo}/baja",
+            "post",
+            {"201", "401", "403", "404", "409", "422"},
+            "BajaManualResponse",
+            False,
+        ),
+        (
+            "/api/inventory/planchas/{id_plancha}/movimientos",
+            "get",
+            {"200", "401", "403", "404", "422"},
+            "MovimientoHistorialResponse",
+            True,
+        ),
+        (
+            "/api/inventory/retazos/{id_retazo}/movimientos",
+            "get",
+            {"200", "401", "403", "404", "422"},
+            "MovimientoHistorialResponse",
+            True,
+        ),
+    )
+
+    for path, method, expected_statuses, success_schema, is_list in cases:
+        operation = paths[path][method]
+        responses = operation["responses"]
+        assert set(responses) == expected_statuses
+
+        success_code = "200" if method == "get" else "201"
+        success_content = responses[success_code]["content"]["application/json"]["schema"]
+        if method == "post":
+            request_schema = operation["requestBody"]["content"]["application/json"]["schema"]
+            expected_request = "BajaPlanchaRequest" if "/planchas/" in path else "BajaManualRequest"
+            assert request_schema["$ref"].endswith(f"/schemas/{expected_request}")
+        if is_list:
+            assert success_content["type"] == "array"
+            assert success_content["items"]["$ref"].endswith(
+                f"/schemas/{success_schema}"
+            )
+        else:
+            assert success_content["$ref"].endswith(f"/schemas/{success_schema}")
+
+        for code in ("401", "403", "404"):
+            error_schema = responses[code]["content"]["application/json"]["schema"]
+            assert error_schema["type"] == "object"
+            assert error_schema["properties"]["detail"]["type"] == "string"
+
+        if method == "post":
+            conflict_schema = responses["409"]["content"]["application/json"]["schema"]
+            assert conflict_schema["properties"]["detail"]["type"] == "string"
+
+        validation_schema = responses["422"]["content"]["application/json"]["schema"]
+        validation_variants = validation_schema["oneOf"]
+        assert any(
+            variant.get("$ref", "").endswith("/schemas/HTTPValidationError")
+            for variant in validation_variants
+        )
+        assert any(
+            variant.get("properties", {}).get("detail", {}).get("type") == "string"
+            for variant in validation_variants
+        )

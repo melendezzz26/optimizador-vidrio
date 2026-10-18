@@ -1,0 +1,736 @@
+{
+  "scenario": "E2E5",
+  "provenance": {
+    "source_commit": "70a6c36",
+    "scope": "Capturas de integración real previas al saneamiento final de Orders; no son una nueva corrida.",
+    "note": "Cada viewport tiene IDs propios. No cruzar IDs entre escenarios ni bases temporales."
+  },
+  "viewports": {
+    "chromium-desktop": {
+      "browser-errors.json": [],
+      "confirmation.json": {
+        "schema_version": 1,
+        "id_optimizacion": 5,
+        "confirmed": true,
+        "orders": [
+          {
+            "id_pedido": 14,
+            "estado": "CONFIRMADO"
+          }
+        ],
+        "materials_consumed": [
+          {
+            "material_source": "RETAZO",
+            "material_id": 5,
+            "stock_unit_index": 1
+          }
+        ],
+        "remnants_created": []
+      },
+      "confirmed-result.json": {
+        "placed_units": 2,
+        "total_units": 2,
+        "progress_pct": "100",
+        "schema_version": 1,
+        "id_optimizacion": 5,
+        "estado": "COMPLETADA",
+        "metodo": "FF",
+        "order_ids": [
+          14
+        ],
+        "configuracion": {
+          "resolucion_raster_mm": "1.000",
+          "margen_mm": "0.00",
+          "separacion_mm": "0.00",
+          "paso_angular_grados": "90.00"
+        },
+        "groups": [
+          {
+            "id_tipo_vidrio": 13,
+            "espesor_mm": "6.0",
+            "units": [
+              {
+                "id_tipo_vidrio": 13,
+                "espesor_mm": "6.0",
+                "id_pedido": 14,
+                "id_pieza": 19,
+                "unit_index": 1,
+                "tipo_forma": "RECTANGULO",
+                "geometria": {
+                  "type": "RECTANGULO",
+                  "width_mm": 50,
+                  "height_mm": 50
+                },
+                "area_mm2": "2500.00"
+              },
+              {
+                "id_tipo_vidrio": 13,
+                "espesor_mm": "6.0",
+                "id_pedido": 14,
+                "id_pieza": 19,
+                "unit_index": 2,
+                "tipo_forma": "RECTANGULO",
+                "geometria": {
+                  "type": "RECTANGULO",
+                  "width_mm": 50,
+                  "height_mm": 50
+                },
+                "area_mm2": "2500.00"
+              }
+            ]
+          }
+        ],
+        "placements": [
+          {
+            "material_source": "RETAZO",
+            "material_id": 5,
+            "stock_unit_index": 1,
+            "id_tipo_vidrio": 13,
+            "espesor_mm": "6.0",
+            "id_pedido": 14,
+            "id_pieza": 19,
+            "unit_index": 1,
+            "x_mm": "0.000",
+            "y_mm": "0.000",
+            "rotation_deg": "0.00",
+            "resolution_mm": "1.000",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 50,
+              "height_mm": 50
+            }
+          },
+          {
+            "material_source": "RETAZO",
+            "material_id": 5,
+            "stock_unit_index": 1,
+            "id_tipo_vidrio": 13,
+            "espesor_mm": "6.0",
+            "id_pedido": 14,
+            "id_pieza": 19,
+            "unit_index": 2,
+            "x_mm": "50.000",
+            "y_mm": "0.000",
+            "rotation_deg": "0.00",
+            "resolution_mm": "1.000",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 50,
+              "height_mm": 50
+            }
+          }
+        ],
+        "materials_used": [
+          {
+            "id_tipo_vidrio": 13,
+            "espesor_mm": "6.0",
+            "material_source": "RETAZO",
+            "material_id": 5,
+            "stock_unit_index": 1,
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 100,
+              "height_mm": 50
+            },
+            "area_mm2": "5000.00"
+          }
+        ],
+        "unplaced_units": [],
+        "completo": true,
+        "metrics_available": true,
+        "metrics": {
+          "aprovechamiento_pct": "100.000",
+          "merma_mm2": "0.00",
+          "planchas_nuevas_usadas": 0,
+          "retazo_recuperable_mm2": "0",
+          "area_material_total_mm2": "5000.00",
+          "area_piezas_colocadas_mm2": "5000.00",
+          "tiempo_computacional_ms": 4
+        },
+        "tiempo_computacional_ms": 4,
+        "confirmed": true,
+        "confirmable": false
+      },
+      "movements.json": [
+        {
+          "id_movimiento": 7,
+          "id_plancha": null,
+          "id_retazo": 5,
+          "tipo_evento": "CONSUMO_OPTIMIZACION",
+          "motivo": "Confirmación First Fit de optimización 5.",
+          "observacion": "stock_unit_index=1",
+          "id_usuario": 24,
+          "fecha": "2026-10-16T19:51:18.841943Z",
+          "id_optimizacion": 5,
+          "cantidad_afectada": 1
+        }
+      ],
+      "orders-after.json": {
+        "order_ids": [
+          14
+        ],
+        "states": [
+          "CONFIRMADO"
+        ]
+      },
+      "result.json": {
+        "placed_units": 2,
+        "total_units": 2,
+        "progress_pct": "100",
+        "schema_version": 1,
+        "id_optimizacion": 5,
+        "estado": "COMPLETADA",
+        "metodo": "FF",
+        "order_ids": [
+          14
+        ],
+        "configuracion": {
+          "resolucion_raster_mm": "1.000",
+          "margen_mm": "0.00",
+          "separacion_mm": "0.00",
+          "paso_angular_grados": "90.00"
+        },
+        "groups": [
+          {
+            "id_tipo_vidrio": 13,
+            "espesor_mm": "6.0",
+            "units": [
+              {
+                "id_tipo_vidrio": 13,
+                "espesor_mm": "6.0",
+                "id_pedido": 14,
+                "id_pieza": 19,
+                "unit_index": 1,
+                "tipo_forma": "RECTANGULO",
+                "geometria": {
+                  "type": "RECTANGULO",
+                  "width_mm": 50,
+                  "height_mm": 50
+                },
+                "area_mm2": "2500.00"
+              },
+              {
+                "id_tipo_vidrio": 13,
+                "espesor_mm": "6.0",
+                "id_pedido": 14,
+                "id_pieza": 19,
+                "unit_index": 2,
+                "tipo_forma": "RECTANGULO",
+                "geometria": {
+                  "type": "RECTANGULO",
+                  "width_mm": 50,
+                  "height_mm": 50
+                },
+                "area_mm2": "2500.00"
+              }
+            ]
+          }
+        ],
+        "placements": [
+          {
+            "material_source": "RETAZO",
+            "material_id": 5,
+            "stock_unit_index": 1,
+            "id_tipo_vidrio": 13,
+            "espesor_mm": "6.0",
+            "id_pedido": 14,
+            "id_pieza": 19,
+            "unit_index": 1,
+            "x_mm": "0.000",
+            "y_mm": "0.000",
+            "rotation_deg": "0.00",
+            "resolution_mm": "1.000",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 50,
+              "height_mm": 50
+            }
+          },
+          {
+            "material_source": "RETAZO",
+            "material_id": 5,
+            "stock_unit_index": 1,
+            "id_tipo_vidrio": 13,
+            "espesor_mm": "6.0",
+            "id_pedido": 14,
+            "id_pieza": 19,
+            "unit_index": 2,
+            "x_mm": "50.000",
+            "y_mm": "0.000",
+            "rotation_deg": "0.00",
+            "resolution_mm": "1.000",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 50,
+              "height_mm": 50
+            }
+          }
+        ],
+        "materials_used": [
+          {
+            "id_tipo_vidrio": 13,
+            "espesor_mm": "6.0",
+            "material_source": "RETAZO",
+            "material_id": 5,
+            "stock_unit_index": 1,
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 100,
+              "height_mm": 50
+            },
+            "area_mm2": "5000.00"
+          }
+        ],
+        "unplaced_units": [],
+        "completo": true,
+        "metrics_available": true,
+        "metrics": {
+          "aprovechamiento_pct": "100.000",
+          "merma_mm2": "0.00",
+          "planchas_nuevas_usadas": 0,
+          "retazo_recuperable_mm2": "0",
+          "area_material_total_mm2": "5000.00",
+          "area_piezas_colocadas_mm2": "5000.00",
+          "tiempo_computacional_ms": 4
+        },
+        "tiempo_computacional_ms": 4,
+        "confirmed": false,
+        "confirmable": true
+      },
+      "runtime.json": {
+        "database": "owned loopback PostgreSQL",
+        "dialect": "postgresql",
+        "version": "17.11 (Debian 17.11-0+deb13u1)",
+        "alembic_heads": [
+          "s1opt02b4c6d"
+        ]
+      },
+      "stock-after.json": {
+        "sheets": [
+          {
+            "id_plancha": 707,
+            "ancho_mm": "100.00",
+            "alto_mm": "50.00",
+            "espesor_mm": "6.0",
+            "cantidad": 1,
+            "estado": true,
+            "fecha_registro": "2026-10-16T19:51:14.852959Z",
+            "id_tipo_vidrio": 13
+          }
+        ],
+        "remnants": [
+          {
+            "id_retazo": 5,
+            "codigo": "E2E-8c01471ea6",
+            "espesor_mm": "6.0",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": "100",
+              "height_mm": "50"
+            },
+            "area_mm2": "5000.00",
+            "estado": false,
+            "fecha_registro": "2026-10-16T19:51:14.852959Z",
+            "id_tipo_vidrio": 13,
+            "id_ejecucion_origen": null
+          }
+        ]
+      },
+      "stock-before.json": {
+        "sheets": [
+          {
+            "id_plancha": 707,
+            "ancho_mm": "100.00",
+            "alto_mm": "50.00",
+            "espesor_mm": "6.0",
+            "cantidad": 1,
+            "estado": true,
+            "fecha_registro": "2026-10-16T19:51:14.852959Z",
+            "id_tipo_vidrio": 13
+          }
+        ],
+        "remnants": [
+          {
+            "id_retazo": 5,
+            "codigo": "E2E-8c01471ea6",
+            "espesor_mm": "6.0",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": "100",
+              "height_mm": "50"
+            },
+            "area_mm2": "5000.00",
+            "estado": true,
+            "fecha_registro": "2026-10-16T19:51:14.852959Z",
+            "id_tipo_vidrio": 13,
+            "id_ejecucion_origen": null
+          }
+        ]
+      },
+      "stream.ndjson": "{\"schema_version\":1,\"sequence\":1,\"id_optimizacion\":5,\"occurred_at\":\"2026-10-16T19:51:18.057240Z\",\"event\":\"optimization_started\",\"data\":{\"metodo\":\"FF\",\"order_ids\":[14],\"total_units\":2,\"groups\":[{\"id_tipo_vidrio\":13,\"espesor_mm\":\"6.0\"}],\"configuracion\":{\"resolucion_raster_mm\":\"1.000\",\"margen_mm\":\"0.00\",\"separacion_mm\":\"0.00\",\"paso_angular_grados\":\"90.00\"}}}\r\n{\"schema_version\":1,\"sequence\":2,\"id_optimizacion\":5,\"occurred_at\":\"2026-10-16T19:51:18.064948Z\",\"event\":\"group_started\",\"data\":{\"id_tipo_vidrio\":13,\"espesor_mm\":\"6.0\",\"total_units\":2}}\r\n{\"schema_version\":1,\"sequence\":3,\"id_optimizacion\":5,\"occurred_at\":\"2026-10-16T19:51:18.065334Z\",\"event\":\"piece_started\",\"data\":{\"placed_units\":0,\"total_units\":2,\"progress_pct\":\"0\",\"id_tipo_vidrio\":13,\"espesor_mm\":\"6.0\",\"id_pedido\":14,\"id_pieza\":19,\"unit_index\":1}}\r\n{\"schema_version\":1,\"sequence\":4,\"id_optimizacion\":5,\"occurred_at\":\"2026-10-16T19:51:18.067277Z\",\"event\":\"piece_placed\",\"data\":{\"placed_units\":1,\"total_units\":2,\"progress_pct\":\"50.0\",\"material_source\":\"RETAZO\",\"material_id\":5,\"stock_unit_index\":1,\"id_tipo_vidrio\":13,\"espesor_mm\":\"6.0\",\"id_pedido\":14,\"id_pieza\":19,\"unit_index\":1,\"x_mm\":\"0.000\",\"y_mm\":\"0.000\",\"rotation_deg\":\"0.00\",\"resolution_mm\":\"1.000\",\"geometria\":{\"type\":\"RECTANGULO\",\"width_mm\":50.0,\"height_mm\":50.0},\"material\":{\"id_tipo_vidrio\":13,\"espesor_mm\":\"6.0\",\"material_source\":\"RETAZO\",\"material_id\":5,\"stock_unit_index\":1,\"geometria\":{\"type\":\"RECTANGULO\",\"width_mm\":100,\"height_mm\":50},\"area_mm2\":\"5000.00\"}}}\r\n{\"schema_version\":1,\"sequence\":5,\"id_optimizacion\":5,\"occurred_at\":\"2026-10-16T19:51:18.067904Z\",\"event\":\"piece_started\",\"data\":{\"placed_units\":1,\"total_units\":2,\"progress_pct\":\"50.0\",\"id_tipo_vidrio\":13,\"espesor_mm\":\"6.0\",\"id_pedido\":14,\"id_pieza\":19,\"unit_index\":2}}\r\n{\"schema_version\":1,\"sequence\":6,\"id_optimizacion\":5,\"occurred_at\":\"2026-10-16T19:51:18.069423Z\",\"event\":\"piece_placed\",\"data\":{\"placed_units\":2,\"total_units\":2,\"progress_pct\":\"100\",\"material_source\":\"RETAZO\",\"material_id\":5,\"stock_unit_index\":1,\"id_tipo_vidrio\":13,\"espesor_mm\":\"6.0\",\"id_pedido\":14,\"id_pieza\":19,\"unit_index\":2,\"x_mm\":\"50.000\",\"y_mm\":\"0.000\",\"rotation_deg\":\"0.00\",\"resolution_mm\":\"1.000\",\"geometria\":{\"type\":\"RECTANGULO\",\"width_mm\":50.0,\"height_mm\":50.0},\"material\":{\"id_tipo_vidrio\":13,\"espesor_mm\":\"6.0\",\"material_source\":\"RETAZO\",\"material_id\":5,\"stock_unit_index\":1,\"geometria\":{\"type\":\"RECTANGULO\",\"width_mm\":100,\"height_mm\":50},\"area_mm2\":\"5000.00\"}}}\r\n{\"schema_version\":1,\"sequence\":7,\"id_optimizacion\":5,\"occurred_at\":\"2026-10-16T19:51:18.070023Z\",\"event\":\"group_completed\",\"data\":{\"placed_units\":2,\"total_units\":2,\"progress_pct\":\"100\",\"id_tipo_vidrio\":13,\"espesor_mm\":\"6.0\",\"result_url\":\"/api/optimization/runs/5\"}}\r\n{\"schema_version\":1,\"sequence\":8,\"id_optimizacion\":5,\"occurred_at\":\"2026-10-16T19:51:18.079986Z\",\"event\":\"metrics_calculated\",\"data\":{\"metrics_available\":true,\"metrics\":{\"aprovechamiento_pct\":\"100.000\",\"merma_mm2\":\"0.00\",\"planchas_nuevas_usadas\":0,\"retazo_recuperable_mm2\":\"0\",\"area_material_total_mm2\":\"5000.00\",\"area_piezas_colocadas_mm2\":\"5000.00\",\"tiempo_computacional_ms\":4}}}\r\n{\"schema_version\":1,\"sequence\":9,\"id_optimizacion\":5,\"occurred_at\":\"2026-10-16T19:51:18.080374Z\",\"event\":\"optimization_completed\",\"data\":{\"placed_units\":2,\"total_units\":2,\"progress_pct\":\"100\",\"estado\":\"COMPLETADA\",\"completo\":true,\"result_url\":\"/api/optimization/runs/5\"}}\r\n"
+    },
+    "chromium-mobile": {
+      "browser-errors.json": [],
+      "confirmation.json": {
+        "schema_version": 1,
+        "id_optimizacion": 15,
+        "confirmed": true,
+        "orders": [
+          {
+            "id_pedido": 34,
+            "estado": "CONFIRMADO"
+          }
+        ],
+        "materials_consumed": [
+          {
+            "material_source": "RETAZO",
+            "material_id": 12,
+            "stock_unit_index": 1
+          }
+        ],
+        "remnants_created": []
+      },
+      "confirmed-result.json": {
+        "placed_units": 2,
+        "total_units": 2,
+        "progress_pct": "100",
+        "schema_version": 1,
+        "id_optimizacion": 15,
+        "estado": "COMPLETADA",
+        "metodo": "FF",
+        "order_ids": [
+          34
+        ],
+        "configuracion": {
+          "resolucion_raster_mm": "1.000",
+          "margen_mm": "0.00",
+          "separacion_mm": "0.00",
+          "paso_angular_grados": "90.00"
+        },
+        "groups": [
+          {
+            "id_tipo_vidrio": 25,
+            "espesor_mm": "6.0",
+            "units": [
+              {
+                "id_tipo_vidrio": 25,
+                "espesor_mm": "6.0",
+                "id_pedido": 34,
+                "id_pieza": 46,
+                "unit_index": 1,
+                "tipo_forma": "RECTANGULO",
+                "geometria": {
+                  "type": "RECTANGULO",
+                  "width_mm": 50,
+                  "height_mm": 50
+                },
+                "area_mm2": "2500.00"
+              },
+              {
+                "id_tipo_vidrio": 25,
+                "espesor_mm": "6.0",
+                "id_pedido": 34,
+                "id_pieza": 46,
+                "unit_index": 2,
+                "tipo_forma": "RECTANGULO",
+                "geometria": {
+                  "type": "RECTANGULO",
+                  "width_mm": 50,
+                  "height_mm": 50
+                },
+                "area_mm2": "2500.00"
+              }
+            ]
+          }
+        ],
+        "placements": [
+          {
+            "material_source": "RETAZO",
+            "material_id": 12,
+            "stock_unit_index": 1,
+            "id_tipo_vidrio": 25,
+            "espesor_mm": "6.0",
+            "id_pedido": 34,
+            "id_pieza": 46,
+            "unit_index": 1,
+            "x_mm": "0.000",
+            "y_mm": "0.000",
+            "rotation_deg": "0.00",
+            "resolution_mm": "1.000",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 50,
+              "height_mm": 50
+            }
+          },
+          {
+            "material_source": "RETAZO",
+            "material_id": 12,
+            "stock_unit_index": 1,
+            "id_tipo_vidrio": 25,
+            "espesor_mm": "6.0",
+            "id_pedido": 34,
+            "id_pieza": 46,
+            "unit_index": 2,
+            "x_mm": "50.000",
+            "y_mm": "0.000",
+            "rotation_deg": "0.00",
+            "resolution_mm": "1.000",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 50,
+              "height_mm": 50
+            }
+          }
+        ],
+        "materials_used": [
+          {
+            "id_tipo_vidrio": 25,
+            "espesor_mm": "6.0",
+            "material_source": "RETAZO",
+            "material_id": 12,
+            "stock_unit_index": 1,
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 100,
+              "height_mm": 50
+            },
+            "area_mm2": "5000.00"
+          }
+        ],
+        "unplaced_units": [],
+        "completo": true,
+        "metrics_available": true,
+        "metrics": {
+          "aprovechamiento_pct": "100.000",
+          "merma_mm2": "0.00",
+          "planchas_nuevas_usadas": 0,
+          "retazo_recuperable_mm2": "0",
+          "area_material_total_mm2": "5000.00",
+          "area_piezas_colocadas_mm2": "5000.00",
+          "tiempo_computacional_ms": 3
+        },
+        "tiempo_computacional_ms": 3,
+        "confirmed": true,
+        "confirmable": false
+      },
+      "movements.json": [
+        {
+          "id_movimiento": 17,
+          "id_plancha": null,
+          "id_retazo": 12,
+          "tipo_evento": "CONSUMO_OPTIMIZACION",
+          "motivo": "Confirmación First Fit de optimización 15.",
+          "observacion": "stock_unit_index=1",
+          "id_usuario": 74,
+          "fecha": "2026-10-16T19:52:27.032046Z",
+          "id_optimizacion": 15,
+          "cantidad_afectada": 1
+        }
+      ],
+      "orders-after.json": {
+        "order_ids": [
+          34
+        ],
+        "states": [
+          "CONFIRMADO"
+        ]
+      },
+      "result.json": {
+        "placed_units": 2,
+        "total_units": 2,
+        "progress_pct": "100",
+        "schema_version": 1,
+        "id_optimizacion": 15,
+        "estado": "COMPLETADA",
+        "metodo": "FF",
+        "order_ids": [
+          34
+        ],
+        "configuracion": {
+          "resolucion_raster_mm": "1.000",
+          "margen_mm": "0.00",
+          "separacion_mm": "0.00",
+          "paso_angular_grados": "90.00"
+        },
+        "groups": [
+          {
+            "id_tipo_vidrio": 25,
+            "espesor_mm": "6.0",
+            "units": [
+              {
+                "id_tipo_vidrio": 25,
+                "espesor_mm": "6.0",
+                "id_pedido": 34,
+                "id_pieza": 46,
+                "unit_index": 1,
+                "tipo_forma": "RECTANGULO",
+                "geometria": {
+                  "type": "RECTANGULO",
+                  "width_mm": 50,
+                  "height_mm": 50
+                },
+                "area_mm2": "2500.00"
+              },
+              {
+                "id_tipo_vidrio": 25,
+                "espesor_mm": "6.0",
+                "id_pedido": 34,
+                "id_pieza": 46,
+                "unit_index": 2,
+                "tipo_forma": "RECTANGULO",
+                "geometria": {
+                  "type": "RECTANGULO",
+                  "width_mm": 50,
+                  "height_mm": 50
+                },
+                "area_mm2": "2500.00"
+              }
+            ]
+          }
+        ],
+        "placements": [
+          {
+            "material_source": "RETAZO",
+            "material_id": 12,
+            "stock_unit_index": 1,
+            "id_tipo_vidrio": 25,
+            "espesor_mm": "6.0",
+            "id_pedido": 34,
+            "id_pieza": 46,
+            "unit_index": 1,
+            "x_mm": "0.000",
+            "y_mm": "0.000",
+            "rotation_deg": "0.00",
+            "resolution_mm": "1.000",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 50,
+              "height_mm": 50
+            }
+          },
+          {
+            "material_source": "RETAZO",
+            "material_id": 12,
+            "stock_unit_index": 1,
+            "id_tipo_vidrio": 25,
+            "espesor_mm": "6.0",
+            "id_pedido": 34,
+            "id_pieza": 46,
+            "unit_index": 2,
+            "x_mm": "50.000",
+            "y_mm": "0.000",
+            "rotation_deg": "0.00",
+            "resolution_mm": "1.000",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 50,
+              "height_mm": 50
+            }
+          }
+        ],
+        "materials_used": [
+          {
+            "id_tipo_vidrio": 25,
+            "espesor_mm": "6.0",
+            "material_source": "RETAZO",
+            "material_id": 12,
+            "stock_unit_index": 1,
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 100,
+              "height_mm": 50
+            },
+            "area_mm2": "5000.00"
+          }
+        ],
+        "unplaced_units": [],
+        "completo": true,
+        "metrics_available": true,
+        "metrics": {
+          "aprovechamiento_pct": "100.000",
+          "merma_mm2": "0.00",
+          "planchas_nuevas_usadas": 0,
+          "retazo_recuperable_mm2": "0",
+          "area_material_total_mm2": "5000.00",
+          "area_piezas_colocadas_mm2": "5000.00",
+          "tiempo_computacional_ms": 3
+        },
+        "tiempo_computacional_ms": 3,
+        "confirmed": false,
+        "confirmable": true
+      },
+      "runtime.json": {
+        "database": "owned loopback PostgreSQL",
+        "dialect": "postgresql",
+        "version": "17.11 (Debian 17.11-0+deb13u1)",
+        "alembic_heads": [
+          "s1opt02b4c6d"
+        ]
+      },
+      "stock-after.json": {
+        "sheets": [
+          {
+            "id_plancha": 719,
+            "ancho_mm": "100.00",
+            "alto_mm": "50.00",
+            "espesor_mm": "6.0",
+            "cantidad": 1,
+            "estado": true,
+            "fecha_registro": "2026-10-16T19:52:23.191021Z",
+            "id_tipo_vidrio": 25
+          }
+        ],
+        "remnants": [
+          {
+            "id_retazo": 12,
+            "codigo": "E2E-5905f8cf55",
+            "espesor_mm": "6.0",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": "100",
+              "height_mm": "50"
+            },
+            "area_mm2": "5000.00",
+            "estado": false,
+            "fecha_registro": "2026-10-16T19:52:23.191021Z",
+            "id_tipo_vidrio": 25,
+            "id_ejecucion_origen": null
+          }
+        ]
+      },
+      "stock-before.json": {
+        "sheets": [
+          {
+            "id_plancha": 719,
+            "ancho_mm": "100.00",
+            "alto_mm": "50.00",
+            "espesor_mm": "6.0",
+            "cantidad": 1,
+            "estado": true,
+            "fecha_registro": "2026-10-16T19:52:23.191021Z",
+            "id_tipo_vidrio": 25
+          }
+        ],
+        "remnants": [
+          {
+            "id_retazo": 12,
+            "codigo": "E2E-5905f8cf55",
+            "espesor_mm": "6.0",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": "100",
+              "height_mm": "50"
+            },
+            "area_mm2": "5000.00",
+            "estado": true,
+            "fecha_registro": "2026-10-16T19:52:23.191021Z",
+            "id_tipo_vidrio": 25,
+            "id_ejecucion_origen": null
+          }
+        ]
+      },
+      "stream.ndjson": "{\"schema_version\":1,\"sequence\":1,\"id_optimizacion\":15,\"occurred_at\":\"2026-10-16T19:52:26.237136Z\",\"event\":\"optimization_started\",\"data\":{\"metodo\":\"FF\",\"order_ids\":[34],\"total_units\":2,\"groups\":[{\"id_tipo_vidrio\":25,\"espesor_mm\":\"6.0\"}],\"configuracion\":{\"resolucion_raster_mm\":\"1.000\",\"margen_mm\":\"0.00\",\"separacion_mm\":\"0.00\",\"paso_angular_grados\":\"90.00\"}}}\r\n{\"schema_version\":1,\"sequence\":2,\"id_optimizacion\":15,\"occurred_at\":\"2026-10-16T19:52:26.251559Z\",\"event\":\"group_started\",\"data\":{\"id_tipo_vidrio\":25,\"espesor_mm\":\"6.0\",\"total_units\":2}}\r\n{\"schema_version\":1,\"sequence\":3,\"id_optimizacion\":15,\"occurred_at\":\"2026-10-16T19:52:26.252868Z\",\"event\":\"piece_started\",\"data\":{\"placed_units\":0,\"total_units\":2,\"progress_pct\":\"0\",\"id_tipo_vidrio\":25,\"espesor_mm\":\"6.0\",\"id_pedido\":34,\"id_pieza\":46,\"unit_index\":1}}\r\n{\"schema_version\":1,\"sequence\":4,\"id_optimizacion\":15,\"occurred_at\":\"2026-10-16T19:52:26.254665Z\",\"event\":\"piece_placed\",\"data\":{\"placed_units\":1,\"total_units\":2,\"progress_pct\":\"50.0\",\"material_source\":\"RETAZO\",\"material_id\":12,\"stock_unit_index\":1,\"id_tipo_vidrio\":25,\"espesor_mm\":\"6.0\",\"id_pedido\":34,\"id_pieza\":46,\"unit_index\":1,\"x_mm\":\"0.000\",\"y_mm\":\"0.000\",\"rotation_deg\":\"0.00\",\"resolution_mm\":\"1.000\",\"geometria\":{\"type\":\"RECTANGULO\",\"width_mm\":50.0,\"height_mm\":50.0},\"material\":{\"id_tipo_vidrio\":25,\"espesor_mm\":\"6.0\",\"material_source\":\"RETAZO\",\"material_id\":12,\"stock_unit_index\":1,\"geometria\":{\"type\":\"RECTANGULO\",\"width_mm\":100,\"height_mm\":50},\"area_mm2\":\"5000.00\"}}}\r\n{\"schema_version\":1,\"sequence\":5,\"id_optimizacion\":15,\"occurred_at\":\"2026-10-16T19:52:26.255018Z\",\"event\":\"piece_started\",\"data\":{\"placed_units\":1,\"total_units\":2,\"progress_pct\":\"50.0\",\"id_tipo_vidrio\":25,\"espesor_mm\":\"6.0\",\"id_pedido\":34,\"id_pieza\":46,\"unit_index\":2}}\r\n{\"schema_version\":1,\"sequence\":6,\"id_optimizacion\":15,\"occurred_at\":\"2026-10-16T19:52:26.256493Z\",\"event\":\"piece_placed\",\"data\":{\"placed_units\":2,\"total_units\":2,\"progress_pct\":\"100\",\"material_source\":\"RETAZO\",\"material_id\":12,\"stock_unit_index\":1,\"id_tipo_vidrio\":25,\"espesor_mm\":\"6.0\",\"id_pedido\":34,\"id_pieza\":46,\"unit_index\":2,\"x_mm\":\"50.000\",\"y_mm\":\"0.000\",\"rotation_deg\":\"0.00\",\"resolution_mm\":\"1.000\",\"geometria\":{\"type\":\"RECTANGULO\",\"width_mm\":50.0,\"height_mm\":50.0},\"material\":{\"id_tipo_vidrio\":25,\"espesor_mm\":\"6.0\",\"material_source\":\"RETAZO\",\"material_id\":12,\"stock_unit_index\":1,\"geometria\":{\"type\":\"RECTANGULO\",\"width_mm\":100,\"height_mm\":50},\"area_mm2\":\"5000.00\"}}}\r\n{\"schema_version\":1,\"sequence\":7,\"id_optimizacion\":15,\"occurred_at\":\"2026-10-16T19:52:26.256879Z\",\"event\":\"group_completed\",\"data\":{\"placed_units\":2,\"total_units\":2,\"progress_pct\":\"100\",\"id_tipo_vidrio\":25,\"espesor_mm\":\"6.0\",\"result_url\":\"/api/optimization/runs/15\"}}\r\n{\"schema_version\":1,\"sequence\":8,\"id_optimizacion\":15,\"occurred_at\":\"2026-10-16T19:52:26.269194Z\",\"event\":\"metrics_calculated\",\"data\":{\"metrics_available\":true,\"metrics\":{\"aprovechamiento_pct\":\"100.000\",\"merma_mm2\":\"0.00\",\"planchas_nuevas_usadas\":0,\"retazo_recuperable_mm2\":\"0\",\"area_material_total_mm2\":\"5000.00\",\"area_piezas_colocadas_mm2\":\"5000.00\",\"tiempo_computacional_ms\":3}}}\r\n{\"schema_version\":1,\"sequence\":9,\"id_optimizacion\":15,\"occurred_at\":\"2026-10-16T19:52:26.269597Z\",\"event\":\"optimization_completed\",\"data\":{\"placed_units\":2,\"total_units\":2,\"progress_pct\":\"100\",\"estado\":\"COMPLETADA\",\"completo\":true,\"result_url\":\"/api/optimization/runs/15\"}}\r\n"
+    }
+  }
+}

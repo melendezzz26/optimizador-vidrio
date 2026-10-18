@@ -1,6 +1,12 @@
-import { useId, useRef, useState } from 'react';
-import { Layers3, LoaderCircle, Plus, Save, Trash2 } from 'lucide-react';
+import { useCallback, useId, useRef, useState } from 'react';
+import { Layers3, LoaderCircle, Save } from 'lucide-react';
 import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
+import { FeedbackMessage, FieldError } from '../../shared/components/feedback';
+import CustomPieceEditor from '../orders/CustomPieceEditor';
+import { fitVerticesToPreview } from '../orders/geometryScaling';
+import { createSegments } from '../orders/segmentGeometry';
+import { edgeLengths } from '../orders/polygonMeasurements';
+import { validateConvexPolygon } from '../orders/convexityValidation';
 import './RegistrarRetazoForm.css';
 
 const SHAPES = [
@@ -9,7 +15,6 @@ const SHAPES = [
   { value: 'POLIGONO_CONVEXO', label: 'Polígono convexo' },
 ];
 
-const MIN_VERTICES = 3;
 
 function positiveNumber(value) {
   if (typeof value !== 'number' && typeof value !== 'string') return null;
@@ -36,13 +41,7 @@ function activeCatalog(catalogo) {
   return [...types.values()];
 }
 
-function emptyVertex() {
-  return { x: '', y: '' };
-}
-
-function initialVertices() {
-  return [emptyVertex(), emptyVertex(), emptyVertex()];
-}
+function initialVertices() { return []; }
 
 function initialGeometryValues(geometria) {
   if (!geometria) return { forma: '', width_mm: '', height_mm: '', radius_mm: '', vertices: initialVertices() };
@@ -109,6 +108,20 @@ export default function RegistrarRetazoForm({
     radius_mm: initialGeometry.radius_mm,
   }));
   const [vertices, setVertices] = useState(() => initialGeometry.vertices);
+  const receiveGeometry = useCallback((points) => {
+    setVertices(points ? points.map(([x,y]) => ({x,y})) : []);
+  }, []);
+  const editorState = (() => {
+    const points = initialGeometry.vertices.map(({x,y}) => ({ x: Number(x), y: Number(y) }));
+    if (points.length < 3) return undefined;
+    const preview = fitVerticesToPreview(points, 800, 500, 40);
+    if (!preview) return undefined;
+    try {
+      const lengths = edgeLengths(points.map(({x,y}) => [x,y]));
+      return { drawing: { vertices: preview.points, isClosed: true },
+        segments: createSegments(points).map((segment, i) => ({ ...segment, lengthMm: String(lengths[i]) })) };
+    } catch { return undefined; }
+  })();
 
   const types = activeCatalog(catalogo);
   const selectedType = types.find((t) => t.id === Number(values.id_tipo_vidrio));
@@ -158,21 +171,8 @@ export default function RegistrarRetazoForm({
   }
 
   if (values.forma === 'POLIGONO_CONVEXO') {
-    if (vertices.length < MIN_VERTICES) {
-      errors.vertices = `Se requieren al menos ${MIN_VERTICES} vértices.`;
-    } else {
-      for (let i = 0; i < vertices.length; i++) {
-        const v = vertices[i];
-        const xVal = v.x.toString().trim();
-        const yVal = v.y.toString().trim();
-        if (!xVal || !Number.isFinite(Number(xVal))) {
-          errors[`vertex_${i}_x`] = 'Coordenada X inválida.';
-        }
-        if (!yVal || !Number.isFinite(Number(yVal))) {
-          errors[`vertex_${i}_y`] = 'Coordenada Y inválida.';
-        }
-      }
-    }
+    const validation = validateConvexPolygon(vertices.map(({x,y}) => [Number(x), Number(y)]));
+    if (!validation.isValid) errors.vertices = 'Cierra y dimensiona un polígono convexo válido en el editor.';
   }
 
   // --- Payload ---
@@ -222,19 +222,6 @@ export default function RegistrarRetazoForm({
     setSubmitError('');
   }
 
-  function changeVertex(index, axis, value) {
-    setVertices((prev) => prev.map((v, i) => i === index ? { ...v, [axis]: value } : v));
-    setSubmitError('');
-  }
-
-  function addVertex() {
-    setVertices((prev) => [...prev, emptyVertex()]);
-  }
-
-  function removeVertex(index) {
-    setVertices((prev) => prev.length > MIN_VERTICES ? prev.filter((_, i) => i !== index) : prev);
-  }
-
   function fieldProps(field, helperId) {
     return {
       id: `${id}-${field}`,
@@ -249,11 +236,7 @@ export default function RegistrarRetazoForm({
   }
 
   function errorMessage(field) {
-    return attempted && errors[field] ? (
-      <p className="retazo-form__error" id={`${id}-${field}-error`}>
-        {errors[field]}
-      </p>
-    ) : null;
+    return <FieldError id={`${id}-${field}-error`}>{attempted ? errors[field] : null}</FieldError>;
   }
 
   async function submit(event) {
@@ -294,16 +277,16 @@ export default function RegistrarRetazoForm({
       </PageHeader>
 
       {types.length === 0 && (
-        <p className="retazo-form__notice" role="status">
+        <FeedbackMessage variant="warning">
           No hay tipos de vidrio activos disponibles. El registro estará disponible cuando haya catálogo.
-        </p>
+        </FeedbackMessage>
       )}
 
       {showHistoricalCombinationWarning && (
-        <p className="retazo-form__notice" role="status">
+        <FeedbackMessage variant="warning">
           La combinación actual de tipo de vidrio y espesor ya no está disponible en el catálogo activo.
           Selecciona una combinación activa para guardar cambios o cancela la edición.
-        </p>
+        </FeedbackMessage>
       )}
 
       <fieldset className="ng-form-section" disabled={busy}>
@@ -412,58 +395,21 @@ export default function RegistrarRetazoForm({
 
           {values.forma === 'POLIGONO_CONVEXO' && (
             <div>
-              <p className="retazo-form__hint">
-                Ingresa al menos {MIN_VERTICES} vértices como pares de coordenadas (X, Y) en milímetros.
-                No es necesario repetir el primer vértice al final.
-              </p>
+              <CustomPieceEditor key={values.forma} title="Geometría del retazo"
+                initialState={editorState} disabled={busy} onGeometryChange={receiveGeometry}
+                helpText="La geometría se registra al guardar el retazo." />
               {errorMessage('vertices')}
-              <ol className="retazo-form__vertices-list">
-                {vertices.map((v, i) => (
-                  <li key={i} className="retazo-form__vertex-row">
-                    <div className="ng-field">
-                      <label htmlFor={`${id}-vertex_${i}_x`} className="retazo-form__vertex-label">V{i + 1} X *</label>
-                      <input className="ng-control" type="number" step="any" inputMode="decimal"
-                        id={`${id}-vertex_${i}_x`} name={`vertex_${i}_x`} required
-                        aria-label={`Vértice ${i + 1} coordenada X`}
-                        aria-invalid={attempted && Boolean(errors[`vertex_${i}_x`])}
-                        aria-describedby={attempted && errors[`vertex_${i}_x`] ? `${id}-vertex_${i}_x-error` : undefined}
-                        value={v.x} onChange={(e) => changeVertex(i, 'x', e.target.value)} />
-                      {errorMessage(`vertex_${i}_x`)}
-                    </div>
-                    <div className="ng-field">
-                      <label htmlFor={`${id}-vertex_${i}_y`} className="retazo-form__vertex-label">V{i + 1} Y *</label>
-                      <input className="ng-control" type="number" step="any" inputMode="decimal"
-                        id={`${id}-vertex_${i}_y`} name={`vertex_${i}_y`} required
-                        aria-label={`Vértice ${i + 1} coordenada Y`}
-                        aria-invalid={attempted && Boolean(errors[`vertex_${i}_y`])}
-                        aria-describedby={attempted && errors[`vertex_${i}_y`] ? `${id}-vertex_${i}_y-error` : undefined}
-                        value={v.y} onChange={(e) => changeVertex(i, 'y', e.target.value)} />
-                      {errorMessage(`vertex_${i}_y`)}
-                    </div>
-                    <button type="button" className="retazo-form__vertex-remove"
-                      aria-label={`Eliminar vértice ${i + 1}`}
-                      disabled={vertices.length <= MIN_VERTICES}
-                      onClick={() => removeVertex(i)}>
-                      <Trash2 size={16} aria-hidden="true" />
-                    </button>
-                  </li>
-                ))}
-              </ol>
-              <button type="button" className="retazo-form__add-vertex" onClick={addVertex} disabled={busy}>
-                <Plus size={16} aria-hidden="true" />
-                Agregar vértice
-              </button>
             </div>
           )}
         </fieldset>
       )}
 
       {attempted && Object.keys(errors).length > 0 && (
-        <p className="retazo-form__error" role="alert">
+        <FeedbackMessage variant="error" title="Hay datos por corregir">
           Revisa los campos indicados antes de {isEdit ? 'guardar' : 'registrar'}.
-        </p>
+        </FeedbackMessage>
       )}
-      {submitError && <p className="retazo-form__error" role="alert">{submitError}</p>}
+      {submitError && <FeedbackMessage variant="error" title="No se pudo guardar">{submitError}</FeedbackMessage>}
       {!onCancel && (
         <p className="retazo-form__hint retazo-form__cancel-hint" id={`${id}-cancel-help`}>
           Cancelar no está disponible en esta vista.

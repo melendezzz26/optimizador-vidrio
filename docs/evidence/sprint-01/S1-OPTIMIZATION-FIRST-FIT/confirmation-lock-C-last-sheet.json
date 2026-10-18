@@ -1,0 +1,23 @@
+{
+  "lock_table": "planchas",
+  "winner_pid": 46234,
+  "waiting": {
+    "pid": 46235,
+    "wait_event_type": "Lock",
+    "wait_event": "transactionid",
+    "blockers": [
+      46234
+    ],
+    "query": "SELECT planchas.id_plancha, planchas.ancho_mm, planchas.alto_mm, planchas.espesor_mm, planchas.cantidad, planchas.estado, planchas.fecha_registro, planchas.id_tipo_vidrio \nFROM planchas \nWHERE planchas.id_plancha IN ($1::INTEGER) ORDER BY planchas.id_plancha FOR UPDATE"
+  },
+  "outcomes": [
+    {
+      "status": 409,
+      "code": "STOCK_CONFLICT"
+    },
+    {
+      "status": 200,
+      "optimization_id": 2
+    }
+  ]
+}
