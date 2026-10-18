@@ -17,20 +17,6 @@ class UserReader(Protocol):
         """Cuenta con ese identificador y un rol existente, o None."""
         ...
 
-class PermissionReader(Protocol):
-    """Lectura de los permisos asignados a un rol (S1-RBAC).
-
-    La fuente de verdad es la base: se consulta en cada petición, sin caché,
-    para que un cambio de permisos rija en la siguiente petición (RN-02).
-    """
-
-    def role_has_permission(self, role: str, permission: str) -> bool:
-        """True si el rol con ese nombre tiene asignado el permiso con ese código."""
-        ...
-
-    def permissions_for_role(self, role: str) -> frozenset[str]:
-        """Códigos de los permisos asignados al rol con ese nombre."""
-        ...
 
 # Recibe la contraseña escrita y el hash guardado; devuelve si coinciden.
 PasswordVerifier = Callable[[str, str], bool]

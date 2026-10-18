@@ -23,20 +23,18 @@ function messageFor(status, data) {
   return 'No se pudo completar la solicitud. Inténtalo otra vez.';
 }
 
-async function request(path, { method = 'GET', body, signal, token } = {}) {
-  const headers = { Authorization: `Bearer ${token ?? getAccessToken()}` };
+async function request(path, { method = 'GET', body } = {}) {
+  const headers = { Authorization: `Bearer ${getAccessToken()}` };
   if (body !== undefined) headers['Content-Type'] = 'application/json';
 
   let response;
   try {
     response = await fetch(`${API_URL}/api/inventory${path}`, {
       method,
-      signal,
       headers,
       body: body === undefined ? undefined : JSON.stringify(body),
     });
-  } catch (error) {
-    if (error.name === 'AbortError') throw error;
+  } catch {
     throw new InventoryApiError(CONNECTION_ERROR);
   }
 
@@ -48,26 +46,15 @@ async function request(path, { method = 'GET', body, signal, token } = {}) {
 }
 
 export const getTiposVidrio = () => request('/tipos-vidrio');
-export const getPlanchas = ({ signal, token } = {}) => request('/planchas', { signal, token });
+export const getPlanchas = () => request('/planchas');
 export const createPlancha = (payload) => request('/planchas', { method: 'POST', body: payload });
 export const updatePlancha = (idPlancha, payload) => request(`/planchas/${idPlancha}`, {
   method: 'PATCH',
   body: payload,
 });
-export const writeoffPlancha = (idPlancha, payload) => request(`/planchas/${idPlancha}/baja`, {
-  method: 'POST',
-  body: payload,
-});
-export const getPlanchaMovements = (idPlancha) => request(`/planchas/${idPlancha}/movimientos`);
-export const getRetazos = ({ signal, token } = {}) => request('/retazos', { signal, token });
+export const getRetazos = () => request('/retazos');
 export const createRetazo = (payload) => request('/retazos', { method: 'POST', body: payload });
 export const updateRetazo = (idRetazo, payload) => request(`/retazos/${idRetazo}`, {
   method: 'PATCH',
   body: payload,
 });
-export const writeoffRetazo = (idRetazo, payload) => request(`/retazos/${idRetazo}/baja`, {
-  method: 'POST',
-  body: payload,
-});
-export const getRetazoMovements = (idRetazo) => request(`/retazos/${idRetazo}/movimientos`);
-export const getRetazoOrigin = (idRetazo, options) => request(`/retazos/${encodeURIComponent(idRetazo)}/origen`, options);

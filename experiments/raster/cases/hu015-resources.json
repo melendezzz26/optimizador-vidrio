@@ -1,9 +1,0 @@
-[
-  {"name":"small","geometry":{"type":"RECTANGULO","width_mm":100,"height_mm":50}},
-  {"name":"reference","geometry":{"type":"RECTANGULO","width_mm":800,"height_mm":600}},
-  {"name":"commercial","geometry":{"type":"RECTANGULO","width_mm":2440,"height_mm":1830}},
-  {"name":"circle","geometry":{"type":"CIRCUNFERENCIA","radius_mm":500}},
-  {"name":"hexagon","geometry":{"type":"POLIGONO_CONVEXO","vertices_mm":[[250,0],[750,0],[1000,433],[750,866],[250,866],[0,433]]}},
-  {"name":"wide","geometry":{"type":"RECTANGULO","width_mm":2440,"height_mm":1}},
-  {"name":"tall","geometry":{"type":"RECTANGULO","width_mm":1,"height_mm":2440}}
-]

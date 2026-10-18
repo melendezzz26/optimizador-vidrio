@@ -4,12 +4,8 @@ La autenticación comprueba en cada petición que la cuenta del token exista y
 siga activa. Estas utilidades entregan un token y un lector de cuentas en
 memoria coherentes entre sí, para las pruebas de otros módulos.
 """
-from app.core.permissions import ASIGNACION_INICIAL
 from app.modules.authentication.domain.user import UserAccount
-from app.modules.authentication.presentation.dependencies import (
-    get_permission_reader,
-    get_user_reader,
-)
+from app.modules.authentication.presentation.dependencies import get_user_reader
 from app.shared.security import create_access_token
 
 _ROLE_BY_USER_ID: dict[int, str] = {}
@@ -50,25 +46,6 @@ class InMemoryUserReader:
         )
 
 
-class InMemoryPermissionReader:
-    """Permisos por rol en memoria. Por defecto, la asignación inicial (CA-02).
-
-    Recibe otra asignación para probar roles con permisos cambiados.
-    """
-
-    def __init__(self, assignment: dict[str, frozenset[str]] | None = None) -> None:
-        self._assignment = ASIGNACION_INICIAL if assignment is None else assignment
-
-    def role_has_permission(self, role: str, permission: str) -> bool:
-        return permission in self._assignment.get(role, frozenset())
-
-    def permissions_for_role(self, role: str) -> frozenset[str]:
-        return frozenset(self._assignment.get(role, frozenset()))
-
-
 def use_in_memory_accounts(app) -> None:
-    """Hace que la aplicación lea las cuentas y sus permisos de prueba en lugar de la base."""
+    """Hace que la aplicación lea las cuentas de prueba en lugar de la base."""
     app.dependency_overrides[get_user_reader] = InMemoryUserReader
-    # Función sin parámetros: si se pasara la clase, FastAPI tomaría el argumento
-    # `assignment` de __init__ como un parámetro más de la petición.
-    app.dependency_overrides[get_permission_reader] = lambda: InMemoryPermissionReader()

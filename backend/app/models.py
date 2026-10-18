@@ -17,12 +17,10 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     BigInteger,
-    func,
-    text,
     true,
 )
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
 from app.shared.database import Base
 
@@ -33,35 +31,7 @@ class Rol(Base):
     id_rol: Mapped[int] = mapped_column(Integer, primary_key=True)
     nombre: Mapped[str] = mapped_column(String(30), unique=True, nullable=False)
     descripcion: Mapped[str | None] = mapped_column(String(150))
-    
-class Permiso(Base):
-    """Acción que un rol puede tener autorizada (S1-RBAC). El código es `modulo.accion`."""
 
-    __tablename__ = "permisos"
-    __table_args__ = (
-        CheckConstraint("codigo ~ '^[a-z]+\\.[a-z]+$'", name="ck_permisos_codigo_formato"),
-        CheckConstraint("codigo LIKE modulo || '.%'", name="ck_permisos_modulo_coincide"),
-    )
-
-    id_permiso: Mapped[int] = mapped_column(Integer, primary_key=True)
-    codigo: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
-    modulo: Mapped[str] = mapped_column(String(30), nullable=False)
-    descripcion: Mapped[str] = mapped_column(String(150), nullable=False)
-
-
-class RolPermiso(Base):
-    """Permiso asignado a un rol. Es la fuente de verdad de la autorización (S1-RBAC)."""
-
-    __tablename__ = "rol_permisos"
-
-    id_rol: Mapped[int] = mapped_column(
-        ForeignKey("roles.id_rol", ondelete="CASCADE", name="fk_rol_permisos_rol"),
-        primary_key=True,
-    )
-    id_permiso: Mapped[int] = mapped_column(
-        ForeignKey("permisos.id_permiso", ondelete="CASCADE", name="fk_rol_permisos_permiso"),
-        primary_key=True,
-    )
 
 class Usuario(Base):
     __tablename__ = "usuarios"
@@ -84,10 +54,6 @@ class Usuario(Base):
     id_rol: Mapped[int] = mapped_column(
         ForeignKey("roles.id_rol"),
         nullable=False
-    )
-    movimientos_inventario: Mapped[list["MovimientoInventario"]] = relationship(
-        back_populates="usuario",
-        passive_deletes="all",
     )
 
 
@@ -141,10 +107,6 @@ class Plancha(Base):
         ForeignKey("tipos_vidrio.id_tipo_vidrio"),
         nullable=False
     )
-    movimientos_inventario: Mapped[list["MovimientoInventario"]] = relationship(
-        back_populates="plancha",
-        passive_deletes="all",
-    )
 
 
 class Retazo(Base):
@@ -174,36 +136,7 @@ class Retazo(Base):
         ForeignKey("tipos_vidrio.id_tipo_vidrio"),
         nullable=False
     )
-    movimientos_inventario: Mapped[list["MovimientoInventario"]] = relationship(
-        back_populates="retazo",
-        passive_deletes="all",
-    )
 
-class Cliente(Base):
-    __tablename__ = "clientes"
-    __table_args__ = (
-        UniqueConstraint(
-            "tipo_documento",
-            "numero_documento",
-            name="uq_clientes_tipo_numero_documento",
-        ),
-    )
-
-    id_cliente: Mapped[int] = mapped_column(Integer, primary_key=True)
-    tipo_documento: Mapped[str | None] = mapped_column(String, nullable=True)
-    numero_documento: Mapped[str | None] = mapped_column(String, nullable=True)
-    nombre_razon_social: Mapped[str] = mapped_column(String, nullable=False)
-    telefono: Mapped[str | None] = mapped_column(String, nullable=True)
-    estado: Mapped[bool] = mapped_column(
-        Boolean,
-        nullable=False,
-        default=True,
-        server_default=true(),
-    )
-    fecha_registro: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        nullable=False,
-    )
 
 class Pedido(Base):
     __tablename__ = "pedidos"
@@ -226,13 +159,6 @@ class Pedido(Base):
         nullable=False
     )
 
-    id_cliente: Mapped[int | None] = mapped_column(
-        ForeignKey("clientes.id_cliente", name="fk_pedidos_cliente"),
-        nullable=True,
-    )
-
-
-    optimizacion_vinculos: Mapped[list["OptimizacionPedido"]] = relationship(back_populates="pedido", passive_deletes="all")
 
 class Pieza(Base):
     __tablename__ = "piezas"
@@ -325,102 +251,6 @@ class Optimizacion(Base):
         ),
         nullable=True,
     )
-    movimientos_inventario: Mapped[list["MovimientoInventario"]] = relationship(
-        back_populates="optimizacion",
-        passive_deletes="all",
-    )
-
-
-    pedido_vinculos: Mapped[list["OptimizacionPedido"]] = relationship(back_populates="optimizacion", passive_deletes="all")
-
-
-class OptimizacionPedido(Base):
-    __tablename__ = "optimizacion_pedidos"
-    __table_args__ = (
-        PrimaryKeyConstraint("id_optimizacion", "id_pedido", name="pk_optimizacion_pedidos"),
-        Index("ix_optimizacion_pedidos_pedido", "id_pedido", "id_optimizacion"),
-    )
-    id_optimizacion: Mapped[int] = mapped_column(ForeignKey("optimizaciones.id_optimizacion", name="fk_optimizacion_pedidos_optimizacion"), nullable=False)
-    id_pedido: Mapped[int] = mapped_column(ForeignKey("pedidos.id_pedido", name="fk_optimizacion_pedidos_pedido"), nullable=False)
-    optimizacion: Mapped["Optimizacion"] = relationship(back_populates="pedido_vinculos")
-    pedido: Mapped["Pedido"] = relationship(back_populates="optimizacion_vinculos")
-
-
-_EVENTOS_MOVIMIENTO_INVENTARIO = "'BAJA_ROTURA', 'BAJA_MERMA', 'BAJA_ERROR_REGISTRO', 'BAJA_RETIRO', 'CONSUMO_OPTIMIZACION'"
-_EVENTOS_BAJA_MANUAL = (
-    "'BAJA_ROTURA', 'BAJA_MERMA', 'BAJA_ERROR_REGISTRO', 'BAJA_RETIRO'"
-)
-
-
-class MovimientoInventario(Base):
-    __tablename__ = "movimientos_inventario"
-    __table_args__ = (
-        CheckConstraint(
-            "(id_plancha IS NOT NULL) <> (id_retazo IS NOT NULL)",
-            name="ck_movimientos_inventario_recurso_xor",
-        ),
-        CheckConstraint(
-            f"tipo_evento IN ({_EVENTOS_MOVIMIENTO_INVENTARIO})",
-            name="ck_movimientos_inventario_tipo_evento",
-        ),
-        CheckConstraint(
-            "length(trim(motivo)) > 0",
-            name="ck_movimientos_inventario_motivo_no_vacio",
-        ),
-        CheckConstraint("cantidad_afectada IS NULL OR cantidad_afectada > 0",
-                        name="ck_movimientos_cantidad_positiva"),
-        CheckConstraint("id_retazo IS NULL OR cantidad_afectada IS NULL OR cantidad_afectada = 1",
-                        name="ck_movimientos_retazo_unitario"),
-        Index(
-            "ix_movimientos_inventario_plancha_fecha",
-            "id_plancha",
-            "fecha",
-            "id_movimiento",
-        ),
-        Index(
-            "ix_movimientos_inventario_retazo_fecha",
-            "id_retazo",
-            "fecha",
-            "id_movimiento",
-        ),
-        Index(
-            "uq_movimientos_baja_manual_retazo",
-            "id_retazo",
-            unique=True,
-            postgresql_where=text(f"tipo_evento IN ({_EVENTOS_BAJA_MANUAL})"),
-            sqlite_where=text(f"tipo_evento IN ({_EVENTOS_BAJA_MANUAL})"),
-        ),
-    )
-
-    id_movimiento: Mapped[int] = mapped_column(Integer, primary_key=True)
-    id_plancha: Mapped[int | None] = mapped_column(
-        ForeignKey("planchas.id_plancha", name="fk_movimientos_inventario_plancha"),
-        nullable=True,
-    )
-    id_retazo: Mapped[int | None] = mapped_column(
-        ForeignKey("retazos.id_retazo", name="fk_movimientos_inventario_retazo"),
-        nullable=True,
-    )
-    cantidad_afectada: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    tipo_evento: Mapped[str] = mapped_column(String(30), nullable=False)
-    motivo: Mapped[str] = mapped_column(Text, nullable=False)
-    observacion: Mapped[str | None] = mapped_column(Text, nullable=True)
-    id_usuario: Mapped[int] = mapped_column(
-        ForeignKey("usuarios.id_usuario", name="fk_movimientos_inventario_usuario"),
-        nullable=False,
-    )
-    fecha: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, server_default=func.now()
-    )
-    id_optimizacion: Mapped[int | None] = mapped_column(
-        ForeignKey("optimizaciones.id_optimizacion", name="fk_movimientos_inventario_optimizacion"),
-        nullable=True,
-    )
-
-    plancha: Mapped[Plancha | None] = relationship(back_populates="movimientos_inventario")
-    retazo: Mapped[Retazo | None] = relationship(back_populates="movimientos_inventario")
-    usuario: Mapped[Usuario] = relationship(back_populates="movimientos_inventario")
-    optimizacion: Mapped[Optimizacion | None] = relationship(back_populates="movimientos_inventario")
 
 
 class EjecucionOptimizacion(Base):

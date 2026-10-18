@@ -1,4 +1,0 @@
-﻿Initial E2E attempt before synthetic accounts were authorized
-Playwright discovered 7 Dashboard tests.
-0 passed · 0 failed · 7 skipped · exit 0
-The skips were caused only by missing role credentials. This was not counted as an E2E pass.

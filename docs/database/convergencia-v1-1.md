@@ -809,14 +809,3 @@ Alembic head: b4d5e6f7a8c9
 
 La base PostgreSQL/Supabase y el modelo SQLAlchemy del repositorio quedaron
 alineados con el diseño de datos v1.1.
-
-## Evolución S1 Optimization multipedido (backend/core)
-
-`optimizacion_pedidos` relaciona cada corrida con 1..N pedidos: PK
-`(id_optimizacion,id_pedido)`, FKs sin cascada destructiva e índice inverso.
-La revisión `s1opt02b4c6d` desciende de RBAC `s1rbac01a2b3` y copia cada
-vínculo histórico. Se conserva `optimizaciones.id_pedido` e índice legado:
-para nuevas corridas refleja el primer ID ascendente solo como compatibilidad;
-la fuente del lote es exclusivamente la asociación y el snapshot versionado.
-Eliminar la columna queda como deuda posterior. Downgrade rechaza lotes no
-representables sin pérdida antes de ejecutar DDL. No cambia stock ni métricas.

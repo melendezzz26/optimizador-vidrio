@@ -29,10 +29,7 @@ existente de `shared/database` está en `evidence/sprint-01/EN-001/`.
 Los experimentos ejecutables están fuera de `docs/`, en
 [`experiments/raster/`](../experiments/raster/README.md): `cases/` para entradas,
 `scripts/` para exploración y `results/` para salidas generadas.
-Sprint 1 incorpora First Fit y su integración real; consultar el
-[cierre funcional](reviews/S1-final-integration.md) y la
-[evidencia consolidada](evidence/sprint-01/S1-OPT-UI/README.md).
-Best Fit y Worst Fit quedan fuera de este cierre.
+First Fit, Best Fit y Worst Fit quedan fuera del alcance de Sprint 1.
 
 ## Flujo documental
 

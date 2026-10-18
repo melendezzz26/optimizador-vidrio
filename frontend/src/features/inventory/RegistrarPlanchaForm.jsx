@@ -1,7 +1,6 @@
 import { useId, useRef, useState } from 'react';
 import { Layers3, LoaderCircle, Save } from 'lucide-react';
 import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
-import { FeedbackMessage, FieldError } from '../../shared/components/feedback';
 import './RegistrarPlanchaForm.css';
 
 function positiveNumber(value) {
@@ -120,7 +119,11 @@ export default function RegistrarPlanchaForm({
   }
 
   function errorMessage(field) {
-    return <FieldError id={`${id}-${field}-error`}>{attempted ? errors[field] : null}</FieldError>;
+    return attempted && errors[field] ? (
+      <p className="plancha-form__error" id={`${id}-${field}-error`}>
+        {errors[field]}
+      </p>
+    ) : null;
   }
 
   async function submit(event) {
@@ -162,9 +165,9 @@ export default function RegistrarPlanchaForm({
       </PageHeader>
 
       {types.length === 0 && (
-        <FeedbackMessage variant="warning">
+        <p className="plancha-form__notice" role="status">
           No hay tipos de vidrio activos disponibles. El registro estará disponible cuando haya catálogo.
-        </FeedbackMessage>
+        </p>
       )}
 
       <fieldset className="ng-form-section" disabled={busy}>
@@ -218,9 +221,9 @@ export default function RegistrarPlanchaForm({
       </fieldset>
 
       {attempted && Object.keys(errors).length > 0 && (
-        <FeedbackMessage variant="error" title="Hay datos por corregir">Revisa los campos indicados antes de registrar.</FeedbackMessage>
+        <p className="plancha-form__error" role="alert">Revisa los campos indicados antes de registrar.</p>
       )}
-      {submitError && <FeedbackMessage variant="error" title="No se pudo guardar">{submitError}</FeedbackMessage>}
+      {submitError && <p className="plancha-form__error" role="alert">{submitError}</p>}
       {!onCancel && (
         <p className="plancha-form__hint plancha-form__cancel-hint" id={`${id}-cancel-help`}>
           Cancelar no está disponible en esta vista.

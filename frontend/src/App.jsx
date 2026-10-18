@@ -1,81 +1,77 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import {
   LoginForm,
   SessionBar,
   canManageOrders,
-  canViewResults,
-  canViewAdministration,
+  canManageUsers,
   canViewInventory,
-  canViewDashboard,
   useSession,
 } from './features/authentication';
 import { InventoryPage } from './features/inventory/InventoryPage';
 import { UsersPage } from './features/users';
-import GestionPedidos from './features/orders/GestionPedidos';
-import { OptimizationPage } from './features/optimization';
-import { DashboardPage } from './features/dashboard';
-
-import { NavigationContext } from './shared/components/NavigationContext';
+import NuevoPedido from './features/orders/NuevoPedido';
 import './App.css';
 
 function App() {
-  
- const { session, isChecking, notice, signIn, signOut, refresh } = useSession();
-  const [view, setView] = useState('dashboard');
-  const [originRunId, setOriginRunId] = useState(null);
-  const handleSignOut = useCallback(message => {
-    setOriginRunId(null);
-    setView('dashboard');
-    signOut(message);
-  }, [signOut]);
+  const { session, isChecking, notice, signIn, signOut } = useSession();
+  const [view, setView] = useState('orders');
 
-  async function handleSignIn(username, password) {
-    await signIn(username, password);
-    setView('dashboard');
-  }
-  
   if (isChecking) {
     return <p className="app-status" role="status">Comprobando la sesión…</p>;
   }
 
   if (!session) {
-    return <LoginForm onSignIn={handleSignIn} notice={notice} />;
+    return <LoginForm onSignIn={signIn} notice={notice} />;
   }
 
   const showOrdersOption = canManageOrders(session.usuario);
   const showInventoryOption = canViewInventory(session.usuario);
-  const showUsersOption = canViewAdministration(session.usuario);
+  const showUsersOption = canManageUsers(session.usuario);
   const allowedViews = [
-    canViewDashboard(session.usuario) && 'dashboard',
     showOrdersOption && 'orders',
-    canViewResults(session.usuario) && 'optimization',
     showInventoryOption && 'inventory',
     showUsersOption && 'users',
   ].filter(Boolean);
   const fallbackView = allowedViews[0];
   const currentView = allowedViews.includes(view) ? view : fallbackView;
 
-  const toolbar = <SessionBar user={session.usuario} onSignOut={handleSignOut} />;
+  const toolbar = (
+    <div className="app-toolbar">
+      <SessionBar user={session.usuario} onSignOut={signOut} />
+      <nav className="app-nav" aria-label="Secciones">
+          {showOrdersOption && <button type="button" className="app-nav-button"
+            aria-current={currentView === 'orders' ? 'page' : undefined}
+            onClick={() => setView('orders')}>
+            Registro de pedidos
+          </button>}
+          {showInventoryOption && <button type="button" className="app-nav-button"
+            aria-current={currentView === 'inventory' ? 'page' : undefined}
+            onClick={() => setView('inventory')}>
+            Gestión de inventario
+          </button>}
+          {showUsersOption && <button type="button" className="app-nav-button"
+            aria-current={currentView === 'users' ? 'page' : undefined}
+            onClick={() => setView('users')}>
+            Panel de roles
+          </button>}
+      </nav>
+    </div>
+  );
 
-  if (!allowedViews.length) return <>{toolbar}<p role="alert">Tu rol no tiene módulos habilitados.</p></>;
+  if (currentView === 'users') {
+    return <UsersPage currentUser={session.usuario} onSessionExpired={signOut} toolbar={toolbar} />;
+  }
 
-  let page;
-  if (currentView === 'dashboard') {
-    page = <DashboardPage user={session.usuario} token={session.token || session.access_token} onSessionExpired={handleSignOut} toolbar={toolbar} />;
-  } else if (currentView === 'users') {
-    page = <UsersPage currentUser={session.usuario} onSessionExpired={handleSignOut} toolbar={toolbar} onPermissionsChanged={refresh} />;
-  } else if (currentView === 'optimization') {
-    page = <OptimizationPage initialRunId={originRunId} user={session.usuario} token={session.token || session.access_token} onSessionExpired={handleSignOut} toolbar={toolbar} />;
-  } else if (currentView === 'inventory') {
-    page = <InventoryPage onOpenCut={id => { setOriginRunId(id); setView('optimization'); }} onSessionExpired={handleSignOut} toolbar={toolbar} user={session.usuario} />;
-  } else page = <GestionPedidos
-    token={session.token || session.access_token}
-    user={session.usuario}
-    onSessionExpired={handleSignOut}
-    toolbar={toolbar}
-  />;
+  if (currentView === 'inventory') {
+    return <InventoryPage onSessionExpired={signOut} toolbar={toolbar} user={session.usuario} />;
+  }
 
-  return <NavigationContext.Provider value={{ onNavigate: setView, availableViews: allowedViews }}>{page}</NavigationContext.Provider>;
+  return (
+    <div className="app-container">
+      {toolbar}
+      <NuevoPedido />
+    </div>
+  );
 }
 
 export default App;

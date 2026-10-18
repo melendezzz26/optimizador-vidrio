@@ -1,3 +1,0 @@
-﻿Command: git diff --cached --check
-Result: PASS
-Exit code: 0

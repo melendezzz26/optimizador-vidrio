@@ -16,12 +16,15 @@ from app.modules.users.domain.errors import (
 )
 from app.shared.security import hash_password
 
-from .dependencies import get_user_repository, require_user_management, require_users_view
+from .dependencies import get_user_repository, require_user_management
 from .schemas import RoleResponse, UserCreateRequest, UserResponse, UserUpdateRequest
 
-# Cada ruta exige un permiso del catálogo: users.view para consultar y
-# users.manage para crear o editar (S1-RBAC, SPEC §4.4).
-router = APIRouter(prefix="/api/users", tags=["Usuarios"])
+# Todas las rutas exigen sesión y el permiso GESTIONAR_USUARIOS.
+router = APIRouter(
+    prefix="/api/users",
+    tags=["Usuarios"],
+    dependencies=[Depends(require_user_management)],
+)
 
 
 def _utc_now() -> datetime:
@@ -46,19 +49,12 @@ def domain_errors_as_http():
 
 
 @router.get("/roles", response_model=list[RoleResponse])
-def list_roles(
-    repository: UserRepository = Depends(get_user_repository),
-    _=Depends(require_users_view),
-):
+def list_roles(repository: UserRepository = Depends(get_user_repository)):
     return [RoleResponse.from_domain(role) for role in use_cases.list_roles(repository=repository)]
 
 
 @router.post("", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-def create_user(
-    data: UserCreateRequest,
-    repository: UserRepository = Depends(get_user_repository),
-    _=Depends(require_user_management),
-):
+def create_user(data: UserCreateRequest, repository: UserRepository = Depends(get_user_repository)):
     with domain_errors_as_http():
         user = use_cases.create_user(
             CreateUserData(
@@ -76,19 +72,12 @@ def create_user(
 
 
 @router.get("", response_model=list[UserResponse])
-def list_users(
-    repository: UserRepository = Depends(get_user_repository),
-    _=Depends(require_users_view),
-):
+def list_users(repository: UserRepository = Depends(get_user_repository)):
     return [UserResponse.from_domain(user) for user in use_cases.list_users(repository=repository)]
 
 
 @router.get("/{id_usuario}", response_model=UserResponse)
-def get_user(
-    id_usuario: int,
-    repository: UserRepository = Depends(get_user_repository),
-    _=Depends(require_users_view),
-):
+def get_user(id_usuario: int, repository: UserRepository = Depends(get_user_repository)):
     with domain_errors_as_http():
         return UserResponse.from_domain(use_cases.get_user(id_usuario, repository=repository))
 

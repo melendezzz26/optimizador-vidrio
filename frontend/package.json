@@ -6,8 +6,6 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:staging": "vite build --mode staging",
-    "check:staging": "node scripts/check-staging-build.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "npm run test:unit && npm run test:component && npm run test:e2e",

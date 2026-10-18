@@ -1,27 +1,25 @@
-import { useContext } from 'react';
-import { House, PackagePlus, Layers3, ShieldCheck, ScanLine } from 'lucide-react';
-import { NavigationContext } from './NavigationContext';
+import { House, PackagePlus, Layers3, ChartColumn, ShieldCheck, Settings } from 'lucide-react';
 import {
+  canConfigureOptimizer,
   canManageOrders,
-  canViewResults,
-  canViewAdministration,
+  canManageUsers,
   canViewInventory,
-  canViewDashboard,
+  canViewResults,
 } from '../../features/authentication/permissions';
 import './ui.css';
 
 const sections = [
-  { id: 'dashboard', label: 'Inicio', icon: House, canView: canViewDashboard },
+  { id: 'home', label: 'Inicio', icon: House, canView: () => true },
   { id: 'orders', label: 'Registro de pedidos', icon: PackagePlus, canView: canManageOrders },
-  { id: 'optimization', label: 'Optimización', icon: ScanLine, canView: canViewResults },
   { id: 'inventory', label: 'Gestión de inventario', icon: Layers3, canView: canViewInventory },
-  { id: 'users', label: 'Administración', icon: ShieldCheck, canView: canViewAdministration },
+  { id: 'results', label: 'Consulta de resultados', icon: ChartColumn, canView: canViewResults },
+  { id: 'roles', label: 'Panel de roles', icon: ShieldCheck, canView: canManageUsers },
+  { id: 'configuration', label: 'Configuración', icon: Settings, canView: canConfigureOptimizer },
 ];
 
+// Presentación de los módulos: no expone enlaces ni controles sin un flujo real.
 export function Sidebar({ activeItem, user }) {
-  const { onNavigate, availableViews } = useContext(NavigationContext);
-  const current = activeItem === 'roles' ? 'users' : activeItem;
-  const visibleSections = sections.filter(({ id, canView }) => availableViews ? availableViews.includes(id) : canView(user));
+  const visibleSections = sections.filter(({ canView }) => canView(user));
 
   return (
     <aside className="ng-ui ng-sidebar" aria-label="Módulos de NewGlass">
@@ -29,15 +27,15 @@ export function Sidebar({ activeItem, user }) {
         <Layers3 size={32} aria-hidden="true" />
         <span>NewGlass<small>Especialistas en vidrio</small></span>
       </div>
-      <nav aria-label="Secciones"><ul className="ng-sidebar__list">
+      <ul className="ng-sidebar__list">
         {visibleSections.map(({ id, label, icon: Icon }) => (
-          <li key={id}><button type="button" className={`ng-sidebar__item${id === current ? ' ng-sidebar__item--active' : ''}`}
-            aria-current={id === current ? 'page' : undefined} disabled={!onNavigate} onClick={() => onNavigate?.(id)}>
+          <li key={id} className={`ng-sidebar__item${id === activeItem ? ' ng-sidebar__item--active' : ''}`}
+            aria-current={id === activeItem ? 'page' : undefined}>
             <Icon size={20} aria-hidden="true" />
             <span>{label}</span>
-          </button></li>
+          </li>
         ))}
-      </ul></nav>
+      </ul>
     </aside>
   );
 }

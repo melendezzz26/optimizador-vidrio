@@ -1,273 +1,241 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import { fitVerticesToPreview, getBoundingBox } from '../../src/features/orders/geometryScaling.js';
-import { buildDimensionalGeometry, createSegments, getDrawingSegmentLength, scaleSketchToLengths, isPositiveLength, resolveSegmentLengths } from '../../src/features/orders/segmentGeometry.js';
-import { hasFiniteVertices, edgeLengths, interiorAngles, scaleVertices } from '../../src/features/orders/polygonMeasurements.js';
-import { validateConvexPolygon } from '../../src/features/orders/convexityValidation.js';
+import test from "node:test";
+import assert from "node:assert/strict";
+import { fitVerticesToPreview, getBoundingBox } from "../../src/features/orders/geometryScaling.js";
+import {
+  buildDimensionalGeometry, createSegments, getDrawingSegmentLength, isPositiveLength,
+  reconstructPolygonFromSegmentLengths, resolveSegmentLengths,
+} from "../../src/features/orders/segmentGeometry.js";
 
-const rectangle = [[0,0],[400,0],[400,200],[0,200]];
-const points = rectangle.map(([x,y]) => ({x,y}));
-const near = (a,b) => assert.ok(Math.abs(a-b) < 1e-7, `${a} != ${b}`);
+const rectangle = [{ x: 100, y: 100 }, { x: 500, y: 100 }, { x: 500, y: 300 }, { x: 100, y: 300 }];
+const pentagon = [{ x: 0, y: 0 }, { x: 300, y: 0 }, { x: 400, y: 200 }, { x: 150, y: 400 }, { x: -100, y: 200 }];
+const triangle = [{ x: 0, y: 0 }, { x: 300, y: 0 }, { x: 300, y: 400 }];
+const withLengths = (vertices, lengths) => createSegments(vertices).map((segment, index) => ({ ...segment, lengthMm: lengths[index] ?? "" }));
+const asPoints = (vertices_mm) => vertices_mm.map(([x, y]) => ({ x, y }));
+function near(actual, expected, tolerance = 1e-6) {
+  assert.ok(Math.abs(actual - expected) <= tolerance, `${actual} differs from ${expected} by more than ${tolerance}`);
+}
+function assertReconstructed(result, lengths) {
+  assert.equal(result.error, undefined);
+  assert.equal(result.vertices_mm.length, lengths.length);
+  assert.deepEqual(result.vertices_mm[0], [0, 0]);
+  assert.ok(result.closureErrorMm <= result.toleranceMm);
+  const points = asPoints(result.vertices_mm);
+  for (let index = 0; index < points.length; index += 1) {
+    near(getDrawingSegmentLength(points[index], points[(index + 1) % points.length]), Number(lengths[index]), result.toleranceMm * 2);
+  }
+}
 
-test('equal lengths cannot determine shape: square and rhombus retain distinct vertices and angles', () => {
-  const square = [[0,0],[10,0],[10,10],[0,10]];
-  const rhombus = [[0,0],[10,0],[16,8],[6,8]];
-  edgeLengths(square).forEach((length,i) => near(length, edgeLengths(rhombus)[i]));
-  assert.notDeepEqual(interiorAngles(square), interiorAngles(rhombus));
-  assert.notDeepEqual(scaleVertices(square,2), scaleVertices(rhombus,2));
-  const model = vertices => buildDimensionalGeometry(vertices.map(([x,y]) => ({x,y})),
-    createSegments(vertices).map((s,i) => ({...s,lengthMm:edgeLengths(vertices)[i]})));
-  assert.deepEqual(model(square).vertices_mm, square);
-  assert.deepEqual(model(rhombus).vertices_mm, rhombus);
-});
-
-test('scale preserves shape, vertex order and angle sum in either winding', () => {
+ test("graphical segment length uses Euclidean distance, independent of translation", () => {
   near(getDrawingSegmentLength({ x: -8, y: 12 }, { x: -5, y: 16 }), 5);
   near(getDrawingSegmentLength({ x: 0, y: 0 }, { x: 0, y: 0 }), 0);
-  for (const polygon of [rectangle, [...rectangle].reverse(), [[0,0],[300,0],[300,400]]]) {
-    const scaled = scaleVertices(polygon,2);
-    edgeLengths(scaled).forEach((length,i) => near(length, edgeLengths(polygon)[i]*2));
-    interiorAngles(scaled).forEach((angle,i) => near(angle, interiorAngles(polygon)[i]));
-    near(interiorAngles(scaled).reduce((sum,a)=>sum+a,0), (polygon.length-2)*180);
-    const segments = createSegments(polygon).map((segment, i) => ({ ...segment, lengthMm: edgeLengths(scaled)[i] }));
-    assert.deepEqual(buildDimensionalGeometry(polygon.map(([x, y]) => ({ x, y })), segments).vertices_mm, scaled);
-  }
 });
 
-test('concave angles are derived with reflex vertex; validation remains separate', () => {
-  const polygon = [[0,0],[4,0],[2,1],[4,4],[0,4]];
-  assert.ok(interiorAngles(polygon)[2] > 180);
-  near(interiorAngles(polygon).reduce((sum,a)=>sum+a,0),540);
-  const scaled = scaleVertices(polygon, 2);
-  const segments = createSegments(polygon).map((segment, i) => ({ ...segment, lengthMm: edgeLengths(scaled)[i] }));
-  const result = buildDimensionalGeometry(polygon.map(([x, y]) => ({ x, y })), segments);
-  assert.deepEqual(result.vertices_mm, scaled);
-  assert.equal(validateConvexPolygon(result.vertices_mm).isValid, false);
+test("segment IDs and indices preserve drawing order, including the closing side", () => {
+  assert.deepEqual(createSegments(triangle), [
+    { id: "S1", index: 0, lengthMm: "" }, { id: "S2", index: 1, lengthMm: "" }, { id: "S3", index: 2, lengthMm: "" },
+  ]);
+  const resolved = resolveSegmentLengths(triangle, withLengths(triangle, [600, "", ""]));
+  assert.deepEqual(resolved.lengths, [600, 800, 1000]);
 });
 
-for (const invalid of [[], [[0,0],[1,0]], [[0,0],[1,0],[NaN,1]], [[0,0],[1,0],[Infinity,1]], [[0,0],[1,0],['2',1]], [[0,0],[1,0],[true,1]]]) {
-  test(`invalid finite vertices ${JSON.stringify(invalid)}`, () => {
-    assert.equal(hasFiniteVertices(invalid),false);
-    assert.throws(()=>edgeLengths(invalid));
-    assert.throws(()=>interiorAngles(invalid));
-  });
-}
-for (const degenerate of [[[0,0],[0,0],[1,1]], [[0,0],[1,0],[2,0]], [[0,0],[1,0],[2,0],[2,1],[0,1]]]) {
-  test(`degenerate geometry ${JSON.stringify(degenerate)} is rejected`,()=>assert.throws(()=>interiorAngles(degenerate),RangeError));
-}
-for (const invalid of [0,-1,NaN,Infinity,'',null,true]) {
-  test(`invalid length ${String(invalid)} cannot yield a polygon`,()=>{
-    assert.equal(isPositiveLength(invalid),false);
-    assert.equal(scaleSketchToLengths(points,[invalid,200,400,200]).error,'length');
-  });
-}
-
-test('inconsistent independent lengths are rejected instead of changing sketch angles',()=>{
-  assert.equal(scaleSketchToLengths(points,[800,200,400,200]).error,'shape-mismatch');
-  assert.deepEqual(scaleSketchToLengths(points,[800,400,800,400]).vertices_mm,scaleVertices(rectangle,2));
-  const segments = createSegments(points).map((segment, i) => ({ ...segment, lengthMm: [800, 200, 400, ''][i] }));
-  const result = buildDimensionalGeometry(points, segments);
-  assert.equal(result.status, 'error');
-  assert.equal(result.error, 'shape-mismatch');
+test("no real measure means no physical scale and no vertices_mm", () => {
+  const result = buildDimensionalGeometry(rectangle, createSegments(rectangle));
+  assert.equal(result.status, "unscaled");
+  assert.equal(result.provisionalScale, null);
   assert.equal(result.vertices_mm, null);
+  assert.equal(result.measuredCount, 0);
 });
 
-test('partial measurements remain provisional; complete consistent measurements scale vertices',()=>{
-  const segments=createSegments(points);
-  assert.equal(buildDimensionalGeometry(points,segments).status,'unscaled');
-  segments[0].lengthMm=800;
-  const provisional = buildDimensionalGeometry(points,segments);
-  assert.equal(provisional.status,'provisional');
-  assert.equal(provisional.provisionalScale, 2);
-  assert.deepEqual(provisional.measured, [true, false, false, false]);
-  assert.deepEqual(provisional.lengths, [800, 400, 800, 400]);
-  assert.equal(segments[1].lengthMm, '');
-  segments.forEach((s,i)=>s.lengthMm=[800,400,800,400][i]);
-  const result=buildDimensionalGeometry(points,segments);
-  assert.equal(result.status,'complete');
-  assert.deepEqual(result.vertices_mm,[[0,0],[800,0],[800,400],[0,400]]);
+test("a single measurement supplies the provisional scale without filling blank inputs", () => {
+  const segments = withLengths(rectangle, [800, "", "", ""]);
+  const result = resolveSegmentLengths(rectangle, segments);
+  assert.equal(result.provisionalScale, 2);
+  assert.deepEqual(result.lengths, [800, 400, 800, 400]);
+  assert.deepEqual(result.measured, [true, false, false, false]);
+  assert.equal(segments[1].lengthMm, "");
+  assert.equal(buildDimensionalGeometry(rectangle, segments).status, "provisional");
 });
 
-test('frozen coordinates remain unchanged through scaling and responsive previews',()=>{
-  const frozen=Object.freeze(rectangle.map(v=>Object.freeze([...v])));
-  const snapshot=JSON.stringify(frozen);
-  const scaled=scaleVertices(frozen,2);
-  const previewPoints = Object.freeze(scaled.map(([x, y]) => Object.freeze({ x, y })));
-  for(const [width,height] of [[214,280],[500,300],[1200,300]]) {
-    const preview=fitVerticesToPreview(previewPoints,width,height,38);
-    near(preview.bounds.width/preview.bounds.height,2);
-    near(preview.bounds.x+preview.bounds.width/2,width/2);
-    near(preview.bounds.y+preview.bounds.height/2,height/2);
-    preview.points.forEach(({x,y})=>assert.ok(x>=37.999&&y>=37.999&&x<=width-37.999&&y<=height-37.999));
+test("odd median is robust to an outlier and even median averages central scales", () => {
+  const odd = resolveSegmentLengths(rectangle, withLengths(rectangle, [800, 800, 40000, ""]));
+  assert.equal(odd.provisionalScale, 4);
+  assert.equal(odd.lengths[3], 800);
+  const even = resolveSegmentLengths(rectangle, withLengths(rectangle, [800, 800, "", ""]));
+  assert.equal(even.provisionalScale, 3);
+  assert.deepEqual(even.lengths, [800, 800, 1200, 600]);
+});
+
+test("complete model uses only entered lengths", () => {
+  const lengths = [850, 420, 600, 510, 730];
+  const result = buildDimensionalGeometry(pentagon, withLengths(pentagon, lengths));
+  assert.equal(result.status, "complete");
+  assert.equal(result.measuredCount, 5);
+  assert.deepEqual(result.lengths, lengths);
+  assertReconstructed(result, lengths);
+});
+
+test("known rectangle preserves reference directions and has origin at its first vertex", () => {
+  const result = reconstructPolygonFromSegmentLengths(rectangle, [1000, 500, 1000, 500]);
+  assertReconstructed(result, [1000, 500, 1000, 500]);
+  const expected = [[0, 0], [1000, 0], [1000, 500], [0, 500]];
+  result.vertices_mm.forEach((point, i) => point.forEach((value, axis) => near(value, expected[i][axis])));
+});
+
+test("three sides reconstruct a known 3-4-5 triangle", () => {
+  const result = reconstructPolygonFromSegmentLengths(triangle, [300, 400, 500]);
+  assertReconstructed(result, [300, 400, 500]);
+  result.vertices_mm.forEach((point, index) => point.forEach((value, axis) => near(value, [[0, 0], [300, 0], [300, 400]][index][axis])));
+});
+
+test("editing one side changes geometry, closes the chain and keeps all other lengths", () => {
+  const segments = withLengths(rectangle, [1000, 500, 1000, 500]);
+  const before = buildDimensionalGeometry(rectangle, segments);
+  const edited = segments.map((segment, index) => index === 0 ? { ...segment, lengthMm: "1200" } : segment);
+  const after = buildDimensionalGeometry(rectangle, edited);
+  assert.notDeepEqual(after.vertices_mm, before.vertices_mm);
+  assertReconstructed(after, [1200, 500, 1000, 500]);
+  // Keeping all original directions here would leave a 200 mm gap.
+  near(after.vertices_mm[2][0], 1100);
+  assert.deepEqual(edited.slice(1), segments.slice(1));
+});
+
+test("reference orientation and vertex order survive a rotated, translated sketch", () => {
+  const rotated = rectangle.map(({ x, y }) => ({ x: 42 - y, y: -71 + x }));
+  const result = reconstructPolygonFromSegmentLengths(rotated, [1000, 500, 1000, 500]);
+  assertReconstructed(result, [1000, 500, 1000, 500]);
+  near(result.vertices_mm[1][0], 0);
+  near(result.vertices_mm[1][1], 1000);
+  near(result.vertices_mm[2][0], -500);
+});
+
+test("five different real lengths reconstruct deterministically", () => {
+  const lengths = [850, 420, 600, 510, 730];
+  const result = reconstructPolygonFromSegmentLengths(pentagon, lengths);
+  assertReconstructed(result, lengths);
+  assert.deepEqual(reconstructPolygonFromSegmentLengths(pentagon, lengths), result);
+});
+
+test("concave sketches are dimensioned without T03 validation", () => {
+  const vertices = [{ x: 0, y: 0 }, { x: 300, y: 0 }, { x: 200, y: 100 }, { x: 300, y: 300 }, { x: 0, y: 300 }];
+  const lengths = vertices.map((point, index) => getDrawingSegmentLength(point, vertices[(index + 1) % vertices.length]) * 2);
+  const result = reconstructPolygonFromSegmentLengths(vertices, lengths);
+  assertReconstructed(result, lengths);
+  near(result.vertices_mm[2][0], 400);
+  near(result.vertices_mm[2][1], 200);
+});
+
+test("six or more segments satisfy each target length", () => {
+  for (const count of [6, 8, 12]) {
+    const vertices = Array.from({ length: count }, (_, i) => ({ x: 100 * Math.cos(i * 2 * Math.PI / count), y: 100 * Math.sin(i * 2 * Math.PI / count) }));
+    const lengths = vertices.map((_, i) => 200 + i * 23);
+    assertReconstructed(reconstructPolygonFromSegmentLengths(vertices, lengths), lengths);
   }
-  assert.equal(JSON.stringify(frozen),snapshot);
-  assert.deepEqual(getBoundingBox(points),{minX:0,maxX:400,minY:0,maxY:200,width:400,height:200});
 });
 
-test('invalid scale, numeric overflow and missing edges never emit non-finite coordinates',()=>{
-  for(const factor of [0,-1,NaN,Infinity]) assert.throws(()=>scaleVertices(rectangle,factor));
-  assert.throws(()=>scaleVertices([[0,0],[1e308,0],[0,1]],2));
-  assert.equal(scaleSketchToLengths([],[]).error,'drawing');
-  for(const invalid of [[],[{x:0,y:NaN}],[{x:0,y:0}]]) assert.equal(fitVerticesToPreview(invalid),null);
+test("a collinear reference can escape the rank-deficient initial directions", () => {
+  const vertices = [{ x: 0, y: 0 }, { x: 100, y: 0 }, { x: 200, y: 0 }];
+  assertReconstructed(reconstructPolygonFromSegmentLengths(vertices, [300, 400, 500]), [300, 400, 500]);
 });
 
-const asPoints = vertices => vertices.map(([x, y]) => ({ x, y }));
-const measured = vertices => createSegments(vertices).map((segment, i) => ({ ...segment, lengthMm: edgeLengths(vertices)[i] }));
-
-test('preview rejects invalid and non-finite viewport dimensions on either axis', () => {
-  for (const [width, height] of [[0, 300], [-1, 300], [300, 0], [300, -1], [NaN, 300], [300, NaN], [Infinity, 300], [300, Infinity]]) {
-    assert.equal(fitVerticesToPreview(points, width, height), null);
-  }
-});
-
-test('preview rejects negative/non-finite padding and a viewport exhausted by padding', () => {
-  for (const padding of [-1, NaN, Infinity, 150, 200]) {
-    assert.equal(fitVerticesToPreview(points, 300, 300, padding), null);
-  }
-});
-
-test('one-axis preview extents remain finite and centered without modifying canonical input', () => {
-  for (const vertices_mm of [[[-10, -10], [-10, 10]], [[-10, -10], [10, -10]]]) {
-    const original = structuredClone(vertices_mm);
-    const preview = fitVerticesToPreview(asPoints(vertices_mm), 300, 300, 40);
-    assert.ok(preview);
-    preview.points.forEach(point => assert.ok(Number.isFinite(point.x) && Number.isFinite(point.y)));
-    near(preview.bounds.x + preview.bounds.width / 2, 150);
-    near(preview.bounds.y + preview.bounds.height / 2, 150);
-    assert.equal(preview.bounds.width === 0, vertices_mm[0][0] === vertices_mm[1][0]);
-    assert.equal(preview.bounds.height === 0, vertices_mm[0][1] === vertices_mm[1][1]);
-    assert.deepEqual(vertices_mm, original);
-    // A line may be displayed, but cannot become a valid polygon for saving.
-    assert.throws(() => interiorAngles(vertices_mm));
-  }
-});
-
-for (const [width, height] of [[200, 5000], [5000, 200]]) {
-  test(`canonical ${width}:${height} polygon preserves angles in tall/wide responsive previews`, () => {
-    const vertices_mm = [[-20, 30], [width - 20, 30], [width - 20, height + 30], [-20, height + 30]];
-    const snapshot = structuredClone(vertices_mm);
-    for (const [viewportWidth, viewportHeight] of [[214, 280], [500, 300], [1200, 300]]) {
-      const preview = fitVerticesToPreview(asPoints(vertices_mm), viewportWidth, viewportHeight, 38);
-      assert.ok(preview);
-      near(preview.bounds.width / preview.bounds.height, width / height);
-      near(preview.bounds.x + preview.bounds.width / 2, viewportWidth / 2);
-      near(preview.bounds.y + preview.bounds.height / 2, viewportHeight / 2);
-      const displayed = preview.points.map(({ x, y }) => [x, y]);
-      interiorAngles(displayed).forEach((angle, i) => near(angle, interiorAngles(vertices_mm)[i]));
-      preview.points.forEach(({ x, y }) => assert.ok(x >= 37.999 && y >= 37.999 && x <= viewportWidth - 37.999 && y <= viewportHeight - 37.999));
-    }
-    assert.deepEqual(vertices_mm, snapshot);
+for (const value of [0, -1, NaN, Infinity, -Infinity, "abc", "", " ", null, undefined, true]) {
+  test(`invalid length ${String(value)} is rejected, never replaced by an estimate`, () => {
+    assert.equal(isPositiveLength(value), false);
+    assert.equal(reconstructPolygonFromSegmentLengths(rectangle, [value, 500, 1000, 500]).error, "length");
   });
 }
 
-test('positive physical lengths below 0.01 scale vertices without changing shape', () => {
-  for (const length of [0.005, 0.001, 0.000001]) {
-    assert.equal(isPositiveLength(String(length)), true);
-    const vertices_mm = scaleVertices(rectangle, length / 400);
-    const result = buildDimensionalGeometry(points, measured(vertices_mm));
-    assert.equal(result.status, 'complete');
-    assert.deepEqual(result.vertices_mm, vertices_mm);
-    edgeLengths(result.vertices_mm).forEach((value, i) => near(value, edgeLengths(rectangle)[i] * length / 400));
-    interiorAngles(result.vertices_mm).forEach(angle => near(angle, 90));
-  }
-});
-
-test('remaining non-finite and malformed length inputs are rejected rather than estimated', () => {
-  for (const value of [-Infinity, undefined, 'abc', ' ']) {
-    assert.equal(isPositiveLength(value), false);
-    assert.equal(scaleSketchToLengths(points, [value, 200, 400, 200]).error, 'length');
-  }
-});
-
-test('segment IDs and indices include the closing edge and reject corrupted ordering', () => {
-  const segments = createSegments(points);
-  assert.deepEqual(segments.map(({ id, index }) => [id, index]), [['S1', 0], ['S2', 1], ['S3', 2], ['S4', 3]]);
-  for (const invalid of [segments.slice(1), [...segments].reverse(), segments.map((segment, i) => i ? segment : { ...segment, id: 'S9' })]) {
-    assert.equal(resolveSegmentLengths(points, invalid).error, 'segments');
-  }
-});
-
-test('native badInput is an error even when its displayed value is empty or previously valid', () => {
-  for (const lengthMm of ['', '400']) {
-    const segments = measured(rectangle);
-    segments[0] = { ...segments[0], lengthMm, badInput: true };
-    const result = buildDimensionalGeometry(points, segments);
-    assert.equal(result.error, 'length');
+test("strict polygon inequality rejects equality and a side longer than all others", () => {
+  for (const lengths of [[2000, 500, 1000, 500], [2001, 500, 1000, 500]]) {
+    const result = buildDimensionalGeometry(rectangle, withLengths(rectangle, lengths));
+    assert.equal(result.error, "inequality");
+    assert.equal(result.status, "error");
     assert.equal(result.vertices_mm, null);
   }
 });
 
-test('malformed/repeated/non-finite sketch vertices cannot yield physical geometry', () => {
-  for (const invalid of [points.slice(0, 2), [...points, points[0]], [{ x: NaN, y: 0 }, ...points], [{ x: Infinity, y: 0 }, ...points]]) {
-    assert.equal(scaleSketchToLengths(invalid, [400, 200, 400, 200]).error, 'drawing');
-  }
-  assert.equal(scaleSketchToLengths(points, [400, 200, 400]).error, 'length');
-});
-
-test('overflow of provisional scale fails before emitting non-finite vertices', () => {
-  const sketch = [{ x: 0, y: 0 }, { x: 1e-300, y: 0 }, { x: 1e-300, y: 1e-300 }];
-  const segments = createSegments(sketch);
-  segments[0].lengthMm = 1e300;
-  const result = buildDimensionalGeometry(sketch, segments);
-  assert.equal(result.error, 'numeric-range');
+test("inconsistent provisional lengths cannot claim a complete preview", () => {
+  const result = buildDimensionalGeometry(rectangle, withLengths(rectangle, [10000, 200, 400, ""]));
+  assert.equal(result.error, "inequality");
+  assert.equal(result.measuredCount, 3);
   assert.equal(result.vertices_mm, null);
 });
 
-test('rotated/translated canonical sketch retains orientation and ordered vertices after scaling', () => {
-  const rotated = rectangle.map(([x, y]) => [42 - y, -71 + x]);
-  const result = buildDimensionalGeometry(asPoints(rotated), measured(scaleVertices(rotated, 2)));
-  assert.deepEqual(result.vertices_mm, [[0, 0], [0, 800], [-400, 800], [-400, 0]]);
-  interiorAngles(result.vertices_mm).forEach((angle, i) => near(angle, interiorAngles(rotated)[i]));
+test("incomplete native numeric input is an error, not an unmeasured estimate", () => {
+  const segments = withLengths(rectangle, [1000, "", "", ""]);
+  segments[1].badInput = true;
+  assert.equal(buildDimensionalGeometry(rectangle, segments).error, "length");
 });
 
-test('six or more vertices retain their canonical shape rather than solving independent side lengths', () => {
-  for (const count of [6, 8, 12]) {
-    const vertices_mm = Array.from({ length: count }, (_, i) => [100 * Math.cos(i * 2 * Math.PI / count), 100 * Math.sin(i * 2 * Math.PI / count)]);
-    const result = buildDimensionalGeometry(asPoints(vertices_mm), measured(scaleVertices(vertices_mm, 2)));
-    assert.equal(result.status, 'complete');
-    result.vertices_mm.forEach((point, i) => point.forEach((value, axis) => near(value, scaleVertices(vertices_mm, 2)[i][axis])));
-    near(interiorAngles(result.vertices_mm).reduce((sum, angle) => sum + angle, 0), (count - 2) * 180);
+test("positive decimals below 0.01 are accepted", () => {
+  const lengths = [0.005, 0.003, 0.005, 0.003];
+  assertReconstructed(reconstructPolygonFromSegmentLengths(rectangle, lengths), lengths);
+});
+
+test("near-degenerate feasible lengths can still close", () => {
+  assertReconstructed(reconstructPolygonFromSegmentLengths(triangle, [1000, 1000, 1999.999]), [1000, 1000, 1999.999]);
+});
+
+test("missing edges, repeated adjacent vertices and non-finite drawings fail explicitly", () => {
+  for (const points of [[], rectangle.slice(0, 2), [...rectangle, rectangle[0]], [{ x: NaN, y: 0 }, ...rectangle], [{ x: Infinity, y: 0 }, ...rectangle]]) {
+    assert.equal(reconstructPolygonFromSegmentLengths(points, [1, 1, 1, 1]).error, "drawing");
   }
+  assert.equal(reconstructPolygonFromSegmentLengths(rectangle, [1, 1, 1]).error, "length");
+  const reversed = createSegments(rectangle).reverse();
+  assert.equal(resolveSegmentLengths(rectangle, reversed).error, "segments");
 });
 
-test('dimensional pipeline leaves frozen sketch and segment inputs unchanged', () => {
-  const sketch = Object.freeze(points.map(point => Object.freeze({ ...point })));
-  const segments = Object.freeze(measured(scaleVertices(rectangle, 2)).map(Object.freeze));
-  const snapshot = JSON.stringify({ sketch, segments });
-  assert.equal(buildDimensionalGeometry(sketch, segments).status, 'complete');
-  assert.equal(JSON.stringify({ sketch, segments }), snapshot);
+test("overflowing provisional scale fails without emitting invalid vertices", () => {
+  const points = [{ x: 0, y: 0 }, { x: 1e-300, y: 0 }, { x: 1e-300, y: 1e-300 }];
+  const result = buildDimensionalGeometry(points, withLengths(points, [1e300, "", ""]));
+  assert.equal(result.error, "numeric-range");
+  assert.equal(result.vertices_mm, null);
 });
 
-test('clearing all measurements removes physical scale and previously derived vertices', () => {
-  const segments = measured(rectangle);
-  assert.equal(buildDimensionalGeometry(points, segments).status, 'complete');
-  segments[0].lengthMm = '';
-  assert.equal(buildDimensionalGeometry(points, segments).status, 'provisional');
-  segments.forEach(segment => { segment.lengthMm = ''; });
+test("all geometry operations leave frozen inputs unchanged", () => {
+  const points = Object.freeze(rectangle.map((point) => Object.freeze({ ...point })));
+  const segments = Object.freeze(withLengths(points, [1200, 500, 1000, ""]).map(Object.freeze));
+  const snapshot = JSON.stringify({ points, segments });
   const result = buildDimensionalGeometry(points, segments);
-  assert.equal(result.status, 'unscaled');
-  assert.equal(result.vertices_mm, null);
+  assert.equal(result.status, "provisional");
+  const previewPoints = Object.freeze(asPoints(result.vertices_mm).map(Object.freeze));
+  assert.ok(fitVerticesToPreview(previewPoints, 320, 280));
+  assert.deepEqual(getBoundingBox(points), { minX: 100, maxX: 500, minY: 100, maxY: 300, width: 400, height: 200 });
+  assert.equal(JSON.stringify({ points, segments }), snapshot);
 });
 
-test('odd and even subsets of canonical measurements resolve the same uniform scale', () => {
-  for (const measuredIndices of [[0, 1, 2], [0, 1]]) {
-    const segments = measured(scaleVertices(rectangle, 2)).map((segment, i) => ({
-      ...segment, lengthMm: measuredIndices.includes(i) ? segment.lengthMm : '',
-    }));
-    const result = resolveSegmentLengths(points, segments);
-    assert.equal(result.provisionalScale, 2);
-    assert.deepEqual(result.lengths, [800, 400, 800, 400]);
-  }
+for (const [horizontal, vertical] of [[200, 5000], [5000, 200], [1000, 500]]) {
+  test(`preview preserves ${horizontal}:${vertical} at desktop and mobile sizes`, () => {
+    const lengths = [horizontal, vertical, horizontal, vertical];
+    const result = reconstructPolygonFromSegmentLengths(rectangle, lengths);
+    assertReconstructed(result, lengths);
+    const points = asPoints(result.vertices_mm);
+    const snapshot = JSON.stringify(points);
+    for (const [width, height] of [[214, 280], [500, 300], [1200, 300]]) {
+      const preview = fitVerticesToPreview(points, width, height, 38);
+      near(preview.bounds.width / preview.bounds.height, horizontal / vertical);
+      near(preview.bounds.x + preview.bounds.width / 2, width / 2);
+      near(preview.bounds.y + preview.bounds.height / 2, height / 2);
+      preview.points.forEach(({ x, y }) => assert.ok(x >= 37.999 && y >= 37.999 && x <= width - 37.999 && y <= height - 37.999));
+    }
+    assert.equal(JSON.stringify(points), snapshot);
+  });
+}
+
+test("preview rejects invalid bounds and handles non-origin and one-axis extents", () => {
+  for (const points of [[], [{ x: 0, y: NaN }], [{ x: 0, y: 0 }]]) assert.equal(fitVerticesToPreview(points), null);
+  for (const size of [[0, 100], [100, NaN], [Infinity, 300]]) assert.equal(fitVerticesToPreview(rectangle, ...size), null);
+  assert.equal(fitVerticesToPreview(rectangle, 500, 300, -1), null);
+  const line = fitVerticesToPreview([{ x: -10, y: -10 }, { x: -10, y: 10 }], 300, 300);
+  near(line.bounds.width, 0);
+  near(line.bounds.x, 150);
 });
 
-test('thin non-degenerate canonical triangle survives scaling while a collinear polygon stays invalid', () => {
-  const vertices_mm = [[0, 0], [1000, 0], [2000, 0.1]];
-  const scaled = scaleVertices(vertices_mm, 0.5);
-  const result = buildDimensionalGeometry(asPoints(vertices_mm), measured(scaled));
-  assert.equal(result.status, 'complete');
-  assert.deepEqual(result.vertices_mm, scaled);
-  assert.equal(validateConvexPolygon(result.vertices_mm).isValid, true);
-  interiorAngles(scaled).forEach((angle, i) => near(angle, interiorAngles(vertices_mm)[i]));
-  const collinear = [[0, 0], [1000, 0], [2000, 0]];
-  assert.equal(validateConvexPolygon(scaleVertices(collinear, 0.5)).isValid, false);
+test("clearing a completed length returns to provisional; clearing all removes physical scale", () => {
+  const segments = withLengths(rectangle, [1000, 500, 1000, 500]);
+  assert.equal(buildDimensionalGeometry(rectangle, segments).status, "complete");
+  segments[2].lengthMm = "";
+  const provisional = buildDimensionalGeometry(rectangle, segments);
+  assert.equal(provisional.status, "provisional");
+  assert.equal(provisional.measuredCount, 3);
+  assert.equal(buildDimensionalGeometry(rectangle, createSegments(rectangle)).status, "unscaled");
 });
