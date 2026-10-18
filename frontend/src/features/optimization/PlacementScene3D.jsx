@@ -2,6 +2,18 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { createPlacementScene, clampYaw, DEFAULT_YAW, extrudedSides, projectPoint, projectedPath } from './placementScene';
 import './PlacementScene3D.css';
 import { ZoomControls } from './InspectionViewport';
+import { getGeometryBounds } from './visualizationGeometry';
+
+function pieceDimensions(placement, snapshot) {
+  const unit = snapshot.groups.flatMap(group => group.units ?? []).find(unit => unit.id_pedido === placement.id_pedido && unit.id_pieza === placement.id_pieza && unit.unit_index === placement.unit_index);
+  const orderPiece = snapshot.orders?.find(order => order.id_pedido === placement.id_pedido)?.piezas?.find(piece => piece.id_pieza === placement.id_pieza);
+  const geometry = unit?.geometria || orderPiece?.geometria || placement.geometria;
+  const bounds = getGeometryBounds(geometry);
+  if (!bounds) return '';
+  const format = value => new Intl.NumberFormat('es-PE', { maximumFractionDigits: 2 }).format(value);
+  return geometry.type === 'CIRCUNFERENCIA' ? `Diámetro ${format(bounds.width)} mm`
+    : `${geometry.type === 'POLIGONO_CONVEXO' ? 'Ancho × alto: ' : ''}${format(bounds.width)} × ${format(bounds.height)} mm`;
+}
 
 const SURFACE = 18;
 const PIECE_TOP = 25;
@@ -112,7 +124,10 @@ export function PlacementScene3D({ snapshot, container, placements, yaw, onYawCh
           return <g key={piece.key} data-piece-3d={piece.key}>
             {extrudedSides(piece.points, SURFACE, PIECE_TOP, scene, yaw, camera).map(side => <path key={side.key} d={side.path} fill={piece.edge} />)}
             <path d={projectedPath(piece.points, PIECE_TOP, scene, yaw, camera)} fill={piece.color} stroke={piece.edge} strokeWidth="2" />
-            <text className="placement-3d-piece-label" x={anchor.x} y={anchor.y} textAnchor="middle" dominantBaseline="middle">#{piece.placement.id_pieza}</text>
+            <text className="placement-3d-piece-label" x={anchor.x} y={anchor.y} textAnchor="middle" dominantBaseline="middle">
+              <tspan x={anchor.x}>#{piece.placement.id_pieza}</tspan>
+              <tspan x={anchor.x} dy="1.3em">{pieceDimensions(piece.placement, snapshot)}</tspan>
+            </text>
           </g>;
         })}
         <g aria-hidden="true">{axes.map(([label, end, color]) => <g key={label}>
@@ -122,7 +137,7 @@ export function PlacementScene3D({ snapshot, container, placements, yaw, onYawCh
         <Dimension start={[0, scene.height + scene.gridStep / 2]} end={[scene.width, scene.height + scene.gridStep / 2]}
           label={`${scene.width} mm`} scene={scene} yaw={yaw} camera={camera} />
         <Dimension start={[-scene.gridStep / 2, 0]} end={[-scene.gridStep / 2, scene.height]}
-          label={`${scene.height} mm`} scene={scene} yaw={yaw} />
+          label={`${scene.height} mm`} scene={scene} yaw={yaw} camera={camera} />
       </svg>
       <span className="placement-3d-angle" aria-hidden="true">Z ↑ · giro {yaw}°</span>
     </div>
@@ -131,6 +146,7 @@ export function PlacementScene3D({ snapshot, container, placements, yaw, onYawCh
     <ul className="placement-3d-legend" aria-label="Piezas en la vista 3D">{scene.pieces.map(piece => <li key={piece.key}>
       <span className="placement-3d-swatch" style={{ backgroundColor: piece.color, borderColor: piece.edge }} aria-hidden="true" />
       <span><strong>Pieza #{piece.placement.id_pieza} · unidad {piece.placement.unit_index}</strong>
+        <small>{pieceDimensions(piece.placement, snapshot)}</small>
         <small>Pedido #{piece.placement.id_pedido} · rotación aplicada: {piece.placement.rotation_deg}°</small></span>
     </li>)}</ul>
     {!scene.pieces.length && <p>No hay piezas colocadas todavía en este contenedor.</p>}

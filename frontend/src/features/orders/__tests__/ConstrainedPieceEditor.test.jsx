@@ -7,6 +7,33 @@ import { validateConvexPolygon } from '../convexityValidation';
 
 const field = i => screen.getByLabelText(`Longitud del segmento S${i} en milímetros`);
 const fill = values => values.forEach((value, i) => fireEvent.change(field(i + 1), { target: { value: String(value) } }));
+
+test('actualiza medidas parciales, conserva el boceto y nunca publica una geometría estimada', async () => {
+  const user = userEvent.setup(); const changed = vi.fn();
+  render(<CustomPieceEditor onGeometryChange={changed} />);
+  expect(screen.getByText('Dibuja la forma aproximada de la pieza. Luego ajusta sus medidas y ángulos para definirla con precisión.')).toBeVisible();
+  await draw(user, 4);
+  const svg = screen.getByRole('img', { name: 'Vista dimensional de la pieza' });
+  const points = () => svg.querySelector('polygon').getAttribute('points');
+  const reference = svg.querySelector('.custom-piece-editor__sketch-reference').getAttribute('points');
+  fireEvent.change(field(1), { target: { value: '300' } });
+  expect(svg).toHaveTextContent('S1 · 300 mm');
+  expect(svg.querySelectorAll('line[data-measured="true"]')).toHaveLength(1);
+  const first = points();
+  fireEvent.change(field(2), { target: { value: '150' } });
+  expect(points()).not.toBe(first);
+  expect(svg.querySelector('.custom-piece-editor__sketch-reference')).toHaveAttribute('points', reference);
+  expect(svg.querySelector('polygon')).toHaveAttribute('data-provisional', 'true');
+  expect(field(3)).toHaveValue(null);
+  expect(changed.mock.calls.at(-1)[0]).toBeNull();
+  expect(screen.getByRole('status', { name: 'Resultado de validación geométrica' })).toHaveTextContent('2 de 4 medidas');
+  fill([300, 150, 300, 150]);
+  expect(changed.mock.calls.at(-1)[0]).not.toBeNull();
+  expect(svg.querySelector('.custom-piece-editor__sketch-reference')).toBeNull();
+  fireEvent.change(field(2), { target: { value: '' } });
+  expect(changed.mock.calls.at(-1)[0]).toBeNull();
+  expect(svg.querySelector('polygon')).toHaveAttribute('data-provisional', 'true');
+});
 async function draw(user, count) {
   const points = Array.from({ length: count }, (_, i) => [350 + 150 * Math.cos(i * 2 * Math.PI / count), 250 + 150 * Math.sin(i * 2 * Math.PI / count)]);
   for (const [x, y] of points) await user.pointer({ target: screen.getByRole('img', { name: /Lienzo del dibujo original/ }), keys: '[MouseLeft]', coords: { clientX: x, clientY: y } });

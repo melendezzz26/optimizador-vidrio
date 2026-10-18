@@ -71,7 +71,7 @@ export default function OrderClientSelector({ value, onChange, disabled, token }
   return (
     <section className="orders-section order-client ng-ui" aria-labelledby="order-client-title">
       <h2 id="order-client-title">Cliente</h2>
-      <p className="orders-section__description" id="order-client-help">Selecciona un cliente o registra uno nuevo para guardar el pedido.</p>
+      <p className="orders-section__description" id="order-client-help">Buscar por nombre, DNI o RUC. Selecciona un cliente o registra uno nuevo para guardar el pedido.</p>
       {error && <FeedbackMessage variant="error" title="No se pudo completar la operación de clientes">{error}</FeedbackMessage>}
       {notice && <FeedbackMessage variant="success">{notice}</FeedbackMessage>}
       {value ? (
@@ -119,7 +119,7 @@ export default function OrderClientSelector({ value, onChange, disabled, token }
               <select id="client-mode" className="ng-control" value={mode} disabled={disabled || busy}
                 onChange={(event) => { setMode(event.target.value); setResults(null); }}>
                 <option value="query">Nombre o razón social</option>
-                <option value="document">Documento exacto</option>
+                <option value="document">DNI o RUC</option>
               </select>
             </div>
             <div className="ng-field">
