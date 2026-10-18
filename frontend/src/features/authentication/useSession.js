@@ -33,18 +33,5 @@ export function useSession() {
   );
   }, []);
 
-  // S1-RBAC: vuelve a pedir /me para actualizar los permisos de la sesión
-  // (por ejemplo, tras cambiar los permisos del propio rol).
-  const refresh = useCallback(async () => {
-    try {
-      setSession(await refreshSession());
-    } catch (error) {
-      if (error.status === 401) {
-        setSession(null);
-        setNotice(error.message);
-      }
-    }
-  }, []);
-
-  return { session, isChecking, notice, signIn, signOut, refresh };
+  return { session, isChecking, notice, signIn, signOut };
 }

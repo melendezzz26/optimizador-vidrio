@@ -34,7 +34,5 @@ responsable de cada módulo lo migre con pruebas.
 - [Índice de documentación](docs/README.md).
 - [Experimentos de rasterización](experiments/raster/README.md).
 
-Sprint 1 integra rasterización y First Fit con Orders, inventario y RBAC.
-El [cierre de integración](docs/reviews/S1-final-integration.md) enlaza los
-resultados finales y la evidencia consolidada. Best Fit y Worst Fit quedan fuera
-de este cierre.
+Durante Sprint 1, la experimentación de optimización se centra en rasterización.
+First Fit, Best Fit y Worst Fit quedan fuera del alcance de ese sprint.

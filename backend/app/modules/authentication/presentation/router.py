@@ -1,7 +1,7 @@
 """Rutas de autenticación: traducen HTTP a casos de uso y errores a códigos."""
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.modules.authentication.application.ports import PermissionReader, UserReader
+from app.modules.authentication.application.ports import UserReader
 from app.modules.authentication.application.use_cases import authenticate
 from app.modules.authentication.domain.errors import (
     InactiveAccountError,
@@ -12,7 +12,7 @@ from app.modules.authentication.domain.user import AuthenticatedUser
 from app.modules.authentication.domain.username import Username
 from app.shared.security import create_access_token, verify_password
 
-from .dependencies import get_current_user, get_permission_reader, get_user_reader
+from .dependencies import get_current_user, get_user_reader
 from .schemas import LoginRequest, LoginResponse, PublicUser, SessionInfo
 
 router = APIRouter(prefix="/api/auth", tags=["Autenticación"])
@@ -23,11 +23,7 @@ INACTIVE_ACCOUNT_MESSAGE = "Tu cuenta está desactivada. Pide al administrador q
 
 
 @router.post("/login", response_model=LoginResponse)
-def login(
-    credentials: LoginRequest,
-    user_reader: UserReader = Depends(get_user_reader),
-    permission_reader: PermissionReader = Depends(get_permission_reader),
-):
+def login(credentials: LoginRequest, user_reader: UserReader = Depends(get_user_reader)):
     try:
         # Si el formato no es válido se responde aquí, sin consultar la base.
         username = Username.parse(credentials.username)
@@ -53,20 +49,10 @@ def login(
             username=user.username,
             nombre=user.full_name,
             rol=user.role,
-            permisos=sorted(permission_reader.permissions_for_role(user.role)),
         ),
     )
 
 
 @router.get("/me", response_model=SessionInfo)
-def me(
-    user: AuthenticatedUser = Depends(get_current_user),
-    permission_reader: PermissionReader = Depends(get_permission_reader),
-):
-    # CA-09: permisos efectivos del rol vigente, leídos de la base en cada llamada.
-    return SessionInfo(
-        id_usuario=user.user_id,
-        username=user.username,
-        rol=user.role,
-        permisos=sorted(permission_reader.permissions_for_role(user.role)),
-    )
+def me(user: AuthenticatedUser = Depends(get_current_user)):
+    return SessionInfo(id_usuario=user.user_id, username=user.username, rol=user.role)

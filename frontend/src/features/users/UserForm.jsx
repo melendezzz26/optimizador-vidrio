@@ -1,7 +1,6 @@
-import { useEffect, useId, useRef, useState } from 'react';
-import { LoaderCircle, Save } from 'lucide-react';
-import { ActionBar, PageCard } from '../../shared/components/PageLayout';
-import { FeedbackMessage, FieldError } from '../../shared/components/feedback';
+import { useId, useState } from 'react';
+import { LoaderCircle, Save, ShieldCheck } from 'lucide-react';
+import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
 import { EMPTY_FORM, validateUserForm } from './userFormRules';
 
 function valuesFor(user) {
@@ -17,13 +16,6 @@ export function UserForm({ roles, editingUser, isOwnAccount, onSubmit, onCancel 
   const [formError, setFormError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const id = useId();
-  const titleRef = useRef(null);
-
-  // El formulario aparece por una acción del usuario: se lleva el foco a su título
-  // para que el lector de pantalla anuncie qué se abrió.
-  useEffect(() => {
-    titleRef.current?.focus();
-  }, []);
 
   function setField(name, value) {
     setValues((current) => ({ ...current, [name]: value }));
@@ -41,6 +33,7 @@ export function UserForm({ roles, editingUser, isOwnAccount, onSubmit, onCancel 
     setIsSubmitting(true);
     try {
       await onSubmit(values);
+      if (!isEditing) setValues(EMPTY_FORM);
     } catch (error) {
       // 409 al crear: el DNI ya está registrado; el aviso va junto a ese campo.
       if (error.status === 409 && !isEditing) setFieldErrors({ dni: error.message });
@@ -63,7 +56,8 @@ export function UserForm({ roles, editingUser, isOwnAccount, onSubmit, onCancel 
   }
 
   function errorMessage(name) {
-    return <FieldError id={`${id}-${name}-error`}>{fieldErrors[name]}</FieldError>;
+    if (!fieldErrors[name]) return null;
+    return <p className="users-error" id={`${id}-${name}-error`}>{fieldErrors[name]}</p>;
   }
 
   const dniHintId = `${id}-dni-hint`;
@@ -73,15 +67,14 @@ export function UserForm({ roles, editingUser, isOwnAccount, onSubmit, onCancel 
   return (
     <PageCard as="form" className="users-form" onSubmit={handleSubmit} noValidate
       aria-busy={isSubmitting} aria-labelledby={`${id}-title`}>
-      <div className="users-form-header">
-        <h2 id={`${id}-title`} ref={titleRef} tabIndex={-1}>
-          {isEditing ? `Editar usuario ${editingUser.usuario}` : 'Nuevo usuario'}
-        </h2>
+      <PageHeader context="Panel de roles" title="Gestión de usuarios" titleId={`${id}-title`}
+        icon={ShieldCheck}
+        description="Registra usuarios, asígnales un rol y activa o desactiva su acceso.">
         <p className="users-hint">Los campos marcados con * son obligatorios.</p>
-      </div>
+      </PageHeader>
 
       <fieldset className="ng-form-section" disabled={isSubmitting}>
-        <legend>Datos del usuario</legend>
+        <legend>{isEditing ? `Editar usuario ${editingUser.usuario}` : 'Nuevo usuario'}</legend>
         <div className="ng-field-grid">
           <div className="ng-field">
             <label htmlFor={`${id}-nombres`}>Nombres *</label>
@@ -146,14 +139,14 @@ export function UserForm({ roles, editingUser, isOwnAccount, onSubmit, onCancel 
         </div>
       </fieldset>
 
-      {formError && (
-        <FeedbackMessage variant="error" title="No se pudo guardar el usuario">{formError}</FeedbackMessage>
-      )}
+      {formError && <p className="users-error" role="alert">{formError}</p>}
 
       <ActionBar>
-        <button className="ng-button" type="button" onClick={onCancel} disabled={isSubmitting}>
-          Cancelar
-        </button>
+        {isEditing && (
+          <button className="ng-button" type="button" onClick={onCancel} disabled={isSubmitting}>
+            Cancelar
+          </button>
+        )}
         <button className="ng-button ng-button--primary" type="submit"
           aria-busy={isSubmitting} disabled={isSubmitting}>
           {isSubmitting

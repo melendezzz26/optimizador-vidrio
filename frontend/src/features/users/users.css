@@ -7,13 +7,27 @@
   font-size: 14px;
 }
 
-.users-hint {
-  margin: var(--ng-space-2) 0 0;
-  color: var(--ng-text-600);
-  font-size: 14px;
+.users-hint { color: var(--ng-text-600); }
+
+.users-error { color: var(--ng-error); font-weight: 600; }
+
+.users-notice {
+  margin: 0 0 var(--ng-space-4);
+  padding: var(--ng-space-3) var(--ng-space-4);
+  border-left: 4px solid var(--ng-brand-blue);
+  border-radius: var(--ng-radius-control);
+  background: var(--ng-background);
 }
 
 .users-list { margin-top: var(--ng-space-6); }
+
+.users-list > h2 {
+  margin: 0 0 var(--ng-space-4);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.users-list > .users-error { margin: 0 0 var(--ng-space-4); }
 
 /* DNI y usuario de acceso en la edición: datos de solo lectura. */
 .users-readonly {
@@ -85,100 +99,3 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
-
-
-/* Búsqueda y filtros (HU-003 T04): misma distribución que los filtros de Inventario. */
-.users-filters {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
-  gap: var(--ng-space-4);
-  min-width: 0;
-  margin: 0 0 var(--ng-space-4);
-  padding: 0;
-  border: 0;
-}
-
-.users-filter-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: var(--ng-space-4);
-}
-
-.users-count {
-  margin: 0 0 var(--ng-space-4);
-  color: var(--ng-text-600);
-  font-size: 14px;
-  font-variant-numeric: tabular-nums;
-}
-
-@media (max-width: 720px) {
-  .users-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .users-filters > .ng-field:first-of-type { grid-column: 1 / -1; }
-}
-
-@media (max-width: 480px) {
-  .users-filters { grid-template-columns: minmax(0, 1fr); gap: var(--ng-space-3); }
-  .users-filter-actions .ng-button { width: 100%; }
-}
-
-
-/* Listado primero, formulario bajo acción (HU-003 T05). */
-.users-list-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--ng-space-4);
-  margin-bottom: var(--ng-space-4);
-}
-
-.users-list-header h2,
-.users-form-header h2 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.users-form-header { margin-bottom: var(--ng-space-4); }
-
-.users-form-header h2:focus { outline: none; }
-
-@media (max-width: 480px) {
-  .users-list-header > .ng-button { width: 100%; }
-}
-
-/* Pestañas de Administración (mismo patrón visual que Inventario). */
-.admin-tabs {
-  display: flex;
-  gap: var(--ng-space-2);
-  margin-top: var(--ng-space-4);
-  border-bottom: 1px solid var(--ng-border-subtle);
-}
-
-.admin-tab {
-  min-height: 44px;
-  padding: var(--ng-space-2) var(--ng-space-4);
-  border: 0;
-  border-bottom: 3px solid transparent;
-  background: transparent;
-  color: var(--ng-text-600);
-  font-weight: 600;
-}
-
-.admin-tab[aria-selected='true'] {
-  border-bottom-color: var(--ng-primary-action);
-  color: var(--ng-primary-focus);
-}
-
-.admin-tab:focus-visible {
-  outline: 2px solid var(--ng-primary-focus);
-  outline-offset: 2px;
-}
-
-/* Roles y permisos. */
-.roles-panel { margin-top: var(--ng-space-6); }
-.roles-select { max-width: 320px; margin-bottom: var(--ng-space-4); }
-.roles-list { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--ng-space-3); }
-.roles-option { display: flex; align-items: flex-start; gap: var(--ng-space-3); min-height: 44px; }
-.roles-option input { flex: none; width: 20px; height: 20px; margin-top: 2px; accent-color: var(--ng-primary-action); }
-.roles-code { display: block; margin-top: var(--ng-space-1); color: var(--ng-text-600); font-size: 13px; }

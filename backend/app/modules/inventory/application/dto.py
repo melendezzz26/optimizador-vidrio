@@ -84,24 +84,3 @@ class RetazoData:
     fecha_registro: datetime
     id_tipo_vidrio: int
     id_ejecucion_origen: int | None
-
-
-@dataclass(frozen=True, slots=True, kw_only=True)
-class MovimientoInventarioData:
-    id_movimiento: int
-    id_plancha: int | None
-    id_retazo: int | None
-    tipo_evento: str
-    motivo: str
-    observacion: str | None
-    id_usuario: int
-    fecha: datetime
-    id_optimizacion: int | None
-    cantidad_afectada: int | None = None
-
-
-@dataclass(frozen=True, slots=True, kw_only=True)
-class BajaInventarioResult:
-    movimiento: MovimientoInventarioData
-    estado: bool
-    cantidad: int | None = None

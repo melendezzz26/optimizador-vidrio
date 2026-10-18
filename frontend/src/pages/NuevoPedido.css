@@ -1,0 +1,2 @@
+/* Compatibilidad temporal para consumidores del estilo legado. */
+@import "../features/orders/NuevoPedido.css";

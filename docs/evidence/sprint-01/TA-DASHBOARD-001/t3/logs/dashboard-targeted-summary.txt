@@ -1,4 +1,0 @@
-﻿Command: npm.cmd run test:component -- src/features/dashboard/__tests__
-Test Files  5 passed (5)
-Tests       73 passed (73)
-Exit code   0

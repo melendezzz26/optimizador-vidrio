@@ -1,4 +1,0 @@
-﻿Command: npm.cmd run build
-Vite 8.3.1
-1966 modules transformed.
-Result: PASS

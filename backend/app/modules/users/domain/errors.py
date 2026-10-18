@@ -19,15 +19,3 @@ class UserNotFoundError(Exception):
 
 class SelfModificationError(Exception):
     """Un Administrador intentó desactivarse o cambiar su propio rol."""
-
-
-class RoleNotRegisteredError(Exception):
-    """No existe un rol con ese identificador (S1-RBAC, 404)."""
-
-
-class UnknownPermissionError(Exception):
-    """Se pidió asignar un código que no está en el catálogo de permisos (RN-06, 422)."""
-
-
-class ProtectedPermissionError(Exception):
-    """Se intentó quitar al Administrador un permiso protegido (RN-05, 409)."""

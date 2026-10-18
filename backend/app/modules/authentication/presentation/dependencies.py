@@ -4,8 +4,8 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
-from app.core.permissions import CODIGOS
-from app.modules.authentication.application.ports import PermissionReader, UserReader
+from app.core.permissions import tiene_permiso
+from app.modules.authentication.application.ports import UserReader
 from app.modules.authentication.application.use_cases import get_active_user
 from app.modules.authentication.domain.errors import SessionNotValidError
 from app.modules.authentication.domain.user import AuthenticatedUser
@@ -32,18 +32,6 @@ def get_user_reader(db: Session = Depends(get_database_session)) -> UserReader:
     )
 
     return SqlAlchemyUserReader(db)
-
-
-def get_permission_reader(db: Session = Depends(get_database_session)) -> PermissionReader:
-    """Único punto donde se elige la implementación real del lector de permisos."""
-    from app.modules.authentication.infrastructure.sqlalchemy_permission_reader import (
-        SqlAlchemyPermissionReader,
-    )
-
-    return SqlAlchemyPermissionReader(db)
-
-
-FORBIDDEN_MESSAGE = "No tienes permiso para realizar esta acción."
 
 
 def _unauthorized(message: str) -> HTTPException:
@@ -79,24 +67,16 @@ def get_current_user(
 def require_permission(permission: str):
     """Protege una ruta: exige que el rol del usuario tenga el permiso indicado.
 
-    Se usa con ``Depends(require_permission("users.manage"))``. Sin sesión
-    responde 401 (lo decide get_current_user) y sin permiso, 403.
-    Los permisos se leen de rol_permisos en cada petición (S1-RBAC, RN-01/02).
+    Se usa con ``Depends(require_permission("GESTIONAR_USUARIOS"))``. Sin
+    sesión responde 401 (lo decide get_current_user) y sin permiso, 403.
     """
-    if permission not in CODIGOS:
-        # RN-08: un código fuera del catálogo es un error de programación y
-        # se detecta al importar la aplicación, es decir, en las pruebas.
-        raise ValueError(f"Permiso desconocido: {permission}")
 
-    def checker(
-        user: AuthenticatedUser = Depends(get_current_user),
-        permission_reader: PermissionReader = Depends(get_permission_reader),
-    ) -> AuthenticatedUser:
+    def checker(user: AuthenticatedUser = Depends(get_current_user)) -> AuthenticatedUser:
         # El rol es el vigente en la base, no el que traía el token.
-        if not permission_reader.role_has_permission(user.role, permission):
-            # Mensaje genérico: no se revela qué permiso falta (PLAN §2.4).
-            raise HTTPException(status.HTTP_403_FORBIDDEN, FORBIDDEN_MESSAGE)
+        if not tiene_permiso(user.role, permission):
+            raise HTTPException(
+                status.HTTP_403_FORBIDDEN, f"No tienes el permiso: {permission}"
+            )
         return user
 
-    checker.permission = permission  # Lo usa la verificación de CA-11.
     return checker
