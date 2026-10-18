@@ -60,7 +60,7 @@ function SegmentField({ segment, active, onSelect, onChange, inputRef }) {
 
 // Overlay único para pintar segmentos, etiquetas in-situ y ángulos
 function SegmentOverlay({
-  points, angles, activeSegmentIndex, selectedVertexIndex, fixedVertices, onSelectVertex, width, height, unitScale = 1
+  points, angles, segments, activeSegmentIndex, selectedVertexIndex, fixedVertices, onSelectVertex, width, height, unitScale = 1
 }) {
   const occupied = [];
   const interactive = Boolean(onSelectVertex) && points.length > 3;
@@ -82,14 +82,14 @@ function SegmentOverlay({
       {points.map((start, index) => {
         const end = points[(index + 1) % points.length];
         return <line key={index} x1={start.x} y1={start.y} x2={end.x} y2={end.y}
-          data-active={index === activeSegmentIndex} vectorEffect="non-scaling-stroke" />;
+          data-active={index === activeSegmentIndex} data-measured={Boolean(segments[index] && !segments[index].badInput && isPositiveLength(segments[index].lengthMm))} vectorEffect="non-scaling-stroke" />;
       })}
 
       {labels.map(({ index, x, y }) => {
         if (occupied.some((label) => Math.abs(label.x - x) * unitScale < 44 && Math.abs(label.y - y) * unitScale < 26)) return null;
         occupied.push({ x, y });
         return <text key={index} x={x} y={y} textAnchor="middle" dominantBaseline="central"
-          style={{ fontSize: 14 / unitScale, strokeWidth: 5 / unitScale }} data-active={index === activeSegmentIndex}>S{index + 1}</text>;
+          style={{ fontSize: 14 / unitScale, strokeWidth: 5 / unitScale }} data-active={index === activeSegmentIndex}>S{index + 1}{segments[index] && !segments[index].badInput && isPositiveLength(segments[index].lengthMm) ? ` · ${segments[index].lengthMm} mm` : ''}</text>;
       })}
 
       {points.map((point, index) => {
@@ -208,7 +208,8 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
   let isProvisional = false;
 
   if (isClosed) {
-    const sourcePoints = result?.vertices_mm ? result.vertices_mm.map(([x,y]) => ({x, y})) : vertices;
+    const previewPoints = result?.vertices_mm || result?.preview_vertices_mm;
+    const sourcePoints = previewPoints ? previewPoints.map(([x,y]) => ({x, y})) : vertices;
     const geometry = fitVerticesToPreview(sourcePoints, canvasSize.width, canvasSize.height, 40);
     if (geometry) {
       displayPoints = geometry.points;
@@ -218,6 +219,7 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
   }
 
   const drawingPointsString = displayPoints.map(({ x, y }) => `${x},${y}`).join(" ");
+  const referencePoints = fitVerticesToPreview(vertices, canvasSize.width, canvasSize.height, 40)?.points || vertices;
 
   function selectVertex(vertexIndex) {
     if (disabled || !isClosed || vertices.length <= 3) return;
@@ -277,6 +279,7 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
     <section className="custom-piece-editor" aria-labelledby={headingId}>
       <div className="custom-piece-editor__header">
         <h2 id={headingId}>{title}</h2>
+        <p>Dibuja la forma aproximada de la pieza. Luego ajusta sus medidas y ángulos para definirla con precisión.</p>
       </div>
 
       <fieldset className="custom-piece-editor__fieldset" disabled={disabled}>
@@ -292,7 +295,7 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
                 </button>
               ) : (
                 <span style={{ color: 'var(--editor-success)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Check size={16} /> Geometría calculada
+                  <Check size={16} /> {dimensionsReady ? 'Geometría calculada' : 'Boceto provisional'}
                 </span>
               )}
               <button type="button" className="custom-piece-editor__button" disabled={!vertices.length} onClick={() => setDrawing(c => ({...c, vertices: c.vertices.slice(0, -1)}))} style={{ marginLeft: 'auto', display: isClosed ? 'none' : 'flex' }}>
@@ -305,12 +308,14 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
 
             <div className="custom-piece-editor__surface" ref={canvasRef}>
               <span className="custom-piece-editor__canvas-label">
-                {!isClosed ? "Boceto libre" : isProvisional ? "Vista Dimensional (Calculando...)" : "Vista Dimensional Exacta"}
+                {!isClosed ? "Boceto libre" : isProvisional ? "Vista provisional · medidas pendientes" : "Vista Dimensional Exacta"}
               </span>
               <svg className="custom-piece-editor__canvas" viewBox={`0 0 ${isClosed ? canvasSize.width : DRAWING_WIDTH} ${isClosed ? canvasSize.height : DRAWING_HEIGHT}`}
                 role="img" aria-label={isClosed ? "Vista dimensional de la pieza" : "Lienzo del dibujo original"}
                 data-closed={isClosed} onClick={addVertex}>
                 <g className="custom-piece-editor__drawing" aria-hidden="true">
+                  {isClosed && isProvisional && <polyline className="custom-piece-editor__sketch-reference"
+                    points={[...referencePoints, referencePoints[0]].filter(Boolean).map(({ x, y }) => `${x},${y}`).join(' ')} />}
                   {isClosed ? (
                     <polygon points={drawingPointsString} data-provisional={isProvisional} />
                   ) : (
@@ -323,7 +328,7 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
                 {/* Dibuja las etiquetas y hace la magia del in-situ */}
                 {isClosed && (
                   <SegmentOverlay
-                    points={displayPoints} angles={angles} activeSegmentIndex={activeSegmentIndex}
+                    points={displayPoints} angles={angles} segments={segments} activeSegmentIndex={activeSegmentIndex}
                     selectedVertexIndex={selectedVertexIndex} fixedVertices={fixedVertices}
                     onSelectVertex={vertices.length > 3 ? selectVertex : null}
                     width={canvasSize.width} height={canvasSize.height} unitScale={unitScale}
@@ -353,7 +358,7 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
                     </p>
                   ) : (
                     <p id={`${validationId}-result`} className="custom-piece-editor__validation-message" style={{ color: 'var(--editor-muted)' }}>
-                      Pendiente de completar dimensiones.
+                      Vista provisional: {measuredCount} de {segments.length} medidas. Los lados pendientes conservan las proporciones del boceto; completa las medidas para validar la pieza.
                     </p>
                   )}
                 </div>

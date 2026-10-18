@@ -16,6 +16,9 @@ afterEach(() => vi.unstubAllGlobals());
 test.each(['query', 'document'])('busca explícitamente por %s y selecciona por teclado', async (mode) => {
   const user = userEvent.setup();
   render(<Harness />);
+  expect(screen.getByText(/Buscar por nombre, DNI o RUC/)).toBeVisible();
+  expect(screen.getByRole('option', { name: 'DNI o RUC' })).toBeInTheDocument();
+  expect(screen.queryByText('Documento exacto')).not.toBeInTheDocument();
   expect(fetch).not.toHaveBeenCalled();
   expect(screen.getByRole('button', { name: 'Buscar', exact: true })).toBeDisabled();
   await user.selectOptions(screen.getByLabelText('Buscar por'), mode);

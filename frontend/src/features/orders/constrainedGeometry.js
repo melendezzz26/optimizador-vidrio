@@ -61,7 +61,20 @@ export function buildConstrainedGeometry(segments, { mode = 'cyclic', angle = 90
   if (segments.some(s => s.badInput || (s.lengthMm !== '' && !isPositiveLength(s.lengthMm)))) return error('length');
   const measured = segments.map(s => isPositiveLength(s.lengthMm));
   const measuredCount = measured.filter(Boolean).length;
-  if (measuredCount !== segments.length) return { status: measuredCount ? 'provisional' : 'unscaled', measured, measuredCount, vertices_mm: null };
+  if (measuredCount !== segments.length) {
+    let preview_vertices_mm = null;
+    // Missing sides use sketch proportions only for display. Never expose
+    // inferred dimensions as canonical geometry or enable saving with them.
+    if (measuredCount && drawing.length === segments.length && validateConvexPolygon(drawing).isValid) {
+      const sketchSides = edgeLengths(drawing);
+      const ratios = sketchSides.flatMap((side, i) => measured[i] ? [Number(segments[i].lengthMm) / side] : []).sort((a, b) => a - b);
+      const scale = ratios[Math.floor(ratios.length / 2)];
+      const estimated = segments.map((segment, i) => ({ ...segment, lengthMm: measured[i] ? segment.lengthMm : sketchSides[i] * scale }));
+      const preview = buildConstrainedGeometry(estimated, { mode, angle, constraints, drawing });
+      if (preview.status === 'complete') preview_vertices_mm = preview.vertices_mm;
+    }
+    return { status: measuredCount ? 'provisional' : 'unscaled', measured, measuredCount, vertices_mm: null, preview_vertices_mm };
+  }
   const lengths = segments.map(s => Number(s.lengthMm));
   const fixed = mode === 'angle' ? [{ vertex: 1, angle }] : constraints;
   if (!Array.isArray(fixed) || fixed.length > lengths.length - 3 ||

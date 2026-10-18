@@ -1,20 +1,20 @@
 .custom-piece-editor {
-  --editor-text: #0f223d;
-  --editor-muted: #52657c;
-  --editor-navy: #123764;
-  --editor-blue: #2563eb;
-  --editor-blue-hover: #1d4ed8;
-  --editor-cyan: #087e98;
-  --editor-border: #bac8d8;
-  --editor-divider: #d8e2ec;
-  --editor-surface: #ffffff;
-  --editor-workspace: #f8fbfe;
+  --editor-text: var(--ng-text-900, #1f2937);
+  --editor-muted: var(--ng-text-600, #64748b);
+  --editor-navy: var(--ng-text-900, #1f2937);
+  --editor-blue: var(--ng-primary-action, #2563eb);
+  --editor-blue-hover: var(--ng-primary-focus, #1d4ed8);
+  --editor-cyan: var(--ng-primary-focus, #1d4ed8);
+  --editor-border: var(--ng-border-strong, #64748b);
+  --editor-divider: var(--ng-border-subtle, #e2e8f0);
+  --editor-surface: var(--ng-surface, #ffffff);
+  --editor-workspace: var(--ng-background, #f5f7fa);
   --editor-grid: rgba(18, 55, 100, 0.06);
   --editor-fill: rgba(37, 99, 235, 0.06);
-  --editor-focus: #2563eb;
-  --editor-error: #b42318;
+  --editor-focus: var(--ng-primary-focus, #1d4ed8);
+  --editor-error: var(--ng-error, #b91c1c);
   --editor-error-bg: #fff5f3;
-  --editor-success: #176349;
+  --editor-success: var(--ng-success, #166534);
   --editor-success-bg: #eef7f3;
   --editor-disabled-text: #5c6d80;
   --editor-disabled-bg: #eaf0f5;
@@ -25,6 +25,7 @@
   min-width: 0;
   margin-bottom: 32px;
   color: var(--editor-text);
+  font-family: var(--ng-font-family, Inter, system-ui, Arial, sans-serif);
   text-align: left;
 }
 
@@ -134,6 +135,12 @@
   fill: rgba(18, 55, 100, 0.03);
   stroke: var(--editor-muted);
 }
+.custom-piece-editor__drawing .custom-piece-editor__sketch-reference {
+  stroke: var(--editor-muted);
+  stroke-width: 1;
+  stroke-dasharray: 2 6;
+  opacity: 0.45;
+}
 
 .custom-piece-editor__empty {
   position: absolute; inset: 0; display: flex; flex-direction: column;
@@ -237,6 +244,7 @@
 .custom-piece-editor__segments { pointer-events: none; }
 .custom-piece-editor__segments line { stroke: var(--editor-navy); stroke-width: 2.5; transition: stroke 150ms ease, stroke-width 150ms ease; }
 .custom-piece-editor__segments line[data-provisional="true"] { stroke-dasharray: 6 6; }
+.custom-piece-editor__segments line[data-measured="true"] { stroke: var(--editor-blue); stroke-width: 3.5; }
 .custom-piece-editor__segments line[data-active="true"] { stroke: var(--editor-cyan); stroke-width: 4.5; }
 
 .custom-piece-editor__segments text {
@@ -280,7 +288,7 @@
   padding: 0 24px;
   font-size: 15px;
   color: white;
-  background: var(--editor-navy);
+  background: var(--editor-blue);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -296,6 +304,17 @@
   background: var(--editor-disabled-bg);
   color: var(--editor-disabled-text);
   cursor: not-allowed;
+}
+
+.custom-piece-editor :is(button, input, select) {
+  min-height: var(--ng-control-height, 44px);
+  border-radius: var(--ng-radius-control, 8px);
+  font-family: inherit;
+}
+.custom-piece-editor button:focus-visible,
+.custom-piece-editor select:focus-visible {
+  outline: 3px solid var(--editor-focus);
+  outline-offset: 2px;
 }
 
 @media (max-width: 900px) {

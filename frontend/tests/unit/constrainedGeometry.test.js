@@ -4,6 +4,23 @@ import { buildConstrainedGeometry } from '../../src/features/orders/constrainedG
 import { edgeLengths, interiorAngles, scaleVertices } from '../../src/features/orders/polygonMeasurements.js';
 import { validateConvexPolygon } from '../../src/features/orders/convexityValidation.js';
 
+test('partial measurements rebuild a convex preview without inventing savable geometry', () => {
+  const drawing = [[0, 0], [300, 0], [300, 200], [0, 200]];
+  const config = { mode: 'guided', drawing, constraints: [{ vertex: 1, angle: 90 }] };
+  const partial = values => buildConstrainedGeometry(values.map(lengthMm => ({ lengthMm })), config);
+  const first = partial([300, '', '', '']);
+  const second = partial([300, 150, '', '']);
+  assert.equal(second.status, 'provisional');
+  assert.equal(second.vertices_mm, null);
+  assert.notDeepEqual(second.preview_vertices_mm, first.preview_vertices_mm);
+  assert.ok(validateConvexPolygon(second.preview_vertices_mm).isValid);
+  edgeLengths(second.preview_vertices_mm).slice(0, 2).forEach((side, i) => assert.ok(Math.abs(side - [300, 150][i]) < 1e-5));
+  assert.ok(Math.abs(interiorAngles(second.preview_vertices_mm)[1] - 90) < 1e-5);
+  assert.equal(partial([300, 150, 300, 150]).status, 'complete');
+  assert.equal(partial([300, 0, '', '']).preview_vertices_mm, undefined);
+  assert.equal(partial(['', '', '', '']).preview_vertices_mm, null);
+});
+
 const construct = (lengths, config) => buildConstrainedGeometry(lengths.map(lengthMm => ({ lengthMm })), config);
 const near = (a, b, tolerance = 1e-7) => assert.ok(Math.abs(a - b) < tolerance, `${a} != ${b}`);
 function assertShape(result, lengths) {

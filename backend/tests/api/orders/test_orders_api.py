@@ -266,6 +266,29 @@ def test_update_missing_order_returns_404(client, authenticated):
     assert response.status_code == 404
 
 
+def test_repeated_edits_preserve_order_id_and_pending_list_without_duplicates(client, authenticated, session_factory):
+    headers = authenticated[1]
+    identifier = create_pending_order(client, headers)
+    original = client.get(f"/api/orders/{identifier}", headers=headers).json()
+    for quantity in [2, 4, 1]:
+        pieces = deepcopy(PAYLOAD["piezas"])
+        pieces[0]["cantidad"] = quantity
+        response = client.put(f"/api/orders/{identifier}", json={"piezas": pieces}, headers=headers)
+        assert response.status_code == 200, response.text
+        assert response.json()["id_pedido"] == identifier
+        current = client.get(f"/api/orders/{identifier}", headers=headers).json()
+        assert current["id_pedido"] == identifier
+        assert current["id_cliente"] == original["id_cliente"]
+        assert current["fecha_registro"] == original["fecha_registro"]
+        assert current["piezas"][0]["cantidad"] == quantity
+        listing = client.get("/api/orders?estado=PENDIENTE", headers=headers).json()
+        assert listing["total"] == 1
+        assert [order["id_pedido"] for order in listing["items"]] == [identifier]
+        with session_factory() as db:
+            assert db.scalar(select(func.count()).select_from(Pedido)) == 1
+            assert db.scalar(select(func.count()).select_from(Pieza)) == len(pieces)
+
+
 def test_update_non_pending_order_returns_409(client, authenticated, session_factory):
     identifier = create_pending_order(client, authenticated[1])
     with session_factory() as db:

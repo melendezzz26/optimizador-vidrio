@@ -15,6 +15,26 @@ const data = () => {
 };
 function open3D() { fireEvent.click(screen.getByRole('button', { name: 'Ver en 3D' })); return screen.getByRole('slider', { name: 'Giro horizontal de la vista 3D' }); }
 
+test('piece dimensions stay visible in mm for rectangles, polygons and circles without changing coordinates', () => {
+  const props = data(), original = JSON.stringify(props);
+  render(<PlacementCanvas {...props} />);
+  const camera = open3D();
+  const legend = screen.getByRole('list', { name: 'Piezas en la vista 3D' });
+  expect(legend).toHaveTextContent('800 × 600 mm');
+  expect(legend).toHaveTextContent('600 × 400 mm');
+  expect(legend).toHaveTextContent('Ancho × alto: 500 × 400 mm');
+  expect(document.querySelector('[data-piece-3d]')).toHaveTextContent('800 × 600 mm');
+  const guides = () => [...document.querySelectorAll('.placement-3d-dimension line')].map(line => line.outerHTML);
+  const first = guides();
+  fireEvent.keyDown(camera, { key: 'ArrowUp' });
+  guides().forEach((line, i) => expect(line).not.toBe(first[i]));
+  fireEvent.keyDown(camera, { key: 'ArrowRight', shiftKey: true });
+  expect(legend).toHaveTextContent('800 × 600 mm');
+  fireEvent.change(screen.getByLabelText('Vidrio del resultado'), { target: { value: '2:5.5' } });
+  expect(screen.getByRole('list', { name: 'Piezas en la vista 3D' })).toHaveTextContent('Diámetro 480 mm');
+  expect(JSON.stringify(props)).toBe(original);
+});
+
 test('camera elevation, pan, zoom and presets change only the projection, never placements', () => {
   const props = data(), original = JSON.stringify(props);
   render(<PlacementCanvas {...props} />);
