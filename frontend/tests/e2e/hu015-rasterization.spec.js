@@ -90,8 +90,10 @@ test('HU-015: flujo real de pieza cantidad 5, raster, recuperación, resolución
   const startResponse = page.waitForResponse(response => response.url() === `${apiOrigin}/api/optimization/start`
     && response.request().method() === 'POST');
   await page.keyboard.press('Enter');
-  expect((await startResponse).status()).toBe(200);
-  await expect(page.getByText('En preparación', { exact: true })).toBeVisible();
+  const preparedResponse = await startResponse;
+  expect(preparedResponse.status()).toBe(200);
+  expect(await preparedResponse.json()).toEqual({ id_pedido: order.id_pedido, estado: 'PENDIENTE' });
+  await expect(page.locator('dd').getByText('Pendiente', { exact: true })).toBeVisible();
   await expect(page.getByLabel('Pieza del pedido')).toBeEnabled();
   expect(startStatuses).toEqual([200]);
 
@@ -190,18 +192,23 @@ test('HU-015: flujo real de pieza cantidad 5, raster, recuperación, resolución
   expect(await thinResponse.json()).toMatchObject({ row_count: 2, columns: 1, occupied_cells: 2, cantidad: 1 });
   await expect(page.getByRole('img', { name: `Detalle del corte de la pieza #${thinPiece.id_pieza}` })).toBeVisible();
 
-  // Leaving and returning discovers the persisted in-progress order without another POST /start.
+  // Preparation is local. Returning finds the same pending order and can safely prepare again.
   const startsBeforeRecovery = startStatuses.length;
   await page.getByRole('button', { name: 'Registro de pedidos', exact: true }).click();
   await page.getByRole('button', { name: 'Optimización', exact: true }).click();
   await page.getByRole('button', { name: 'Vista previa de piezas', exact: true }).click();
-  await page.getByRole('button', { name: 'Recuperar proceso iniciado' }).click();
   const recovered = page.getByRole('button', { name: new RegExp(`Pedido #${order.id_pedido}`) });
   await expect(recovered).toBeVisible();
   await recovered.click();
-  await expect(page.getByText('En preparación', { exact: true })).toBeVisible();
-  await expect(page.getByLabel('Pieza del pedido')).toBeEnabled();
+  await expect(page.locator('dd').getByText('Pendiente', { exact: true })).toBeVisible();
+  await expect(page.getByLabel('Pieza del pedido')).toBeDisabled();
   expect(startStatuses).toHaveLength(startsBeforeRecovery);
+  const prepareAgain = page.waitForResponse(response => response.url() === `${apiOrigin}/api/optimization/start`
+    && response.request().method() === 'POST');
+  await page.getByRole('button', { name: 'Preparar vista previa' }).click();
+  expect((await prepareAgain).status()).toBe(200);
+  await expect(page.getByLabel('Pieza del pedido')).toBeEnabled();
+  await expect(page.locator('dd').getByText('Pendiente', { exact: true })).toBeVisible();
 });
 
 test('HU-015: CIRCUNFERENCIA se compara con la máscara real del backend', async ({ page, baseURL }, info) => {

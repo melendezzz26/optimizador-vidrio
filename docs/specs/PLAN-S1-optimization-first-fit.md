@@ -288,6 +288,8 @@ El adaptador actual de Inventory (`InventoryRepository.transaction()` y `Invento
 
 Conservar `/api/optimization/start` y `/api/optimization/rasterize` sin cambiar sus request/response ni permiso mientras HU-015 tenga consumidores. La ruta nueva no delega al caso escalar varias veces; una selección `N=1` entra por el mismo `OptimizationProblem` que `N>1`.
 
+**Excepción autorizada S1-01, 21/10/2026:** se conservan ambas rutas, requests y permisos; start pasa a preparar sin escrituras y devuelve el estado real PENDIENTE en lugar de EN_OPTIMIZACION. Repetir una preparación válida devuelve 200. Rasterize admite PENDIENTE y conserva lectura de EN_OPTIMIZACION. Se actualizan conjuntamente schema/parser/UI de HU-015. Esta revisión sustituye la obligación anterior de mantener ese valor de respuesta y evita que la vista previa invalide la selección First Fit. `/runs`, su aceptación transaccional de pendientes, snapshots, persistencia y confirmación permanecen intactos. No hay migraciones ni reparación de históricos. Véase [evidencia S1-01](../evidence/sprint-01/S1-01/README.md).
+
 ### Rutas nuevas
 
 | Método/ruta | Contrato propuesto | HTTP |

@@ -1,5 +1,15 @@
 # PLAN-HU-015 — Interfaz de rasterización
 
+## Revisión S1-01 — 21/10/2026
+
+La corrección autorizada de [SPEC-HU-015, revisión S1-01](SPEC-HU-015-interfaz-rasterizacion.md#revisión-s1-01--21102026) sustituye el inicio mutador de este plan histórico. No se reescribe la planificación ni la evidencia que respaldó su implementación original.
+
+StartOptimizationUseCase utiliza get_order y conserva la validación completa/presupuesto inicial; deja de llamar start_pending y devuelve PENDIENTE sin UPDATE ni commit. La cadena mutadora histórica de Orders no participa en la vista previa; no se refactoriza Orders. RasterizeOrderPieceUseCase admite PENDIENTE y EN_OPTIMIZACION, con las mismas validaciones por solicitud y sin escrituras. El schema y parser de start exigen PENDIENTE.
+
+La UI conserva «Preparar vista previa» y registra su preparación local tras éxito y lectura de detalle vigente. Al desmontar cancela/invalida la solicitud; un error no concede una preparación local por el mero estado PENDIENTE. Recargar/reabrir permite repetir de forma segura y los pedidos previsualizados siguen pendientes para edición y First Fit. Se preserva la consulta histórica de EN_OPTIMIZACION.
+
+Se sustituyen las pruebas de CAS/commit y ganador único del endpoint por preparaciones concurrentes 200/200 sin mutación y compatibilidad con edición/cancelación concurrente. Se comprueban validaciones, estados, errores, permisos, geometrías/cantidad, respuestas tardías y el recorrido integrado con PostgreSQL real hasta confirmación. El harness usa exclusivamente bases temporales de loopback y el esquema existente. Resultados: [evidencia S1-01](../evidence/sprint-01/S1-01/README.md). Sin migraciones nuevas ni reconciliación de datos históricos.
+
 ## Información general
 
 | Campo | Valor |

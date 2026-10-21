@@ -1,0 +1,11 @@
+> frontend@0.0.0 test:component
+> vitest run src/features/optimization/__tests__
+
+
+ RUN  v5.0.3 C:/Users/fabri/Documents/TALLER INTEGRADOR I/optimizador-vidrio/frontend
+
+
+ Test Files  10 passed (10)
+      Tests  135 passed (135)
+   Start at  10:45:45
+   Duration  10.04s (environment 46%, tests 33%, transform 9%, setup 8%, import 3%)

@@ -16,19 +16,21 @@ class StartOptimizationUseCase:
 
     def execute(self, id_pedido: int) -> dict:
         validate_id(id_pedido)
-
-        def validate(order):
-            pieces = order.get("piezas", [])
-            if not pieces:
-                raise InvalidRasterInput("El pedido debe contener piezas válidas para iniciar.")
-            for piece in pieces:
-                if piece.get("id_pedido") != id_pedido:
-                    raise InvalidRasterInput("Las piezas persistidas no corresponden al pedido.")
-                self.budget.check(piece.get("geometria"), DEFAULT_RESOLUTION_MM)
-                self.orders.validate_piece(piece)
-
-        self.orders.start_pending(id_pedido, validate)
-        return {"id_pedido": id_pedido, "estado": "EN_OPTIMIZACION"}
+        order = self.orders.get_order(id_pedido)
+        if order is None:
+            raise OptimizationNotFoundError("Pedido no encontrado.")
+        if order["estado"] != "PENDIENTE":
+            raise OptimizationStateError("Solo un pedido PENDIENTE puede preparar la vista previa.")
+        pieces = order.get("piezas", [])
+        if not pieces:
+            raise InvalidRasterInput("El pedido debe contener piezas válidas para preparar la vista previa.")
+        for piece in pieces:
+            if piece.get("id_pedido") != id_pedido:
+                raise InvalidRasterInput("Las piezas persistidas no corresponden al pedido.")
+            self.budget.check(piece.get("geometria"), DEFAULT_RESOLUTION_MM)
+            self.orders.validate_piece(piece)
+        # HU-015 prepares a preview, not a First Fit execution or reservation.
+        return {"id_pedido": id_pedido, "estado": order["estado"]}
 
 
 class RasterizeOrderPieceUseCase:
@@ -43,8 +45,8 @@ class RasterizeOrderPieceUseCase:
         order = self.orders.get_order(id_pedido)
         if order is None:
             raise OptimizationNotFoundError("Pedido no encontrado.")
-        if order["estado"] != "EN_OPTIMIZACION":
-            raise OptimizationStateError("El pedido debe estar EN_OPTIMIZACION para rasterizar.")
+        if order["estado"] not in ("PENDIENTE", "EN_OPTIMIZACION"):
+            raise OptimizationStateError("El pedido debe estar PENDIENTE o EN_OPTIMIZACION para rasterizar.")
         piece = next((p for p in order["piezas"]
                       if p["id_pieza"] == id_pieza and p["id_pedido"] == id_pedido), None)
         if piece is None:

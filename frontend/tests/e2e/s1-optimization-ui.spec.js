@@ -12,6 +12,43 @@ test.afterEach(({ page }, info) => {
   expect(browserErrors.get(page)).toEqual([]);
 });
 
+test('S1-01 vista previa real conserva pendiente, permite First Fit y confirma con trazabilidad', async ({ page }, info) => {
+  const data = await setup(page, 'single');
+  const before = await stock(page, data);
+  await login(page, data.actors.all); await open(page);
+  await page.getByRole('button', { name: 'Vista previa de piezas', exact: true }).click();
+  await page.getByRole('button', { name: new RegExp(`Pedido #${data.orders[0]}\\b`) }).click();
+  await page.getByRole('button', { name: 'Preparar vista previa', exact: true }).click();
+  await expect(page.getByLabel('Pieza del pedido')).toBeEnabled();
+  await expect(page.locator('dd').getByText('Pendiente', { exact: true })).toBeVisible();
+  const detail = await page.request.get(`${api}/api/orders/${data.orders[0]}`, { headers: data.headers });
+  const order = await detail.json();
+  const repeated = await page.request.post(`${api}/api/optimization/start`, {
+    headers: data.headers, data: { id_pedido: order.id_pedido },
+  });
+  expect(repeated.status()).toBe(200);
+  expect(await repeated.json()).toEqual({ id_pedido: order.id_pedido, estado: 'PENDIENTE' });
+  await page.getByLabel('Pieza del pedido').selectOption(String(order.piezas[0].id_pieza));
+  const raster = page.waitForResponse(r => r.url() === `${api}/api/optimization/rasterize`
+    && r.request().method() === 'POST');
+  await page.getByRole('button', { name: 'Ver pieza', exact: true }).click();
+  expect((await raster).status()).toBe(200);
+  await expect(page.getByRole('img', { name: `Detalle del corte de la pieza #${order.piezas[0].id_pieza}` })).toBeVisible();
+  expect(await orderStates(page, data)).toEqual(['PENDIENTE']);
+  expect(await stock(page, data)).toEqual(before);
+  await page.getByRole('button', { name: 'Distribución de corte', exact: true }).click();
+  const { result } = await run(page, data, info);
+  expect(result.completo).toBe(true);
+  expect(await orderStates(page, data)).toEqual(['OPTIMIZADO']);
+  expect(await stock(page, data)).toEqual(before);
+  await confirm(page, data, result, info);
+  expect(await orderStates(page, data)).toEqual(['CONFIRMADO']);
+  const history = await page.request.get(`${api}/api/inventory/planchas/${data.sheets[0]}/movimientos`, { headers: data.headers });
+  expect(history.status()).toBe(200);
+  expect((await history.json()).some(m => m.tipo_evento === 'CONSUMO_OPTIMIZACION'
+    && m.id_optimizacion === result.id_optimizacion)).toBe(true);
+});
+
 test('E2E1 N=1 real: progreso, placements, métricas, confirmación, stock y pedido', async ({ page }, info) => {
   const data = await setup(page, 'single'); await login(page, data.actors.all); await open(page);
   const { result, events } = await run(page, data, info);

@@ -23,8 +23,7 @@ beforeEach(() => {
   getOrder.mockImplementation(async () => structuredClone(persisted));
   listOrderMaterials.mockResolvedValue([{ id_tipo_vidrio: 7, nombre: 'Vidrio claro' }, { id_tipo_vidrio: 8, nombre: 'Vidrio gris' }]);
   startOptimization.mockImplementation(async () => {
-    persisted.estado = 'EN_OPTIMIZACION';
-    return { id_pedido: 27, estado: 'EN_OPTIMIZACION' };
+    return { id_pedido: 27, estado: 'PENDIENTE' };
   });
   rasterizePiece.mockResolvedValue(raster);
 });
@@ -59,7 +58,7 @@ test('loading inicial, filtro backend PENDIENTE y start bloqueado sin selección
 test('estado vacío y actualización explícita recupera nuevos pendientes', async () => {
   listOrders.mockResolvedValueOnce(pageData([]));
   renderPage();
-  await screen.findByText('No hay pedidos pendientes disponibles para iniciar optimización.');
+  await screen.findByText('No hay pedidos pendientes disponibles para previsualizar.');
   fireEvent.click(screen.getByRole('button', { name: 'Actualizar pedidos' }));
   expect(await screen.findByRole('button', { name: /Pedido #27.*Cliente local/ })).toBeVisible();
 });
@@ -87,16 +86,16 @@ test('start loading impide doble envío y no anticipa En preparación', async ()
   expect(button).toBeDisabled(); expect(startOptimization).toHaveBeenCalledOnce();
   expect(screen.getByText('Pendiente', { selector: 'dd' })).toBeVisible();
   expect(screen.getByLabelText('Pieza del pedido')).toBeDisabled();
-  persisted.estado = 'EN_OPTIMIZACION';
-  await act(async () => pending.resolve({ id_pedido: 27, estado: 'EN_OPTIMIZACION' }));
+  await act(async () => pending.resolve({ id_pedido: 27, estado: 'PENDIENTE' }));
 });
 
-test('200 conserva selección, actualiza estado, relee piezas y no rasteriza automáticamente', async () => {
+test('200 prepara localmente y conserva PENDIENTE, selección y disponibilidad', async () => {
   await started();
   expect(screen.getByRole('heading', { name: 'Pedido seleccionado #27' })).toBeVisible();
-  expect(screen.getByText('En preparación', { selector: 'dd' })).toBeVisible();
+  expect(screen.getByText('Pendiente', { selector: 'dd' })).toBeVisible();
   expect(screen.getByRole('button', { name: 'Preparar vista previa' })).toBeDisabled();
-  expect(await screen.findByText('No hay pedidos pendientes disponibles para iniciar optimización.')).toBeVisible();
+  expect(screen.getByRole('button', { name: /Pedido #27.*Cliente local/ })).toBeVisible();
+  expect(persisted.estado).toBe('PENDIENTE');
   expect(getOrder).toHaveBeenCalledTimes(2);
   expect(rasterizePiece).not.toHaveBeenCalled();
 });
@@ -105,8 +104,8 @@ test('409 informa conflicto, refresca pendientes y no concede un inicio local', 
   startOptimization.mockImplementation(async () => { persisted.estado = 'EN_OPTIMIZACION'; throw error(409); });
   renderPage(); await select();
   fireEvent.click(screen.getByRole('button', { name: 'Preparar vista previa' }));
-  expect(await screen.findByRole('alert')).toHaveTextContent('El pedido ya no está disponible');
-  await screen.findByText('No hay pedidos pendientes disponibles para iniciar optimización.');
+  expect(await screen.findByRole('alert')).toHaveTextContent('El pedido ya no está pendiente');
+  await screen.findByText('No hay pedidos pendientes disponibles para previsualizar.');
   expect(screen.getByText('Pendiente', { selector: 'dd' })).toBeVisible();
   expect(screen.getByLabelText('Pieza del pedido')).toBeDisabled();
   expect(screen.getByRole('button', { name: 'Preparar vista previa' })).toBeDisabled();
@@ -185,7 +184,7 @@ test('ignora detalle tardío al seleccionar otro pedido', async () => {
   getOrder.mockReturnValueOnce(pending.promise).mockResolvedValueOnce({ ...order, id_pedido: 28, piezas: [] });
   renderPage(); fireEvent.click(await screen.findByRole('button', { name: /Pedido #27/ }));
   fireEvent.click(screen.getByRole('button', { name: /Pedido #28/ }));
-  await screen.findByText('El pedido no contiene piezas disponibles. No se puede iniciar la optimización.');
+  await screen.findByText('El pedido no contiene piezas disponibles. No se puede preparar la vista previa.');
   await act(async () => pending.resolve(order));
   expect(screen.queryByRole('table')).not.toBeInTheDocument();
   expect(screen.getByRole('heading', { name: 'Pedido seleccionado #28' })).toBeVisible();
@@ -217,7 +216,7 @@ test('si POST incierto y GET falla, oculta estado obsoleto, no afirma éxito y p
   getOrder.mockResolvedValueOnce(order).mockRejectedValueOnce(error(0, 'No se pudo consultar el pedido.'));
   renderPage(); await select();
   fireEvent.click(screen.getByRole('button', { name: 'Preparar vista previa' }));
-  expect(await screen.findByText('El inicio sigue sin confirmar y no se pudo consultar el pedido. Actualiza el detalle antes de continuar.')).toBeVisible();
+  expect(await screen.findByText('No se pudo validar la vista previa ni consultar el pedido. Actualiza el detalle antes de volver a prepararla.')).toBeVisible();
   expect(screen.getByRole('alert')).toHaveTextContent('No se pudo consultar el pedido.');
   expect(screen.queryByText('Pendiente', { selector: 'dd' })).not.toBeInTheDocument();
   expect(screen.getByLabelText('Pieza del pedido')).toBeDisabled();
@@ -282,10 +281,39 @@ test('al desmontar limpia contexto y no publica respuestas tardías', async () =
   const pending = deferred(); startOptimization.mockReturnValue(pending.promise);
   const { unmount } = renderPage(); await select();
   fireEvent.click(screen.getByRole('button', { name: 'Preparar vista previa' }));
-  unmount(); persisted.estado = 'EN_OPTIMIZACION';
-  await act(async () => pending.resolve({ id_pedido: 27, estado: 'EN_OPTIMIZACION' }));
-  expect(getOrder).toHaveBeenLastCalledWith(27, expect.any(Object));
+  const reads = getOrder.mock.calls.length;
+  const signal = startOptimization.mock.calls[0][1].signal;
+  unmount();
+  expect(signal.aborted).toBe(true);
+  await act(async () => pending.resolve({ id_pedido: 27, estado: 'PENDIENTE' }));
+  expect(getOrder).toHaveBeenCalledTimes(reads);
   renderPage();
   expect(screen.queryByRole('table')).not.toBeInTheDocument();
   expect(screen.queryByText('Vista previa lista')).not.toBeInTheDocument();
+});
+
+test('volver a la vista pierde la preparación local y permite preparar el mismo pendiente', async () => {
+  const { unmount } = renderPage(); await select();
+  fireEvent.click(screen.getByRole('button', { name: 'Preparar vista previa' }));
+  await waitFor(() => expect(screen.getByLabelText('Pieza del pedido')).toBeEnabled());
+  unmount();
+  renderPage(); await select();
+  expect(screen.getByText('Pendiente', { selector: 'dd' })).toBeVisible();
+  expect(screen.getByLabelText('Pieza del pedido')).toBeDisabled();
+  fireEvent.click(screen.getByRole('button', { name: 'Preparar vista previa' }));
+  await waitFor(() => expect(screen.getByLabelText('Pieza del pedido')).toBeEnabled());
+  expect(startOptimization).toHaveBeenCalledTimes(2);
+  expect(persisted.estado).toBe('PENDIENTE');
+});
+
+test('un cambio de estado durante la preparación no habilita una vista obsoleta', async () => {
+  startOptimization.mockImplementation(async () => {
+    persisted.estado = 'CANCELADO';
+    return { id_pedido: 27, estado: 'PENDIENTE' };
+  });
+  renderPage(); await select();
+  fireEvent.click(screen.getByRole('button', { name: 'Preparar vista previa' }));
+  await waitFor(() => expect(screen.getByText('Cancelado', { selector: 'dd' })).toBeVisible());
+  expect(screen.getByLabelText('Pieza del pedido')).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Preparar vista previa' })).toBeDisabled();
 });

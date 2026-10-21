@@ -1,0 +1,25 @@
+node : [WebServer] (node:2972) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+En línea: 2 Carácter: 229
++ ... est-2026!'; node node_modules/@playwright/test/cli.js test --grep 'HU ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([WebServer] (no... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 8 tests using 1 worker
+
+(node:8308) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [chromium-desktop] › tests\e2e\hu015-rasterization.spec.js:55:1 › HU-015: flujo real de pieza cantidad 5, raster, recuperación, resolución y responsive (2.9s)
+  ok 2 [chromium-desktop] › tests\e2e\hu015-rasterization.spec.js:214:1 › HU-015: CIRCUNFERENCIA se compara con la máscara real del backend (1.8s)
+  ok 3 [chromium-desktop] › tests\e2e\hu015-rasterization.spec.js:242:1 › HU-015: POLIGONO_CONVEXO conserva vertices_mm negativos y columnas sobre 53 (1.9s)
+  ok 4 [chromium-desktop] › tests\e2e\s1-optimization-ui.spec.js:15:1 › S1-01 vista previa real conserva pendiente, permite First Fit y confirma con trazabilidad (5.1s)
+(node:19040) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 5 [chromium-mobile] › tests\e2e\hu015-rasterization.spec.js:55:1 › HU-015: flujo real de pieza cantidad 5, raster, recuperación, resolución y responsive (2.9s)
+  ok 6 [chromium-mobile] › tests\e2e\hu015-rasterization.spec.js:214:1 › HU-015: CIRCUNFERENCIA se compara con la máscara real del backend (2.0s)
+  ok 7 [chromium-mobile] › tests\e2e\hu015-rasterization.spec.js:242:1 › HU-015: POLIGONO_CONVEXO conserva vertices_mm negativos y columnas sobre 53 (1.9s)
+  ok 8 [chromium-mobile] › tests\e2e\s1-optimization-ui.spec.js:15:1 › S1-01 vista previa real conserva pendiente, permite First Fit y confirma con trazabilidad (5.0s)
+
+  8 passed (40.5s)
