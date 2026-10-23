@@ -31,8 +31,10 @@ def test_start_then_three_shapes_contract_quantity_and_no_excluded_writes(client
     assert client.get(f"/api/orders/{order_id}", headers=headers).json()["estado"] == "PENDIENTE"
     response = start(client, headers, order_id)
     assert response.status_code == 200, response.text
-    assert response.json() == {"id_pedido": order_id, "estado": "EN_OPTIMIZACION"}
-    assert start(client, headers, order_id).status_code == 409
+    assert response.json() == {"id_pedido": order_id, "estado": "PENDIENTE"}
+    repeated = start(client, headers, order_id)
+    assert repeated.status_code == 200
+    assert repeated.json() == response.json()
     for piece in order["piezas"]:
         response = raster(client, headers, order_id, piece["id_pieza"])
         assert response.status_code == 200, response.text
@@ -49,13 +51,43 @@ def test_start_then_three_shapes_contract_quantity_and_no_excluded_writes(client
             assert (data["row_count"], data["columns"], data["occupied_cells"]) == (120, 160, 19200)
     assert excluded_counts(session_factory) == before
     current = client.get(f"/api/orders/{order_id}", headers=headers).json()
-    assert current["estado"] == "EN_OPTIMIZACION" and current["piezas"] == order["piezas"]
+    assert current["estado"] == "PENDIENTE" and current["piezas"] == order["piezas"]
 
 
 @pytest.mark.parametrize("path,body", [("/start", {"id_pedido": 10}),
                                       ("/rasterize", {"id_pedido": 10, "id_pieza": 25, "resolution_mm": 5})])
 def test_both_operations_require_authentication(client, path, body):
     assert client.post(PREFIX + path, json=body).status_code == 401
+
+
+@pytest.mark.parametrize("state", ["PENDIENTE", "EN_OPTIMIZACION"])
+def test_raster_without_start_preserves_order_and_all_effects(client, authenticated, order, session_factory, state):
+    with session_factory() as db:
+        db.get(Pedido, order["id_pedido"]).estado = state
+        db.commit()
+    before = excluded_counts(session_factory)
+    response = raster(client, authenticated[1], order["id_pedido"], order["piezas"][0]["id_pieza"])
+    assert response.status_code == 200, response.text
+    assert excluded_counts(session_factory) == before
+    with session_factory() as db:
+        assert db.get(Pedido, order["id_pedido"]).estado == state
+
+
+def test_preview_leaves_pending_order_editable_and_raster_reloads_pieces(client, authenticated, order):
+    headers, identifier = authenticated[1], order["id_pedido"]
+    old_piece = order["piezas"][0]["id_pieza"]
+    assert start(client, headers, identifier).status_code == 200
+    assert raster(client, headers, identifier, old_piece).status_code == 200
+    edited = client.put(f"/api/orders/{identifier}", headers=headers, json={"piezas": [
+        dict(tipo_forma="RECTANGULO", id_tipo_vidrio=7, espesor_mm=6, cantidad=2, width_mm=20, height_mm=10)
+    ]})
+    assert edited.status_code == 200, edited.text
+    current = client.get(f"/api/orders/{identifier}", headers=headers).json()
+    assert current["estado"] == "PENDIENTE"
+    assert raster(client, headers, identifier, old_piece).status_code == 404
+    fresh = raster(client, headers, identifier, current["piezas"][0]["id_pieza"])
+    assert fresh.status_code == 200
+    assert fresh.json()["geometria"] == {"type": "RECTANGULO", "width_mm": 20, "height_mm": 10}
 
 
 @pytest.mark.parametrize("role,status", [(2, 403), (1, 200), (3, 200)])
@@ -92,7 +124,7 @@ def test_start_wrong_state_conflict(client, authenticated, order, session_factor
     assert client.get(f"/api/orders/{order['id_pedido']}", headers=authenticated[1]).json()["estado"] == state
 
 
-@pytest.mark.parametrize("state", ["PENDIENTE", "OPTIMIZADO", "CONFIRMADO", "CANCELADO"])
+@pytest.mark.parametrize("state", ["OPTIMIZADO", "CONFIRMADO", "CANCELADO"])
 def test_raster_wrong_state_does_not_transition(client, authenticated, order, session_factory, state):
     with session_factory() as db:
         db.execute(update(Pedido).where(Pedido.id_pedido == order["id_pedido"]).values(estado=state))
@@ -102,7 +134,7 @@ def test_raster_wrong_state_does_not_transition(client, authenticated, order, se
 
 
 @pytest.mark.parametrize("change", ["empty", "corrupt", "large"])
-def test_invalid_start_rolls_back_tentative_cas(client, authenticated, order, session_factory, change):
+def test_invalid_start_does_not_mutate(client, authenticated, order, session_factory, change):
     with session_factory() as db:
         if change == "empty":
             db.execute(delete(Pieza).where(Pieza.id_pedido == order["id_pedido"]))
@@ -140,18 +172,28 @@ def test_raster_rejects_geometry_in_request(client, authenticated):
     assert client.post(PREFIX + "/rasterize", json=body, headers=authenticated[1]).status_code == 422
 
 
-def test_limit_prevents_raster_call_and_leaves_started_state(client, authenticated, order):
+def test_limit_prevents_raster_call_and_leaves_pending_state(client, authenticated, order):
     headers, order_id = authenticated[1], order["id_pedido"]
     assert start(client, headers, order_id).status_code == 200
     with patch("app.modules.optimization.application.use_cases.rasterize_geometry") as domain:
         response = raster(client, headers, order_id, order["piezas"][0]["id_pieza"], 0.01)
     assert response.status_code == 422 and isinstance(response.json()["detail"], str)
     domain.assert_not_called()
-    assert client.get(f"/api/orders/{order_id}", headers=headers).json()["estado"] == "EN_OPTIMIZACION"
+    assert client.get(f"/api/orders/{order_id}", headers=headers).json()["estado"] == "PENDIENTE"
 
 
-def test_commit_failure_is_safe_and_rolls_back(client, authenticated, order, session_factory):
-    with patch("sqlalchemy.orm.Session.commit", side_effect=RuntimeError("private sql error")):
+def test_start_never_needs_a_commit(client, authenticated, order, session_factory):
+    with patch("sqlalchemy.orm.Session.commit", side_effect=AssertionError("Preview must not commit")) as commit:
+        response = start(client, authenticated[1], order["id_pedido"])
+    assert response.status_code == 200, response.text
+    commit.assert_not_called()
+    with session_factory() as db:
+        assert db.get(Pedido, order["id_pedido"]).estado == "PENDIENTE"
+
+
+def test_start_read_failure_is_safe_and_does_not_change_state(client, authenticated, order, session_factory):
+    with patch("app.modules.optimization.infrastructure.orders_adapter.OrdersOptimizationAdapter.get_order",
+               side_effect=RuntimeError("private sql error")):
         response = start(client, authenticated[1], order["id_pedido"])
     assert response.status_code == 500 and "private" not in response.text
     with session_factory() as db:
@@ -183,14 +225,14 @@ def test_corrupt_geometry_after_start_is_safe_422(client, authenticated, order, 
     assert response.status_code == 422 and "Traceback" not in response.text
 
 
-def test_domain_error_returns_safe_422_without_changing_started_order(client, authenticated, order):
+def test_domain_error_returns_safe_422_without_changing_pending_order(client, authenticated, order):
     from app.modules.optimization.domain.raster_mask import RasterizationError
     assert start(client, authenticated[1], order["id_pedido"]).status_code == 200
     with patch("app.modules.optimization.application.use_cases.rasterize_geometry",
                side_effect=RasterizationError("La geometría no se puede rasterizar.")):
         response = raster(client, authenticated[1], order["id_pedido"], order["piezas"][0]["id_pieza"])
     assert response.status_code == 422
-    assert client.get(f"/api/orders/{order['id_pedido']}", headers=authenticated[1]).json()["estado"] == "EN_OPTIMIZACION"
+    assert client.get(f"/api/orders/{order['id_pedido']}", headers=authenticated[1]).json()["estado"] == "PENDIENTE"
 
 
 def test_fractional_circle_has_safe_result_without_changing_state(client, authenticated, order, session_factory):
@@ -210,4 +252,4 @@ def test_fractional_circle_has_safe_result_without_changing_state(client, authen
     else:
         assert isinstance(response.json()["detail"], str)
         assert "Traceback" not in response.text
-    assert client.get(f"/api/orders/{order['id_pedido']}", headers=authenticated[1]).json()["estado"] == "EN_OPTIMIZACION"
+    assert client.get(f"/api/orders/{order['id_pedido']}", headers=authenticated[1]).json()["estado"] == "PENDIENTE"

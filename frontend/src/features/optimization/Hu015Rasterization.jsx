@@ -47,7 +47,7 @@ export function Hu015Rasterization(props) {
         {recovery && <p>Selecciona un pedido en curso para continuar sin volver a iniciarlo.</p>}
         {flow.list.loading ? <LoadingState>Cargando pedidos...</LoadingState>
           : flow.list.error ? <FeedbackMessage variant="error">{flow.list.error}</FeedbackMessage>
-            : !flow.list.items.length ? <EmptyState title={recovery ? 'No hay procesos iniciados disponibles.' : 'No hay pedidos pendientes disponibles para iniciar optimización.'} />
+            : !flow.list.items.length ? <EmptyState title={recovery ? 'No hay procesos iniciados disponibles.' : 'No hay pedidos pendientes disponibles para previsualizar.'} />
               : <ul className="optimization-orders" aria-label={recovery ? 'Pedidos en optimización' : 'Pedidos pendientes'}>
                 {flow.list.items.map(item => <li key={item.id_pedido}>
                   <button type="button" className="ng-button optimization-order" aria-pressed={flow.selection?.item.id_pedido === item.id_pedido}
@@ -75,7 +75,7 @@ export function Hu015Rasterization(props) {
             <div><dt>Estado</dt><dd>{stateLabel(order.estado)}</dd></div>
             <div><dt>Piezas del pedido</dt><dd>{order.piezas.length}</dd></div>
           </dl>
-          {!order.piezas.length ? <FeedbackMessage variant="warning">El pedido no contiene piezas disponibles. No se puede iniciar la optimización.</FeedbackMessage>
+          {!order.piezas.length ? <FeedbackMessage variant="warning">El pedido no contiene piezas disponibles. No se puede preparar la vista previa.</FeedbackMessage>
             : <div className="optimization-table-scroll"><table className="optimization-pieces">
               <caption>Piezas del pedido #{order.id_pedido}</caption>
               <thead><tr><th scope="col">Pieza</th><th scope="col">Forma y medidas</th><th scope="col">Cantidad</th><th scope="col">Vidrio y espesor</th></tr></thead>

@@ -22,7 +22,7 @@ class RasterizeRequest(StartRequest):
 
 class StartResponse(BaseModel):
     id_pedido: PositiveId
-    estado: Literal["EN_OPTIMIZACION"]
+    estado: Literal["PENDIENTE"]
 
 
 class RectangleGeometry(BaseModel):

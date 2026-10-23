@@ -1,5 +1,18 @@
 # SPEC-HU-015 — Interfaz de rasterización
 
+## Revisión S1-01 — 21/10/2026
+
+Esta revisión autorizada sustituye las reglas históricas de inicio y estados de la vista previa descritas más abajo. Se conserva el cierre Verified y la evidencia del PR #47 como registros históricos: aquella versión sí cambiaba el pedido a EN_OPTIMIZACION. La corrección se verifica por separado en [evidencia S1-01](../evidence/sprint-01/S1-01/README.md).
+
+- `POST /api/optimization/start` se conserva como preparación de consulta: lee el pedido PENDIENTE y valida todas sus piezas, pertenencia, geometría y presupuesto inicial a 5 mm/celda. Devuelve `200 {"id_pedido":10,"estado":"PENDIENTE"}` sin escribir; repetir sobre un pedido todavía válido devuelve 200. Ausencia 404, estado no pendiente 409 y datos/presupuesto inválidos 422.
+- `POST /api/optimization/rasterize` acepta PENDIENTE y conserva la lectura de EN_OPTIMIZACION. Relee la pieza persistida y valida pertenencia, geometría, resolución y presupuesto en cada solicitud. OPTIMIZADO, CONFIRMADO y CANCELADO siguen rechazados con 409. No exige un start previo persistido.
+- Preparar o rasterizar no modifica pedidos/piezas, no crea optimización/ejecución y no reserva ni consume inventario. Se conservan autenticación, permisos actuales y contratos de error seguros.
+- «Vista previa preparada» es una condición local de la UI tras validar y recargar el detalle; no cambia Pedido.estado. Al volver a abrir la vista se puede preparar de nuevo el mismo pendiente. Los pedidos EN_OPTIMIZACION siguen consultables sin normalización ni otro start. La UI cancela/ignora respuestas obsoletas y no deduce una preparación exitosa de un GET pendiente después de un error.
+- Previsualizar deja disponible la edición ordinaria del pendiente. Una máscara describe los datos de su cálculo, no constituye una reserva ni el snapshot de First Fit; editar puede reemplazar IDs de piezas y cada nuevo cálculo relee los datos efectivos.
+- El inicio real de `/api/optimization/runs` conserva su validación atómica de pendientes y su transición PENDIENTE → EN_OPTIMIZACION junto a la creación de ejecución/snapshot. Confirmación, persistencia y stock conservan sus reglas.
+
+Los criterios históricos que exigían transición, segundo start 409, un único ganador concurrente o rasterización solo en EN_OPTIMIZACION quedan sustituidos para esta revisión por: preparaciones concurrentes válidas sin escrituras; preparación repetible; raster sobre pendiente; edición posterior permitida; recorrido vista previa → raster → First Fit → resultado persistido → confirmación; stock intacto hasta confirmar. No se incorporan migraciones ni reparación automática de históricos.
+
 ## Información general
 
 | Campo | Valor |

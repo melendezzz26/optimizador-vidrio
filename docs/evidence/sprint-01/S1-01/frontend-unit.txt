@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: canonical recovery preserves a safe failure message without inventing a PENDIENTE transition
+ok 1 - canonical recovery preserves a safe failure message without inventing a PENDIENTE transition
+  ---
+  duration_ms: 4.3679
+  type: 'test'
+  ...
+# Subtest: wire events preserve 1-based units, physical stock and decimal strings; duplicate sequence ignored
+ok 2 - wire events preserve 1-based units, physical stock and decimal strings; duplicate sequence ignored
+  ---
+  duration_ms: 1.8254
+  type: 'test'
+  ...
+# Subtest: terminal with nullable metrics is not a failure; confirmation waits for canonical GET
+ok 3 - terminal with nullable metrics is not a failure; confirmation waits for canonical GET
+  ---
+  duration_ms: 0.7883
+  type: 'test'
+  ...
+# Subtest: SIN_SOLUCION retains diagnostic placements and cannot confirm
+ok 4 - SIN_SOLUCION retains diagnostic placements and cannot confirm
+  ---
+  duration_ms: 0.4767
+  type: 'test'
+  ...
+# Subtest: failed event shows safe error, canonical confirmed snapshot disables confirmation
+ok 5 - failed event shows safe error, canonical confirmed snapshot disables confirmation
+  ---
+  duration_ms: 0.7037
+  type: 'test'
+  ...
+# Subtest: sequence gaps, mismatched correlation and malformed placement fail without polluting canvas
+ok 6 - sequence gaps, mismatched correlation and malformed placement fail without polluting canvas
+  ---
+  duration_ms: 0.7997
+  type: 'test'
+  ...
+# Subtest: retry and discard reject stale lifecycle events
+ok 7 - retry and discard reject stale lifecycle events
+  ---
+  duration_ms: 0.521
+  type: 'test'
+  ...
+# Subtest: live updates reconcile selection but preserve run snapshot
+ok 8 - live updates reconcile selection but preserve run snapshot
+  ---
+  duration_ms: 0.6178
+  type: 'test'
+  ...
+# Subtest: new orders are unselected, non-pending excluded and preparation invalidated
+ok 9 - new orders are unselected, non-pending excluded and preparation invalidated
+  ---
+  duration_ms: 0.3554
+  type: 'test'
+  ...
+# Subtest: group-scoped completion does not replace global progress
+ok 10 - group-scoped completion does not replace global progress
+  ---
+  duration_ms: 0.7085
+  type: 'test'
+  ...
+# Subtest: inspection accepts bounded span masks but rejects malformed resolution and out-of-grid runs
+ok 11 - inspection accepts bounded span masks but rejects malformed resolution and out-of-grid runs
+  ---
+  duration_ms: 0.9539
+  type: 'test'
+  ...
+# Subtest: order and piece keys take precedence, and all group units require prepared masks
+ok 12 - order and piece keys take precedence, and all group units require prepared masks
+  ---
+  duration_ms: 0.2172
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 147.7424

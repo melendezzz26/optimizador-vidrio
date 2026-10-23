@@ -9,7 +9,7 @@ afterEach(() => { vi.unstubAllGlobals(); vi.useRealTimers(); });
 
 describe('contratos de Optimization', () => {
   test('start envía únicamente el ID, utiliza transporte autenticado y devuelve el estado confirmado', async () => {
-    const data = { id_pedido: 27, estado: 'EN_OPTIMIZACION' };
+    const data = { id_pedido: 27, estado: 'PENDIENTE' };
     fetch.mockResolvedValue(response(data));
     await expect(startOptimization(27, { token: 'test-token' })).resolves.toBe(data);
     expect(fetch).toHaveBeenCalledWith(`${API_URL}/api/optimization/start`, expect.objectContaining({
@@ -64,7 +64,7 @@ describe('contratos de Optimization', () => {
     await expect(startOptimization(27)).rejects.toThrow('Revisa los datos del pedido');
   });
 
-  test.each([{ id_pedido: 28, estado: 'EN_OPTIMIZACION' }, { id_pedido: 27, estado: 'PENDIENTE' }])('rechaza un start no confirmado: %j', async data => {
+  test.each([{ id_pedido: 28, estado: 'PENDIENTE' }, { id_pedido: 27, estado: 'EN_OPTIMIZACION' }])('rechaza un start no confirmado: %j', async data => {
     fetch.mockResolvedValue(response(data));
     await expect(startOptimization(27)).rejects.toMatchObject({ status: 200 });
   });

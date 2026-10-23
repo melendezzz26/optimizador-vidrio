@@ -24,6 +24,7 @@ export function useOptimization({ token, onSessionExpired = NOOP }) {
   const [rasterError, setRasterError] = useState('');
   const mounted = useRef(false);
   const startBusy = useRef(false);
+  const preparationRequest = useRef({ id: 0, controller: null });
   const detailRequest = useRef({ id: 0, controller: null });
   const rasterRequest = useRef({ id: 0, controller: null, busy: false });
 
@@ -35,8 +36,8 @@ export function useOptimization({ token, onSessionExpired = NOOP }) {
       detailRequest.current.id++;
       rasterRequest.current.controller?.abort();
       rasterRequest.current.id++;
-      // No abortar start: un POST aceptado puede haber cambiado el pedido.
-      // Su continuación consulta el ID original; al volver se recupera por Orders.
+      preparationRequest.current.controller?.abort();
+      preparationRequest.current.id++;
     };
   }, []);
 
@@ -93,19 +94,20 @@ export function useOptimization({ token, onSessionExpired = NOOP }) {
     setResolution('5');
   };
 
-  async function readDetails(item, reconcile = false) {
+  async function readDetails(item, { reconcile = false, prepared = false } = {}) {
     detailRequest.current.controller?.abort();
     const controller = new AbortController();
     const id = detailRequest.current.id + 1;
     detailRequest.current = { id, controller };
-    if (mounted.current) setSelection(current => ({ ...current, item, loading: true, error: '', blocked: true, reconcile }));
+    if (mounted.current) setSelection(current => ({ ...current, item, loading: true, error: '', blocked: true, reconcile, prepared }));
     try {
       const order = await getOrder(item.id_pedido, { token, signal: controller.signal, timeoutMs: 30000 });
       if (!mounted.current || id !== detailRequest.current.id) return;
       if (order.id_pedido !== item.id_pedido || !Array.isArray(order.piezas)) throw new Error('El detalle recibido no es válido. Actualiza los datos.');
-      setSelection({ item, order, loading: false, error: '', blocked: false, reconcile: false });
+      setSelection({ item, order, loading: false, error: '', blocked: false, reconcile: false,
+        prepared: prepared && order.estado === 'PENDIENTE' });
       if (reconcile) setFeedback({ variant: 'info', message: order.estado === 'EN_OPTIMIZACION'
-        ? 'El pedido ya está en preparación. Puedes continuar con sus piezas.'
+        ? 'El pedido está en optimización. Puedes consultar sus piezas sin cambiar su estado.'
         : order.estado === 'PENDIENTE'
           ? 'El pedido sigue pendiente. Puedes volver a preparar su vista previa.'
           : `El pedido está ${orderWorkState(order.estado)}. No se puede continuar con la vista previa.` });
@@ -114,7 +116,7 @@ export function useOptimization({ token, onSessionExpired = NOOP }) {
       reportSession(error);
       if (reconcile) {
         setSelection(current => ({ ...current, order: null, loading: false, blocked: true, error: error.message, reconcile: true }));
-        setFeedback({ variant: 'warning', message: 'El inicio sigue sin confirmar y no se pudo consultar el pedido. Actualiza el detalle antes de continuar.' });
+        setFeedback({ variant: 'warning', message: 'No se pudo validar la vista previa ni consultar el pedido. Actualiza el detalle antes de volver a prepararla.' });
       } else {
         setSelection(current => ({ ...current, loading: false, blocked: true, error: error.message }));
       }
@@ -143,8 +145,9 @@ export function useOptimization({ token, onSessionExpired = NOOP }) {
 
   const order = selection?.order;
   const ready = Boolean(order && !selection.loading && !selection.blocked && order.piezas.length);
-  const canStart = ready && order.estado === 'PENDIENTE' && !starting;
-  const canChoosePiece = ready && order.estado === 'EN_OPTIMIZACION' && !starting;
+  const canStart = ready && order.estado === 'PENDIENTE' && !selection.prepared && !starting;
+  const canChoosePiece = ready && (order.estado === 'EN_OPTIMIZACION'
+    || (order.estado === 'PENDIENTE' && selection.prepared)) && !starting;
   const validResolution = resolution.trim() !== '' && Number.isFinite(Number(resolution)) && Number(resolution) > 0;
   const chosenPiece = order?.piezas.find(piece => String(piece.id_pieza) === pieceId);
   const canRasterize = canChoosePiece && Boolean(chosenPiece) && validResolution && !rasterizing;
@@ -152,35 +155,39 @@ export function useOptimization({ token, onSessionExpired = NOOP }) {
   async function start() {
     if (!canStart || startBusy.current) return;
     const item = selection.item;
+    const controller = new AbortController();
+    const id = preparationRequest.current.id + 1;
+    preparationRequest.current = { id, controller };
+    const current = () => mounted.current && id === preparationRequest.current.id;
     startBusy.current = true;
     setStarting(true);
     setFeedback(null);
     resetPiece();
     try {
-      const result = await startOptimization(item.id_pedido, { token });
-      if (mounted.current) {
-        setSelection(current => ({ ...current, order: { ...current.order, estado: result.estado }, blocked: true }));
-        setFeedback({ variant: 'success', message: `Pedido #${item.id_pedido} iniciado. Puedes revisar sus piezas.` });
-        refresh();
-      }
-      await readDetails(item);
+      await startOptimization(item.id_pedido, { token, signal: controller.signal });
+      if (!current()) return;
+      setFeedback({ variant: 'success', message: `Vista previa del pedido #${item.id_pedido} validada. La preparación no cambia el estado del pedido.` });
+      await readDetails(item, { prepared: true });
     } catch (error) {
+      if (!current() || error.name === 'AbortError') return;
       reportSession(error);
       const uncertain = error.status === 0 || error.status >= 500 || error.status === 200;
       if (mounted.current) {
         setFeedback({ variant: uncertain ? 'warning' : 'error', message: uncertain
-          ? 'No se pudo confirmar el inicio. Consultando el estado del pedido; no se repetirá el envío.'
-          : error.status === 409 ? 'El pedido ya no está disponible para iniciar optimización. Actualiza sus datos o recupera un proceso iniciado.' : error.message });
+          ? 'No se pudo validar la vista previa. Consultando el pedido; puedes volver a prepararla sin cambiar su estado.'
+          : error.status === 409 ? 'El pedido ya no está pendiente. Actualiza sus datos antes de continuar.' : error.message });
         if ([403, 404, 409].includes(error.status)) setSelection(current => ({ ...current, blocked: true }));
         if ([404, 409].includes(error.status)) refresh();
       }
       if (uncertain) {
-        await readDetails(item, true);
+        await readDetails(item, { reconcile: true });
         if (mounted.current) refresh();
       }
     } finally {
-      startBusy.current = false;
-      if (mounted.current) setStarting(false);
+      if (current()) {
+        startBusy.current = false;
+        setStarting(false);
+      }
     }
   }
 
@@ -214,7 +221,7 @@ export function useOptimization({ token, onSessionExpired = NOOP }) {
     raster, rasterizing, rasterError, canStart, canChoosePiece, canRasterize, validResolution,
     refresh, selectOrder, changeScope, start, rasterize,
     goToPage(next) { setList(current => ({ ...current, loading: true, error: '' })); setPage(next); },
-    reloadSelection() { resetPiece(); void readDetails(selection.item, selection.reconcile); },
+    reloadSelection() { resetPiece(); void readDetails(selection.item, { reconcile: selection.reconcile, prepared: selection.prepared }); },
     changePiece(value) { invalidateRaster(); setPieceId(value); },
     changeResolution(value) { invalidateRaster(); setResolution(value); },
   };

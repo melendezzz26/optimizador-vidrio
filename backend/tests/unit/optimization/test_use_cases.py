@@ -10,7 +10,6 @@ from app.modules.optimization.application.resource_policy import RasterBudget, e
 from app.modules.optimization.application.use_cases import StartOptimizationUseCase, RasterizeOrderPieceUseCase
 from app.modules.optimization.domain.rasterizer import rasterize_geometry
 from app.modules.optimization.infrastructure.orders_adapter import OrdersOptimizationAdapter
-from app.modules.orders.application.ports import OrderMutationResult
 
 PIECE = dict(id_pedido=10, id_pieza=25, id_tipo_vidrio=7, espesor_mm=6, cantidad=5,
              tipo_forma="RECTANGULO", geometria=dict(type="RECTANGULO", width_mm=100, height_mm=50))
@@ -20,29 +19,30 @@ BUDGET = RasterBudget(10_000, 1000, 128, 262_144)
 @pytest.fixture
 def gateway():
     repo = Mock()
-    repo.get_order.return_value = dict(id_pedido=10, estado="EN_OPTIMIZACION", piezas=[deepcopy(PIECE)])
-    def start(identifier, validate):
-        validate(repo.get_order.return_value)
-        return OrderMutationResult.UPDATED
-    repo.start_optimization.side_effect = start
+    repo.get_order.return_value = dict(id_pedido=10, estado="PENDIENTE", piezas=[deepcopy(PIECE)])
     return OrdersOptimizationAdapter(repo)
 
 
 def test_start_validates_once_and_returns_minimal_response_without_raster(gateway):
     with patch("app.modules.optimization.application.use_cases.rasterize_geometry") as raster:
         assert StartOptimizationUseCase(gateway, BUDGET).execute(10) == {
-            "id_pedido": 10, "estado": "EN_OPTIMIZACION"}
+            "id_pedido": 10, "estado": "PENDIENTE"}
     raster.assert_not_called()
-    gateway.repository.start_optimization.assert_called_once()
+    assert [c[0] for c in gateway.repository.mock_calls] == ["get_order"]
 
 
-@pytest.mark.parametrize("result,error", [
-    (OrderMutationResult.NOT_FOUND, OptimizationNotFoundError),
-    (OrderMutationResult.STATE_CONFLICT, OptimizationStateError),
+@pytest.mark.parametrize("state,error", [
+    (None, OptimizationNotFoundError),
+    ("EN_OPTIMIZACION", OptimizationStateError),
+    ("OPTIMIZADO", OptimizationStateError),
+    ("CONFIRMADO", OptimizationStateError),
+    ("CANCELADO", OptimizationStateError),
 ])
-def test_start_missing_or_conflict_never_reports_success(gateway, result, error):
-    gateway.repository.start_optimization.side_effect = None
-    gateway.repository.start_optimization.return_value = result
+def test_start_missing_or_conflict_never_reports_success(gateway, state, error):
+    if state is None:
+        gateway.repository.get_order.return_value = None
+    else:
+        gateway.repository.get_order.return_value["estado"] = state
     with pytest.raises(error):
         StartOptimizationUseCase(gateway, BUDGET).execute(10)
 
@@ -69,7 +69,9 @@ def test_invalid_id_never_accesses_repository(gateway, identifier):
     gateway.repository.start_optimization.assert_not_called()
 
 
-def test_raster_quantity_five_calls_domain_once_and_never_mutates(gateway):
+@pytest.mark.parametrize("state", ["PENDIENTE", "EN_OPTIMIZACION"])
+def test_raster_quantity_five_calls_domain_once_and_never_mutates(gateway, state):
+    gateway.repository.get_order.return_value["estado"] = state
     with patch("app.modules.optimization.application.use_cases.rasterize_geometry", wraps=rasterize_geometry) as raster:
         result = RasterizeOrderPieceUseCase(gateway, BUDGET).execute(10, 25, 5)
     raster.assert_called_once_with(PIECE["geometria"], 5)
@@ -79,7 +81,7 @@ def test_raster_quantity_five_calls_domain_once_and_never_mutates(gateway):
     assert [c[0] for c in gateway.repository.mock_calls] == ["get_order"]
 
 
-@pytest.mark.parametrize("state", ["PENDIENTE", "CANCELADO", "OPTIMIZADO", "CONFIRMADO"])
+@pytest.mark.parametrize("state", ["CANCELADO", "OPTIMIZADO", "CONFIRMADO"])
 def test_raster_requires_started_order(gateway, state):
     gateway.repository.get_order.return_value["estado"] = state
     with pytest.raises(OptimizationStateError):

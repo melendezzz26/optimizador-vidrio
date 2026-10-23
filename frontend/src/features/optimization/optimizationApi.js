@@ -22,9 +22,9 @@ const positiveInteger = value => Number.isSafeInteger(value) && value > 0;
 export async function startOptimization(idPedido, options = {}) {
   const data = await request('/api/optimization/start', {
     timeoutMs: 30000, ...options, method: 'POST', body: { id_pedido: idPedido },
-    validationFallback: 'No se pudo iniciar. Revisa los datos del pedido y sus piezas.',
+    validationFallback: 'No se pudo preparar la vista previa. Revisa los datos del pedido y sus piezas.',
   });
-  if (data.id_pedido !== idPedido || data.estado !== 'EN_OPTIMIZACION') throw unexpected();
+  if (data.id_pedido !== idPedido || data.estado !== 'PENDIENTE') throw unexpected();
   return data;
 }
 
