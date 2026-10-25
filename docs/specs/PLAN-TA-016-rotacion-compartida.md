@@ -8,4 +8,3 @@
 
 Comando baseline desde backend:
 `../.venv/Scripts/python -m pytest -q tests/unit/optimization/test_first_fit.py tests/unit/optimization/test_rotation.py tests/unit/optimization/test_worst_fit.py tests/integration/optimization/test_worst_fit_slice.py`.
-

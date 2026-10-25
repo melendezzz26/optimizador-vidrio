@@ -26,4 +26,3 @@ HTTP/lifecycle durable permanece con contrato FF vigente, igual que WF integrado
 Aceptación: normal, rotación necesaria, no colocable, desempate, repetición,
 prioridad retazo, fallback plancha, capacidad posterior con separación,
 regresión FF, métricas y snapshot de BD intacto.
-

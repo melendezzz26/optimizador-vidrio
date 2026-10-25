@@ -63,4 +63,3 @@ TA-016 adopta rotation.py y su contrato existente para FF/BF/WF.
 TA-018 será selector sobre pack, con identidad BF en resultado de dominio.
 Como WF integrado, no habilita un método HTTP ni confirmación BF implícita.
 La simulación usa snapshots y puertos de lectura; no tiene acceso a escrituras.
-

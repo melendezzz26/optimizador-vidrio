@@ -37,4 +37,3 @@ Recomendación para esta instancia: 45°. 15° no aporta mejora y tarda más.
 No cambiar el valor global: una instancia sintética no demuestra óptimo universal.
 90° sigue siendo una base económica para piezas ortogonales; evaluar otras
 instancias industriales antes de una recomendación general.
-

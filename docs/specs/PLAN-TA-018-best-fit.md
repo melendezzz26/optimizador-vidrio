@@ -5,4 +5,3 @@
 3. Reutilizar preparación/stock en slice de aplicación de solo lectura.
 4. Pruebas unitarias y repositorios reales en SQLite aislado.
 5. Ejecutar regresiones POST-PR58, diff --check y publicar rama sin PR.
-

@@ -15,4 +15,3 @@ pack es el único consumidor para FF/BF/WF; todos usan exactamente la misma ruta
 Aceptación: regresiones FF/rotation/WF antes y después sin cambios de placements;
 prueba parametrizada de las tres heurísticas invocando el mismo componente.
 No se exige una extracción adicional: PR58 ya centralizó el motor.
-
