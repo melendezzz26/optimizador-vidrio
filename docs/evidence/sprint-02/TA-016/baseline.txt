@@ -1,0 +1,6 @@
+Base: 783aac89323a2780dc4b769e2a0603cd06490815
+Python 3.11.15; Windows; dependencias backend/requirements.txt.
+Comando desde backend:
+../.venv/Scripts/python -m pytest -q tests/unit/optimization/test_first_fit.py tests/unit/optimization/test_rotation.py tests/unit/optimization/test_worst_fit.py tests/integration/optimization/test_worst_fit_slice.py
+80 passed in 2.52s
+

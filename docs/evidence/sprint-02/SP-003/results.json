@@ -1,0 +1,213 @@
+{
+  "python": "3.11.15",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "algorithm": "FF",
+  "resolution_mm": 1,
+  "margin_mm": 0,
+  "separation_mm": 0,
+  "minimum_residual_mm": [
+    1,
+    1
+  ],
+  "memory": "not measured: no existing instrumentation",
+  "runs": [
+    {
+      "angle_step": 90,
+      "orientations_prepared": 6,
+      "orientation_position_searches": 3,
+      "feasible_candidates": 3,
+      "placed": 3,
+      "metrics": {
+        "utilization_pct": "20.652",
+        "waste_mm2": "78",
+        "new_sheets_used": 1,
+        "recoverable_remnant_mm2": "68",
+        "material_area_mm2": "184",
+        "placed_piece_area_mm2": "38"
+      },
+      "seconds": [
+        0.0019252999918535352,
+        0.0019252999918535352,
+        0.0018266000552102923,
+        0.0016681000124663115,
+        0.0015970999374985695
+      ],
+      "placements": [
+        {
+          "piece": [
+            1,
+            1
+          ],
+          "stock": [
+            "PLANCHA",
+            2,
+            1
+          ],
+          "x": "0",
+          "y": "0",
+          "angle": "0"
+        },
+        {
+          "piece": [
+            2,
+            1
+          ],
+          "stock": [
+            "RETAZO",
+            1,
+            1
+          ],
+          "x": "0",
+          "y": "0",
+          "angle": "0"
+        },
+        {
+          "piece": [
+            3,
+            1
+          ],
+          "stock": [
+            "RETAZO",
+            1,
+            1
+          ],
+          "x": "4",
+          "y": "0",
+          "angle": "0"
+        }
+      ]
+    },
+    {
+      "angle_step": 45,
+      "orientations_prepared": 12,
+      "orientation_position_searches": 9,
+      "feasible_candidates": 3,
+      "placed": 3,
+      "metrics": {
+        "utilization_pct": "20.652",
+        "waste_mm2": "16",
+        "new_sheets_used": 1,
+        "recoverable_remnant_mm2": "130",
+        "material_area_mm2": "184",
+        "placed_piece_area_mm2": "38"
+      },
+      "seconds": [
+        0.0034487000666558743,
+        0.004204299999400973,
+        0.0037155000027269125,
+        0.003249799949117005,
+        0.0033990999218076468
+      ],
+      "placements": [
+        {
+          "piece": [
+            1,
+            1
+          ],
+          "stock": [
+            "RETAZO",
+            1,
+            1
+          ],
+          "x": "0",
+          "y": "0",
+          "angle": "135"
+        },
+        {
+          "piece": [
+            2,
+            1
+          ],
+          "stock": [
+            "PLANCHA",
+            2,
+            1
+          ],
+          "x": "0",
+          "y": "0",
+          "angle": "0"
+        },
+        {
+          "piece": [
+            3,
+            1
+          ],
+          "stock": [
+            "PLANCHA",
+            2,
+            1
+          ],
+          "x": "4",
+          "y": "0",
+          "angle": "0"
+        }
+      ]
+    },
+    {
+      "angle_step": 15,
+      "orientations_prepared": 32,
+      "orientation_position_searches": 18,
+      "feasible_candidates": 3,
+      "placed": 3,
+      "metrics": {
+        "utilization_pct": "20.652",
+        "waste_mm2": "16",
+        "new_sheets_used": 1,
+        "recoverable_remnant_mm2": "130",
+        "material_area_mm2": "184",
+        "placed_piece_area_mm2": "38"
+      },
+      "seconds": [
+        0.01340860000345856,
+        0.016394699923694134,
+        0.016788700013421476,
+        0.019676500000059605,
+        0.017403300036676228
+      ],
+      "placements": [
+        {
+          "piece": [
+            1,
+            1
+          ],
+          "stock": [
+            "RETAZO",
+            1,
+            1
+          ],
+          "x": "0",
+          "y": "0",
+          "angle": "135"
+        },
+        {
+          "piece": [
+            2,
+            1
+          ],
+          "stock": [
+            "PLANCHA",
+            2,
+            1
+          ],
+          "x": "0",
+          "y": "0",
+          "angle": "0"
+        },
+        {
+          "piece": [
+            3,
+            1
+          ],
+          "stock": [
+            "PLANCHA",
+            2,
+            1
+          ],
+          "x": "4",
+          "y": "0",
+          "angle": "0"
+        }
+      ]
+    }
+  ]
+}
