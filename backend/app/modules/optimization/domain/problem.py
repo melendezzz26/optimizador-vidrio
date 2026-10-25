@@ -284,7 +284,7 @@ class OptimizationResult:
             raise ValueError("Metrics require used material from accepted placements.")
 
     @property
-    def method(self) -> Literal["FF"]:
+    def method(self) -> Literal["FF", "WF"]:
         return "FF"
 
     @property
