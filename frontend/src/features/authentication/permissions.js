@@ -6,10 +6,9 @@ export function hasPermission(user, code) {
   return Array.isArray(user?.permisos) && user.permisos.includes(code);
 }
 
-const hasAny = (user, codes) => codes.some((code) => hasPermission(user, code));
-
-// Inicio muestra datos de inventario y de pedidos: basta con poder ver uno de los dos.
-export const canViewDashboard = (user) => hasAny(user, ['inventory.view', 'orders.view']);
+// Inicio es la pantalla común para cualquier usuario con sesión válida (HU-016).
+// No concede acceso a datos: cada módulo y endpoint valida sus propios permisos.
+export const canViewDashboard = (user) => Boolean(user);
 
 // Módulo de pedidos y clientes.
 export const canManageOrders = (user) => hasPermission(user, 'orders.view');

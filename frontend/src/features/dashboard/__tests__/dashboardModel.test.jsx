@@ -10,8 +10,8 @@ test.each(['Administrador', 'Operario', 'Almacenero'])('%s recibe únicamente fu
   const actions = getDashboardActions(dashboardUser(role)).map(action => action.view);
   expect(sources).toEqual(role === 'Almacenero' ? ['planchas', 'retazos']
     : ['planchas', 'retazos', 'pendingOrders', 'inProgressOrders', 'recentOrders', 'clients']);
-  expect(actions).toEqual(role === 'Administrador' ? ['inventory', 'orders', 'users']
-    : role === 'Operario' ? ['inventory', 'orders'] : ['inventory']);
+  expect(actions).toEqual(role === 'Administrador' ? ['inventory', 'orders', 'optimization', 'users']
+    : role === 'Operario' ? ['inventory', 'orders', 'optimization'] : ['inventory', 'optimization']);
 });
 test.each([null, { rol: 'Unknown' }])('sin rol reconocido no hay fuentes ni acciones (%j)', user => {
   expect(getDashboardSources(user)).toEqual([]);

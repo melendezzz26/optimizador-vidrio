@@ -1,0 +1,15 @@
+Command: npx playwright test --config=playwright.hu016.config.js
+Playwright 1.63.0 · Chromium 153.0.8010.12
+Running 9 tests using 1 worker
+
+ok 1 tests\e2e\hu016-dashboard.spec.js:174:1 › CA-01, CA-03, CA-04, CA-10: Dashboard real para Administrador con todos los accesos (757ms)
+ok 2 tests\e2e\hu016-dashboard.spec.js:198:1 › CA-04, CA-10, CA-12: Dashboard real para Operario sin Administración (672ms)
+ok 3 tests\e2e\hu016-dashboard.spec.js:213:1 › CA-04, CA-10, CA-11: Dashboard real para Almacenero sin Pedidos ni Ejecución (581ms)
+ok 4 tests\e2e\hu016-dashboard.spec.js:231:1 › CA-03, §4, §12: Sesión sin funciones autorizadas accede a Inicio con mensaje explicativo (693ms)
+ok 5 tests\e2e\hu016-dashboard.spec.js:247:1 › CA-02, CA-10: Navegación de acceso rápido a Optimización y retorno por Sidebar (855ms)
+ok 6 tests\e2e\hu016-dashboard.spec.js:265:1 › CA-17: Verificación responsive sin overflow en 1440px, 1024px y 800px (1.1s)
+ok 7 tests\e2e\hu016-dashboard.spec.js:283:1 › CA-18: Refresh desde Inicio recupera sesión con /api/auth/me (944ms)
+ok 8 tests\e2e\hu016-dashboard.spec.js:294:1 › CA-19: Logout elimina la sesión y retorna al login (641ms)
+ok 9 tests\e2e\hu016-dashboard.spec.js:306:1 › CA-13, CA-14: Fallo parcial controlado muestra aviso sin comprometer fuentes válidas (731ms)
+
+9 passed (9.6s) · exit 0

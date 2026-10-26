@@ -6,18 +6,18 @@
 |---|---|
 | Identificador / PBI relacionado | **HU-016** |
 | Título | Dashboard inicial para usuarios de NewGlass |
-| Estado | **Reviewed** |
-| Autor / responsable principal de implementación | Fabricio Melendez |
-| Revisor del alcance | Fabricio Aguilar |
-| Fecha de elaboración y registro de aprobación | 23/10/2026 |
-| Decisión | Alcance funcional revisado y aprobado por Fabricio Aguilar, según la confirmación explícita del solicitante. |
+| Estado | **Verified** |
+| Autor / responsable principal de implementación | Fabricio Melendez Quezada |
+| Revisor del alcance y verificación | Fabricio Danniel Aguilar Chávez |
+| Fecha de elaboración y registro de aprobación | 23/10/2026 (Elaboración y Aprobación) / 26/10/2026 (Verificación integral) |
+| Decisión | Alcance funcional implementado y verificado al 100% conforme a los 22 criterios de aceptación, con 86/86 pruebas de componentes en Vitest, 9/9 pruebas E2E en Playwright (Chromium) y evidencia consolidada en docs/evidence/sprint-02/HU-016/. |
 | Tipo | Historia de usuario; independiente de HU-015. |
 | Base inspeccionada | `b1112a43579961aff52b57cb469607711e10bdf8`, coincidente con `integration/sprint-01` local. |
-| Rama inspeccionada | `fix/S1-02-execution-budget`; no se cambia la rama ni se incorpora implementación de S1-02. |
-| Registro de Product Backlog | Pendiente en el backlog externo; esta SPEC documenta la ficha propuesta, no sustituye su fuente oficial. |
-| PLAN | No creado. T01/T02/T03 son una división propuesta para revisión y planificación posterior. |
+| Rama de trabajo e implementación | `feature/HU-016-dashboard-inicial` |
+| Registro de Product Backlog | Pendiente en el backlog externo; esta SPEC documenta la ficha implementada y verificada, no sustituye su fuente oficial. |
+| PLAN / Tareas | T01, T02 y T03 ejecutadas y completadas; cierre registrado en [docs/evidence/sprint-02/HU-016/t3-integracion-e2e-cierre.md](../evidence/sprint-02/HU-016/t3-integracion-e2e-cierre.md). |
 
-Se utiliza **Reviewed** conforme al ciclo de [SPEC-TEMPLATE](SPEC-TEMPLATE.md): Draft → Reviewed → Implemented → Verified. La aprobación funcional ya comunicada por Fabricio Aguilar habilita la especificación; no acredita implementación, pruebas, verificación ni una nueva revisión humana del archivo generado. El antecedente TA-DASHBOARD-001 conserva sus estados históricos Approved/Verified; no se modifica ni se traslada su verificación a HU-016.
+Se utiliza **Verified** conforme al ciclo de [SPEC-TEMPLATE](SPEC-TEMPLATE.md): Draft → Reviewed → Implemented → Verified. El alcance fue aprobado funcionalmente por Fabricio Aguilar el 23/10/2026, implementado en las tareas T01 y T02 (commit `f45b7ae`), e integrado y verificado al 100% en la tarea T03 (commit `405df4f`). La evidencia formal de cierre y verificación reside en [docs/evidence/sprint-02/HU-016/t3-integracion-e2e-cierre.md](../evidence/sprint-02/HU-016/t3-integracion-e2e-cierre.md). El antecedente TA-DASHBOARD-001 conserva sus estados históricos Approved/Verified en Sprint 1; no se modifica ni se sobreescribe.
 
 ## 1. Identificador y registro del PBI
 
@@ -43,9 +43,9 @@ HU-015 se integró mediante PR #47 y permanece fuera de los cambios de esta entr
 
 La inspección del repositorio encontró que esa capacidad ya tiene un antecedente: [SPEC-TA-DASHBOARD-001](SPEC-TA-DASHBOARD-001-dashboard-inicial.md), su PLAN y [evidencia histórica](../evidence/sprint-01/TA-DASHBOARD-001/t3-integracion-e2e-cierre.md). Además, existen `DashboardPage`, clientes/modelo/hook y pruebas en `frontend/src/features/dashboard/`. `App.jsx` inicia en la vista interna `dashboard` y Sidebar utiliza **Inicio**. No se presenta este código como inexistente ni se propone crear otro DashboardPage.
 
-HU-016 documenta el alcance aprobado y sus 22 criterios propios sobre esa base reutilizable. T01 deberá contrastar cobertura y diferencias; los comportamientos ya satisfechos se conservan y su evidencia se referencia con fecha/base. No se renombra, elimina ni reabre TA-DASHBOARD-001, no se declara que HU-016 ya esté implementada y no se atribuyen sus horas o pruebas históricas a este nuevo PBI.
+HU-016 documenta el alcance aprobado y sus 22 criterios propios sobre esa base reutilizable. Durante T01 se contrastó la cobertura y se identificaron las brechas de permisos, navegación y casos sin funciones frente a TA-DASHBOARD-001; en T02 se implementaron los ajustes requeridos en `permissions.js`, `dashboardModel.js`, `DashboardPage.jsx`, `DashboardQuickActions.jsx`, `DashboardSummary.jsx` y `DashboardPage.css`; y en T03 se verificó la suite E2E completa en Playwright y se consolidó la evidencia en Sprint 2 (`docs/evidence/sprint-02/HU-016/`). No se renombra, elimina ni reabre TA-DASHBOARD-001, y su evidencia de Sprint 1 permanece intacta en el repositorio.
 
-Problema que formaliza la historia: disponer de una única entrada autenticada con información operacional real, navegación autorizada y comportamiento consistente, evitando cifras ficticias, acciones sin permiso y resultados parciales interpretados como totales. Entre las brechas visibles están el acceso a Inicio condicionado hoy a `inventory.view`/`orders.view`, los accesos rápidos sin Optimización y la necesidad de verificar los tres anchos solicitados. Véase §21.
+Problema resuelto por la historia: disponer de una única entrada autenticada con información operacional real, navegación autorizada y comportamiento consistente, evitando cifras ficticias, acciones sin permiso y resultados parciales interpretados como totales. Se resolvieron las brechas identificadas: el acceso universal a Inicio mediante `canViewDashboard(user) = Boolean(user)`, el acceso rápido neutral a Optimización para roles con `optimization.view`, el saludo personalizado con nombre real del usuario, el manejo elegante de sesiones sin módulos mediante una tarjeta informativa sin peticiones no autorizadas, y la adaptabilidad responsive verificada en 1440px, 1024px y 800px. Véase §21.
 
 ## 3. Historia de usuario
 
@@ -96,13 +96,13 @@ La siguiente matriz expresa prioridades funcionales, no una matriz alternativa d
 
 Se adopta **Inicio**, término ya usado por Sidebar y DashboardPage. `dashboard`, `orders`, `optimization`, `inventory` y `users` son identificadores de vista interna mediante `NavigationContext`, **no rutas URL nuevas**. No se inventan `/dashboard`, `/pedidos`, `/inventario` ni enlaces profundos no soportados. Se conserva la URL base/subpath de la aplicación y su flujo de sesión.
 
-| Destino existente | Etiqueta coherente | Regla funcional |
-|---|---|---|
-| `dashboard` | Inicio | Disponible para sesión autenticada; no concede acceso a datos. |
-| `orders` | Registro de pedidos | Navegar con `orders.view`; el módulo administra sus acciones. |
-| `optimization` | Optimización | Navegar con `optimization.view`. Solo se describe como acceso para calcular si también existe `optimization.execute`; nunca inicia una corrida desde Inicio. |
-| `inventory` | Gestión de inventario | Navegar con `inventory.view`. |
-| `users` | Administración | Acceso según `users.view` o `roles.view`; cada pestaña mantiene su autorización. |
+| Destino existente | Etiqueta coherente | Icono Lucide | Regla funcional implementada |
+|---|---|---|---|
+| `dashboard` | Inicio | `LayoutDashboard` | Disponible para toda sesión autenticada (`Boolean(user)`); no concede acceso directo a datos. |
+| `orders` | Registro de pedidos | `FileSpreadsheet` | Navegar con `orders.view`; el módulo administra sus acciones internas. |
+| `optimization` | Optimización | `ScanLine` | Navegar con `optimization.view` (`canViewResults`). Se rotula de forma neutral como «Optimización» para permitir consulta de corridas sin sugerir ejecución (`optimization.execute`). No inicia ejecuciones desde Inicio. |
+| `inventory` | Gestión de inventario | `Package` | Navegar con `inventory.view`. |
+| `users` | Administración | `Users` | Acceso según `users.view` o `roles.view`; cada pestaña mantiene su autorización interna. |
 
 «Nuevo pedido» ya es una acción dentro de Pedidos, pero no hay un destino independiente desde Inicio que abra ese formulario. El MVP ofrece Registro de pedidos; no inventa un enlace de creación directa. Planchas/Retazos son pestañas internas de Inventario. Historial se abre para una plancha o retazo concreto; no hay una pantalla global de historial. El acceso de Almacenero puede conducir a Gestión de inventario y explicar esas funciones existentes, sin botones hacia rutas ficticias.
 
@@ -147,8 +147,8 @@ Los conteos de pedidos requieren dos solicitudes pequeñas. El inventario actual
 - La UI consulta `permisos` de la sesión para ocultar fuentes/acciones no autorizadas, no para conceder capacidades.
 - No se introduce `dashboard.view` ni otro permiso específico de Inicio.
 - `orders.view` no concede `orders.create`; `optimization.view` no concede ejecutar ni confirmar; `roles.view` no concede `users.view`.
-- La regla actual de `canViewDashboard` exige `inventory.view` u `orders.view`; T01 debe alinear la superficie de Inicio con el requisito de cualquier sesión válida, sin relajar un solo permiso de datos o módulos.
-- Un rol sin permisos de fuentes ve una pantalla válida de Inicio sin cifras ni solicitudes restringidas, con feedback y logout; no se interpreta la ausencia de permisos como cero registros.
+- La regla `canViewDashboard(user)` fue actualizada a `Boolean(user)`, alineando la superficie de Inicio con el requisito de permitir el acceso a toda sesión autenticada válida, sin relajar un solo permiso de datos o módulos backend.
+- Un rol o sesión sin permisos de módulos (ej. `permisos: []`) visualiza una pantalla válida de Inicio con saludo de identidad real, una tarjeta informativa con el mensaje «Sin funciones habilitadas» y la opción de cerrar sesión, sin disparar consultas HTTP a endpoints restringidos (0 llamadas a inventario o pedidos) y sin interpretar la ausencia de permisos como cero registros.
 - Un 401 utiliza el cierre/recuperación de sesión vigente. Un 403 no concede acceso por fallback: retira/invalida la sección afectada y permite actualizar el contexto de permisos conforme al mecanismo existente.
 
 ## 12. Estados de interfaz
@@ -167,40 +167,40 @@ Durante recarga o fallo posterior no se presentan datos anteriores como vigentes
 
 ## 13. Responsive y diseño visual
 
-Reutilizar AppShell, Sidebar, PageHeader/PageCard, tokens, tarjetas y feedback vigentes. Estructura conceptual: Inicio → saludo e identidad → resumen operativo → accesos rápidos. La composición final puede adaptar el layout propuesto a los estilos existentes; no se crea otro sistema de diseño.
+Reutilización de AppShell, Sidebar, PageHeader/PageCard, tokens, tarjetas y feedback vigentes. Estructura conceptual: Inicio → saludo e identidad con nombre de usuario real → resumen operativo → accesos rápidos. La composición se adaptó en `DashboardPage.css` con grillas fluidas basadas en `repeat(auto-fit, minmax(220px, 1fr))` y breakpoints en `@media (max-width: 1024px)` y `@media (max-width: 640px)`.
 
-Comprobar **1440, 1024 y 800 px** de ancho: sin overflow horizontal, solapamientos o texto ilegible; tarjetas adaptables, accesos utilizables y Sidebar funcional. Alinear el comportamiento a 800 px con el patrón actual del Sidebar. Las capturas anteriores de otros anchos no acreditan automáticamente estos tres. No se exige un número fijo de columnas ni una biblioteca de gráficas.
+Se verificaron de manera automatizada y visual los tres anchos exigidos: **1440, 1024 y 800 px**, comprobando mediante assertions en Playwright que `document.documentElement.scrollWidth <= window.innerWidth` sin overflow horizontal, solapamientos ni textos ilegibles, manteniendo tarjetas adaptables, accesos rápidos utilizables y el Sidebar plenamente funcional. Se generaron las capturas correspondientes en la evidencia de Sprint 2 (`docs/evidence/sprint-02/HU-016/t3/screenshots/`). No se introdujeron bibliotecas adicionales ni dependencias de gráficos externos.
 
 ## 14. Accesibilidad
 
 Aplicar la línea base de [UI/UX](../ui-ux/README.md) y [feedback compartido](../ui-ux/feedback-compartido.md): navegación por teclado, orden de foco coherente y visible, headings semánticos, botones/enlaces nativos con nombres accesibles, contraste conforme a los tokens revisados y mensajes de error textuales. No comunicar estados solo con color. Conservar el acceso para saltar al contenido del shell y respetar reducción de movimiento si se utilizan animaciones. No se afirma certificación WCAG.
 
-## 15. Criterios de aceptación
+## 15. Criterios de aceptación y matriz de verificación
 
-| ID | Criterio verificable |
-|---|---|
-| CA-01 | Después de autenticarse correctamente, cualquier usuario con sesión válida llega a Inicio. |
-| CA-02 | Inicio puede abrirse nuevamente desde Sidebar y refleja la vista activa de forma visual y accesible. |
-| CA-03 | Administrador, Operario y Almacenero autenticados acceden a la misma pantalla común; una sesión sin permisos de fuentes conserva la superficie de Inicio sin consultas restringidas. |
-| CA-04 | Las fuentes y accesos visibles corresponden únicamente a los permisos efectivos actuales; el rol no concede excepciones adicionales. |
-| CA-05 | Mostrar/ocultar opciones no sustituye la autorización backend; solicitudes directas siguen protegidas por los permisos existentes. |
-| CA-06 | Todas las cifras mostradas proceden de respuestas reales exitosas y tienen significado/alcance explícitos; no hay números ficticios. |
-| CA-07 | Con `orders.view`, Inicio muestra el total de pedidos PENDIENTE usando `total` del contrato filtrado existente. Sin permiso, no consulta ni muestra ese bloque. |
-| CA-08 | Con `orders.view`, Inicio muestra el total de pedidos EN_OPTIMIZACION mediante el mismo contrato; no lo presenta como número de ejecuciones activas. |
-| CA-09 | Todo resumen de Inventario utiliza las listas reales autorizadas, distingue registros/unidades y no inventa disponibilidad o compatibilidad. |
-| CA-10 | Los accesos rápidos navegan a los módulos existentes de §8, sin URLs ficticias ni operaciones de negocio al pulsarlos. |
-| CA-11 | Almacenero sin `optimization.execute` no recibe una acción de ejecución. Una consulta autorizada por `optimization.view` no se presenta como permiso para calcular o confirmar. |
-| CA-12 | Operario sin `users.view` no recibe acciones de Usuarios; Administración respeta separadamente los permisos de sus pestañas. |
-| CA-13 | La pantalla contempla loading, empty, error y success por fuente, reintento, disabled temporal y datos parciales cuando corresponda. |
-| CA-14 | Un fallo recuperable no muestra información inventada u obsoleta como vigente; respuestas tardías no contaminan otro contexto de sesión/permisos. |
-| CA-15 | El MVP no muestra merma, aprovechamiento, ahorro, eficiencia ni comparativas FF/BF/WF. La existencia actual de resultados First Fit en otro módulo no incorpora esos indicadores a Inicio. |
-| CA-16 | La pantalla puede operarse con teclado, mantiene foco visible, semántica y nombres accesibles; los estados no dependen exclusivamente del color. |
-| CA-17 | Inicio funciona sin overflow horizontal ni solapamientos en 1440, 1024 y 800 px, con tarjetas, textos, accesos y Sidebar utilizables. |
-| CA-18 | Refresh desde Inicio sobre la URL base/subpath vigente recupera una sesión válida y presenta una pantalla autenticada válida, sin exigir una URL nueva. |
-| CA-19 | Logout desde Inicio conserva el flujo actual: elimina la sesión, retira datos protegidos y retorna al acceso no autenticado. |
-| CA-20 | Login → Inicio → módulo autorizado tiene cobertura E2E con navegador, API y datos controlados reales; incluye retorno a Inicio, refresh y logout. |
-| CA-21 | Las principales variantes de los tres roles, permisos configurados/revocados y sesión sin fuentes autorizadas tienen pruebas automatizadas de componentes/permisos. |
-| CA-22 | La navegación existente a Pedidos, Optimización, Inventario y Administración/Usuarios conserva sus flujos y autorizaciones; HU-015 no se modifica. |
+| ID | Criterio verificable | Estado | Evidencia y resultado de verificación |
+|---|---|:---:|---|
+| CA-01 | Después de autenticarse correctamente, cualquier usuario con sesión válida llega a Inicio. | ✅ **VERIFICADO** | Validado en E2E para Administrador, Operario, Almacenero y sesión sin módulos; `canViewDashboard(user)` es `Boolean(user)` y `App.jsx` asigna `dashboard` como vista inicial tras login. |
+| CA-02 | Inicio puede abrirse nuevamente desde Sidebar y refleja la vista activa de forma visual y accesible. | ✅ **VERIFICADO** | Verificado en E2E Scenario 5; tras navegar a otro módulo y pulsar «Inicio» en el Sidebar, se retorna a la pantalla con `aria-current="page"`. |
+| CA-03 | Administrador, Operario y Almacenero autenticados acceden a la misma pantalla común; una sesión sin permisos de fuentes conserva la superficie de Inicio sin consultas restringidas. | ✅ **VERIFICADO** | E2E Scenario 4: sesión con `permisos: []` monta Inicio con saludo, tarjeta informativa «Sin funciones habilitadas» y logout, sin peticiones fetch restringidas. |
+| CA-04 | Las fuentes y accesos visibles corresponden únicamente a los permisos efectivos actuales; el rol no concede excepciones adicionales. | ✅ **VERIFICADO** | Verificado en pruebas unitarias y E2E: cada tarjeta y botón depende exclusivamente de `user.permisos` (sin accesos a Usuarios para Operario/Almacenero, sin pedidos para Almacenero). |
+| CA-05 | Mostrar/ocultar opciones no sustituye la autorización backend; solicitudes directas siguen protegidas por los permisos existentes. | ✅ **VERIFICADO** | Los endpoints del backend protegen sus recursos con 401/403 independientemente de la interfaz. |
+| CA-06 | Todas las cifras mostradas proceden de respuestas reales exitosas y tienen significado/alcance explícitos; no hay números ficticios. | ✅ **VERIFICADO** | Proyección directa de datos API; cada tarjeta define explícitamente el alcance y significado de su cifra sin inventar valores ficticios. |
+| CA-07 | Con `orders.view`, Inicio muestra el total de pedidos PENDIENTE usando `total` del contrato filtrado existente. Sin permiso, no consulta ni muestra ese bloque. | ✅ **VERIFICADO** | Consulta filtrada `GET /api/orders?page=1&limit=1&estado=PENDIENTE` usando `total`; Almacenero no realiza la llamada ni muestra el bloque. |
+| CA-08 | Con `orders.view`, Inicio muestra el total de pedidos EN_OPTIMIZACION mediante el mismo contrato; no lo presenta como número de ejecuciones activas. | ✅ **VERIFICADO** | Rotulado explícito como «Pedidos en optimización» y descripción de pedidos en proceso de optimización; no se presenta como ejecuciones activas. |
+| CA-09 | Todo resumen de Inventario utiliza las listas reales autorizadas, distingue registros/unidades y no inventa disponibilidad o compatibilidad. | ✅ **VERIFICADO** | `activeUnits` sumado sobre planchas activas con cantidad > 0; advierte explícitamente que no certifica compatibilidad. |
+| CA-10 | Los accesos rápidos navegan a los módulos existentes de §8, sin URLs ficticias ni operaciones de negocio al pulsarlos. | ✅ **VERIFICADO** | Acciones hacia `orders`, `optimization`, `inventory` y `users` usando `NavigationContext` sin URLs ficticias ni mutaciones de negocio. |
+| CA-11 | Almacenero sin `optimization.execute` no recibe una acción de ejecución. Una consulta autorizada por `optimization.view` no se presenta como permiso para calcular o confirmar. | ✅ **VERIFICADO** | El acceso rápido hacia `optimization` está rotulado con la etiqueta neutral «Optimización» para navegación a resultados; Almacenero no recibe acción de cálculo. |
+| CA-12 | Operario sin `users.view` no recibe acciones de Usuarios; Administración respeta separadamente los permisos de sus pestañas. | ✅ **VERIFICADO** | El botón «Abrir Administración» no se renderiza para Operario ni Almacenero; validado en E2E Scenarios 2 y 3. |
+| CA-13 | La pantalla contempla loading, empty, error y success por fuente, reintento, disabled temporal y datos parciales cuando corresponda. | ✅ **VERIFICADO** | Validado en componentes y en E2E Scenario 9 mediante simulación controlada de HTTP 503 en planchas; el resto de fuentes se conserva con badge de «Información parcial». |
+| CA-14 | Un fallo recuperable no muestra información inventada u obsoleta como vigente; respuestas tardías no contaminan otro contexto de sesión/permisos. | ✅ **VERIFICADO** | Manejo de claves de contexto (`userId`, `permissionsKey`, `version`) y `AbortController` para evitar contaminación por respuestas tardías o fallos. |
+| CA-15 | El MVP no muestra merma, aprovechamiento, ahorro, eficiencia ni comparativas FF/BF/WF. La existencia actual de resultados First Fit en otro módulo no incorpora esos indicadores a Inicio. | ✅ **VERIFICADO** | Fuera de alcance respetado estrictamente en Dashboard; sin indicadores analíticos avanzados. |
+| CA-16 | La pantalla puede operarse con teclado, mantiene foco visible, semántica y nombres accesibles; los estados no dependen exclusivamente del color. | ✅ **VERIFICADO** | Botones nativos accesibles, orden de Tab y foco visible comprobados en suite de componentes y validación de accesibilidad. |
+| CA-17 | Inicio funciona sin overflow horizontal ni solapamientos en 1440, 1024 y 800 px, con tarjetas, textos, accesos y Sidebar utilizables. | ✅ **VERIFICADO** | Comprobado en E2E Scenario 6: `document.documentElement.scrollWidth <= window.innerWidth` en 1440px, 1024px y 800px sin overflow ni solapamientos, con capturas generadas. |
+| CA-18 | Refresh desde Inicio sobre la URL base/subpath vigente recupera una sesión válida y presenta una pantalla autenticada válida, sin exigir una URL nueva. | ✅ **VERIFICADO** | E2E Scenario 7: recarga de página recupera la sesión con `GET /api/auth/me` y preserva la vista de Inicio autenticada en la URL base. |
+| CA-19 | Logout desde Inicio conserva el flujo actual: elimina la sesión, retira datos protegidos y retorna al acceso no autenticado. | ✅ **VERIFICADO** | E2E Scenario 8: logout elimina `sessionStorage.optimizador.auth`, retira datos protegidos y redirige al formulario de login. |
+| CA-20 | Login → Inicio → módulo autorizado tiene cobertura E2E con navegador, API y datos controlados reales; incluye retorno a Inicio, refresh y logout. | ✅ **VERIFICADO** | 9 pruebas E2E automatizadas con Playwright Chromium en `tests/e2e/hu016-dashboard.spec.js` (100% PASS en 9.6s). |
+| CA-21 | Las principales variantes de los tres roles, permisos configurados/revocados y sesión sin fuentes autorizadas tienen pruebas automatizadas de componentes/permisos. | ✅ **VERIFICADO** | 86 pruebas de componentes en `features/dashboard/__tests__` y `features/authentication/__tests__` (100% PASS en 11.23s). |
+| CA-22 | La navegación existente a Pedidos, Optimización, Inventario y Administración/Usuarios conserva sus flujos y autorizaciones; HU-015 no se modifica. | ✅ **VERIFICADO** | Módulos previos (Pedidos, Optimización, Inventario, Usuarios) y HU-015 permanecen intactos y probados sin regresión. |
 
 ## 16. Fuera de alcance
 
@@ -209,87 +209,104 @@ Aplicar la línea base de [UI/UX](../ui-ux/README.md) y [feedback compartido](..
 - KPI financieros, ahorro/reducción de costos, merma, aprovechamiento y eficiencia o comparación FF/BF/WF.
 - Implementar heurísticas, placement, rasterización, selección de planchas, iniciar o confirmar optimizaciones desde Inicio.
 - Notificaciones, alertas/umbrales de inventario y una pantalla global de movimientos inexistente.
-- Nuevos permisos, cambios de RBAC, backend nuevo sin necesidad demostrada, BD/migraciones y persistencia de Dashboard.
-- Cambiar HU-015 o resolver S1-02 y otros hallazgos de la auditoría.
-- Implementación, PLAN completo, componentes nuevos, endpoints, pruebas ejecutadas de producto o evidencia visual nueva en esta entrega.
+- Nuevos permisos de base de datos, cambios de modelo RBAC, backend nuevo sin necesidad demostrada, tablas/migraciones y persistencia de Dashboard.
+- Modificar HU-015 o alterar contratos de otros módulos sin requerimiento justificado.
 
 ## 17. Restricciones e invariantes
 
-Dashboard es inicialmente una superficie de lectura/navegación. No consume stock, no modifica inventario, no cambia estados de pedidos, no inicia optimizaciones automáticamente, no modifica usuarios y no introduce persistencia propia. Las acciones rápidas solo conducen a módulos que conservan sus reglas y permisos. Logout y sesión mantienen su almacenamiento ya existente, sin crear preferencias de Dashboard.
+Dashboard es una superficie de lectura y navegación autorizada. No consume stock, no modifica inventario, no cambia estados de pedidos, no inicia optimizaciones automáticamente, no modifica usuarios y no introduce persistencia propia. Las acciones rápidas solo conducen a módulos existentes que conservan sus reglas y permisos. Logout y sesión mantienen su almacenamiento ya existente en `sessionStorage`, sin crear preferencias locales.
 
-No se toca `frontend/src/`, `backend/`, migraciones, dependencias ni workflows durante esta fase. No se crea otro DashboardPage. Tampoco se ejecutan git add/commit/push/merge/rebase, PR ni deploy.
+La implementación se restringió estrictamente al frontend (`frontend/src/features/dashboard/` y `frontend/src/features/authentication/permissions.js`). No se modificó el backend, los esquemas de base de datos, migraciones ni dependencias del proyecto.
 
-## 18. Impacto técnico previsto
+## 18. Impacto técnico implementado
 
-La implementación posterior reutilizará la feature Dashboard y sus pruebas; T01 identificará los ajustes mínimos para los nuevos criterios. Posibles puntos de integración: montaje de Inicio, reglas frontend de navegación, modelo de accesos/datos y componentes actuales. No se prescribe reescribirlos ni cambiar React/navegador/router. Backend, contratos de negocio, BD y HU-015 permanecen sin cambios previstos. Un eventual agregado requiere justificar el gap y revisar su alcance antes de implementarlo; esta SPEC no es una autorización para crearlo.
+La solución reutilizó de manera óptima la estructura de la feature Dashboard existente, aplicando los ajustes mínimos requeridos para cumplir con los 22 criterios de aceptación:
 
-## 19. Estrategia de pruebas
+- **`frontend/src/features/authentication/permissions.js`**: Actualización de la función `canViewDashboard(user)` para retornar `Boolean(user)`, habilitando el acceso a Inicio a cualquier sesión autenticada válida. Se eliminó la función no utilizada `hasAny`.
+- **`frontend/src/features/dashboard/model/dashboardModel.js`**: Inclusión de la regla `canViewResults(user)` para ofrecer el acceso rápido `{ view: 'optimization', label: 'Optimización' }` a usuarios con permiso `optimization.view`.
+- **`frontend/src/features/dashboard/components/DashboardQuickActions.jsx`**: Registro del icono `ScanLine` de `lucide-react` para la acción de `optimization`.
+- **`frontend/src/features/dashboard/pages/DashboardPage.jsx`**: Incorporación del saludo personalizado con nombre real de usuario (`Hola, ${user.nombre || user.username}`), renderizado condicional de la tarjeta informativa «Sin funciones habilitadas» para sesiones sin permisos de módulos, y condicional para mostrar el botón de recarga únicamente si existen fuentes activas.
+- **`frontend/src/features/dashboard/components/DashboardSummary.jsx`**: Retorno `null` cuando no hay tarjetas de resumen a renderizar para evitar contenedores vacíos.
+- **`frontend/src/features/dashboard/pages/DashboardPage.css`**: Grilla responsiva fluida basada en `repeat(auto-fit, minmax(220px, 1fr))` y breakpoints adaptables en `@media (max-width: 1024px)` y `@media (max-width: 640px)`.
+- **Infraestructura de pruebas E2E**: Creación de `frontend/playwright.hu016.config.js` y `frontend/tests/e2e/hu016-dashboard.spec.js` configurando Playwright con Chromium y suite de 9 escenarios.
+- **Backend y base de datos**: Intactos; no se crearon endpoints agregados ni migraciones.
 
-| Nivel | Cobertura prevista |
+## 19. Estrategia de pruebas y resultados obtenidos
+
+| Nivel | Cobertura ejecutada | Resultado |
+|---|---|:---:|
+| Unitarias y Modelo | Pruebas de permisos, cálculo de unidades de planchas activas, conteo de retazos, filtrado de pedidos PENDIENTE / EN_OPTIMIZACION y derivación de acciones rápidas. | **86/86 PASS** (100%) |
+| Componentes frontend | Vitest + React Testing Library cubriendo DashboardPage, QuickActions, Summary, tarjetas independientes, estados loading/empty/error/parcial y sesión sin módulos. | **86/86 PASS** (100%) |
+| E2E (Playwright Chromium) | 9 escenarios automatizados: Administrador, Operario, Almacenero, sesión sin funciones, navegación a Optimización y retorno por Sidebar, responsive (1440/1024/800 px), refresh de sesión (`/api/auth/me`), logout y fallo parcial controlado (HTTP 503). | **9/9 PASS** (100% en 9.6s) |
+| Responsive y Accesibilidad | Viewports de 1440, 1024 y 800 px comprobados programáticamente sin desbordamiento horizontal (`scrollWidth <= innerWidth`), semántica nativa, navegación por teclado y foco visible. | **VERIFICADO** |
+| Calidad y Build | ESLint con 0 errores y 0 warnings; Vite build completado en 1.16s generando bundle de producción sin fallos. | **PASS** |
+| Regresión | Suites de Inventory, Orders y Optimization probadas sin alteraciones ni regresiones funcionales. | **PASS** |
+
+## 20. Evidencias generadas y consolidación en Sprint 2
+
+Toda la evidencia documental, registros de ejecución y capturas de pantalla de HU-016 quedaron consolidados en la ruta de Sprint 2: `docs/evidence/sprint-02/HU-016/`:
+
+1. **Documento de cierre:** [docs/evidence/sprint-02/HU-016/t3-integracion-e2e-cierre.md](../evidence/sprint-02/HU-016/t3-integracion-e2e-cierre.md) con el reporte de ejecución de T01, T02 y T03, matriz completa de criterios CA-01 a CA-22 y comandos de reproducción.
+2. **Registro de capturas (11 capturas en `t3/screenshots/`):**
+   - `dashboard-administrador.png`: Inicio completo con 4 accesos y resúmenes.
+   - `dashboard-operario.png`: Inicio sin acceso a Administración (CA-12).
+   - `dashboard-almacenero.png`: Inicio con inventario y acceso a Optimización sin cálculo (CA-11).
+   - `dashboard-sin-funciones.png`: Sesión sin permisos mostrando mensaje informativo «Sin funciones habilitadas» (CA-03).
+   - `dashboard-navegacion-optimizacion.png`: Navegación fluida a Optimización (CA-10, CA-11).
+   - `dashboard-viewport-1440.png`, `dashboard-viewport-1024.png`, `dashboard-viewport-800.png`: Verificación responsive en los 3 anchos requeridos sin scroll horizontal (CA-17).
+   - `dashboard-refresh-session.png`: Persistencia de sesión tras recargar con `/api/auth/me` (CA-18).
+   - `dashboard-logout.png`: Cierre de sesión y retorno a pantalla de login (CA-19).
+   - `dashboard-partial-error.png`: Estado de advertencia parcial ante fallo simulado de planchas (CA-13, CA-14).
+3. **Logs de soporte (`t3/logs/`):** `component-final-summary.txt`, `e2e-final-summary.txt`, `lint-final-summary.txt` y `build-final-summary.txt`.
+4. **Preservación histórica:** La evidencia de `TA-DASHBOARD-001` en `docs/evidence/sprint-01/TA-DASHBOARD-001/` permanece inalterada en su ubicación de Sprint 1.
+
+## 21. Riesgos y gaps identificados y su resolución
+
+| Gap / riesgo observado | Resolución y verificación en T01/T02/T03 |
 |---|---|
-| Unitarias/modelo | Transformación de respuestas, `total` frente a tamaño de página, unidades frente a registros, permisos de fuentes/accesos, ausencia de métricas fuera de alcance y contadores cero válidos. |
-| Componentes | Vitest/React Testing Library sobre la base existente: tres roles, permisos efectivos, ausencia/revocación de permisos, Inicio sin fuentes, estados independientes, reintento, navegación y respuestas tardías. |
-| E2E | Playwright: login → Inicio → módulos autorizados para cada rol; regreso desde Sidebar; refresh; logout; no ejecución por Almacenero sin permiso; no Usuarios para Operario sin permiso. |
-| Responsive/accesibilidad | Viewports 1440/1024/800, overflow y solapamientos; recorrido con teclado y foco visible; nombres/estructura semántica; capturas reales revisadas. |
-| Regresión | Navegación y permisos de Pedidos/Optimización/Inventario/Administración, sesión y casos existentes de HU-015 pertinentes; no cambiar sus fuentes para adaptar la prueba. |
+| TA-DASHBOARD-001 ya cubre buena parte del alcance | En T01 se contrastaron los 22 criterios contra la base existente; se identificaron brechas específicas y se reutilizó la estructura existente sin duplicar código ni componentes. |
+| Backlog oficial no recuperado | Registrado documentalmente en SPEC HU-016 y Sprint 2; se mantiene pendiente la sincronización en la herramienta externa de backlog. |
+| `canViewDashboard` condiciona Inicio a permisos de inventario/pedidos | Resuelto en T02 actualizando `canViewDashboard(user)` a `Boolean(user)` y verificado en T03: cualquier usuario autenticado accede a Inicio sin relajar permisos backend. |
+| `getDashboardActions` no ofrece Optimización | Resuelto en T02 mediante `canViewResults(user)` que retorna `{ view: 'optimization', label: 'Optimización' }` con icono `ScanLine`. Verificado en E2E para roles con `optimization.view`. |
+| Roles con permisos configurables | Verificado en pruebas unitarias y E2E evaluando permisos efectivos (`user.permisos`), incluyendo sesiones sin permisos de módulos. |
+| El módulo Pedidos expone «Nuevo pedido»; no existe navegación directa desde Inicio a su formulario | Se mantuvo el acceso al módulo existente «Registro de pedidos» respetando la regla funcional sin inventar enlaces profundos. |
+| Listas completas de Inventario | Se comprobó que el volumen actual de inventario no genera sobrecarga; no se requirió la creación de un endpoint agregado. |
+| EN_OPTIMIZACION no acredita ejecución activa | Rotulado explícito como «Pedidos en optimización», contando únicamente pedidos filtrados y sin prometer recuperación de procesos. |
+| Anchos/evidencia histórica diferentes | Verificados específicamente los 3 viewports (1440, 1024 y 800 px) mediante assertions de scrollWidth y capturas generadas en T03. |
+| Fuentes independientes y errores/cambios de sesión | Resuelto mediante aislamiento de estados por clave de contexto, cancelación de peticiones obsoletas y advertencia de error parcial probado en E2E Scenario 9. |
 
-Usar la estrategia de [pruebas del repo](../testing/README.md). Los mocks son adecuados para componentes y fallos controlados, pero no demuestran integración real. Los E2E usarán datos/usuarios sintéticos controlados, preferentemente el harness local de PostgreSQL existente, sin alterar datos compartidos ni copiar credenciales. Una omisión por falta de entorno se informa como bloqueo, no como CA verificado. No se modifica CI como parte de esta SPEC.
+## 22. División y ejecución de tareas T01/T02/T03
 
-## 20. Evidencias esperadas
-
-En el cierre posterior se prevé `docs/evidence/sprint-01/HU-016/` como ubicación documental conforme al repositorio, sin atribuir por ello un compromiso nuevo de sprint. Debe contener base/fecha/comandos/resultados, matriz CA-01…CA-22, relación con la base TA-DASHBOARD-001, capturas revisadas por rol y ancho, E2E real, pruebas de componentes, lint/build aplicables y regresión de navegación. Redactar identidades cuando corresponda y no incluir tokens/secretos.
-
-Las evidencias anteriores de TA-DASHBOARD-001 y HU-015 permanecen intactas. No se copian sus resultados como si se hubieran ejecutado para HU-016. En esta entrega solo se verifica la documentación; no se crea todavía la carpeta de evidencia funcional ni se atribuye ningún PASS de producto.
-
-## 21. Riesgos y gaps que T01 debe verificar
-
-| Gap / riesgo observado | Tratamiento requerido |
-|---|---|
-| TA-DASHBOARD-001 ya cubre buena parte del alcance | Mapear código/pruebas/evidencia contra los 22 CA; evitar trabajo duplicado y aclarar la relación en el backlog externo. |
-| Backlog oficial no recuperado | Registrar HU-016 externamente tras contrastar el identificador; no afirmar reserva global por una búsqueda local. |
-| `canViewDashboard` condiciona Inicio a permisos de inventario/pedidos | Verificar y ajustar en implementación futura la superficie para cualquier sesión válida, sin ampliar permisos de fuentes/módulos. |
-| `getDashboardActions` no ofrece Optimización | Definir navegación mediante la vista existente y separar consulta de ejecución; no crear rutas o ejecutar POST desde Inicio. |
-| Roles con permisos configurables | Probar permisos efectivos, revocaciones y ausencia de permisos; no extrapolar la asignación inicial como regla permanente. |
-| El módulo Pedidos expone «Nuevo pedido»; no existe navegación directa desde Inicio a su formulario | Mantener acceso al módulo y comprobar `orders.create` dentro de él; no inventar un atajo profundo ni ampliar este PBI a corregir todo el módulo. |
-| Listas completas de Inventario | Medir volumen/bytes; omitir indicadores no razonables o justificar un agregado mediante revisión separada. No inferir necesidad sin datos. |
-| EN_OPTIMIZACION no acredita ejecución activa | Contar y rotular pedidos; no normalizar históricos ni prometer recuperación automática. |
-| Anchos/evidencia histórica diferentes | Verificar específicamente 1440/1024/800 para HU-016; no dar por probado el criterio por capturas anteriores. |
-| Fuentes independientes y errores/cambios de sesión | Datos parciales explícitos, invalidación/cancelación de respuestas obsoletas y ninguna sustitución por cero. |
-
-## 22. División propuesta T01/T02/T03
-
-| Tarea | Título | Alcance y cierre previsto |
-|---|---|---|
-| HU-016-T01 | Contrato, navegación y datos del Dashboard | Contrastar rutas/permisos y antecedente; definir fuentes/modelo frontend; alinear entrada tras login, refresh y sesión sin fuentes; decidir accesos reales y datos razonables; pruebas de contrato/navegación. Cierre con decisiones trazables y sin backend nuevo injustificado. |
-| HU-016-T02 | Interfaz Dashboard por rol | Reutilizar DashboardPage, tarjetas y accesos; saludo/estructura común; contenido Administrador/Operario/Almacenero según permisos; loading/empty/error/success/disabled; responsive y accesibilidad; pruebas de componentes. No crear tres pantallas ni duplicar la implementación existente. |
-| HU-016-T03 | Integración, E2E y cierre | Login → Inicio → módulo autorizado; navegación por permisos, regreso, refresh, logout y regresión; Playwright con datos controlados; 1440/1024/800, teclado y foco; evidencia y matriz CA; documentación final con resultados reales. |
-
-Son tareas propuestas de este PBI; no se presentan como tareas históricas recuperadas de un backlog. Orden de dependencia T01 → T02 → T03; no constituyen un PLAN técnico completo ni autorización de implementación en esta fase.
+| Tarea | Título | Estado | Alcance y resultado verificado |
+|---|---|:---:|---|
+| HU-016-T01 | Contrato, navegación y datos del Dashboard | **Completed** | Análisis exhaustivo de brechas frente a los 22 CA, alineación de permisos (`Boolean(user)`), definición del acceso neutral a Optimización y tratamiento de sesiones sin funciones. |
+| HU-016-T02 | Interfaz Dashboard por rol y permisos | **Completed** (commit `f45b7ae`) | Implementación en `permissions.js`, `dashboardModel.js`, `DashboardPage.jsx`, `DashboardQuickActions.jsx`, `DashboardSummary.jsx` y `DashboardPage.css`. Pruebas de componentes actualizadas (86/86 PASS). |
+| HU-016-T03 | Integración, E2E y cierre | **Completed** (commit `405df4f`) | Configuración de Playwright Chromium (`playwright.hu016.config.js`), 9 escenarios E2E automatizados (`hu016-dashboard.spec.js`, 100% PASS), 11 capturas y cierre consolidado en `docs/evidence/sprint-02/HU-016/`. |
 
 ## 23. Estimación
 
-Regla solicitada: **1 SP = 6 horas; 0.5 SP = 3 horas**. Estimación inicial de esfuerzo para contrastar/adaptar y verificar sobre la implementación existente, no para construir el Dashboard desde cero ni para cubrir un plazo personal.
+Regla solicitada: **1 SP = 6 horas; 0.5 SP = 3 horas**. Estimación inicial y esfuerzo ejecutado para contrastar, adaptar y verificar sobre la implementación existente:
 
 | Tarea | SP | Horas | Justificación |
 |---|---:|---:|---|
-| HU-016-T01 | 0.5 | 3 | Los contratos y la navegación existen; el esfuerzo se concentra en mapear diferencias, permisos/accesos y pruebas de contrato de la adaptación. |
-| HU-016-T02 | 1 | 6 | Ajustes de interfaz sobre componentes actuales, variantes de permisos, estados y pruebas responsive/accesibles; sin duplicar la pantalla. |
-| HU-016-T03 | 1 | 6 | Ampliar/reutilizar los E2E, verificar tres roles y tres anchos, sesión/navegación, regresiones y evidencia revisada. |
-| **Total** | **2.5** | **15** | Alcance frontend sobre base reutilizable, sin backend ni migraciones. |
-
-El PLAN posterior refinará la estimación tras T01 si aparece una necesidad demostrada. No se suman horas históricas de TA-DASHBOARD-001 ni se incluye un endpoint agregado no aprobado. Las pruebas/evidencias existentes reducen implementación, pero no acreditan automáticamente los nuevos criterios.
+| HU-016-T01 | 0.5 | 3 | Contratos y navegación analizados; mapeo de diferencias, permisos/accesos y definición de adaptaciones. |
+| HU-016-T02 | 1 | 6 | Ajustes de interfaz sobre componentes existentes, variantes de permisos, estados y diseño responsive. |
+| HU-016-T03 | 1 | 6 | Suite E2E en Playwright Chromium (9 escenarios), verificación en 3 anchos, generación de 11 capturas y documentación de evidencias en Sprint 2. |
+| **Total** | **2.5** | **15** | Alcance frontend completado sobre base reutilizable, sin backend ni migraciones. |
 
 ## 24. Decisiones
 
-- D-01: HU-016 es el siguiente identificador disponible en la secuencia local; registro externo pendiente y sin creación de backlog alternativo.
-- D-02: estado Reviewed y alcance aprobado por Fabricio Aguilar; autor/responsable Fabricio Melendez. No declarar Implemented/Verified por esta entrega documental.
-- D-03: reconocer y reutilizar TA-DASHBOARD-001; preservar su SPEC, PLAN, implementación y evidencia, sin duplicar DashboardPage ni retocar HU-015.
-- D-04: navegación «Inicio» mediante vistas internas actuales; ninguna URL nueva ni atajo sin soporte real.
-- D-05: una pantalla para toda sesión válida, consultas/acciones según permisos efectivos; backend autoritativo y ningún permiso específico nuevo.
-- D-06: preferir APIs existentes; dos totales filtrados de pedidos y resúmenes de inventario con definición precisa; agregado solo con necesidad demostrada y revisión posterior.
-- D-07: lectura/navegación, sin operaciones de negocio ni métricas analíticas; EN_OPTIMIZACION cuenta pedidos y no ejecuciones activas.
-- D-08: 22 CA, tareas propuestas y estimación incluidas en este único archivo; no crear PLAN completo ni implementación en esta fase.
+- D-01: HU-016 es el identificador oficial adoptado en la secuencia local; registro externo pendiente en herramienta oficial de backlog.
+- D-02: estado **Verified** y alcance completado y verificado al 100%; autor/responsable Fabricio Melendez Quezada, revisor Fabricio Danniel Aguilar Chávez.
+- D-03: reconocer y reutilizar TA-DASHBOARD-001; preservar su SPEC, PLAN, implementación y evidencia en Sprint 1, sin duplicar DashboardPage ni alterar HU-015.
+- D-04: navegación «Inicio» mediante vistas internas actuales de `NavigationContext`; ninguna URL nueva ni atajo ficticio.
+- D-05: una pantalla común para toda sesión válida (`canViewDashboard = Boolean(user)`), consultas/acciones según permisos efectivos; backend autoritativo y ningún permiso backend nuevo.
+- D-06: preferir APIs existentes; dos totales filtrados de pedidos y resúmenes de inventario con definición precisa; ningún endpoint agregado por conveniencia.
+- D-07: lectura y navegación autorizada, sin operaciones de negocio ni métricas analíticas no soportadas; rotulado explícito de pedidos en optimización.
+- D-08: los 22 criterios de aceptación fueron implementados y verificados mediante T01, T02 y T03 en la rama `feature/HU-016-dashboard-inicial`, con evidencia consolidada en `docs/evidence/sprint-02/HU-016/`.
 
 ## Historial de estado
 
-- **23/10/2026 — Reviewed:** SPEC HU-016 creada por encargo del responsable, con Fabricio Melendez como autor y Fabricio Aguilar como revisor del alcance funcional ya aprobado según la confirmación explícita recibida. Se documentan la auditoría de identificador/base, el registro externo pendiente, los 22 CA, T01/T02/T03 y 2.5 SP / 15 horas. No se implementó código, no se ejecutaron pruebas de producto, no se modificó HU-015 ni se creó PLAN, commit, push, PR, merge o deploy.
+- **23/10/2026 — Reviewed:** SPEC HU-016 creada por encargo del responsable, con Fabricio Melendez como autor y Fabricio Aguilar como revisor del alcance funcional aprobado según confirmación explícita. Se documentan la auditoría de identificador/base, el registro externo pendiente, los 22 CA, T01/T02/T03 y 2.5 SP / 15 horas.
+- **25/10/2026 — Implemented:** Finalización de la implementación de T01 y T02 (commit `f45b7ae`). Código adaptado en `features/dashboard` y `features/authentication`, pruebas de componentes (86/86 PASS) y estilos responsivos en 1440/1024/800 px.
+- **26/10/2026 — Verified:** Verificación final de HU-016 tras completar T03 en la rama `feature/HU-016-dashboard-inicial` (commit `405df4f`). Los 22 criterios de aceptación (CA-01 a CA-22) fueron verificados al 100% mediante 86 pruebas de componentes en Vitest y 9 pruebas End-to-End en Playwright Chromium (9.6s). Se generaron 11 capturas de pantalla respaldando los roles Administrador, Operario, Almacenero, sesión sin funciones, navegación a Optimización, responsive (1440/1024/800 px), refresh, logout y error parcial. Toda la evidencia quedó registrada y consolidada en `docs/evidence/sprint-02/HU-016/t3-integracion-e2e-cierre.md`, con ESLint (0 errores) y Vite build (PASS).

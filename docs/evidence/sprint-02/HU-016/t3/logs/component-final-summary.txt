@@ -1,0 +1,14 @@
+Command: npm run test:component -- src/features/dashboard src/features/authentication
+RUN v5.0.3 frontend
+
+✓ src/features/authentication/__tests__/permissions.test.jsx (11 tests) 8ms
+✓ src/features/dashboard/__tests__/dashboardModel.test.jsx (24 tests) 14ms
+✓ src/features/dashboard/__tests__/dashboardApi.test.jsx (12 tests) 36ms
+✓ src/features/dashboard/__tests__/useDashboard.test.jsx (9 tests) 725ms
+✓ src/features/dashboard/__tests__/DashboardPage.test.jsx (18 tests) 4068ms
+✓ src/features/dashboard/__tests__/DashboardNavigation.test.jsx (12 tests) 5756ms
+
+Test Files  6 passed (6)
+Tests       86 passed (86)
+Duration    11.23s
+Exit code   0

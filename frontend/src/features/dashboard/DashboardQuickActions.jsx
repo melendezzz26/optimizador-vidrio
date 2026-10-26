@@ -1,8 +1,8 @@
 import { useContext, useId } from 'react';
-import { Layers3, PackagePlus, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Layers3, PackagePlus, ScanLine, ShieldCheck, ArrowRight } from 'lucide-react';
 import { NavigationContext } from '../../shared/components/NavigationContext';
 
-const icons = { inventory: Layers3, orders: PackagePlus, users: ShieldCheck };
+const icons = { inventory: Layers3, orders: PackagePlus, optimization: ScanLine, users: ShieldCheck };
 
 export function DashboardQuickActions({ actions }) {
   const { onNavigate, availableViews } = useContext(NavigationContext);
