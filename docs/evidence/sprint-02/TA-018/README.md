@@ -70,3 +70,10 @@ código, documentación y datos sintéticos, permitió el push.
 git diff --check aprobado después de normalizar finales de archivos de documentación.
 No PR, no rebase, no merge a integration. Simulación BF sin escrituras de inventario.
 El HEAD definitivo y estado limpio se comprueban después del commit de cierre.
+
+## Actualización posterior: regla de 5°
+
+La recomendación experimental anterior de 45° no es la configuración operativa.
+Sprint 2 establece 5° para FF/BF/WF. Ver docs/reviews/S2-angular-configuration.md
+y docs/evidence/sprint-02/TA-016/angular-5.md para nuevos resultados y pruebas.
+Los conteos anteriores se conservan como evidencia del checkpoint original.

@@ -26,3 +26,11 @@ HTTP/lifecycle durable permanece con contrato FF vigente, igual que WF integrado
 Aceptación: normal, rotación necesaria, no colocable, desempate, repetición,
 prioridad retazo, fallback plancha, capacidad posterior con separación,
 regresión FF, métricas y snapshot de BD intacto.
+
+## Granularidad operacional Sprint 2: 5°
+
+La primera orientación factible se determina por 0°,5°,10°,...,355°, después
+de la deduplicación válida del componente TA-016 compartido con FF y WF.
+No cambia MIN(remaining_free_cells_after_placement), tuple de desempate,
+primera posición por fuente ni prioridad retazo. No se optimiza el ángulo
+dentro de la fuente. La simulación conserva inventario intacto también a 5°.

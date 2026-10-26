@@ -5,6 +5,7 @@ import sys
 from dataclasses import asdict
 from decimal import Decimal as D
 from pathlib import Path
+from statistics import median
 from time import perf_counter
 from unittest.mock import patch
 
@@ -73,7 +74,7 @@ def measure(step):
         assert repeated == result
     measured, _ = calculate_metrics(result, D(1), D(1))
     return dict(angle_step=step, **counts, placed=result.placed_units,
-                metrics=asdict(measured.metrics), seconds=times,
+                metrics=asdict(measured.metrics), seconds=times, median_seconds=median(times),
                 placements=[dict(piece=p.piece.identity, stock=p.stock.identity,
                                  x=p.x_mm, y=p.y_mm, angle=p.rotation_deg) for p in result.placements])
 
@@ -84,5 +85,5 @@ if __name__ == "__main__":
     output.write_text(json.dumps(dict(python=platform.python_version(), platform=platform.platform(),
         algorithm="FF", resolution_mm=1, margin_mm=0, separation_mm=0,
         minimum_residual_mm=[1, 1], memory="not measured: no existing instrumentation",
-        runs=[measure(step) for step in (90, 45, 15)]), default=str, indent=2) + "\n", encoding="utf-8")
+        runs=[measure(step) for step in (90, 45, 15, 5)]), default=str, indent=2) + "\n", encoding="utf-8")
     print(output)

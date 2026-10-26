@@ -1,39 +1,51 @@
-# SP-003 — comparación angular POST-PR58
+﻿# SP-003 — comparación angular y contrato operativo de Sprint 2
 
-Responsable: Andro Quispe. Base: 783aac8. Algoritmo fijo: FF.
-Reproducción desde raíz:
+Responsable: Andro Quispe. Revisión: 2026-10-26.
+Base original POST-PR58 783aac8; nueva medición después de integrar 6f2a159.
+Algoritmo fijo: FF. Desde raíz:
 `.venv/Scripts/python experiments/raster/scripts/sp003_angles.py`.
-Entrada completa versionada en instance() del script; resultados en
-../evidence/sprint-02/SP-003/results.json.
 
-Se eligen 90° (rectángulos/cuarto de vuelta), 45° (polígono diagonal),
-15° (exploración más fina, incluye 45°). Misma instancia de tres piezas,
-mismo retazo 10×4 y plancha 12×12, resolución 1 mm, margen/separación 0,
-orden y umbral residual 1×1 mm. Solo cambia angular_step_deg.
+Los resultados originales 90/45/15 se preservan íntegros en
+docs/evidence/sprint-02/SP-003/results-historical-90-45-15.json.
+results.json contiene una nueva ejecución completa 90/45/15/5, cinco tiempos
+por paso y median_seconds. La función instance() permanece idéntica.
+Tres piezas (incluido polígono diagonal), retazo 10×4, plancha 12×12,
+resolución 1 mm, margen/separación 0, residual mínimo 1×1 mm y mismo orden.
+Solo cambia angular_step_deg.
 
-| Paso | Orientaciones preparadas | Búsquedas de posición | Candidatos factibles | Colocadas | Uso % | Merma mm² | Recuperable mm² | Mediana ms |
+90° cubre cuartos de vuelta; 45° permite alinear la pieza diagonal; 15° aumenta
+la exploración; 5° verifica la granularidad operacional acordada por el equipo.
+
+| Paso | Orientaciones preparadas | Búsquedas posición | Candidatos | Colocadas | Uso % | Merma mm² | Recuperable mm² | Mediana ms |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-|90|6|3|3|3|20.652|78|68|1.827|
-|45|12|9|3|3|20.652|16|130|3.449|
-|15|32|18|3|3|20.652|16|130|16.789|
+|90|6|3|3|3|20.652|78|68|1.671|
+|45|12|9|3|3|20.652|16|130|3.585|
+|15|32|18|3|3|20.652|16|130|11.514|
+|5|68|24|3|3|20.652|22|124|34.008|
 
-Orientaciones preparadas = suma por unidad después de deduplicar.
-Búsquedas = llamadas reales a first_position, excluye orientaciones rechazadas
-por bbox. Candidatos = yields consumidos por FF. No equivalen a todas las
-posiciones raster ni a todas las fuentes potenciales.
-Instrumentación local al experimento, retirada antes de medir cinco ejecuciones
-con cache fresca. Se comprueba igualdad de resultados en las cinco.
-Tiempo solo del optimizador, sin métricas ni instrumentación. Memoria no medida:
-la infraestructura no tenía telemetría de memoria. Python 3.11.15, Windows;
-datos temporales sujetos a variación del equipo, sin extrapolar a producción.
+Preparadas = suma por unidad después de deduplicar. A 5° se enumeran 72 ángulos
+por pieza antes de deduplicar; no confundir esa secuencia con 68 máscaras
+entregadas en total para las tres piezas. Búsquedas = llamadas a first_position,
+excluye rechazo bbox; candidatos = yields consumidos por FF, no todas las posiciones.
+Tiempo solo del optimizador, cinco ejecuciones con cache fresca sin instrumentación;
+se afirma igualdad de resultados en todas. Métricas fuera del cronómetro.
+Memoria no medida: no existe instrumentación de memoria en este experimento.
+Python 3.11.15, Windows; son mediciones locales pequeñas, no estimaciones industriales.
 
-45° permite que el polígono entre en el retazo a 135°; las otras piezas van a
-plancha. 90° usa plancha para el polígono y retazo para rectángulos.
-Se usa la misma superficie total (184 mm²), por eso el aprovechamiento no cambia,
-aunque mejora la superficie recuperable. Merma = material - piezas - recuperable.
-No confundir merma con todo el sobrante.
+## Resultado experimental
 
-Recomendación para esta instancia: 45°. 15° no aporta mejora y tarda más.
-No cambiar el valor global: una instancia sintética no demuestra óptimo universal.
-90° sigue siendo una base económica para piezas ortogonales; evaluar otras
-instancias industriales antes de una recomendación general.
+45° tuvo la mejor relación calidad/costo de esta instancia; 15° no mejoró la calidad.
+A 5° la mediana fue 2.954 veces la de 15° (+22.494 ms), preparó 36 orientaciones
+adicionales y realizó seis búsquedas más. Merma +6 mm² y recuperable -6 mm².
+El polígono entra a 130° en vez de 135°: la primera orientación factible cambia
+el patrón. Mayor resolución angular NO garantiza mejorar la heurística voraz.
+Aprovechamiento constante: piezas 38 mm² / material usado 184 mm².
+Merma = material - piezas - recuperable; no equivale a todo el sobrante.
+
+## Decisión de diseño
+
+Sprint 2 usa **5° para FF/BF/WF** por regla explícita del equipo.
+45° fue suficiente en este caso sintético, pero NO es la recomendación operativa.
+Se acepta mayor costo de exploración fina sin prometer mejora de calidad.
+No se busca el mejor ángulo dentro de una fuente: se mantiene primera orientación
+y primera posición factibles, deduplicación por máscara y retazo antes que plancha.
