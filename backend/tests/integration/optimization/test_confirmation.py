@@ -202,28 +202,41 @@ def test_nonconfirmable_runs_no_writes(session_factory,prepared,state):
     invariant(session_factory)
 
 
-def test_residual_created_from_oriented_contours_and_reproducible_free_cells(session_factory,prepared):
+@pytest.mark.parametrize('piece_height,sheet_height,angle,residual_y,residual_count', [
+    (2, 7, 90, 6, 1),
+    (1, 5, 70, 4, 2),
+])
+def test_residual_created_from_oriented_contours_and_reproducible_free_cells(
+        session_factory,prepared,piece_height,sheet_height,angle,residual_y,residual_count):
+    # Exercise both a forced quarter turn and the earlier feasible 70-degree
+    # contour introduced by the shared operational five-degree configuration.
     actor,ids,uow=prepared
     with session_factory() as s:
         p=s.scalar(select(Pieza).where(Pieza.id_pedido==ids[0]))
-        p.geometria={'type':'RECTANGULO','width_mm':3,'height_mm':1}
-        p.area_mm2=3
+        p.geometria={'type':'RECTANGULO','width_mm':3,'height_mm':piece_height}
+        p.area_mm2=3*piece_height
         sheet=s.get(Plancha,5)
-        sheet.ancho_mm,sheet.alto_mm=2,4
+        sheet.ancho_mm,sheet.alto_mm=2,sheet_height
         s.commit()
     run=calculate(session_factory,uow,ids[:1],actor)
-    assert all(p.rotation_deg==90 for p in run.result.placements)
+    assert run.result.problem.config.angular_step_deg==5
+    assert len(run.result.placements)==2
+    assert all(p.rotation_deg==angle for p in run.result.placements)
+    assert run.result.metrics.recoverable_remnant_mm2==2*residual_count
     receipt=ConfirmRun(uow).execute(run.optimization_id,actor)
-    new,=receipt.remnants_created
-    assert (new.x_mm,new.y_mm,new.exact_area_mm2)==(0,3,2)
-    assert new.geometry=={'type':'RECTANGULO','width_mm':2.0,'height_mm':1.0}
+    assert len(receipt.remnants_created)==residual_count
+    for new in receipt.remnants_created:
+        assert (new.x_mm,new.y_mm,new.exact_area_mm2)==(0,residual_y,2)
+        assert new.geometry=={'type':'RECTANGULO','width_mm':2.0,'height_mm':1.0}
     with session_factory() as s:
-        row=s.get(Retazo,new.remnant_id)
         execution=s.scalar(select(EjecucionOptimizacion))
-        assert row.estado and row.id_ejecucion_origen==execution.id_ejecucion
-        assert row.area_mm2==2 and row.id_tipo_vidrio==7 and row.espesor_mm==6
-        assert row.codigo.startswith('FF-') and len(row.codigo)<=40
-        assert execution.patron_resultado['confirmation']['receipt']['remnants_created'][0]['remnant_id']==new.remnant_id
+        persisted=execution.patron_resultado['confirmation']['receipt']['remnants_created']
+        assert [r['remnant_id'] for r in persisted]==[r.remnant_id for r in receipt.remnants_created]
+        for new in receipt.remnants_created:
+            row=s.get(Retazo,new.remnant_id)
+            assert row.estado and row.id_ejecucion_origen==execution.id_ejecucion
+            assert row.area_mm2==2 and row.id_tipo_vidrio==7 and row.espesor_mm==6
+            assert row.codigo.startswith('FF-') and len(row.codigo)<=40
     invariant(session_factory)
 
 

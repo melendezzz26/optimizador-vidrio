@@ -70,3 +70,18 @@ def test_five_degree_operational_configuration_reaches_preparation():
     uow.orders.lock_pending.return_value = [piece()]
     AcceptRun(lambda: uow).execute([1], 1)
     assert uow.runs.create.call_args.args[0].config.angular_step_deg == 5
+
+
+@pytest.mark.parametrize('optimizer', [FirstFitOptimizer, BestFitOptimizer, WorstFitOptimizer])
+def test_first_feasible_angle_is_70_not_90_for_pr64_geometry(optimizer):
+    # Original failing PostgreSQL fixture, also protected without a database.
+    cfg = OptimizationConfig(resolution_mm=1, margin_mm=0, separation_mm=0)
+    sources = [stock(5, width=2, height=4, physical=i) for i in (1, 2)]
+    result = optimizer().optimize(problem([piece(width=3, height=1, quantity=2)], sources, cfg))
+    assert result.complete
+    assert [p.rotation_deg for p in result.placements] == [70, 70]
+    assert [p.stock.physical_unit_index for p in result.placements] == [1, 2]
+    assert [(p.x_mm, p.y_mm) for p in result.placements] == [(0, 0), (0, 0)]
+    assert all(p.geometry == dict(type='POLIGONO_CONVEXO', vertices_mm=(
+        (0.939693, 0.0), (1.965753, 2.819078), (1.02606, 3.161098), (0.0, 0.34202),
+    )) for p in result.placements)
