@@ -7,7 +7,7 @@ de CI ni un umbral automático.
 
 Uso (desde backend/):
     python ../experiments/raster/scripts/ta037_load_benchmark.py            # escenarios cortos
-    python ../experiments/raster/scripts/ta037_load_benchmark.py --largos   # incluye casos de minutos
+    python ../experiments/raster/scripts/ta037_load_benchmark.py --paso5    # paso operativo de 5° (Sprint 2)
 
 Los tiempos dependen de la máquina: registrar CPU y versión de Python junto
 con los resultados.
@@ -113,5 +113,43 @@ def main(long_cases):
     print(f"{'3 ejecuciones simultáneas, tiempo total':62s} {(time.perf_counter() - started) * 1000:10.0f} ms")
 
 
+def distinct_pieces(sizes, *, step="5"):
+    """Varias piezas distintas (una unidad cada una) para medir la caché raster."""
+    config = OptimizationConfig(resolution_mm=Decimal(1), margin_mm=Decimal(0),
+                                separation_mm=Decimal(0), angular_step_deg=Decimal(step))
+    snapshots = [PieceSnapshot(quantity=1, unit=PieceUnit(
+        order_id=1, piece_id=i + 1, unit_index=1, glass_type_id=1, thickness_mm=Decimal(6),
+        geometry=rectangle(w, h), area_mm2=Decimal(w * h))) for i, (w, h) in enumerate(sizes)]
+    prepared = prepare_problem([1], snapshots, config)
+    stock = tuple(StockCandidate(source=MaterialSource.SHEET, material_id=1, physical_unit_index=i + 1,
+                                 glass_type_id=1, thickness_mm=Decimal(6), geometry=SHEET,
+                                 area_mm2=Decimal(2440 * 1830)) for i in range(len(sizes)))
+    return replace(prepared, groups=tuple(replace(g, stock_candidates=stock) for g in prepared.groups))
+
+
+def main_step5():
+    """Paso angular operativo de Sprint 2 (5°, PR #64): 72 orientaciones por pieza."""
+    print(f"Python {platform.python_version()} | {platform.machine()} | {platform.processor() or 'cpu n/d'}")
+    print("\n# First Fit a 5°, 1 mm, 10 planchas")
+    for units in (100, 150, 200):
+        timed(f"FF {units} rectángulos 300x200", lambda u=units: first_fit(problem(u, rectangle(300, 200), 10, step="5")))
+    for units in (100, 150):
+        timed(f"FF {units} polígonos de 128 vértices", lambda u=units: first_fit(problem(u, polygon(128), 10, step="5")))
+    timed("FF 200 polígonos de 8 vértices", lambda: first_fit(problem(200, polygon(8), 10, step="5")))
+    timed("FF 200 circunferencias r=150", lambda: first_fit(problem(
+        200, {"type": "CIRCUNFERENCIA", "radius_mm": 150}, 10, step="5")))
+
+    print("\n# Caché raster interna (64 MiB) a 5°: piezas distintas de ~1300x1000")
+    timed("FF 2 piezas distintas", lambda: first_fit(distinct_pieces([(1300, 1000), (1300, 1001)])))
+    timed("FF 3 piezas distintas", lambda: first_fit(distinct_pieces([(1300, 1000), (1300, 1001), (1300, 1002)])))
+
+    print("\n# Stock sin encaje a 5° (margen 500 mm): costo por par unidad x plancha")
+    timed("FF 5 unidades 1500x900 sin encaje x 10 planchas", lambda: first_fit(
+        problem(5, rectangle(1500, 900), 10, margin="500", step="5")))
+
+
 if __name__ == "__main__":
-    main("--largos" in sys.argv)
+    if "--paso5" in sys.argv:
+        main_step5()
+    else:
+        main("--largos" in sys.argv)

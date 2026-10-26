@@ -5,6 +5,11 @@ usó para fijar los valores propuestos en
 [SPEC-TA-037](../../../specs/SPEC-TA-037-control-carga-optimizador.md). No es una
 prueba de CI.
 
+La primera parte corresponde a la SPEC v1.0, medida a 90°. La sección
+«Recalibración a 5° (SPEC v1.1)» contiene las mediciones vigentes.
+
+## Medición a 90° (SPEC v1.0, histórico)
+
 - Fecha: 25/10/2026
 - Código: `integration/sprint-01` en `d1dcd92`
 - Máquina: 2 vCPU Intel Xeon a 2,10 GHz, Python 3.11.17, x86_64
@@ -65,6 +70,50 @@ Mediciones adicionales de la misma sesión, con el mismo script y otros parámet
 4. **Las ejecuciones simultáneas no aportan paralelismo.** Por el GIL, 3
    ejecuciones tardan lo mismo que hacerlas en serie y bloquean la CPU del
    proceso web. Esto justifica L-10 y L-11.
+
+## Recalibración a 5° (SPEC v1.1)
+
+El PR #64 fijó el paso angular operativo en 5° (72 orientaciones por pieza). Se
+repitió la medición con el código de `integration/sprint-01` en `b7b9caa`.
+
+- Fecha: 26/10/2026
+- Comando, desde `backend/`: `python ../experiments/raster/scripts/ta037_load_benchmark.py --paso5`
+- Misma máquina, resolución 1 mm, 10 planchas de 2440 × 1830 mm
+
+```text
+# First Fit a 5°, 1 mm, 10 planchas
+FF 100 rectángulos 300x200                       1239 ms   colocadas 100/100
+FF 150 rectángulos 300x200                       3442 ms   colocadas 150/150
+FF 200 rectángulos 300x200                       7091 ms   colocadas 200/200
+FF 100 polígonos de 128 vértices                10232 ms   colocadas 100/100
+FF 150 polígonos de 128 vértices                22427 ms   colocadas 150/150
+FF 200 polígonos de 8 vértices                  49980 ms   colocadas 200/200
+FF 200 circunferencias r=150                     4844 ms   colocadas 200/200
+
+# Caché raster interna (64 MiB) a 5°: piezas distintas de ~1300x1000
+FF 2 piezas distintas                            1209 ms   colocadas 2/2
+FF 3 piezas distintas                            1462 ms   RasterPreparationError: raster cache exceeds 64 MiB
+
+# Stock sin encaje a 5° (margen 500 mm)
+FF 5 unidades 1500x900 sin encaje x 10 planchas 30914 ms   colocadas 0/5
+```
+
+Con la misma fórmula que usa `RasterCache`, la estimación por geometría distinta a 5°
+es: 600 × 400 → 6,0 MiB; 1000 × 800 → 15,8 MiB; 1300 × 1000 → 24,4 MiB;
+1600 × 1200 → 34,7 MiB; 2000 × 1500 → 52,5 MiB; 2440 × 1830 → 76,2 MiB. Por eso 2
+piezas de 1300 × 1000 (~48,8 MiB) caben y 3 (~73 MiB) no.
+
+### Lectura a 5°
+
+1. **El cálculo es mucho más caro.** 200 rectángulos pasan de 0,5 s (a 90°) a 7,1 s.
+   Las formas no rectangulares son las más caras: 150 polígonos tardan 22,4 s y 200
+   llegan a 50 s, con 8 o con 128 vértices. Esto justifica bajar L-03 a 150.
+2. **El stock sin encaje cuesta ~0,62 s por par** (antes 9,5 ms). Un tope de pares
+   útil sería demasiado restrictivo, así que L-08 se retira: L-07 (50 unidades) acota
+   el tramo entre dos hitos a unos 31 s, y L-12 (120 s) acota el total.
+3. **Aparece un fallo tardío nuevo en la caché raster.** Tres formas grandes
+   distintas ya la superan. L-13 lo rechaza antes con la misma fórmula del motor; la
+   capacidad real queda como GAP-05 para TA-016 / HU-017.
 
 Los tiempos son de una máquina de desarrollo. En un dyno compartido pueden ser
 mayores. Los valores de la SPEC dejan margen respecto de estas cifras, pero
