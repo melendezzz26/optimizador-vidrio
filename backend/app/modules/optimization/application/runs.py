@@ -1,6 +1,7 @@
 """Multipedido preflight. The unit of work owns exactly one commit/rollback."""
 from .errors import RunError
 from .preparation import prepare_persisted_problem
+from ..domain.problem import SPRINT_2_ANGULAR_STEP_DEG
 from ..domain.rotation import RasterCache, discrete_angles
 
 
@@ -15,6 +16,12 @@ class AcceptRun:
         ids = tuple(sorted(ids))
         with self.unit_of_work() as uow:
             configuration_id, config = uow.configuration()
+            if config.angular_step_deg != SPRINT_2_ANGULAR_STEP_DEG:
+                raise RunError(
+                    "CONFIG_CONFLICT",
+                    "Sprint 2 requiere una configuración vigente con paso angular de 5°. "
+                    "Publica una nueva versión de configuración sin alterar el historial.",
+                )
             pieces = uow.orders.lock_pending(ids)
             try:
                 discrete_angles(config.angular_step_deg)

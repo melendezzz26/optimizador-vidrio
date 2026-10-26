@@ -94,7 +94,7 @@ asume un ID de usuario ni se crean cuentas ficticias. En una base compartida,
 ejecutar únicamente con autorización y verificar el destino antes de migrar.
 
 Los parámetros provienen de `tests/optimization_e2e_data.py`, usado en los E2E
-finales: separación 0 mm, margen 0 mm, resolución 1 mm, paso angular 90° y tamaño
+actualizados para Sprint 2: separación 0 mm, margen 0 mm, resolución 1 mm, paso angular 5° y tamaño
 mínimo de retazo 10 × 10 mm. Son una base reproducible de desarrollo/demo,
 no una recomendación de tolerancias de fabricación para todos los trabajos.
 
@@ -105,6 +105,13 @@ varias vigentes o una vigente incompleta/inválida, falla e indica que debe
 revisarla el administrador. Si necesita crear y el responsable no existe o está
 inactivo, también falla sin crear datos. Puede ejecutarse dos veces para
 comprobar la idempotencia; no requiere INSERT manual ni nuevas migraciones.
+
+Las nuevas ejecuciones operativas de Sprint 2 requieren paso angular de 5°.
+Si la configuración vigente conserva 90° u otro paso, se devuelve CONFIG_CONFLICT
+antes de bloquear pedidos. El seed conserva esa versión: el responsable de
+configuración debe publicar una nueva versión vigente de 5°, sin alterar las
+versiones históricas. Este cambio de código no migra ninguna base de datos.
+El motor permite pasos explícitos para experimentos y reproducción histórica.
 
 ## Primer Administrador
 

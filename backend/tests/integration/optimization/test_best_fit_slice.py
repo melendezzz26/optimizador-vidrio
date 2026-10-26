@@ -1,6 +1,7 @@
 """Real read adapters and full database snapshot around BF simulation."""
 from datetime import datetime, timezone
 from decimal import Decimal as D
+import pytest
 
 from app.models import Plancha, Retazo
 from app.modules.inventory.infrastructure.repository import SqlAlchemyInventoryRepository
@@ -12,7 +13,8 @@ from app.modules.orders.infrastructure.repositories import SQLAlchemyOrderReposi
 from tests.integration.optimization.test_worst_fit_slice import database_snapshot, sqlite_slice
 
 
-def test_real_repositories_bf_simulation_leaves_every_table_unchanged(sqlite_slice):
+@pytest.mark.parametrize("step", [5, 90])
+def test_real_repositories_bf_simulation_leaves_every_table_unchanged(sqlite_slice, step):
     factory = sqlite_slice
     now = datetime.now(timezone.utc)
     with factory() as session:
@@ -31,7 +33,7 @@ def test_real_repositories_bf_simulation_leaves_every_table_unchanged(sqlite_sli
         session.commit()
         snapshots = orders.get_order(order_id)["piezas"]
     before = database_snapshot(factory)
-    cfg = OptimizationConfig(resolution_mm=1, margin_mm=0, separation_mm=0, angular_step_deg=90)
+    cfg = OptimizationConfig(resolution_mm=1, margin_mm=0, separation_mm=0, angular_step_deg=step)
     provider = InventoryStockAdapter(SqlAlchemyInventoryRepository(factory))
     result = calculate_best_fit([order_id], snapshots, cfg, provider)
     assert result.complete and result.method == "BF"

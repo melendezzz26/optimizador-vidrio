@@ -33,10 +33,13 @@ def test_normal_chooses_smallest_remaining_source_and_keeps_method_with_metrics(
 
 
 @pytest.mark.parametrize("optimizer", [FirstFitOptimizer, BestFitOptimizer, WorstFitOptimizer])
-def test_all_heuristics_use_exact_same_rotation_component(optimizer):
+@pytest.mark.parametrize("step", [5, 90])
+def test_all_heuristics_use_exact_same_rotation_component(optimizer, step):
     with patch.object(RasterCache, "orientations", wraps=RasterCache().orientations) as orientations:
-        result = optimizer().optimize(problem([piece(width=3, height=2)], [stock(width=2, height=3)]))
+        result = optimizer().optimize(problem([piece(width=3, height=2)], [stock(width=2, height=3)],
+                                             config(angular_step_deg=D(step))))
     assert orientations.call_count == 1
+    assert orientations.call_args.args[2] == step
     assert result.complete and result.placements[0].rotation_deg == 90
     assert dict(result.placements[0].geometry) == dict(type="RECTANGULO", width_mm=2, height_mm=3)
 
