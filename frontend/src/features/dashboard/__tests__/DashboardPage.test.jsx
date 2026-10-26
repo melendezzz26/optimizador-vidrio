@@ -9,7 +9,7 @@ import { dashboardUser, deferred, emptyResponse, orderItem, orderPage, sourceRes
 vi.mock('../dashboardApi', () => ({ loadDashboardSource: vi.fn() }));
 const onNavigate = vi.fn();
 function renderPage(role = 'Operario', navigation = {}) {
-  return render(<NavigationContext.Provider value={{ onNavigate, availableViews: ['dashboard', 'inventory', 'orders', 'users'], ...navigation }}>
+  return render(<NavigationContext.Provider value={{ onNavigate, availableViews: ['dashboard', 'inventory', 'orders', 'optimization', 'users'], ...navigation }}>
     <DashboardPage user={dashboardUser(role)} token="synthetic" />
   </NavigationContext.Provider>);
 }
@@ -37,12 +37,13 @@ test.each(['Administrador', 'Almacenero', 'Operario'])('%s recibe únicamente re
   renderPage(role); await ready();
   const shortcuts = section('Accesos rápidos');
   expect(within(shortcuts).getByRole('button', { name: 'Abrir Gestión de inventario' })).toBeEnabled();
+  expect(within(shortcuts).getByRole('button', { name: 'Abrir Optimización' })).toBeEnabled();
   expect(within(shortcuts).queryByRole('button', { name: 'Abrir Registro de pedidos' }) !== null).toBe(role !== 'Almacenero');
   expect(within(shortcuts).queryByRole('button', { name: 'Abrir Administración' }) !== null).toBe(role === 'Administrador');
   expect(screen.queryByRole('region', { name: 'Clientes registrados', exact: true }) !== null).toBe(role !== 'Almacenero');
   expect(screen.queryByRole('region', { name: 'Pedidos pendientes', exact: true }) !== null).toBe(role !== 'Almacenero');
   if (role === 'Almacenero') expect(loadDashboardSource.mock.calls.map(([source]) => source)).toEqual(['planchas', 'retazos']);
-  expect(within(shortcuts).queryByRole('button', { name: /Optimizaci|Clientes/ })).not.toBeInTheDocument();
+  expect(within(shortcuts).queryByRole('button', { name: /Clientes/ })).not.toBeInTheDocument();
 });
 test('listado conserva orden backend, estado textual, cliente y fecha reales sin afirmar recenticidad global', async () => {
   const items = [orderItem, { ...orderItem, id_pedido: 90, estado: 'CANCELADO', fecha_registro: '2026-10-14T12:00:00Z' }];
@@ -152,8 +153,14 @@ test('no ofrece accesos sin navegación disponible o hacia vistas no montadas', 
   view.unmount(); renderPage('Operario', { onNavigate: null }); await ready();
   expect(screen.queryByRole('region', { name: 'Accesos rápidos' })).not.toBeInTheDocument();
 });
-test('rol sin acceso no monta workspace ni consulta fuentes', () => {
+test('sesión sin funciones autorizadas accede a Inicio sin consultar fuentes y muestra explicación (HU-016 CA-03)', () => {
   renderPage('Unknown');
+  expect(screen.getByRole('heading', { level: 1, name: 'Inicio' })).toBeVisible();
+  expect(screen.getByText('Sin funciones habilitadas')).toBeVisible();
+  expect(loadDashboardSource).not.toHaveBeenCalled();
+});
+test('sin sesión válida no monta workspace', () => {
+  render(<DashboardPage user={null} />);
   expect(screen.getByRole('alert')).toHaveTextContent('No tienes acceso a Inicio');
   expect(loadDashboardSource).not.toHaveBeenCalled();
 });

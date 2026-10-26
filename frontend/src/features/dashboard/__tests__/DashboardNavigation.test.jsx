@@ -104,6 +104,7 @@ test('401 de datos usa logout global y retira el Dashboard', async () => {
 test.each([
   ['Gestión de inventario', 'Gestión de inventario'],
   ['Registro de pedidos', 'Registro de pedidos'],
+  ['Optimización', 'Optimización'],
   ['Administración', 'Administración'],
 ])('acceso rápido %s navega al módulo real desde App', async (quickLabel, sidebarLabel) => {
   actor = dashboardUser('Administrador'); storeSession();

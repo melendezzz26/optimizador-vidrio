@@ -23,11 +23,13 @@ const summaries = [
 
 export function DashboardSummary({ blocks }) {
   const id = useId();
+  const availableSummaries = summaries.filter(({ source }) => blocks[source]);
+  if (!availableSummaries.length) return null;
   return <section aria-labelledby={`${id}-title`}>
     <h2 id={`${id}-title`} className="dashboard-section-title">Resumen operativo</h2>
     <p className="dashboard-section-description">Información de las consultas disponibles para tu rol.</p>
     <div className="dashboard-summary-grid">
-      {summaries.filter(({ source }) => blocks[source]).map(({ source, title, icon: Icon, empty, description, metrics }) => {
+      {availableSummaries.map(({ source, title, icon: Icon, empty, description, metrics }) => {
         const block = blocks[source];
         return <section key={source} className="dashboard-summary-card" aria-labelledby={`${id}-${source}`}>
           <div className="dashboard-card-heading"><Icon size={20} aria-hidden="true" /><h3 id={`${id}-${source}`}>{title}</h3></div>

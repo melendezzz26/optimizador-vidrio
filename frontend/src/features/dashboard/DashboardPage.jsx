@@ -9,17 +9,32 @@ import { DashboardOrders } from './DashboardOrders';
 import { DashboardQuickActions } from './DashboardQuickActions';
 import './DashboardPage.css';
 
-function DashboardWorkspace(props) {
-  const { blocks, status, refresh, actions } = useDashboard(props);
+function DashboardWorkspace({ user, ...props }) {
+  const { blocks, status, refresh, actions } = useDashboard({ user, ...props });
   const loading = Object.values(blocks).some(block => block.status === 'loading');
   const failed = status === 'error' || status === 'partial-error';
+  const hasSources = Object.keys(blocks).length > 0;
+  const hasActions = actions.length > 0;
+  const greeting = user?.nombre ? `Hola, ${user.nombre}` : user?.username ? `Hola, ${user.username}` : 'NewGlass';
+
   return <PageCard className="dashboard-page">
     <div className="dashboard-heading">
-      <PageHeader title="Inicio" context="NewGlass" description="Resumen operativo de la información disponible para tu rol." />
-      <button type="button" className="ng-button" onClick={refresh} disabled={loading} aria-busy={loading}>
-        <RefreshCw size={18} aria-hidden="true" />{failed ? 'Reintentar carga' : 'Actualizar datos'}
-      </button>
+      <PageHeader
+        title="Inicio"
+        context={greeting}
+        description="Resumen operativo de la información disponible para tu rol."
+      />
+      {hasSources && (
+        <button type="button" className="ng-button" onClick={refresh} disabled={loading} aria-busy={loading}>
+          <RefreshCw size={18} aria-hidden="true" />{failed ? 'Reintentar carga' : 'Actualizar datos'}
+        </button>
+      )}
     </div>
+    {!hasSources && !hasActions && (
+      <FeedbackMessage variant="info" title="Sin funciones habilitadas">
+        Tu cuenta no tiene módulos ni fuentes de información operativas autorizadas.
+      </FeedbackMessage>
+    )}
     {status === 'partial-error' && <FeedbackMessage variant="warning" title="Información parcial">
       Algunas consultas no pudieron completarse. Cada bloque identifica su resultado; los datos válidos siguen disponibles.
     </FeedbackMessage>}

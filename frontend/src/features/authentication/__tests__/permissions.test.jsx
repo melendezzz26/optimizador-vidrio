@@ -5,23 +5,32 @@ import {
 } from '../permissions';
 import { withPermissions } from './permissionFixtures';
 
-const ALL_HELPERS = [
+const MODULE_HELPERS = [
   canExecuteOptimization, canManageOrders, canManagePlanchas, canManageRoles, canManageUsers,
-  canViewAdministration, canViewDashboard, canViewInventory, canViewRoles, canViewUsers,
+  canViewAdministration, canViewInventory, canViewRoles, canViewUsers,
 ];
 
 test('las opciones dependen de los permisos recibidos y no del nombre del rol (CA-10)', () => {
   const adminWithoutPermissions = { rol: 'Administrador', permisos: [] };
-  for (const helper of ALL_HELPERS) expect(helper(adminWithoutPermissions)).toBe(false);
+  for (const helper of MODULE_HELPERS) expect(helper(adminWithoutPermissions)).toBe(false);
   expect(canViewAdministration({ rol: 'Almacenero', permisos: ['roles.view'] })).toBe(true);
 });
 
 test.each([null, undefined, {}, { rol: 'Administrador' }, { permisos: 'users.view' }])(
   'sin una lista de permisos válida no se ofrece nada (%j)',
   (user) => {
-    for (const helper of ALL_HELPERS) expect(helper(user)).toBe(false);
+    for (const helper of MODULE_HELPERS) expect(helper(user)).toBe(false);
   },
 );
+
+test('Inicio (canViewDashboard) está disponible para cualquier usuario con sesión válida (HU-016 CA-01)', () => {
+  expect(canViewDashboard(null)).toBe(false);
+  expect(canViewDashboard(undefined)).toBe(false);
+  expect(canViewDashboard({ rol: 'Administrador', permisos: [] })).toBe(true);
+  expect(canViewDashboard({ rol: 'Operario', permisos: [] })).toBe(true);
+  expect(canViewDashboard({ rol: 'Almacenero', permisos: [] })).toBe(true);
+  expect(canViewDashboard({ username: 'O70000001' })).toBe(true);
+});
 
 test('cada helper consulta su permiso del catálogo', () => {
   const user = { permisos: ['inventory.view', 'orders.view', 'optimization.execute', 'users.view'] };
