@@ -312,27 +312,41 @@ def test_browser_can_read_location_for_canonical_result(run_api):
     assert response.headers['location'].startswith(BASE+'/')
 
 
-def test_rotated_placement_geometry_is_durable_and_used_without_second_rotation(run_api,session_factory):
+@pytest.mark.parametrize('piece_height,sheet_height,angle,positions,physical_units,recovered', [
+    (2, 7, 90, [(0, 0), (0, 3)], [1, 1], 2),
+    (1, 5, 70, [(0, 0), (0, 0)], [1, 2], 4),
+])
+def test_rotated_placement_geometry_is_durable_and_used_without_second_rotation(
+        run_api,session_factory,piece_height,sheet_height,angle,positions,physical_units,recovered):
+    # At step=5 the 3x1 rectangle fits at 70 degrees. A 3x2 rectangle
+    # requires 90 degrees on width 2; retain both exact contour regressions.
     client,ids,headers,*_=run_api
     with session_factory() as s:
         piece=s.scalar(select(Pieza).where(Pieza.id_pedido==ids[0]))
-        piece.geometria={'type':'RECTANGULO','width_mm':3,'height_mm':1}
-        piece.area_mm2=3
+        piece.geometria={'type':'RECTANGULO','width_mm':3,'height_mm':piece_height}
+        piece.area_mm2=3*piece_height
         sheet=s.get(Plancha,5)
-        sheet.ancho_mm,sheet.alto_mm=2,4
+        sheet.ancho_mm,sheet.alto_mm=2,sheet_height
         s.commit()
     response=client.post(BASE,json={'order_ids':ids[:1]},headers=headers)
     events=parse(response)
     live=[e['data'] for e in events if e['event']=='piece_placed']
     assert len(live)==2
-    assert all(Decimal(p['rotation_deg'])==90 for p in live)
-    assert all(p['geometria']=={'type':'RECTANGULO','width_mm':1.0,'height_mm':3.0} for p in live)
-    assert [Decimal(p['x_mm']) for p in live]==[0,1]
+    expected_geometry = ({'type':'RECTANGULO','width_mm':2.0,'height_mm':3.0} if angle == 90 else {
+        'type':'POLIGONO_CONVEXO',
+        'vertices_mm':[[0.939693,0.0],[1.965753,2.819078],[1.02606,3.161098],[0.0,0.34202]],
+    })
+    assert all(Decimal(p['rotation_deg'])==angle for p in live)
+    assert all(p['geometria']==expected_geometry for p in live)
+    assert [(Decimal(p['x_mm']),Decimal(p['y_mm'])) for p in live]==positions
+    assert [p['stock_unit_index'] for p in live]==physical_units
     final=client.get(response.headers['location'],headers=headers).json()
     assert final['estado']=='COMPLETADA' and final['metrics_available']
-    assert final['placements'][0]['geometria']==live[0]['geometria']
-    assert Decimal(final['metrics']['area_piezas_colocadas_mm2'])==6
-    assert Decimal(final['metrics']['retazo_recuperable_mm2'])==2
+    assert Decimal(final['configuracion']['paso_angular_grados'])==5
+    assert [p['geometria'] for p in final['placements']]==[p['geometria'] for p in live]
+    assert [Decimal(p['rotation_deg']) for p in final['placements']]==[angle,angle]
+    assert Decimal(final['metrics']['area_piezas_colocadas_mm2'])==6*piece_height
+    assert Decimal(final['metrics']['retazo_recuperable_mm2'])==recovered
 
 
 def test_authorization_db_session_ends_before_stream_calculation(run_api,session_factory,monkeypatch):

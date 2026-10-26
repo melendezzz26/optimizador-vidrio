@@ -62,7 +62,7 @@ def seed(scenario):
             actors[name] = {'username': user.usuario, 'password': 'Integration-test-2026!'}
         if not db.scalar(sa.select(Configuracion.id_configuracion).where(Configuracion.vigente.is_(True))):
             db.add(Configuracion(version=1, separacion_mm=0, margen_mm=0, resolucion_raster_mm=1,
-                paso_angular_grados=90, ancho_min_retazo_mm=10, alto_min_retazo_mm=10,
+                paso_angular_grados=5, ancho_min_retazo_mm=10, alto_min_retazo_mm=10,
                 vigente=True, id_usuario_creacion=user.id_usuario, fecha_creacion=now))
         types, sheets, remnants = [], [], []
         for i in range(2 if scenario in ('multimaterial', 'combined') else 1):

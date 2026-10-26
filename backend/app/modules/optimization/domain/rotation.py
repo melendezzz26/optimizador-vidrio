@@ -161,6 +161,11 @@ class RasterCache:
             raise RasterPreparationError("Geometry cannot be safely rasterized by TA-005/006.") from error
 
     def orientations(self, unit: PieceUnit, resolution, step) -> tuple[OrientedUnit, ...]:
+        """TA-016 contract shared by FF/BF/WF through packing.pack.
+
+        Ordered, normalized geometry and raster masks; retain the first angle
+        for each equal full mask. No source selection or inventory mutation.
+        """
         resolution = decimal_value(resolution, "resolution_mm", positive=True)
         self.check_geometry(unit.geometry, resolution)
         angles = discrete_angles(step)

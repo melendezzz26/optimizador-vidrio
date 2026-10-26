@@ -1,0 +1,283 @@
+{
+  "python": "3.11.15",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "algorithm": "FF",
+  "resolution_mm": 1,
+  "margin_mm": 0,
+  "separation_mm": 0,
+  "minimum_residual_mm": [
+    1,
+    1
+  ],
+  "memory": "not measured: no existing instrumentation",
+  "runs": [
+    {
+      "angle_step": 90,
+      "orientations_prepared": 6,
+      "orientation_position_searches": 3,
+      "feasible_candidates": 3,
+      "placed": 3,
+      "metrics": {
+        "utilization_pct": "20.652",
+        "waste_mm2": "78",
+        "new_sheets_used": 1,
+        "recoverable_remnant_mm2": "68",
+        "material_area_mm2": "184",
+        "placed_piece_area_mm2": "38"
+      },
+      "seconds": [
+        0.0017012000316753983,
+        0.001670599915087223,
+        0.0016345999902114272,
+        0.0016918000765144825,
+        0.0015867999754846096
+      ],
+      "median_seconds": 0.001670599915087223,
+      "placements": [
+        {
+          "piece": [
+            1,
+            1
+          ],
+          "stock": [
+            "PLANCHA",
+            2,
+            1
+          ],
+          "x": "0",
+          "y": "0",
+          "angle": "0"
+        },
+        {
+          "piece": [
+            2,
+            1
+          ],
+          "stock": [
+            "RETAZO",
+            1,
+            1
+          ],
+          "x": "0",
+          "y": "0",
+          "angle": "0"
+        },
+        {
+          "piece": [
+            3,
+            1
+          ],
+          "stock": [
+            "RETAZO",
+            1,
+            1
+          ],
+          "x": "4",
+          "y": "0",
+          "angle": "0"
+        }
+      ]
+    },
+    {
+      "angle_step": 45,
+      "orientations_prepared": 12,
+      "orientation_position_searches": 9,
+      "feasible_candidates": 3,
+      "placed": 3,
+      "metrics": {
+        "utilization_pct": "20.652",
+        "waste_mm2": "16",
+        "new_sheets_used": 1,
+        "recoverable_remnant_mm2": "130",
+        "material_area_mm2": "184",
+        "placed_piece_area_mm2": "38"
+      },
+      "seconds": [
+        0.0035847999388352036,
+        0.003464299952611327,
+        0.0039036000380292535,
+        0.0033874999498948455,
+        0.004439199925400317
+      ],
+      "median_seconds": 0.0035847999388352036,
+      "placements": [
+        {
+          "piece": [
+            1,
+            1
+          ],
+          "stock": [
+            "RETAZO",
+            1,
+            1
+          ],
+          "x": "0",
+          "y": "0",
+          "angle": "135"
+        },
+        {
+          "piece": [
+            2,
+            1
+          ],
+          "stock": [
+            "PLANCHA",
+            2,
+            1
+          ],
+          "x": "0",
+          "y": "0",
+          "angle": "0"
+        },
+        {
+          "piece": [
+            3,
+            1
+          ],
+          "stock": [
+            "PLANCHA",
+            2,
+            1
+          ],
+          "x": "4",
+          "y": "0",
+          "angle": "0"
+        }
+      ]
+    },
+    {
+      "angle_step": 15,
+      "orientations_prepared": 32,
+      "orientation_position_searches": 18,
+      "feasible_candidates": 3,
+      "placed": 3,
+      "metrics": {
+        "utilization_pct": "20.652",
+        "waste_mm2": "16",
+        "new_sheets_used": 1,
+        "recoverable_remnant_mm2": "130",
+        "material_area_mm2": "184",
+        "placed_piece_area_mm2": "38"
+      },
+      "seconds": [
+        0.01162749994546175,
+        0.011966199963353574,
+        0.01036379998549819,
+        0.01151370001025498,
+        0.011497500003315508
+      ],
+      "median_seconds": 0.01151370001025498,
+      "placements": [
+        {
+          "piece": [
+            1,
+            1
+          ],
+          "stock": [
+            "RETAZO",
+            1,
+            1
+          ],
+          "x": "0",
+          "y": "0",
+          "angle": "135"
+        },
+        {
+          "piece": [
+            2,
+            1
+          ],
+          "stock": [
+            "PLANCHA",
+            2,
+            1
+          ],
+          "x": "0",
+          "y": "0",
+          "angle": "0"
+        },
+        {
+          "piece": [
+            3,
+            1
+          ],
+          "stock": [
+            "PLANCHA",
+            2,
+            1
+          ],
+          "x": "4",
+          "y": "0",
+          "angle": "0"
+        }
+      ]
+    },
+    {
+      "angle_step": 5,
+      "orientations_prepared": 68,
+      "orientation_position_searches": 24,
+      "feasible_candidates": 3,
+      "placed": 3,
+      "metrics": {
+        "utilization_pct": "20.652",
+        "waste_mm2": "22",
+        "new_sheets_used": 1,
+        "recoverable_remnant_mm2": "124",
+        "material_area_mm2": "184",
+        "placed_piece_area_mm2": "38"
+      },
+      "seconds": [
+        0.034007900045253336,
+        0.033772199996747077,
+        0.034794499981217086,
+        0.03383670002222061,
+        0.03461189998779446
+      ],
+      "median_seconds": 0.034007900045253336,
+      "placements": [
+        {
+          "piece": [
+            1,
+            1
+          ],
+          "stock": [
+            "RETAZO",
+            1,
+            1
+          ],
+          "x": "0",
+          "y": "0",
+          "angle": "130"
+        },
+        {
+          "piece": [
+            2,
+            1
+          ],
+          "stock": [
+            "PLANCHA",
+            2,
+            1
+          ],
+          "x": "0",
+          "y": "0",
+          "angle": "0"
+        },
+        {
+          "piece": [
+            3,
+            1
+          ],
+          "stock": [
+            "PLANCHA",
+            2,
+            1
+          ],
+          "x": "4",
+          "y": "0",
+          "angle": "0"
+        }
+      ]
+    }
+  ]
+}

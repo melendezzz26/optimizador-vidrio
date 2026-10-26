@@ -91,7 +91,21 @@ test('crear polígono actualiza medidas parciales y mantiene referencia provisio
   await page.keyboard.press('Enter');
   const view = page.getByRole('img', { name: 'Vista dimensional de la pieza', exact: true });
   const polygon = view.locator('polygon');
-  const reference = await view.locator('.custom-piece-editor__sketch-reference').getAttribute('points');
+  const sketchReference = view.locator('.custom-piece-editor__sketch-reference');
+  const referenceShape = () => sketchReference.evaluate(polyline => {
+    const points = Array.from(polyline.points, ({ x, y }) => [x, y]);
+    const minX = Math.min(...points.map(([x]) => x));
+    const minY = Math.min(...points.map(([, y]) => y));
+    const scale = Math.max(
+      Math.max(...points.map(([x]) => x)) - minX,
+      Math.max(...points.map(([, y]) => y)) - minY,
+    );
+    if (!Number.isFinite(scale) || scale <= 0) throw new Error('Reference must be a nondegenerate sketch');
+    // Remove only translation and uniform responsive scaling. A single scale
+    // preserves aspect ratio, angles, vertex order and the closing vertex.
+    return points.map(([x, y]) => [(x - minX) / scale, (y - minY) / scale]);
+  });
+  const reference = await referenceShape();
   const field = i => page.getByLabel(`Longitud del segmento S${i} en milímetros`, { exact: true });
   await expect(field(1)).toBeFocused();
   await field(1).fill('300');
@@ -100,7 +114,11 @@ test('crear polígono actualiza medidas parciales y mantiene referencia provisio
   await field(2).fill('150');
   await expect(polygon).not.toHaveAttribute('points', first);
   await expect(polygon).toHaveAttribute('data-provisional', 'true');
-  await expect(view.locator('.custom-piece-editor__sketch-reference')).toHaveAttribute('points', reference);
+  // ResizeObserver can update the SVG viewBox after closing the mobile canvas.
+  // Compare the sketch shape, not pixel coordinates from an earlier layout.
+  await expect.poll(referenceShape).toEqual(
+    reference.map(point => point.map(coordinate => expect.closeTo(coordinate, 8))),
+  );
   await expect(field(3)).toHaveValue('');
   await expect(page.getByRole('button', { name: 'Agregar pieza al pedido', exact: true })).toBeDisabled();
   await field(2).fill('170');
@@ -110,6 +128,7 @@ test('crear polígono actualiza medidas parciales y mantiene referencia provisio
   await field(3).fill('300');
   await field(4).fill('150');
   await expect(polygon).toHaveAttribute('data-provisional', 'false');
+  await expect(sketchReference).toHaveCount(0);
   await expect(page.getByText('✓ Geometría validada y lista.')).toBeVisible();
   await page.getByRole('button', { name: 'Agregar pieza al pedido', exact: true }).click();
   await expect(page.getByText('✓ Figura configurada')).toBeVisible();
