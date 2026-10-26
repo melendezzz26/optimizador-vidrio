@@ -6,7 +6,7 @@
 |---|---|
 | Identificador / PBI relacionado | **HU-016** |
 | Título | Dashboard inicial para usuarios de NewGlass |
-| Estado | **Reviewed** |
+| Estado | **Implemented** |
 | Autor / responsable principal de implementación | Fabricio Melendez |
 | Revisor del alcance | Fabricio Aguilar |
 | Fecha de elaboración y registro de aprobación | 23/10/2026 |
@@ -237,7 +237,7 @@ Usar la estrategia de [pruebas del repo](../testing/README.md). Los mocks son ad
 
 ## 20. Evidencias esperadas
 
-En el cierre posterior se prevé `docs/evidence/sprint-01/HU-016/` como ubicación documental conforme al repositorio, sin atribuir por ello un compromiso nuevo de sprint. Debe contener base/fecha/comandos/resultados, matriz CA-01…CA-22, relación con la base TA-DASHBOARD-001, capturas revisadas por rol y ancho, E2E real, pruebas de componentes, lint/build aplicables y regresión de navegación. Redactar identidades cuando corresponda y no incluir tokens/secretos.
+En el cierre posterior se prevé `docs/evidence/sprint-02/HU-016/` como ubicación documental conforme al repositorio, sin atribuir por ello un compromiso nuevo de sprint. Debe contener base/fecha/comandos/resultados, matriz CA-01…CA-22, relación con la base TA-DASHBOARD-001, capturas revisadas por rol y ancho, E2E real, pruebas de componentes, lint/build aplicables y regresión de navegación. Redactar identidades cuando corresponda y no incluir tokens/secretos.
 
 Las evidencias anteriores de TA-DASHBOARD-001 y HU-015 permanecen intactas. No se copian sus resultados como si se hubieran ejecutado para HU-016. En esta entrega solo se verifica la documentación; no se crea todavía la carpeta de evidencia funcional ni se atribuye ningún PASS de producto.
 
@@ -293,3 +293,4 @@ El PLAN posterior refinará la estimación tras T01 si aparece una necesidad dem
 ## Historial de estado
 
 - **23/10/2026 — Reviewed:** SPEC HU-016 creada por encargo del responsable, con Fabricio Melendez como autor y Fabricio Aguilar como revisor del alcance funcional ya aprobado según la confirmación explícita recibida. Se documentan la auditoría de identificador/base, el registro externo pendiente, los 22 CA, T01/T02/T03 y 2.5 SP / 15 horas. No se implementó código, no se ejecutaron pruebas de producto, no se modificó HU-015 ni se creó PLAN, commit, push, PR, merge o deploy.
+- **25/10/2026 — Implemented:** Finalización de T01, T02 y T03 en la rama `feature/HU-016-dashboard-inicial`. Código adaptado en `features/dashboard` y `features/authentication`, pruebas de componentes (86/86) y Playwright E2E (9/9) superadas, evidencia documentada en `docs/evidence/sprint-02/HU-016/t3-integracion-e2e-cierre.md` y 11 capturas generadas.
