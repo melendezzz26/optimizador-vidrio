@@ -12,6 +12,7 @@ from app.modules.optimization.domain.first_fit import FirstFitOptimizer
 from app.modules.optimization.domain.placement import SheetLayout
 from app.modules.optimization.domain.problem import MaterialSource, OptimizationConfig, StockCandidate
 from app.modules.optimization.domain.rotation import RasterCache, RasterPreparationError
+from app.modules.optimization.domain.run_geometry import PreparedRunGeometry
 from app.modules.optimization.infrastructure.stock_adapter import InventoryStockAdapter
 from app.modules.optimization.presentation.run_serialization import placement_response, run_response
 from tests.unit.optimization.test_preparation import piece, prepare_persisted_problem
@@ -84,7 +85,8 @@ def test_partial_retained_and_smaller_units_still_attempted_after_no_fit():
 
 def test_first_candidate_wins_without_trying_later_better_sheet():
     first, better = stock(5, width=9, height=9), stock(6, width=4, height=2)
-    with patch.object(RasterCache, "material", wraps=RasterCache().material) as material:
+    # Source lookup during search, distinct from preparing all base masks.
+    with patch.object(PreparedRunGeometry, "material", autospec=True, side_effect=PreparedRunGeometry.material) as material:
         result = optimize(candidates=[first, better])
         assert result.placements[0].stock == first
         assert material.call_count == 1

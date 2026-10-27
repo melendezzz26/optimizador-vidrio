@@ -13,6 +13,7 @@ from app.modules.optimization.domain.first_fit import FirstFitOptimizer
 from app.modules.optimization.domain.metrics import calculate_metrics
 from app.modules.optimization.domain.problem import MaterialSource, OptimizationResult
 from app.modules.optimization.domain.rotation import RasterCache
+from app.modules.optimization.domain.placement import SheetLayout
 from app.modules.optimization.domain.worst_fit import WorstFitOptimizer
 from tests.unit.optimization.test_first_fit import config, piece, problem, stock
 
@@ -231,18 +232,26 @@ def test_common_minima_are_captured_once_and_duration_covers_only_optimization_a
 
 @pytest.mark.parametrize("candidate_count", [8, 80])
 def test_first_fit_remains_lazy_including_common_metrics(monkeypatch, candidate_count):
-    original, visited = RasterCache.material, []
+    original, visited = RasterCache._raster, []
+    first_position, searches = SheetLayout.first_position, []
 
-    def material(self, source, resolution):
-        visited.append(source.material_id)
-        return original(self, source, resolution)
+    def raster(self, geometry, resolution, *, material=False):
+        if material:
+            visited.append(dict(geometry))
+        return original(self, geometry, resolution, material=material)
 
-    monkeypatch.setattr(RasterCache, "material", material)
+    def position(self, mask):
+        searches.append(True)
+        return first_position(self, mask)
+
+    monkeypatch.setattr(RasterCache, "_raster", raster)
+    monkeypatch.setattr(SheetLayout, "first_position", position)
     prepared = problem(candidates=[stock(i) for i in range(1, candidate_count + 1)])
     assert compare(prepared, METHODS[:1])[0].result.complete
-    # One rasterization for placement and one for metrics, irrespective of
-    # later available sources; the coordinator does not precompute candidates.
-    assert visited == [1, 1]
+    # One shared material base and one for metrics, independent of quantity.
+    # Search still stops on the first source despite preparing all its peers.
+    assert len(visited) == 2 and visited[0] == visited[1]
+    assert searches == [True]
 
 
 @pytest.mark.parametrize("prepared", list(representative_cases()))

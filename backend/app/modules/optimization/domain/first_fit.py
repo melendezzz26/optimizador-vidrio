@@ -8,5 +8,5 @@ from .problem import OptimizationProblem, OptimizationResult
 
 class FirstFitOptimizer:
     def optimize(self, problem: OptimizationProblem,
-                 on_event: Callable[[FirstFitEvent], None] | None = None) -> OptimizationResult:
-        return pack(problem, on_event)
+                 on_event: Callable[[FirstFitEvent], None] | None = None, *, checkpoint=None) -> OptimizationResult:
+        return pack(problem, on_event, checkpoint=checkpoint)

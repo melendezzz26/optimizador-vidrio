@@ -28,6 +28,6 @@ class WorstFitResult(OptimizationResult):
 
 class WorstFitOptimizer:
     def optimize(self, problem: OptimizationProblem,
-                 on_event: Callable[[FirstFitEvent], None] | None = None) -> OptimizationResult:
-        result = pack(problem, on_event, select=WorstFitSelector().select)
+                 on_event: Callable[[FirstFitEvent], None] | None = None, *, checkpoint=None) -> OptimizationResult:
+        result = pack(problem, on_event, select=WorstFitSelector().select, checkpoint=checkpoint)
         return WorstFitResult(problem=result.problem, placements=result.placements)

@@ -1,5 +1,5 @@
 """HU-017 T02: a base barrier and restartable lazy search, shared by FF/BF/WF."""
-from dataclasses import FrozenInstanceError, replace
+from dataclasses import FrozenInstanceError
 from decimal import Decimal as D
 from unittest.mock import patch
 

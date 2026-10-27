@@ -13,7 +13,7 @@ class CalculateRun:
     def __init__(self, unit_of_work, stock_provider, *, clock=perf_counter_ns):
         self.unit_of_work, self.stock_provider, self.clock = unit_of_work, stock_provider, clock
 
-    def execute(self, optimization_id, on_event=None):
+    def execute(self, optimization_id, on_event=None, *, checkpoint=None):
         with self.unit_of_work() as uow:
             run = uow.runs.get(optimization_id)
             minimum_width, minimum_height = uow.runs.residual_limits(optimization_id)
@@ -31,7 +31,7 @@ class CalculateRun:
                 finally:
                     paused += self.clock() - before
         started = self.clock()
-        result = FirstFitOptimizer().optimize(problem, on_event=emit)
+        result = FirstFitOptimizer().optimize(problem, on_event=emit, checkpoint=checkpoint)
         result, residuals = calculate_metrics(result, minimum_width, minimum_height)
         duration = max(0, (self.clock() - started - paused) // 1_000_000)
         result = replace(result, computation_time_ms=duration)

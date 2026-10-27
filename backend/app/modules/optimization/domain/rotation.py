@@ -8,6 +8,7 @@ import math
 from dataclasses import dataclass
 from decimal import Decimal, localcontext
 from types import MappingProxyType
+from collections.abc import Callable, Iterable, Iterator
 
 from .preparation import bbox_dimensions
 from .problem import PieceUnit, decimal_value, geometry_snapshot
@@ -123,6 +124,31 @@ class OrientedUnit:
     orientation: Orientation
 
 
+@dataclass(frozen=True)
+class _OrientationView:
+    """Restart at angle zero for each source; cache only actually requested masks."""
+    cache: 'RasterCache'
+    unit: PieceUnit
+    resolution: Decimal
+    angles: tuple[Decimal, ...]
+    checkpoint: Callable[[], None]
+
+    def __iter__(self) -> Iterator[OrientedUnit]:
+        masks_seen = set()
+        for angle in self.angles:
+            self.checkpoint()
+            try:
+                prepared = self.cache._orientation(self.unit, self.resolution, angle)
+            except RasterExtentExceeded:
+                # This angle cannot fit ANY supported stock, as in TA-016.
+                continue
+            self.checkpoint()
+            signature = (prepared.mask.columns, prepared.mask.rows)
+            if signature not in masks_seen:
+                masks_seen.add(signature)
+                yield OrientedUnit(self.unit, prepared)
+
+
 class RasterCache:
     """One instance per calculation. Immutable masks may be shared across units."""
     # Internal bit rows, independent of HU-015's JSON preview budget. A maximum
@@ -160,36 +186,36 @@ class RasterCache:
         except (RasterizationError, OverflowError) as error:
             raise RasterPreparationError("Geometry cannot be safely rasterized by TA-005/006.") from error
 
-    def orientations(self, unit: PieceUnit, resolution, step) -> tuple[OrientedUnit, ...]:
-        """TA-016 contract shared by FF/BF/WF through packing.pack.
+    def _orientation(self, unit: PieceUnit, resolution, angle) -> Orientation:
+        key = (_fingerprint(unit.geometry), resolution, angle)
+        if key not in self._pieces:
+            geometry = oriented_geometry(unit.geometry, angle)
+            self.check_geometry(geometry, resolution)
+            self._pieces[key] = Orientation(angle, geometry, self._raster(geometry, resolution))
+        return self._pieces[key]
 
-        Ordered, normalized geometry and raster masks; retain the first angle
-        for each equal full mask. No source selection or inventory mutation.
+    def base(self, unit: PieceUnit, resolution) -> Orientation:
+        """Normalized zero-degree base, shared with the subsequent TA-016 search."""
+        resolution = decimal_value(resolution, 'resolution_mm', positive=True)
+        self.check_geometry(unit.geometry, resolution)
+        return self._orientation(unit, resolution, Decimal(0))
+
+    def iter_orientations(self, unit: PieceUnit, resolution, step, *, checkpoint=None) -> Iterable[OrientedUnit]:
+        """Shared, reiterable lazy TA-016 contract; same order/full-mask dedup.
+
+        Constructing this view validates bounds/angles without rasterizing. A
+        fresh iterator starts at the first angle even after another source failed.
         """
         resolution = decimal_value(resolution, "resolution_mm", positive=True)
         self.check_geometry(unit.geometry, resolution)
         angles = discrete_angles(step)
         if unit.shape_type == "CIRCUNFERENCIA":
             angles = (Decimal(0),)
-        values, masks_seen = [], set()
-        for angle in angles:
-            key = (_fingerprint(unit.geometry), resolution, angle)
-            if key not in self._pieces:
-                geometry = oriented_geometry(unit.geometry, angle)
-                # An oriented bbox outside the supported stock grid cannot fit
-                # ANY valid stock. Skip it without discarding a valid 0/90° fit.
-                try:
-                    self.check_geometry(geometry, resolution)
-                except RasterExtentExceeded:
-                    continue
-                self._pieces[key] = Orientation(angle, geometry, self._raster(geometry, resolution))
-            prepared = self._pieces[key]
-            signature = (prepared.mask.columns, prepared.mask.rows)
-            # Full mask equality, never bbox symmetry inference. Retain first angle.
-            if signature not in masks_seen:
-                masks_seen.add(signature)
-                values.append(OrientedUnit(unit, prepared))
-        return tuple(values)
+        return _OrientationView(self, unit, resolution, angles, checkpoint if checkpoint is not None else lambda: None)
+
+    def orientations(self, unit: PieceUnit, resolution, step) -> tuple[OrientedUnit, ...]:
+        """Historical eager tuple adapter; metrics/confirmation remain compatible."""
+        return tuple(self.iter_orientations(unit, resolution, step))
 
     def material(self, stock, resolution):
         resolution = decimal_value(resolution, "resolution_mm", positive=True)

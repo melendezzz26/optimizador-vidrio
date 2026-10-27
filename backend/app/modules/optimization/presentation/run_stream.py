@@ -92,13 +92,16 @@ class LiveRunStream:
                 if stopped.is_set():
                     raise ExecutionInterrupted()
 
-        def milestone(event):
-            if event.placement is not None:
-                placements.append(event.placement)
+        def checkpoint():
             if stopped.is_set():
                 raise ExecutionInterrupted()
             if self.clock() - clock["started"] - clock["delivery"] > self.time_budget_s:
                 raise TimeBudgetExceeded()                                  # TA-037 L-12
+
+        def milestone(event):
+            if event.placement is not None:
+                placements.append(event.placement)
+            checkpoint()
             key = event.group_key
             material_key = dict(id_tipo_vidrio=key[0], espesor_mm=key[1])
             progress = progress_response(event.placed_units, event.total_units)
@@ -130,7 +133,7 @@ class LiveRunStream:
         def calculate():
             clock["started"] = self.clock()
             try:
-                run = self.calculator.execute(identifier, milestone)
+                run = self.calculator.execute(identifier, milestone, checkpoint=checkpoint)
                 completed(run)
             except Exception as error:
                 code = ("EXECUTION_INTERRUPTED" if isinstance(error, ExecutionInterrupted) else
@@ -189,5 +192,5 @@ class LiveRunStream:
                     break
         finally:
             stopped.set()
-            # Cooperative cancellation occurs at milestones, not per rejected cell.
+            # Cooperative checks cover bases/orientations/sources, not each cell.
             await asyncio.to_thread(worker.join, 2)
