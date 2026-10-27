@@ -4,10 +4,14 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Approved** |
-| SPEC | [SPEC-TA-021-comparacion-metodos.md](SPEC-TA-021-comparacion-metodos.md), Reviewed |
-| Responsable / revisor | Pendientes de asignación formal |
-| Fecha / base | 25/10/2026 / `da550d0` |
+| Versión | **1.1 — actualización del 27/10/2026** |
+| Estado | **Draft — pendiente de revisión y aprobación de esta versión** |
+| SPEC | [SPEC-TA-021-comparacion-metodos.md](SPEC-TA-021-comparacion-metodos.md), v1.1 Draft |
+| Responsable | Fabricio Melendez Quezada |
+| Revisión documental | Codex; revisión propia registrada en SPEC §11 |
+| Aprobación de alcance y desarrollo | Pendiente de Fabricio Melendez Quezada |
+| Revisión cruzada de implementación | Pendiente de designación |
+| Fecha / base actual | 27/10/2026 / `0424f30c84cefb3d5899bbbbba2de363cc5a2319`, `integration/sprint-01` |
 | Rama | `docs/TA-021-comparacion-metodos` |
 | Estimación de referencia | 1 SP / 6 h, backlog comunicado; sin actualización del backlog. |
 | División preliminar | T01 0.5 SP / 3 h; T02 0.5 SP / 3 h. |
@@ -15,14 +19,16 @@
 
 ## 1. Autoridad, objetivo y auditoría de alcance
 
-Este PLAN deriva de la SPEC Reviewed y pasa a Approved por autorización
-documental del solicitante. Revisor y revisión cruzada real pendientes; la
-aprobación no declara implementadas ni verificadas sus capacidades.
+Este PLAN desarrolla la SPEC v1.1 y se entrega para revisión y aprobación antes
+de implementar, conforme a la secuencia solicitada por el responsable. El estado
+Approved del 25/10 pertenece a la versión anterior; no aprueba esta revisión.
+No se declara Implemented o Verified ni una revisión cruzada humana.
 
 Se mantienen T01 como infraestructura genérica + FF/WF y T02 como incorporación
-de BF real después de integrar TA-018. TA-021 permanece abierta tras T01. Los
-20 CA, 0.5 SP por tarea y total de 1 SP / 6 h no cambian; siguen fuera de alcance
-UI, persistencia, selección de ganador y nuevas métricas.
+al comparador del BF real ya disponible. No existe bloqueo externo por falta de
+TA-018; T02 parte de T01 validada. Los 20 CA, 0.5 SP por tarea y total de 1 SP / 6 h
+se conservan como referencia, sin cambiar el backlog. UI, HTTP, persistencia,
+selección de ganador y fórmulas nuevas mantienen sus tareas correspondientes.
 
 La inspección previa confirmó rama/árbol limpio y no encontró SPEC/PLAN TA-021
 en conflicto. HU-017 ya define ese ID como comparación/orquestación, sin ganador;
@@ -39,22 +45,23 @@ Los caminos backend de esta sección parten de `backend/app/modules/optimization
 
 | Componente inspeccionado | Reutilización / límite |
 |---|---|
-| `domain/first_fit.py`, `worst_fit.py` | Ambos exponen `optimize(problem, on_event=None)`. WF devuelve especialización de `OptimizationResult` con `method="WF"`; FF devuelve el tipo base con método FF. |
+| `domain/first_fit.py`, `best_fit.py`, `worst_fit.py` | Los tres exponen `optimize(problem, on_event=None)`. FF devuelve el tipo base con método FF; BF/WF sus especializaciones `BestFitResult`/`WorstFitResult`, con identidad BF/WF. |
 | `domain/packing.py` | Recorrido común con `select` opcional, candidatos perezosos y, actualmente, estado/cachés nuevos por llamada. Es descripción de la base, no prohibición de compartir datos/cache inmutables seguros. No cambiar selectores para comparar. |
-| `domain/problem.py` | Problema/configuración/unidades/stock inmutables; `geometry_snapshot` copia y congela geometrías. `OptimizationResult.method` hoy contempla FF/WF, no BF. Coordinar identidad BF con TA-018. |
+| `domain/problem.py` | Problema/configuración/unidades/stock inmutables; `geometry_snapshot` copia y congela geometrías. `OptimizationResult.method` contempla FF/BF/WF; no se requiere modificar este contrato para incorporar BF. |
 | `domain/preparation.py`, `application/preparation.py` | Validación y expansión de `PieceSnapshot.quantity`; orden y grupos compartidos. No hay `quantity` en unidades expandidas. |
 | `application/stock.py`, `infrastructure/stock_adapter.py` | Lectura compatible y orden estable, cantidad física expandida y caché por grupo de una preparación. Llamar una vez, no una vez por método. |
 | `domain/placement.py`, `raster_mask.py`, `rotation.py` | Layouts/máscaras inmutables, caché raster actual con mapas/contadores mutables. Aislar ocupación/estado por método; máscaras o cachés de derivados inmutables pueden compartirse si su contrato es seguro. |
-| `domain/metrics.py` | Calcula métricas/residuales comunes sin escrituras. Necesita mínimos de ancho/alto externos al problema geométrico. Preserva WF mediante `replace`. |
+| `domain/metrics.py` | Calcula métricas/residuales comunes sin escrituras. Necesita mínimos de ancho/alto externos al problema geométrico. Usa `replace`, preservando el tipo del resultado; T02 debe comprobar identidad FF/BF/WF también después de aplicar métricas. |
 | `infrastructure/run_snapshot.py` | JSONB V1, `decode` reconstruye tipo base FF. No es clonador genérico de resultados WF/BF ni debe extenderse aquí. |
 | `application/runs.py`, `calculation.py`, `infrastructure/run_uow.py` | Aceptación/persistencia/transición de pedidos y selección de ejecución FF. No reutilizar el ciclo completo como comparador puro. |
 | `presentation/run_routes.py`, `run_stream.py`, `run_schemas.py` | `/runs`, GET, NDJSON y confirmación actuales especializados en FF. Mantenerlos intactos; futuro consumo no exige integración HTTP ahora. |
-| SPEC/PLAN TA-019 y evidencia | Reglas WF y regresiones de aislamiento/no consumo ya disponibles; no trasladar sus PASS a una comparación aún inexistente. |
+| TA-016/TA-018/TA-019/TA-020 y evidencia | Rotación común a 5°, BF/WF y prioridad de retazos disponibles en PR #58/#64/#73; sus PASS no acreditan todavía la orquestación de TA-021. |
+| TA-037 y saneamiento | Guardrails integrados hasta PR #74; admisión conserva plazas hasta que termina el propietario. No abrir `/runs` por cada método para comparar. |
 | HU-017 | Consumidor futuro visual, con DG-01 propia. TA-021 no decide A/B de streaming ni implementa su UI. |
 
-No se hallaron SPEC/PLAN propios de TA-018/022/025/026/037 en los archivos e
-historial local consultados. BF no existe en el core de la base inspeccionada;
-usar su contrato real cuando TA-018 se integre, no un supuesto score BF.
+La base actual `0424f30` incluye SPEC/PLAN de TA-018/TA-037 y documentación de
+TA-020. Se reutilizan los tres optimizadores reales; no se inventan contratos de
+TA-022/TA-025/TA-026 ni se declara implementado el comparador por disponer de ellos.
 
 ## 3. Diseño mínimo propuesto: N métodos, una entrada
 
@@ -62,9 +69,9 @@ usar su contrato real cuando TA-018 se integre, no un supuesto score BF.
 
 | Alternativa | Evaluación |
 |---|---|
-| Colección de estrategias/factorías identificadas | Recomendada: FF/WF ya comparten firma de entrada/salida. Una iteración genérica basta; una factoría por invocación evita depender de estado futuro del optimizador. |
+| Colección de estrategias/factorías identificadas | Recomendada: FF/BF/WF ya comparten firma de entrada y contrato de resultado. Una iteración genérica basta; una factoría por invocación evita depender de estado futuro del optimizador. |
 | Registro global/factory con descubrimiento de plugins | Innecesario para métodos conocidos y colección pequeña; añade estado/configuración sin requisito. |
-| Nuevo protocolo/clase base obligatoria | No existe un protocolo de optimizadores en la base. No crearlo solo para dos clases ya compatibles; evaluar una anotación mínima solo si el tipado ayuda sin cambiar sus políticas. |
+| Nuevo protocolo/clase base obligatoria | No existe un protocolo obligatorio de optimizadores en la base. No crearlo solo para tres clases ya compatibles; evaluar una anotación mínima solo si el tipado ayuda sin cambiar sus políticas. |
 
 **Propuesta, no código implementado:** servicio en `application/comparison.py`
 que reciba `OptimizationProblem` ya preparado con stock, colección ordenada
@@ -74,7 +81,9 @@ estrategia; dos estrategias con el mismo código se rechazan sin ejecutar ningun
 Ejecutar
 secuencialmente para no multiplicar memoria de trabajo ni introducir concurrencia.
 
-T01 registra/recibe FF y WF; T02 incorpora la factoría BF entregada por TA-018.
+T01 registra/recibe FF y WF; T02 incorpora la factoría `BestFitOptimizer` ya
+entregada por TA-018. Se conserva la división para validar incrementalmente,
+sin esperar otra entrega de BF.
 No hay `run_ff()` + `run_wf()` ni un segundo flujo para tres métodos. La colección
 puede tener distinto tamaño; el orden solicitado solo determina orden de entrega,
 no ranking por mérito. Un doble de prueba adicional puede demostrar extensibilidad,
@@ -126,8 +135,10 @@ propuestas nuevas, no campos ya existentes del problema.
 Mantener un único problema lógico de referencia y no serializarlo/copiarlo por
 cada máscara. Verificar correspondencia entre código y `result.method` cuando
 el contrato del optimizador lo informa. Rechazar discrepancias en vez de
-reetiquetar FF como BF/WF. La identidad BF y cualquier adaptación mínima se
-resuelven en T02 con el contrato real; no modificar anticipadamente `problem.py`.
+reetiquetar FF como BF/WF. El contrato BF actual ya devuelve
+`BestFitResult.method="BF"`; en T02 se verifica que métricas y colección
+mantienen esa identidad. No se prevé un adaptador con
+las firmas observadas ni modificar `problem.py` para incorporarlo.
 
 Usar `calculate_metrics(result, minimum_width_mm, minimum_height_mm)` con todos
 los parámetros comunes capturados una sola vez antes de ejecutar heurísticas e
@@ -225,11 +236,11 @@ no es requisito implementar un caché compartido nuevo.
 |---|---|
 | Objetivo | Incorporar BF real al mismo mecanismo y demostrar comparación FF/BF/WF completa. |
 | Capas/archivos probables | Entrada/factoría BF en composición de comparación; ampliar los dos archivos de pruebas/evidencia. Adaptador mínimo solo si el contrato TA-018 lo requiere. |
-| Estrategia | Inspeccionar TA-018 integrada, firma/resultado/identidad/métricas y registrar BF sin rediseñar el servicio. No definir ni copiar su score. |
+| Estrategia | Registrar `BestFitOptimizer` integrado y probar su resultado e identidad antes/después de métricas, sin rediseñar el servicio ni definir/copiar su score. |
 | Pruebas | Tres métodos, seis órdenes posibles, repeticiones y resultados funcionales directos por método; misma entrada/configuración/stock/parámetros métricos; independencia/no consumo, fallos identificados; excluir tiempo/timestamps/telemetría. |
 | Riesgos | Contrato BF incompatible o etiqueta incorrecta, diferencias de preparación, mezcla de ramas y un doble BF confundido con integración real. |
-| Dependencias | **Bloqueada hasta integrar TA-018** y confirmar su contrato. T01 debe estar validada; cambios comunes TA-016 coordinados. |
-| Evidencia | Revisión/commit que incorpora BF real, las seis permutaciones, matriz final de los 20 CA y suites reales por fase. |
+| Dependencias | TA-018 ya integrada y contrato inspeccionado en `0424f30`; no hay bloqueo externo por BF. T01 debe estar validada y las reglas comunes TA-016/TA-020 preservadas. |
+| Evidencia | Referencia a TA-018 integrada y commit que la conecta al comparador; seis permutaciones, identidad BF antes/después de métricas, matriz final de 20 CA y suites por fase. |
 | Condición de cierre | FF/BF/WF reales validados con todos los CA aplicables, evidencia y revisión. Solo entonces puede cerrarse TA-021; no por terminar T01. |
 | Estimación preliminar | **0.5 SP / 3 h**, condicionada a compatibilidad del contrato TA-018. |
 
@@ -248,7 +259,7 @@ no autoriza rebajar igualdad de condiciones ni refactorizar heurísticas desde T
 | CA-04 | Tuplas completas de stock físico/dimensiones/orden iguales. |
 | CA-05 | Entrada/datos compartidos inmutables, estado mutable aislado y resultados directos/por permutación iguales; sin exigir cachés exclusivos. |
 | CA-06 | Snapshot de tablas de inventario/pedidos antes/después del slice sin cambios. |
-| CA-07 | Identificadores únicos validados antes de cualquier invocación; duplicados rechazados, WF preservado y BF real en T02. |
+| CA-07 | Identificadores únicos antes de cualquier invocación; duplicados rechazados y códigos FF/BF/WF preservados después de aplicar métricas; BF real en T02. |
 | CA-08 | Regresión FF y prueba de no score/early exit, ejecución directa vs comparador. |
 | CA-09 | Regresión WF de score posterior/desempates, ejecución directa vs comparador. |
 | CA-10 | Evidencia de fase 1 FF/WF, estado TA-021 abierto. |
@@ -293,9 +304,9 @@ inmutables, firmas FF/WF, métricas y pruebas/slice ya existen; faltan un bucle
 genérico, contrato pequeño y pruebas de combinación. No incluye UI, HTTP,
 persistencia, ejecución concurrente, nuevos guardrails o fórmulas.
 
-No es una garantía de plazo. Si TA-018 exige conversión no trivial de resultado,
-evolución de identidad común o preparación distinta, eso añade trabajo no
-demostrado hoy y puede superar las 3 h de T02. Si se exige benchmark global,
+No es una garantía de plazo. El contrato BF actual es compatible; si una nueva
+evolución exige conversión no trivial de resultado, identidad común o preparación
+distinta, añade trabajo que puede superar las 3 h de T02. Si se exige benchmark global,
 persistencia/streaming o múltiples dialectos DB, excede el alcance de 1 SP.
 En tales casos informar tarea/horas adicionales para decisión del equipo, sin
 actualizar automáticamente el backlog ni ocultarlos dentro de TA-021.
@@ -305,13 +316,20 @@ actualizar automáticamente el backlog ni ocultarlos dentro de TA-021.
 | Dependencia | Tipo / coordinación |
 |---|---|
 | TA-016 | Contrato común disponible, no bloquea T01 por mera existencia de trabajo paralelo; resolver incompatibilidades reales antes de validar. No modificar `rotation.py` aquí. |
-| TA-018 | Bloqueante T02/cierre, no T01. Acordar identidad y contrato de resultado cuando se integre. |
+| TA-018 | Disponible: `BestFitOptimizer` y `BestFitResult` integrados en PR #64. T02 valida su composición y el cierre exige los tres métodos reales. |
 | TA-019 | Base T01; reutilizar WF y sus pruebas, sin cambiar score ni candidatos. |
+| TA-020 | Política común retazo → plancha validada por PR #73. Reutilizarla en todos los casos sin otro selector. |
 | TA-022 | No bloqueante con fórmulas actuales; dependencia condicional si aparece métrica indispensable ausente. No nueva métrica dentro del comparador. |
 | TA-025 | Consumidor posterior de resultados; la selección empieza donde TA-021 termina. |
 | TA-026 | Persistencia posterior. No adaptar `run_snapshot`/`run_uow` para guardar la comparación aquí. |
 | HU-017 | Consumidor visual posterior; no bloquea T01/T02 ni impone implementar sus eventos. |
-| TA-037 | Coordinar costo acumulado y límites. Ejecución secuencial limita memoria simultánea; no resuelve presupuestos globales por sí sola. |
+| TA-037 | Guardrails y saneamiento #74 integrados. Ejecutar secuencialmente con cargas controladas; no atribuir a los límites por corrida una política global de comparación aún no acordada. |
+
+La admisión y el timeout de `/runs` no se aplican automáticamente a llamadas
+directas a `optimize(P)`. No ejecutar tres POST de `/runs` para obtenerlos. La
+política global de carga del consumidor debe acordarse antes de exponer una
+comparación por HTTP; esta tarea interna usa instancias controladas y conserva
+los presupuestos del motor, sin introducir otra admisión o presupuesto.
 
 **Conflictos con TA-018 y trabajo de Quispe:** evitar editar `packing.py`,
 `first_fit.py`, `worst_fit.py`, `problem.py` y `rotation.py` para añadir otro
@@ -319,12 +337,11 @@ motor o un protocolo obligatorio. La propuesta añade composición y pruebas en
 archivos separados. Si TA-018 cambia contrato común, coordinar un adaptador
 mínimo con su autor antes de tocarlo desde TA-021.
 
-Las fuentes históricas S1-OPT-UI/PLAN-S1 mencionan a Quispe como consumidor UI.
-No se asume que esa mención le asigne automáticamente TA-018 en Sprint 2.
-Coordinar con Quispe la forma de resultados/eventos que vaya a consumir: no
-editar `runContract.js`, hooks o pantallas en esta rama. Acordar ownership del
-contrato de comparación para no duplicar resultados ni introducir selección
-del ganador en HU-017. No se inspeccionó ni se modificó una rama remota ajena.
+TA-018 ya fue implementada por Andro Quispe e integrada mediante PR #64.
+Cualquier evolución incompatible del contrato común se coordina con su autor;
+no se le atribuyen nuevas tareas desde este documento. No editar `runContract.js`,
+hooks o pantallas desde TA-021. HU-017 consume el resultado identificado y TA-025
+selecciona; ninguno de esos consumidores se implementa en esta rama documental.
 
 ## 9. Riesgos
 
@@ -335,7 +352,7 @@ del ganador en HU-017. No se inspeccionó ni se modificó una rama remota ajena.
 | Memoria/CPU multiplicados | Secuencial; sumar costo temporal y tamaño de resultados retenidos, coordinar TA-037. Sin prometer costo constante ni añadir carga masiva. |
 | FF deja de ser lazy | No consumir sus candidatos ni compartir ranking con WF; regresión existente y comparación con ejecución directa. |
 | Diseño rígido de dos métodos | Colección de factorías, pruebas de cardinalidad y adición BF sin un flujo especial. |
-| Conflictos con BF | T02 posterior a integración real, contrato acordado; no inventar su score/adaptación. |
+| Conflictos con BF | Integración ya disponible; verificar contrato actual y coordinar solo incompatibilidades nuevas, sin inventar score/adaptación. |
 | Duplicación de métricas | Reutilizar `calculate_metrics`, mismos mínimos; GAP a TA-022. |
 | Persistencia/selección prematuras | No invocar `/runs`/`save_result` ni establecer ejecución seleccionada; TA-025/026 fuera. |
 | Contaminación de inventario/pedidos | Lecturas únicas y slice que compara tablas; no aceptación/confirmación transaccional del lote. |
@@ -345,9 +362,10 @@ del ganador en HU-017. No se inspeccionó ni se modificó una rama remota ajena.
 
 ## 10. Puerta de cierre de TA-021
 
-- [ ] SPEC/PLAN revisados y responsables/contratos acordados.
+- [ ] SPEC/PLAN v1.1 revisados y aprobados por el responsable antes de iniciar el desarrollo.
 - [ ] T01 FF/WF validada con evidencia, sin cierre anticipado de TA-021.
-- [ ] TA-018 integrada y BF real incorporado al mismo mecanismo.
+- [x] Disponibilidad de TA-018 comprobada en la base `0424f30` (solo prerrequisito, no evidencia de TA-021).
+- [ ] BF real incorporado al comparador y validado en T02.
 - [ ] T02 demuestra los 20 CA sobre FF/BF/WF, incluidas seis permutaciones.
 - [ ] Regresiones correctas, misma instancia y cero cambios en inventario/pedidos.
 - [ ] Métricas comunes, contrato identificado y ausencia de ganador/SQL/UI confirmadas.
@@ -355,8 +373,9 @@ del ganador en HU-017. No se inspeccionó ni se modificó una rama remota ajena.
 
 TA-021 **no puede declararse Closed** mientras falte BF real integrado o su
 validación conjunta. Las tareas siguen planificadas, no ejecutadas; aprobar
-este PLAN no marca CA como PASS ni declara Implemented o Verified. La revisión
-cruzada real continúa pendiente.
+este PLAN no marca CA como PASS ni declara Implemented o Verified. La aprobación
+de esta versión y la revisión cruzada de la futura implementación continúan
+pendientes; la revisión documental propia está registrada en SPEC §11.
 
 ## Historial de estado
 
@@ -365,3 +384,4 @@ cruzada real continúa pendiente.
 | 25/10/2026 | Draft | T01 FF/WF no bloqueada por TA-018; T02 y cierre condicionados a BF real. Referencia 0.5 + 0.5 SP, sin actualizar backlog ni implementar. |
 | 25/10/2026 | Draft | Parámetros métricos explícitos invariantes sin clase obligatoria; fallos identificados por método, rechazo previo de IDs duplicados, orden funcional y datos/cachés inmutables compartibles. Se mantiene 1 SP / 6 h y riesgo de reestimación por incompatibilidad TA-018. |
 | 25/10/2026 | Approved | Cambio de estado documental autorizado; SPEC Reviewed y revisión cruzada pendiente. T01/T02 sin cambios, 0.5 + 0.5 SP; TA-021 abierta después de T01 y cierre condicionado a BF real integrado. |
+| 27/10/2026 | Draft — v1.1 | Base actualizada a `0424f30`; contratos FF/BF/WF inspeccionados, TA-018/TA-020/TA-037 disponibles, T01/T02 y 1 SP / 6 h conservados. Revisión documental propia completada; aprobación del responsable y desarrollo pendientes. |
