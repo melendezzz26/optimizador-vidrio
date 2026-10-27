@@ -113,6 +113,12 @@ La ruta PostgreSQL debe contener `initdb` y `pg_ctl`; en esta sesión es
 `/tmp/hu016-tools/root/usr/lib/postgresql/17/bin`. No requiere credenciales ni
 variables de entorno del usuario, y no conecta a su base remota.
 
+Resultado local final sobre `fdce92c`, Python 3.11.9 y PostgreSQL 17 temporal:
+**2238 passed, 1 warning in 261.07s (0:04:21)**. Sin skips. El warning existente
+es `StarletteDeprecationWarning` sobre `httpx` en TestClient; no se modifica
+esa dependencia desde TA-021. Incluye las regresiones PostgreSQL de corridas,
+concurrencia, límites y confirmación transaccional además de las 60 pruebas nuevas.
+
 ## Matriz final de aceptación técnica
 
 Referencias: U = `backend/tests/unit/optimization/test_comparison.py`;
