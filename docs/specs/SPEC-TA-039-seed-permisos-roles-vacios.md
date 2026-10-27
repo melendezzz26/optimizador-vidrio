@@ -11,7 +11,7 @@
 | Épica | EN-003 / Permisos |
 | Prioridad / estimación | Alta / 0,5 SP |
 | Versión | **1.1**: alternativa C implementada |
-| Estado | **Implemented** (pasa a Verified con CI en verde y la revisión del PR) |
+| Estado | **Verified**: CI en verde, revisado e integrado en el PR #78 |
 | Responsable | Fabricio Aguilar |
 | Reviewer | Por asignar (distinto del autor) |
 | Rama | `fix/TA-039-seed-roles-vacios` |
@@ -186,3 +186,4 @@ PostgreSQL); la de CA-03 ya pasaba. Detalle en la evidencia.
 | 27/10/2026 | 0.1 | Draft | Borrador: análisis, alternativas y reglas propuestas para revisión. |
 | 27/10/2026 | 1.0 | Draft | P-01 (alternativa C) y P-02 decididas por el responsable. Pendiente: revisión en el PR. |
 | 27/10/2026 | 1.1 | Implemented | Regresiones en rojo antes de la corrección y en verde después; CA-01 a CA-07 en PASS (§11). Pendiente: CI y revisión del PR para Verified. |
+| 27/10/2026 | 1.1 | Verified | PR #78 aprobado e integrado en `integration/sprint-01` con CI en verde (backend con PostgreSQL, frontend y E2E). |
