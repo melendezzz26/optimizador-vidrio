@@ -428,7 +428,7 @@ recibe el foco. El resto de errores conserva la presentación genérica de siemp
 | CA-02 | PASS | `tests/unit/optimization/test_load_budget.py` (exacto y + 1); `tests/api/optimization/test_run_load_limits.py` |
 | CA-03 | PASS | `tests/unit/optimization/test_accept_run_load_limits.py` (espía sobre `prepare_persisted_problem`) |
 | CA-04 | PASS | `tests/api/optimization/test_run_load_limits.py`, `tests/integration/optimization/test_run_load_limits_pg.py` (PostgreSQL) |
-| CA-05 | PASS | Suite backend completa sin editar pruebas existentes; corte comercial (`test_commercial_cut.py`, E2E11) |
+| CA-05 | PASS técnico | Regresión de optimización: 717 PASS, sin cambiar las aserciones de FF/BF/WF, corte comercial o confirmación. La prueba de caducidad de TA-037 sí se sustituye deliberadamente; suite completa y E2E mediante CI del PR. |
 | CA-06 | PASS | Cantidad 2 147 483 647 rechazada en menos de 1 s (unitaria) y en ~0,12 s por HTTP (`test_run_load_stress.py`) |
 | CA-07 | PASS | Caso H-10 en `test_load_budget.py` y `test_accept_run_load_limits.py` |
 | CA-08 | PASS técnico | Reloj a 300/301/3600 s en `test_run_admission.py`; stream real con PostgreSQL por encima de 300 s en `test_run_concurrency.py`; límites global y por usuario preservados. |
