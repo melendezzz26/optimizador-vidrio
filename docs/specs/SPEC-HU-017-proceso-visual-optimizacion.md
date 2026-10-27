@@ -14,6 +14,7 @@
 | PLAN | [PLAN-HU-017-proceso-visual-optimizacion.md](PLAN-HU-017-proceso-visual-optimizacion.md) |
 | Dependencias | HU-015/S1-01, SP-001, TA-016, TA-018, TA-019, TA-021 y TA-037 según contratos pendientes |
 | Decisión | Cierre documental autorizado: SPEC Reviewed. Revisión cruzada real pendiente; no implica implementación ni verificación. |
+| Streaming / DG-01 | **B elegida expresamente; DG-01 Closed.** Perfil visual-v2 optativo, V1 predeterminado; contrato en [DECISION-HU-017-DG-01](DECISION-HU-017-DG-01-streaming-visual.md). T03 pendiente. |
 
 ## 1. Identificador, historia y propósito
 
@@ -276,9 +277,11 @@ Los ocho eventos V1 actuales permanecen sin cambios para consumidores existentes
 `group_completed`, `metrics_calculated`, `optimization_completed`, `optimization_failed`.
 
 El contrato debe definir eventos, payloads, correlación, orden, compatibilidad
-y límites de entrega. El PLAN comparará extensión compatible del contrato actual
-y perfil/versionado específico antes de elegir la alternativa mínima segura.
-Esta SPEC no prescribe `visual-v2`, un query parameter ni un número de versión.
+y límites de entrega. La comparación del PLAN se resolvió por elección expresa
+del solicitante: **B, perfil visual-v2 optativo**, con V1 predeterminado.
+[DG-01](DECISION-HU-017-DG-01-streaming-visual.md) concreta negociación,
+versiones, entrega, referencias y presupuestos iniciales; su implementación y
+pruebas quedan en T03. Esta concreción no altera los 26 CA funcionales.
 No enviar tipos nuevos a un parser incompatible ni
 degradar silenciosamente el contrato. El modo visual no modifica problema,
 stock, resolución ni política heurística.
@@ -308,7 +311,8 @@ incluido SIN_SOLUCION y faltantes; no volver a ejecutar el algoritmo para verlo.
   de evaluación llevan descriptores, no copias repetidas de sus celdas.
 - Descriptores y `mask_ref` ligados a snapshot/resolución/ángulo; recuperar solo
   la máscara visible mediante contrato autenticado acotado, reutilizando rangos
-  `spans_by_row`. URI/esquema concreto de recuperación pendiente de T03.
+  `spans_by_row`. URI/ventanas y retención según DG-01; schemas e implementación
+  concretos de recuperación pendientes de T03.
 - Los límites de HU-015 no se amplían para servir máscaras internas grandes.
   Si hace falta, ventanas/tiles o detalle visual reducido claramente rotulado;
   jamás cambiar por ello la máscara o resolución que usa el algoritmo.
@@ -417,7 +421,7 @@ existencia de código de HU-015/TA-019 ni por crear esta documentación.
 | TA-037 | SPEC y guardrails integrados. Coordinar límites de resolución y recursos, máscaras base, generación bajo demanda, throttling y checkpoints; sin selección automática en HU-017. |
 | Preparación base | GAP frente a `pack` actual; resolver preparación previa acotada y preservar generación/evaluación perezosa con TA-016/TA-037. |
 | GAP-VECTORIAL | Decidir necesidad y alcance de validación final independiente; tarea separable, sin ID inventado ni garantía anticipada. |
-| Contrato visual / máscaras | Revisar la negociación propuesta en el PLAN, URI de recuperación, TTL/retención y tamaños antes de implementar. No prometer persistencia de todos los intentos. |
+| Contrato visual / máscaras | DG-01 Closed, B elegida. Implementar/probar negociación, URI de recuperación, retención y tamaños definidos en la decisión; sin persistencia de todos los intentos. |
 | Configuración visible | No hay API pública completa de Configuration; definir lectura autorizada/acotada o mostrar configuración al aceptar la corrida. |
 
 ## Historial de estado
@@ -431,3 +435,4 @@ existencia de código de HU-015/TA-019 ni por crear esta documentación.
 | 27/10/2026 | Reviewed | Base revalidada en `4bcf54d`; inicio local de T01 autorizado. Se conservan los 26 CA, las exclusiones y DG-01 abierta antes de T03. |
 | 27/10/2026 | Reviewed | Primer incremento T01 implementado y validado localmente; [evidencia](../evidence/sprint-02/HU-017/t01-flujo-unificado.md). Sin cierre global ni publicación de HU-017. |
 | 27/10/2026 | Reviewed | Núcleo T02 implementado en `1291d65`: bases previas, resolución/configuración inmutables y orientaciones compartidas lazy. 2270 backend y 34 E2E correctos; sin cierre global, publicación ni revisión humana atribuida. |
+| 27/10/2026 | Reviewed | DG-01 Closed por elección expresa de B; contrato visual-v2 optativo documentado antes de T03. Sin código nuevo ni cambio de los 26 CA. |
