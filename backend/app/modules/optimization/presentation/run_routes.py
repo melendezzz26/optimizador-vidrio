@@ -30,8 +30,11 @@ class RunRoute(APIRoute):
                 raise HTTPException(422, detail=dict(code="INVALID_INPUT", message="La solicitud de optimización no es válida.")) from error
             except RunError as error:
                 status = {"NOT_FOUND":404, "STATE_CONFLICT":409, "CONFIG_CONFLICT":409, "INVALID_INPUT":422,
-                          "STOCK_CONFLICT":409, "ALREADY_CONFIRMED":409, "NOT_CONFIRMABLE":422}.get(error.code,500)
-                raise HTTPException(status, detail=dict(code=error.code, message=error.message)) from error
+                          "STOCK_CONFLICT":409, "ALREADY_CONFIRMED":409, "NOT_CONFIRMABLE":422,
+                          "LOAD_LIMIT_EXCEEDED":422}.get(error.code,500)
+                # TA-037: public details (e.g. limit) only; internals stay in the server log.
+                raise HTTPException(status, detail=dict(code=error.code, message=error.message,
+                                                        **(error.details or {}))) from error
             except HTTPException as error:
                 code = {401:"UNAUTHENTICATED",403:"FORBIDDEN",404:"NOT_FOUND",422:"INVALID_INPUT"}.get(error.status_code,"INTERNAL_ERROR")
                 raise HTTPException(error.status_code, detail=dict(code=code, message=str(error.detail)), headers=error.headers) from error
@@ -60,14 +63,21 @@ def get_run_calculator(unit_of_work=Depends(get_run_unit_of_work)):
     return CalculateRun(unit_of_work, InventoryStockAdapter(SqlAlchemyInventoryRepository(SessionLocal)))
 
 
+def get_stock_counter(calculator=Depends(get_run_calculator)):
+    """TA-037 P4: the calculator's own stock adapter, so counting and expansion share rules."""
+    provider = calculator.stock_provider
+    return provider if hasattr(provider, "count_compatible") else None
+
+
 router = APIRouter(prefix="/runs", route_class=RunRoute)
 
 
 @router.post("", status_code=201, response_class=StreamingResponse,
     responses={201:{"content":{"application/x-ndjson":{}}}})
 def start_run(request: RunRequestV1, user=Depends(run_permission("optimization.execute")),
-              unit_of_work=Depends(get_run_unit_of_work), calculator=Depends(get_run_calculator)):
-    accepted = AcceptRun(unit_of_work).execute(request.order_ids, user.user_id)
+              unit_of_work=Depends(get_run_unit_of_work), calculator=Depends(get_run_calculator),
+              stock_counter=Depends(get_stock_counter)):
+    accepted = AcceptRun(unit_of_work, stock_counter).execute(request.order_ids, user.user_id)
     return RunStreamingResponse(LiveRunStream(unit_of_work, calculator).lines(accepted), status_code=201,
         media_type="application/x-ndjson", headers={"Location":f"/api/optimization/runs/{accepted.optimization_id}",
                                                  "Cache-Control":"no-cache", "X-Accel-Buffering":"no"})
