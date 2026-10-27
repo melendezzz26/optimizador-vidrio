@@ -111,3 +111,72 @@ def test_a_newly_added_catalog_permission_is_assigned_to_its_initial_roles(make_
     assert "orders.cancel" in result["Operario"]
     assert "orders.cancel" in result["Administrador"]
     assert "orders.cancel" not in result["Almacenero"]
+
+
+# TA-039: el seed distingue una base nueva de un rol vaciado a propósito.
+
+def empty_role(factory, role):
+    """Deja el rol sin permisos, como un PUT de RN-06 con una lista vacía."""
+    with factory() as db:
+        role_id = db.scalar(select(Rol.id_rol).where(Rol.nombre == role))
+        db.execute(delete(RolPermiso).where(RolPermiso.id_rol == role_id))
+        db.commit()
+
+
+@pytest.mark.parametrize("role", ["Almacenero", "Operario"])
+def test_seed_does_not_refill_a_role_emptied_by_the_administrator(make_session, role):
+    """CA-02: el rol sigue vacío después de 1 y de 2 ejecuciones."""
+    add_roles(make_session)
+    with make_session() as db:
+        seed_permissions(db)
+    empty_role(make_session, role)
+    expected = assignment(make_session)
+    for _ in range(2):
+        with make_session() as db:
+            seed_permissions(db)
+        assert assignment(make_session) == expected
+    assert assignment(make_session)[role] == set()
+
+
+def test_seed_keeps_a_partially_configured_role(make_session):
+    """CA-03: no recupera ninguno de los permisos retirados."""
+    add_roles(make_session)
+    with make_session() as db:
+        seed_permissions(db)
+    for code in ("orders.cancel", "optimization.execute", "optimization.confirm"):
+        remove_permission(make_session, "Operario", code)
+    expected = assignment(make_session)
+    with make_session() as db:
+        seed_permissions(db)
+    assert assignment(make_session) == expected
+
+
+def test_a_new_catalog_permission_reaches_an_emptied_role_alone(make_session):
+    """CA-04 (P-02): el rol vacío recibe solo el permiso nuevo, no su asignación completa."""
+    add_roles(make_session)
+    with make_session() as db:
+        seed_permissions(db)
+        # Simula una base anterior a que existiera este código en el catálogo.
+        db.execute(delete(Permiso).where(Permiso.codigo == "orders.cancel"))
+        db.execute(delete(RolPermiso).where(~RolPermiso.id_permiso.in_(select(Permiso.id_permiso))))
+        db.commit()
+    empty_role(make_session, "Operario")
+    with make_session() as db:
+        seed_permissions(db)
+    assert assignment(make_session)["Operario"] == {"orders.cancel"}
+
+
+def test_a_role_created_by_this_seed_run_receives_its_initial_assignment(make_session):
+    """CA-05: en una base ya inicializada, solo el rol recién creado recibe su asignación."""
+    add_roles(make_session, ("Administrador", "Almacenero"))
+    with make_session() as db:
+        seed_permissions(db)
+    empty_role(make_session, "Almacenero")
+    with make_session() as db:
+        db.add(Rol(nombre="Operario"))
+        db.flush()
+        seed_permissions(db, created_roles={"Operario"})
+    result = assignment(make_session)
+    assert result["Operario"] == set(ASIGNACION_INICIAL["Operario"])
+    assert result["Almacenero"] == set()
+    assert result["Administrador"] == set(ASIGNACION_INICIAL["Administrador"])
