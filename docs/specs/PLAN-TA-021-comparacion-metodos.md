@@ -5,11 +5,11 @@
 | Campo | Valor |
 |---|---|
 | Versión | **1.1 — actualización del 27/10/2026** |
-| Estado | **Draft — pendiente de revisión y aprobación de esta versión** |
-| SPEC | [SPEC-TA-021-comparacion-metodos.md](SPEC-TA-021-comparacion-metodos.md), v1.1 Draft |
+| Estado | **Approved — v1.1, desarrollo T01/T02 autorizado** |
+| SPEC | [SPEC-TA-021-comparacion-metodos.md](SPEC-TA-021-comparacion-metodos.md), v1.1 Reviewed |
 | Responsable | Fabricio Melendez Quezada |
 | Revisión documental | Codex; revisión propia registrada en SPEC §11 |
-| Aprobación de alcance y desarrollo | Pendiente de Fabricio Melendez Quezada |
+| Aprobación de alcance y desarrollo | Fabricio Melendez Quezada, 27/10/2026; autorización expresa para implementar |
 | Revisión cruzada de implementación | Pendiente de designación |
 | Fecha / base actual | 27/10/2026 / `0424f30c84cefb3d5899bbbbba2de363cc5a2319`, `integration/sprint-01` |
 | Rama | `docs/TA-021-comparacion-metodos` |
@@ -19,10 +19,10 @@
 
 ## 1. Autoridad, objetivo y auditoría de alcance
 
-Este PLAN desarrolla la SPEC v1.1 y se entrega para revisión y aprobación antes
-de implementar, conforme a la secuencia solicitada por el responsable. El estado
-Approved del 25/10 pertenece a la versión anterior; no aprueba esta revisión.
-No se declara Implemented o Verified ni una revisión cruzada humana.
+Este PLAN desarrolla la SPEC v1.1 Reviewed. El responsable aprobó expresamente
+la versión el 27/10/2026 y pidió continuar con la implementación siguiendo el
+flujo del repositorio. El PLAN pasa a Approved; las pruebas funcionales, la
+evidencia y la revisión de cierre siguen pendientes de ejecución real.
 
 Se mantienen T01 como infraestructura genérica + FF/WF y T02 como incorporación
 al comparador del BF real ya disponible. No existe bloqueo externo por falta de
@@ -362,7 +362,7 @@ selecciona; ninguno de esos consumidores se implementa en esta rama documental.
 
 ## 10. Puerta de cierre de TA-021
 
-- [ ] SPEC/PLAN v1.1 revisados y aprobados por el responsable antes de iniciar el desarrollo.
+- [x] SPEC/PLAN v1.1 revisados y aprobados por el responsable el 27/10/2026 antes de iniciar el desarrollo.
 - [ ] T01 FF/WF validada con evidencia, sin cierre anticipado de TA-021.
 - [x] Disponibilidad de TA-018 comprobada en la base `0424f30` (solo prerrequisito, no evidencia de TA-021).
 - [ ] BF real incorporado al comparador y validado en T02.
@@ -373,9 +373,8 @@ selecciona; ninguno de esos consumidores se implementa en esta rama documental.
 
 TA-021 **no puede declararse Closed** mientras falte BF real integrado o su
 validación conjunta. Las tareas siguen planificadas, no ejecutadas; aprobar
-este PLAN no marca CA como PASS ni declara Implemented o Verified. La aprobación
-de esta versión y la revisión cruzada de la futura implementación continúan
-pendientes; la revisión documental propia está registrada en SPEC §11.
+este PLAN no marca CA como PASS ni declara Implemented o Verified. Esta versión ya está aprobada para desarrollar; la revisión cruzada de la
+implementación permanece pendiente. La revisión documental está en SPEC §11.
 
 ## Historial de estado
 
@@ -385,3 +384,4 @@ pendientes; la revisión documental propia está registrada en SPEC §11.
 | 25/10/2026 | Draft | Parámetros métricos explícitos invariantes sin clase obligatoria; fallos identificados por método, rechazo previo de IDs duplicados, orden funcional y datos/cachés inmutables compartibles. Se mantiene 1 SP / 6 h y riesgo de reestimación por incompatibilidad TA-018. |
 | 25/10/2026 | Approved | Cambio de estado documental autorizado; SPEC Reviewed y revisión cruzada pendiente. T01/T02 sin cambios, 0.5 + 0.5 SP; TA-021 abierta después de T01 y cierre condicionado a BF real integrado. |
 | 27/10/2026 | Draft — v1.1 | Base actualizada a `0424f30`; contratos FF/BF/WF inspeccionados, TA-018/TA-020/TA-037 disponibles, T01/T02 y 1 SP / 6 h conservados. Revisión documental propia completada; aprobación del responsable y desarrollo pendientes. |
+| 27/10/2026 | Approved — v1.1 | Aprobación expresa de Fabricio Melendez para implementar T01/T02 conforme a SPEC/PLAN, con pruebas, evidencia y PR hacia integration/sprint-01. |

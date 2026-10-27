@@ -6,11 +6,11 @@
 |---|---|
 | ID / nombre | TA-021 — Comparar FF/BF/WF sobre una instancia idéntica |
 | Versión | **1.1 — actualización del 27/10/2026** |
-| Estado | **Draft — pendiente de revisión y aprobación de esta versión** |
+| Estado | **Reviewed — v1.1 aprobada para iniciar el desarrollo** |
 | Sprint / módulo | Sprint 2 / Optimization |
 | Responsable de implementación | Fabricio Melendez Quezada |
 | Revisión técnica documental | Codex; registro de revisión en §11 |
-| Aprobación de alcance y desarrollo | Pendiente de Fabricio Melendez Quezada |
+| Aprobación de alcance y desarrollo | Fabricio Melendez Quezada, 27/10/2026: «Aprobada, sigamos con la implementación» |
 | Revisión cruzada de la implementación | Pendiente de designación; no se atribuye una revisión humana |
 | Fechas | 25/10/2026 (versión original) / 27/10/2026 (actualización) |
 | Rama documental | `docs/TA-021-comparacion-metodos` |
@@ -19,12 +19,11 @@
 | Estimación de referencia | Backlog comunicado: 1 SP = 6 h; no se modifica el backlog. |
 | Fases | T01: infraestructura común + FF/WF; T02: BF integrado y validación FF/BF/WF. |
 
-La aprobación documental del 25/10 se conserva como antecedente de la versión
-anterior. **No aprueba automáticamente esta revisión ni autoriza iniciar el
-desarrollo.** La secuencia solicitada es actualizar SPEC/PLAN, revisar esta
-versión, obtener la aprobación del responsable y después implementar.
-Se conservan los 20 CA, el alcance y la división T01/T02. No se declara
-Implemented, Verified ni pruebas funcionales aprobadas por actualizar documentos.
+La versión 1.1 fue revisada documentalmente y aprobada expresamente por el
+responsable el 27/10/2026: «Aprobada, sigamos con la implementación». Esa
+aprobación autoriza desarrollar T01 y T02 con el alcance de esta SPEC y su PLAN.
+No declara el comparador implementado, los CA aprobados ni el PBI cerrado;
+se mantiene la revisión de implementación y su evidencia como puerta de cierre.
 
 ## 1. Identidad, fuentes y objetivo
 
@@ -401,7 +400,7 @@ no es una revisión cruzada humana ni evidencia de ejecución del comparador.
 | Responsabilidades | TA-025 selecciona, TA-026 persiste, HU-017 visualiza y TA-022 define nuevas métricas. |
 | Recursos | Secuencial; preservar presupuestos del motor, limitar cargas de prueba y no atribuir a TA-037 cobertura global de tres métodos. |
 | Aceptación | Los 20 CA permanecen íntegros; T01 no cierra TA-021 y T02 requiere los tres métodos reales y seis permutaciones. |
-| Autorización | Pendiente de revisión/aprobación del responsable para iniciar desarrollo. |
+| Autorización | Aprobación expresa del responsable el 27/10/2026; desarrollo T01/T02 autorizado. |
 
 Los controles de admisión y tiempo de TA-037 se ejecutan en `/runs` y su stream;
 **no se heredan automáticamente al llamar directamente a `optimize(P)`**. Los
@@ -419,3 +418,4 @@ guardrails, una cola ni otra admisión dentro de esta tarea.
 | 25/10/2026 | Draft | Precisados parámetros métricos invariantes, error técnico identificado por método, unicidad previa, equivalencia funcional por orden y posibilidad de compartir cachés/datos inmutables seguros. Sin implementación ni cambio de estimación. |
 | 25/10/2026 | Reviewed | Cambio de estado autorizado documentalmente; revisor/revisión cruzada pendientes. Sin implementación ni verificación, con 20 CA y alcance T01/T02 intactos. |
 | 27/10/2026 | Draft — v1.1 | Base actualizada a `0424f30`: BF/TA-016/TA-020/TA-037 disponibles, contratos reales inspeccionados y fases conservadas. Revisión documental propia registrada; aprobación de esta versión y desarrollo pendientes. Los 20 CA y la estimación se conservan. |
+| 27/10/2026 | Reviewed — v1.1 aprobada | Fabricio Melendez aprueba expresamente esta revisión y solicita continuar con la implementación. Se autoriza T01/T02, manteniendo los 20 CA, límites y revisión de cierre. |
