@@ -33,3 +33,7 @@ class ResultSaveFailed(Exception):
 
 class ExecutionInterrupted(Exception):
     pass
+
+
+class TimeBudgetExceeded(Exception):
+    """TA-037 L-12: the calculation passed its time budget; stopped at a milestone."""

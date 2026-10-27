@@ -182,10 +182,15 @@ debajo de L-12.
   proceso**. La plaza se libera cuando termina el hilo, no cuando se cierra la
   conexión del cliente. La regla es válida mientras haya un solo proceso
   (H-08); con más dynos o workers se necesitaría una admisión compartida en base de
-  datos, y esa decisión requiere un ADR.
-- **L-12:** se mide desde que empieza el cálculo, excluyendo el tiempo de entrega
-  de eventos, igual que `computation_time_ms`. Un hito posterior al vencimiento
-  detiene la ejecución.
+  datos, y esa decisión requiere un ADR. La plaza se toma antes de aceptar la ejecución
+  y se libera una sola vez: al terminar el hilo de cálculo (éxito, fallo, desconexión o
+  L-12), al rechazarse la solicitud antes del stream, o al cerrarse un stream cuyo hilo
+  nunca arrancó. Como respaldo, una plaza que por un error no se liberara expira a los
+  300 s (L-12 + un tramo entre hitos + guardado); ninguna ejecución sana dura tanto.
+- **L-12:** se mide desde que arranca el hilo de cálculo, descontando el tiempo de
+  entrega de eventos al cliente, para que un cliente lento no consuma el presupuesto. Se
+  verifica en cada hito (`group_started`, `piece_started`, `piece_placed`,
+  `group_completed`): el primer hito posterior al vencimiento detiene la ejecución.
 - Si una solicitud viola varios límites, se informa **solo el primero** en el orden
   de §6. Así el resultado es determinista y fácil de probar.
 
@@ -294,8 +299,10 @@ La ejecución ya fue aceptada y el stream está abierto, así que no puede respo
 con otro código HTTP. Termina con el evento `optimization_failed`,
 `estado = FALLIDA` y `code = TIME_BUDGET_EXCEEDED`. Agregar este código requiere
 actualizar la lista permitida en `frontend/src/features/optimization/runContract.js:117`
-y `OptimizationFailedV1`. Ese cambio corresponde a T03 y T04. Qué pasa después con
-los pedidos lo define TA-038.
+y `OptimizationFailedV1`; T03 hace ambos cambios. El mensaje del evento es «El cálculo
+superó el tiempo máximo de 120 s y se detuvo. Divide la selección en lotes más
+pequeños.». La ejecución queda `FALLIDA`, como en los demás fallos; qué pasa después con
+los pedidos lo define TA-038. La presentación específica en pantalla corresponde a T04.
 
 ### 7.4 Mensajes por límite
 
@@ -404,3 +411,4 @@ específica: aviso no destructivo y selección conservada.
 | 25/10/2026 | 1.0 | Draft | T01: límites medidos a 90°, puntos de validación y contrato de error propuestos para revisión del equipo. Integrada con el PR #62. |
 | 26/10/2026 | 1.1 | Draft | Recalibración al paso operativo de 5° (PR #64): L-03 de 500 a 150, L-07 de 100 a 50, L-02, L-06 y L-08 retirados, L-12 pasa a protección principal, nuevo L-13 (memoria raster) y GAP-05. Integrada con el PR #65. |
 | 26/10/2026 | 1.2 | Reviewed | Valores de v1.1 aprobados por el equipo (Scrum Master). Correcciones de implementación de T02: L-09 retirado por no tener cota segura; L-05 conserva `INVALID_INPUT`; L-13 calculado con cota inferior en coma flotante; P4 usa el adaptador de stock del cálculo. |
+| 26/10/2026 | 1.2 | Reviewed | T03 implementada según §5.1, §7.2 y §7.3. Detalle de implementación agregado en §5.1: puntos de liberación de la plaza y respaldo de expiración de 300 s. Sin cambios de valores ni de contrato. |

@@ -17,7 +17,7 @@
 |---|---:|---|---|---|
 | T01 — Definir presupuesto y contrato de errores | 0,5 | HU-015, TA-021 | Lunes 26/10, 12:00 | **Hecha.** v1.0 (PR #62), v1.1 a 5° (PR #65), valores aprobados; SPEC en `Reviewed` (v1.2) |
 | T02 — Implementar guardrails previos a la expansión | 1,5 | T01 | Martes 27/10 | **Implementada** en `enabler/TA-037-guardrails` (§3); 55 pruebas nuevas; suite completa en verde |
-| T03 — Limitar concurrencia y controlar ejecución | 1 | T01, T02 | Martes 27/10 | Diseño en la SPEC (§5.1, §7.2, §7.3). L-12 pasa a ser protección principal |
+| T03 — Limitar concurrencia y controlar ejecución | 1 | T01, T02 | Martes 27/10 | **Implementada** en `enabler/TA-037-concurrencia` (§4); 20 pruebas nuevas; suites backend, frontend y E2E en verde |
 | T04 — Probar límites y feedback | 1 | T02, T03 | Martes 27/10 | Casos definidos en la SPEC (§9, §12) |
 
 T01 quedó cerrada al aprobarse los valores de la v1.1. La SPEC pasa a `Reviewed` en la
@@ -162,12 +162,24 @@ corre: revisar que el job de backend quede en verde.
 
 ## 4. T03 y T04 — Pendientes del martes
 
-- **T03:** puerto `RunAdmission` con `try_acquire(user_id) -> Lease | None` y una
-  implementación en proceso (`threading.Lock` y contadores), usada en `start_run`
-  antes de `AcceptRun`. El `Lease` se libera en el `finally` de `produce()` y, si el
-  hilo nunca arrancó, en el `finally` de `lines()`. La liberación es idempotente.
-  L-12 se verifica en `milestone` con un reloj inyectable. Como en la v1.1 L-12
-  reemplaza a L-08, T03 es necesaria para cerrar el peor caso de stock.
+- **T03 (implementada):**
+    - `application/admission.py`: puerto `RunAdmission.acquire(user_id) -> AdmissionLease`
+      y error `OptimizerBusy` (503 `OPTIMIZER_BUSY`, `Retry-After: 15`, `limit`).
+    - `infrastructure/in_process_admission.py`: `InProcessRunAdmission` con
+      `threading.Lock`, L-10 = 2, L-11 = 1, liberación idempotente y expiración de
+      respaldo a los 300 s.
+    - `presentation/run_routes.py`: `start_run` toma la plaza antes de `AcceptRun` y la
+      libera si la aceptación falla; la confirmación no pasa por la admisión.
+    - `presentation/run_stream.py`: la plaza se libera en el `finally` del hilo de
+      cálculo, o al cerrar un stream cuyo hilo nunca arrancó; L-12 se verifica en cada
+      hito descontando el tiempo de entrega; nuevo código `TIME_BUDGET_EXCEEDED`.
+    - `presentation/run_schemas.py` y `frontend/.../runContract.js`: aceptan
+      `OPTIMIZER_BUSY` y `TIME_BUDGET_EXCEEDED`.
+    - Pruebas: `tests/unit/optimization/test_run_admission.py`,
+      `tests/api/optimization/test_run_concurrency.py`, un caso nuevo en
+      `frontend/tests/unit/runContract.test.js` y una fixture que da a cada prueba de API
+      una admisión limpia. Una prueba de mutación confirmó que las pruebas fallan si se
+      quita la liberación, el corte por tiempo o la admisión.
 - **T04:** pruebas de concurrencia (admitida, rechazada y liberación), stock
   voluminoso sin OOM, y feedback en `useFirstFit.js` / `OptimizationPage.jsx` con
   Vitest y Playwright.
@@ -190,3 +202,4 @@ corre: revisar que el job de backend quede en verde.
 | 25/10/2026 | Draft | T01 redactada; T02 diseñada, sin implementar. |
 | 26/10/2026 | Draft | v1.1: valores recalibrados a 5° (PR #64); L-13 agregado; diseño de T02 actualizado. |
 | 26/10/2026 | Draft | T02 implementada; SPEC v1.2 en `Reviewed`; L-09 retirado; T03 y T04 pendientes. |
+| 26/10/2026 | Draft | T03 implementada (admisión, liberación de plazas y L-12); T04 pendiente. |
