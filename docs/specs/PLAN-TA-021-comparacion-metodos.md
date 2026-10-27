@@ -6,8 +6,8 @@
 |---|---|
 | Versión | **1.1 — actualización del 27/10/2026** |
 | Estado | **Approved — v1.1, desarrollo T01/T02 autorizado** |
-| Ejecución | **T01/T02 implementadas, probadas y revisadas; integración y smoke pendientes** |
-| SPEC | [SPEC-TA-021-comparacion-metodos.md](SPEC-TA-021-comparacion-metodos.md), v1.1 Implemented |
+| Ejecución | **Closed — T01/T02 revisadas, integradas y verificadas** |
+| SPEC | [SPEC-TA-021-comparacion-metodos.md](SPEC-TA-021-comparacion-metodos.md), v1.1 Verified |
 | Responsable | Fabricio Melendez Quezada |
 | Revisión documental | Codex; revisión propia registrada en SPEC §11 |
 | Aprobación de alcance y desarrollo | Fabricio Melendez Quezada, 27/10/2026; autorización expresa para implementar |
@@ -25,7 +25,8 @@ Este PLAN desarrolla la SPEC v1.1, aprobada como Reviewed. El responsable aprob�
 la versión el 27/10/2026 y pidió continuar con la implementación siguiendo el
 flujo del repositorio. El PLAN permanece Approved; T01/T02 y su evidencia técnica
 están ejecutadas según §10. El responsable confirma la revisión conforme y
-autoriza completar el cierre en la misma rama; restan integración y smoke.
+autoriza completar el cierre en la misma rama. Integración y smoke completados;
+registro de cierre en §10 y en la evidencia vinculada.
 
 Se mantienen T01 como infraestructura genérica + FF/WF y T02 como incorporación
 al comparador del BF real ya disponible. No existe bloqueo externo por falta de
@@ -374,14 +375,16 @@ selecciona; ninguno de esos consumidores se implementa en esta rama documental.
 - [x] Métricas comunes, contrato identificado y ausencia de ganador/SQL/UI confirmadas.
 - [x] Evidencia reproducible de ambas fases y `git diff --check` correcto.
 - [x] Revisión realizada y conforme confirmada por el responsable el 27/10/2026.
-- [ ] Integración del PR.
-- [ ] Smoke posterior al merge sobre `integration/sprint-01`.
+- [x] Integración de #76 y #77 en `integration/sprint-01`; implementación en `f1fd38d`.
+- [x] Smoke posterior al merge sobre `f1fd38d`: 523 pruebas correctas.
 
 T01 (`5af647f`) y T02 están ejecutadas. [Evidencia y matriz final](../evidence/sprint-02/TA-021/README.md):
 60 pruebas específicas correctas y revisión técnica propia de Codex. El
 responsable confirma «ya hemos revisado y està correcto» y autoriza completar
-el cierre; no se inventan otros revisores. TA-021 no se declara Closed/Verified
-hasta completar integración y smoke. La revisión documental está en SPEC §11.
+el cierre; no se inventan otros revisores. CI #153 aprobada y smoke posterior al
+merge correctos. Puerta de cierre completada: SPEC Verified y tarea Closed en el
+repositorio. [Acta de cierre](../evidence/sprint-02/TA-021/README.md#cierre-verificado).
+La revisión documental está en SPEC §11; los CA y la estimación se conservan.
 
 ## Historial de estado
 
@@ -394,3 +397,4 @@ hasta completar integración y smoke. La revisión documental está en SPEC §11
 | 27/10/2026 | Approved — v1.1 | Aprobación expresa de Fabricio Melendez para implementar T01/T02 conforme a SPEC/PLAN, con pruebas, evidencia y PR hacia integration/sprint-01. |
 | 27/10/2026 | Approved — ejecución T01/T02 | Comparador implementado y validado con BF real y seis permutaciones; evidencia técnica vinculada. Revisión cruzada y cierre posterior al PR pendientes. |
 | 27/10/2026 | Approved — revisión conforme | Fabricio Melendez confirma la revisión y autoriza el cierre manteniendo la rama de implementación. Integración y smoke pendientes. |
+| 27/10/2026 | Approved — ejecución Closed | T01/T02 y puerta de cierre completadas; PR #77 integrado en `f1fd38d`, CI #153 aprobada y smoke posterior de 523 pruebas. SPEC Verified; cierre documental en la misma rama. |
