@@ -157,5 +157,12 @@ el archivo de pruebas. No se crea comparador multimétodo.
 - Estado previo al PR: **Revisada y lista para entrega mediante PR**.
 - Entrega autorizada: commit/push a `feature/S2-TA-020-retazo-priority`, crear PR
   hacia `integration/sprint-01`, consultar CI y solicitar review de Fabricio.
-- Pendientes: PR/CI, review final del PR, merge por Fabricio, smoke y cierre.
+- PR creado: [#73](https://github.com/melendezzz26/optimizador-vidrio/pull/73),
+  `test(TA-020): validar prioridad uniforme de retazos en FF BF WF`.
+  Base `integration/sprint-01`; compare `feature/S2-TA-020-retazo-priority`.
+- Commit de preparación y pruebas finales: `7b64eb9`, publicado.
+- Review final solicitado a `melendezzz26` (perfil GitHub: Wilder Fabricio).
+- CI: consultar checks del HEAD actual en el PR; no se afirma resultado verde
+  antes de que GitHub lo produzca. La ejecución local permanece en 498 PASS.
+- Pendientes: CI, review final del PR, merge por Fabricio, smoke y cierre.
   No habilitar auto-merge, rebase, squash ni cerrar TA-020.

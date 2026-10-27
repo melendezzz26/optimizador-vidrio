@@ -15,7 +15,7 @@ Periodo: 21/10/2026 – 28/10/2026. Estado de revisión: **Revisado / autorizado
 - [x] Review previo de SPEC/PLAN por Fabricio, confirmado el 27/10/2026.
 - [x] PLAN revisado / autorizado para continuar.
 - [x] Verificación de CA-01 a CA-06.
-- [ ] PR creado.
+- [x] PR creado: [#73](https://github.com/melendezzz26/optimizador-vidrio/pull/73).
 - [ ] CI del PR.
 - [ ] Review final del PR por Fabricio.
 - [ ] Merge del PR por Fabricio.
