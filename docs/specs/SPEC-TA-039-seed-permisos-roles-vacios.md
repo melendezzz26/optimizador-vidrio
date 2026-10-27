@@ -10,7 +10,8 @@
 | Sprint | Sprint 2 |
 | Épica | EN-003 / Permisos |
 | Prioridad / estimación | Alta / 0,5 SP |
-| Estado | **Draft** |
+| Versión | **1.1**: alternativa C implementada |
+| Estado | **Implemented** (pasa a Verified con CI en verde y la revisión del PR) |
 | Responsable | Fabricio Aguilar |
 | Reviewer | Por asignar (distinto del autor) |
 | Rama | `fix/TA-039-seed-roles-vacios` |
@@ -18,6 +19,7 @@
 | Fecha | 27/10/2026 |
 | Origen | Auditoría pre-Sprint 2, hallazgo **S1-06** (HIGH, defecto confirmado) |
 | Dependencia | RBAC actual ([SPEC-S1-RBAC](SPEC-S1-RBAC-roles-permisos-configurables.md)) |
+| Evidencia | [docs/evidence/sprint-02/TA-039](../evidence/sprint-02/TA-039/README.md) |
 
 ## 1. Objetivo
 
@@ -97,7 +99,7 @@ base nueva, nunca por una decisión de un administrador.
   permisos.
 - **R-04 Permiso nuevo del catálogo.** Un código que se incorpora al catálogo se
   asigna a los roles que lo tienen en ASIGNACION_INICIAL. Es el comportamiento
-  actual y se conserva (ver P-02).
+  actual y se conserva (P-02, decidida).
 - **R-05 Nunca quita.** El seed nunca elimina permisos ni filas.
 - **R-06 Atomicidad.** En `seed.py`, la creación de roles, la carga del catálogo y
   la asignación se confirman juntas. Si algo falla, no se guarda nada y una nueva
@@ -152,17 +154,35 @@ cambia el Domain ni la Presentation.
 
 ## 10. Decisiones y preguntas abiertas
 
-- **P-01:** aprobar la alternativa C (recomendada) frente a A o B.
-- **P-02:** ¿un permiso **nuevo** del catálogo debe asignarse también a un rol que
-  el administrador dejó vacío? La propuesta es **sí** (R-04): no es un permiso
-  retirado, sino uno que no existía, y así lo hace hoy el seed. Si el equipo
-  prefiere lo contrario, solo cambia R-04 y CA-04.
+- **P-01 (decidida, 27/10/2026):** se adopta la alternativa C. Cumple el criterio
+  sin migración y sin editar fixtures de otros módulos. La B sigue siendo válida
+  si el reviewer la prefiere; en ese caso se avisará antes de tocar esos 5 archivos.
+- **P-02 (decidida, 27/10/2026):** un permiso **nuevo** del catálogo sí se asigna
+  según la tabla 4.3, aunque el rol esté vacío (R-04). No es un permiso retirado,
+  sino uno que no existía, y así lo hace hoy el seed.
 - **P-03:** si en algún entorno el Administrador quedó sin permisos por un fallo
   antiguo entre roles y permisos (y `rol_permisos` no está vacía), el seed no lo
   repara. Ese estado viola RN-05 y se trataría aparte, con autorización del equipo.
+
+## 11. Verificación de criterios de aceptación
+
+| CA | Resultado | Prueba |
+|---|---|---|
+| CA-01 | PASS | `test_new_database_gets_catalog_and_initial_assignment`, `test_roles_created_after_the_catalog_receive_their_initial_assignment`; PostgreSQL: `test_empty_database_then_seed_completes_assignment` |
+| CA-02 | PASS | `test_seed_does_not_refill_a_role_emptied_by_the_administrator[Almacenero/Operario]`; PostgreSQL con el caso de uso real: `test_seed_script_keeps_a_role_emptied_through_the_use_case` |
+| CA-03 | PASS | `test_seed_keeps_a_partially_configured_role`, `test_seed_does_not_restore_a_permission_removed_by_the_administrator` |
+| CA-04 | PASS | `test_a_newly_added_catalog_permission_is_assigned_to_its_initial_roles`, `test_a_new_catalog_permission_reaches_an_emptied_role_alone` |
+| CA-05 | PASS | `test_a_role_created_by_this_seed_run_receives_its_initial_assignment`; PostgreSQL: `test_seed_script_keeps_a_role_emptied_through_the_use_case` |
+| CA-06 | PASS | PostgreSQL: `test_seed_script_saves_nothing_if_the_assignment_fails` |
+| CA-07 | PASS | `test_running_seed_twice_changes_nothing`; suite backend completa 2185 PASS con PostgreSQL; sin migraciones ni cambios en la API o el frontend |
+
+Antes de la corrección, las 6 regresiones nuevas fallaban (4 unitarias y 2 con
+PostgreSQL); la de CA-03 ya pasaba. Detalle en la evidencia.
 
 ## Historial de estado
 
 | Fecha | Versión | Estado | Cambio |
 |---|---|---|---|
 | 27/10/2026 | 0.1 | Draft | Borrador: análisis, alternativas y reglas propuestas para revisión. |
+| 27/10/2026 | 1.0 | Draft | P-01 (alternativa C) y P-02 decididas por el responsable. Pendiente: revisión en el PR. |
+| 27/10/2026 | 1.1 | Implemented | Regresiones en rojo antes de la corrección y en verde después; CA-01 a CA-07 en PASS (§11). Pendiente: CI y revisión del PR para Verified. |
