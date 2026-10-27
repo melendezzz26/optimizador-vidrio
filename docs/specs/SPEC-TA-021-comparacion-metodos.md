@@ -6,7 +6,8 @@
 |---|---|
 | ID / nombre | TA-021 — Comparar FF/BF/WF sobre una instancia idéntica |
 | Versión | **1.1 — actualización del 27/10/2026** |
-| Estado | **Implemented — revisión conforme; integración y smoke pendientes** |
+| Estado | **Verified — revisión, integración y smoke completados** |
+| Estado de la tarea | **Closed — cierre en repositorio** |
 | Sprint / módulo | Sprint 2 / Optimization |
 | Responsable de implementación | Fabricio Melendez Quezada |
 | Revisión técnica documental | Codex; registro de revisión en §11 |
@@ -16,6 +17,7 @@
 | Rama documental | `docs/TA-021-comparacion-metodos` |
 | Rama de implementación | `feature/TA-021-comparacion-metodos` → `integration/sprint-01` |
 | Base auditada | `integration/sprint-01` en `0424f30c84cefb3d5899bbbbba2de363cc5a2319` |
+| Integración verificada | PR #77, `f1fd38de01038161f880c14ccbf4193c4e379d43`; CI #153 y smoke posterior correctos |
 | PLAN | [PLAN-TA-021-comparacion-metodos.md](PLAN-TA-021-comparacion-metodos.md) |
 | Estimación de referencia | Backlog comunicado: 1 SP = 6 h; no se modifica el backlog. |
 | Fases | T01: infraestructura común + FF/WF; T02: BF integrado y validación FF/BF/WF. |
@@ -23,10 +25,11 @@
 La versión 1.1 fue revisada documentalmente y aprobada expresamente por el
 responsable el 27/10/2026: «Aprobada, sigamos con la implementación». Esa
 aprobación autoriza desarrollar T01 y T02 con el alcance de esta SPEC y su PLAN.
-La aprobación antecede a la implementación. T01/T02 se implementan y prueban
+La aprobación antecede a la implementación. T01/T02 se implementaron y probaron
 en la rama `feature/TA-021-comparacion-metodos`; evidencia de ejecución en §12.
 El responsable confirma el 27/10/2026: «ya hemos revisado y està correcto» y
-autoriza completar el cierre en la misma rama. Integración y smoke pendientes.
+autoriza completar el cierre en la misma rama. PR #77 integrado y smoke posterior
+correcto: SPEC Verified y TA-021 Closed en el repositorio; evidencia en §12.
 
 ## 1. Identidad, fuentes y objetivo
 
@@ -426,7 +429,12 @@ al calcular métricas y demuestra seis permutaciones/repeticiones por método.
 ausencia de SQL/efectos externos y fallos identificados con causa. No cambian
 los criterios, el alcance ni la estimación de v1.1. Fabricio Melendez confirma
 la revisión realizada y conforme el 27/10/2026; no se atribuye a otros revisores
-una participación no identificada. Integración y smoke permanecen pendientes.
+una participación no identificada. Integración completada mediante PR #77 en
+`f1fd38d`, tras CI #153 aprobada: 2245 pruebas backend, 161 unitarias frontend,
+483 de componentes, lint/build y 100 E2E correctas (6 skips previos de HU-015).
+Smoke posterior sobre ese commit: **523 passed in 10.27s**.
+[Acta de cierre](../evidence/sprint-02/TA-021/README.md#cierre-verificado):
+puertas de revisión, integración y verificación cumplidas; tarea Closed.
 
 ## Historial de estado
 
@@ -439,3 +447,4 @@ una participación no identificada. Integración y smoke permanecen pendientes.
 | 27/10/2026 | Reviewed — v1.1 aprobada | Fabricio Melendez aprueba expresamente esta revisión y solicita continuar con la implementación. Se autoriza T01/T02, manteniendo los 20 CA, límites y revisión de cierre. |
 | 27/10/2026 | Implemented | T01/T02 ejecutadas, FF/BF/WF reales y evidencia técnica vinculada. Revisión cruzada, merge y smoke pendientes; no Closed/Verified. |
 | 27/10/2026 | Implemented — revisión conforme | El responsable confirma «ya hemos revisado y està correcto» y autoriza completar el cierre en la misma rama. Restan integración y smoke. |
+| 27/10/2026 | Verified / Closed en repositorio | Revisión conforme confirmada por el responsable, PR #76/#77 integrados, CI #153 aprobada y smoke posterior de 523 pruebas sobre `f1fd38d`. T01/T02 y los 20 CA verificados; sin cambio de alcance ni estimación. |

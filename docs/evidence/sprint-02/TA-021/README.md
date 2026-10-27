@@ -3,13 +3,13 @@
 Fecha: 27/10/2026. Responsable: Fabricio Melendez Quezada, con Codex.
 SPEC v1.1 Reviewed y PLAN Approved antes del desarrollo; aprobación registrada
 en `a665115`. Rama `feature/TA-021-comparacion-metodos`, destino exclusivo
-`integration/sprint-01`. Base integrada actualizada a `2fc228d` (PR #75,
+`integration/sprint-01`. Base inicial de implementación `2fc228d` (PR #75,
 documentación TA-020; motor idéntico a la base auditada `0424f30`).
 
-**Estado: implementación T01/T02 y validación técnica local completadas.**
+**Estado: Closed en repositorio; SPEC Verified y PLAN ejecutado.**
 Revisión conforme confirmada por Fabricio Melendez Quezada el 27/10/2026:
 «ya hemos revisado y està correcto». Autoriza completar el cierre en la misma
-rama. Integración y smoke pendientes; no se declara aún Closed/Verified.
+rama. PR #76/#77 integrados y smoke posterior correcto; acta al final.
 
 ## Entregas y uso
 
@@ -114,7 +114,7 @@ La ruta PostgreSQL debe contener `initdb` y `pg_ctl`; en esta sesión es
 `/tmp/hu016-tools/root/usr/lib/postgresql/17/bin`. No requiere credenciales ni
 variables de entorno del usuario, y no conecta a su base remota.
 
-Resultado local final sobre `fdce92c`, Python 3.11.9 y PostgreSQL 17 temporal:
+Resultado local de T02 sobre `fdce92c`, Python 3.11.9 y PostgreSQL 17 temporal:
 **2238 passed, 1 warning in 261.07s (0:04:21)**. Sin skips. El warning existente
 es `StarletteDeprecationWarning` sobre `httpx` en TestClient; no se modifica
 esa dependencia desde TA-021. Incluye las regresiones PostgreSQL de corridas,
@@ -124,7 +124,7 @@ concurrencia, límites y confirmación transaccional además de las 60 pruebas n
 
 Referencias: U = `backend/tests/unit/optimization/test_comparison.py`;
 I = `backend/tests/integration/optimization/test_comparison_slice.py`.
-PASS significa evidencia técnica propia; no sustituye la revisión cruzada.
+PASS resume evidencia técnica; revisión conforme y smoke se registran en el acta.
 
 | CA | Estado | Evidencia |
 |---|---|---|
@@ -151,7 +151,7 @@ PASS significa evidencia técnica propia; no sustituye la revisión cruzada.
 
 ## Revisión propia, límites y cierre
 
-Se revisa el diff completo contra `origin/integration/sprint-01`: un módulo de
+En la entrega de implementación se revisó el diff contra `integration/sprint-01`: un módulo de
 aplicación, dos archivos de pruebas y documentación TA-021. `git diff --check`
 correcto. No se modifican motor, rotación, métricas, confirmación, endpoints,
 persistencia, frontend, migraciones ni variables de entorno del proyecto.
@@ -165,5 +165,47 @@ TA-025 seleccionará, TA-026 persistirá y HU-017 visualizará por separado.
 
 La aprobación de SPEC/PLAN y la confirmación de revisión conforme provienen del
 responsable. La revisión técnica documentada por Codex es propia; no se atribuyen
-nombres de otros revisores no identificados. Antes de Closed/Verified quedan
-merge del PR hacia `integration/sprint-01` y smoke de integración.
+nombres de otros revisores no identificados. Revisión, integración y smoke
+completados conforme al acta siguiente.
+
+## Cierre verificado
+
+27/10/2026, America/Lima. El responsable autoriza: «Has todo para cerrar la TA-021
+en la misma rama, ya hemos revisado y està correcto». La revisión conforme se
+registró en `7ae0b94`; no se atribuye una aprobación GitHub a otra cuenta.
+
+| Puerta | Resultado y referencia |
+|---|---|
+| SPEC/PLAN aprobados antes de desarrollar | `a665115`; PR #76 integrado en `8097e408ac7c69ea1ef9d04e59d1680de3325b5e`. |
+| T01/T02 y 20 CA | Matriz anterior; tres métodos reales, seis permutaciones y 60 pruebas específicas. |
+| Base actualizada | `75254dd` sincroniza `8097e40`, que incluye TA-039 de #78; el código TA-021 conserva la versión revisada. |
+| Revisión conforme | Confirmación expresa del responsable; registro `7ae0b94`. |
+| CI previa al merge | [CI #153](https://github.com/melendezzz26/optimizador-vidrio/actions/runs/40569616454), aprobada sobre `7ae0b94a65d1a41d04d59be8b98be5fee25cc766`. |
+| Integración | [PR #77](https://github.com/melendezzz26/optimizador-vidrio/pull/77), merge `f1fd38de01038161f880c14ccbf4193c4e379d43` en `integration/sprint-01`. |
+| Smoke posterior | 523 pruebas correctas sobre ese merge; comando y salida debajo. |
+| Cierre | SPEC Verified, PLAN completado y tarea Closed en el repositorio. |
+
+CI #153: backend **2245 passed, 1 warning in 268.68s**, con PostgreSQL temporal
+obligatorio; frontend **161 unitarias y 483 de componentes**, lint/build correctos;
+E2E **100 passed (2.5m), 6 skipped** previos de HU-015. El warning es el existente
+de Starlette/httpx. Esta ejecución pasó sin reintentar E2E.
+
+Smoke ejecutado desde `backend/` después del merge y manteniendo la rama
+`feature/TA-021-comparacion-metodos`, avanzada al commit integrado `f1fd38d`:
+
+```bash
+git diff --exit-code 7ae0b94 f1fd38de01038161f880c14ccbf4193c4e379d43 -- app tests
+# Sin diferencias: código backend y pruebas iguales a la versión validada por CI.
+
+PYTHON_DOTENV_DISABLED=1 .venv/bin/python -m pytest tests/unit/optimization tests/optimization tests/integration/optimization/test_worst_fit_slice.py tests/integration/optimization/test_comparison_slice.py -q
+# 523 passed in 10.27s
+```
+
+Incluye las 60 pruebas del comparador y las regresiones existentes de Optimization.
+Los slices usan SQLite aislado y metadatos clonados; se conserva cero SQL durante
+la comparación y todas las tablas intactas ante éxito/fallo. Sin base compartida.
+La CI completa anterior cubre además las regresiones PostgreSQL existentes.
+
+El registro final modifica solo SPEC, PLAN y esta evidencia en la misma rama.
+No añade código ni cambia los 20 CA, el alcance, la estimación o el backlog externo.
+La verificación CI del commit documental de cierre queda vinculada en su PR.
