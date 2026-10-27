@@ -30,13 +30,12 @@ async function signInAndOpenOptimization(page, baseURL) {
     const origin = new URL(route.request().url()).origin;
     return [baseURL, apiOrigin].includes(origin) ? route.continue() : route.abort();
   });
-  await page.goto('/');
+  await page.goto('/hu015-compatibility.html');
   await page.getByLabel('Usuario', { exact: true }).fill(credentials.username);
   await page.getByLabel('Contraseña', { exact: true }).fill(credentials.password);
   await page.getByRole('button', { name: 'Ingresar', exact: true }).click();
   await page.getByRole('button', { name: 'Optimización', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Optimización de corte' })).toBeVisible();
-  await page.getByRole('button', { name: 'Vista previa de piezas', exact: true }).click();
 }
 
 function waitForRasterResponse(page) {
@@ -196,7 +195,6 @@ test('HU-015: flujo real de pieza cantidad 5, raster, recuperación, resolución
   const startsBeforeRecovery = startStatuses.length;
   await page.getByRole('button', { name: 'Registro de pedidos', exact: true }).click();
   await page.getByRole('button', { name: 'Optimización', exact: true }).click();
-  await page.getByRole('button', { name: 'Vista previa de piezas', exact: true }).click();
   const recovered = page.getByRole('button', { name: new RegExp(`Pedido #${order.id_pedido}`) });
   await expect(recovered).toBeVisible();
   await recovered.click();

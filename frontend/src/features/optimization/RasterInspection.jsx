@@ -1,6 +1,8 @@
 import { useId, useState } from 'react';
 import { InspectionViewport } from './InspectionViewport';
 import { RasterComparison } from './RasterComparison';
+import { GeometryPreview } from './GeometryPreview';
+import { getRasterComparisonFrame } from './visualizationGeometry';
 import { pieceRaster, validInspectionRaster } from './rasterInspectionModel';
 import { stockKey, unitKey } from './runContract.js';
 
@@ -16,12 +18,16 @@ export function RasterInspection({ snapshot, group, placements = [], preparation
   return <section className="raster-inspection" aria-label={preparation ? 'Vista previa del vidrio' : 'Detalle de las piezas'}>
     <h3>{group.name} · {group.thickness} mm · {preparation ? 'Vista previa del corte' : 'Detalle de las piezas'}</h3>
     <p>Una vista más detallada puede tardar más en prepararse.</p>
-    <p>{snapshot.fixture ? 'Vista ilustrativa con piezas de ejemplo.' : ready ? 'Vista de la pieza disponible.' : 'Este resultado muestra la distribución del corte. Para revisar una pieza con más detalle, abre «Vista previa de piezas».'}</p>
+    <p>{snapshot.fixture ? 'Vista ilustrativa con piezas de ejemplo.' : ready ? 'Vista de la pieza disponible.'
+      : 'Puedes consultar la geometría del pedido. La máscara usada en el cálculo todavía no está disponible en esta vista.'}</p>
     <label htmlFor={`${id}-piece`}>Pieza para inspeccionar</label>
     <select id={`${id}-piece`} className="ng-control" value={piece?.key ?? ''} onChange={e => setChosen(e.target.value)}>
       {pieces.map(p => <option key={p.key} value={p.key}>Pedido #{p.orderId} · Pieza #{p.id_pieza} · {p.cantidad} unidades</option>)}
     </select>
-    {!ready ? <p role="status">Pendiente: vista previa no disponible para esta pieza.</p> : <>
+    {!ready ? <>
+      <p role="status">Máscara de la ejecución no disponible para esta pieza.</p>
+      {piece && <GeometryPreview geometry={piece.geometria} pieceId={piece.id_pieza} frame={getRasterComparisonFrame(piece.geometria, null)} />}
+    </> : <>
       <p role="status">Preparada · resolución: {raster.resolution_mm} mm por celda · {raster.columns} × {raster.row_count} celdas · {raster.occupied_cells} ocupadas</p>
       <label className="raster-grid-toggle"><input type="checkbox" checked={grid} onChange={e => setGrid(e.target.checked)} />Mostrar celdas</label>
       <InspectionViewport key={piece.key} label="del corte">

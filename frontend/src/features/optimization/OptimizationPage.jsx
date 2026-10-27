@@ -6,7 +6,8 @@ import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLay
 import { ConfirmDialog, EmptyState, FeedbackMessage, LoadingState } from '../../shared/components/feedback';
 import { createPendingOrdersSource } from './pendingOrdersSource';
 import { createBackendRunAdapter } from './runApi';
-import { STAGES, pieceCount, runErrorFeedback } from './optimizationModel';
+import { pieceCount, runErrorFeedback } from './optimizationModel';
+import { OptimizationStages } from './OptimizationStages';
 import { useFirstFit } from './useFirstFit';
 import { PlacementCanvas } from './PlacementCanvas';
 import { detectMaterialGroups } from './materialGroups';
@@ -37,7 +38,6 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired, user, result
   const canConfirm = hasPermission(user, 'optimization.confirm');
   const locked = !canExecute || confirming || ['preparing', 'running', 'loading_result'].includes(state.status);
   const fresh = state.runId ? state.orders.filter(o => !state.availableAtStart?.includes(o.id_pedido)).length : 0;
-  const stageIndex = STAGES.findIndex(([id]) => id === state.stage);
   const detected = detectMaterialGroups(state.orders.filter(o => state.selected.includes(o.id_pedido)), adapter.resolveMaterial);
   const preview = { ...detected, groups: glassGroups(detected.groups, catalog) };
   const rasterReady = state.snapshot?.groups.length > 0 && state.snapshot.groups.every(g => groupRasterReady(state.snapshot, g));
@@ -63,6 +63,7 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired, user, result
   }
   function reset(action) { setConfirmation(''); setConfirmationConflict(false); action(); }
   return <>
+    <OptimizationStages state={state} />
     {adapter.loadResult && <form className="first-fit-result-lookup" onSubmit={event => { event.preventDefault(); if (Number.isSafeInteger(Number(lookupId)) && Number(lookupId) > 0) reset(() => flow.load(Number(lookupId))); }}>
       <label>Número de trabajo<input className="ng-control" type="number" min="1" step="1" value={lookupId} onChange={event => setLookupId(event.target.value)} /></label>
       <button className="ng-button" disabled={['running', 'preparing', 'loading_result'].includes(state.status) || confirming || !Number.isSafeInteger(Number(lookupId)) || Number(lookupId) <= 0}>Consultar resultado</button>
@@ -106,10 +107,6 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired, user, result
       {(state.runId || state.optimizationId) && <>
         <h2>Progreso de optimización</h2>
         {state.snapshot.fixture && <p>Distribución ilustrativa con piezas de ejemplo.</p>}
-        <ol className="first-fit-stages" aria-label="Etapas de optimización">{STAGES.map(([id, label], i) => {
-          const status = state.status === 'failed' ? 'Interrumpido' : state.estado === 'COMPLETADA' || i < stageIndex ? 'Completado' : i === stageIndex ? 'Activo' : 'Pendiente';
-          return <li key={id} aria-current={status === 'Activo' ? 'step' : undefined}><span>{label}</span><small>{status}</small></li>;
-        })}</ol>
         {state.optimizationId && <p>Trabajo #{state.optimizationId}</p>}
       {state.status === 'failed' && <p role="status">No se pudo calcular el corte</p>}
         <p role="status">{state.placed_units} / {state.total_units} piezas colocadas</p>
@@ -170,17 +167,13 @@ function OptimizationContent({ user, result, initialRunId, token, source: provid
   </PageCard>;
 }
 export function OptimizationPage({ user, toolbar, initialMode = 'first-fit', ...props }) {
-  const [mode, setMode] = useState(initialMode);
   return <AppShell activeItem="optimization" user={user}>{toolbar}
     {canViewResults(user) ? <>
       <div className="ng-ui optimization-workspace">
         <PageHeader title="Optimización de corte" context="Trabajo de vidriería" icon={ScanLine}
           description="Selecciona pedidos → revisa vidrios y piezas → calcula la distribución → confirma el corte." />
-        <nav className="optimization-tools" aria-label="Herramientas de corte">
-        <button className="ng-button" aria-pressed={mode === 'first-fit'} onClick={() => setMode('first-fit')}>Distribución de corte</button>
-        <button className="ng-button" aria-pressed={mode === 'hu015'} onClick={() => setMode('hu015')}>Vista previa de piezas</button>
-      </nav></div>
-      {mode === 'first-fit' ? <OptimizationContent {...props} user={user} />
+      </div>
+      {initialMode !== 'hu015' ? <OptimizationContent {...props} user={user} />
         : canExecuteOptimization(user) ? <Hu015Rasterization {...props} />
           : <FeedbackMessage variant="error">No tienes permiso para preparar la vista previa de piezas.</FeedbackMessage>}
     </> : <FeedbackMessage variant="error">No tienes permiso para consultar la optimización.</FeedbackMessage>}
