@@ -12,9 +12,11 @@
 | Clasificación funcional | **A. SATISFECHA** |
 
 La regla solicitada ya existe para FF/BF/WF. No se modificó código productivo.
-Esta clasificación corresponde a la política funcional y los seis casos dados
-por el usuario; no declara aprobación, cierre de TA-020 ni verificación del
-texto literal del backlog, cuya referencia sigue pendiente.
+Esta clasificación corresponde a los seis criterios provisionales confirmados
+por el usuario y los seis escenarios probados. La aclaración del 27/10/2026
+resuelve la referencia de trabajo: se usa su regla funcional como aceptación
+provisional, sin esperar otra fuente. No declara aprobación formal ni cierre
+de TA-020; la revisión de Fabricio permanece pendiente.
 
 ## Sincronización y alcance
 
@@ -84,18 +86,25 @@ Archivo nuevo: `backend/tests/unit/optimization/test_retazo_priority.py`.
 26 casos parametrizados; reutiliza helpers y adapter reales existentes.
 No se usa el filtro del helper `problem` como prueba de exclusión de incompatibles.
 
-Los CA-01 a CA-06 son identificadores operativos de la SPEC, derivados de la
-solicitud, no transcripción del backlog. Evidencia de ejecución: [backend-tests.txt](backend-tests.txt).
+Los CA-01 a CA-06 corresponden ahora a los seis puntos confirmados por el
+usuario el 27/10/2026, transcritos en SPEC §8 como criterios provisionales.
+Sustituyen la numeración operativa inicial; los escenarios y pruebas no cambian.
+Evidencia de ejecución: [backend-tests.txt](backend-tests.txt).
 
 | CA | Evidencia | Prueba nueva | Resultado |
 |---|---|---|---|
-| CA literal del backlog | No encontrado en archivos versionados ni búsqueda Notion `TA-020`; referencia solicitada al usuario | Pendiente de cotejo literal | GAP documental, no cierre |
-| CA-01: retazo compatible/factible antes de plancha, FF/BF/WF | Plancha primero en entrada; planchas tentadoras para BF/WF; solo material retazo evaluado; pasos 5°/90° | `test_feasible_remnant_excludes_sheets_from_evaluation` | PASS, 6 casos |
-| CA-02: retazo no factible → plancha, FF/BF/WF | Retazo 1×1, pieza 2×2 | `test_sheet_fallback[infeasible-remnant]` | PASS, 3 casos |
-| CA-03: sin retazo → plancha, FF/BF/WF | Stock solo plancha | `test_sheet_fallback[no-remnant]` | PASS, 3 casos |
+| CA-01: Evaluar primero retazos compatibles. | Plancha primero en entrada; adapter ordena fuentes y packing impone niveles FF/BF/WF | `test_feasible_remnant_excludes_sheets_from_evaluation`; existente `test_priority_dates_ids_and_physical_units_no_collisions_or_mutation` | PASS |
+| CA-02: Si existe al menos un retazo factible, FF/BF/WF deben resolver únicamente dentro del nivel retazo. | Planchas tentadoras para BF/WF; solo material retazo evaluado; pasos 5°/90° | `test_feasible_remnant_excludes_sheets_from_evaluation` | PASS, 6 casos |
+| CA-03: Las planchas nuevas solo se evalúan si no existe ningún retazo factible. | Exclusión con retazo factible; fallback por retazo pequeño, ausencia o agotamiento por unidad | `test_feasible_remnant_excludes_sheets_from_evaluation`, `test_sheet_fallback`, `test_priority_is_rechecked_per_unit_and_repeated_runs_are_identical` | PASS en FF/BF/WF |
 | CA-04: incompatibles excluidos | Otro vidrio/espesor descartado por adapter antes del motor; contrato de dominio rechaza inyección directa | `test_adapter_excludes_incompatible_remnant_before_optimization`, `test_domain_rejects_incompatible_candidate_without_filtering_helper` | PASS, 6 + 2 casos |
 | CA-05: reproducibilidad, FF/BF/WF | Tres ejecuciones iguales, eventos/placements/fuentes iguales, entrada inmutable; retazo agotado conduce a plancha por unidad | `test_priority_is_rechecked_per_unit_and_repeated_runs_are_identical` | PASS, 3 casos |
 | CA-06: simulación sin consumo, FF/BF/WF | Snapshot DTO antes/después y nueva lectura idéntica; además slices existentes con repositorios/SQLite | `test_simulation_leaves_inventory_unchanged` | PASS, 3 casos + slices reutilizados |
+
+Los seis escenarios originales siguen cubiertos por 26 pruebas nuevas:
+6 de prioridad, 6 de fallback (retazo no factible/sin retazo), 8 de
+incompatibilidad, 3 de determinismo/agotamiento y 3 de simulación.
+No hay GAP funcional identificado en los CA provisionales; su revisión formal
+continúa pendiente y esta confirmación no implica cierre de TA-020.
 
 ## Ejecución reproducible
 
@@ -131,4 +140,9 @@ el archivo de pruebas. No se crea comparador multimétodo.
 Entrega autorizada: commit y push únicamente a
 `origin/feature/S2-TA-020-retazo-priority`. Andro abrirá PR manualmente;
 Fabricio revisará. No PR, merge, rebase, smoke post-merge ni cierre ejecutados.
-Pendientes: referencia literal del backlog y revisión efectiva de Fabricio.
+Commit inicial `b8d0417` publicado en la rama autorizada; estado limpio tras
+el push. La actualización posterior solo alinea documentación con los CA
+provisionales confirmados: no cambia código ni pruebas, por lo que se conserva
+la ejecución anterior de 498 casos sin repetirla. Se verifican diff documental,
+`git diff --check` y ausencia de cambios en producción.
+Pendiente: revisión efectiva de Fabricio y flujo posterior de entrega del equipo.

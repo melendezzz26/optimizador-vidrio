@@ -22,7 +22,7 @@ de revisión real; este trabajo de auditoría/pruebas no registra aprobación.
 ## 2. Secuencia de trabajo y dependencias
 
 1. Sincronizar origin; la rama anterior fue integrada por PR #64.
-2. Crear SPEC y PLAN, registrar revisión pendiente y referencia faltante del backlog.
+2. Crear SPEC y PLAN, registrar revisión pendiente y los seis CA provisionales confirmados por el usuario.
 3. Auditar en lectura; clasificar con evidencia real.
 4. Añadir únicamente pruebas comunes si la política ya existe.
 5. Ejecutar regresiones y slices; documentar CA y límites de verificación.
@@ -42,7 +42,7 @@ Verificar snapshots de inventario y reutilizar slices SQLite existentes.
 |---|---|
 | T01 auditoría | Recorrido stock → niveles → candidatos → selectores |
 | Seis casos del usuario | Matriz FF/BF/WF y pruebas reutilizadas |
-| Evidencia | Clasificación y tabla de CA; referencia literal pendiente |
+| Evidencia | Clasificación y tabla de los seis CA provisionales confirmados |
 | Entrega | Commits y push feature; sin PR/merge/rebase/cierre |
 
 ## 5. Coordinación y archivos de alcance
@@ -60,10 +60,13 @@ verificar `git diff --check` y ausencia de cambios en backend/app.
 
 ## 7. Riesgos y pendientes
 
-- CA literal del backlog no disponible: mantener GAP documental explícito.
+- Los criterios provisionales confirmados por el usuario permiten verificar los seis puntos sin esperar otra fuente; no atribuir aprobación formal al revisor.
 - Revisión de Fabricio pendiente; no equivale a aprobación ni cierre.
 - No alterar la rama paralela TA-021 ni los motores productivos.
 
 ## Historial de estado
 
 - 27/10/2026 — Draft: plan de auditoría y pruebas; revisión Pendiente.
+- 27/10/2026 — Draft: aclaración del usuario incorporada. Los seis CA provisionales
+  están cubiertos por las pruebas ejecutadas. Sin cambios de código/pruebas,
+  se conserva la ejecución de 498 casos y se verifica el diff documental.

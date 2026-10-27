@@ -10,7 +10,8 @@ Periodo: 21/10/2026 – 28/10/2026. Estado de revisión: **Pendiente**.
 - [x] Cubrir seis casos comunes FF/BF/WF: 26 pruebas nuevas correctas.
 - [x] Ejecutar regresión: 498 pruebas correctas, incluidos slices locales.
 - [x] Registrar evidencia y matriz de criterios operativos.
-- [ ] Incorporar y contrastar CA literal del backlog (referencia solicitada).
+- [x] Incorporar los seis CA provisionales confirmados por el usuario y vincularlos con las pruebas ejecutadas.
+- [x] Commit inicial `b8d0417` y push a la feature autorizada.
 - [ ] Revisión efectiva de SPEC/PLAN por Fabricio.
 - [ ] PR manual por Andro y CI/review posteriores.
 - [ ] Merge, smoke y cierre por responsables del equipo; no ejecutados por Codex.

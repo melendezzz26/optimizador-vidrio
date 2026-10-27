@@ -69,17 +69,24 @@ compatible y factible tiene prioridad absoluta sobre cualquier plancha.
 
 ## 8. Criterios de aceptación
 
-La transcripción literal del CA del backlog está pendiente: no se encontró
-TA-020 en archivos versionados ni mediante búsqueda de Notion. Se solicitó
-la referencia al usuario. Los siguientes son criterios operativos derivados
-de su instrucción, **no una cita del backlog**:
+Fuente: aclaración del usuario del 27/10/2026 con la información disponible del
+backlog TA-020 / T01. Objetivo / descripción: «Aplicar una política uniforme de
+evaluación de retazos compatibles antes de planchas nuevas para FF/BF/WF».
 
-- CA-01: retazo factible + plancha factible → retazo en FF/BF/WF; plancha no evaluada.
-- CA-02: retazo compatible no factible → plancha en FF/BF/WF.
-- CA-03: sin retazo → plancha en FF/BF/WF.
-- CA-04: otro vidrio u otro espesor nunca llega como candidato al selector.
-- CA-05: misma entrada → mismo nivel, fuente y placement.
-- CA-06: evaluación/simulación no modifica inventario.
+Criterios **provisionales** expresamente autorizados por el usuario; se transcribe
+su regla funcional. No sustituyen la revisión pendiente de Fabricio.
+
+- CA-01: Evaluar primero retazos compatibles.
+- CA-02: Si existe al menos un retazo factible, FF/BF/WF deben resolver únicamente dentro del nivel retazo.
+- CA-03: Las planchas nuevas solo se evalúan si no existe ningún retazo factible.
+- CA-04: Material con tipo de vidrio o espesor incompatible nunca debe ofrecerse como candidato.
+- CA-05: La regla debe ser reproducible y determinista.
+- CA-06: Simular no debe modificar inventario.
+
+Se mantienen los seis escenarios originales: retazo y plancha factibles,
+retazo no factible, sin retazo, incompatibilidad, determinismo y simulación.
+Los CA-01 a CA-03 se alinean ahora con los puntos confirmados por el usuario;
+sus números no corresponden a los números de los escenarios originales.
 
 ## 9. Impacto técnico
 
@@ -109,8 +116,9 @@ de su instrucción, **no una cita del backlog**:
 
 - `docs/evidence/sprint-02/TA-020/`: base, auditoría, clasificación, resultados,
   matriz CA → pruebas y diff sin producción.
-- Literal del backlog y revisión de Fabricio pendientes; no declarar cierre.
+- Matriz de los seis CA provisionales confirmados; revisión de Fabricio pendiente, sin declarar cierre.
 
 ## Historial de estado
 
 - 27/10/2026 — Draft: SPEC creada antes de pruebas nuevas; revisión Pendiente.
+- 27/10/2026 — Draft: incorporados los seis CA provisionales confirmados por el usuario; revisión Pendiente.
