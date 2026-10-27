@@ -162,6 +162,23 @@ HU-017. La invariancia previa no exige todos los candidatos ni todos los layouts
 con fidelidad visual comprobable. Fuera de transacciones DB largas y con
 checkpoints de desconexión.
 
+**Diseño del incremento T02 (27/10, local):** `PreparedRunGeometry` vinculará
+el problema inmutable, su configuración y máscaras base compartidas. La barrera
+de preparación se completará antes del primer layout/búsqueda; preparar una
+fuente no significa evaluarla como candidato. `RasterCache.iter_orientations`
+será reiterable y lazy, reutilizando exactamente la rotación/deduplicación de
+TA-016. Se conserva `orientations()` como adaptador a tupla para consumidores
+actuales (métricas, confirmación y pruebas del contrato histórico). Cada fuente
+recorre desde el primer ángulo: no reutilizar un generador ya agotado.
+
+Los checkpoints internos cubrirán preparación y trabajo bajo demanda, sin
+añadir eventos V1 ni esperar animaciones. El cache conservará el límite de
+64 MiB y los layouts usados el de 128 MiB. La admisión TA-037 y su estimador
+angular previo se conservan como política existente; no se amplía la aceptación
+de cargas por introducir laziness. Referencias HTTP/máscaras y retención siguen
+en T03, tras DG-01. La comparación de regresión usa una captura funcional previa
+de los ocho casos representativos de TA-021 para FF/BF/WF, además de sus suites.
+
 ### DG-01 — Seleccionar estrategia de streaming visual
 
 **Estado:** abierta, pendiente de decisión. **Puerta obligatoria previa a T03:**
