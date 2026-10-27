@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | ID | TA-037 |
-| SPEC | [SPEC-TA-037-control-carga-optimizador.md](SPEC-TA-037-control-carga-optimizador.md) (v1.2, Reviewed) |
+| SPEC | [SPEC-TA-037-control-carga-optimizador.md](SPEC-TA-037-control-carga-optimizador.md) (v1.3, saneamiento T03) |
 | Estado | **Implemented** (T01 a T04) |
 | Responsable | Fabricio Aguilar |
 | Fecha | 26/10/2026 |
@@ -166,8 +166,8 @@ corre: revisar que el job de backend quede en verde.
     - `application/admission.py`: puerto `RunAdmission.acquire(user_id) -> AdmissionLease`
       y error `OptimizerBusy` (503 `OPTIMIZER_BUSY`, `Retry-After: 15`, `limit`).
     - `infrastructure/in_process_admission.py`: `InProcessRunAdmission` con
-      `threading.Lock`, L-10 = 2, L-11 = 1, liberación idempotente y expiración de
-      respaldo a los 300 s.
+      `threading.Lock`, L-10 = 2, L-11 = 1 y liberación idempotente al finalizar
+      el propietario. La expiración de respaldo de v1.2 se retira en el saneamiento v1.3.
     - `presentation/run_routes.py`: `start_run` toma la plaza antes de `AcceptRun` y la
       libera si la aceptación falla; la confirmación no pasa por la admisión.
     - `presentation/run_stream.py`: la plaza se libera en el `finally` del hilo de
@@ -195,6 +195,31 @@ corre: revisar que el job de backend quede en verde.
     - Evidencia: `docs/evidence/sprint-02/TA-037/README.md` y capturas en
       `docs/evidence/sprint-02/TA-037/e2e/`.
 
+## Saneamiento T03 — 27/10/2026
+
+Base `445886a` de `integration/sprint-01`; rama `fix/TA-037-admission-lifecycle`.
+El trabajo original de Aguilar se conserva. Esta corrección la realiza Fabricio
+Melendez Quezada con Codex, antes de comenzar nuevos PBIs.
+
+1. Actualizar SPEC §5.1: mantener la plaza hasta la liberación de su propietario;
+   retirar la caducidad por reloj sin cambiar L-10/L-11, L-12 ni HTTP/NDJSON.
+2. Reproducir el defecto con reloj simulado; sustituir la prueba que esperaba
+   expiración por regresiones del límite global y por usuario después de 300 s.
+3. Corregir únicamente la admisión en Infrastructure. Mantener el cierre del
+   trabajador como propietario de la plaza y la liberación idempotente.
+4. Probar contrapresión de un stream real con PostgreSQL, finalización y fallo
+   de arranque del trabajador; verificar rechazo sin nuevos pedidos, consumo de
+   inventario o movimientos. Conservar regresiones de desconexión, tiempo y confirmación.
+5. Ejecutar pruebas focalizadas y regresión backend obligatoria con PostgreSQL;
+   revisar el CI de frontend/E2E y registrar evidencia por CA y tarea.
+6. Abrir PR hacia `integration/sprint-01`, sin cambios en otras heurísticas ni
+   PBIs. Dejar el cierre formal sujeto a revisión e integración del saneamiento.
+
+Entregables de cierre: corrección, pruebas reproducibles, matriz de los 12 CA,
+CI y trazabilidad de aportes en `docs/evidence/sprint-02/TA-037/`. Los gaps
+TA-038, GAP-03 y GAP-05 mantienen su alcance separado; no bloquean el cierre de
+los criterios propios de TA-037 si quedan explícitamente documentados.
+
 ## 5. Riesgos
 
 | Riesgo | Mitigación |
@@ -215,3 +240,4 @@ corre: revisar que el job de backend quede en verde.
 | 26/10/2026 | Draft | T02 implementada; SPEC v1.2 en `Reviewed`; L-09 retirado; T03 y T04 pendientes. |
 | 26/10/2026 | Draft | T03 implementada (admisión, liberación de plazas y L-12); T04 pendiente. |
 | 26/10/2026 | Implemented | T04 implementada; CA-01 a CA-12 en PASS. Pendiente: CI y revisión para Verified. |
+| 27/10/2026 | Implemented — saneamiento en curso | Plan de corrección de caducidad de plazas, regresiones temporales y stream/PostgreSQL; cierre técnico y revisión pendientes. |
