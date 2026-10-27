@@ -6,12 +6,12 @@
 |---|---|
 | ID / nombre | TA-021 — Comparar FF/BF/WF sobre una instancia idéntica |
 | Versión | **1.1 — actualización del 27/10/2026** |
-| Estado | **Implemented — T01/T02; revisión cruzada e integración pendientes** |
+| Estado | **Implemented — revisión conforme; integración y smoke pendientes** |
 | Sprint / módulo | Sprint 2 / Optimization |
 | Responsable de implementación | Fabricio Melendez Quezada |
 | Revisión técnica documental | Codex; registro de revisión en §11 |
 | Aprobación de alcance y desarrollo | Fabricio Melendez Quezada, 27/10/2026: «Aprobada, sigamos con la implementación» |
-| Revisión cruzada de la implementación | Pendiente de designación; no se atribuye una revisión humana |
+| Revisión de la implementación | Confirmada conforme por Fabricio Melendez Quezada el 27/10/2026; otros participantes no individualizados |
 | Fechas | 25/10/2026 (versión original) / 27/10/2026 (actualización) |
 | Rama documental | `docs/TA-021-comparacion-metodos` |
 | Rama de implementación | `feature/TA-021-comparacion-metodos` → `integration/sprint-01` |
@@ -25,7 +25,8 @@ responsable el 27/10/2026: «Aprobada, sigamos con la implementación». Esa
 aprobación autoriza desarrollar T01 y T02 con el alcance de esta SPEC y su PLAN.
 La aprobación antecede a la implementación. T01/T02 se implementan y prueban
 en la rama `feature/TA-021-comparacion-metodos`; evidencia de ejecución en §12.
-No se declara el PBI Closed/Verified: revisión cruzada e integración pendientes.
+El responsable confirma el 27/10/2026: «ya hemos revisado y està correcto» y
+autoriza completar el cierre en la misma rama. Integración y smoke pendientes.
 
 ## 1. Identidad, fuentes y objetivo
 
@@ -423,8 +424,9 @@ al calcular métricas y demuestra seis permutaciones/repeticiones por método.
 [Evidencia final y matriz de los 20 CA](../evidence/sprint-02/TA-021/README.md):
 60 pruebas específicas correctas; resultados directos equivalentes, inmutabilidad,
 ausencia de SQL/efectos externos y fallos identificados con causa. No cambian
-los criterios, el alcance ni la estimación de v1.1. La revisión cruzada humana,
-la integración y el smoke posterior permanecen como puerta de cierre.
+los criterios, el alcance ni la estimación de v1.1. Fabricio Melendez confirma
+la revisión realizada y conforme el 27/10/2026; no se atribuye a otros revisores
+una participación no identificada. Integración y smoke permanecen pendientes.
 
 ## Historial de estado
 
@@ -436,3 +438,4 @@ la integración y el smoke posterior permanecen como puerta de cierre.
 | 27/10/2026 | Draft — v1.1 | Base actualizada a `0424f30`: BF/TA-016/TA-020/TA-037 disponibles, contratos reales inspeccionados y fases conservadas. Revisión documental propia registrada; aprobación de esta versión y desarrollo pendientes. Los 20 CA y la estimación se conservan. |
 | 27/10/2026 | Reviewed — v1.1 aprobada | Fabricio Melendez aprueba expresamente esta revisión y solicita continuar con la implementación. Se autoriza T01/T02, manteniendo los 20 CA, límites y revisión de cierre. |
 | 27/10/2026 | Implemented | T01/T02 ejecutadas, FF/BF/WF reales y evidencia técnica vinculada. Revisión cruzada, merge y smoke pendientes; no Closed/Verified. |
+| 27/10/2026 | Implemented — revisión conforme | El responsable confirma «ya hemos revisado y està correcto» y autoriza completar el cierre en la misma rama. Restan integración y smoke. |

@@ -7,8 +7,9 @@ en `a665115`. Rama `feature/TA-021-comparacion-metodos`, destino exclusivo
 documentación TA-020; motor idéntico a la base auditada `0424f30`).
 
 **Estado: implementación T01/T02 y validación técnica local completadas.**
-Revisión cruzada de implementación e integración pendientes; no se atribuye
-una aprobación humana ni se declara Closed/Verified o se modifica Notion.
+Revisión conforme confirmada por Fabricio Melendez Quezada el 27/10/2026:
+«ya hemos revisado y està correcto». Autoriza completar el cierre en la misma
+rama. Integración y smoke pendientes; no se declara aún Closed/Verified.
 
 ## Entregas y uso
 
@@ -162,6 +163,7 @@ política de presupuesto global debe acordarse antes de un consumidor HTTP.
 No es benchmark ni garantía de memoria constante del conjunto de resultados.
 TA-025 seleccionará, TA-026 persistirá y HU-017 visualizará por separado.
 
-La aprobación de SPEC/PLAN proviene del responsable; la revisión de código aquí
-descrita es propia de Codex. Antes de Closed/Verified quedan revisión cruzada y
-merge del PR hacia `integration/sprint-01`, seguidos del smoke de integración.
+La aprobación de SPEC/PLAN y la confirmación de revisión conforme provienen del
+responsable. La revisión técnica documentada por Codex es propia; no se atribuyen
+nombres de otros revisores no identificados. Antes de Closed/Verified quedan
+merge del PR hacia `integration/sprint-01` y smoke de integración.
