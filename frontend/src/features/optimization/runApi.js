@@ -56,13 +56,6 @@ export function createBackendRunAdapter({ token, fetchImpl = globalThis.fetch, r
         console.error('No se pudo iniciar el cálculo de corte', { status: response.status, code: data.detail.code, detail: data.detail.message });
         throw new RunApiError('No se puede calcular el corte porque faltan los parámetros de trabajo. Solicita al administrador revisar la configuración.', response.status, 'CONFIG_CONFLICT');
       }
-      if (response.status === 503) {
-        throw new RunApiError(data?.detail?.message ?? messages[response.status]
-          ?? 'El servidor no pudo completar la operación.', response.status, data?.detail?.code, {
-            limit: data?.detail?.limit,
-            retryAfter: retryAfterSeconds(response)
-          });
-      }
       throw new RunApiError(data?.detail?.message ?? messages[response.status]
         ?? 'El servidor no pudo completar la operación.', response.status, data?.detail?.code,
       { limit: data?.detail?.limit ?? null, retryAfter: retryAfterSeconds(response) });
