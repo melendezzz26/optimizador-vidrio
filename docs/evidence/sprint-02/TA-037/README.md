@@ -118,3 +118,54 @@ piezas de 1300 × 1000 (~48,8 MiB) caben y 3 (~73 MiB) no.
 Los tiempos son de una máquina de desarrollo. En un dyno compartido pueden ser
 mayores. Los valores de la SPEC dejan margen respecto de estas cifras, pero
 conviene repetir la medición en staging durante T04.
+## Resultados de implementación (T02 a T04)
+
+Ejecutado el 26/10/2026 sobre `integration/sprint-01` con T02 integrada (PR #66) más
+T03 y T04, con PostgreSQL real, igual que CI.
+
+| Suite | Resultado |
+|---|---|
+| Backend completo (`pytest`, PostgreSQL) | 2146 pasan, 0 fallos. Antes de TA-037: 2068. Ninguna prueba existente se editó |
+| Frontend componentes (`vitest`) | 483 pasan (43 archivos) |
+| Frontend unitarias (`npm run test:unit`) | 161 pasan |
+| Lint y build | Sin errores |
+| E2E Playwright (escritorio y móvil) | 95 pasan, 20 omitidas por diseño. 1 falla: `ta036-retazo-personalizado` en móvil, de inventario; también falla con el código anterior a TA-037, así que no la causa este cambio |
+
+### Pruebas de TA-037 por tarea
+
+| Tarea | Archivo | Pruebas |
+|---|---|---|
+| T02 | `backend/tests/unit/optimization/test_load_budget.py` | 33 |
+| T02 | `backend/tests/unit/optimization/test_accept_run_load_limits.py` | 12 |
+| T02 | `backend/tests/api/optimization/test_run_load_limits.py` | 7 |
+| T02 | `backend/tests/integration/optimization/test_run_load_limits_pg.py` | 3 |
+| T03 | `backend/tests/unit/optimization/test_run_admission.py` | 9 |
+| T03 | `backend/tests/api/optimization/test_run_concurrency.py` | 10 |
+| T03 | `frontend/tests/unit/runContract.test.js` (caso nuevo) | 1 |
+| T04 | `backend/tests/api/optimization/test_run_load_stress.py` | 4 |
+| T04 | `frontend/src/features/optimization/__tests__/LoadControlFeedback.test.jsx` | 7 |
+| T04 | `frontend/tests/e2e/ta037-load-feedback.spec.js` (escritorio y móvil) | 2 |
+
+### Hallazgos medidos
+
+- **Sin OOM:** stock y piezas con cantidad 2 147 483 647 (el máximo de la base) se
+  rechazan por HTTP en ~0,12 s, porque se cuentan filas y no se expanden unidades.
+- **Pruebas de mutación:** al quitar a propósito la liberación de la plaza, el corte por
+  tiempo, la admisión o los avisos del frontend, las pruebas correspondientes fallan.
+- **Motor intacto:** First Fit, Best Fit, Worst Fit, el corte comercial (8 de 8 a 1 mm) y
+  la confirmación pasan sin cambios en sus aserciones.
+
+### Capturas (E2E real)
+
+Aviso que ve el operario al seleccionar un pedido de 151 unidades (máximo 150):
+
+- `e2e/chromium-desktop/TA037-aviso-limite.png`
+- `e2e/chromium-mobile/TA037-aviso-limite.png`
+
+Para regenerarlas, desde `frontend/` en PowerShell:
+
+```powershell
+$env:NEWGLASS_OPTIMIZATION_EVIDENCE_DIR = "../docs/evidence/sprint-02/TA-037/e2e"
+npx playwright test tests/e2e/ta037-load-feedback.spec.js
+Remove-Item Env:NEWGLASS_OPTIMIZATION_EVIDENCE_DIR
+```

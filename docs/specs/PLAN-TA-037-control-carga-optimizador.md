@@ -6,7 +6,7 @@
 |---|---|
 | ID | TA-037 |
 | SPEC | [SPEC-TA-037-control-carga-optimizador.md](SPEC-TA-037-control-carga-optimizador.md) (v1.2, Reviewed) |
-| Estado | **Draft** |
+| Estado | **Implemented** (T01 a T04) |
 | Responsable | Fabricio Aguilar |
 | Fecha | 26/10/2026 |
 | Base | `integration/sprint-01` en `4b82af7` (después del PR #65) |
@@ -18,7 +18,7 @@
 | T01 — Definir presupuesto y contrato de errores | 0,5 | HU-015, TA-021 | Lunes 26/10, 12:00 | **Hecha.** v1.0 (PR #62), v1.1 a 5° (PR #65), valores aprobados; SPEC en `Reviewed` (v1.2) |
 | T02 — Implementar guardrails previos a la expansión | 1,5 | T01 | Martes 27/10 | **Implementada** en `enabler/TA-037-guardrails` (§3); 55 pruebas nuevas; suite completa en verde |
 | T03 — Limitar concurrencia y controlar ejecución | 1 | T01, T02 | Martes 27/10 | **Implementada** en `enabler/TA-037-concurrencia` (§4); 20 pruebas nuevas; suites backend, frontend y E2E en verde |
-| T04 — Probar límites y feedback | 1 | T02, T03 | Martes 27/10 | Casos definidos en la SPEC (§9, §12) |
+| T04 — Probar límites y feedback | 1 | T02, T03 | Martes 27/10 | **Implementada** en `enabler/TA-037-feedback`; avisos de frontend, pruebas de peor caso y E2E real (§4) |
 
 T01 quedó cerrada al aprobarse los valores de la v1.1. La SPEC pasa a `Reviewed` en la
 v1.2, que además recoge dos correcciones encontradas al implementar T02: L-09 se retira
@@ -180,9 +180,20 @@ corre: revisar que el job de backend quede en verde.
       `frontend/tests/unit/runContract.test.js` y una fixture que da a cada prueba de API
       una admisión limpia. Una prueba de mutación confirmó que las pruebas fallan si se
       quita la liberación, el corte por tiempo o la admisión.
-- **T04:** pruebas de concurrencia (admitida, rechazada y liberación), stock
-  voluminoso sin OOM, y feedback en `useFirstFit.js` / `OptimizationPage.jsx` con
-  Vitest y Playwright.
+- **T04 (implementada):**
+    - `runApi.js`: `RunApiError` conserva `limit` y `Retry-After`.
+    - `useFirstFit.js`: un 503 `OPTIMIZER_BUSY` cuenta como rechazo (no se creó la
+      ejecución), igual que un 4xx.
+    - `optimizationModel.js`: clasifica el error (`load_limit`, `busy`, `time_budget`) y
+      `runErrorFeedback` decide título, indicación y variante (SPEC §7.4).
+    - `OptimizationPage.jsx` y `.css`: muestran el aviso con `FeedbackMessage` y le dan el
+      foco; estilos con los tokens existentes.
+    - Pruebas: `__tests__/LoadControlFeedback.test.jsx` (7),
+      `tests/api/optimization/test_run_load_stress.py` (4) y la E2E
+      `tests/e2e/ta037-load-feedback.spec.js` (escritorio y móvil). Una prueba de mutación
+      confirmó que los avisos fallan sin los cambios de T04.
+    - Evidencia: `docs/evidence/sprint-02/TA-037/README.md` y capturas en
+      `docs/evidence/sprint-02/TA-037/e2e/`.
 
 ## 5. Riesgos
 
@@ -203,3 +214,4 @@ corre: revisar que el job de backend quede en verde.
 | 26/10/2026 | Draft | v1.1: valores recalibrados a 5° (PR #64); L-13 agregado; diseño de T02 actualizado. |
 | 26/10/2026 | Draft | T02 implementada; SPEC v1.2 en `Reviewed`; L-09 retirado; T03 y T04 pendientes. |
 | 26/10/2026 | Draft | T03 implementada (admisión, liberación de plazas y L-12); T04 pendiente. |
+| 26/10/2026 | Implemented | T04 implementada; CA-01 a CA-12 en PASS. Pendiente: CI y revisión para Verified. |
