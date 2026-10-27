@@ -9,7 +9,7 @@
 | Sprint | Sprint 2 |
 | Tipo / épica | Habilitador / Optimización segura |
 | Versión | **1.2**: valores de v1.1 aprobados; correcciones de implementación de T02 (L-05, L-09) |
-| Estado | **Reviewed** |
+| Estado | **Implemented** (T01 a T04; pasa a Verified con CI en verde y la revisión del equipo) |
 | Responsable | Fabricio Aguilar |
 | Revisor | Pendiente de asignación |
 | Fecha | 26/10/2026 |
@@ -314,9 +314,19 @@ los pedidos lo define TA-038. La presentación específica en pantalla correspon
 | `raster_memory` | Las piezas seleccionadas tienen demasiadas formas grandes distintas para un solo cálculo. Divide la selección en lotes más pequeños. |
 | `stock_units_per_material` | Hay {actual} unidades de stock compatibles para un mismo material y un cálculo admite {maximum}. Solicita al almacenero revisar el inventario activo. |
 
-El backend construye el mensaje. En el primer paso, el frontend lo muestra tal
-cual, porque `runApi.js:51` ya usa `detail.message`. T04 agrega la presentación
-específica: aviso no destructivo y selección conservada.
+El backend construye el mensaje y el frontend lo muestra tal cual. T04 agrega la
+presentación específica, decidida en `optimizationModel.runErrorFeedback` y no en el
+componente:
+
+| Caso | Título | Indicación | Variante |
+|---|---|---|---|
+| 422 `LOAD_LIMIT_EXCEEDED` | El trabajo es demasiado grande para un solo cálculo | Los pedidos siguen pendientes y no se usó inventario. Ajusta la selección y vuelve a revisar vidrios y piezas. | Error (`role="alert"`) |
+| 503 `OPTIMIZER_BUSY` | El optimizador está ocupado | Los pedidos siguen pendientes. Vuelve a presionar «Calcular distribución» en {Retry-After} segundos. | Advertencia (`role="status"`) |
+| `TIME_BUDGET_EXCEEDED` | El cálculo superó el tiempo máximo | No se consumió inventario. Consulta el resultado; los pedidos de este trabajo requieren revisión antes de volver a calcularse. | Error |
+
+En los dos primeros casos la ejecución no llegó a crearse: la selección y el resumen se
+conservan, no se muestra progreso y «Calcular distribución» sigue disponible. El aviso
+recibe el foco. El resto de errores conserva la presentación genérica de siempre.
 
 ## 8. Reglas
 
@@ -404,6 +414,23 @@ específica: aviso no destructivo y selección conservada.
 | Regresión | FF, BF, WF, el corte comercial y la confirmación, sin cambios. | Suites existentes |
 | Frontend | Mensaje, foco y selección conservada. | `frontend/src/features/optimization/__tests__/` |
 
+## 13. Verificación de criterios de aceptación
+
+| CA | Resultado | Evidencia |
+|---|---|---|
+| CA-01 | PASS | Esta SPEC (v1.0 a v1.2) y `docs/evidence/sprint-02/TA-037/README.md` |
+| CA-02 | PASS | `tests/unit/optimization/test_load_budget.py` (exacto y + 1); `tests/api/optimization/test_run_load_limits.py` |
+| CA-03 | PASS | `tests/unit/optimization/test_accept_run_load_limits.py` (espía sobre `prepare_persisted_problem`) |
+| CA-04 | PASS | `tests/api/optimization/test_run_load_limits.py`, `tests/integration/optimization/test_run_load_limits_pg.py` (PostgreSQL) |
+| CA-05 | PASS | Suite backend completa sin editar pruebas existentes; corte comercial (`test_commercial_cut.py`, E2E11) |
+| CA-06 | PASS | Cantidad 2 147 483 647 rechazada en menos de 1 s (unitaria) y en ~0,12 s por HTTP (`test_run_load_stress.py`) |
+| CA-07 | PASS | Caso H-10 en `test_load_budget.py` y `test_accept_run_load_limits.py` |
+| CA-08 | PASS | `tests/unit/optimization/test_run_admission.py`; `tests/api/optimization/test_run_concurrency.py` |
+| CA-09 | PASS | Liberación al terminar, fallar, desconectarse, rechazar y vencer L-12; 100 ciclos sin plazas tomadas; expiración de respaldo |
+| CA-10 | PASS | `test_run_concurrency.py`: 201, 422, 503, `TIME_BUDGET_EXCEEDED`; la confirmación funciona con el optimizador lleno |
+| CA-11 | PASS | `frontend/src/features/optimization/__tests__/LoadControlFeedback.test.jsx`; E2E `ta037-load-feedback.spec.js` (escritorio y móvil) |
+| CA-12 | PASS | `test_run_load_stress.py`: stock y piezas al máximo de la base, rechazados en menos de 5 s y sin OOM |
+
 ## Historial de estado
 
 | Fecha | Versión | Estado | Nota |
@@ -412,3 +439,4 @@ específica: aviso no destructivo y selección conservada.
 | 26/10/2026 | 1.1 | Draft | Recalibración al paso operativo de 5° (PR #64): L-03 de 500 a 150, L-07 de 100 a 50, L-02, L-06 y L-08 retirados, L-12 pasa a protección principal, nuevo L-13 (memoria raster) y GAP-05. Integrada con el PR #65. |
 | 26/10/2026 | 1.2 | Reviewed | Valores de v1.1 aprobados por el equipo (Scrum Master). Correcciones de implementación de T02: L-09 retirado por no tener cota segura; L-05 conserva `INVALID_INPUT`; L-13 calculado con cota inferior en coma flotante; P4 usa el adaptador de stock del cálculo. |
 | 26/10/2026 | 1.2 | Reviewed | T03 implementada según §5.1, §7.2 y §7.3. Detalle de implementación agregado en §5.1: puntos de liberación de la plaza y respaldo de expiración de 300 s. Sin cambios de valores ni de contrato. |
+| 26/10/2026 | 1.2 | Implemented | T04: avisos de frontend («divide el lote», «intenta más tarde», tiempo máximo), pruebas de peor caso y E2E real. CA-01 a CA-12 en PASS (§13). Pendiente: CI en verde y revisión para Verified. |
