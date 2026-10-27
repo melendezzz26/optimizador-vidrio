@@ -3,6 +3,7 @@
 This slice makes no PostgreSQL locking/constraint claims and runs no migrations.
 """
 from datetime import datetime, timezone
+from itertools import permutations
 from unittest.mock import patch
 
 import pytest
@@ -19,7 +20,7 @@ from app.modules.optimization.domain.worst_fit import WorstFitOptimizer
 from app.modules.optimization.infrastructure.stock_adapter import InventoryStockAdapter
 from app.modules.orders.infrastructure.repositories import SQLAlchemyOrderRepository
 from tests.integration.optimization.test_worst_fit_slice import database_snapshot, sqlite_slice
-from tests.unit.optimization.test_comparison import METHODS, direct, functional
+from tests.unit.optimization.test_comparison import ALL_METHODS, METHODS, direct, functional
 
 
 def captured_input(factory):
@@ -84,6 +85,49 @@ def test_comparison_uses_no_sql_and_leaves_every_table_unchanged_even_on_failure
             entries = compare_methods(prepared, methods, minimum_width_mm=1, minimum_height_mm=1)
             assert functional(entries) == direct(prepared, methods)
             assert all(e.result.complete and e.result.total_units == 8 for e in entries)
+        assert queries == []
+    finally:
+        event.remove(engine, "before_cursor_execute", record_sql)
+    assert repr(prepared) == input_before
+    assert database_snapshot(factory) == before
+
+
+@pytest.mark.parametrize("failure", [None, "optimization", "metrics"])
+def test_real_best_fit_composition_is_read_only_in_all_orders_and_on_failure(sqlite_slice, monkeypatch, failure):
+    factory = sqlite_slice
+    prepared = captured_input(factory)
+    before, input_before = database_snapshot(factory), repr(prepared)
+    methods, original = ALL_METHODS, RuntimeError("synthetic BF failure")
+    if failure == "optimization":
+        from app.modules.optimization.domain.best_fit import BestFitOptimizer
+        class FailingBestFit(BestFitOptimizer):
+            def optimize(self, value):
+                super().optimize(value)
+                raise original
+        methods = (("FF", ALL_METHODS[0][1]), ("BF", FailingBestFit), ("WF", ALL_METHODS[2][1]))
+    elif failure == "metrics":
+        metrics = comparison.calculate_metrics
+        def failing_metrics(result, *args):
+            measured = metrics(result, *args)
+            if result.method == "BF":
+                raise original
+            return measured
+        monkeypatch.setattr(comparison, "calculate_metrics", failing_metrics)
+    queries, engine = [], factory.kw["bind"]
+    def record_sql(*args):
+        queries.append(args[2])
+    event.listen(engine, "before_cursor_execute", record_sql)
+    try:
+        if failure:
+            with pytest.raises(ComparisonFailed) as error:
+                compare_methods(prepared, methods, minimum_width_mm=1, minimum_height_mm=1)
+            assert error.value.method == "BF" and error.value.__cause__ is original
+        else:
+            expected = direct(prepared, ALL_METHODS)
+            for order in permutations(ALL_METHODS):
+                entries = compare_methods(prepared, order, minimum_width_mm=1, minimum_height_mm=1)
+                assert functional(entries) == expected
+                assert all(e.result.complete and e.result.total_units == 8 for e in entries)
         assert queries == []
     finally:
         event.remove(engine, "before_cursor_execute", record_sql)

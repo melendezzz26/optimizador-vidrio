@@ -8,6 +8,7 @@ import pytest
 
 from app.modules.optimization.application import comparison
 from app.modules.optimization.application.comparison import ComparisonFailed, compare_methods
+from app.modules.optimization.domain.best_fit import BestFitOptimizer, BestFitResult
 from app.modules.optimization.domain.first_fit import FirstFitOptimizer
 from app.modules.optimization.domain.metrics import calculate_metrics
 from app.modules.optimization.domain.problem import MaterialSource, OptimizationResult
@@ -17,6 +18,7 @@ from tests.unit.optimization.test_first_fit import config, piece, problem, stock
 
 
 METHODS = (("FF", FirstFitOptimizer), ("WF", WorstFitOptimizer))
+ALL_METHODS = (("FF", FirstFitOptimizer), ("BF", BestFitOptimizer), ("WF", WorstFitOptimizer))
 
 
 def compare(prepared, methods=METHODS, **kwargs):
@@ -241,3 +243,85 @@ def test_first_fit_remains_lazy_including_common_metrics(monkeypatch, candidate_
     # One rasterization for placement and one for metrics, irrespective of
     # later available sources; the coordinator does not precompute candidates.
     assert visited == [1, 1]
+
+
+@pytest.mark.parametrize("prepared", list(representative_cases()))
+def test_real_three_methods_match_direct_runs_in_all_six_orders_repeatedly(prepared):
+    before, expected = repr(prepared), direct(prepared, ALL_METHODS)
+    orders = tuple(permutations(ALL_METHODS))
+    assert len(orders) == 6
+    for order in orders:
+        for _ in range(3):
+            entries = compare(prepared, order)
+            assert tuple(e.method for e in entries) == tuple(code for code, _ in order)
+            assert functional(entries) == expected
+            assert all(e.method == e.result.method for e in entries)
+            assert repr(prepared) == before
+
+
+def test_default_composition_uses_real_best_fit_and_preserves_its_type_through_metrics(monkeypatch):
+    prepared = problem([piece(width=2, height=2)],
+                       [stock(1, width=6, height=4), stock(2, width=4, height=4), stock(3, width=3, height=3)],
+                       config(angular_step_deg=D(5)))
+    observed = []
+    def metrics(result, *args):
+        observed.append((result.method, type(result)))
+        return calculate_metrics(result, *args)
+    monkeypatch.setattr(comparison, "calculate_metrics", metrics)
+    entries = compare_methods(prepared, minimum_width_mm=1, minimum_height_mm=1)
+    assert comparison.DEFAULT_METHODS == ALL_METHODS
+    assert tuple(e.method for e in entries) == ("FF", "BF", "WF")
+    assert [e.result.placements[0].stock.material_id for e in entries] == [1, 3, 1]
+    assert ("BF", BestFitResult) in observed and isinstance(entries[1].result, BestFitResult)
+    assert entries[1].result.metrics is not None
+    assert functional(entries) == direct(prepared, ALL_METHODS)
+
+
+@pytest.mark.parametrize("stage", ["optimization", "metrics"])
+def test_best_fit_failure_is_explicit_and_does_not_run_later_methods_or_contaminate_retry(monkeypatch, stage):
+    prepared = next(representative_cases())
+    before, original, executed = repr(prepared), RuntimeError("synthetic BF failure"), []
+    class FailingBestFit(BestFitOptimizer):
+        def optimize(self, value):
+            result = super().optimize(value)
+            if stage == "optimization":
+                raise original
+            return result
+    class LaterWorstFit(WorstFitOptimizer):
+        def optimize(self, value):
+            executed.append("WF")
+            return super().optimize(value)
+    def metrics(result, *args):
+        if result.method == "BF" and stage == "metrics":
+            raise original
+        return calculate_metrics(result, *args)
+    monkeypatch.setattr(comparison, "calculate_metrics", metrics)
+    with pytest.raises(ComparisonFailed) as error:
+        compare(prepared, (("FF", FirstFitOptimizer), ("BF", FailingBestFit), ("WF", LaterWorstFit)))
+    assert error.value.method == "BF" and error.value.stage == stage and error.value.__cause__ is original
+    assert not executed and repr(prepared) == before
+    monkeypatch.setattr(comparison, "calculate_metrics", calculate_metrics)
+    assert functional(compare(prepared, ALL_METHODS)) == direct(prepared, ALL_METHODS)
+
+
+def test_external_changes_do_not_change_captured_stock_geometry_quantities_or_minima(monkeypatch):
+    rows, candidates = [piece(width=2, height=2, quantity=2)], [stock(width=4, height=4)]
+    captured = problem(rows, candidates, config(angular_step_deg=D(5)))
+    minima, seen = dict(width=D(1), height=D(1)), []
+    class ExternalChangeFirstFit(FirstFitOptimizer):
+        def optimize(self, value):
+            rows[0]["cantidad"] = 999
+            rows[0]["geometria"]["width_mm"] = 999
+            candidates.clear()
+            minima.update(width=D(999), height=D(999))
+            return super().optimize(value)
+    def metrics(result, width, height):
+        seen.append((width, height))
+        return calculate_metrics(result, width, height)
+    monkeypatch.setattr(comparison, "calculate_metrics", metrics)
+    entries = compare_methods(captured, (("FF", ExternalChangeFirstFit), *ALL_METHODS[1:]),
+                              minimum_width_mm=minima["width"], minimum_height_mm=minima["height"])
+    assert functional(entries) == direct(captured, ALL_METHODS)
+    assert seen == [(D(1), D(1))] * 3
+    assert captured.units[0].geometry["width_mm"] == 2 and len(captured.units) == 2
+    assert len(captured.groups[0].stock_candidates) == 1
