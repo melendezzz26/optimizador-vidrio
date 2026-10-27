@@ -27,6 +27,9 @@ class RunLoadBudget:
     max_vertices: int = 128                             # L-04
     max_stock_units_per_material: int = 50              # L-07
     max_raster_bytes: int = INTERNAL_CACHE_BYTES        # L-13, mismo valor que RasterCache
+    max_active_runs: int = 2                            # L-10, por proceso
+    max_active_runs_per_user: int = 1                   # L-11
+    max_calculation_seconds: int = 120                  # L-12
 
 
 DEFAULT_RUN_LOAD_BUDGET = RunLoadBudget()

@@ -114,7 +114,7 @@ export function parseEvent(raw) {
       progress(d); require(['COMPLETADA', 'SIN_SOLUCION'].includes(d.estado) && typeof d.result_url === 'string'
         && d.completo === (d.placed_units === d.total_units) && d.completo === (d.estado === 'COMPLETADA')); break;
     case 'optimization_failed':
-      require(d.estado === 'FALLIDA' && ['CALCULATION_FAILED', 'EXECUTION_INTERRUPTED', 'RESULT_SAVE_FAILED'].includes(d.code)
+      require(d.estado === 'FALLIDA' && ['CALCULATION_FAILED', 'EXECUTION_INTERRUPTED', 'RESULT_SAVE_FAILED', 'TIME_BUDGET_EXCEEDED'].includes(d.code)
         && typeof d.message === 'string' && typeof d.result_url === 'string'); break;
   }
   return structuredClone(raw);

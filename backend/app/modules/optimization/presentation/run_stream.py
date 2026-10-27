@@ -8,12 +8,14 @@ import asyncio
 import anyio
 from fastapi.responses import StreamingResponse
 import logging
+import time
 from datetime import datetime, timezone
 from queue import Queue, Empty, Full
 from threading import Event, Thread
 from typing import get_args
 
-from ..application.errors import ExecutionInterrupted, ResultSaveFailed
+from ..application.errors import ExecutionInterrupted, ResultSaveFailed, TimeBudgetExceeded
+from ..application.load_budget import DEFAULT_RUN_LOAD_BUDGET
 from ..application.dto import RunStatus
 from .run_schemas import (OptimizationStartedV1, GroupStartedV1, PieceStartedV1, PiecePlacedV1,
     GroupCompletedV1, MetricsCalculatedV1, OptimizationCompletedV1, OptimizationFailedV1)
@@ -24,6 +26,10 @@ logger = logging.getLogger(__name__)
 
 
 class RunStreamingResponse(StreamingResponse):
+    def __init__(self, *args, stream=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.stream = stream
+
     async def stream_response(self, send):
         try:
             await super().stream_response(send)
@@ -33,17 +39,30 @@ class RunStreamingResponse(StreamingResponse):
             # Shield cleanup so disconnect reaches the producer immediately.
             with anyio.CancelScope(shield=True):
                 await self.body_iterator.aclose()
+            if self.stream is not None:
+                # TA-037: a stream that never started its worker frees its slot here.
+                self.stream.release_if_idle()
 
 
 class LiveRunStream:
-    def __init__(self, unit_of_work, calculator):
+    def __init__(self, unit_of_work, calculator, *, lease=None,
+                 time_budget_s=DEFAULT_RUN_LOAD_BUDGET.max_calculation_seconds, clock=time.monotonic):
         self.unit_of_work, self.calculator = unit_of_work, calculator
+        # TA-037 T03: admission slot (L-10/L-11) and time budget (L-12).
+        self.lease, self.time_budget_s, self.clock = lease, time_budget_s, clock
+        self.worker_started = False
+
+    def release_if_idle(self):
+        """Free the slot only if no worker owns it; a running worker frees it when it ends."""
+        if not self.worker_started and self.lease is not None:
+            self.lease.release()
 
     async def lines(self, accepted):
         identifier, problem = accepted.optimization_id, accepted.result.problem
         result_url = f"/api/optimization/runs/{identifier}"
         queue, stopped = Queue(maxsize=1), Event()
         sequence, placements, group_bases = 0, [], {}
+        clock = dict(started=None, delivery=0.0)  # L-12 excludes time spent delivering events
         group_totals = {g.key: len(g.units) for g in problem.groups}
 
         def line(schema, data):
@@ -53,6 +72,13 @@ class LiveRunStream:
                 occurred_at=datetime.now(timezone.utc), event=get_args(schema.model_fields["event"].annotation)[0], data=data).model_dump_json() + "\n"
 
         def send(schema, data, *, terminal=False):
+            before = self.clock()
+            try:
+                deliver(schema, data, terminal)
+            finally:
+                clock["delivery"] += self.clock() - before
+
+        def deliver(schema, data, terminal):
             payload, acknowledged = line(schema, data), Event()
             while not stopped.is_set():
                 try:
@@ -71,6 +97,8 @@ class LiveRunStream:
                 placements.append(event.placement)
             if stopped.is_set():
                 raise ExecutionInterrupted()
+            if self.clock() - clock["started"] - clock["delivery"] > self.time_budget_s:
+                raise TimeBudgetExceeded()                                  # TA-037 L-12
             key = event.group_key
             material_key = dict(id_tipo_vidrio=key[0], espesor_mm=key[1])
             progress = progress_response(event.placed_units, event.total_units)
@@ -94,12 +122,24 @@ class LiveRunStream:
 
         def produce():
             try:
+                calculate()
+            finally:
+                if self.lease is not None:
+                    self.lease.release()                                    # TA-037: always, once
+
+        def calculate():
+            clock["started"] = self.clock()
+            try:
                 run = self.calculator.execute(identifier, milestone)
                 completed(run)
             except Exception as error:
                 code = ("EXECUTION_INTERRUPTED" if isinstance(error, ExecutionInterrupted) else
+                        "TIME_BUDGET_EXCEEDED" if isinstance(error, TimeBudgetExceeded) else
                         "RESULT_SAVE_FAILED" if isinstance(error, ResultSaveFailed) else "CALCULATION_FAILED")
-                if not isinstance(error, ExecutionInterrupted):
+                if isinstance(error, TimeBudgetExceeded):
+                    logger.warning("First Fit run %s stopped after %s s (TIME_BUDGET_EXCEEDED)",
+                                   identifier, self.time_budget_s)
+                elif not isinstance(error, ExecutionInterrupted):
                     logger.exception("First Fit run %s failed (%s)", identifier, code)
                 try:
                     with self.unit_of_work() as uow:
@@ -115,7 +155,10 @@ class LiveRunStream:
                 if not stopped.is_set():
                     try:
                         send(OptimizationFailedV1, dict(estado="FALLIDA", code=code,
-                             message="La ejecución no pudo completarse. Consulta el resultado o solicita revisión.",
+                             message=(f"El cálculo superó el tiempo máximo de {self.time_budget_s} s y se detuvo. "
+                                      "Divide la selección en lotes más pequeños."
+                                      if code == "TIME_BUDGET_EXCEEDED" else
+                                      "La ejecución no pudo completarse. Consulta el resultado o solicita revisión."),
                              result_url=result_url), terminal=True)
                     except ExecutionInterrupted:
                         pass
@@ -125,6 +168,7 @@ class LiveRunStream:
                                                    for g in problem.groups], configuracion=config_response(problem.config)))
         worker = Thread(target=produce, name=f"optimization-{identifier}", daemon=True)
         worker.start()
+        self.worker_started = True  # after start(): if starting fails, release_if_idle frees the slot
         def next_item():
             try:
                 return queue.get(timeout=0.1)
