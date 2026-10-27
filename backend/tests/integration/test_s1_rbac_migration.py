@@ -127,3 +127,50 @@ def test_downgrade_removes_tables_and_reupgrade_works(isolated_postgres):
         assert "roles" in tables
         result = upgrade(engine, REVISION)
         assert result.returncode == 0, result.stderr
+                
+
+# TA-039: misma secuencia que un redespliegue real (migración + seed.py) en PostgreSQL.
+
+def test_seed_script_keeps_a_role_emptied_through_the_use_case(isolated_postgres, monkeypatch):
+    """CA-02 y CA-05: el Operario vaciado por el administrador sigue vacío; el rol que faltaba se crea completo."""
+    import seed
+    from app.modules.users.application.role_use_cases import replace_role_permissions
+    from app.modules.users.infrastructure.sqlalchemy_role_permission_repository import (
+        SqlAlchemyRolePermissionRepository,
+    )
+    with new_database(isolated_postgres) as engine:
+        assert upgrade(engine, "head").returncode == 0
+        factory = sessionmaker(bind=engine)
+        monkeypatch.setattr(seed, "SessionLocal", factory)
+        seed.crear_roles()
+        with factory() as db:
+            operario = db.scalar(sa.text("SELECT id_rol FROM roles WHERE nombre = 'Operario'"))
+            replace_role_permissions(operario, [], repository=SqlAlchemyRolePermissionRepository(db))
+        with engine.begin() as connection:
+            connection.execute(sa.text("DELETE FROM roles WHERE nombre = 'Almacenero'"))
+        seed.crear_roles()
+        seed.crear_roles()
+        with engine.connect() as connection:
+            result = assignment(connection)
+        expected = expected_assignment()
+        assert "Operario" not in result
+        assert result["Almacenero"] == expected["Almacenero"]
+        assert result["Administrador"] == expected["Administrador"]
+
+
+def test_seed_script_saves_nothing_if_the_assignment_fails(isolated_postgres, monkeypatch):
+    """CA-06: roles y permisos se confirman juntos; un fallo no deja roles sin permisos."""
+    import seed
+
+    def failing_seed(db, *args, **kwargs):
+        raise RuntimeError("fallo sintético durante la asignación")
+
+    with new_database(isolated_postgres) as engine:
+        assert upgrade(engine, "head").returncode == 0
+        monkeypatch.setattr(seed, "SessionLocal", sessionmaker(bind=engine))
+        monkeypatch.setattr(seed, "seed_permissions", failing_seed)
+        with pytest.raises(RuntimeError, match="fallo sintético"):
+            seed.crear_roles()
+        with engine.connect() as connection:
+            assert connection.scalar(sa.text("SELECT count(*) FROM roles")) == 0
+            assert connection.scalar(sa.text("SELECT count(*) FROM rol_permisos")) == 0

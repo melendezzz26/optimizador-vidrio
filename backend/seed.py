@@ -15,6 +15,7 @@ def crear_roles():
             ("Operario", "Registro de pedidos y ejecución de optimizaciones"),
         ]
 
+        creados = set()
         for nombre, descripcion in roles:
             existe = db.query(Rol).filter(Rol.nombre == nombre).first()
 
@@ -25,11 +26,13 @@ def crear_roles():
                         descripcion=descripcion
                     )
                 )
+                creados.add(nombre)
 
-        db.commit()
+        # TA-039: sin commit aquí. Roles y permisos se confirman juntos en
+        # seed_permissions; si algo falla, no quedan roles creados sin permisos.
+        db.flush()
+        seed_permissions(db, created_roles=creados)
         print("Roles registrados correctamente.")
-        
-        seed_permissions(db)
         print("Permisos de roles registrados correctamente.")
 
     finally:
