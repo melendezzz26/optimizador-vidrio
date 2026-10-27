@@ -2,11 +2,11 @@
 
 | Campo | Valor |
 |---|---|
-| Fecha | 27/10/2026 (America/Bogota) |
+| Fecha | 27/10/2026 (America/Lima) |
 | Sprint / periodo | Sprint 2 / 21/10/2026 – 28/10/2026 |
 | Responsable técnico | Andro Quispe |
 | Scrum Master / revisor | Fabricio Melendez Quezada |
-| Estado de revisión | Pendiente |
+| Estado de revisión | Revisado / autorizado para continuar — 27/10/2026 |
 | Commit base | 2a76141d38ca52045a5f5ee6000fea4eedb00885 |
 | Rama | feature/S2-TA-020-retazo-priority |
 | Clasificación funcional | **A. SATISFECHA** |
@@ -16,7 +16,7 @@ Esta clasificación corresponde a los seis criterios provisionales confirmados
 por el usuario y los seis escenarios probados. La aclaración del 27/10/2026
 resuelve la referencia de trabajo: se usa su regla funcional como aceptación
 provisional, sin esperar otra fuente. No declara aprobación formal ni cierre
-de TA-020; la revisión de Fabricio permanece pendiente.
+de TA-020; el review final del PR permanece pendiente.
 
 ## Sincronización y alcance
 
@@ -27,8 +27,8 @@ la rama nueva directamente desde origin/integration/sprint-01, sin rebase/merge.
 Se repitió fetch antes de los lotes de escritura; integration permaneció en
 2a76141 y `origin/docs/TA-021-comparacion-metodos` en 36d9c234ec6bfce7bf59cca26c8cc9827ac3e89f.
 
-SPEC y PLAN fueron creados antes del archivo nuevo de pruebas. La revisión
-humana permanece Pendiente; no se registra una revisión ficticia. El trabajo
+SPEC y PLAN fueron creados antes del archivo nuevo de pruebas. El usuario confirmó
+la revisión previa de Fabricio el 27/10/2026 y autorizó continuar hasta crear PR. El trabajo
 de auditoría y pruebas está expresamente autorizado por la solicitud.
 
 ## Auditoría: diez respuestas
@@ -103,7 +103,7 @@ Evidencia de ejecución: [backend-tests.txt](backend-tests.txt).
 Los seis escenarios originales siguen cubiertos por 26 pruebas nuevas:
 6 de prioridad, 6 de fallback (retazo no factible/sin retazo), 8 de
 incompatibilidad, 3 de determinismo/agotamiento y 3 de simulación.
-No hay GAP funcional identificado en los CA provisionales; su revisión formal
+No hay GAP funcional identificado en los CA provisionales; el review final del PR
 continúa pendiente y esta confirmación no implica cierre de TA-020.
 
 ## Ejecución reproducible
@@ -112,10 +112,10 @@ Entorno local `.venv/Scripts/python.exe`; desde `backend/`:
 
 ```powershell
 ..\.venv\Scripts\python.exe -m pytest tests/unit/optimization/test_retazo_priority.py -q
-# 26 passed in 1.18s
+# 26 passed in 0.44s
 
 ..\.venv\Scripts\python.exe -m pytest tests/unit/optimization tests/optimization tests/api/optimization/test_run_contract.py tests/integration/optimization/test_worst_fit_slice.py tests/integration/optimization/test_best_fit_slice.py -q
-# 498 passed in 7.87s
+# 498 passed in 5.39s
 ```
 
 Segunda salida completa archivada. Incluye las 26 nuevas y 472 existentes.
@@ -137,12 +137,25 @@ Los cuatro archivos restringidos (`domain/packing.py`, `first_fit.py`,
 todo `backend/app`. Solo se agregan SPEC, PLAN, TASKS, esta evidencia, log y
 el archivo de pruebas. No se crea comparador multimétodo.
 
-Entrega autorizada: commit y push únicamente a
-`origin/feature/S2-TA-020-retazo-priority`. Andro abrirá PR manualmente;
-Fabricio revisará. No PR, merge, rebase, smoke post-merge ni cierre ejecutados.
-Commit inicial `b8d0417` publicado en la rama autorizada; estado limpio tras
-el push. La actualización posterior solo alinea documentación con los CA
-provisionales confirmados: no cambia código ni pruebas, por lo que se conserva
-la ejecución anterior de 498 casos sin repetirla. Se verifican diff documental,
-`git diff --check` y ausencia de cambios en producción.
-Pendiente: revisión efectiva de Fabricio y flujo posterior de entrega del equipo.
+## Entrega final preparada
+
+- Base inicial: `2a76141d38ca52045a5f5ee6000fea4eedb00885`.
+- Base final validada: `9cf6dc8739b9b6d1be19d0bb8d2411d762b74a80`.
+- Sincronización normal de integration en la feature: merge `78224ce`, sin conflictos.
+  No se realizó merge de ningún PR ni cambios directos en integration.
+- Ubicación del proyecto: Trujillo, La Libertad, Perú; zona horaria America/Lima.
+- SPEC/PLAN: revisados / autorizados para continuar por Fabricio Melendez Quezada,
+  el 27/10/2026, según confirmación expresa del usuario.
+- Clasificación: **A. SATISFECHA**; CA-01 a CA-06 verificados.
+- Validación final tras sincronización: TA-020 **26 passed / 0 failed / 0 skipped**;
+  regresión **498 passed / 0 failed / 0 skipped** (incluye los 26 de TA-020).
+- PostgreSQL: no se encontraron binarios locales en PATH ni en la ruta de la
+  fixture; no se ejecutaron regresiones PostgreSQL. Sin E2E en esta entrega.
+- Diff contra integration: solo los seis archivos TA-020 descritos arriba;
+  producción intacta, sin TA-021, secretos, temporales ni artefactos de entorno.
+- Commits existentes: `b8d0417`, `f02efd3`; sincronización `78224ce`.
+- Estado previo al PR: **Revisada y lista para entrega mediante PR**.
+- Entrega autorizada: commit/push a `feature/S2-TA-020-retazo-priority`, crear PR
+  hacia `integration/sprint-01`, consultar CI y solicitar review de Fabricio.
+- Pendientes: PR/CI, review final del PR, merge por Fabricio, smoke y cierre.
+  No habilitar auto-merge, rebase, squash ni cerrar TA-020.

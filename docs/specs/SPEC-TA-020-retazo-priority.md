@@ -4,12 +4,12 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Draft |
+| Estado | Reviewed — revisada y lista para entrega mediante PR |
 | PBI relacionado | TA-020 / T01 — Generalizar preferencia retazo → plancha |
 | Responsable | Andro Quispe |
 | Reviewer | Fabricio Melendez Quezada |
 | Periodo | 21/10/2026 – 28/10/2026 |
-| Estado de revisión | Pendiente |
+| Estado de revisión | Revisado / autorizado para continuar — 27/10/2026 |
 
 ## 1. Objetivo
 
@@ -27,7 +27,7 @@ compatible y factible tiene prioridad absoluta sobre cualquier plancha.
 
 - Cambios en packing.py, first_fit.py, best_fit.py y worst_fit.py.
 - Comparación multimétodo, TA-021/TA-025, UI, migraciones y consumo de inventario.
-- PR, merge, rebase y cierre de TA-020.
+- Merge del PR, rebase, auto-merge, smoke post-merge y cierre de TA-020.
 
 ## 3. Actor y precondiciones
 
@@ -36,7 +36,7 @@ compatible y factible tiene prioridad absoluta sobre cualquier plancha.
 **Precondiciones:**
 
 - Problema válido agrupado por tipo de vidrio y espesor; stock disponible.
-- Base integration actualizada; revisión humana pendiente, sin atribuir aprobación.
+- Base integration actualizada; revisión previa realizada por Fabricio el 27/10/2026, según confirmación del usuario.
 
 ## 4. Entradas y datos
 
@@ -74,7 +74,7 @@ backlog TA-020 / T01. Objetivo / descripción: «Aplicar una política uniforme 
 evaluación de retazos compatibles antes de planchas nuevas para FF/BF/WF».
 
 Criterios **provisionales** expresamente autorizados por el usuario; se transcribe
-su regla funcional. No sustituyen la revisión pendiente de Fabricio.
+su regla funcional. Revisados previamente por Fabricio, según confirmación del usuario del 27/10/2026.
 
 - CA-01: Evaluar primero retazos compatibles.
 - CA-02: Si existe al menos un retazo factible, FF/BF/WF deben resolver únicamente dentro del nivel retazo.
@@ -116,9 +116,11 @@ sus números no corresponden a los números de los escenarios originales.
 
 - `docs/evidence/sprint-02/TA-020/`: base, auditoría, clasificación, resultados,
   matriz CA → pruebas y diff sin producción.
-- Matriz de los seis CA provisionales confirmados; revisión de Fabricio pendiente, sin declarar cierre.
+- Matriz de los seis CA provisionales confirmados; revisión previa de Fabricio realizada; review del PR pendiente, sin declarar cierre.
 
 ## Historial de estado
 
-- 27/10/2026 — Draft: SPEC creada antes de pruebas nuevas; revisión Pendiente.
-- 27/10/2026 — Draft: incorporados los seis CA provisionales confirmados por el usuario; revisión Pendiente.
+- 27/10/2026 — Draft: SPEC creada antes de pruebas nuevas; estado inicial anterior a la revisión confirmada.
+- 27/10/2026 — Draft: incorporados los seis CA provisionales confirmados por el usuario; estado inicial anterior a la revisión confirmada.
+
+- 27/10/2026 — Revisado / autorizado para continuar: review previo de Fabricio confirmado por el usuario; lista para entrega mediante PR. No equivale a cierre.
