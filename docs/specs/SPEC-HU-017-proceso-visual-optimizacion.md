@@ -10,7 +10,7 @@
 | Responsable / revisor | Pendientes de asignación formal |
 | Fecha | 27/10/2026 |
 | Base inspeccionada | `4bcf54d`, `integration/sprint-01`; antecedente documental `783aac8` |
-| Ejecución | Primer incremento de T01 implementado localmente; revisión/cierre pendientes. HU-017 no está Implemented ni Verified. |
+| Ejecución | Primer incremento T01 y núcleo T02 implementados y validados localmente; revisión/cierre pendientes. HU-017 no está Implemented ni Verified. |
 | PLAN | [PLAN-HU-017-proceso-visual-optimizacion.md](PLAN-HU-017-proceso-visual-optimizacion.md) |
 | Dependencias | HU-015/S1-01, SP-001, TA-016, TA-018, TA-019, TA-021 y TA-037 según contratos pendientes |
 | Decisión | Cierre documental autorizado: SPEC Reviewed. Revisión cruzada real pendiente; no implica implementación ni verificación. |
@@ -192,13 +192,15 @@ fuentes, orientaciones o posiciones después del primer candidato factible ni
 calcula scores. WF conserva su comparación entre fuentes, colocación canónica y
 score posterior. La generación compartida debe preservar orden y deduplicación.
 
-**GAP actual:** falta una fase previa de máscaras base; el contrato de orientaciones
-actual entrega una tupla por pieza. Coordinar con TA-016 su consumo bajo demanda
-y cualquier evolución incremental compartida, sin reimplementar ni imponer desde
-HU-017 una refactorización de rotación. TA-037 coordina presupuesto de bases y
-trabajo bajo demanda. Si un presupuesto impide
-continuar, informar error técnico; no omitir candidatos ni reducir precisión
-silenciosamente. No se exige materializar todas las orientaciones de la corrida.
+**Avance local T02:** `PreparedRunGeometry` prepara las bases antes de buscar,
+y el componente común TA-016 ofrece una vista reiterable de orientaciones bajo
+demanda. Se conserva la tupla histórica para sus otros consumidores. La
+integración `4bcf54d` de partida todavía tiene el GAP; este avance solo existe en
+la rama local de HU-017. [Evidencia del incremento](../evidence/sprint-02/HU-017/t02-bases-y-rotaciones-lazy.md).
+Se conservan presupuestos TA-037 y fallos técnicos explícitos, sin omitir
+candidatos ni reducir precisión. No se exige materializar todas las orientaciones
+de la corrida. Contrato visual, referencias públicas y recuperación de máscaras
+siguen pendientes de T03/T04, tras DG-01.
 
 ### RN-02 — Cuatro conceptos distintos
 
@@ -428,3 +430,4 @@ existencia de código de HU-015/TA-019 ni por crear esta documentación.
 | 25/10/2026 | Reviewed | Cierre documental autorizado por el solicitante. Revisión cruzada real pendiente; no Implemented ni Verified. TA-021 definida y HU-017 delimitada como consumidor visual sin selección del ganador. |
 | 27/10/2026 | Reviewed | Base revalidada en `4bcf54d`; inicio local de T01 autorizado. Se conservan los 26 CA, las exclusiones y DG-01 abierta antes de T03. |
 | 27/10/2026 | Reviewed | Primer incremento T01 implementado y validado localmente; [evidencia](../evidence/sprint-02/HU-017/t01-flujo-unificado.md). Sin cierre global ni publicación de HU-017. |
+| 27/10/2026 | Reviewed | Núcleo T02 implementado en `1291d65`: bases previas, resolución/configuración inmutables y orientaciones compartidas lazy. 2270 backend y 34 E2E correctos; sin cierre global, publicación ni revisión humana atribuida. |

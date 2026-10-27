@@ -9,14 +9,15 @@
 | Responsable / revisor | Pendientes de asignación formal |
 | Fecha / base | 27/10/2026 / `4bcf54d`, `integration/sprint-01` |
 | Estimación | Propuesta, 1 SP = 6 h; sin asignación ni compromiso de sprint. |
-| Ejecución actual | Inicio de T01 en `feature/HU-017-proceso-visual-optimizacion`, con commits locales. Sin push de HU-017, PR ni merge. |
+| Ejecución actual | Primer incremento T01 y núcleo T02 implementados/validados en `feature/HU-017-proceso-visual-optimizacion`, con commits locales. Sin push de HU-017, PR ni merge. |
 
 ## 1. Objetivo y disponibilidad del ID
 
 Convertir la SPEC en trabajo trazable para un único flujo visual A–E, con
 preparación real, telemetría acotada y resultado del backend. SPEC Reviewed y
 PLAN Approved por autorización documental del solicitante; revisión cruzada
-real pendiente. No se declaran implementadas ni verificadas estas capacidades.
+real pendiente. El avance local T01/T02 se acredita por incremento; no se declara
+HU-017 implementada por completo ni verificada.
 
 TA-021 se define como «Comparación/orquestación de FF/BF/WF sobre la misma
 instancia, sin selección del ganador». HU-017 consume visualmente sus resultados
@@ -117,8 +118,8 @@ mostrar solo estados respaldados por el contrato actual. Si faltan máscaras o
 telemetría de preparación/orientaciones, informar su ausencia; no fabricarlas ni
 llamar `/start` o `/rasterize` para habilitar `/runs`. Conservar el componente
 HU-015 mediante entrada técnica de pruebas fuera de la navegación principal,
-con sus contratos autenticados y regresiones existentes. T02–T05 siguen pendientes;
-este incremento no declara CA-03/06/08/26 ni cierre de HU-017.
+con sus contratos autenticados y regresiones existentes. En ese primer incremento
+T02–T05 quedaron pendientes; no se declaró CA-03/06/08/26 ni cierre de HU-017.
 
 **Avance local:** primer incremento implementado en `1eeff98`; revisión y cierre
 formal de T01 pendientes. [Evidencia y límites del incremento](../evidence/sprint-02/HU-017/t01-flujo-unificado.md).
@@ -178,6 +179,12 @@ angular previo se conservan como política existente; no se amplía la aceptaci�
 de cargas por introducir laziness. Referencias HTTP/máscaras y retención siguen
 en T03, tras DG-01. La comparación de regresión usa una captura funcional previa
 de los ocho casos representativos de TA-021 para FF/BF/WF, además de sus suites.
+
+**Avance local T02:** núcleo implementado en `1291d65`; 2270 pruebas backend y
+34 E2E correctos, con medición de memoria y 24/24 resultados de referencia
+FF/BF/WF iguales. [Evidencia T02 y límites](../evidence/sprint-02/HU-017/t02-bases-y-rotaciones-lazy.md).
+La fidelidad interna está probada; descriptores públicos/UI autoritativa y cierre
+completo de CA-11/26 requieren T03/T04/T06. Revisión y cierre formal pendientes.
 
 ### DG-01 — Seleccionar estrategia de streaming visual
 
@@ -383,8 +390,8 @@ ni la selección de un método ganador; esta última queda fuera de ambos alcanc
 - [ ] Evidencia reproducible, diff de alcance y revisión de accesibilidad disponibles.
 - [ ] Decisión del GAP vectorial registrada sin atribuir garantías inexistentes.
 
-La ejecución comienza por T01; su evidencia se registrará por incremento sin
-atribuir cumplimiento a las tareas restantes. La aprobación documental no
+La ejecución local cubre el primer incremento T01 y el núcleo T02; su evidencia
+se registra por incremento sin atribuir cumplimiento a las tareas restantes. La aprobación documental no
 acredita implementación completa ni cierre de DG-01. La revisión cruzada sigue
 pendiente. Las correcciones HU-016 publicadas por instrucción independiente no
 forman parte de esta rama; el cambio de CI permanece en su rama local separada.
@@ -398,3 +405,4 @@ forman parte de esta rama; el cambio de CI permanece en su rama local separada.
 | 25/10/2026 | Draft | Precisada congelación previa de configuración y fidelidad de máscara/geometría; alternativas A/B de streaming pendientes. Estimación preliminar T01..T06: 1.5/2/1.5/2/1/2 SP, total 10 SP / 60 h. |
 | 25/10/2026 | Approved | Cierre documental autorizado: DG-01 obligatoria y abierta antes de implementar T03; TA-021 definida, HU-017 consumidor visual sin ganador. Se mantienen 10 SP / 60 h; sin implementación ni revisión cruzada atribuida. |
 | 27/10/2026 | Approved | Inicio local autorizado de T01 desde `4bcf54d`, con commits y validación por incremento. DG-01 abierta; sin alterar estimación ni declarar cierre global. |
+| 27/10/2026 | Approved | Núcleo T02 implementado/validado en `1291d65`; DG-01 sigue abierta antes de T03. Sin cierre global, publicación ni cambios en los 26 CA o la estimación. |
