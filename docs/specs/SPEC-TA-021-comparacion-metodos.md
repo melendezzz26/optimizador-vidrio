@@ -6,14 +6,15 @@
 |---|---|
 | ID / nombre | TA-021 — Comparar FF/BF/WF sobre una instancia idéntica |
 | Versión | **1.1 — actualización del 27/10/2026** |
-| Estado | **Reviewed — v1.1 aprobada para iniciar el desarrollo** |
+| Estado | **Implemented — revisión conforme; integración y smoke pendientes** |
 | Sprint / módulo | Sprint 2 / Optimization |
 | Responsable de implementación | Fabricio Melendez Quezada |
 | Revisión técnica documental | Codex; registro de revisión en §11 |
 | Aprobación de alcance y desarrollo | Fabricio Melendez Quezada, 27/10/2026: «Aprobada, sigamos con la implementación» |
-| Revisión cruzada de la implementación | Pendiente de designación; no se atribuye una revisión humana |
+| Revisión de la implementación | Confirmada conforme por Fabricio Melendez Quezada el 27/10/2026; otros participantes no individualizados |
 | Fechas | 25/10/2026 (versión original) / 27/10/2026 (actualización) |
 | Rama documental | `docs/TA-021-comparacion-metodos` |
+| Rama de implementación | `feature/TA-021-comparacion-metodos` → `integration/sprint-01` |
 | Base auditada | `integration/sprint-01` en `0424f30c84cefb3d5899bbbbba2de363cc5a2319` |
 | PLAN | [PLAN-TA-021-comparacion-metodos.md](PLAN-TA-021-comparacion-metodos.md) |
 | Estimación de referencia | Backlog comunicado: 1 SP = 6 h; no se modifica el backlog. |
@@ -22,8 +23,10 @@
 La versión 1.1 fue revisada documentalmente y aprobada expresamente por el
 responsable el 27/10/2026: «Aprobada, sigamos con la implementación». Esa
 aprobación autoriza desarrollar T01 y T02 con el alcance de esta SPEC y su PLAN.
-No declara el comparador implementado, los CA aprobados ni el PBI cerrado;
-se mantiene la revisión de implementación y su evidencia como puerta de cierre.
+La aprobación antecede a la implementación. T01/T02 se implementan y prueban
+en la rama `feature/TA-021-comparacion-metodos`; evidencia de ejecución en §12.
+El responsable confirma el 27/10/2026: «ya hemos revisado y està correcto» y
+autoriza completar el cierre en la misma rama. Integración y smoke pendientes.
 
 ## 1. Identidad, fuentes y objetivo
 
@@ -349,9 +352,9 @@ naturalmente no deterministas.
 | CA-19 | No modifica políticas internas de FF/WF/BF ni geometría compartida. | T01/T02 |
 | CA-20 | Contrato común con completitud/faltantes y métricas disponibles: SIN_SOLUCION o equivalente es resultado válido; una excepción técnica identifica el método fallido, no presenta el conjunto incompleto como comparación válida completa y no altera inventario/pedidos/entrada de otros métodos. | T01/T02 |
 
-Son objetivos de implementación futura, no una matriz PASS actual. T01 solo
-aporta evidencia parcial del alcance final; CA-11/12 y los CA aplicables a BF
-deben demostrarse con TA-018 real antes de declarar TA-021 Closed.
+La matriz de evidencia técnica ejecutada está vinculada en §12. T01 por sí sola
+no cierra TA-021; T02 demuestra CA-11/12 y los CA aplicables con TA-018 real.
+Los PASS técnicos no sustituyen revisión cruzada e integración antes del cierre.
 
 ## 9. Dependencias
 
@@ -382,9 +385,10 @@ deben demostrarse con TA-018 real antes de declarar TA-021 Closed.
 - Slice de lectura real con inventario/pedidos/tablas intactos, sin `/runs`.
 - BF simulado para probar extensibilidad no valida CA-12 ni cierra T02.
 
-Evidencia futura: `docs/evidence/sprint-02/TA-021/`, con revisión/instancia común,
+Evidencia: `docs/evidence/sprint-02/TA-021/`, con revisión/instancia común,
 métodos realmente integrados, órdenes, comandos y resultados reales por fase.
-No se ejecutan pruebas ni se genera evidencia funcional en esta entrega documental.
+La actualización documental aprobada antecedió a las pruebas funcionales;
+la ejecución posterior queda registrada en §12 y en la evidencia de cada fase.
 
 ## 11. Revisión y aprobación de la versión 1.1
 
@@ -410,6 +414,20 @@ comparación. Esa política debe acordarse antes de la exposición; T01/T02 se
 validan como servicio interno con instancias controladas. No se implementan
 guardrails, una cola ni otra admisión dentro de esta tarea.
 
+## 12. Implementación y evidencia técnica
+
+T01 se entrega en `5af647f`: comparador genérico, FF/WF, 45 pruebas nuevas y
+[evidencia de fase](../evidence/sprint-02/TA-021/T01.md). TA-021 permaneció abierta.
+T02 incorpora `BestFitOptimizer` real por composición, preserva `BestFitResult`
+al calcular métricas y demuestra seis permutaciones/repeticiones por método.
+
+[Evidencia final y matriz de los 20 CA](../evidence/sprint-02/TA-021/README.md):
+60 pruebas específicas correctas; resultados directos equivalentes, inmutabilidad,
+ausencia de SQL/efectos externos y fallos identificados con causa. No cambian
+los criterios, el alcance ni la estimación de v1.1. Fabricio Melendez confirma
+la revisión realizada y conforme el 27/10/2026; no se atribuye a otros revisores
+una participación no identificada. Integración y smoke permanecen pendientes.
+
 ## Historial de estado
 
 | Fecha | Estado | Nota |
@@ -419,3 +437,5 @@ guardrails, una cola ni otra admisión dentro de esta tarea.
 | 25/10/2026 | Reviewed | Cambio de estado autorizado documentalmente; revisor/revisión cruzada pendientes. Sin implementación ni verificación, con 20 CA y alcance T01/T02 intactos. |
 | 27/10/2026 | Draft — v1.1 | Base actualizada a `0424f30`: BF/TA-016/TA-020/TA-037 disponibles, contratos reales inspeccionados y fases conservadas. Revisión documental propia registrada; aprobación de esta versión y desarrollo pendientes. Los 20 CA y la estimación se conservan. |
 | 27/10/2026 | Reviewed — v1.1 aprobada | Fabricio Melendez aprueba expresamente esta revisión y solicita continuar con la implementación. Se autoriza T01/T02, manteniendo los 20 CA, límites y revisión de cierre. |
+| 27/10/2026 | Implemented | T01/T02 ejecutadas, FF/BF/WF reales y evidencia técnica vinculada. Revisión cruzada, merge y smoke pendientes; no Closed/Verified. |
+| 27/10/2026 | Implemented — revisión conforme | El responsable confirma «ya hemos revisado y està correcto» y autoriza completar el cierre en la misma rama. Restan integración y smoke. |

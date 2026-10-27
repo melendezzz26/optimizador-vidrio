@@ -6,23 +6,26 @@
 |---|---|
 | Versión | **1.1 — actualización del 27/10/2026** |
 | Estado | **Approved — v1.1, desarrollo T01/T02 autorizado** |
-| SPEC | [SPEC-TA-021-comparacion-metodos.md](SPEC-TA-021-comparacion-metodos.md), v1.1 Reviewed |
+| Ejecución | **T01/T02 implementadas, probadas y revisadas; integración y smoke pendientes** |
+| SPEC | [SPEC-TA-021-comparacion-metodos.md](SPEC-TA-021-comparacion-metodos.md), v1.1 Implemented |
 | Responsable | Fabricio Melendez Quezada |
 | Revisión documental | Codex; revisión propia registrada en SPEC §11 |
 | Aprobación de alcance y desarrollo | Fabricio Melendez Quezada, 27/10/2026; autorización expresa para implementar |
-| Revisión cruzada de implementación | Pendiente de designación |
+| Revisión de implementación | Conformidad confirmada por Fabricio Melendez el 27/10/2026; otros participantes no individualizados |
 | Fecha / base actual | 27/10/2026 / `0424f30c84cefb3d5899bbbbba2de363cc5a2319`, `integration/sprint-01` |
-| Rama | `docs/TA-021-comparacion-metodos` |
+| Rama documental | `docs/TA-021-comparacion-metodos` |
+| Rama de implementación | `feature/TA-021-comparacion-metodos` → `integration/sprint-01` |
 | Estimación de referencia | 1 SP / 6 h, backlog comunicado; sin actualización del backlog. |
 | División preliminar | T01 0.5 SP / 3 h; T02 0.5 SP / 3 h. |
 | Restricción de cierre | TA-018 integrada y FF/BF/WF reales validados; T01 sola no cierra TA-021. |
 
 ## 1. Autoridad, objetivo y auditoría de alcance
 
-Este PLAN desarrolla la SPEC v1.1 Reviewed. El responsable aprobó expresamente
+Este PLAN desarrolla la SPEC v1.1, aprobada como Reviewed. El responsable aprobó expresamente
 la versión el 27/10/2026 y pidió continuar con la implementación siguiendo el
-flujo del repositorio. El PLAN pasa a Approved; las pruebas funcionales, la
-evidencia y la revisión de cierre siguen pendientes de ejecución real.
+flujo del repositorio. El PLAN permanece Approved; T01/T02 y su evidencia técnica
+están ejecutadas según §10. El responsable confirma la revisión conforme y
+autoriza completar el cierre en la misma rama; restan integración y smoke.
 
 Se mantienen T01 como infraestructura genérica + FF/WF y T02 como incorporación
 al comparador del BF real ya disponible. No existe bloqueo externo por falta de
@@ -73,7 +76,7 @@ TA-022/TA-025/TA-026 ni se declara implementado el comparador por disponer de el
 | Registro global/factory con descubrimiento de plugins | Innecesario para métodos conocidos y colección pequeña; añade estado/configuración sin requisito. |
 | Nuevo protocolo/clase base obligatoria | No existe un protocolo obligatorio de optimizadores en la base. No crearlo solo para tres clases ya compatibles; evaluar una anotación mínima solo si el tipado ayuda sin cambiar sus políticas. |
 
-**Propuesta, no código implementado:** servicio en `application/comparison.py`
+**Diseño aprobado e implementado:** servicio en `application/comparison.py`
 que reciba `OptimizationProblem` ya preparado con stock, colección ordenada
 de pares `(código, factoría del optimizador)` y parámetros métricos comunes.
 Validar toda la colección y códigos únicos/disponibles antes de invocar la primera
@@ -279,17 +282,17 @@ Archivos existentes de regresión: `test_problem_contract.py`, `test_preparation
 WF dentro de las ubicaciones Optimization ya establecidas. Se referencian como
 base; hoy no prueban un comparador que aún no existe.
 
-Comandos propuestos desde `backend/`, solo durante futura implementación:
+Comando de regresión desde `backend/` (ajustar ruta del entorno al sistema):
 
 ```powershell
 .\venv\Scripts\python.exe -m pytest tests/unit/optimization tests/optimization tests/integration/optimization/test_worst_fit_slice.py tests/integration/optimization/test_comparison_slice.py -q
 ```
 
-El archivo de comparison todavía no existe. No ejecutar este comando como si
-fuera evidencia presente ni activar fixtures que migren bases sin autorización.
-Guardar evidencia real por fase en `docs/evidence/sprint-02/TA-021/` con base,
+Los archivos de comparison se incorporan durante T01/T02. La validación real y
+sus comandos Linux están en la evidencia; no usar bases compartidas.
+Evidencia por fase en `docs/evidence/sprint-02/TA-021/` con base,
 colección, configuración/mínimos, datos sintéticos, orden y resultados por método.
-Esta entrega documental no ejecuta suites ni crea evidencia funcional.
+La entrega documental aprobada precedió a la implementación y sus pruebas.
 
 ## 7. Estimación sin modificar backlog
 
@@ -363,18 +366,22 @@ selecciona; ninguno de esos consumidores se implementa en esta rama documental.
 ## 10. Puerta de cierre de TA-021
 
 - [x] SPEC/PLAN v1.1 revisados y aprobados por el responsable el 27/10/2026 antes de iniciar el desarrollo.
-- [ ] T01 FF/WF validada con evidencia, sin cierre anticipado de TA-021.
+- [x] T01 FF/WF validada con evidencia, sin cierre anticipado de TA-021.
 - [x] Disponibilidad de TA-018 comprobada en la base `0424f30` (solo prerrequisito, no evidencia de TA-021).
-- [ ] BF real incorporado al comparador y validado en T02.
-- [ ] T02 demuestra los 20 CA sobre FF/BF/WF, incluidas seis permutaciones.
-- [ ] Regresiones correctas, misma instancia y cero cambios en inventario/pedidos.
-- [ ] Métricas comunes, contrato identificado y ausencia de ganador/SQL/UI confirmadas.
-- [ ] Evidencia reproducible de ambas fases y `git diff --check` correcto.
+- [x] BF real incorporado al comparador y validado en T02.
+- [x] T02 demuestra técnicamente los 20 CA sobre FF/BF/WF, incluidas seis permutaciones.
+- [x] Regresiones locales correctas, misma instancia y cero cambios en inventario/pedidos.
+- [x] Métricas comunes, contrato identificado y ausencia de ganador/SQL/UI confirmadas.
+- [x] Evidencia reproducible de ambas fases y `git diff --check` correcto.
+- [x] Revisión realizada y conforme confirmada por el responsable el 27/10/2026.
+- [ ] Integración del PR.
+- [ ] Smoke posterior al merge sobre `integration/sprint-01`.
 
-TA-021 **no puede declararse Closed** mientras falte BF real integrado o su
-validación conjunta. Las tareas siguen planificadas, no ejecutadas; aprobar
-este PLAN no marca CA como PASS ni declara Implemented o Verified. Esta versión ya está aprobada para desarrollar; la revisión cruzada de la
-implementación permanece pendiente. La revisión documental está en SPEC §11.
+T01 (`5af647f`) y T02 están ejecutadas. [Evidencia y matriz final](../evidence/sprint-02/TA-021/README.md):
+60 pruebas específicas correctas y revisión técnica propia de Codex. El
+responsable confirma «ya hemos revisado y està correcto» y autoriza completar
+el cierre; no se inventan otros revisores. TA-021 no se declara Closed/Verified
+hasta completar integración y smoke. La revisión documental está en SPEC §11.
 
 ## Historial de estado
 
@@ -385,3 +392,5 @@ implementación permanece pendiente. La revisión documental está en SPEC §11.
 | 25/10/2026 | Approved | Cambio de estado documental autorizado; SPEC Reviewed y revisión cruzada pendiente. T01/T02 sin cambios, 0.5 + 0.5 SP; TA-021 abierta después de T01 y cierre condicionado a BF real integrado. |
 | 27/10/2026 | Draft — v1.1 | Base actualizada a `0424f30`; contratos FF/BF/WF inspeccionados, TA-018/TA-020/TA-037 disponibles, T01/T02 y 1 SP / 6 h conservados. Revisión documental propia completada; aprobación del responsable y desarrollo pendientes. |
 | 27/10/2026 | Approved — v1.1 | Aprobación expresa de Fabricio Melendez para implementar T01/T02 conforme a SPEC/PLAN, con pruebas, evidencia y PR hacia integration/sprint-01. |
+| 27/10/2026 | Approved — ejecución T01/T02 | Comparador implementado y validado con BF real y seis permutaciones; evidencia técnica vinculada. Revisión cruzada y cierre posterior al PR pendientes. |
+| 27/10/2026 | Approved — revisión conforme | Fabricio Melendez confirma la revisión y autoriza el cierre manteniendo la rama de implementación. Integración y smoke pendientes. |
