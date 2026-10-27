@@ -13,6 +13,9 @@ from types import MappingProxyType
 from typing import Literal
 
 
+SPRINT_2_ANGULAR_STEP_DEG = Decimal(5)
+
+
 class MaterialSource(str, Enum):
     REMNANT = "RETAZO"
     SHEET = "PLANCHA"
@@ -74,7 +77,7 @@ class OptimizationConfig:
     resolution_mm: Decimal
     margin_mm: Decimal
     separation_mm: Decimal
-    angular_step_deg: Decimal
+    angular_step_deg: Decimal = SPRINT_2_ANGULAR_STEP_DEG
 
     def __post_init__(self):
         for name in ("resolution_mm", "margin_mm", "separation_mm", "angular_step_deg"):
@@ -284,7 +287,7 @@ class OptimizationResult:
             raise ValueError("Metrics require used material from accepted placements.")
 
     @property
-    def method(self) -> Literal["FF", "WF"]:
+    def method(self) -> Literal["FF", "BF", "WF"]:
         return "FF"
 
     @property

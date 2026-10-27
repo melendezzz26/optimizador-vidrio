@@ -18,10 +18,13 @@ class RasterBudgetExceeded(InvalidRasterInput):
 
 
 class RunError(Exception):
-    """Safe public code/message; the underlying exception stays server-side."""
-    def __init__(self, code: str, message: str):
+    """Safe public code/message; the underlying exception stays server-side.
+
+    ``details`` holds extra public fields (TA-037: ``limit``), never internals.
+    """
+    def __init__(self, code: str, message: str, details: dict | None = None):
         super().__init__(message)
-        self.code, self.message = code, message
+        self.code, self.message, self.details = code, message, details
 
 
 class ResultSaveFailed(Exception):
@@ -30,3 +33,7 @@ class ResultSaveFailed(Exception):
 
 class ExecutionInterrupted(Exception):
     pass
+
+
+class TimeBudgetExceeded(Exception):
+    """TA-037 L-12: the calculation passed its time budget; stopped at a milestone."""

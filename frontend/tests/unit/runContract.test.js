@@ -79,3 +79,11 @@ test('unconfigured transport performs no fabricated network operation', async ()
   await assert.rejects(transport.loadResult(101), /no está disponible/);
   await assert.rejects(transport.confirm(101), /no está disponible/);
 });
+
+test('TA-037: optimization_failed accepts TIME_BUDGET_EXCEEDED and still rejects unknown codes', () => {
+  const failed = code => ({ schema_version: 1, sequence: 9, id_optimizacion: 7, occurred_at: '2026-10-26T20:00:00Z',
+    event: 'optimization_failed', data: { estado: 'FALLIDA', code, message: 'El cálculo superó el tiempo máximo.',
+      result_url: '/api/optimization/runs/7' } });
+  assert.equal(parseEvent(failed('TIME_BUDGET_EXCEEDED')).data.code, 'TIME_BUDGET_EXCEEDED');
+  assert.throws(() => parseEvent(failed('SOMETHING_ELSE')));
+});

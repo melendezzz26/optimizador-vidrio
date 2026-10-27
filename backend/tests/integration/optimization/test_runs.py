@@ -20,7 +20,7 @@ def prepared(session_factory, create_user):
     now = datetime.now(timezone.utc)
     with session_factory() as s:
         s.add(Configuracion(version=1, separacion_mm=0, margen_mm=0, resolucion_raster_mm=1,
-            paso_angular_grados=90, ancho_min_retazo_mm=1, alto_min_retazo_mm=1, vigente=True,
+            paso_angular_grados=5, ancho_min_retazo_mm=1, alto_min_retazo_mm=1, vigente=True,
             id_usuario_creacion=actor, fecha_creacion=now))
         s.add(Plancha(id_plancha=5, ancho_mm=4, alto_mm=2, espesor_mm=6, cantidad=2, estado=True,
                       fecha_registro=now, id_tipo_vidrio=7))
@@ -73,7 +73,7 @@ def test_invalid_batch_rolls_back_everything(session_factory, prepared, invalid)
         if invalid == "config": s.scalar(select(Configuracion)).paso_angular_grados = None
         if invalid == "multi_config":
             s.add(Configuracion(version=2, separacion_mm=0, margen_mm=0, resolucion_raster_mm=1,
-                paso_angular_grados=90, ancho_min_retazo_mm=1, alto_min_retazo_mm=1, vigente=True,
+                paso_angular_grados=5, ancho_min_retazo_mm=1, alto_min_retazo_mm=1, vigente=True,
                 id_usuario_creacion=actor, fecha_creacion=datetime.now(timezone.utc)))
         s.commit()
     with pytest.raises(RunError):

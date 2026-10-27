@@ -23,3 +23,15 @@ def order(client, authenticated):
     response = client.post("/api/orders", json={"id_cliente": 41, "piezas": pieces}, headers=authenticated[1])
     assert response.status_code == 201, response.text
     return client.get(f"/api/orders/{response.json()['id_pedido']}", headers=authenticated[1]).json()
+
+
+@pytest.fixture(autouse=True)
+def run_admission():
+    """TA-037 T03: cada prueba empieza con una admisión limpia (sin plazas de pruebas anteriores)."""
+    from main import app
+    from app.modules.optimization.infrastructure.in_process_admission import InProcessRunAdmission
+    from app.modules.optimization.presentation.run_routes import get_run_admission
+    admission = InProcessRunAdmission()
+    app.dependency_overrides[get_run_admission] = lambda: admission
+    yield admission
+    app.dependency_overrides.pop(get_run_admission, None)

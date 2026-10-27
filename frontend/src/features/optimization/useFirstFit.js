@@ -3,6 +3,9 @@ import { buildRunRequest } from './runContract.js';
 import { initialOptimization, optimizationReducer } from './optimizationModel';
 
 let runSequence = 0;
+// TA-037: a 4xx or a 503 OPTIMIZER_BUSY never created a run; keep the reviewed work.
+const rejection = error => ({ message: error.message, code: error.code ?? null, retryAfter: error.retryAfter ?? null,
+  rejected: (error.status >= 400 && error.status < 500) || error.code === 'OPTIMIZER_BUSY' });
 export function useFirstFit({ source, adapter, onSessionExpired, result }) {
   const [state, dispatch] = useReducer(optimizationReducer, initialOptimization);
   const lifecycle = useRef(0);
@@ -57,11 +60,11 @@ export function useFirstFit({ source, adapter, onSessionExpired, result }) {
       };
       stream.current.subscribe(accept, error => {
         if (error.status === 401) onSessionExpired?.();
-        if (runId === activeRun.current) dispatch({ type: 'connection_failed', message: error.message, rejected: error.status >= 400 && error.status < 500 });
+        if (runId === activeRun.current) dispatch({ type: 'connection_failed', ...rejection(error) });
       }, optimizationId => {
         if (runId === activeRun.current) dispatch({ type: 'accepted', optimizationId, runId });
       });
-    } catch (error) { dispatch({ type: 'connection_failed', message: error.message, rejected: error.status >= 400 && error.status < 500 }); }
+    } catch (error) { dispatch({ type: 'connection_failed', ...rejection(error) }); }
   }
   function discard() { activeRun.current = null; stream.current?.dispose(); lifecycle.current++; busy.current = false; dispatch({ type: 'discard' }); }
   async function recover() {

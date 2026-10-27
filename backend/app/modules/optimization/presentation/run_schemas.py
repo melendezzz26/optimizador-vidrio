@@ -311,7 +311,7 @@ class CompletedDataV1(ProgressV1):
 
 
 class FailedDataV1(ContractV1):
-    code: Literal["CALCULATION_FAILED", "EXECUTION_INTERRUPTED", "RESULT_SAVE_FAILED"]
+    code: Literal["CALCULATION_FAILED", "EXECUTION_INTERRUPTED", "RESULT_SAVE_FAILED", "TIME_BUDGET_EXCEEDED"]
     message: str
     estado: Literal["FALLIDA"]
     result_url: str
@@ -409,10 +409,27 @@ class ConfirmResponseV1(ContractV1):
         return self
 
 
+class LoadLimitV1(ContractV1):
+    """TA-037 §7.1: which operational limit was exceeded; no internals."""
+    name: Literal["orders_per_run", "units_per_run", "vertices_per_piece", "raster_memory",
+                  "stock_units_per_material", "active_runs", "active_runs_per_user"]
+    maximum: Annotated[int, Field(strict=True, gt=0)]
+    actual: Annotated[int, Field(strict=True, gt=0)]
+    scope: dict[str, int | str] | None = None
+
+
 class ErrorDetailV1(ContractV1):
     code: Literal["UNAUTHENTICATED", "FORBIDDEN", "NOT_FOUND", "STATE_CONFLICT", "CONFIG_CONFLICT",
-                  "STOCK_CONFLICT", "ALREADY_CONFIRMED", "INVALID_INPUT", "NOT_CONFIRMABLE", "INTERNAL_ERROR"]
+                  "STOCK_CONFLICT", "ALREADY_CONFIRMED", "INVALID_INPUT", "NOT_CONFIRMABLE", "INTERNAL_ERROR",
+                  "LOAD_LIMIT_EXCEEDED", "OPTIMIZER_BUSY"]
     message: str
+    limit: LoadLimitV1 | None = None
+
+    @model_validator(mode="after")
+    def limit_only_for_load_errors(self):
+        if (self.code in ("LOAD_LIMIT_EXCEEDED", "OPTIMIZER_BUSY")) != (self.limit is not None):
+            raise ValueError("limit is present exactly for LOAD_LIMIT_EXCEEDED and OPTIMIZER_BUSY.")
+        return self
 
 
 class ErrorResponseV1(ContractV1):

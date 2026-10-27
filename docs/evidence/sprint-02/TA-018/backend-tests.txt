@@ -1,0 +1,21 @@
+Python 3.11.15; Windows; dependencies from backend/requirements.txt.
+Commands run from backend using ../.venv/Scripts/python.exe.
+
+Baseline at 783aac8, before changes:
+-m pytest -q tests/unit/optimization/test_first_fit.py tests/unit/optimization/test_rotation.py tests/unit/optimization/test_worst_fit.py tests/integration/optimization/test_worst_fit_slice.py
+80 passed in 2.52s
+
+After TA-016/TA-018:
+-m pytest -q tests/unit/optimization/test_best_fit.py tests/integration/optimization/test_best_fit_slice.py tests/unit/optimization/test_first_fit.py tests/unit/optimization/test_rotation.py tests/unit/optimization/test_worst_fit.py tests/integration/optimization/test_worst_fit_slice.py
+101 passed in 0.97s
+
+Full backend suite: -m pytest -q
+1445 passed, 605 skipped, 1 warning in 45.28s
+Skipped: no local PostgreSQL binaries for isolated cluster (postgres_support.py).
+Warning: StarletteDeprecationWarning for httpx usage with starlette.testclient.
+No PostgreSQL/Supabase shared database was accessed.
+
+Development correction: initial targeted run had 100 passed / 1 failed because
+the new inventory test expected one catalogue call. Existing adapter performs
+two reads (remnants and sheets) inside one read_transaction. Assertion corrected
+to that existing contract; no production logic changed for this failure.

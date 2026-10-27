@@ -1,4 +1,4 @@
-"""Opt-in development/demo configuration, using the approved S1 E2E values."""
+"""Opt-in development/demo configuration with Sprint 2 angular granularity."""
 from datetime import datetime, timezone
 from decimal import Decimal
 
@@ -6,14 +6,14 @@ from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
 from app.models import Configuracion, Usuario
-from app.modules.optimization.domain.problem import OptimizationConfig
+from app.modules.optimization.domain.problem import OptimizationConfig, SPRINT_2_ANGULAR_STEP_DEG
 from app.modules.optimization.domain.rotation import discrete_angles
 
 
-# Exact values from tests/optimization_e2e_data.py (final approved browser runs).
+# Shared operational angle; other dimensions retain the demo fixture values.
 DEMO_PARAMETERS = dict(
     separacion_mm=Decimal("0"), margen_mm=Decimal("0"),
-    resolucion_raster_mm=Decimal("1"), paso_angular_grados=Decimal("90"),
+    resolucion_raster_mm=Decimal("1"), paso_angular_grados=SPRINT_2_ANGULAR_STEP_DEG,
     ancho_min_retazo_mm=Decimal("10"), alto_min_retazo_mm=Decimal("10"),
 )
 

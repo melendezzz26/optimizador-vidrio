@@ -27,7 +27,7 @@ def test_empty_database_seed_twice_preserves_one_complete_version_and_real_actor
         assert second.version == 1 and second.vigente
         assert {field: getattr(second, field) for field in DEMO_PARAMETERS} == {
             "separacion_mm": Decimal("0"), "margen_mm": Decimal("0"),
-            "resolucion_raster_mm": Decimal("1"), "paso_angular_grados": Decimal("90"),
+            "resolucion_raster_mm": Decimal("1"), "paso_angular_grados": Decimal("5"),
             "ancho_min_retazo_mm": Decimal("10"), "alto_min_retazo_mm": Decimal("10"),
         }
         assert db.scalar(select(func.count()).select_from(Configuracion)) == 1

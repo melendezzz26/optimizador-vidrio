@@ -12,6 +12,12 @@ class CompatibleStockProvider(Protocol):
     def list_compatible(self, group_key: tuple[int, Decimal]) -> tuple[StockCandidate, ...]: ...
 
 
+class CompatibleStockCounter(Protocol):
+    """TA-037 P4: same compatibility as list_compatible, counted without expansion."""
+
+    def count_compatible(self, group_key: tuple[int, Decimal]) -> int: ...
+
+
 class OptimizationOrders(Protocol):
     def get_order(self, id_pedido: int) -> dict | None: ...
 
