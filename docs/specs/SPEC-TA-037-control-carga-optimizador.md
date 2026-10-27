@@ -9,7 +9,7 @@
 | Sprint | Sprint 2 |
 | Tipo / épica | Habilitador / Optimización segura |
 | Versión | **1.3**: saneamiento del ciclo de vida de plazas de T03; presupuestos y contratos de v1.2 conservados |
-| Estado | **Implemented** — T01/T02/T04 integradas; saneamiento T03 en curso. Verified requiere evidencia actual y revisión del cierre. |
+| Estado | **Implemented** — T01–T04 validadas técnicamente; pendiente de CI y revisión del PR de saneamiento para Verified. |
 | Responsable | Fabricio Aguilar |
 | Saneamiento T03 | Fabricio Melendez Quezada con asistencia de Codex; trabajo original T01–T04 de Fabricio Aguilar |
 | Revisor del cierre | Pendiente de revisión del PR; no se atribuye una aprobación humana |
@@ -367,8 +367,8 @@ recibe el foco. El resto de errores conserva la presentación genérica de siemp
 | CA-05 | T02 | Las suites existentes de First Fit, Best Fit, Worst Fit, el corte comercial (8 de 8 piezas a 1 mm) y la confirmación pasan sin cambios en sus aserciones. |
 | CA-06 | T02 | Una pieza con cantidad 2 147 483 647 se rechaza sin asignar memoria proporcional. |
 | CA-07 | T02 | El caso de H-10 (3 piezas distintas de ~1300 × 1000) se rechaza con 422 `raster_memory` antes de crear la ejecución; 2 piezas siguen aceptándose. |
-| CA-08 | T03 | Con 2 ejecuciones activas, una tercera recibe 503 `OPTIMIZER_BUSY` con `Retry-After`; al terminar una, se admite la siguiente. |
-| CA-09 | T03 | La plaza se libera si el cliente se desconecta, si el cálculo falla o si se supera L-12. No quedan plazas tomadas tras 100 ciclos de admisión y rechazo. |
+| CA-08 | T03 | Con 2 ejecuciones activas, una tercera recibe 503 `OPTIMIZER_BUSY` con `Retry-After`, incluso tras 300 s de entrega lenta; al terminar una, se admite la siguiente. El límite por usuario también se mantiene. |
+| CA-09 | T03 | La plaza se libera cuando termina el trabajador tras éxito, desconexión, fallo o L-12; el cierre de la conexión o de su espera de limpieza no la libera antes. Si el trabajador no arranca, se libera la reserva. No quedan plazas tomadas tras 100 ciclos de admisión y rechazo. |
 | CA-10 | T03 | El contrato distingue ejecución admitida (201), rechazada (422 o 503) y cancelada (`EXECUTION_INTERRUPTED` o `TIME_BUDGET_EXCEEDED`), y la confirmación sigue igual. |
 | CA-11 | T04 | El frontend muestra el mensaje del backend sin perder la selección de pedidos, con el foco en el aviso, y diferencia «divide el lote» de «intenta más tarde». |
 | CA-12 | T04 | Las pruebas de stock voluminoso y de límite + 1 terminan en menos de 5 s y sin OOM, porque rechazan antes de expandir. |
@@ -431,8 +431,8 @@ recibe el foco. El resto de errores conserva la presentación genérica de siemp
 | CA-05 | PASS | Suite backend completa sin editar pruebas existentes; corte comercial (`test_commercial_cut.py`, E2E11) |
 | CA-06 | PASS | Cantidad 2 147 483 647 rechazada en menos de 1 s (unitaria) y en ~0,12 s por HTTP (`test_run_load_stress.py`) |
 | CA-07 | PASS | Caso H-10 en `test_load_budget.py` y `test_accept_run_load_limits.py` |
-| CA-08 | Saneamiento en curso | Regresión requerida: dos trabajadores siguen ocupando sus plazas después de 300 s; terceros y mismo usuario reciben 503 hasta liberación real. |
-| CA-09 | Saneamiento en curso | Liberación al terminar, fallar, desconectarse, rechazar o vencer L-12; 100 ciclos sin fugas. La desconexión no libera hasta que termina el trabajador. |
+| CA-08 | PASS técnico | Reloj a 300/301/3600 s en `test_run_admission.py`; stream real con PostgreSQL por encima de 300 s en `test_run_concurrency.py`; límites global y por usuario preservados. |
+| CA-09 | PASS técnico | Éxito, fallo, rechazo, desconexión, L-12, arranque fallido, contrapresión y trabajador vivo después del join de limpieza; 100 ciclos sin fugas. [Evidencia v1.3](../evidence/sprint-02/TA-037/admission-lifecycle.md). |
 | CA-10 | PASS | `test_run_concurrency.py`: 201, 422, 503, `TIME_BUDGET_EXCEEDED`; la confirmación funciona con el optimizador lleno |
 | CA-11 | PASS | `frontend/src/features/optimization/__tests__/LoadControlFeedback.test.jsx`; E2E `ta037-load-feedback.spec.js` (escritorio y móvil) |
 | CA-12 | PASS | `test_run_load_stress.py`: stock y piezas al máximo de la base, rechazados en menos de 5 s y sin OOM |
@@ -446,4 +446,4 @@ recibe el foco. El resto de errores conserva la presentación genérica de siemp
 | 26/10/2026 | 1.2 | Reviewed | Valores de v1.1 aprobados por el equipo (Scrum Master). Correcciones de implementación de T02: L-09 retirado por no tener cota segura; L-05 conserva `INVALID_INPUT`; L-13 calculado con cota inferior en coma flotante; P4 usa el adaptador de stock del cálculo. |
 | 26/10/2026 | 1.2 | Reviewed | T03 implementada según §5.1, §7.2 y §7.3. Detalle de implementación agregado en §5.1: puntos de liberación de la plaza y respaldo de expiración de 300 s. Sin cambios de valores ni de contrato. |
 | 26/10/2026 | 1.2 | Implemented | T04: avisos de frontend («divide el lote», «intenta más tarde», tiempo máximo), pruebas de peor caso y E2E real. CA-01 a CA-12 en PASS (§13). Pendiente: CI en verde y revisión para Verified. |
-| 27/10/2026 | 1.3 | Implemented — saneamiento en curso | Se retira el respaldo de expiración de 300 s: contradice L-10/L-11 durante entrega lenta excluida de L-12. Se conservan CA-01 a CA-12 y todos los presupuestos/contratos. Rama `fix/TA-037-admission-lifecycle`; revisión y evidencia final pendientes. |
+| 27/10/2026 | 1.3 | Implemented | Retirado el respaldo de expiración de 300 s; CA-08/CA-09 precisan que la plaza sigue al trabajador. Presupuestos y contratos conservados. Regresión focalizada 39 PASS; optimización/geometría/API/PostgreSQL/confirmación 717 PASS. Trabajo original de Aguilar preservado; corrección y revisión técnica de Fabricio Melendez con Codex. CI y revisión del PR pendientes para cierre formal. |

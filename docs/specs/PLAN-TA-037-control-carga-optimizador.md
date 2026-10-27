@@ -160,7 +160,7 @@ corre: revisar que el job de backend quede en verde.
 2. `feat(TA-037): reject oversized runs before expansion` (T02: código)
 3. `test(TA-037): cover exact and over-limit run budgets` (T02: pruebas)
 
-## 4. T03 y T04 — Pendientes del martes
+## 4. T03 y T04 — Implementación original
 
 - **T03 (implementada):**
     - `application/admission.py`: puerto `RunAdmission.acquire(user_id) -> AdmissionLease`
@@ -199,7 +199,9 @@ corre: revisar que el job de backend quede en verde.
 
 Base `445886a` de `integration/sprint-01`; rama `fix/TA-037-admission-lifecycle`.
 El trabajo original de Aguilar se conserva. Esta corrección la realiza Fabricio
-Melendez Quezada con Codex, antes de comenzar nuevos PBIs.
+Melendez Quezada con Codex, antes de comenzar nuevos PBIs. Implementación y
+pruebas: `b583870` y `2470100`; resultados reproducibles en la
+[evidencia v1.3](../evidence/sprint-02/TA-037/admission-lifecycle.md).
 
 1. Actualizar SPEC §5.1: mantener la plaza hasta la liberación de su propietario;
    retirar la caducidad por reloj sin cambiar L-10/L-11, L-12 ni HTTP/NDJSON.
@@ -240,4 +242,4 @@ los criterios propios de TA-037 si quedan explícitamente documentados.
 | 26/10/2026 | Draft | T02 implementada; SPEC v1.2 en `Reviewed`; L-09 retirado; T03 y T04 pendientes. |
 | 26/10/2026 | Draft | T03 implementada (admisión, liberación de plazas y L-12); T04 pendiente. |
 | 26/10/2026 | Implemented | T04 implementada; CA-01 a CA-12 en PASS. Pendiente: CI y revisión para Verified. |
-| 27/10/2026 | Implemented — saneamiento en curso | Plan de corrección de caducidad de plazas, regresiones temporales y stream/PostgreSQL; cierre técnico y revisión pendientes. |
+| 27/10/2026 | Implemented | Saneamiento implementado: 39 pruebas focalizadas y 717 regresiones de optimización aprobadas con PostgreSQL obligatorio. Se conservan T01/T02/T04 y contratos; CI y revisión del PR pendientes para cierre formal. |
