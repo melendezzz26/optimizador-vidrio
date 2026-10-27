@@ -5,30 +5,29 @@
 | Campo | Valor |
 |---|---|
 | ID | TA-037 |
-| SPEC | [SPEC-TA-037-control-carga-optimizador.md](SPEC-TA-037-control-carga-optimizador.md) (v1.1) |
+| SPEC | [SPEC-TA-037-control-carga-optimizador.md](SPEC-TA-037-control-carga-optimizador.md) (v1.2, Reviewed) |
 | Estado | **Draft** |
 | Responsable | Fabricio Aguilar |
 | Fecha | 26/10/2026 |
-| Base | `integration/sprint-01` en `b7b9caa` (después del PR #64, paso angular de 5°) |
+| Base | `integration/sprint-01` en `4b82af7` (después del PR #65) |
 
 ## 1. Secuencia y estado
 
-| Tarea | SP | Depende de | Entrega | Estado al 26/10 |
+| Tarea | SP | Depende de | Entrega | Estado |
 |---|---:|---|---|---|
-| T01 — Definir presupuesto y contrato de errores | 0,5 | HU-015, TA-021 | Lunes 26/10, 12:00 | v1.0 integrada (PR #62). v1.1 recalibrada a 5°; **pendiente de aprobación** de los valores de §5 de la SPEC |
-| T02 — Implementar guardrails previos a la expansión | 1,5 | T01 | Martes 27/10 | Diseño de código y pruebas listos (§3); falta implementar |
+| T01 — Definir presupuesto y contrato de errores | 0,5 | HU-015, TA-021 | Lunes 26/10, 12:00 | **Hecha.** v1.0 (PR #62), v1.1 a 5° (PR #65), valores aprobados; SPEC en `Reviewed` (v1.2) |
+| T02 — Implementar guardrails previos a la expansión | 1,5 | T01 | Martes 27/10 | **Implementada** en `enabler/TA-037-guardrails` (§3); 55 pruebas nuevas; suite completa en verde |
 | T03 — Limitar concurrencia y controlar ejecución | 1 | T01, T02 | Martes 27/10 | Diseño en la SPEC (§5.1, §7.2, §7.3). L-12 pasa a ser protección principal |
 | T04 — Probar límites y feedback | 1 | T02, T03 | Martes 27/10 | Casos definidos en la SPEC (§9, §12) |
 
-T01 se considera cerrada cuando el equipo apruebe (o ajuste) los valores de la v1.1 y
-la SPEC pase de `Draft` a `Reviewed`, con la aprobación anotada en el historial. Si
-un valor cambia, solo cambia la constante y su justificación: los puntos de
-validación y el contrato no dependen del número.
+T01 quedó cerrada al aprobarse los valores de la v1.1. La SPEC pasa a `Reviewed` en la
+v1.2, que además recoge dos correcciones encontradas al implementar T02: L-09 se retira
+(no tiene cota inferior segura) y L-05 conserva su `INVALID_INPUT` actual.
 
 ## 2. T01 — Qué quedó definido
 
-- Límites vigentes de la v1.1: L-01, L-03 a L-05, L-07, L-09 a L-13, cada uno con su
-  base medida a 5° (SPEC §3 y §5). L-02, L-06 y L-08 quedan retirados con su motivo.
+- Límites vigentes de la v1.2: L-01, L-03 a L-05, L-07 y L-10 a L-13, cada uno con su
+  base medida a 5° (SPEC §3 y §5). L-02, L-06, L-08 y L-09 quedan retirados con su motivo.
 - La separación entre validación de negocio y límite operativo (SPEC §4).
 - El punto exacto donde se valida cada límite (SPEC §6).
 - Los contratos 422 `LOAD_LIMIT_EXCEEDED`, 503 `OPTIMIZER_BUSY` y el evento de
@@ -63,7 +62,8 @@ Rama: `enabler/TA-037-guardrails`, creada desde `integration/sprint-01` actualiz
 | `backend/app/modules/optimization/application/ports.py` | Application | Puerto `CompatibleStockCounter.count_compatible(group_key) -> StockCount`. |
 | `backend/app/modules/optimization/application/runs.py` | Application | Llamadas a P1, P3 y P4. `AcceptRun(unit_of_work, stock_counter=None, budget=DEFAULT_RUN_LOAD_BUDGET)`. |
 | `backend/app/modules/optimization/infrastructure/stock_adapter.py` | Infrastructure | `count_compatible` sin expandir; defensa P5 antes del bucle. |
-| `backend/app/modules/optimization/presentation/run_routes.py` | Presentation | Inyecta el contador; mapea `LOAD_LIMIT_EXCEEDED` a 422 e incluye `limit` en `detail`. |
+| `backend/app/modules/optimization/presentation/run_routes.py` | Presentation | `get_stock_counter` reutiliza el adaptador del cálculo; mapea `LOAD_LIMIT_EXCEEDED` a 422 e incluye `limit` en `detail`. |
+| `backend/app/modules/optimization/presentation/run_schemas.py` | Presentation | `ErrorDetailV1` acepta `LOAD_LIMIT_EXCEEDED` y el campo opcional `limit` (`LoadLimitV1`), presente solo con ese código. |
 
 Archivos que **no** se tocan: `domain/packing.py`, `domain/first_fit.py`,
 `domain/best_fit.py`, `domain/worst_fit.py`, `domain/placement.py`,
@@ -82,7 +82,6 @@ class RunLoadBudget:
     max_units: int = 150                       # L-03
     max_vertices: int = 128                    # L-04
     max_stock_units_per_material: int = 50     # L-07
-    max_layout_bytes: int = 128 * 1024 * 1024  # L-09, mismo valor que packing.py
     max_raster_bytes: int = 64 * 1024 * 1024   # L-13, mismo valor que rotation.py
 
 class LoadLimitExceeded(RunError):
@@ -90,21 +89,23 @@ class LoadLimitExceeded(RunError):
     def __init__(self, name: str, maximum: int, actual: int, scope: dict | None = None): ...
 
 def check_selection(order_ids, budget) -> None: ...                     # P1: L-01
-def check_pieces(rows, config, budget) -> dict[key, GroupLoad]: ...     # P3: L-03, L-04, L-05, L-13
-def estimate_raster_bytes(geometries, config) -> int: ...               # L-13, misma fórmula que RasterCache._raster
-def check_stock(groups: dict[key, GroupLoad], counts, config, budget) -> None: ...  # P4: L-07, L-09
+def check_pieces(rows, config, budget) -> dict[key, int]: ...           # P3: L-03, L-04, L-05, L-13
+def estimate_raster_bytes(snapshots, config) -> int: ...                # L-13, cota inferior de RasterCache
+def check_stock(units_by_material, stock_units, budget) -> None: ...    # P4: L-07
 ```
 
-- `check_pieces` recorre **filas**, nunca unidades. `GroupLoad` acumula, por
-  material, las unidades y el área total con `Decimal`.
+- `check_pieces` recorre **filas**, nunca unidades, y devuelve las unidades por
+  material para P4. Las filas con datos de negocio inválidos no se cuentan: las
+  rechaza después la validación existente con `INVALID_INPUT`.
 - La suma de `cantidad` se corta en cuanto supera `max_units`, para no depender de
   sumas enormes. `actual` informa la suma exacta, porque con pocas filas es barata.
 - La geometría se verifica con la **misma** `RasterCache().check_geometry` que hoy
   usa `runs.py`, una vez por fila. `RasterPreparationError` sigue terminando en el
   mismo `INVALID_INPUT`, para no cambiar la respuesta actual.
-- `estimate_raster_bytes` agrupa por geometría canónica (como la huella de
-  `RasterCache`) y suma, por orientación válida, la fórmula de SPEC §5.1. No
-  rasteriza ni guarda máscaras.
+- `estimate_raster_bytes` agrupa por la misma huella que `RasterCache` y suma, por
+  orientación, la fórmula de SPEC §5.1 con la rejilla redondeada hacia abajo. No
+  rasteriza ni guarda máscaras. Una prueba comprueba que queda entre el 90 % y el
+  100 % de la caché real del motor.
 - El orden de verificación es exactamente el de SPEC §6.
 
 ### 3.3 Cambio en `AcceptRun.execute`
@@ -120,7 +121,7 @@ with self.unit_of_work() as uow:
     groups = check_pieces(pieces, config, self.budget)            # P3, antes de expandir
     if self.stock_counter is not None:
         check_stock(groups, {k: self.stock_counter.count_compatible(k) for k in groups},
-                    config, self.budget)                          # P4
+                    self.budget)                                  # P4
     problem = prepare_persisted_problem(ids, pieces, config)      # igual que hoy
     ...
 ```
@@ -132,7 +133,7 @@ un solo argumento. En producción, `run_routes.py` siempre lo inyecta.
 
 | Archivo | Casos |
 |---|---|
-| `tests/unit/optimization/test_load_budget.py` | Exacto y + 1 de L-01, L-03, L-04, L-05, L-07, L-09 y L-13 (parametrizado); orden cuando se violan dos límites; `scope` correcto; cantidad 2 147 483 647 sin asignación grande; `estimate_raster_bytes` coincide con lo que suma `RasterCache`; mensajes sin SQL ni rutas. |
+| `tests/unit/optimization/test_load_budget.py` | Exacto y + 1 de L-01, L-03, L-04, L-07 y L-13; L-05 conserva su `ValueError`; orden cuando se violan dos límites; `scope` correcto; cantidad 2 147 483 647 sin asignación grande; `estimate_raster_bytes` coincide con lo que suma `RasterCache`; mensajes sin SQL ni rutas. |
 | `tests/unit/optimization/test_accept_run_load_limits.py` | Con UoW en memoria: el rechazo no llama a `prepare_persisted_problem`, `runs.create` ni `transition` (espías que fallan si se invocan); la aceptación en el límite exacto produce el mismo `problem` que sin presupuesto; caso H-10 (3 piezas de ~1300 × 1000 rechazadas, 2 aceptadas). |
 | `tests/api/optimization/test_run_load_limits.py` | 422 con el `detail` de SPEC §7.1; sin `Location` ni NDJSON; un Operario sin `optimization.execute` sigue recibiendo 403 antes que el límite. |
 | `tests/integration/optimization/test_run_load_limits_pg.py` | PostgreSQL: pedidos `PENDIENTE`, cero filas nuevas en las 3 tablas de optimización e inventario idéntico tras el rechazo; una plancha con `cantidad` 1000 se rechaza por conteo. |
@@ -155,7 +156,7 @@ corre: revisar que el job de backend quede en verde.
 
 ### 3.5 Commits sugeridos
 
-1. `docs(TA-037): recalibrate load budget for 5 degree rotation` (v1.1: SPEC, PLAN, evidencia y script)
+1. `docs(TA-037): mark load budget spec as reviewed` (v1.2: SPEC y PLAN)
 2. `feat(TA-037): reject oversized runs before expansion` (T02: código)
 3. `test(TA-037): cover exact and over-limit run budgets` (T02: pruebas)
 
@@ -188,3 +189,4 @@ corre: revisar que el job de backend quede en verde.
 |---|---|---|
 | 25/10/2026 | Draft | T01 redactada; T02 diseñada, sin implementar. |
 | 26/10/2026 | Draft | v1.1: valores recalibrados a 5° (PR #64); L-13 agregado; diseño de T02 actualizado. |
+| 26/10/2026 | Draft | T02 implementada; SPEC v1.2 en `Reviewed`; L-09 retirado; T03 y T04 pendientes. |
