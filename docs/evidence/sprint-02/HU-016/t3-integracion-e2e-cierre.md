@@ -1,112 +1,150 @@
-# HU-016 — T3 Integración, E2E y Cierre
+# HU-016 T03 — integración real y evidencia de cierre
 
-## Información general
+Fecha: 27/10/2026, America/Lima. Rama: `feature/HU-016-dashboard-inicial`.
+PR: [#72 → integration/sprint-01](https://github.com/melendezzz26/optimizador-vidrio/pull/72).
+SPEC: [SPEC-HU-016](../../../specs/SPEC-HU-016-dashboard-inicial.md).
 
-| Campo | Valor |
+T01/T02: Luis Anthony Ibañez Herrera (`imthonyyy`), integradas en PR #63.
+Regularización T03: Fabricio Melendez Quezada con asistencia de Codex,
+commit de pruebas `32dd7156a0dbc081c3684ed05c9127d1bc9f5eaa`, sobre
+`2094b2d` de Luis y `9cf6dc8` de integración. Revisión humana del PR pendiente;
+no se atribuye a Aguilar la aprobación del cierre ni se modifica Notion.
+
+La ejecución anterior no acreditaba T03: eliminar la suite simulada no ejecutaba
+la suite real, que omitía 14 casos por falta de credenciales. Esta evidencia
+sustituye las afirmaciones anteriores de cierre, conservadas en Git.
+
+## Qué se verifica
+
+Se reutilizan la aplicación Vite, la API FastAPI y el PostgreSQL temporal de
+`tests.e2e_server` con migraciones Alembic reales. Los tres roles usan las
+cuentas sintéticas ya preparadas; se añade una cuarta cuenta con un rol sin
+filas en `rol_permisos`. Login y `/api/auth/me` consultan el backend real.
+No se inyectan tokens, respuestas HTTP ni permisos del cliente para los flujos
+que acreditan CA-20. No se necesitan credenciales ni variables secretas externas.
+
+- Login → Inicio → Inventario/Optimización → Inicio para los tres roles.
+- Pedidos para Administrador/Operario y Usuarios para Administrador.
+- Almacenero consulta Optimización sin controles de cálculo/confirmación.
+- Totales de pedidos y unidades/registros de planchas comparados con las
+  respuestas HTTP recibidas; no se fijan cifras para aparentar datos reales.
+- Sesión sin permisos: Inicio, identidad, refresh y logout; cero solicitudes
+  del navegador a módulos restringidos. Llamadas API directas con ese token
+  reciben 403 en Inventario, Pedidos, Clientes y Usuarios.
+- Responsive 1440/1024/800/390 px: sin overflow horizontal, Sidebar sin
+  intersección con contenido, accesos utilizables con scroll y retorno a Inicio.
+- Logout elimina `sessionStorage.optimizador.auth` y la superficie protegida.
+
+El escenario **CONTROLLED FAILURE SCENARIO — NOT REAL BACKEND FAILURE**
+intercepta una respuesta 503 de planchas para comprobar error parcial y luego
+retira la intercepción: el reintento obtiene las seis fuentes de la API real.
+Son **2 casos de fallo controlado** (uno por proyecto), separados de los
+**20 casos de integración real**. No se presentan como una avería natural del
+backend ni sustituyen los flujos reales de CA-20. Los estados loading, empty,
+error, success, permisos revocados y respuestas tardías también tienen pruebas
+de componentes específicas.
+
+## Resultados observados
+
+| Comprobación | Resultado |
 |---|---|
-| PBI relacionado | **HU-016** — Dashboard inicial para usuarios de NewGlass |
-| Tarea | **HU-016-T03** — Integración, E2E y cierre |
-| Estado de la tarea | **Completed** |
-| Estado de la SPEC | **Implemented** |
-| Rama | `feature/HU-016-dashboard-inicial` |
-| Fecha de cierre | 25/10/2026 |
-| Autor | Fabricio Melendez Quezada |
-| Revisor del alcance | Fabricio Aguilar |
+| Dashboard/Authentication, componentes focalizados | 86 passed, 6 archivos; 9.56 s |
+| Dashboard E2E focalizado, escritorio y móvil | 22 passed, 0 skipped; 1.3 min |
+| Componentes frontend completos | 483 passed, 43 archivos; 244.02 s |
+| Unitarias frontend, Node 24.19.0 | 9 archivos aprobados, 0 fallos; el reporter local resume por archivo |
+| ESLint | Exit 0, sin errores ni advertencias |
+| Build Vite 8.3.1 | Exit 0; 1988 módulos; 1.24 s |
+| Regresión E2E completa, Chromium local 154 | 99 passed, 6 skipped de HU-015, 1 fallo en TA-036 móvil; 7.1 min. Los 22 casos Dashboard pasan dentro de esta ejecución. |
+| Backend completo con PostgreSQL obligatorio | 2146 passed, 1 warning; 518.76 s |
+| CI del commit de pruebas | [Run 138](https://github.com/melendezzz26/optimizador-vidrio/actions/runs/40527868191): frontend aprobado (161 unitarias, 483 componentes, lint/build) y E2E aprobado (100 passed, 6 skipped de HU-015, incluidos los 22 Dashboard sin skips); backend en ejecución al preparar este reporte |
 
----
+Contexto local: Linux, Python 3.11.9 (venv del backend), Node 24.19.0,
+PostgreSQL 17.11 temporal y Chromium 154.0.8037.57 del entorno. Los comandos se ejecutaron
+sobre `32dd715`; solo la documentación estaba sin commit al preparar el reporte.
+CI usa su Node 22, Python 3.11, PostgreSQL y Chromium administrados del workflow.
+Los resultados locales y de CI se distinguen; no se copian cifras históricas.
 
-## 1. Resumen de ejecución y resultados
+### Límite observado en la regresión local
 
-Se completó la verificación integral de integración y pruebas End-to-End para el Dashboard inicial de NewGlass (HU-016), abarcando los roles **Administrador**, **Operario** y **Almacenero**, así como el caso de **sesión sin funciones autorizadas** y pruebas de adaptabilidad responsive en los tres anchos solicitados (**1440px, 1024px y 800px**).
+`ta036-retazo-personalizado.spec.js` falla en el proyecto móvil al pulsar
+«Registrar retazo»: el formulario/footer intercepta el puntero. Se repitió
+el caso aislado y volvió a fallar con Chromium 154 local. Ese test y todo el
+código de producción son idénticos a la base `9cf6dc8`; no se modifica TA-036
+para declarar verde HU-016. El mismo caso aprueba en escritorio y móvil con Chromium administrado de CI
+(run 138: 100 passed, 6 skipped, 0 failed). No se declara que toda la regresión
+local haya pasado ni se atribuye a HU-016 un cambio en esa interfaz.
+Los seis skips corresponden a tres escenarios antiguos HU-015 por proyecto,
+fuera de los 22 E2E Dashboard; no se presentan como pruebas ejecutadas.
 
-### Resultados clave:
-1. **Pruebas E2E automatizadas:** **9 pasadas / 9 ejecutadas (100% PASS)** en 9.6 segundos mediante Playwright y Chromium.
-2. **Pruebas de componentes y contratos:** **86 pasadas / 86 ejecutadas (100% PASS)** en 11.23 segundos cubriendo `features/dashboard` y `features/authentication`.
-3. **Calidad de código y empaquetado:** `eslint` pasó con 0 errores y 0 advertencias; `vite build` completó en 1.16s generando el bundle de producción sin incidencias.
-4. **Regresión:** Las pruebas de Inventario, Optimización y Pedidos se mantienen íntegras y sin regresiones.
+## Reproducción
 
----
+Con dependencias backend/frontend preparadas según los README y binarios
+`initdb`/`pg_ctl` disponibles:
 
-## 2. Matriz de Verificación de Criterios de Aceptación (CA-01 a CA-22)
-
-| ID | Criterio de Aceptación | Estado | Evidencia de Verificación |
-|---|---|:---:|---|
-| **CA-01** | Tras autenticarse correctamente, cualquier usuario con sesión válida llega a Inicio. | ✅ **VERIFICADO** | Validado en E2E para los 3 roles y sesión sin módulos; `canViewDashboard(user)` es `Boolean(user)` y `App.jsx` lo asigna como vista inicial y fallback. |
-| **CA-02** | Inicio puede abrirse desde Sidebar y refleja la vista activa de forma accesible. | ✅ **VERIFICADO** | Verificado en E2E; al navegar a otro módulo y pulsar «Inicio» en el Sidebar, se retorna a la pantalla con `aria-current="page"`. |
-| **CA-03** | Misma pantalla común para los 3 roles; sesión sin permisos conserva Inicio sin consultas restringidas. | ✅ **VERIFICADO** | E2E Scenario 4: sesión con `permisos: []` monta Inicio con saludo, mensaje de estado «Sin funciones habilitadas» y logout, sin peticiones fetch restringidas. |
-| **CA-04** | Fuentes y accesos corresponden solo a los permisos efectivos vigentes. | ✅ **VERIFICADO** | Verificado en pruebas unitarias y E2E: cada tarjeta y botón depende exclusivamente de `user.permisos`. |
-| **CA-05** | Ocultar opciones no sustituye la autorización backend. | ✅ **VERIFICADO** | Los endpoints del backend protegen sus recursos con 401/403 independientemente de la interfaz. |
-| **CA-06** | Cifras proceden de respuestas reales y con significado explícito. | ✅ **VERIFICADO** | Proyección directa de datos API; cada tarjeta define explícitamente el alcance de su métrica. |
-| **CA-07** | Con `orders.view`, muestra total de pedidos PENDIENTE usando `total`. Sin permiso no lo consulta. | ✅ **VERIFICADO** | Consulta `GET /api/orders?page=1&limit=1&estado=PENDIENTE` con `total`; Almacenero no realiza la llamada. |
-| **CA-08** | Con `orders.view`, muestra pedidos EN_OPTIMIZACION (sin presentarlo como ejecuciones activas). | ✅ **VERIFICADO** | Rotulado como «Pedidos en optimización» y descripción explícita de pedidos. |
-| **CA-09** | Resumen de inventario distingue registros de unidades y aclara compatibilidad. | ✅ **VERIFICADO** | `activeUnits` sumado sobre planchas activas con cantidad > 0; advierte que no certifica compatibilidad. |
-| **CA-10** | Accesos rápidos navegan a módulos existentes de §8 sin URLs ficticias ni mutaciones. | ✅ **VERIFICADO** | Acciones hacia `inventory`, `orders`, `optimization` y `users` usando `NavigationContext`. |
-| **CA-11** | Almacenero sin `optimization.execute` no recibe acción de ejecución. Consulta autorizada no sugiere calcular. | ✅ **VERIFICADO** | El acceso rápido hacia `optimization` está rotulado con la etiqueta neutral «Optimización» para navegación. |
-| **CA-12** | Operario sin `users.view` no recibe acciones de Usuarios; Administración respeta permisos por pestaña. | ✅ **VERIFICADO** | El botón «Abrir Administración» no se renderiza para Operario ni Almacenero. |
-| **CA-13** | Contempla loading, empty, error y success por fuente, reintento, disabled temporal y parciales. | ✅ **VERIFICADO** | Validado en componentes y en E2E mediante simulación controlada de HTTP 503 en planchas. |
-| **CA-14** | Fallo no muestra datos ficticios u obsoletos; respuestas tardías no contaminan sesión. | ✅ **VERIFICADO** | Claves de contexto (`userId`, `permissionsKey`, `version`) y `AbortController`. |
-| **CA-15** | MVP no muestra merma, aprovechamiento, ahorro, eficiencia ni comparativas de algoritmos. | ✅ **VERIFICADO** | Fuera de alcance respetado estrictamente en Dashboard. |
-| **CA-16** | Operable por teclado, foco visible, semántica y nombres accesibles sin depender solo de color. | ✅ **VERIFICADO** | Botones nativos, orden de Tab y Enter probados en componentes. |
-| **CA-17** | Funciona sin overflow ni solapamientos en 1440, 1024 y 800 px con Sidebar usable. | ✅ **VERIFICADO** | Comprobado en E2E: `document.documentElement.scrollWidth <= window.innerWidth` en 1440px, 1024px y 800px. |
-| **CA-18** | Refresh sobre URL base/subpath recupera sesión válida y presenta pantalla autenticada. | ✅ **VERIFICADO** | E2E valida recarga con `GET /api/auth/me` conservando la sesión y la vista de Inicio. |
-| **CA-19** | Logout desde Inicio elimina sesión, retira datos protegidos y vuelve a login. | ✅ **VERIFICADO** | E2E confirma eliminación de `sessionStorage.optimizador.auth` y retorno a la vista de login. |
-| **CA-20** | Cobertura E2E real para Login → Inicio → módulos autorizados, refresh y logout. | ✅ **VERIFICADO** | 9 pruebas automatizadas Playwright en `tests/e2e/hu016-dashboard.spec.js`. |
-| **CA-21** | Pruebas automatizadas de componentes para roles, permisos revocados y sesión sin fuentes. | ✅ **VERIFICADO** | 86 pruebas en `features/dashboard/__tests__` y `features/authentication/__tests__`. |
-| **CA-22** | Navegación a otros módulos conserva flujos y autorizaciones; HU-015 no se modifica. | ✅ **VERIFICADO** | Módulos previos intactos y probados sin regresión. |
-
----
-
-## 3. Pruebas E2E Playwright (`hu016-dashboard.spec.js`)
-
-Comando ejecutado:
-```powershell
-Push-Location "optimizador-vidrio/frontend"
-npx playwright test --config=playwright.hu016.config.js
-Pop-Location
+```bash
+# Activar primero el venv de backend para que Playwright encuentre python.
+# Linux: ajustar únicamente NEWGLASS_TEST_PG_BIN a los binarios instalados.
+export NEWGLASS_TEST_PG_BIN=/ruta/a/postgresql/bin
+export NEWGLASS_REQUIRE_POSTGRES=1
+export PYTHON_DOTENV_DISABLED=1
+export PLAYWRIGHT_CHANNEL=chromium
+cd frontend
+npm run test:component -- src/features/dashboard src/features/authentication
+npm run test:e2e -- ta-dashboard.spec.js
+npm run test:unit
+npm run test:component
+npm run test:e2e
+npm run lint
+npm run build
+cd ../backend
+python -m pytest tests -q -ra
 ```
 
-**Resultado:**
-```text
-Running 9 tests using 1 worker
+Playwright inicia y detiene sus servidores; la base se crea en loopback bajo
+un directorio temporal propio. `DATABASE_URL` compartida no es un requisito.
+El CI existente establece `NEWGLASS_REQUIRE_POSTGRES=1` y deshabilita dotenv.
+La suite Dashboard no usa `test.skip` por credenciales. No se crea un endpoint
+agregado, ni se cambian producción, migraciones o lógica del optimizador.
 
-  ok 1 tests\e2e\hu016-dashboard.spec.js:174:1 › CA-01, CA-03, CA-04, CA-10: Dashboard real para Administrador con todos los accesos (757ms)
-  ok 2 tests\e2e\hu016-dashboard.spec.js:198:1 › CA-04, CA-10, CA-12: Dashboard real para Operario sin Administración (672ms)
-  ok 3 tests\e2e\hu016-dashboard.spec.js:213:1 › CA-04, CA-10, CA-11: Dashboard real para Almacenero sin Pedidos ni Ejecución (581ms)
-  ok 4 tests\e2e\hu016-dashboard.spec.js:231:1 › CA-03, §4, §12: Sesión sin funciones autorizadas accede a Inicio con mensaje explicativo (693ms)
-  ok 5 tests\e2e\hu016-dashboard.spec.js:247:1 › CA-02, CA-10: Navegación de acceso rápido a Optimización y retorno por Sidebar (855ms)
-  ok 6 tests\e2e\hu016-dashboard.spec.js:265:1 › CA-17: Verificación responsive sin overflow en 1440px, 1024px y 800px (1.1s)
-  ok 7 tests\e2e\hu016-dashboard.spec.js:283:1 › CA-18: Refresh desde Inicio recupera sesión con /api/auth/me (944ms)
-  ok 8 tests\e2e\hu016-dashboard.spec.js:294:1 › CA-19: Logout elimina la sesión y retorna al login (641ms)
-  ok 9 tests\e2e\hu016-dashboard.spec.js:306:1 › CA-13, CA-14: Fallo parcial controlado muestra aviso sin comprometer fuentes válidas (731ms)
+Para exportar capturas fuera del directorio ignorado de Playwright, configurar
+`NEWGLASS_HU016_EVIDENCE_DIR` antes del comando focalizado. Sin esa variable,
+los artefactos van a `frontend/test-results/`; los proyectos se separan y no
+sobrescriben la evidencia histórica de Sprint 1. La exportación de esta sesión
+usó `/tmp/hu016-tools/evidence`; se conservan cinco capturas seleccionadas en
+[t3/real/](t3/real/). Son capturas nuevas contra PostgreSQL real. Las imágenes
+anteriores de `t3/screenshots/` son históricas y no acreditan esta ejecución.
 
-  9 passed (9.6s)
-```
+## Matriz de los 22 criterios
 
----
+Se mantiene el texto funcional de la SPEC. CA-20 recupera su exigencia original:
+Login → Inicio → módulo autorizado con navegador, API y datos controlados reales,
+incluyendo retorno a Inicio, refresh y logout.
 
-## 4. Registro de Capturas Generadas
-
-Las capturas de pantalla fueron generadas y depositadas en `docs/evidence/sprint-02/HU-016/t3/screenshots/`:
-
-| Archivo de captura | Descripción y Criterios respaldados |
+| CA | Evidencia actual |
 |---|---|
-| `dashboard-administrador.png` | Vista completa del Dashboard para Administrador con los 4 accesos rápidos y resúmenes. |
-| `dashboard-operario.png` | Vista para Operario; excluye acceso a Administración (CA-12). |
-| `dashboard-almacenero.png` | Vista para Almacenero; solo inventario y acceso a Optimización sin prometer cálculo (CA-11). |
-| `dashboard-sin-funciones.png` | Sesión válida sin fuentes ni módulos; mensaje de «Sin funciones habilitadas» y logout (CA-03, §4, §12). |
-| `dashboard-navegacion-optimizacion.png` | Navegación exitosa desde el acceso rápido hacia el módulo Optimización (CA-10, CA-11). |
-| `dashboard-viewport-1440.png` | Renderizado a 1440px de ancho sin scroll horizontal (CA-17). |
-| `dashboard-viewport-1024.png` | Renderizado a 1024px de ancho con adaptación de columnas (CA-17). |
-| `dashboard-viewport-800.png` | Renderizado a 800px de ancho manteniendo Sidebar y contenido utilizables sin overflow (CA-17). |
-| `dashboard-refresh-session.png` | Estado persistente del Dashboard tras recargar la página (`/api/auth/me`) (CA-18). |
-| `dashboard-logout.png` | Retorno limpio al formulario de inicio de sesión tras cerrar sesión (CA-19). |
-| `dashboard-partial-error.png` | Alerta de «Información parcial» ante fallo simulado en planchas (CA-13, CA-14). |
+| CA-01 | E2E real para los tres roles y rol sin permisos; login HTTP 200 y saludo con identidad de la respuesta. |
+| CA-02 | E2E real: navegación desde accesos rápidos y retorno mediante Sidebar con aria-current=page. |
+| CA-03 | E2E real: rol sin filas en rol_permisos; Inicio, mensaje, refresh y logout; cero solicitudes del navegador a módulos restringidos. |
+| CA-04 | E2E real: fuentes y accesos por rol; ausencia de Pedidos/Usuarios donde corresponde. Componentes para permisos efectivos y revocados. |
+| CA-05 | E2E real: llamadas directas con token sin permisos reciben 403 en Inventario, Pedidos, Clientes y Usuarios; controles backend existentes. |
+| CA-06 | E2E compara unidades/registros de planchas y totales de pedidos con las respuestas HTTP reales. Componentes verifican las otras transformaciones. |
+| CA-07 | E2E distingue estado=PENDIENTE y compara total; sin consulta ni tarjeta para Almacenero. |
+| CA-08 | E2E distingue estado=EN_OPTIMIZACION y compara total; componentes comprueban el rotulado sin métricas de ejecución. |
+| CA-09 | E2E compara unidades/registros de planchas; dashboardModel/DashboardPage prueban retazos y advertencias de compatibilidad. |
+| CA-10 | E2E real: Inventario y Optimización para tres roles; Pedidos para Administrador/Operario; Usuarios para Administrador; retorno a Inicio. |
+| CA-11 | E2E Almacenero: acceso neutral a Optimización, consulta visible, sin controles de cálculo ni confirmación. |
+| CA-12 | E2E sin Administración para Operario/Almacenero; pruebas de permisos y componentes para pestañas independientes. |
+| CA-13 | Componentes: loading/empty/error/success, disabled y parciales. E2E: datos vacíos reales y fallo 503 controlado seguido de reintento contra API real. |
+| CA-14 | useDashboard y DashboardNavigation: cancelación/aislamiento por sesión y permisos; E2E controlado conserva fuentes exitosas. |
+| CA-15 | Contrato y pruebas de componentes: Inicio no incorpora indicadores ni comparativas del optimizador. |
+| CA-16 | DashboardNavigation: teclado, foco y semántica. E2E: accesos y Sidebar utilizables; no se afirma certificación WCAG. |
+| CA-17 | E2E parametrizado en 1440/1024/800/390: scrollWidth <= innerWidth, controles accesibles al hacer scroll y Sidebar sin solapamiento. |
+| CA-18 | E2E real: reload en URL base, GET /api/auth/me 200 y sesión recuperada; componentes conservan navegación en subpath. |
+| CA-19 | E2E real: desaparecen Inicio y sus datos, sessionStorage.optimizador.auth queda vacío y se presenta Login. |
+| CA-20 | ta-dashboard.spec.js: navegador, API y PostgreSQL temporal reales; login, módulos, retorno a Inicio, refresh/logout. El fallo 503 controlado no acredita este CA. |
+| CA-21 | 86 pruebas de permisos/componentes de Dashboard y Authentication, incluyendo permisos revocados y sesión sin fuentes. |
+| CA-22 | E2E real navega a los cuatro módulos autorizados; regresión completa registrada en la evidencia. Sin cambios en HU-015 ni código de producción. |
 
----
-
-## 5. Relación con el antecedente TA-DASHBOARD-001
-
-Conforme a la decisión D-03 de la SPEC:
-* La evidencia histórica de `TA-DASHBOARD-001` permanece intacta en `docs/evidence/sprint-01/TA-DASHBOARD-001/`.
-* No se han duplicado componentes ni creado rutas redundantes.
-* Las mejoras de **HU-016** (acceso universal a Inicio, acceso rápido a Optimización, saludo de sesión personalizado, soporte responsive a 1440/1024/800 px y tratamiento de sesiones sin funciones) se incorporaron sobre la base compartida con trazabilidad completa.
+La validación técnica se completa con los resultados anteriores; la revisión y
+el merge del PR se registran separadamente. El estado de Notion no se cambia
+automáticamente ni se declara una aprobación humana que no haya ocurrido.

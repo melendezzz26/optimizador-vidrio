@@ -56,7 +56,7 @@ def main():
 
         with engine.begin() as connection:
             connection.execute(sa.text(
-                "INSERT INTO roles(id_rol,nombre) VALUES (1,'Operario'), (2,'Almacenero'), (3,'Administrador')"
+                "INSERT INTO roles(id_rol,nombre) VALUES (1,'Operario'), (2,'Almacenero'), (3,'Administrador'), (4,'Sin funciones E2E')"
             ))
             connection.execute(sa.text("""
                 INSERT INTO usuarios(dni,nombres,apellidos,usuario,password_hash,id_rol,fecha_creacion)
@@ -70,6 +70,12 @@ def main():
                 INSERT INTO usuarios(dni,nombres,apellidos,usuario,password_hash,id_rol,fecha_creacion)
                 VALUES ('70000003','Administrador','Prueba','A70000003',:password,3,:now)
             """), {"password": hash_password("Admin-test-2026!"), "now": datetime.now(timezone.utc)})
+            # HU-016: a real authenticated role with zero rol_permisos rows.
+            # seed_permissions only assigns the three named operational roles.
+            connection.execute(sa.text("""
+                INSERT INTO usuarios(dni,nombres,apellidos,usuario,password_hash,id_rol,fecha_creacion)
+                VALUES ('70000004','Sin funciones','Prueba','O70000004',:password,4,:now)
+            """), {"password": hash_password("Dashboard-test-2026!"), "now": datetime.now(timezone.utc)})
             connection.execute(sa.text("INSERT INTO tipos_vidrio(id_tipo_vidrio,nombre,estado) VALUES (7,'Material de prueba',true)"))
             connection.execute(sa.text("INSERT INTO tipos_vidrio_espesores VALUES (7,5.5),(7,6)"))
             connection.execute(sa.text("""
