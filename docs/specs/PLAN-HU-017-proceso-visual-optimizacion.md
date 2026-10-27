@@ -120,6 +120,10 @@ HU-015 mediante entrada técnica de pruebas fuera de la navegación principal,
 con sus contratos autenticados y regresiones existentes. T02–T05 siguen pendientes;
 este incremento no declara CA-03/06/08/26 ni cierre de HU-017.
 
+**Avance local:** primer incremento implementado en `1eeff98`; revisión y cierre
+formal de T01 pendientes. [Evidencia y límites del incremento](../evidence/sprint-02/HU-017/t01-flujo-unificado.md).
+Las máscaras reales y los hechos de preparación/orientaciones siguen en T02–T04.
+
 ### T02 — Preparar máscaras base y preservar búsqueda lazy
 
 - Formalizar `PreparedRunGeometry` o equivalente: handle acotado de geometrías
@@ -324,7 +328,7 @@ transacción actual como efecto lateral de HU-017.
 | TA-018 | BF integrado en dominio; acordar instrumentación neutral. Sus reglas e integración HTTP no se implementan aquí. |
 | TA-019 | Conservar WF de dominio y retención acotada; no enviar sus resultados a adaptadores FF actuales sin integración posterior propia. |
 | TA-021 | Comparación/orquestación de FF/BF/WF sobre la misma instancia, sin selección del ganador. Coordinar contrato e identidad de instancia/método en resultados/eventos; HU-017 es consumidor visual y no decide el método ganador. |
-| TA-037 | Límites de resolución/recursos, bases y generación bajo demanda, throttling/agrupamiento, máscaras acotadas y checkpoints. Sin selección automática de resolución en HU-017. Su SPEC propia no está disponible localmente. |
+| TA-037 | SPEC y guardrails integrados: conservar sus límites de admisión y coordinar bases/generación bajo demanda, throttling/agrupamiento, máscaras acotadas y checkpoints. Sin selección automática de resolución en HU-017. |
 | HU-015/S1-01 | Compatibilidad y reutilización de UI/preview; preservar rutas y evidencia histórica. |
 
 Secuencia propuesta: decisiones de recursos y diseño → T01/T02 con TA-016/TA-037

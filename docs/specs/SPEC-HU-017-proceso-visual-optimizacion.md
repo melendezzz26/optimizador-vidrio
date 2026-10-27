@@ -10,7 +10,7 @@
 | Responsable / revisor | Pendientes de asignación formal |
 | Fecha | 27/10/2026 |
 | Base inspeccionada | `4bcf54d`, `integration/sprint-01`; antecedente documental `783aac8` |
-| Ejecución | Inicio local de T01 autorizado por el solicitante; HU-017 no está Implemented ni Verified. |
+| Ejecución | Primer incremento de T01 implementado localmente; revisión/cierre pendientes. HU-017 no está Implemented ni Verified. |
 | PLAN | [PLAN-HU-017-proceso-visual-optimizacion.md](PLAN-HU-017-proceso-visual-optimizacion.md) |
 | Dependencias | HU-015/S1-01, SP-001, TA-016, TA-018, TA-019, TA-021 y TA-037 según contratos pendientes |
 | Decisión | Cierre documental autorizado: SPEC Reviewed. Revisión cruzada real pendiente; no implica implementación ni verificación. |
@@ -427,3 +427,4 @@ existencia de código de HU-015/TA-019 ni por crear esta documentación.
 | 25/10/2026 | Draft | Precisada invariancia previa a FF/BF/WF y congelación geométrica; fidelidad de máscara/geometría, eventos acotados sin máscaras repetidas y comparación de alternativas de streaming en el PLAN. |
 | 25/10/2026 | Reviewed | Cierre documental autorizado por el solicitante. Revisión cruzada real pendiente; no Implemented ni Verified. TA-021 definida y HU-017 delimitada como consumidor visual sin selección del ganador. |
 | 27/10/2026 | Reviewed | Base revalidada en `4bcf54d`; inicio local de T01 autorizado. Se conservan los 26 CA, las exclusiones y DG-01 abierta antes de T03. |
+| 27/10/2026 | Reviewed | Primer incremento T01 implementado y validado localmente; [evidencia](../evidence/sprint-02/HU-017/t01-flujo-unificado.md). Sin cierre global ni publicación de HU-017. |
