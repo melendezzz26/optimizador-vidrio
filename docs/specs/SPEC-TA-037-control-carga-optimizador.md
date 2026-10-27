@@ -8,12 +8,12 @@
 | Nombre | Control de carga del optimizador |
 | Sprint | Sprint 2 |
 | Tipo / épica | Habilitador / Optimización segura |
-| Versión | **1.1**: valores recalibrados al paso angular operativo de 5° (PR #64) |
-| Estado | **Draft** (pendiente de aprobación de los valores de §5) |
+| Versión | **1.2**: valores de v1.1 aprobados; correcciones de implementación de T02 (L-05, L-09) |
+| Estado | **Reviewed** |
 | Responsable | Fabricio Aguilar |
 | Revisor | Pendiente de asignación |
 | Fecha | 26/10/2026 |
-| Rama | `docs/TA-037-recalibracion-5-grados` (v1.1); `enabler/TA-037-guardrails` (T02 en adelante) |
+| Rama | `enabler/TA-037-guardrails` (T02 y v1.2) |
 | Origen | Auditoría pre-Sprint 2, hallazgo **S1-02** (BLOCKER) y propuesta EN-S2-02 |
 | Dependencias | HU-015, TA-021 (T01); TA-037 T01 (T02); TA-037 T01 y T02 (T03); TA-037 T02 y T03 (T04) |
 | Coordina con | TA-016, TA-018, TA-019, TA-021, HU-017, TA-038 |
@@ -23,8 +23,8 @@
 Este documento corresponde a **TA-037 T01: definir el presupuesto y el contrato de
 errores**. Fija los límites técnicos, el punto exacto donde se valida cada uno y la
 respuesta que recibe el cliente cuando una ejecución excede el presupuesto. Los
-valores de §5 son una **propuesta medida** y entran en vigor cuando el equipo
-apruebe esta SPEC. Hasta entonces, nada de lo descrito está implementado.
+valores de §5 fueron aprobados por el equipo el 26/10/2026. T02 implementa los
+límites de tamaño (L-01, L-03, L-04, L-05, L-07, L-13); T03 y T04 completan el resto.
 
 **Cambio en v1.1.** La v1.0 se midió con el paso angular de 90° (4 orientaciones por
 pieza), que era la configuración vigente al 25/10/2026. El PR #64 fijó el paso
@@ -152,7 +152,7 @@ debajo de L-12.
 | L-06 | Unidades × orientaciones | **Retirado** | 2000 | — | El paso es fijo en 5° (H-09) y L-03 ya está medido a 5°. El costo no crece en proporción a las orientaciones, así que la fórmula de v1.0 rechazaba de más. |
 | L-07 | Stock físico compatible por material (Σ `planchas.cantidad` activas + retazos activos) | **50** | 100 | unidades físicas | Con ~0,62 s por par sin encaje, una unidad que no encaja tarda hasta ~31 s **entre dos hitos** del motor. Es el tiempo máximo en que L-12 no puede actuar. |
 | L-08 | Unidades × stock por material | **Retirado** | 5000 | — | A 5°, cualquier tope útil de pares sería demasiado restrictivo. El peor caso total lo acota L-12, y L-07 acota el tramo entre hitos. |
-| L-09 | Memoria de layouts por ejecución | **128 MiB** (existente) | igual | bytes estimados | Sin cambio. Se rechaza antes de calcular solo cuando la **cota inferior** de planchas necesarias ya supera el presupuesto (§5.1). |
+| L-09 | Memoria de layouts por ejecución | **Retirado en v1.2** | 128 MiB | — | No existe una cota inferior segura: cuántas planchas se usan depende de qué piezas encajan, y eso solo se sabe ejecutando el motor. Un rechazo previo podría bloquear pedidos válidos. El presupuesto interno de 128 MiB del motor se mantiene como fallo tardío (GAP-04), acotado por L-03 y L-07. |
 | L-10 | Ejecuciones activas por proceso | **2** | 2 | ejecuciones | Sin cambio. A 5° cada ejecución es más larga, así que el límite importa más. |
 | L-11 | Ejecuciones activas por usuario | **1** | 1 | ejecuciones | Sin cambio. |
 | L-12 | Tiempo máximo de cálculo | **120 s** | 120 s | s | Pasa de respaldo a protección **principal** del peor caso de stock (reemplaza a L-08). Se verifica en los hitos del motor (T03). |
@@ -165,21 +165,19 @@ debajo de L-12.
   las mismas reglas de compatibilidad de `InventoryStockAdapter`: activas, con
   `cantidad > 0` y del mismo material. Se cuentan filas y se suman cantidades sin
   crear `StockCandidate`.
-- **L-09:** `cota = ceil(Σ área de unidades del grupo / área de la plancha compatible
-  más grande)`. Se rechaza si Σ por grupo de `cota × estimación de bytes por layout`
-  supera 128 MiB. La estimación de bytes por layout es la misma fórmula de
-  `packing.py:138`. Solo se rechaza lo que **seguro** fallaría; si la cota cabe y el
-  motor falla igual, sigue el fallo tardío actual (TA-038).
 - **L-13:** para cada **geometría distinta** de las piezas seleccionadas (la misma
   huella con la que `RasterCache` comparte máscaras), se recorren los ángulos de
   `discrete_angles(paso)` (solo 0° para circunferencias). Para cada ángulo se calcula
-  `oriented_geometry` y su rejilla con `check_geometry`, sin rasterizar; los ángulos
-  que exceden la extensión interna se omiten, igual que en el motor. La estimación por
-  orientación es la misma fórmula de `RasterCache._raster`:
-  `filas × (32 + 4 × ceil(columnas / 30) + 8) + 4096 + 512 × vértices`. Si la suma
-  supera 64 MiB, se rechaza. Como no incluye la rasterización del stock, es una
-  **cota inferior**: solo rechaza lo que el motor seguro rechazaría. Se verificó con
-  el caso de H-10: 2 piezas distintas (~48,8 MiB) pasan y 3 (~73 MiB) fallan.
+  el ancho y alto de la figura rotada, sin rasterizar, y su rejilla **redondeada hacia
+  abajo** (`floor` en vez de `ceil`); los ángulos que podrían exceder la extensión
+  interna aportan 0. La estimación por orientación es la misma fórmula de
+  `RasterCache._raster`: `filas × (32 + 4 × ceil(columnas / 30) + 8) + 4096 + 512 × vértices`.
+  Si la suma supera 64 MiB, se rechaza. Es una **cota inferior**: no incluye el stock
+  y redondea hacia abajo, así que solo rechaza lo que el motor seguro rechazaría. Una
+  prueba la compara con la caché real del motor (queda entre el 90 % y el 100 %). Se
+  usa el cálculo en coma flotante porque el exacto (`oriented_geometry`) tardaría hasta
+  ~108 ms por pieza distinta de 128 vértices con los pedidos bloqueados. Se verificó
+  con el caso de H-10: 2 piezas distintas (~48,8 MiB) pasan y 3 (~73 MiB) fallan.
 - **L-10 y L-11:** cuentan ejecuciones con hilo de cálculo vivo **en este
   proceso**. La plaza se libera cuando termina el hilo, no cuando se cierra la
   conexión del cliente. La regla es válida mientras haya un solo proceso
@@ -201,7 +199,7 @@ antes de la primera estructura proporcional a lo que limita.
 | P1 | Antes de abrir la transacción | `application/runs.py`, `AcceptRun.execute`, después de la validación de ids | L-01 | Solo la lista de ids | Bloqueos, lecturas |
 | P2 | Admisión | `presentation/run_routes.py`, `start_run`, **antes** de `AcceptRun`, mediante un puerto de admisión | L-10, L-11 | Usuario autenticado | Transacción, ejecución |
 | P3 | Con los pedidos bloqueados | `application/runs.py`, inmediatamente después de `uow.orders.lock_pending(ids)` y **antes** de `prepare_persisted_problem` | L-03, L-04, L-05 (por fila), L-13 | Filas de `piezas` y configuración | Unidades expandidas, máscaras |
-| P4 | Stock, en la misma transacción | `application/runs.py`, después de P3 y **antes** de `uow.runs.create`; usa un puerto nuevo `count_compatible` que no expande | L-07, L-09 | Conteos por material | `StockCandidate`, layouts |
+| P4 | Stock, durante la aceptación | `application/runs.py`, después de P3 y **antes** de `uow.runs.create`; usa el puerto `count_compatible` del mismo adaptador de stock del cálculo, que cuenta filas sin expandir | L-07 | Conteos por material | `StockCandidate`, layouts |
 | P5 | Defensa en el cálculo | `infrastructure/stock_adapter.py`, `list_compatible`, antes del bucle de expansión | L-07 | Filas de inventario | Unidades físicas |
 | P6 | Durante el cálculo | `presentation/run_stream.py`, callback `milestone` | L-12 | Ejecución en curso | — |
 
@@ -210,7 +208,8 @@ TA-037 no lo cambia.
 
 Notas de diseño:
 
-- **P3 y P4 están dentro de la transacción** que ya abre `AcceptRun`. Un rechazo
+- **P3 y P4 ocurren dentro de la aceptación** que ya abre `AcceptRun`. P4 lee el
+  inventario con una lectura de solo lectura del adaptador de stock. Un rechazo
   lanza `RunError` antes de `runs.create` y de `orders.transition`, así que la
   unidad de trabajo hace rollback: no se crea `optimizaciones`, los pedidos siguen
   `PENDIENTE` y no se lee ni escribe stock para consumo.
@@ -227,7 +226,7 @@ Notas de diseño:
 
 ## 7. Contrato de error
 
-### 7.1 Límite de tamaño (L-01, L-03 a L-05, L-07, L-09, L-13)
+### 7.1 Límite de tamaño (L-01, L-03, L-04, L-07, L-13)
 
 `HTTP 422 Unprocessable Content`, sin cuerpo NDJSON. La ejecución no llega a
 crearse.
@@ -251,10 +250,16 @@ crearse.
 |---|---|---|
 | `code` | string | Siempre `LOAD_LIMIT_EXCEEDED` para los límites de tamaño. |
 | `message` | string | En español y apto para mostrar tal cual. No incluye SQL, trazas, nombres de tabla ni rutas. |
-| `limit.name` | string | Uno de: `orders_per_run`, `units_per_run`, `vertices_per_piece`, `geometry_extent`, `raster_memory`, `stock_units_per_material`, `layout_memory`. |
-| `limit.maximum` | int | Valor del presupuesto vigente. Para `raster_memory` y `layout_memory`, en bytes. |
-| `limit.actual` | int | Valor medido. Para `geometry_extent` es el eje mayor en celdas; para las memorias, la estimación en bytes. |
-| `limit.scope` | object \| null | `{"id_pieza": n}` para L-04 y L-05; `{"id_tipo_vidrio": n, "espesor_mm": "6.00"}` para L-07 y L-09; `null` en el resto. |
+| `limit.name` | string | Uno de: `orders_per_run`, `units_per_run`, `vertices_per_piece`, `raster_memory`, `stock_units_per_material`. |
+| `limit.maximum` | int | Valor del presupuesto vigente. Para `raster_memory`, en bytes. |
+| `limit.actual` | int | Valor medido. Para `raster_memory`, la estimación en bytes. |
+| `limit.scope` | object \| null | `{"id_pieza": n}` para L-04; `{"id_tipo_vidrio": n, "espesor_mm": "6.00"}` para L-07; `null` en el resto. |
+
+**L-05 conserva su respuesta actual.** Una pieza que excede la extensión geométrica
+interna sigue respondiendo `422 INVALID_INPUT` con el mismo mensaje de siempre («Las
+piezas o parámetros exceden las condiciones válidas de cálculo.»), porque T02 usa la
+misma función de validación y no debe cambiar respuestas existentes. La diferencia es
+que ahora se valida una vez por pieza y antes de expandir.
 
 **Por qué 422:** la solicitud está bien formada, pero no se puede procesar tal como
 viene, y reintentarla igual no cambia el resultado. Es coherente con
@@ -299,10 +304,8 @@ los pedidos lo define TA-038.
 | `orders_per_run` | Seleccionaste {actual} pedidos y el máximo por cálculo es {maximum}. Quita algunos e inténtalo de nuevo. |
 | `units_per_run` | Los pedidos seleccionados suman {actual} unidades y el máximo por cálculo es {maximum}. Divide la selección en lotes más pequeños. |
 | `vertices_per_piece` | La pieza {id_pieza} tiene {actual} vértices y el máximo admitido es {maximum}. Edita la pieza en su pedido. |
-| `geometry_extent` | La pieza {id_pieza} es demasiado grande para la resolución de cálculo configurada. Edita la pieza o solicita revisar la configuración. |
 | `raster_memory` | Las piezas seleccionadas tienen demasiadas formas grandes distintas para un solo cálculo. Divide la selección en lotes más pequeños. |
 | `stock_units_per_material` | Hay {actual} unidades de stock compatibles para un mismo material y un cálculo admite {maximum}. Solicita al almacenero revisar el inventario activo. |
-| `layout_memory` | Las piezas de un mismo material necesitarían más planchas de las que un cálculo puede manejar. Divide la selección en lotes más pequeños. |
 
 El backend construye el mensaje. En el primer paso, el frontend lo muestra tal
 cual, porque `runApi.js:51` ya usa `detail.message`. T04 agrega la presentación
@@ -335,7 +338,7 @@ específica: aviso no destructivo y selección conservada.
 | CA | Tarea | Criterio |
 |---|---|---|
 | CA-01 | T01 | Esta SPEC documenta los límites vigentes, su punto de validación y su contrato de error, sin cambiar reglas comerciales, con valores medidos en la configuración operativa (5°). |
-| CA-02 | T02 | Para L-01, L-03, L-04, L-05, L-07, L-09 y L-13: con el valor exacto se acepta; con el valor + 1 se responde 422 `LOAD_LIMIT_EXCEEDED` con el `limit.name` correcto. |
+| CA-02 | T02 | Para L-01, L-03, L-04, L-07 y L-13: con el valor exacto se acepta; con el valor + 1 se responde 422 `LOAD_LIMIT_EXCEEDED` con el `limit.name` correcto. L-05 conserva su `INVALID_INPUT` actual. |
 | CA-03 | T02 | Un rechazo de P3 o P4 ocurre sin llamar a `prepare_persisted_problem`, sin rasterizar y sin crear `StockCandidate`. Se prueba con dobles de prueba que fallan si se invocan. |
 | CA-04 | T02 | Tras un rechazo, los pedidos siguen `PENDIENTE`, no hay filas nuevas de optimización y el inventario queda igual (PostgreSQL real). |
 | CA-05 | T02 | Las suites existentes de First Fit, Best Fit, Worst Fit, el corte comercial (8 de 8 piezas a 1 mm) y la confirmación pasan sin cambios en sus aserciones. |
@@ -373,8 +376,9 @@ específica: aviso no destructivo y selección conservada.
   se avisa a sus responsables y no se modifica desde TA-037.
 - **GAP-03 — Escalado horizontal.** L-10 y L-11 valen para un único proceso. Si se
   agregan dynos o workers, se necesita un ADR de admisión compartida.
-- **GAP-04 — Fallo tardío residual de L-09 y L-13.** Las cotas inferiores no
-  garantizan éxito. El fallo tardío se recupera según TA-038.
+- **GAP-04 — Fallos tardíos residuales.** El presupuesto de layouts del motor
+  (128 MiB, antes L-09) solo se conoce al calcular, y la cota de L-13 no garantiza
+  éxito. Ambos casos terminan como `CALCULATION_FAILED` y se recuperan según TA-038.
 - **GAP-05 — Capacidad real a 5° (nuevo en v1.1).** Con la caché raster de 64 MiB y
   72 orientaciones, un pedido comercial con 3 formas grandes distintas no se puede
   calcular en un solo lote. L-13 lo convierte en un rechazo claro, pero no lo
@@ -398,4 +402,5 @@ específica: aviso no destructivo y selección conservada.
 | Fecha | Versión | Estado | Nota |
 |---|---|---|---|
 | 25/10/2026 | 1.0 | Draft | T01: límites medidos a 90°, puntos de validación y contrato de error propuestos para revisión del equipo. Integrada con el PR #62. |
-| 26/10/2026 | 1.1 | Draft | Recalibración al paso operativo de 5° (PR #64): L-03 de 500 a 150, L-07 de 100 a 50, L-02, L-06 y L-08 retirados, L-12 pasa a protección principal, nuevo L-13 (memoria raster) y GAP-05. Pendiente de aprobación. |
+| 26/10/2026 | 1.1 | Draft | Recalibración al paso operativo de 5° (PR #64): L-03 de 500 a 150, L-07 de 100 a 50, L-02, L-06 y L-08 retirados, L-12 pasa a protección principal, nuevo L-13 (memoria raster) y GAP-05. Integrada con el PR #65. |
+| 26/10/2026 | 1.2 | Reviewed | Valores de v1.1 aprobados por el equipo (Scrum Master). Correcciones de implementación de T02: L-09 retirado por no tener cota segura; L-05 conserva `INVALID_INPUT`; L-13 calculado con cota inferior en coma flotante; P4 usa el adaptador de stock del cálculo. |

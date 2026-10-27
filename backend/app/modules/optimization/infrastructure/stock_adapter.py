@@ -8,7 +8,12 @@ from decimal import Decimal
 
 from app.modules.inventory.application.ports import InventoryRepository
 
+from ..application.load_budget import DEFAULT_RUN_LOAD_BUDGET
 from ..domain.problem import MaterialSource, StockCandidate
+
+
+class StockLoadExceeded(ValueError):
+    """TA-037 P5: compatible stock grew past L-07 after acceptance; fail before expanding."""
 
 
 def _canonical_measure(value):
@@ -21,16 +26,30 @@ def _canonical_measure(value):
 
 
 class InventoryStockAdapter:
-    def __init__(self, inventory: InventoryRepository):
+    def __init__(self, inventory: InventoryRepository,
+                 max_units: int = DEFAULT_RUN_LOAD_BUDGET.max_stock_units_per_material):
         self.inventory = inventory
+        self.max_units = max_units
 
-    def list_compatible(self, group_key):
+    def _compatible(self, group_key):
         glass, thickness = group_key
         with self.inventory.read_transaction():
             remnants = [r for r in self.inventory.list_retazos()
                         if r.estado and (r.id_tipo_vidrio, r.espesor_mm) == (glass, thickness)]
             sheets = [s for s in self.inventory.list_planchas()
                       if s.estado and s.cantidad > 0 and (s.id_tipo_vidrio, s.espesor_mm) == (glass, thickness)]
+        return remnants, sheets
+
+    def count_compatible(self, group_key):
+        """TA-037 P4: physical units, counted from rows without creating candidates."""
+        remnants, sheets = self._compatible(group_key)
+        return len(remnants) + sum(sheet.cantidad for sheet in sheets)
+
+    def list_compatible(self, group_key):
+        glass, thickness = group_key
+        remnants, sheets = self._compatible(group_key)
+        if len(remnants) + sum(sheet.cantidad for sheet in sheets) > self.max_units:
+            raise StockLoadExceeded("Compatible stock exceeds the TA-037 per-material budget.")
         # PLAN §7: date DESC, persisted ID DESC, physical unit ASC.
         remnants.sort(key=lambda r: (r.fecha_registro, r.id_retazo), reverse=True)
         sheets.sort(key=lambda s: (s.fecha_registro, s.id_plancha), reverse=True)
