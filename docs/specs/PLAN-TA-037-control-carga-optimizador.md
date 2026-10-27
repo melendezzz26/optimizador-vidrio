@@ -9,13 +9,14 @@
 | Estado | **Implemented** (T01 a T04) |
 | Responsable | Fabricio Aguilar |
 | Fecha | 26/10/2026 |
-| Base | `integration/sprint-01` en `4b82af7` (después del PR #65) |
+| Base original T02 | `integration/sprint-01` en `4b82af7` (después del PR #65) |
+| Base del saneamiento T03 | `integration/sprint-01` en `445886a` |
 
 ## 1. Secuencia y estado
 
 | Tarea | SP | Depende de | Entrega | Estado |
 |---|---:|---|---|---|
-| T01 — Definir presupuesto y contrato de errores | 0,5 | HU-015, TA-021 | Lunes 26/10, 12:00 | **Hecha.** v1.0 (PR #62), v1.1 a 5° (PR #65), valores aprobados; SPEC en `Reviewed` (v1.2) |
+| T01 — Definir presupuesto y contrato de errores | 0,5 | HU-015; coordinación con TA-021 | Lunes 26/10, 12:00 | **Hecha.** v1.0 (PR #62), v1.1 a 5° (PR #65), valores aprobados; SPEC en `Reviewed` (v1.2) |
 | T02 — Implementar guardrails previos a la expansión | 1,5 | T01 | Martes 27/10 | **Implementada** en `enabler/TA-037-guardrails` (§3); 55 pruebas nuevas; suite completa en verde |
 | T03 — Limitar concurrencia y controlar ejecución | 1 | T01, T02 | Martes 27/10 | **Implementada** en `enabler/TA-037-concurrencia` (§4); 20 pruebas nuevas; suites backend, frontend y E2E en verde |
 | T04 — Probar límites y feedback | 1 | T02, T03 | Martes 27/10 | **Implementada** en `enabler/TA-037-feedback`; avisos de frontend, pruebas de peor caso y E2E real (§4) |

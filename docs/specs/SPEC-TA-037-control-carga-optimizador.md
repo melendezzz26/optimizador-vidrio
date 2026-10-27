@@ -16,14 +16,14 @@
 | Fecha | 26/10/2026 |
 | Rama | `fix/TA-037-admission-lifecycle`, desde `integration/sprint-01` en `445886a` |
 | Origen | Auditoría pre-Sprint 2, hallazgo **S1-02** (BLOCKER) y propuesta EN-S2-02 |
-| Dependencias | HU-015, TA-021 (T01); TA-037 T01 (T02); TA-037 T01 y T02 (T03); TA-037 T02 y T03 (T04) |
+| Dependencias | HU-015 como baseline; TA-037 T01 → T02 → T03/T04. TA-021 es un consumidor coordinado, no un prerrequisito para cerrar TA-037. |
 | Coordina con | TA-016, TA-018, TA-019, TA-021, HU-017, TA-038 |
 | PLAN técnico | [PLAN-TA-037-control-carga-optimizador.md](PLAN-TA-037-control-carga-optimizador.md) |
 | Evidencia | [docs/evidence/sprint-02/TA-037](../evidence/sprint-02/TA-037/README.md) |
 
-Este documento corresponde a **TA-037 T01: definir el presupuesto y el contrato de
-errores**. Fija los límites técnicos, el punto exacto donde se valida cada uno y la
-respuesta que recibe el cliente cuando una ejecución excede el presupuesto. Los
+Este documento nació en **TA-037 T01: definir el presupuesto y el contrato de
+errores** y actualmente cubre T01–T04 y el saneamiento de T03. Fija los límites
+técnicos, su validación y la respuesta al exceder el presupuesto. Los
 valores de §5 fueron aprobados por el equipo el 26/10/2026. T02 implementa los
 límites de tamaño (L-01, L-03, L-04, L-05, L-07, L-13); T03 y T04 completan el resto.
 
@@ -70,7 +70,7 @@ Fit ni Worst Fit, ni la confirmación transaccional.
 - Parametrizar los límites desde la interfaz o la tabla `configuraciones`, porque
   requeriría una migración y una API nueva.
 
-## 3. Situación actual (evidencia)
+## 3. Situación inicial auditada (evidencia histórica)
 
 Revisión del código de `integration/sprint-01` en `b7b9caa` (después del PR #64):
 
