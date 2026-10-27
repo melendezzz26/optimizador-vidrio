@@ -1,6 +1,11 @@
 ﻿# SP-003 — comparación angular y contrato operativo de Sprint 2
 
-Responsable: Andro Quispe. Revisión: 2026-10-26.
+**Estado: lista para Cierre**. Smoke post-merge del PR #64 aprobado el 27/10/2026
+sobre integration `2a76141`. Revisor / Scrum Master: Fabricio Melendez Quezada.
+Periodo: 21/10/2026 – 28/10/2026. Pendiente decisión formal del revisor.
+[Evidencia de reproducción y criterios finales](../evidence/sprint-02/TA-016/PR64-post-merge-smoke.md).
+
+Responsable: Andro Quispe. Revisión experimental: 2026-10-26.
 Base original POST-PR58 783aac8; nueva medición después de integrar 6f2a159.
 Algoritmo fijo: FF. Desde raíz:
 `.venv/Scripts/python experiments/raster/scripts/sp003_angles.py`.
