@@ -7,9 +7,9 @@
 | Estado | **Approved** |
 | SPEC | [SPEC-HU-017-proceso-visual-optimizacion.md](SPEC-HU-017-proceso-visual-optimizacion.md), Reviewed |
 | Responsable / revisor | Pendientes de asignación formal |
-| Fecha / base | 25/10/2026 / `783aac8`, `integration/sprint-01` |
+| Fecha / base | 27/10/2026 / `4bcf54d`, `integration/sprint-01` |
 | Estimación | Propuesta, 1 SP = 6 h; sin asignación ni compromiso de sprint. |
-| Alcance de esta entrega | Dos documentos. Sin cambios de código/pruebas, suites, migraciones, commit, push o PR. |
+| Ejecución actual | Inicio de T01 en `feature/HU-017-proceso-visual-optimizacion`, con commits locales. Sin push de HU-017, PR ni merge. |
 
 ## 1. Objetivo y disponibilidad del ID
 
@@ -28,6 +28,10 @@ texto de `docs/`. La mención de `f5e9e79` describe disponibilidad al crear HU-0
 no otra historia. Confirmar registro externo sin inventar otro identificador.
 
 ## 2. Arquitectura antes/después
+
+La base se actualiza a `4bcf54d`: BF y el comparador TA-021 ya están integrados
+internamente, TA-037 dispone de SPEC y guardrails. El ciclo HTTP sigue siendo FF;
+la implementación visual no habilitará métodos que ese contrato no entregue.
 
 | Área | Antes, base auditada | Después propuesto por SPEC |
 |---|---|---|
@@ -106,6 +110,15 @@ el total ni contabilizar dos veces trabajo ajeno.
 - No borrar HU-015, su SPEC, PLAN ni evidencia histórica al integrar la experiencia.
 
 **Salida:** diseño/componentes del flujo A–E y pruebas de navegación/compatibilidad.
+
+**Primer incremento autorizado (27/10):** retirar el selector de dos flujos de
+la pantalla principal, integrar la inspección en la selección multipedido y
+mostrar solo estados respaldados por el contrato actual. Si faltan máscaras o
+telemetría de preparación/orientaciones, informar su ausencia; no fabricarlas ni
+llamar `/start` o `/rasterize` para habilitar `/runs`. Conservar el componente
+HU-015 mediante entrada técnica de pruebas fuera de la navegación principal,
+con sus contratos autenticados y regresiones existentes. T02–T05 siguen pendientes;
+este incremento no declara CA-03/06/08/26 ni cierre de HU-017.
 
 ### T02 — Preparar máscaras base y preservar búsqueda lazy
 
@@ -308,7 +321,7 @@ transacción actual como efecto lateral de HU-017.
 | Dependencia | Coordinación requerida |
 |---|---|
 | TA-016 | Generación incremental compartida de orientaciones, orden/deduplicación, máscaras coherentes y puntos observables, sin rotación propia de HU-017/frontend. |
-| TA-018 | BF está en desarrollo según contexto; acordar instrumentación neutral. Sus reglas e integración no se implementan aquí. |
+| TA-018 | BF integrado en dominio; acordar instrumentación neutral. Sus reglas e integración HTTP no se implementan aquí. |
 | TA-019 | Conservar WF de dominio y retención acotada; no enviar sus resultados a adaptadores FF actuales sin integración posterior propia. |
 | TA-021 | Comparación/orquestación de FF/BF/WF sobre la misma instancia, sin selección del ganador. Coordinar contrato e identidad de instancia/método en resultados/eventos; HU-017 es consumidor visual y no decide el método ganador. |
 | TA-037 | Límites de resolución/recursos, bases y generación bajo demanda, throttling/agrupamiento, máscaras acotadas y checkpoints. Sin selección automática de resolución en HU-017. Su SPEC propia no está disponible localmente. |
@@ -349,9 +362,11 @@ ni la selección de un método ganador; esta última queda fuera de ambos alcanc
 - [ ] Evidencia reproducible, diff de alcance y revisión de accesibilidad disponibles.
 - [ ] Decisión del GAP vectorial registrada sin atribuir garantías inexistentes.
 
-Las tareas están planificadas, no ejecutadas. La aprobación documental fue
-autorizada expresamente; no acredita implementación, ejecución de suites,
-evidencia funcional nueva ni cierre de DG-01. La revisión cruzada sigue pendiente.
+La ejecución comienza por T01; su evidencia se registrará por incremento sin
+atribuir cumplimiento a las tareas restantes. La aprobación documental no
+acredita implementación completa ni cierre de DG-01. La revisión cruzada sigue
+pendiente. Las correcciones HU-016 publicadas por instrucción independiente no
+forman parte de esta rama; el cambio de CI permanece en su rama local separada.
 
 ## Historial de estado
 
@@ -361,3 +376,4 @@ evidencia funcional nueva ni cierre de DG-01. La revisión cruzada sigue pendien
 | 25/10/2026 | Draft | Estimación revisada a aproximadamente 10 SP / 60 h, sujeta al PLAN final; bases previas, orientaciones/posiciones lazy, CA-26 y throttling. Perfil visual-v2 solo como decisión técnica propuesta. |
 | 25/10/2026 | Draft | Precisada congelación previa de configuración y fidelidad de máscara/geometría; alternativas A/B de streaming pendientes. Estimación preliminar T01..T06: 1.5/2/1.5/2/1/2 SP, total 10 SP / 60 h. |
 | 25/10/2026 | Approved | Cierre documental autorizado: DG-01 obligatoria y abierta antes de implementar T03; TA-021 definida, HU-017 consumidor visual sin ganador. Se mantienen 10 SP / 60 h; sin implementación ni revisión cruzada atribuida. |
+| 27/10/2026 | Approved | Inicio local autorizado de T01 desde `4bcf54d`, con commits y validación por incremento. DG-01 abierta; sin alterar estimación ni declarar cierre global. |

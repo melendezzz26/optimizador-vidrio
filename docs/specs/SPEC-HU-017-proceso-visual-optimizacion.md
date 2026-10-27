@@ -8,8 +8,9 @@
 | Estado | **Reviewed** |
 | Tipo / módulo | Historia de usuario / Optimization |
 | Responsable / revisor | Pendientes de asignación formal |
-| Fecha | 25/10/2026 |
-| Base inspeccionada | `783aac8`, `integration/sprint-01`, árbol inicialmente limpio |
+| Fecha | 27/10/2026 |
+| Base inspeccionada | `4bcf54d`, `integration/sprint-01`; antecedente documental `783aac8` |
+| Ejecución | Inicio local de T01 autorizado por el solicitante; HU-017 no está Implemented ni Verified. |
 | PLAN | [PLAN-HU-017-proceso-visual-optimizacion.md](PLAN-HU-017-proceso-visual-optimizacion.md) |
 | Dependencias | HU-015/S1-01, SP-001, TA-016, TA-018, TA-019, TA-021 y TA-037 según contratos pendientes |
 | Decisión | Cierre documental autorizado: SPEC Reviewed. Revisión cruzada real pendiente; no implica implementación ni verificación. |
@@ -34,12 +35,19 @@ el resultado.
 
 La rasterización es una etapa de Optimización, no un trabajo previo independiente
 que el operario deba ejecutar. La visualización explica hechos reales, sin alterar
-las decisiones de FF/WF ni atribuir funcionalidades todavía inexistentes a BF.
+las decisiones de FF/BF/WF ni atribuir al contrato HTTP métodos aún no integrados.
 HU-017 es consumidor visual de resultados/eventos. La comparación/orquestación
 de FF/BF/WF sobre la misma instancia corresponde a TA-021 y no selecciona un
 método ganador. HU-017 tampoco decide ese ganador.
 
 ## 2. Contexto y auditoría de la base
+
+Revalidación del 27/10 sobre `4bcf54d`: FF/BF/WF comparten `packing.pack` y
+`RasterCache.orientations`; BF ya existe en dominio. TA-021 está Verified/Closed
+y compara los tres métodos internamente, sin ganador. El ciclo HTTP de corridas
+y sus parsers V1 siguen entregando FF. TA-037 tiene SPEC y guardrails integrados;
+la preparación previa de bases y el consumo incremental de orientaciones siguen
+pendientes. Estos cambios de contexto no modifican los 26 CA aprobados.
 
 | Fuente actual | Hallazgo relevante |
 |---|---|
@@ -402,9 +410,9 @@ existencia de código de HU-015/TA-019 ni por crear esta documentación.
 | Dependencia / GAP | Decisión requerida |
 |---|---|
 | TA-016 | Generación incremental compartida de orientaciones, orden/deduplicación, geometría/máscara coherentes y observación sin rotación propia de UI. |
-| TA-018 / TA-019 | Instrumentación neutral del recorrido común, preservando políticas BF futura/WF actual. No reabrir su algoritmo. |
+| TA-018 / TA-019 | BF/WF integrados en dominio; instrumentación neutral del recorrido común, preservando sus políticas. La integración HTTP multimétodo sigue fuera de esta historia. |
 | TA-021 | Comparación/orquestación de FF/BF/WF sobre la misma instancia, sin selección del ganador. Definición comunicada por el solicitante; coordinar contrato/ownership de resultados y eventos. HU-017 los consume visualmente y no decide el método ganador. |
-| TA-037 | No se encontró SPEC propia local; hay referencias en TA-019. Coordinar límites de resolución y recursos, máscaras base, generación bajo demanda, throttling y checkpoints; sin selección automática en HU-017. |
+| TA-037 | SPEC y guardrails integrados. Coordinar límites de resolución y recursos, máscaras base, generación bajo demanda, throttling y checkpoints; sin selección automática en HU-017. |
 | Preparación base | GAP frente a `pack` actual; resolver preparación previa acotada y preservar generación/evaluación perezosa con TA-016/TA-037. |
 | GAP-VECTORIAL | Decidir necesidad y alcance de validación final independiente; tarea separable, sin ID inventado ni garantía anticipada. |
 | Contrato visual / máscaras | Revisar la negociación propuesta en el PLAN, URI de recuperación, TTL/retención y tamaños antes de implementar. No prometer persistencia de todos los intentos. |
@@ -418,3 +426,4 @@ existencia de código de HU-015/TA-019 ni por crear esta documentación.
 | 25/10/2026 | Draft | Revisión solicitada: máscaras base previas, orientaciones/posiciones lazy, resolución única sin mínimo automático, CA-26 de fidelidad visual y throttling explícito; negociación del contrato delegada al PLAN. |
 | 25/10/2026 | Draft | Precisada invariancia previa a FF/BF/WF y congelación geométrica; fidelidad de máscara/geometría, eventos acotados sin máscaras repetidas y comparación de alternativas de streaming en el PLAN. |
 | 25/10/2026 | Reviewed | Cierre documental autorizado por el solicitante. Revisión cruzada real pendiente; no Implemented ni Verified. TA-021 definida y HU-017 delimitada como consumidor visual sin selección del ganador. |
+| 27/10/2026 | Reviewed | Base revalidada en `4bcf54d`; inicio local de T01 autorizado. Se conservan los 26 CA, las exclusiones y DG-01 abierta antes de T03. |
