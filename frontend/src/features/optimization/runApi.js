@@ -4,6 +4,7 @@ import { getOrder } from '../orders/ordersApi';
 import { detectMaterialGroups } from './materialGroups';
 import { pieceCount } from './optimizationModel';
 import { createRunTransport } from './runTransport';
+import { parseMaskDescriptor, parseVisualManifest, parseVisualMask, readVisualNdjson } from './visualContract';
 
 export class RunApiError extends Error {
   constructor(message, status, code, { limit = null, retryAfter = null } = {}) {
@@ -32,7 +33,8 @@ const messages = {
 
 // All URLs come from the implemented v1 routes. Never follow an event-provided
 // URL to another host, and never send a replacement layout on confirmation.
-export function createBackendRunAdapter({ token, fetchImpl = globalThis.fetch, readOrder = getOrder } = {}) {
+export function createBackendRunAdapter({ token, fetchImpl = globalThis.fetch, readOrder = getOrder, streamProfile = 'v1' } = {}) {
+  if (!['v1', 'visual-v2'].includes(streamProfile)) throw new RunApiError('Perfil visual inválido.', 422, 'INVALID_INPUT');
   async function request(path, { method = 'GET', body, signal, stream = false } = {}) {
     let response;
     try {
@@ -81,7 +83,8 @@ export function createBackendRunAdapter({ token, fetchImpl = globalThis.fetch, r
     if (match && Number.isSafeInteger(Number(match[1]))) chunks.optimizationId = Number(match[1]);
     return chunks;
   }
-  return createRunTransport({
+  const transport = createRunTransport({
+    ...(streamProfile === 'visual-v2' ? { decode: readVisualNdjson } : {}),
     async prepare({ order_ids }) {
       // Read-only preview, never /start or inventory reservation. The run POST
       // revalidates the complete selection atomically on the server.
@@ -93,8 +96,28 @@ export function createBackendRunAdapter({ token, fetchImpl = globalThis.fetch, r
       if (unresolved.length) throw new RunApiError('Falta el detalle de las piezas seleccionadas.', 422, 'INVALID_INPUT');
       return { orders, groups, total: pieceCount(orders), rasters: {} };
     },
-    open: (body, { signal }) => request('', { method: 'POST', body, signal, stream: true }),
+    open: (body, { signal }) => request(streamProfile === 'visual-v2' ? '?stream_profile=visual-v2' : '', { method: 'POST', body, signal, stream: true }),
     load: (id, { signal } = {}) => request(`/${encodeURIComponent(id)}`, { signal }),
     confirm: id => request(`/${encodeURIComponent(id)}/confirm`, { method: 'POST' }),
   });
+  return {
+    ...transport,
+    async loadVisualManifest(id, { offset = 0, signal } = {}) {
+      if (!Number.isSafeInteger(id) || id <= 0 || !Number.isSafeInteger(offset) || offset < 0 || offset > 1024) throw new RunApiError('Consulta visual inválida.', 422, 'INVALID_INPUT');
+      return parseVisualManifest(await request(`/${id}/visual?offset=${offset}`, { signal }), id);
+    },
+    async loadVisualMask(id, descriptor, { signal, ...window } = {}) {
+      parseMaskDescriptor(descriptor, id);
+      if (!descriptor.available) throw new RunApiError('Detalle visual no disponible.', 410, 'VISUAL_DATA_UNAVAILABLE');
+      const query = new URLSearchParams();
+      for (const [key, value] of Object.entries(window)) {
+        if (!['row_start', 'row_count', 'column_start', 'column_count'].includes(key) || !Number.isSafeInteger(value)
+          || value < (key.endsWith('_count') ? 1 : 0)
+          || key === 'row_count' && value > 256 || key === 'column_count' && value > 1024) throw new RunApiError('Ventana visual inválida.', 422, 'INVALID_INPUT');
+        query.set(key, value);
+      }
+      const value = await request(`/${id}/visual/masks/${descriptor.mask_ref}?${query}`, { signal });
+      return parseVisualMask(value, id, descriptor);
+    },
+  };
 }

@@ -7,6 +7,7 @@ from .problem import OptimizationConfig, OptimizationProblem, PieceUnit, StockCa
 from .raster_mask import RasterMask
 from .rasterizer import COORDINATE_DECIMALS
 from .rotation import Orientation, RasterCache, discrete_angles, oriented_geometry, raster_number
+from .visual_events import VisualEvent
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -36,7 +37,7 @@ class PreparedRunGeometry:
         return self.material_bases[stock.identity]
 
 
-def prepare_run_geometry(problem: OptimizationProblem, *, cache=None, checkpoint=None) -> PreparedRunGeometry:
+def prepare_run_geometry(problem: OptimizationProblem, *, cache=None, checkpoint=None, on_visual=None) -> PreparedRunGeometry:
     """Validate all geometries, then allocate only bases, with bounded checkpoints.
 
     Reuses TA-005/006 normalization and TA-016 caches; does not enumerate layouts,
@@ -50,6 +51,15 @@ def prepare_run_geometry(problem: OptimizationProblem, *, cache=None, checkpoint
     discrete_angles(problem.config.angular_step_deg)
     pieces = {(unit.order_id, unit.piece_id): unit for unit in problem.units}
     stocks = {stock.identity: stock for group in problem.groups for stock in group.stock_candidates}
+    quantities = {}
+    for unit in problem.units:
+        key = (unit.order_id, unit.piece_id)
+        quantities[key] = quantities.get(key, 0) + 1
+    def emit(kind, **kwargs):
+        if on_visual is not None:
+            on_visual(VisualEvent(kind=kind, config=problem.config, unique_pieces=len(pieces),
+                material_bases=len(stocks), total_units=len(problem.units), **kwargs))
+    emit('preparation_started')
     for item in (*pieces.values(), *stocks.values()):
         checkpoint()
         cache.check_geometry(item.geometry, resolution)
@@ -57,11 +67,14 @@ def prepare_run_geometry(problem: OptimizationProblem, *, cache=None, checkpoint
     piece_bases, material_bases = {}, {}
     for key, unit in pieces.items():
         checkpoint()
+        emit('piece_rasterizing', unit=unit, quantity=quantities[key])
         piece_bases[key] = cache.base(unit, resolution)
         checkpoint()
+        emit('piece_ready', unit=unit, quantity=quantities[key], orientation=piece_bases[key])
     for key, stock in stocks.items():
         checkpoint()
         material_bases[key] = cache.material(stock, resolution)
         checkpoint()
+    emit('preparation_completed')
     return PreparedRunGeometry(problem=problem, piece_bases=MappingProxyType(piece_bases),
         material_bases=MappingProxyType(material_bases), _cache=cache, _checkpoint=checkpoint)

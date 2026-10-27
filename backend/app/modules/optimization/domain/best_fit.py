@@ -23,6 +23,6 @@ class BestFitResult(OptimizationResult):
 
 class BestFitOptimizer:
     def optimize(self, problem: OptimizationProblem,
-                 on_event: Callable[[FirstFitEvent], None] | None = None, *, checkpoint=None) -> OptimizationResult:
-        result = pack(problem, on_event, select=BestFitSelector().select, checkpoint=checkpoint)
+                 on_event: Callable[[FirstFitEvent], None] | None = None, *, checkpoint=None, on_visual=None) -> OptimizationResult:
+        result = pack(problem, on_event, select=BestFitSelector().select, checkpoint=checkpoint, on_visual=on_visual)
         return BestFitResult(problem=result.problem, placements=result.placements)

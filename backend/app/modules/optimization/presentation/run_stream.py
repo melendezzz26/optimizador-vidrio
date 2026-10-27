@@ -21,6 +21,9 @@ from .run_schemas import (OptimizationStartedV1, GroupStartedV1, PieceStartedV1,
     GroupCompletedV1, MetricsCalculatedV1, OptimizationCompletedV1, OptimizationFailedV1)
 from .run_serialization import (config_response, unit_reference, placement_response, stock_response,
                                 progress_response, run_response)
+from ..application.visual import MAX_EVENT_BYTES
+from .visual_schemas import EVENT_TYPES, VisualPolicyV2
+from .visual_serialization import VisualProjection
 
 logger = logging.getLogger(__name__)
 
@@ -45,17 +48,20 @@ class RunStreamingResponse(StreamingResponse):
 
 
 class LiveRunStream:
-    def __init__(self, unit_of_work, calculator, *, lease=None,
+    def __init__(self, unit_of_work, calculator, *, lease=None, visual_session=None,
                  time_budget_s=DEFAULT_RUN_LOAD_BUDGET.max_calculation_seconds, clock=time.monotonic):
         self.unit_of_work, self.calculator = unit_of_work, calculator
         # TA-037 T03: admission slot (L-10/L-11) and time budget (L-12).
         self.lease, self.time_budget_s, self.clock = lease, time_budget_s, clock
         self.worker_started = False
+        self.visual_session = visual_session
 
     def release_if_idle(self):
         """Free the slot only if no worker owns it; a running worker frees it when it ends."""
         if not self.worker_started and self.lease is not None:
             self.lease.release()
+        if not self.worker_started and self.visual_session is not None:
+            self.visual_session.abort()
 
     async def lines(self, accepted):
         identifier, problem = accepted.optimization_id, accepted.result.problem
@@ -64,12 +70,25 @@ class LiveRunStream:
         sequence, placements, group_bases = 0, [], {}
         clock = dict(started=None, delivery=0.0)  # L-12 excludes time spent delivering events
         group_totals = {g.key: len(g.units) for g in problem.groups}
+        projection = VisualProjection(self.visual_session, lambda kind, data: send(EVENT_TYPES[kind], data),
+                                      clock=self.clock) if self.visual_session is not None else None
 
         def line(schema, data):
             nonlocal sequence
             sequence += 1
-            return schema(schema_version=1, sequence=sequence, id_optimizacion=identifier,
-                occurred_at=datetime.now(timezone.utc), event=get_args(schema.model_fields["event"].annotation)[0], data=data).model_dump_json() + "\n"
+            name = get_args(schema.model_fields['event'].annotation)[0]
+            if projection is not None:
+                schema = EVENT_TYPES[name]
+                if name == 'optimization_started':
+                    data = {**data, 'visual': VisualPolicyV2()}
+                elif name in ('piece_started', 'piece_placed', 'optimization_completed'):
+                    data = {**data, 'processed_units': projection.processed}
+            payload = schema(schema_version=2 if projection is not None else 1,
+                sequence=sequence, id_optimizacion=identifier,
+                occurred_at=datetime.now(timezone.utc), event=name, data=data).model_dump_json() + '\n'
+            if projection is not None and len(payload.encode('utf-8')) > MAX_EVENT_BYTES:
+                raise ValueError('Visual event exceeds its byte budget.')
+            return payload
 
         def send(schema, data, *, terminal=False):
             before = self.clock()
@@ -118,6 +137,8 @@ class LiveRunStream:
                     **progress_response(event.placed_units - group_bases[key], group_totals[key])})
 
         def completed(run):
+            if projection is not None:
+                projection.processed = run.result.total_units
             response = run_response(run)
             send(MetricsCalculatedV1, dict(metrics_available=response.metrics_available, metrics=response.metrics))
             send(OptimizationCompletedV1, dict(estado=run.status.value, completo=run.result.complete,
@@ -129,11 +150,23 @@ class LiveRunStream:
             finally:
                 if self.lease is not None:
                     self.lease.release()                                    # TA-037: always, once
+                if self.visual_session is not None:
+                    self.visual_session.finish()
+
+        def visual(event):
+            # Includes sampling/reference registration as well as delivery. The
+            # nested send() duration is counted only once by this outer callback.
+            before, previous = self.clock(), clock['delivery']
+            try:
+                projection(event)
+            finally:
+                clock['delivery'] = previous + self.clock() - before
 
         def calculate():
             clock["started"] = self.clock()
             try:
-                run = self.calculator.execute(identifier, milestone, checkpoint=checkpoint)
+                kwargs = {'on_visual': visual} if projection is not None else {}
+                run = self.calculator.execute(identifier, milestone, checkpoint=checkpoint, **kwargs)
                 completed(run)
             except Exception as error:
                 code = ("EXECUTION_INTERRUPTED" if isinstance(error, ExecutionInterrupted) else

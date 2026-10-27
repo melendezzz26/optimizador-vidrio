@@ -3,9 +3,9 @@ import json
 from decimal import Decimal
 
 import pytest
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select
 
-from app.models import MovimientoInventario, Optimizacion, Pedido, Plancha
+from app.models import MovimientoInventario, Optimizacion, Pedido, Plancha, Permiso, RolPermiso
 from tests.api.optimization.test_runs_api import BASE, parse, run_api  # noqa: F401
 from tests.integration.optimization.test_runs import prepared  # noqa: F401
 
@@ -80,3 +80,31 @@ def test_v1_remains_default_and_visual_absence_is_explicit(run_api):
     response = client.post(BASE, json={'order_ids': ids}, headers=headers)
     assert parse(response)[-1]['event'] == 'optimization_completed'
     assert client.get(response.headers['location'] + '/visual', headers=headers).status_code == 410
+
+
+def test_mask_reads_require_view_and_expiration_preserves_canonical_result(run_api, visual_store, session_factory):
+    client, ids, headers, *_ = run_api
+    now = [0.0]
+    visual_store.clock = lambda: now[0]
+    response = client.post(BASE + '?stream_profile=visual-v2', json={'order_ids': ids}, headers=headers)
+    events = visual(response)
+    reference = next(entry['data']['mask']['mask_ref'] for entry in events if entry['event'] == 'piece_ready')
+    path = response.headers['location'] + '/visual/masks/' + reference
+    assert client.get(path).status_code == 401
+    assert client.get(path, headers=headers).status_code == 200
+    assert client.get(response.headers['location'] + '/visual/masks/' + 'f' * 32, headers=headers).status_code == 404
+    now[0] = 300.0
+    assert client.get(path, headers=headers).status_code == 410
+    assert client.get(response.headers['location'], headers=headers).json()['completo']
+    with session_factory() as session:
+        permission = session.scalar(select(Permiso.id_permiso).where(Permiso.codigo == 'optimization.view'))
+        session.execute(delete(RolPermiso).where(RolPermiso.id_rol == 3, RolPermiso.id_permiso == permission))
+        session.commit()
+    assert client.get(path, headers=headers).status_code == 403
+
+
+def test_visual_reservation_is_released_when_acceptance_fails(run_api, visual_store, run_admission):
+    client, ids, headers, *_ = run_api
+    response = client.post(BASE + '?stream_profile=visual-v2', json={'order_ids': [999999]}, headers=headers)
+    assert response.status_code == 404
+    assert visual_store.contexts == [] and run_admission.active() == 0

@@ -10,6 +10,7 @@ from .preparation import prepare_group_units
 from .problem import MaterialSource, OptimizationProblem, OptimizationResult, PieceUnit, Placement, StockCandidate
 from .rotation import Orientation, RasterPreparationError, raster_number
 from .run_geometry import prepare_run_geometry
+from .visual_events import VisualEvent
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -82,7 +83,7 @@ class FeasibleCandidate:
                    for usable, blocked in zip(self.layout_after.usable, self.layout_after.blocked))
 
 
-def _feasible_candidates(group, source, orientations, prepared, layouts, config, checkpoint):
+def _feasible_candidates(group, source, orientations, prepared, layouts, config, checkpoint, observe=None):
     # Preserve upstream stock order. Source priority is eligibility, not a score.
     for stock_rank, stock in enumerate(group.stock_candidates):
         if stock.source is not source:
@@ -94,6 +95,8 @@ def _feasible_candidates(group, source, orientations, prepared, layouts, config,
         for orientation_rank, oriented in enumerate(orientations):
             checkpoint()
             orientation, mask = oriented.orientation, oriented.orientation.mask
+            if observe is not None:
+                observe(stock, orientation)
             # Negative bbox prefilter only; acceptance uses real material bits.
             if layout.material.row_count < mask.row_count or layout.material.columns < mask.columns:
                 continue
@@ -111,6 +114,7 @@ def _feasible_candidates(group, source, orientations, prepared, layouts, config,
 def pack(problem: OptimizationProblem, on_event: Callable[[FirstFitEvent], None] | None = None,
          *, select: Callable[[Iterable[FeasibleCandidate]], FeasibleCandidate | None] | None = None,
          checkpoint: Callable[[], None] | None = None,
+         on_visual: Callable[[VisualEvent], None] | None = None,
          ) -> OptimizationResult:
     """Existing FF traversal with one optional source-selection decision point."""
     groups = tuple(replace(group, units=prepare_group_units(group.units), stock_candidates=tuple(
@@ -118,10 +122,17 @@ def pack(problem: OptimizationProblem, on_event: Callable[[FirstFitEvent], None]
     )) for group in sorted(problem.groups, key=lambda group: group.key))
     problem = replace(problem, order_ids=tuple(sorted(problem.order_ids)), groups=groups)
     checkpoint = checkpoint if checkpoint is not None else lambda: None
-    prepared = prepare_run_geometry(problem, checkpoint=checkpoint)
+    prepared = prepare_run_geometry(problem, checkpoint=checkpoint, on_visual=on_visual)
     layouts, placements = {}, []
     layout_bytes = 0
     total = len(problem.units)
+    processed = 0
+    evaluation_index = 0
+
+    def visual(kind, **kwargs):
+        if on_visual is not None:
+            on_visual(VisualEvent(kind=kind, processed_units=processed, placed_units=len(placements),
+                total_units=total, **kwargs))
 
     def emit(kind, group, unit=None, placement=None):
         if on_event is not None:
@@ -134,8 +145,14 @@ def pack(problem: OptimizationProblem, on_event: Callable[[FirstFitEvent], None]
             checkpoint()
             emit("piece_started", group, unit)
             orientations = prepared.orientations(unit)
+            def observe(stock, orientation):
+                nonlocal evaluation_index
+                evaluation_index += 1
+                visual('orientation_testing', unit=unit, stock=stock, orientation=orientation,
+                       evaluation_index=evaluation_index)
             for source in (MaterialSource.REMNANT, MaterialSource.SHEET):
-                candidates = _feasible_candidates(group, source, orientations, prepared, layouts, problem.config, checkpoint)
+                candidates = _feasible_candidates(group, source, orientations, prepared, layouts, problem.config,
+                    checkpoint, observe if on_visual is not None else None)
                 # next() preserves FF's early exit, without examining later stock.
                 winner = next(candidates, None) if select is None else select(candidates)
                 if winner is None:
@@ -154,8 +171,16 @@ def pack(problem: OptimizationProblem, on_event: Callable[[FirstFitEvent], None]
                     rotation_deg=winner.orientation.rotation_deg, geometry=winner.orientation.geometry,
                 )
                 placements.append(accepted)
+                processed += 1
+                if on_visual is not None:
+                    visual('source_selected', unit=unit, stock=stock, orientation=winner.orientation,
+                        material_mask=prepared.material(stock),
+                        score=winner.remaining_free_cells_after_placement if select is not None else None)
                 emit("piece_placed", group, unit, accepted)
                 break
+            else:
+                processed += 1
+                visual('piece_unplaced', unit=unit)
             # Failure for one unit does not suppress attempts for subsequent units.
         emit("group_completed", group)
     return OptimizationResult(problem=problem, placements=tuple(placements))

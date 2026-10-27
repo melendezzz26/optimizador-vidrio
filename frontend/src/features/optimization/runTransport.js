@@ -1,7 +1,7 @@
 import { buildRunRequest, parseConfirmation, parseRun, readNdjson, RunContractError } from './runContract.js';
 
 // Parsing and lifecycle are shared by the real HTTP adapter and test adapters.
-export function createRunTransport({ prepare, open, load, confirm } = {}) {
+export function createRunTransport({ prepare, open, load, confirm, decode = readNdjson } = {}) {
   const pending = () => { throw new Error('Esta operación no está disponible. Inténtalo más tarde.'); };
   return {
     prepare: request => (prepare ?? pending)(buildRunRequest(request.order_ids)),
@@ -17,7 +17,7 @@ export function createRunTransport({ prepare, open, load, confirm } = {}) {
             try {
               const chunks = await (open ?? pending)(dto, { signal: controller.signal });
               if (active && chunks.optimizationId) accepted?.(chunks.optimizationId);
-              for await (const event of readNdjson(chunks)) {
+              for await (const event of decode(chunks)) {
                 if (!active) break;
                 listener(event);
               }
