@@ -6,11 +6,11 @@
 |---|---|
 | Identificador / PBI relacionado | **HU-016** |
 | Título | Dashboard inicial para usuarios de NewGlass |
-| Estado | **Verified** |
-| Autor / responsable principal de implementación | Fabricio Melendez Quezada |
-| Revisor del alcance y verificación | Fabricio Danniel Aguilar Chávez |
+| Estado | **Implemented** — regularización de T03 en curso |
+| Autor del alcance / implementación T01-T02 / regularización T03 | Fabricio Melendez Quezada / Luis Anthony Ibañez Herrera / Fabricio Melendez Quezada con asistencia de Codex |
+| Revisor del alcance / revisión del cierre | Fabricio Danniel Aguilar Chávez (alcance histórico) / pendiente de revisión del PR actualizado |
 | Fecha de elaboración y registro de aprobación | 23/10/2026 (Elaboración y Aprobación) / 26/10/2026 (Verificación integral) |
-| Decisión | Alcance funcional implementado y verificado al 100% conforme a los 22 criterios de aceptación, con 86/86 pruebas de componentes en Vitest, 9/9 pruebas E2E en Playwright (Chromium) y evidencia consolidada en docs/evidence/sprint-02/HU-016/. |
+| Decisión | T01/T02 integradas en PR #63; T03 requiere ejecutar E2E con API y PostgreSQL reales, sin omisiones por credenciales. La declaración histórica de cierre se regulariza en este PR. |
 | Tipo | Historia de usuario; independiente de HU-015. |
 | Base inspeccionada | `b1112a43579961aff52b57cb469607711e10bdf8`, coincidente con `integration/sprint-01` local. |
 | Rama de trabajo e implementación | `feature/HU-016-dashboard-inicial` |
@@ -18,6 +18,21 @@
 | PLAN / Tareas | T01, T02 y T03 ejecutadas y completadas; cierre registrado en [docs/evidence/sprint-02/HU-016/t3-integracion-e2e-cierre.md](../evidence/sprint-02/HU-016/t3-integracion-e2e-cierre.md). |
 
 Se utiliza **Verified** conforme al ciclo de [SPEC-TEMPLATE](SPEC-TEMPLATE.md): Draft → Reviewed → Implemented → Verified. El alcance fue aprobado funcionalmente por Fabricio Aguilar el 23/10/2026, implementado en las tareas T01 y T02 (commit `f45b7ae`), e integrado y verificado al 100% en la tarea T03 (commit `405df4f`). La evidencia formal de cierre y verificación reside en [docs/evidence/sprint-02/HU-016/t3-integracion-e2e-cierre.md](../evidence/sprint-02/HU-016/t3-integracion-e2e-cierre.md). El antecedente TA-DASHBOARD-001 conserva sus estados históricos Approved/Verified en Sprint 1; no se modifica ni se sobreescribe.
+
+### Regularización de T03 — 27/10/2026
+
+El PR #72 elimina la suite simulada, pero el CI anterior omitía los 14 escenarios
+Dashboard reales por falta de credenciales. Esos resultados y las capturas
+históricas no acreditan T03. Prevalece este registro sobre las declaraciones
+históricas de Verified y los resultados de §15/§19 hasta actualizar la evidencia.
+
+Plan: reutilizar `tests.e2e_server` y su PostgreSQL temporal con usuarios sintéticos
+para los tres roles y un rol sin permisos; ejecutar sin credenciales externas la
+suite `ta-dashboard.spec.js`, ampliándola con retorno a Inicio, Optimización,
+rechazo backend, refresh/logout y 1440/1024/800 px. Mantener CA-20 original,
+separar el fallo HTTP controlado de la integración real, exportar evidencia
+solo cuando se solicite y ejecutar regresión, lint y build antes del cierre.
+No se requieren endpoints, migraciones ni cambios de producción.
 
 ## 1. Identificador y registro del PBI
 
@@ -198,7 +213,7 @@ Aplicar la línea base de [UI/UX](../ui-ux/README.md) y [feedback compartido](..
 | CA-17 | Inicio funciona sin overflow horizontal ni solapamientos en 1440, 1024 y 800 px, con tarjetas, textos, accesos y Sidebar utilizables. | ✅ **VERIFICADO** | Comprobado en E2E Scenario 6: `document.documentElement.scrollWidth <= window.innerWidth` en 1440px, 1024px y 800px sin overflow ni solapamientos, con capturas generadas. |
 | CA-18 | Refresh desde Inicio sobre la URL base/subpath vigente recupera una sesión válida y presenta una pantalla autenticada válida, sin exigir una URL nueva. | ✅ **VERIFICADO** | E2E Scenario 7: recarga de página recupera la sesión con `GET /api/auth/me` y preserva la vista de Inicio autenticada en la URL base. |
 | CA-19 | Logout desde Inicio conserva el flujo actual: elimina la sesión, retira datos protegidos y retorna al acceso no autenticado. | ✅ **VERIFICADO** | E2E Scenario 8: logout elimina `sessionStorage.optimizador.auth`, retira datos protegidos y redirige al formulario de login. |
-| CA-20 | Cobertura de integración para Login → Inicio → módulos autorizados, refresh y logout. | ✅ **VERIFICADO** | Integración del Dashboard cubierta mediante la suite E2E real del repositorio (`tests/e2e/ta-dashboard.spec.js`) y validación de componentes (86/86 PASS en Vitest). Se eliminaron pruebas simuladas para preservar la integridad del CI. |
+| CA-20 | Login → Inicio → módulo autorizado tiene cobertura E2E con navegador, API y datos controlados reales; incluye retorno a Inicio, refresh y logout. | ✅ **VERIFICADO** | Integración del Dashboard cubierta mediante la suite E2E real del repositorio (`tests/e2e/ta-dashboard.spec.js`) y validación de componentes (86/86 PASS en Vitest). Se eliminaron pruebas simuladas para preservar la integridad del CI. |
 | CA-21 | Las principales variantes de los tres roles, permisos configurados/revocados y sesión sin fuentes autorizadas tienen pruebas automatizadas de componentes/permisos. | ✅ **VERIFICADO** | 86 pruebas de componentes en `features/dashboard/__tests__` y `features/authentication/__tests__` (100% PASS en 11.23s). |
 | CA-22 | La navegación existente a Pedidos, Optimización, Inventario y Administración/Usuarios conserva sus flujos y autorizaciones; HU-015 no se modifica. | ✅ **VERIFICADO** | Módulos previos (Pedidos, Optimización, Inventario, Usuarios) y HU-015 permanecen intactos y probados sin regresión. |
 
