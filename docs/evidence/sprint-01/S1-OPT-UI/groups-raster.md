@@ -2,7 +2,7 @@
 
 > **Registro histórico.** Este documento conserva decisiones, cifras y límites de su entrega original. El estado vigente y los resultados integrados están en el [índice canónico](README.md). Los logs supersedidos se consolidaron y las capturas enlazadas a integración son equivalentes de cobertura de una corrida posterior, no imágenes de este hito. Los originales se pueden recuperar desde `cbfa6ad` con el índice SHA256 de consolidación.
 
-2026-10-15, America/Bogota. Rama feature/S1-optimization-ui.
+2026-10-15, America/Lima. Rama feature/S1-optimization-ui.
 
 | Frente | Estado |
 |---|---|
