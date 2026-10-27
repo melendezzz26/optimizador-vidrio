@@ -83,3 +83,9 @@
 .optimization-section-heading { margin-bottom: var(--ng-space-4); }
 .optimization-section-heading h2 { margin-top: 0; }
 .optimization-section-heading small { color: var(--ng-text-600); }
+
+/* TA-037 T04: aviso de límite operativo; recibe el foco para teclado y lector de pantalla. */
+.first-fit-feedback { margin-block: var(--ng-space-4); border-radius: var(--ng-radius-control); }
+.first-fit-feedback:focus-visible { outline: 3px solid var(--ng-primary-focus); outline-offset: 2px; }
+.first-fit-feedback .ng-feedback__text p { margin: 0; }
+.first-fit-feedback .ng-feedback__text p + p { margin-top: var(--ng-space-2); }

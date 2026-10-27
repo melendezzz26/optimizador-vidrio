@@ -6,12 +6,20 @@ import { pieceCount } from './optimizationModel';
 import { createRunTransport } from './runTransport';
 
 export class RunApiError extends Error {
-  constructor(message, status, code) {
+  constructor(message, status, code, { limit = null, retryAfter = null } = {}) {
     super(message);
     this.name = 'RunApiError';
     this.status = status;
     this.code = code;
+    // TA-037: which operational limit was exceeded and when to retry (503).
+    this.limit = limit;
+    this.retryAfter = retryAfter;
   }
+}
+
+function retryAfterSeconds(response) {
+  const value = Number(response.headers?.get?.('retry-after'));
+  return Number.isSafeInteger(value) && value > 0 ? value : null;
 }
 
 const messages = {
@@ -48,8 +56,16 @@ export function createBackendRunAdapter({ token, fetchImpl = globalThis.fetch, r
         console.error('No se pudo iniciar el cálculo de corte', { status: response.status, code: data.detail.code, detail: data.detail.message });
         throw new RunApiError('No se puede calcular el corte porque faltan los parámetros de trabajo. Solicita al administrador revisar la configuración.', response.status, 'CONFIG_CONFLICT');
       }
+      if (response.status === 503) {
+        throw new RunApiError(data?.detail?.message ?? messages[response.status]
+          ?? 'El servidor no pudo completar la operación.', response.status, data?.detail?.code, {
+            limit: data?.detail?.limit,
+            retryAfter: retryAfterSeconds(response)
+          });
+      }
       throw new RunApiError(data?.detail?.message ?? messages[response.status]
-        ?? 'El servidor no pudo completar la operación.', response.status, data?.detail?.code);
+        ?? 'El servidor no pudo completar la operación.', response.status, data?.detail?.code,
+      { limit: data?.detail?.limit ?? null, retryAfter: retryAfterSeconds(response) });
     }
     if (!stream) return response.json();
     if (!response.headers.get('content-type')?.startsWith('application/x-ndjson') || !response.body) {

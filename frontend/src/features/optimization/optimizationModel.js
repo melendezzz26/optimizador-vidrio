@@ -11,6 +11,7 @@ export const initialOptimization = {
   snapshot: null, placements: [], completedGroups: [], metrics: null, error: '', runId: null, stage: null,
   optimizationId: null, sequence: 0, estado: null, placed_units: 0, total_units: 0, progress_pct: '0',
   completo: false, metrics_available: false, confirmable: false, confirmed: false, resultUrl: null,
+  errorKind: null, retryAfter: null,
 };
 export const placementKey = unitKey;
 export const containerKey = stockKey;
@@ -29,8 +30,33 @@ function loadedSnapshot(dto, previous) {
     }) };
 }
 export function optimizationReducer(state, action) {
-  try { return reduce(state, action); }
-  catch (error) { return { ...state, status: 'failed', error: error.message, confirmable: false }; }
+  try { return withErrorKind(state, reduce(state, action), action); }
+  catch (error) { return { ...state, status: 'failed', error: error.message, confirmable: false, errorKind: null, retryAfter: null }; }
+}
+
+// TA-037: only these actions classify their error; any other new error is generic.
+const CLASSIFIED = new Set(['connection_failed', 'event']);
+function withErrorKind(previous, next, action) {
+  if (next.error && (next.error === previous.error || CLASSIFIED.has(action.type))) return next;
+  return next.errorKind || next.retryAfter ? { ...next, errorKind: null, retryAfter: null } : next;
+}
+
+const ERROR_KINDS = { LOAD_LIMIT_EXCEEDED: 'load_limit', OPTIMIZER_BUSY: 'busy', TIME_BUDGET_EXCEEDED: 'time_budget' };
+
+// TA-037 T04: what the person can do after an operational limit (SPEC §7).
+// "load_limit" and "time_budget" ask for a smaller batch; "busy" asks to retry later.
+export function runErrorFeedback({ error, errorKind, retryAfter }) {
+  if (!error) return null;
+  if (errorKind === 'load_limit') return { kind: errorKind, variant: 'error', message: error,
+    title: 'El trabajo es demasiado grande para un solo cálculo',
+    hint: 'Los pedidos siguen pendientes y no se usó inventario. Ajusta la selección y vuelve a revisar vidrios y piezas.' };
+  if (errorKind === 'busy') return { kind: errorKind, variant: 'warning', message: error,
+    title: 'El optimizador está ocupado',
+    hint: `Los pedidos siguen pendientes. Vuelve a presionar «Calcular distribución» en ${retryAfter ?? 15} segundos.` };
+  if (errorKind === 'time_budget') return { kind: errorKind, variant: 'error', message: error,
+    title: 'El cálculo superó el tiempo máximo',
+    hint: 'No se consumió inventario. Consulta el resultado; los pedidos de este trabajo requieren revisión antes de volver a calcularse.' };
+  return { kind: null, variant: 'error', message: error, title: undefined, hint: null };
 }
 function reduce(state, action) {
   switch (action.type) {
@@ -73,8 +99,9 @@ function reduce(state, action) {
       if (action.rejected && !state.optimizationId && state.sequence === 0) return {
         ...state, status: 'prepared', error: action.message, runId: null, estado: null,
         stage: null, placed_units: 0, progress_pct: '0', confirmable: false,
+        errorKind: ERROR_KINDS[action.code] ?? null, retryAfter: action.retryAfter ?? null,
       };
-      return { ...state, status: 'failed', stage: null, error: action.message, confirmable: false };
+      return { ...state, status: 'failed', stage: null, error: action.message, confirmable: false, errorKind: null, retryAfter: null };
     }
     case 'result_error': return { ...state, status: state.status === 'loading_result' ? 'failed' : state.status, error: action.message, confirmable: false };
     case 'confirmed': return { ...state, confirmed: true, confirmable: false };
@@ -122,7 +149,8 @@ function reduce(state, action) {
           return { ...next, status: runStatus(data.estado), estado: data.estado, completo: data.completo,
             placed_units: data.placed_units, progress_pct: data.progress_pct, resultUrl: data.result_url,
             stage: data.completo ? 'completed' : state.stage, confirmable: false };
-        case 'optimization_failed': return { ...next, status: 'failed', estado: 'FALLIDA', error: data.message, resultUrl: data.result_url, confirmable: false };
+        case 'optimization_failed': return { ...next, status: 'failed', estado: 'FALLIDA', error: data.message, resultUrl: data.result_url, confirmable: false,
+          errorKind: data.code === 'TIME_BUDGET_EXCEEDED' ? 'time_budget' : null, retryAfter: null };
         default: return next;
       }
     }

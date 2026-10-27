@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ScanLine } from 'lucide-react';
 import { canExecuteOptimization, canViewResults, hasPermission } from '../authentication';
 import { AppShell } from '../../shared/components/AppShell';
@@ -6,7 +6,7 @@ import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLay
 import { ConfirmDialog, EmptyState, FeedbackMessage, LoadingState } from '../../shared/components/feedback';
 import { createPendingOrdersSource } from './pendingOrdersSource';
 import { createBackendRunAdapter } from './runApi';
-import { STAGES, pieceCount } from './optimizationModel';
+import { STAGES, pieceCount, runErrorFeedback } from './optimizationModel';
 import { useFirstFit } from './useFirstFit';
 import { PlacementCanvas } from './PlacementCanvas';
 import { detectMaterialGroups } from './materialGroups';
@@ -28,6 +28,10 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired, user, result
   const [confirmation, setConfirmation] = useState('');
   const [confirming, setConfirming] = useState(false);
   const [confirmationConflict, setConfirmationConflict] = useState(false);
+    // TA-037 T04: an operational-limit notice takes focus so keyboard users land on it.
+  const feedback = runErrorFeedback(state);
+  const feedbackRef = useRef(null);
+  useEffect(() => { if (feedback?.kind) feedbackRef.current?.focus(); }, [feedback?.kind, state.error]);
   const [lookupId, setLookupId] = useState('');
   const canExecute = canExecuteOptimization(user);
   const canConfirm = hasPermission(user, 'optimization.confirm');
@@ -85,7 +89,12 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired, user, result
         <button className="ng-button ng-button--primary" disabled={locked || !state.selected.length || state.connection !== 'connected'} onClick={() => reset(flow.prepare)}>Revisar vidrios y piezas</button></ActionBar>
       {fresh > 0 && <p role="status">{fresh} nuevo pedido disponible para la siguiente ejecución.</p>}
     </section>}
-    {state.error && <FeedbackMessage variant="error">{state.error}</FeedbackMessage>}
+    {feedback && (feedback.kind
+      ? <div ref={feedbackRef} tabIndex={-1} className="first-fit-feedback" data-error-kind={feedback.kind}>
+        <FeedbackMessage variant={feedback.variant} title={feedback.title}>
+          <p>{feedback.message}</p><p>{feedback.hint}</p>
+        </FeedbackMessage></div>
+      : <FeedbackMessage variant="error">{feedback.message}</FeedbackMessage>)}
     {state.status === 'preparing' && <LoadingState>Revisando pedidos y vidrios…</LoadingState>}
     {(state.selected.length > 0 || state.snapshot) && <MaterialGroupsPanel groups={state.snapshot?.groups ?? preview.groups}
       unresolved={state.snapshot ? [] : preview.unresolved} snapshot={state.snapshot} completedGroups={state.snapshot ? state.completedGroups : []} />}
