@@ -2,6 +2,7 @@ import { mkdirSync } from 'node:fs';
 import process from 'node:process';
 import path from 'node:path';
 import { expect, test } from '@playwright/test';
+import { watchDashboardResponses } from './dashboardResponses.js';
 
 const appOrigin = 'http://127.0.0.1:5173';
 // These actors exist only in tests.e2e_server's owned loopback PostgreSQL.
@@ -37,21 +38,6 @@ const roles = {
 };
 
 const noFunctions = { label: 'Sin funciones E2E', username: 'O70000004', password: 'Dashboard-test-2026!' };
-const dashboardPaths = new Set([
-  '/api/inventory/planchas', '/api/inventory/retazos', '/api/orders', '/api/clients',
-]);
-
-function watchDashboardResponses(page) {
-  const responses = [];
-  page.on('response', response => {
-    const url = new URL(response.url());
-    if (url.origin === apiOrigin && response.request().method() === 'GET' && dashboardPaths.has(url.pathname)) {
-      responses.push({ path: url.pathname, query: url.searchParams, status: response.status(), response });
-    }
-  });
-  return responses;
-}
-
 async function restrictOrigins(page) {
   await page.route('**/*', route => {
     const origin = new URL(route.request().url()).origin;
@@ -136,7 +122,7 @@ async function capture(page, filename) {
 for (const [key, role] of Object.entries(roles)) {
   test(`Dashboard real para ${role.label}: datos, permisos y navegación`, async ({ page }) => {
     await restrictOrigins(page);
-    const responses = watchDashboardResponses(page);
+    const { responses, beginCycle } = watchDashboardResponses(page, apiOrigin);
     await signIn(page, role);
     await waitForRealDashboard(page, responses, role);
 
@@ -161,7 +147,7 @@ for (const [key, role] of Object.entries(roles)) {
     const screenshotName = key === 'administrator' ? 'administrador' : key === 'operator' ? 'operario' : 'almacenero';
     await capture(page, `dashboard-${screenshotName}-${key === 'warehouse' ? 'inventario' : 'navegacion'}.png`);
 
-    responses.length = 0;
+    beginCycle();
     await page.getByRole('button', { name: 'Inicio', exact: true }).click();
     await waitForRealDashboard(page, responses, role);
     await expect(page.getByRole('button', { name: 'Inicio', exact: true })).toHaveAttribute('aria-current', 'page');
@@ -175,7 +161,7 @@ for (const [key, role] of Object.entries(roles)) {
       await expect(page.getByRole('button', { name: 'Consultar resultado', exact: true })).toBeVisible();
     }
     await capture(page, `dashboard-${screenshotName}-optimizacion.png`);
-    responses.length = 0;
+    beginCycle();
     await page.getByRole('button', { name: 'Inicio', exact: true }).click();
     await waitForRealDashboard(page, responses, role);
     for (const [action, heading, resource] of [
@@ -186,22 +172,77 @@ for (const [key, role] of Object.entries(roles)) {
       await page.getByRole('button', { name: `Abrir ${action}`, exact: true }).click();
       await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible();
       expect((await loaded).status()).toBe(200);
-      responses.length = 0;
+      beginCycle();
       await page.getByRole('button', { name: 'Inicio', exact: true }).click();
       await waitForRealDashboard(page, responses, role);
     }
   });
 }
 
+test('CONTROLLED LATENCY WITH REAL API: una respuesta del ciclo anterior no contamina Inicio', async ({ page }) => {
+  const role = roles.administrator;
+  test.info().annotations.push({ type: 'scenario', description: 'Controlled response delivery; payload and authentication use the real API.' });
+  await restrictOrigins(page);
+  const { responses, beginCycle } = watchDashboardResponses(page, apiOrigin);
+  const session = await signIn(page, role);
+  await waitForRealDashboard(page, responses, role);
+  await page.getByRole('button', { name: 'Abrir Gestión de inventario', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Gestión de Inventario', exact: true })).toBeVisible();
+  await expect(page.locator('.inventory-list [role="status"]')).toContainText('Mostrando');
+
+  let releaseResponse, resolveHeld, rejectHeld;
+  const released = new Promise(resolve => { releaseResponse = resolve; });
+  const held = new Promise((resolve, reject) => { resolveHeld = resolve; rejectHeld = reject; });
+  let interceptNext = true;
+  const pattern = `${apiOrigin}/api/orders?*`;
+  const holdResponse = async route => {
+    if (!interceptNext || route.request().method() !== 'GET') return route.fallback();
+    interceptNext = false;
+    try {
+      const actual = await route.fetch();
+      resolveHeld({ request: route.request(), status: actual.status() });
+      await released;
+      await route.fulfill({ response: actual });
+    } catch (error) {
+      rejectHeld(error);
+      throw error;
+    }
+  };
+  await page.route(pattern, holdResponse);
+  try {
+    // This real authenticated request starts in the previous visit. Only its
+    // delivery is held; its URL also belongs to the new Dashboard's six sources.
+    await page.evaluate(({ url, token }) => {
+      window.__dashboardE2ELateResponse = fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+        .then(response => response.json());
+    }, { url: `${apiOrigin}/api/orders?estado=PENDIENTE&page=1&limit=1`, token: session.access_token });
+    const delayed = await held;
+    expect(delayed.status).toBe(200);
+    beginCycle();
+    await page.getByRole('button', { name: 'Inicio', exact: true }).click();
+    await waitForRealDashboard(page, responses, role);
+
+    const arrived = page.waitForResponse(response => response.request() === delayed.request);
+    releaseResponse();
+    expect((await arrived).status()).toBe(200);
+    await page.evaluate(() => window.__dashboardE2ELateResponse);
+    expect(responses).toHaveLength(6);
+    await waitForRealDashboard(page, responses, role);
+  } finally {
+    releaseResponse();
+    await page.unroute(pattern, holdResponse);
+  }
+});
+
 test('refresh conserva sesión real mediante GET /api/auth/me', async ({ page }) => {
   const role = roles.administrator;
   await restrictOrigins(page);
-  const responses = watchDashboardResponses(page);
+  const { responses, beginCycle } = watchDashboardResponses(page, apiOrigin);
   await signIn(page, role);
   await waitForRealDashboard(page, responses, role);
   const meResponse = page.waitForResponse(response => response.url() === `${apiOrigin}/api/auth/me`
     && response.request().method() === 'GET');
-  responses.splice(0, responses.length);
+  beginCycle();
   await page.reload();
   expect((await meResponse).status()).toBe(200);
   await waitForRealDashboard(page, responses, role);
@@ -213,7 +254,7 @@ test('refresh conserva sesión real mediante GET /api/auth/me', async ({ page })
 test('logout elimina la sesión real y devuelve al login', async ({ page }) => {
   const role = roles.administrator;
   await restrictOrigins(page);
-  const responses = watchDashboardResponses(page);
+  const { responses } = watchDashboardResponses(page, apiOrigin);
   await signIn(page, role);
   await waitForRealDashboard(page, responses, role);
   await page.getByRole('button', { name: 'Cerrar sesión', exact: true }).click();
@@ -227,7 +268,7 @@ for (const width of [1440, 1024, 800, 390]) {
     const role = roles.administrator;
     await page.setViewportSize({ width, height: 900 });
     await restrictOrigins(page);
-    const responses = watchDashboardResponses(page);
+    const { responses, beginCycle } = watchDashboardResponses(page, apiOrigin);
     await signIn(page, role);
     await waitForRealDashboard(page, responses, role);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -245,7 +286,7 @@ for (const width of [1440, 1024, 800, 390]) {
     await sidebar.getByRole('button', { name: 'Gestión de inventario', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Gestión de Inventario', exact: true })).toBeVisible();
     await expect(page.locator('.inventory-list [role="status"]')).toContainText('Mostrando');
-    responses.length = 0;
+    beginCycle();
     await page.getByRole('button', { name: 'Inicio', exact: true }).click();
     await waitForRealDashboard(page, responses, role);
   });
@@ -295,7 +336,7 @@ test('CONTROLLED FAILURE SCENARIO — NOT REAL BACKEND FAILURE: muestra error pa
       body: JSON.stringify({ detail: 'Simulación controlada de error parcial' }),
     });
   });
-  const responses = watchDashboardResponses(page);
+  const { responses, beginCycle } = watchDashboardResponses(page, apiOrigin);
   await signIn(page, role);
   await expect.poll(() => responses.length, { timeout: 30_000 }).toBe(6);
   expect(responses.filter(response => response.path === '/api/inventory/planchas').map(({ path, status }) => ({ path, status })))
@@ -306,7 +347,7 @@ test('CONTROLLED FAILURE SCENARIO — NOT REAL BACKEND FAILURE: muestra error pa
   await expect(page.getByRole('heading', { name: 'Resumen operativo' })).toBeVisible();
   await capture(page, 'dashboard-partial-error.png');
   await page.unroute(`${apiOrigin}/api/inventory/planchas`);
-  responses.length = 0;
+  beginCycle();
   await page.getByRole('button', { name: 'Reintentar carga', exact: true }).click();
   await waitForRealDashboard(page, responses, role);
   await expect(page.getByText('Información parcial', { exact: true })).toHaveCount(0);
