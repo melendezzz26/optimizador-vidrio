@@ -8,21 +8,22 @@
 | Nombre | Control de carga del optimizador |
 | Sprint | Sprint 2 |
 | Tipo / épica | Habilitador / Optimización segura |
-| Versión | **1.2**: valores de v1.1 aprobados; correcciones de implementación de T02 (L-05, L-09) |
-| Estado | **Implemented** (T01 a T04; pasa a Verified con CI en verde y la revisión del equipo) |
+| Versión | **1.3**: saneamiento del ciclo de vida de plazas de T03; presupuestos y contratos de v1.2 conservados |
+| Estado | **Implemented** — T01–T04 validadas técnicamente; pendiente de CI y revisión del PR de saneamiento para Verified. |
 | Responsable | Fabricio Aguilar |
-| Revisor | Pendiente de asignación |
+| Saneamiento T03 | Fabricio Melendez Quezada con asistencia de Codex; trabajo original T01–T04 de Fabricio Aguilar |
+| Revisor del cierre | Pendiente de revisión del PR; no se atribuye una aprobación humana |
 | Fecha | 26/10/2026 |
-| Rama | `enabler/TA-037-guardrails` (T02 y v1.2) |
+| Rama | `fix/TA-037-admission-lifecycle`, desde `integration/sprint-01` en `445886a` |
 | Origen | Auditoría pre-Sprint 2, hallazgo **S1-02** (BLOCKER) y propuesta EN-S2-02 |
-| Dependencias | HU-015, TA-021 (T01); TA-037 T01 (T02); TA-037 T01 y T02 (T03); TA-037 T02 y T03 (T04) |
+| Dependencias | HU-015 como baseline; TA-037 T01 → T02 → T03/T04. TA-021 es un consumidor coordinado, no un prerrequisito para cerrar TA-037. |
 | Coordina con | TA-016, TA-018, TA-019, TA-021, HU-017, TA-038 |
 | PLAN técnico | [PLAN-TA-037-control-carga-optimizador.md](PLAN-TA-037-control-carga-optimizador.md) |
 | Evidencia | [docs/evidence/sprint-02/TA-037](../evidence/sprint-02/TA-037/README.md) |
 
-Este documento corresponde a **TA-037 T01: definir el presupuesto y el contrato de
-errores**. Fija los límites técnicos, el punto exacto donde se valida cada uno y la
-respuesta que recibe el cliente cuando una ejecución excede el presupuesto. Los
+Este documento nació en **TA-037 T01: definir el presupuesto y el contrato de
+errores** y actualmente cubre T01–T04 y el saneamiento de T03. Fija los límites
+técnicos, su validación y la respuesta al exceder el presupuesto. Los
 valores de §5 fueron aprobados por el equipo el 26/10/2026. T02 implementa los
 límites de tamaño (L-01, L-03, L-04, L-05, L-07, L-13); T03 y T04 completan el resto.
 
@@ -69,7 +70,7 @@ Fit ni Worst Fit, ni la confirmación transaccional.
 - Parametrizar los límites desde la interfaz o la tabla `configuraciones`, porque
   requeriría una migración y una API nueva.
 
-## 3. Situación actual (evidencia)
+## 3. Situación inicial auditada (evidencia histórica)
 
 Revisión del código de `integration/sprint-01` en `b7b9caa` (después del PR #64):
 
@@ -185,8 +186,13 @@ debajo de L-12.
   datos, y esa decisión requiere un ADR. La plaza se toma antes de aceptar la ejecución
   y se libera una sola vez: al terminar el hilo de cálculo (éxito, fallo, desconexión o
   L-12), al rechazarse la solicitud antes del stream, o al cerrarse un stream cuyo hilo
-  nunca arrancó. Como respaldo, una plaza que por un error no se liberara expira a los
-  300 s (L-12 + un tramo entre hitos + guardado); ninguna ejecución sana dura tanto.
+  nunca arrancó. **La antigüedad de la plaza no permite liberarla:** la entrega de
+  eventos puede durar más de 300 s y está excluida de L-12. Una conexión lenta,
+  un abandono o el fin de la espera de limpieza no hacen disponible una plaza
+  mientras el trabajador siga vivo. Si se sospecha una fuga, no se recupera
+  capacidad por reloj sin demostrar que su propietario terminó; un reinicio del
+  proceso elimina también sus trabajadores. Se prueban los límites global y por
+  usuario con reloj simulado por encima de 300 s, contrapresión y liberación real.
 - **L-12:** se mide desde que arranca el hilo de cálculo, descontando el tiempo de
   entrega de eventos al cliente, para que un cliente lento no consuma el presupuesto. Se
   verifica en cada hito (`group_started`, `piece_started`, `piece_placed`,
@@ -361,8 +367,8 @@ recibe el foco. El resto de errores conserva la presentación genérica de siemp
 | CA-05 | T02 | Las suites existentes de First Fit, Best Fit, Worst Fit, el corte comercial (8 de 8 piezas a 1 mm) y la confirmación pasan sin cambios en sus aserciones. |
 | CA-06 | T02 | Una pieza con cantidad 2 147 483 647 se rechaza sin asignar memoria proporcional. |
 | CA-07 | T02 | El caso de H-10 (3 piezas distintas de ~1300 × 1000) se rechaza con 422 `raster_memory` antes de crear la ejecución; 2 piezas siguen aceptándose. |
-| CA-08 | T03 | Con 2 ejecuciones activas, una tercera recibe 503 `OPTIMIZER_BUSY` con `Retry-After`; al terminar una, se admite la siguiente. |
-| CA-09 | T03 | La plaza se libera si el cliente se desconecta, si el cálculo falla o si se supera L-12. No quedan plazas tomadas tras 100 ciclos de admisión y rechazo. |
+| CA-08 | T03 | Con 2 ejecuciones activas, una tercera recibe 503 `OPTIMIZER_BUSY` con `Retry-After`, incluso tras 300 s de entrega lenta; al terminar una, se admite la siguiente. El límite por usuario también se mantiene. |
+| CA-09 | T03 | La plaza se libera cuando termina el trabajador tras éxito, desconexión, fallo o L-12; el cierre de la conexión o de su espera de limpieza no la libera antes. Si el trabajador no arranca, se libera la reserva. No quedan plazas tomadas tras 100 ciclos de admisión y rechazo. |
 | CA-10 | T03 | El contrato distingue ejecución admitida (201), rechazada (422 o 503) y cancelada (`EXECUTION_INTERRUPTED` o `TIME_BUDGET_EXCEEDED`), y la confirmación sigue igual. |
 | CA-11 | T04 | El frontend muestra el mensaje del backend sin perder la selección de pedidos, con el foco en el aviso, y diferencia «divide el lote» de «intenta más tarde». |
 | CA-12 | T04 | Las pruebas de stock voluminoso y de límite + 1 terminan en menos de 5 s y sin OOM, porque rechazan antes de expandir. |
@@ -422,11 +428,11 @@ recibe el foco. El resto de errores conserva la presentación genérica de siemp
 | CA-02 | PASS | `tests/unit/optimization/test_load_budget.py` (exacto y + 1); `tests/api/optimization/test_run_load_limits.py` |
 | CA-03 | PASS | `tests/unit/optimization/test_accept_run_load_limits.py` (espía sobre `prepare_persisted_problem`) |
 | CA-04 | PASS | `tests/api/optimization/test_run_load_limits.py`, `tests/integration/optimization/test_run_load_limits_pg.py` (PostgreSQL) |
-| CA-05 | PASS | Suite backend completa sin editar pruebas existentes; corte comercial (`test_commercial_cut.py`, E2E11) |
+| CA-05 | PASS técnico | Regresión de optimización: 717 PASS, sin cambiar las aserciones de FF/BF/WF, corte comercial o confirmación. La prueba de caducidad de TA-037 sí se sustituye deliberadamente; suite completa y E2E mediante CI del PR. |
 | CA-06 | PASS | Cantidad 2 147 483 647 rechazada en menos de 1 s (unitaria) y en ~0,12 s por HTTP (`test_run_load_stress.py`) |
 | CA-07 | PASS | Caso H-10 en `test_load_budget.py` y `test_accept_run_load_limits.py` |
-| CA-08 | PASS | `tests/unit/optimization/test_run_admission.py`; `tests/api/optimization/test_run_concurrency.py` |
-| CA-09 | PASS | Liberación al terminar, fallar, desconectarse, rechazar y vencer L-12; 100 ciclos sin plazas tomadas; expiración de respaldo |
+| CA-08 | PASS técnico | Reloj a 300/301/3600 s en `test_run_admission.py`; stream real con PostgreSQL por encima de 300 s en `test_run_concurrency.py`; límites global y por usuario preservados. |
+| CA-09 | PASS técnico | Éxito, fallo, rechazo, desconexión, L-12, arranque fallido, contrapresión y trabajador vivo después del join de limpieza; 100 ciclos sin fugas. [Evidencia v1.3](../evidence/sprint-02/TA-037/admission-lifecycle.md). |
 | CA-10 | PASS | `test_run_concurrency.py`: 201, 422, 503, `TIME_BUDGET_EXCEEDED`; la confirmación funciona con el optimizador lleno |
 | CA-11 | PASS | `frontend/src/features/optimization/__tests__/LoadControlFeedback.test.jsx`; E2E `ta037-load-feedback.spec.js` (escritorio y móvil) |
 | CA-12 | PASS | `test_run_load_stress.py`: stock y piezas al máximo de la base, rechazados en menos de 5 s y sin OOM |
@@ -440,3 +446,4 @@ recibe el foco. El resto de errores conserva la presentación genérica de siemp
 | 26/10/2026 | 1.2 | Reviewed | Valores de v1.1 aprobados por el equipo (Scrum Master). Correcciones de implementación de T02: L-09 retirado por no tener cota segura; L-05 conserva `INVALID_INPUT`; L-13 calculado con cota inferior en coma flotante; P4 usa el adaptador de stock del cálculo. |
 | 26/10/2026 | 1.2 | Reviewed | T03 implementada según §5.1, §7.2 y §7.3. Detalle de implementación agregado en §5.1: puntos de liberación de la plaza y respaldo de expiración de 300 s. Sin cambios de valores ni de contrato. |
 | 26/10/2026 | 1.2 | Implemented | T04: avisos de frontend («divide el lote», «intenta más tarde», tiempo máximo), pruebas de peor caso y E2E real. CA-01 a CA-12 en PASS (§13). Pendiente: CI en verde y revisión para Verified. |
+| 27/10/2026 | 1.3 | Implemented | Retirado el respaldo de expiración de 300 s; CA-08/CA-09 precisan que la plaza sigue al trabajador. Presupuestos y contratos conservados. Regresión focalizada 39 PASS; optimización/geometría/API/PostgreSQL/confirmación 717 PASS. Trabajo original de Aguilar preservado; corrección y revisión técnica de Fabricio Melendez con Codex. CI y revisión del PR pendientes para cierre formal. |

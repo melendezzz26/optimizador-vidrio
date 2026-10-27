@@ -53,15 +53,21 @@ def test_release_is_idempotent_and_frees_exactly_one_slot():
     assert admission.active() == 1
 
 
-def test_a_slot_that_was_never_released_expires_after_the_safety_timeout():
+@pytest.mark.parametrize("elapsed", [300, 301, 3600])
+def test_unreleased_slots_keep_global_and_user_limits_after_long_delivery(elapsed):
     clock = FakeClock()
-    admission = InProcessRunAdmission(lease_timeout=300, clock=clock)
-    admission.acquire(1), admission.acquire(2)
-    clock.now = 299.9
-    busy(admission, 3)
-    clock.now = 300
-    admission.acquire(3)
-    assert admission.active() == 1
+    admission = InProcessRunAdmission(clock=clock)
+    first, second = admission.acquire(1), admission.acquire(2)
+    clock.now = elapsed
+    assert admission.active() == 2
+    assert busy(admission, 3)["name"] == "active_runs"
+    assert busy(admission, 1)["name"] == "active_runs_per_user"
+    first.release()
+    third = admission.acquire(3)
+    assert admission.active() == 2
+    second.release()
+    third.release()
+    assert admission.active() == 0
 
 
 def test_no_slot_leaks_after_100_admission_and_rejection_cycles():

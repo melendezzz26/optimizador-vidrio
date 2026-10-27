@@ -1,4 +1,20 @@
-# Evidencia TA-037 T01 — Mediciones de carga
+# Evidencia TA-037 — Control de carga y saneamiento de cierre
+
+## Estado actual — v1.3, 27/10/2026
+
+T01–T04 tienen implementación y evidencia técnica. El saneamiento retira la
+caducidad de plazas de 300 s que podía liberar capacidad con trabajadores vivos.
+[Reporte v1.3 y matriz de los 12 CA](admission-lifecycle.md): 39 pruebas
+focalizadas y 717 regresiones de optimización aprobadas, con PostgreSQL obligatorio.
+Trabajo original: Fabricio Aguilar. Saneamiento: Fabricio Melendez Quezada con
+Codex. Rama `fix/TA-037-admission-lifecycle`, base `445886a`. Pendientes para
+Verified: CI del PR y revisión del cierre; no se atribuye aprobación humana.
+
+Las mediciones y resultados del 25–26/10 siguientes son antecedentes históricos;
+no son una ejecución nueva ni sustituyen el reporte v1.3. Los gaps TA-038,
+GAP-03 y GAP-05 conservan su alcance separado.
+
+## Antecedentes T01–T04
 
 Medición exploratoria del motor de dominio actual, sin base de datos ni HTTP. Se
 usó para fijar los valores propuestos en
@@ -159,8 +175,8 @@ T03 y T04, con PostgreSQL real, igual que CI.
 
 Aviso que ve el operario al seleccionar un pedido de 151 unidades (máximo 150):
 
-- `e2e/chromium-desktop/TA037-aviso-limite.png`
-- `e2e/chromium-mobile/TA037-aviso-limite.png`
+- [Captura archivada de escritorio](e2e/chromium-desktop/image.png)
+- [Captura archivada de móvil](e2e/chromium-mobile/image.png)
 
 Para regenerarlas, desde `frontend/` en PowerShell:
 
