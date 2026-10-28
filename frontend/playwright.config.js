@@ -8,7 +8,8 @@ export default defineConfig({
   retries: 0,
   globalTeardown: './tests/e2e/globalTeardown.js',
   workers: 2,
-  reporter: [['list'], ['html', { open: 'never' }]],
+  // TA-040: el gate convierte en fallo las omisiones no aprobadas y los specs críticos sin ejecutar.
+  reporter: [['list'], ['html', { open: 'never' }], ['./tests/e2e/e2eGateReporter.js']],
   use: {
     baseURL: 'http://127.0.0.1:5173',
     browserName: 'chromium',
