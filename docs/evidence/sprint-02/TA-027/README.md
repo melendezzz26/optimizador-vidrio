@@ -143,3 +143,10 @@ Los hashes anteriores corresponden a JSON UTF-8 con finales LF, como se almacena
 
 Entrega: PR hacia integration/sprint-01 y review melendezzz26. No merge, rebase,
 force push, auto-merge, cierre formal ni smoke post-merge.
+
+## Entrega para revisión
+
+PR [#82](https://github.com/melendezzz26/optimizador-vidrio/pull/82), base integration/sprint-01.
+Reviewer `melendezzz26` solicitado mediante GitHub y confirmado en requested_reviewers.
+CI backend/frontend/E2E en ejecución al registrar esta nota; resultado definitivo en
+los checks y descripción del PR, vinculados al HEAD revisable. Sin merge ni cierre formal.

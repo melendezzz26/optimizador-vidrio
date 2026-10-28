@@ -8,7 +8,7 @@ Fecha: 28/10/2026. Verificación técnica completada; review y cierre formal pen
 Base limpia: `4bcf54db8344d4003f115b38646f6fcfd23984a6`, integration/sprint-01,
 tras fetch/prune y pull --ff-only. HEAD previo: `68b4bed` (rama documental anterior).
 PR #73 integrado en `445886a`; PR #75 integrado en `2fc228d` (solo smoke/documentación).
-últimos commits base: `4bcf54d` (#80), `45cbd80`, `a3414df` (#79), `56438b4`, `f1fd38d` (#77).
+Últimos commits base: `4bcf54d` (#80), `45cbd80`, `a3414df` (#79), `56438b4`, `f1fd38d` (#77).
 TA-021 ya está integrado y fue inspeccionado; no se modifica su comparador.
 
 ## Arquitectura auditada
@@ -92,3 +92,10 @@ FF, BF y WF operan sobre las mismas reglas de preparación, factibilidad y gener
 de candidatos; únicamente difieren en la política de selección del candidato dentro
 del nivel permitido. Esta conclusión tiene los límites de entrada y duración indicados arriba.
 SP-002 queda técnicamente verificado para iniciar TA-027; no cerrado formalmente.
+
+## Entrega para revisión
+
+PR [#82](https://github.com/melendezzz26/optimizador-vidrio/pull/82), base integration/sprint-01.
+Reviewer `melendezzz26` solicitado mediante GitHub y confirmado en requested_reviewers.
+CI backend/frontend/E2E en ejecución al registrar esta nota; resultado definitivo en
+los checks y descripción del PR, vinculados al HEAD revisable. Sin merge ni cierre formal.
