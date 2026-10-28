@@ -1,18 +1,24 @@
 """HU-017 T03: opt-in live geometry, strict V1 compatibility and owned PostgreSQL."""
 import json
+import asyncio
 from decimal import Decimal
 
 import pytest
 from sqlalchemy import delete, func, select
+from pydantic import TypeAdapter
 
 from app.models import MovimientoInventario, Optimizacion, Pedido, Plancha, Permiso, RolPermiso
 from tests.api.optimization.test_runs_api import BASE, parse, run_api  # noqa: F401
 from tests.integration.optimization.test_runs import prepared  # noqa: F401
+from app.modules.optimization.application.runs import AcceptRun
+from app.modules.optimization.presentation.run_stream import LiveRunStream
+from app.modules.optimization.presentation.visual_schemas import OptimizationEventV2
 
 
 def visual(response):
     assert response.status_code == 201, response.text
-    values = [json.loads(line) for line in response.iter_lines()]
+    parser = TypeAdapter(OptimizationEventV2)
+    values = [parser.validate_json(line).model_dump(mode='json') for line in response.iter_lines()]
     assert all(value['schema_version'] == 2 for value in values)
     assert [value['sequence'] for value in values] == list(range(1, len(values) + 1))
     return values
@@ -108,3 +114,87 @@ def test_visual_reservation_is_released_when_acceptance_fails(run_api, visual_st
     response = client.post(BASE + '?stream_profile=visual-v2', json={'order_ids': [999999]}, headers=headers)
     assert response.status_code == 404
     assert visual_store.contexts == [] and run_admission.active() == 0
+
+
+def test_full_visual_budget_reports_unavailable_without_changing_placements(run_api, visual_store):
+    client, ids, headers, *_ = run_api
+    visual_store.max_bytes = 1
+    response = client.post(BASE + '?stream_profile=visual-v2', json={'order_ids': ids}, headers=headers)
+    events = visual(response)
+    assert events[-1]['data']['completo']
+    masks = [entry['data']['mask'] for entry in events if 'mask' in entry['data']]
+    assert masks and all(not mask['available'] and mask['reason'] == 'VISUAL_BUDGET_EXCEEDED' for mask in masks)
+    result = client.get(response.headers['location'], headers=headers).json()
+    assert result['placed_units'] == 4 and result['confirmable']
+
+
+def test_visual_overhead_is_excluded_from_both_clocks(run_api, visual_store, monkeypatch):
+    from app.modules.optimization.infrastructure.visual_store import VisualSession
+    from app.modules.optimization.presentation import run_routes
+    from functools import partial
+    client, ids, headers, _, calculator = run_api
+    now = [0]
+    calculator.clock = lambda: now[0]
+    original = VisualSession.register
+    def register(self, *args):
+        now[0] += 60_000_000_000
+        return original(self, *args)
+    monkeypatch.setattr(VisualSession, 'register', register)
+    monkeypatch.setattr(run_routes, 'LiveRunStream', partial(LiveRunStream, clock=lambda: now[0] / 1e9, time_budget_s=1))
+    response = client.post(BASE + '?stream_profile=visual-v2', json={'order_ids': ids}, headers=headers)
+    events = visual(response)
+    assert events[-1]['event'] == 'optimization_completed'
+    result = client.get(response.headers['location'], headers=headers).json()
+    assert result['tiempo_computacional_ms'] == 0 and now[0] > 120_000_000_000
+
+
+def test_disconnect_after_selection_preserves_the_actual_diagnostic_placement(run_api, visual_store, prepared):
+    _, ids, _, uow, calculator = run_api
+    session = visual_store.reserve()
+    accepted = AcceptRun(uow).execute(ids, prepared[0])
+    session.bind(accepted.optimization_id, accepted.result.problem.config.resolution_mm)
+    owner = LiveRunStream(uow, calculator, visual_session=session)
+    async def consume():
+        stream = owner.lines(accepted)
+        try:
+            while json.loads(await anext(stream))['event'] != 'source_selected':
+                pass
+        finally:
+            await stream.aclose()
+    asyncio.run(consume())
+    with uow() as transaction:
+        result = transaction.runs.get(accepted.optimization_id)
+    assert result.status.value == 'FALLIDA' and result.result.placed_units == 1
+    assert session.finished_at is not None
+
+
+def test_slow_visual_consumer_does_not_spend_compute_budget_or_expire_active_masks(
+        run_api, visual_store, run_admission, prepared, session_factory):
+    _, ids, _, uow, calculator = run_api
+    now = [0.0]
+    visual_store.clock = lambda: now[0]
+    session = visual_store.reserve()
+    lease = run_admission.acquire(prepared[0])
+    accepted = AcceptRun(uow).execute(ids, prepared[0])
+    session.bind(accepted.optimization_id, accepted.result.problem.config.resolution_mm)
+    owner = LiveRunStream(uow, calculator, visual_session=session, lease=lease,
+        clock=lambda: now[0], time_budget_s=1)
+    async def consume():
+        stream = owner.lines(accepted)
+        try:
+            assert json.loads(await anext(stream))['event'] == 'optimization_started'
+            assert json.loads(await anext(stream))['event'] == 'preparation_started'
+            now[0] = 301.0  # Consumer is suspended at the acknowledged bounded bridge.
+            assert run_admission.active() == 1
+            assert visual_store.get(accepted.optimization_id) is session
+            assert session.records == {}  # Producer cannot run ahead of this event.
+            events = [json.loads(raw) async for raw in stream]
+            assert events[-1]['event'] == 'optimization_completed'
+            assert events[-1]['data']['processed_units'] == 4
+        finally:
+            await stream.aclose()
+    asyncio.run(consume())
+    assert run_admission.active() == 0 and session.finished_at == 301.0
+    with session_factory() as db:
+        assert db.get(Plancha, 5).cantidad == 2
+        assert db.scalar(select(func.count()).select_from(MovimientoInventario)) == 0

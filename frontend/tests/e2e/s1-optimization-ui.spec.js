@@ -53,7 +53,9 @@ test('E2E1 N=1 real: progreso, placements, métricas, confirmación, stock y ped
   const data = await setup(page, 'single'); await login(page, data.actors.all); await open(page);
   const { result, events } = await run(page, data, info);
   expect(result.completo).toBe(true); expect(result.metrics_available).toBe(true);
-  expect(new Set(events.map(e => e.event))).toEqual(new Set(['optimization_started', 'group_started', 'piece_started', 'piece_placed', 'group_completed', 'metrics_calculated', 'optimization_completed']));
+  const names = new Set(events.map(e => e.event));
+  for (const name of ['optimization_started', 'group_started', 'piece_started', 'piece_placed', 'group_completed', 'metrics_calculated', 'optimization_completed',
+    'preparation_started', 'piece_ready', 'preparation_completed', 'orientation_testing', 'source_selected']) expect(names.has(name)).toBe(true);
   await expect(page.getByRole('heading', { name: 'Resultado del corte' })).toBeVisible();
   const after = await confirm(page, data, result, info);
   expect(after.sheets[0].cantidad).toBe(0);
