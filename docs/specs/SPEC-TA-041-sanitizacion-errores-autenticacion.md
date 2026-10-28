@@ -11,7 +11,7 @@
 | Épica | EN-003 / Seguridad |
 | Prioridad / estimación | Alta / 0,5 SP |
 | Versión | **1.1**: alternativa A implementada |
-| Estado | **Implemented** (pasa a Verified con el CI del PR en verde y la revisión) |
+| Estado | **Verified**: CI en verde, revisado e integrado en el PR #85 |
 | Responsable | Fabricio Aguilar |
 | Reviewer | Por asignar (distinto del autor) |
 | Rama | `fix/TA-041-sin-eco-de-contrasena` |
@@ -144,7 +144,7 @@ después, la tabla CA → prueba y el resultado de la suite completa.
 | CA-03 | PASS | `assert_sanitized`: cada error tiene exactamente `loc`, `msg` y `type` |
 | CA-04 | PASS | `test_business_messages_and_codes_do_not_change`; además, `test_auth_api.py` y `test_users_api.py` sin cambios en sus aserciones |
 | CA-05 | PASS | El frontend no se modificó; solo lee `detail` cuando es texto y muestra un mensaje fijo ante un 422 con lista. Ninguna prueba ni código lee `input` o `ctx`. |
-| CA-06 | PASS local; CI pendiente | Backend completo: 2254 passed con PostgreSQL (1618 passed + 636 skipped en Windows sin PostgreSQL). Frontend y E2E por el CI del PR, con el gate de TA-040. |
+| CA-06 | PASS | CI del PR #85: backend con PostgreSQL, frontend (unitarias, componentes, lint y build) y E2E con el gate de TA-040, los 3 jobs en verde sin cambiar aserciones. Local: 2254 pruebas backend sin fallos. |
 
 Antes de la corrección, 8 de las 9 pruebas nuevas fallaban; solo pasaba la de
 mensajes de negocio (CA-04), que ya funcionaba. Detalle en la evidencia.
@@ -156,3 +156,4 @@ mensajes de negocio (CA-04), que ya funcionaba. Detalle en la evidencia.
 | 28/10/2026 | 0.1 | Draft | Borrador: reproducción del eco en login y usuarios, alternativas y reglas. |
 | 28/10/2026 | 1.0 | Draft | P-01 (alternativa A) y P-02 decididas. Pendiente: revisión en el PR. |
 | 28/10/2026 | 1.1 | Implemented | Manejador global implementado; 8 pruebas en rojo antes y 9 en verde después; suite backend 2254 PASS. Pendiente: CI del PR y revisión para Verified. |
+| 28/10/2026 | 1.1 | Verified | PR #85 revisado e integrado en `integration/sprint-01` con los 3 checks del CI en verde (CA-06 en PASS). |
