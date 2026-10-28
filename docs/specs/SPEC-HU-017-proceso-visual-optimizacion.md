@@ -5,16 +5,17 @@
 | Campo | Valor |
 |---|---|
 | ID / nombre | HU-017 — Visualizar proceso de optimización |
-| Estado | **Reviewed** |
+| Estado | **Verified — local, sin integrar** |
 | Tipo / módulo | Historia de usuario / Optimization |
-| Responsable / revisor | Pendientes de asignación formal |
-| Fecha | 27/10/2026 |
+| Responsable / revisor | Implementación y verificación local: Codex por encargo del solicitante. Responsable/revisor humano formal pendientes. |
+| Fecha | 28/10/2026 UTC |
 | Base inspeccionada | `4bcf54d`, `integration/sprint-01`; antecedente documental `783aac8` |
-| Ejecución | Primer incremento T01 y núcleo T02 implementados y validados localmente; revisión/cierre pendientes. HU-017 no está Implemented ni Verified. |
+| Ejecución | T01–T06 implementadas y verificadas en `feature/HU-017-proceso-visual-optimizacion`, con commits y evidencia local. Sin push, PR ni merge. |
 | PLAN | [PLAN-HU-017-proceso-visual-optimizacion.md](PLAN-HU-017-proceso-visual-optimizacion.md) |
 | Dependencias | HU-015/S1-01, SP-001, TA-016, TA-018, TA-019, TA-021 y TA-037 según contratos pendientes |
-| Decisión | Cierre documental autorizado: SPEC Reviewed. Revisión cruzada real pendiente; no implica implementación ni verificación. |
-| Streaming / DG-01 | **B elegida expresamente; DG-01 Closed.** Perfil visual-v2 optativo, V1 predeterminado; contrato en [DECISION-HU-017-DG-01](DECISION-HU-017-DG-01-streaming-visual.md). T03 pendiente. |
+| Decisión | Cierre técnico local autorizado y probado con PostgreSQL temporal para esta HU. Revisión cruzada humana e integración pendientes; sin cambiar backlog remoto. |
+| Streaming / DG-01 | **B implementada; DG-01 Closed.** Perfil visual-v2 optativo, V1 predeterminado; contrato en [DECISION-HU-017-DG-01](DECISION-HU-017-DG-01-streaming-visual.md). |
+| Evidencia de cierre | [T03–T06, matriz de 26 CA, pruebas, recursos y capturas](../evidence/sprint-02/HU-017/t03-t06-visualizacion-y-cierre-local.md). |
 
 ## 1. Identificador, historia y propósito
 
@@ -385,8 +386,10 @@ de la visualización. TA-037 debe coordinar checkpoints durante preparación lar
 | CA-25 | Existen E2E del flujo unificado, incluidos parcial, recuperación y no consumo. | T06 |
 | CA-26 | La máscara/geometría visualizada corresponde a geometría, resolución efectiva y orientación de la ejecución backend real; la UI no presenta una rasterización independiente con reglas diferentes como si fuera la del optimizador ni usa un preview ajeno. | T02/T03/T04/T06 |
 
-Estos 26 CA son objetivos de implementación futura: no se declaran PASS por la
-existencia de código de HU-015/TA-019 ni por crear esta documentación.
+Los 26 textos se conservan respecto de la aprobación. Su cumplimiento local se
+traza en la matriz de evidencia de cierre, incluidas las condiciones de CA-17:
+BF/WF HTTP siguen fuera de alcance. No se atribuye cumplimiento solo por la
+existencia previa de HU-015/TA-019 ni por crear documentación.
 
 ## 11. Pruebas y evidencia previstas
 
@@ -407,9 +410,9 @@ existencia de código de HU-015/TA-019 ni por crear esta documentación.
 - E2E unificado real: no cambiar a `hu015`, multipedido/multimaterial, rotación,
   retazo/fallback, SIN_SOLUCION, resultado/confirmación explícita y stock intacto
   antes de confirmar. Responsive y límite de detalle representativo.
-- Evidencia futura: `docs/evidence/sprint-02/HU-017/`, con base, comandos,
-  resultados reales, capturas accesibles y medición de memoria/payload/latencia.
-  No se ejecutan ni se generan esas evidencias en esta tarea documental.
+- Evidencia de ejecución: `docs/evidence/sprint-02/HU-017/`, con base, comandos,
+  resultados reales, capturas y medición de memoria/payload. T01/T02 conservan
+  sus registros históricos y T03–T06 documentan la verificación final local.
 
 ## 12. Decisiones pendientes y dependencias
 
@@ -419,10 +422,10 @@ existencia de código de HU-015/TA-019 ni por crear esta documentación.
 | TA-018 / TA-019 | BF/WF integrados en dominio; instrumentación neutral del recorrido común, preservando sus políticas. La integración HTTP multimétodo sigue fuera de esta historia. |
 | TA-021 | Comparación/orquestación de FF/BF/WF sobre la misma instancia, sin selección del ganador. Definición comunicada por el solicitante; coordinar contrato/ownership de resultados y eventos. HU-017 los consume visualmente y no decide el método ganador. |
 | TA-037 | SPEC y guardrails integrados. Coordinar límites de resolución y recursos, máscaras base, generación bajo demanda, throttling y checkpoints; sin selección automática en HU-017. |
-| Preparación base | GAP frente a `pack` actual; resolver preparación previa acotada y preservar generación/evaluación perezosa con TA-016/TA-037. |
+| Preparación base | Resuelta localmente mediante `PreparedRunGeometry` y orientaciones compartidas lazy; sin alterar políticas FF/BF/WF. |
 | GAP-VECTORIAL | Decidir necesidad y alcance de validación final independiente; tarea separable, sin ID inventado ni garantía anticipada. |
-| Contrato visual / máscaras | DG-01 Closed, B elegida. Implementar/probar negociación, URI de recuperación, retención y tamaños definidos en la decisión; sin persistencia de todos los intentos. |
-| Configuración visible | No hay API pública completa de Configuration; definir lectura autorizada/acotada o mostrar configuración al aceptar la corrida. |
+| Contrato visual / máscaras | DG-01 Closed, B implementada/probada: negociación, URI, retención y tamaños acotados; sin persistencia de todos los intentos. |
+| Configuración visible | Se muestra el snapshot efectivo al aceptar/recuperar la corrida. Sin nueva API pública de Configuration. |
 
 ## Historial de estado
 
@@ -436,3 +439,4 @@ existencia de código de HU-015/TA-019 ni por crear esta documentación.
 | 27/10/2026 | Reviewed | Primer incremento T01 implementado y validado localmente; [evidencia](../evidence/sprint-02/HU-017/t01-flujo-unificado.md). Sin cierre global ni publicación de HU-017. |
 | 27/10/2026 | Reviewed | Núcleo T02 implementado en `1291d65`: bases previas, resolución/configuración inmutables y orientaciones compartidas lazy. 2270 backend y 34 E2E correctos; sin cierre global, publicación ni revisión humana atribuida. |
 | 27/10/2026 | Reviewed | DG-01 Closed por elección expresa de B; contrato visual-v2 optativo documentado antes de T03. Sin código nuevo ni cambio de los 26 CA. |
+| 28/10/2026 UTC | Verified — local | T01–T06 implementadas y verificadas: 2312 backend, ampliación API visual 12/12, 161 unitarias frontend, 506 componentes y 38 E2E; lint/build correctos. PostgreSQL temporal autorizado para HU-017. Sin publicación, integración ni revisión humana atribuida; CA/estimación intactos. |

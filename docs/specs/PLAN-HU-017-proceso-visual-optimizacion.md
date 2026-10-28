@@ -4,21 +4,22 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Approved** |
-| SPEC | [SPEC-HU-017-proceso-visual-optimizacion.md](SPEC-HU-017-proceso-visual-optimizacion.md), Reviewed |
-| Responsable / revisor | Pendientes de asignación formal |
+| Estado | **Verified — local, sin integrar** |
+| SPEC | [SPEC-HU-017-proceso-visual-optimizacion.md](SPEC-HU-017-proceso-visual-optimizacion.md), Verified local |
+| Responsable / revisor | Implementación y verificación local: Codex por encargo del solicitante. Responsable/revisor humano formal pendientes. |
 | Fecha / base | 27/10/2026 / `4bcf54d`, `integration/sprint-01` |
 | Estimación | Propuesta, 1 SP = 6 h; sin asignación ni compromiso de sprint. |
-| Ejecución actual | Primer incremento T01 y núcleo T02 implementados/validados en `feature/HU-017-proceso-visual-optimizacion`, con commits locales. Sin push de HU-017, PR ni merge. |
-| DG-01 | **Closed — B (`visual-v2`)**, elegida expresamente por el solicitante; reglas registradas. Implementación T03 pendiente. |
+| Ejecución actual | T01–T06 implementadas y verificadas en `feature/HU-017-proceso-visual-optimizacion`, con commits y evidencia local. Sin push de HU-017, PR ni merge. |
+| DG-01 | **Closed — B (`visual-v2`)**, elegida expresamente e implementada; V1 conservado. |
+| Evidencia final | [Matriz de CA, suites, recursos y capturas T03–T06](../evidence/sprint-02/HU-017/t03-t06-visualizacion-y-cierre-local.md). |
 
 ## 1. Objetivo y disponibilidad del ID
 
 Convertir la SPEC en trabajo trazable para un único flujo visual A–E, con
 preparación real, telemetría acotada y resultado del backend. SPEC Reviewed y
-PLAN Approved por autorización documental del solicitante; revisión cruzada
-real pendiente. El avance local T01/T02 se acredita por incremento; no se declara
-HU-017 implementada por completo ni verificada.
+PLAN Approved por autorización documental del solicitante. T01–T06 se completaron
+y verificaron localmente; la revisión cruzada humana y la integración siguen
+pendientes. El cierre técnico no modifica Notion ni acredita CI remoto/staging.
 
 TA-021 se define como «Comparación/orquestación de FF/BF/WF sobre la misma
 instancia, sin selección del ganador». HU-017 consume visualmente sus resultados
@@ -122,9 +123,10 @@ HU-015 mediante entrada técnica de pruebas fuera de la navegación principal,
 con sus contratos autenticados y regresiones existentes. En ese primer incremento
 T02–T05 quedaron pendientes; no se declaró CA-03/06/08/26 ni cierre de HU-017.
 
-**Avance local:** primer incremento implementado en `1eeff98`; revisión y cierre
-formal de T01 pendientes. [Evidencia y límites del incremento](../evidence/sprint-02/HU-017/t01-flujo-unificado.md).
-Las máscaras reales y los hechos de preparación/orientaciones siguen en T02–T04.
+**Avance local:** primer incremento implementado en `1eeff98`;
+[evidencia histórica y límites](../evidence/sprint-02/HU-017/t01-flujo-unificado.md).
+T01 completada junto con T03–T05 en `3574609`: máscaras reales y preparación
+integradas, verificadas en la evidencia final del 28/10.
 
 ### T02 — Preparar máscaras base y preservar búsqueda lazy
 
@@ -184,8 +186,9 @@ de los ocho casos representativos de TA-021 para FF/BF/WF, además de sus suites
 **Avance local T02:** núcleo implementado en `1291d65`; 2270 pruebas backend y
 34 E2E correctos, con medición de memoria y 24/24 resultados de referencia
 FF/BF/WF iguales. [Evidencia T02 y límites](../evidence/sprint-02/HU-017/t02-bases-y-rotaciones-lazy.md).
-La fidelidad interna está probada; descriptores públicos/UI autoritativa y cierre
-completo de CA-11/26 requieren T03/T04/T06. Revisión y cierre formal pendientes.
+La fidelidad interna quedó probada en ese incremento. Descriptores públicos,
+UI autoritativa y comprobaciones CA-11/26 completados por T03/T04/T06; evidencia
+final del 28/10. La revisión cruzada humana no se atribuye a las pruebas locales.
 
 ### DG-01 — Seleccionar estrategia de streaming visual
 
@@ -193,7 +196,8 @@ completo de CA-11/26 requieren T03/T04/T06. Revisión y cierre formal pendientes
 expresamente «Vamos por B», después de comparar las alternativas. La decisión,
 compatibilidad, negociación, límites, entrega/recuperación y validación previstas
 quedan registradas en [DECISION-HU-017-DG-01](DECISION-HU-017-DG-01-streaming-visual.md).
-La puerta previa a T03 queda cumplida; este registro no acredita implementación V2.
+La puerta previa a T03 quedó cumplida antes de desarrollar. La implementación
+posterior se acredita por `1ec14f7`, `3574609` y sus pruebas, no por la elección B.
 
 **Alternativa A, no elegida:** extensión compatible del stream actual.
 
@@ -259,6 +263,10 @@ los 26 CA de la SPEC y el total estimado permanecen intactos.
 **Salida:** decisión A/B documentada, contrato limitado revisable y pruebas de
 compatibilidad de la alternativa elegida; V1 sigue soportado.
 
+**Completada localmente:** contrato/máscaras en `1ec14f7`, recuperación y diagnóstico
+en `3574609`; pruebas de negociación, permisos, bytes, retención, presupuesto visual,
+relojes y consumidor lento. V1 conserva sus contratos. Véase evidencia final.
+
 ### T04 — Implementar visualización del proceso
 
 - Panel operativo con etapa, pieza/unidad, máscara, ángulo, fuente y progreso.
@@ -278,6 +286,11 @@ compatibilidad de la alternativa elegida; V1 sigue soportado.
 
 **Salida:** componentes responsivos con tests de loading/error/obsolescencia.
 
+**Completada localmente en `3574609`:** panel, inspección de máscara backend por
+ventana, muestras identificadas, pausa/ocultar locales, abortos y errores visuales
+separados. Componentes y E2E verifican foco/teclado, movimiento reducido y anchos
+360/768/1440; capturas en la evidencia final.
+
 ### T05 — Integrar resultado final
 
 - Alimentar 2D/3D/raster desde placements canónicos y máscaras de la misma corrida.
@@ -289,6 +302,11 @@ compatibilidad de la alternativa elegida; V1 sigue soportado.
 - UI neutral FF/BF/WF; no activar métodos que backend/persistencia no soportan.
 
 **Salida:** continuidad visual a resultado y confirmación separada existente.
+
+**Completada localmente en `3574609`:** resultado canónico GET, faltantes/motivos,
+método/configuración efectivos, 2D/3D/raster de la corrida y confirmación actual.
+Recuperación por ID y máscara ganadora a 90° sin un nuevo POST. Se mantiene HTTP FF;
+integrar persistencia BF/WF no forma parte de esta historia.
 
 ### T06 — Pruebas y evidencia
 
@@ -306,9 +324,12 @@ Reutilizar `backend/tests/unit/optimization/`, `tests/optimization/`,
 HU-015/Optimization/visualización y `frontend/tests/e2e/s1-optimization-ui.spec.js`.
 No afirmar que esos tests ya prueban la barrera o los nuevos eventos.
 
-La evidencia futura irá en `docs/evidence/sprint-02/HU-017/`. Registrar base,
-configuración/versión de perfil, comandos reales, métricas, stock antes/después
-y limitaciones. No ejecutar suites ni crear capturas en esta entrega documental.
+**Completada localmente:** pruebas en `da40a11`, medición en `f13d4c7` y
+evidencia final en `docs/evidence/sprint-02/HU-017/`: 2312 backend; ampliación API
+visual 12/12; 161 unitarias frontend, 506 componentes y 38 E2E; lint/build correctos.
+Pruebas temporales autorizadas expresamente para HU-017; no se usó Supabase/staging.
+La evidencia distingue memoria Python, bytes contabilizados y tiempos locales;
+no afirma FPS/CPU de render aislados ni SLO de producción.
 
 ## 5. Resolución: decisión previa a T02
 
@@ -383,26 +404,26 @@ ni la selección de un método ganador; esta última queda fuera de ambos alcanc
 | Confundir conservador con exacto | Mensaje de aproximación y GAP vectorial separado; no nuevas garantías sin validar. |
 | Duplicación/conflicto de trabajo | Acordar TA-016/018/019/021/037 y delimitar preparación, telemetría e integración multimétodo. |
 
-## 9. Definition of Done futura
+## 9. Definition of Done y cierre técnico local
 
 - [ ] SPEC y PLAN revisados; responsables, dependencias y contrato visual acordados.
 - [x] DG-01 cerrada y registrada antes de implementar T03: B elegida expresamente.
-- [ ] Los 26 CA cuentan con implementación y pruebas propias trazables.
-- [ ] Bases previas y trabajo lazy medidos; resolución única configurada validada.
-- [ ] Máscara visual backend verificable y throttling/agrupamiento probados.
-- [ ] FF/WF sin regresiones; UI lista para métodos realmente integrados.
-- [ ] V1 y HU-015 compatibles; no consumo hasta confirmación explícita.
-- [ ] Pruebas unitarias/componentes/integración/E2E y rendimiento aplicables correctas.
-- [ ] Evidencia reproducible, diff de alcance y revisión de accesibilidad disponibles.
-- [ ] Decisión del GAP vectorial registrada sin atribuir garantías inexistentes.
+- [x] Los 26 CA cuentan con implementación y pruebas propias trazables, conservando la condición multimétodo de CA-17.
+- [x] Bases previas y trabajo lazy medidos; resolución única configurada validada.
+- [x] Máscara visual backend verificable y throttling/agrupamiento probados.
+- [x] FF/WF sin regresiones; UI lista para métodos realmente integrados.
+- [x] V1 y HU-015 compatibles; no consumo hasta confirmación explícita.
+- [x] Pruebas unitarias/componentes/integración/E2E y rendimiento aplicables correctas.
+- [x] Evidencia reproducible, diff de alcance y revisión local de accesibilidad disponibles.
+- [x] Decisión del GAP vectorial registrada sin atribuir garantías inexistentes.
 
-La ejecución local cubre el primer incremento T01 y el núcleo T02; su evidencia
-se registra por incremento sin atribuir cumplimiento a las tareas restantes. La
-aprobación documental inicial no acreditaba DG-01: su cierre posterior se basa
-en la elección expresa de B y su registro. No acredita implementación V2 ni
-cierre completo de HU-017. La revisión cruzada de implementación sigue
-pendiente. Las correcciones HU-016 publicadas por instrucción independiente no
-forman parte de esta rama; el cambio de CI permanece en su rama local separada.
+El cierre técnico local cubre T01–T06. El primer punto permanece abierto por la
+asignación formal/revisión cruzada humana pendiente; no se inventa un responsable
+humano ni una aprobación independiente. SPEC/PLAN y DG-01 sí fueron aprobados
+por el solicitante. Las pruebas no sustituyen esa revisión ni la integración.
+No se cambió el backlog remoto, publicó HU-017, abrió PR o hizo merge. Las
+correcciones HU-016 publicadas por instrucción independiente y el cambio local
+de CI no forman parte de esta rama.
 
 ## Historial de estado
 
@@ -415,3 +436,4 @@ forman parte de esta rama; el cambio de CI permanece en su rama local separada.
 | 27/10/2026 | Approved | Inicio local autorizado de T01 desde `4bcf54d`, con commits y validación por incremento. DG-01 abierta; sin alterar estimación ni declarar cierre global. |
 | 27/10/2026 | Approved | Núcleo T02 implementado/validado en `1291d65`; DG-01 sigue abierta antes de T03. Sin cierre global, publicación ni cambios en los 26 CA o la estimación. |
 | 27/10/2026 | Approved | Solicitante elige B («Vamos por B»); DG-01 Closed con perfil visual-v2 optativo y reglas documentadas. T03 habilitada, aún no implementada; sin cambio de estimación ni cierre global. |
+| 28/10/2026 UTC | Verified — local | T01–T06 implementadas, pruebas completas y evidencia final/matriz CA; misma estimación 10 SP / 60 h. PostgreSQL temporal por autorización expresa. Cierre técnico local, sin publicación ni revisión humana atribuida. |

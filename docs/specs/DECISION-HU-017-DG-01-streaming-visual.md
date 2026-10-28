@@ -7,8 +7,9 @@
 | Decisión del solicitante | «Vamos por B», después de explicar A/B y recomendar el perfil visual separado. |
 | Responsable de la elección | Solicitante; elección expresa de B. |
 | Concreción técnica | Codex, a partir de la SPEC/PLAN y auditoría de los consumidores actuales. |
-| Revisión | La elección de alternativa está confirmada por el solicitante; revisión cruzada de implementación y pruebas de T03 pendientes. |
-| Alcance | Decisión de arquitectura y reglas de T03; no acredita código V2, mediciones nuevas ni cierre de HU-017. |
+| Revisión | Alternativa confirmada por el solicitante; implementación y pruebas locales completadas el 28/10. Revisión cruzada humana pendiente. |
+| Alcance | Decisión de arquitectura y reglas de T03. La implementación posterior se acredita en la evidencia final, sin atribuirla a la elección de B. |
+| Evidencia posterior | [T03–T06: verificación local, recursos y límites](../evidence/sprint-02/HU-017/t03-t06-visualizacion-y-cierre-local.md). |
 
 Referencias: [SPEC HU-017](SPEC-HU-017-proceso-visual-optimizacion.md),
 [PLAN HU-017](PLAN-HU-017-proceso-visual-optimizacion.md) y
@@ -134,7 +135,9 @@ Retención inicial en el proceso único actual:
   real, sin copiar matrices. Es un presupuesto visual, no un nuevo límite de stock.
 - Se reservan recursos antes de aceptar una corrida visual, liberando la reserva
   si la aceptación falla. Los contextos activos no se desalojan para otra corrida.
-- Al terminar el worker, retención máxima de 300 s. Un contexto terminado puede
+- Al terminar el worker, disponibilidad consultable máxima de 300 s. La limpieza
+  es perezosa al reservar/consultar; en reposo no hay temporizador de borrado y
+  la memoria sigue acotada a dos contextos. Un contexto terminado puede
   desalojarse antes para admitir otro: disponibilidad temporal explícita, sin
   prometer un mínimo de cinco minutos ni persistencia entre reinicios.
 - La proyección de máscaras no conserva todos los intentos; los descriptores se
@@ -174,6 +177,7 @@ inicia otro POST automáticamente ni se añade cancelación distribuida/replay.
    la pantalla y sus estados; T05 conserva resultado/confirmación; T06 completa
    cobertura transversal. No se atribuye implementación a esta decisión.
 
-DG-01 queda cerrada por la elección expresa de B y el registro de estas reglas.
-Se habilita el inicio de T03; la SPEC conserva sus 26 CA, estado Reviewed y el
-PLAN Approved. No se ejecutan suites funcionales por este cambio documental.
+DG-01 quedó cerrada antes de T03 por la elección expresa de B y estas reglas.
+La implementación posterior `1ec14f7`/`3574609` y su verificación se registran
+en la evidencia final del 28/10. SPEC/PLAN quedan Verified local, sin cambiar
+los 26 CA, publicar HU-017 ni atribuir revisión cruzada humana.
