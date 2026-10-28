@@ -6,7 +6,7 @@
 |---|---|
 | ID | TA-037 |
 | SPEC | [SPEC-TA-037-control-carga-optimizador.md](SPEC-TA-037-control-carga-optimizador.md) (v1.3, saneamiento T03) |
-| Estado | **Implemented** (T01 a T04) |
+| Estado | **Verified** (T01 a T04 y saneamiento de T03) |
 | Responsable | Fabricio Aguilar |
 | Fecha | 26/10/2026 |
 | Base original T02 | `integration/sprint-01` en `4b82af7` (después del PR #65) |
@@ -18,7 +18,7 @@
 |---|---:|---|---|---|
 | T01 — Definir presupuesto y contrato de errores | 0,5 | HU-015; coordinación con TA-021 | Lunes 26/10, 12:00 | **Hecha.** v1.0 (PR #62), v1.1 a 5° (PR #65), valores aprobados; SPEC en `Reviewed` (v1.2) |
 | T02 — Implementar guardrails previos a la expansión | 1,5 | T01 | Martes 27/10 | **Implementada** en `enabler/TA-037-guardrails` (§3); 55 pruebas nuevas; suite completa en verde |
-| T03 — Limitar concurrencia y controlar ejecución | 1 | T01, T02 | Martes 27/10 | **Implementada** en `enabler/TA-037-concurrencia` (§4); 20 pruebas nuevas; suites backend, frontend y E2E en verde |
+| T03 — Limitar concurrencia y controlar ejecución | 1 | T01, T02 | Martes 27/10 | **Cerrada.** Implementada en PR #67; saneamiento del ciclo de vida de plazas en PR #74; regresión reproducible verificada el 28/10 (6 fallan con la admisión anterior, 39 PASS con la actual) |
 | T04 — Probar límites y feedback | 1 | T02, T03 | Martes 27/10 | **Implementada** en `enabler/TA-037-feedback`; avisos de frontend, pruebas de peor caso y E2E real (§4) |
 
 T01 quedó cerrada al aprobarse los valores de la v1.1. La SPEC pasa a `Reviewed` en la
@@ -244,3 +244,4 @@ los criterios propios de TA-037 si quedan explícitamente documentados.
 | 26/10/2026 | Draft | T03 implementada (admisión, liberación de plazas y L-12); T04 pendiente. |
 | 26/10/2026 | Implemented | T04 implementada; CA-01 a CA-12 en PASS. Pendiente: CI y revisión para Verified. |
 | 27/10/2026 | Implemented | Saneamiento implementado: 39 pruebas focalizadas y 717 regresiones de optimización aprobadas con PostgreSQL obligatorio. Se conservan T01/T02/T04 y contratos; CI y revisión del PR pendientes para cierre formal. |
+| 28/10/2026 | Verified | Saneamiento de T03 integrado (PR #74) y verificado de forma independiente; CI de integración en verde. TA-037 lista para Closed. |
