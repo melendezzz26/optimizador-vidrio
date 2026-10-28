@@ -4,19 +4,22 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Approved** |
-| SPEC | [SPEC-HU-017-proceso-visual-optimizacion.md](SPEC-HU-017-proceso-visual-optimizacion.md), Reviewed |
-| Responsable / revisor | Pendientes de asignación formal |
-| Fecha / base | 25/10/2026 / `783aac8`, `integration/sprint-01` |
+| Estado | **Approved — T01–T06 implementadas; revisión cruzada, CI verde y merge pendientes** |
+| SPEC | [SPEC-HU-017-proceso-visual-optimizacion.md](SPEC-HU-017-proceso-visual-optimizacion.md), Implemented con evidencia local; sin Verified formal |
+| Responsable / revisor | Implementación y verificación local: Codex por encargo del solicitante. Responsable/revisor humano formal pendientes. |
+| Fecha / base | 27/10/2026 / `4bcf54d`, `integration/sprint-01` |
 | Estimación | Propuesta, 1 SP = 6 h; sin asignación ni compromiso de sprint. |
-| Alcance de esta entrega | Dos documentos. Sin cambios de código/pruebas, suites, migraciones, commit, push o PR. |
+| Ejecución actual | T01–T06 implementadas y probadas localmente; rama publicada y PR #81 abierto hacia `integration/sprint-01`. Ajuste E2E en revisión local, sin commit/push de este ajuste ni merge. |
+| DG-01 | **Closed — B (`visual-v2`)**, elegida expresamente e implementada; V1 conservado. |
+| Evidencia final | [Matriz de CA, suites, recursos y capturas T03–T06](../evidence/sprint-02/HU-017/t03-t06-visualizacion-y-cierre-local.md). |
 
 ## 1. Objetivo y disponibilidad del ID
 
 Convertir la SPEC en trabajo trazable para un único flujo visual A–E, con
 preparación real, telemetría acotada y resultado del backend. SPEC Reviewed y
-PLAN Approved por autorización documental del solicitante; revisión cruzada
-real pendiente. No se declaran implementadas ni verificadas estas capacidades.
+PLAN Approved por autorización documental del solicitante. T01–T06 se completaron
+y verificaron localmente; la revisión cruzada humana y la integración siguen
+pendientes. El cierre técnico no modifica Notion ni acredita CI remoto/staging.
 
 TA-021 se define como «Comparación/orquestación de FF/BF/WF sobre la misma
 instancia, sin selección del ganador». HU-017 consume visualmente sus resultados
@@ -29,13 +32,17 @@ no otra historia. Confirmar registro externo sin inventar otro identificador.
 
 ## 2. Arquitectura antes/después
 
+La base se actualiza a `4bcf54d`: BF y el comparador TA-021 ya están integrados
+internamente, TA-037 dispone de SPEC y guardrails. El ciclo HTTP sigue siendo FF;
+la implementación visual no habilitará métodos que ese contrato no entregue.
+
 | Área | Antes, base auditada | Después propuesto por SPEC |
 |---|---|---|
 | Entrada | Sidebar Optimización y dos modos internos de `OptimizationPage`. | Mismo Sidebar, un flujo A–E; inspección raster integrada. |
 | Preparación UI | `runApi.prepare`: pedidos/grupos, `rasters: {}`. HU-015 calcula preview por separado. | Descriptor de preparación real ligado a corrida, no a otra lectura mutable de Orders. |
 | Preparación backend | `AcceptRun` valida metadatos; `pack` prepara por pieza/material y el contrato de orientaciones entrega una tupla por pieza. | Antes de FF/BF/WF: resolución única, geometrías válidas, bases necesarias listas y configuración geométrica congelada. Orientaciones/posiciones pueden generarse/cachearse bajo demanda; no se precalculan todos los candidatos/layouts. |
 | Búsqueda | FF `next()`, WF selector sobre candidatos canónicos; geometría compartida. | Misma política/orden/resultado y observación neutral. FF conserva lazy evaluation y salida temprana; preparar bases no es explorar fuentes/rotaciones/posiciones. |
-| Streaming | Ocho eventos V1, método FF, cola de uno con ack. | Contrato visual compatible y acotado; comparar extensión actual y perfil visual-v2. Alternativa mínima segura pendiente de selección. |
+| Streaming | Ocho eventos V1, método FF, cola de uno con ack. | B seleccionada: perfil `visual-v2` optativo, V1 predeterminado; contrato acotado según DG-01. |
 | Máscaras UI | Preview HU-015 y rasters de fixtures; resultado real puede no traerlos. | Recuperación autoritativa por referencia de corrida/resolución/ángulo y presupuesto visual. |
 | Resultado | GET/patrón, métricas, 2D/3D/raster y confirmación transaccional FF. | Reutilizados; UI neutral respecto del método entregado. Integrar métodos a persistencia pertenece a sus tareas. |
 
@@ -107,6 +114,20 @@ el total ni contabilizar dos veces trabajo ajeno.
 
 **Salida:** diseño/componentes del flujo A–E y pruebas de navegación/compatibilidad.
 
+**Primer incremento autorizado (27/10):** retirar el selector de dos flujos de
+la pantalla principal, integrar la inspección en la selección multipedido y
+mostrar solo estados respaldados por el contrato actual. Si faltan máscaras o
+telemetría de preparación/orientaciones, informar su ausencia; no fabricarlas ni
+llamar `/start` o `/rasterize` para habilitar `/runs`. Conservar el componente
+HU-015 mediante entrada técnica de pruebas fuera de la navegación principal,
+con sus contratos autenticados y regresiones existentes. En ese primer incremento
+T02–T05 quedaron pendientes; no se declaró CA-03/06/08/26 ni cierre de HU-017.
+
+**Avance local:** primer incremento implementado en `1eeff98`;
+[evidencia histórica y límites](../evidence/sprint-02/HU-017/t01-flujo-unificado.md).
+T01 completada junto con T03–T05 en `3574609`: máscaras reales y preparación
+integradas, verificadas en la evidencia final del 28/10.
+
 ### T02 — Preparar máscaras base y preservar búsqueda lazy
 
 - Formalizar `PreparedRunGeometry` o equivalente: handle acotado de geometrías
@@ -145,45 +166,73 @@ HU-017. La invariancia previa no exige todos los candidatos ni todos los layouts
 con fidelidad visual comprobable. Fuera de transacciones DB largas y con
 checkpoints de desconexión.
 
+**Diseño del incremento T02 (27/10, local):** `PreparedRunGeometry` vinculará
+el problema inmutable, su configuración y máscaras base compartidas. La barrera
+de preparación se completará antes del primer layout/búsqueda; preparar una
+fuente no significa evaluarla como candidato. `RasterCache.iter_orientations`
+será reiterable y lazy, reutilizando exactamente la rotación/deduplicación de
+TA-016. Se conserva `orientations()` como adaptador a tupla para consumidores
+actuales (métricas, confirmación y pruebas del contrato histórico). Cada fuente
+recorre desde el primer ángulo: no reutilizar un generador ya agotado.
+
+Los checkpoints internos cubrirán preparación y trabajo bajo demanda, sin
+añadir eventos V1 ni esperar animaciones. El cache conservará el límite de
+64 MiB y los layouts usados el de 128 MiB. La admisión TA-037 y su estimador
+angular previo se conservan como política existente; no se amplía la aceptación
+de cargas por introducir laziness. Referencias HTTP/máscaras y retención siguen
+en T03, tras DG-01. La comparación de regresión usa una captura funcional previa
+de los ocho casos representativos de TA-021 para FF/BF/WF, además de sus suites.
+
+**Avance local T02:** núcleo implementado en `1291d65`; 2270 pruebas backend y
+34 E2E correctos, con medición de memoria y 24/24 resultados de referencia
+FF/BF/WF iguales. [Evidencia T02 y límites](../evidence/sprint-02/HU-017/t02-bases-y-rotaciones-lazy.md).
+La fidelidad interna quedó probada en ese incremento. Descriptores públicos,
+UI autoritativa y comprobaciones CA-11/26 completados por T03/T04/T06; evidencia
+final del 28/10. La revisión cruzada humana no se atribuye a las pruebas locales.
+
 ### DG-01 — Seleccionar estrategia de streaming visual
 
-**Estado:** abierta, pendiente de decisión. **Puerta obligatoria previa a T03:**
-la implementación de T03 no inicia hasta cerrar DG-01.
+**Estado: Closed — alternativa B.** El 27/10/2026 el solicitante eligió
+expresamente «Vamos por B», después de comparar las alternativas. La decisión,
+compatibilidad, negociación, límites, entrega/recuperación y validación previstas
+quedan registradas en [DECISION-HU-017-DG-01](DECISION-HU-017-DG-01-streaming-visual.md).
+La puerta previa a T03 quedó cumplida antes de desarrollar. La implementación
+posterior se acredita por `1ec14f7`, `3574609` y sus pruebas, no por la elección B.
 
-**Alternativa A:** extensión compatible del stream actual.
+**Alternativa A, no elegida:** extensión compatible del stream actual.
 
-**Alternativa B:** perfil/versionado `visual-v2`.
+**Alternativa B, elegida:** perfil/versionado `visual-v2`, V1 predeterminado.
 
-Para cerrar DG-01 se debe registrar la alternativa elegida, su justificación
-como opción mínima segura, el análisis de compatibilidad con clientes/parsers
-actuales y las reglas de negociación, payloads acotados, entrega/recuperación y
-validación previstas. El responsable de la decisión y su revisión quedan
-pendientes de asignación; no se presume el cierre por aprobar este PLAN.
+La elección corresponde al solicitante; Codex concreta el contrato a partir de
+la SPEC/PLAN y los consumidores auditados. Se registra la aprobación de B, sin
+atribuir revisión humana de una implementación aún inexistente. Los parámetros
+técnicos iniciales deberán comprobarse en T03; no se presentan como benchmarks
+ni como valores revisados individualmente por el solicitante.
 
-La comparación siguiente alimenta DG-01. No se añaden SP: su resolución forma
+La comparación siguiente sustenta DG-01. No se añaden SP: su resolución forma
 parte de la planificación ya estimada de T03; el total permanece 10 SP / 60 h.
 
 ### T03 — Exponer eventos visuales del optimizador
 
-**Precondición de implementación:** DG-01 cerrada y decisión registrada.
+**Precondición de implementación cumplida:** DG-01 cerrada y decisión B registrada.
 
-**Comparación pendiente antes de implementar:**
+**Comparación registrada antes de implementar:**
 
 | Alternativa | Alcance y reutilización | Riesgo / condición de seguridad |
 |---|---|---|
 | A — Extensión compatible del contrato actual | Conservar transporte y envolvente actuales; reutilizar hitos y ampliar capacidades visuales solo donde sean negociables/compatibles. Menos ramificación si los clientes y schemas permiten la evolución. | Los parsers actuales enumeran eventos y los schemas son estrictos: añadir tipos/campos sin más no es compatible. Auditar clientes, negociar capacidades cuando haga falta y mantener intacta la respuesta para consumidores existentes. No inventar progreso a partir de hitos que no lo acreditan. |
-| B — Perfil/versionado `visual-v2` | Propuesta: `stream_profile=visual-v2`, eventos `schema_version: 2`, V1 por defecto. Reutilizar NDJSON/ack/GET con schemas/parsers explícitos para el perfil visual. | Aísla semántica nueva, pero añade negociación, mantenimiento y pruebas de dos contratos. Evitar duplicar motor o estado de corrida; comprobar clientes antiguos y recuperación. |
+| B — Perfil/versionado `visual-v2` | **Elegida:** `stream_profile=visual-v2`, eventos `schema_version: 2`, V1 por defecto. Reutilizar NDJSON/ack/GET con schemas/parsers explícitos para el perfil visual. | Aísla semántica nueva, pero añade negociación, mantenimiento y pruebas de dos contratos. Evitar duplicar motor o estado de corrida; comprobar clientes antiguos y recuperación. |
 
-**Decisión:** no seleccionada. Elegir posteriormente la alternativa mínima segura
-que cubra los hechos visuales, proteja a consumidores existentes y requiera menos
-cambios/mantenimiento, con pruebas de compatibilidad. Preferir A solo si su
-compatibilidad está demostrada; si no puede garantizarse, evaluar B. `visual-v2`
-no es requisito definitivo de la SPEC ni una alternativa elegida por aprobar
-este PLAN. DG-01 permanece abierta hasta registrar su cierre explícito.
+**Decisión:** B, autorizada expresamente. La auditoría de lectores V1 muestra
+versiones/nombres de evento restringidos y schemas que prohíben campos extra;
+no se demostró una ampliación directa compatible. V2 optativo conserva V1 y
+permite probar ambos contratos. El mantenimiento adicional se acepta como coste
+de la alternativa elegida. T03 implementará las reglas del documento DG-01;
+los 26 CA de la SPEC y el total estimado permanecen intactos.
 
 - Conservar los ocho hitos V1. Los siete hechos visuales propuestos en SPEC §9
   deben tener secuencias, unidades y correlación inequívocas; su representación
-  concreta se fijará al resolver A/B, sin enviar tipos desconocidos a clientes antiguos.
+  concreta seguirá DG-01/B, sin enviar tipos desconocidos a clientes antiguos.
 - Emitir `preparation_completed` cuando las máscaras base estén listas, antes de
   evaluar colocaciones; no afirmar que se generaron todas las rotaciones.
   `piece_started` mantiene significado de pieza en búsqueda. Distinguir una
@@ -193,12 +242,14 @@ este PLAN. DG-01 permanece abierta hasta registrar su cierre explícito.
 - Emitir `piece_unplaced` por unidad NO_FIT. Actualizar contadores procesados sin
   reinterpretar el porcentaje V1 de colocadas. No emitir NO_FIT por timeout/error.
 - Descriptor `mask_ref` y recuperación autenticada por corrida/resolución/ángulo;
-  rangos/ventanas acotados. Definir URI, retención y límites con TA-037. Un preview
+  rangos/ventanas acotados. URI, retención y límites iniciales según DG-01,
+  conservando guardrails TA-037. Un preview
   histórico a 5 mm no reemplaza una máscara de corrida a otra resolución.
 - No repetir máscaras completas por evento. Deduplicar referencias/recuperación
   por contexto de máscara y reutilizar la representación backend obtenida.
 - Throttling, batching/agrupamiento o eventos significativos de orientación con
-  límites de frecuencia, número y bytes por acordar con TA-037.
+  límites iniciales de frecuencia, número y bytes registrados en DG-01,
+  a validar durante T03 y sin ampliar límites del motor TA-037.
   No detener el motor para animar. Mantener orden/correlación y conservar todos
   los hechos críticos, aunque se agrupen para entrega/renderizado.
 - No emitir registros de celdas ni posiciones candidatas individuales. Solo
@@ -211,6 +262,10 @@ este PLAN. DG-01 permanece abierta hasta registrar su cierre explícito.
 
 **Salida:** decisión A/B documentada, contrato limitado revisable y pruebas de
 compatibilidad de la alternativa elegida; V1 sigue soportado.
+
+**Completada localmente:** contrato/máscaras en `1ec14f7`, recuperación y diagnóstico
+en `3574609`; pruebas de negociación, permisos, bytes, retención, presupuesto visual,
+relojes y consumidor lento. V1 conserva sus contratos. Véase evidencia final.
 
 ### T04 — Implementar visualización del proceso
 
@@ -231,6 +286,11 @@ compatibilidad de la alternativa elegida; V1 sigue soportado.
 
 **Salida:** componentes responsivos con tests de loading/error/obsolescencia.
 
+**Completada localmente en `3574609`:** panel, inspección de máscara backend por
+ventana, muestras identificadas, pausa/ocultar locales, abortos y errores visuales
+separados. Componentes y E2E verifican foco/teclado, movimiento reducido y anchos
+360/768/1440; capturas en la evidencia final.
+
 ### T05 — Integrar resultado final
 
 - Alimentar 2D/3D/raster desde placements canónicos y máscaras de la misma corrida.
@@ -242,6 +302,11 @@ compatibilidad de la alternativa elegida; V1 sigue soportado.
 - UI neutral FF/BF/WF; no activar métodos que backend/persistencia no soportan.
 
 **Salida:** continuidad visual a resultado y confirmación separada existente.
+
+**Completada localmente en `3574609`:** resultado canónico GET, faltantes/motivos,
+método/configuración efectivos, 2D/3D/raster de la corrida y confirmación actual.
+Recuperación por ID y máscara ganadora a 90° sin un nuevo POST. Se mantiene HTTP FF;
+integrar persistencia BF/WF no forma parte de esta historia.
 
 ### T06 — Pruebas y evidencia
 
@@ -259,9 +324,12 @@ Reutilizar `backend/tests/unit/optimization/`, `tests/optimization/`,
 HU-015/Optimization/visualización y `frontend/tests/e2e/s1-optimization-ui.spec.js`.
 No afirmar que esos tests ya prueban la barrera o los nuevos eventos.
 
-La evidencia futura irá en `docs/evidence/sprint-02/HU-017/`. Registrar base,
-configuración/versión de perfil, comandos reales, métricas, stock antes/después
-y limitaciones. No ejecutar suites ni crear capturas en esta entrega documental.
+**Completada localmente:** pruebas en `da40a11`, medición en `f13d4c7` y
+evidencia final en `docs/evidence/sprint-02/HU-017/`: 2312 backend; ampliación API
+visual 12/12; 161 unitarias frontend, 506 componentes y 38 E2E; lint/build correctos.
+Pruebas temporales autorizadas expresamente para HU-017; no se usó Supabase/staging.
+La evidencia distingue memoria Python, bytes contabilizados y tiempos locales;
+no afirma FPS/CPU de render aislados ni SLO de producción.
 
 ## 5. Resolución: decisión previa a T02
 
@@ -308,10 +376,10 @@ transacción actual como efecto lateral de HU-017.
 | Dependencia | Coordinación requerida |
 |---|---|
 | TA-016 | Generación incremental compartida de orientaciones, orden/deduplicación, máscaras coherentes y puntos observables, sin rotación propia de HU-017/frontend. |
-| TA-018 | BF está en desarrollo según contexto; acordar instrumentación neutral. Sus reglas e integración no se implementan aquí. |
+| TA-018 | BF integrado en dominio; acordar instrumentación neutral. Sus reglas e integración HTTP no se implementan aquí. |
 | TA-019 | Conservar WF de dominio y retención acotada; no enviar sus resultados a adaptadores FF actuales sin integración posterior propia. |
 | TA-021 | Comparación/orquestación de FF/BF/WF sobre la misma instancia, sin selección del ganador. Coordinar contrato e identidad de instancia/método en resultados/eventos; HU-017 es consumidor visual y no decide el método ganador. |
-| TA-037 | Límites de resolución/recursos, bases y generación bajo demanda, throttling/agrupamiento, máscaras acotadas y checkpoints. Sin selección automática de resolución en HU-017. Su SPEC propia no está disponible localmente. |
+| TA-037 | SPEC y guardrails integrados: conservar sus límites de admisión y coordinar bases/generación bajo demanda, throttling/agrupamiento, máscaras acotadas y checkpoints. Sin selección automática de resolución en HU-017. |
 | HU-015/S1-01 | Compatibilidad y reutilización de UI/preview; preservar rutas y evidencia histórica. |
 
 Secuencia propuesta: decisiones de recursos y diseño → T01/T02 con TA-016/TA-037
@@ -336,22 +404,29 @@ ni la selección de un método ganador; esta última queda fuera de ambos alcanc
 | Confundir conservador con exacto | Mensaje de aproximación y GAP vectorial separado; no nuevas garantías sin validar. |
 | Duplicación/conflicto de trabajo | Acordar TA-016/018/019/021/037 y delimitar preparación, telemetría e integración multimétodo. |
 
-## 9. Definition of Done futura
+## 9. Definition of Done y cierre técnico local
 
 - [ ] SPEC y PLAN revisados; responsables, dependencias y contrato visual acordados.
-- [ ] DG-01 cerrada y registrada antes de implementar T03.
-- [ ] Los 26 CA cuentan con implementación y pruebas propias trazables.
-- [ ] Bases previas y trabajo lazy medidos; resolución única configurada validada.
-- [ ] Máscara visual backend verificable y throttling/agrupamiento probados.
-- [ ] FF/WF sin regresiones; UI lista para métodos realmente integrados.
-- [ ] V1 y HU-015 compatibles; no consumo hasta confirmación explícita.
-- [ ] Pruebas unitarias/componentes/integración/E2E y rendimiento aplicables correctas.
-- [ ] Evidencia reproducible, diff de alcance y revisión de accesibilidad disponibles.
-- [ ] Decisión del GAP vectorial registrada sin atribuir garantías inexistentes.
+- [x] DG-01 cerrada y registrada antes de implementar T03: B elegida expresamente.
+- [x] Los 26 CA cuentan con implementación y pruebas propias trazables, conservando la condición multimétodo de CA-17.
+- [x] Bases previas y trabajo lazy medidos; resolución única configurada validada.
+- [x] Máscara visual backend verificable y throttling/agrupamiento probados.
+- [x] FF/WF sin regresiones; UI lista para métodos realmente integrados.
+- [x] V1 y HU-015 compatibles; no consumo hasta confirmación explícita.
+- [x] Pruebas unitarias/componentes/integración/E2E y rendimiento aplicables correctas.
+- [x] Evidencia reproducible, diff de alcance y revisión local de accesibilidad disponibles.
+- [x] Decisión del GAP vectorial registrada sin atribuir garantías inexistentes.
 
-Las tareas están planificadas, no ejecutadas. La aprobación documental fue
-autorizada expresamente; no acredita implementación, ejecución de suites,
-evidencia funcional nueva ni cierre de DG-01. La revisión cruzada sigue pendiente.
+El cierre técnico local cubre T01–T06. El primer punto permanece abierto por la
+asignación formal/revisión cruzada humana pendiente; no se inventa un responsable
+humano ni una aprobación independiente. SPEC/PLAN y DG-01 sí fueron aprobados
+por el solicitante. Las pruebas no sustituyen esa revisión ni la integración.
+El registro histórico de pruebas precedió a la publicación. Actualmente HU-017
+está publicada y propuesta en PR #81; revisión cruzada, CI verde e integración
+siguen pendientes. El ajuste E2E se documenta en
+[la regresión del PR](../evidence/sprint-02/HU-017/pr81-regresion-e2e.md), sin
+desarrollar TA-040 ni cambiar el backlog. Las correcciones HU-016 publicadas por
+instrucción independiente y el cambio local de CI no forman parte de esta rama.
 
 ## Historial de estado
 
@@ -361,3 +436,9 @@ evidencia funcional nueva ni cierre de DG-01. La revisión cruzada sigue pendien
 | 25/10/2026 | Draft | Estimación revisada a aproximadamente 10 SP / 60 h, sujeta al PLAN final; bases previas, orientaciones/posiciones lazy, CA-26 y throttling. Perfil visual-v2 solo como decisión técnica propuesta. |
 | 25/10/2026 | Draft | Precisada congelación previa de configuración y fidelidad de máscara/geometría; alternativas A/B de streaming pendientes. Estimación preliminar T01..T06: 1.5/2/1.5/2/1/2 SP, total 10 SP / 60 h. |
 | 25/10/2026 | Approved | Cierre documental autorizado: DG-01 obligatoria y abierta antes de implementar T03; TA-021 definida, HU-017 consumidor visual sin ganador. Se mantienen 10 SP / 60 h; sin implementación ni revisión cruzada atribuida. |
+| 27/10/2026 | Approved | Inicio local autorizado de T01 desde `4bcf54d`, con commits y validación por incremento. DG-01 abierta; sin alterar estimación ni declarar cierre global. |
+| 27/10/2026 | Approved | Núcleo T02 implementado/validado en `1291d65`; DG-01 sigue abierta antes de T03. Sin cierre global, publicación ni cambios en los 26 CA o la estimación. |
+| 27/10/2026 | Approved | Solicitante elige B («Vamos por B»); DG-01 Closed con perfil visual-v2 optativo y reglas documentadas. T03 habilitada, aún no implementada; sin cambio de estimación ni cierre global. |
+| 28/10/2026 UTC | Verified — local | T01–T06 implementadas, pruebas completas y evidencia final/matriz CA; misma estimación 10 SP / 60 h. PostgreSQL temporal por autorización expresa. Cierre técnico local, sin publicación ni revisión humana atribuida. |
+| 27/10/2026 America/Lima | Approved — PR #81 pendiente | Corrección mínima de sincronización E2E para el perfil aprobado visual-v2; alcance/26 CA/10 SP intactos. No se declara verificación formal: revisión cruzada, CI verde del PR y merge pendientes. |
+| 28/10/2026 America/Lima | Approved — arreglo Dashboard validado localmente | Se adapta únicamente el aislamiento de peticiones por ciclo de `a8c3b38` y sus regresiones. 108/0/6 E2E completos con dos workers, Dashboard/S1/TA-037/HU-017 correctos; calidad local aprobada. TA-040/skips se reportan por separado; 26 CA y 10 SP intactos. Sin merge/rebase/commit/push; revisión cruzada y CI del PR pendientes. |

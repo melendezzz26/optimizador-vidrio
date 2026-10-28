@@ -19,11 +19,11 @@ test('selection previews groups immediately and preparation exposes all masks be
   expect(groups).toHaveTextContent('3 piezas · Pedidos #21 y #22');
   expect(screen.queryByRole('img', { name: /Celdas raster/ })).not.toBeInTheDocument();
   await act(async () => click('Revisar vidrios y piezas'));
-  expect(screen.getByRole('heading', { name: 'Vista previa del corte' })).toBeVisible();
+  expect(screen.getByRole('heading', { name: 'Inspección de piezas' })).toBeVisible();
   expect(screen.getByRole('img', { name: 'Detalle de la pieza #101' })).toBeVisible();
   expect(screen.getByText(/Preparada · resolución: 100 mm por celda/)).toBeVisible();
   expect(screen.queryByRole('group', { name: 'Vista del resultado' })).not.toBeInTheDocument();
-  fireEvent.change(screen.getByLabelText('Vidrio de la vista previa'), { target: { value: '2:5.5' } });
+  fireEvent.change(screen.getByLabelText('Vidrio para inspeccionar'), { target: { value: '2:5.5' } });
   expect(screen.getByLabelText('Pieza para inspeccionar').options).toHaveLength(1);
   expect(screen.getByRole('img', { name: 'Detalle de la pieza #103' })).toBeVisible();
   expect(screen.getByRole('button', { name: 'Calcular distribución', exact: true })).toBeEnabled();
@@ -71,8 +71,8 @@ test('rendering rejects incompatible imported placements and hides result modes 
 test('missing raster is explicit, never fabricated from geometry', () => {
   const snapshot = prepareFixture([21]); snapshot.rasters = {};
   render(<RasterInspection snapshot={snapshot} group={snapshot.groups[0]} />);
-  expect(screen.getByRole('status')).toHaveTextContent('vista previa no disponible');
-  expect(screen.queryByRole('img')).not.toBeInTheDocument();
+  expect(screen.getByRole('status')).toHaveTextContent('Máscara de la ejecución no disponible');
+  expect(screen.queryByRole('img', { name: /Detalle de la pieza/ })).not.toBeInTheDocument();
 });
 
 test('execution waits for complete raster preparation instead of silently running with missing masks', async () => {

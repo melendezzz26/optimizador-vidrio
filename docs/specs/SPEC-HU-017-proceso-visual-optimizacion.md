@@ -5,14 +5,18 @@
 | Campo | Valor |
 |---|---|
 | ID / nombre | HU-017 — Visualizar proceso de optimización |
-| Estado | **Reviewed** |
+| Estado | **Implemented — validación local; revisión cruzada, CI verde del PR y merge pendientes** |
 | Tipo / módulo | Historia de usuario / Optimization |
-| Responsable / revisor | Pendientes de asignación formal |
-| Fecha | 25/10/2026 |
-| Base inspeccionada | `783aac8`, `integration/sprint-01`, árbol inicialmente limpio |
+| Responsable / revisor | Implementación y verificación local: Codex por encargo del solicitante. Responsable/revisor humano formal pendientes. |
+| Fecha | 28/10/2026 UTC |
+| Base inspeccionada | `4bcf54d`, `integration/sprint-01`; antecedente documental `783aac8` |
+| Ejecución | T01–T06 implementadas con evidencia local en `feature/HU-017-proceso-visual-optimizacion`, publicada y propuesta en PR #81 hacia `integration/sprint-01`. Corrección E2E en revisión local, sin commit/push de este ajuste ni merge. |
 | PLAN | [PLAN-HU-017-proceso-visual-optimizacion.md](PLAN-HU-017-proceso-visual-optimizacion.md) |
 | Dependencias | HU-015/S1-01, SP-001, TA-016, TA-018, TA-019, TA-021 y TA-037 según contratos pendientes |
-| Decisión | Cierre documental autorizado: SPEC Reviewed. Revisión cruzada real pendiente; no implica implementación ni verificación. |
+| Decisión | Cierre técnico local autorizado y probado con PostgreSQL temporal para esta HU. Revisión cruzada humana e integración pendientes; sin cambiar backlog remoto. |
+| Streaming / DG-01 | **B implementada; DG-01 Closed.** Perfil visual-v2 optativo, V1 predeterminado; contrato en [DECISION-HU-017-DG-01](DECISION-HU-017-DG-01-streaming-visual.md). |
+| Evidencia de cierre | [T03–T06, matriz de 26 CA, pruebas, recursos y capturas](../evidence/sprint-02/HU-017/t03-t06-visualizacion-y-cierre-local.md). |
+| Seguimiento PR #81 | [Diagnóstico y regresión E2E](../evidence/sprint-02/HU-017/pr81-regresion-e2e.md). No se declara Verified formal sin revisión cruzada, CI verde e integración. |
 
 ## 1. Identificador, historia y propósito
 
@@ -34,12 +38,19 @@ el resultado.
 
 La rasterización es una etapa de Optimización, no un trabajo previo independiente
 que el operario deba ejecutar. La visualización explica hechos reales, sin alterar
-las decisiones de FF/WF ni atribuir funcionalidades todavía inexistentes a BF.
+las decisiones de FF/BF/WF ni atribuir al contrato HTTP métodos aún no integrados.
 HU-017 es consumidor visual de resultados/eventos. La comparación/orquestación
 de FF/BF/WF sobre la misma instancia corresponde a TA-021 y no selecciona un
 método ganador. HU-017 tampoco decide ese ganador.
 
 ## 2. Contexto y auditoría de la base
+
+Revalidación del 27/10 sobre `4bcf54d`: FF/BF/WF comparten `packing.pack` y
+`RasterCache.orientations`; BF ya existe en dominio. TA-021 está Verified/Closed
+y compara los tres métodos internamente, sin ganador. El ciclo HTTP de corridas
+y sus parsers V1 siguen entregando FF. TA-037 tiene SPEC y guardrails integrados;
+la preparación previa de bases y el consumo incremental de orientaciones siguen
+pendientes. Estos cambios de contexto no modifican los 26 CA aprobados.
 
 | Fuente actual | Hallazgo relevante |
 |---|---|
@@ -184,13 +195,15 @@ fuentes, orientaciones o posiciones después del primer candidato factible ni
 calcula scores. WF conserva su comparación entre fuentes, colocación canónica y
 score posterior. La generación compartida debe preservar orden y deduplicación.
 
-**GAP actual:** falta una fase previa de máscaras base; el contrato de orientaciones
-actual entrega una tupla por pieza. Coordinar con TA-016 su consumo bajo demanda
-y cualquier evolución incremental compartida, sin reimplementar ni imponer desde
-HU-017 una refactorización de rotación. TA-037 coordina presupuesto de bases y
-trabajo bajo demanda. Si un presupuesto impide
-continuar, informar error técnico; no omitir candidatos ni reducir precisión
-silenciosamente. No se exige materializar todas las orientaciones de la corrida.
+**Avance local T02:** `PreparedRunGeometry` prepara las bases antes de buscar,
+y el componente común TA-016 ofrece una vista reiterable de orientaciones bajo
+demanda. Se conserva la tupla histórica para sus otros consumidores. La
+integración `4bcf54d` de partida todavía tiene el GAP; este avance solo existe en
+la rama local de HU-017. [Evidencia del incremento](../evidence/sprint-02/HU-017/t02-bases-y-rotaciones-lazy.md).
+Se conservan presupuestos TA-037 y fallos técnicos explícitos, sin omitir
+candidatos ni reducir precisión. No se exige materializar todas las orientaciones
+de la corrida. Contrato visual, referencias públicas y recuperación de máscaras
+siguen pendientes de T03/T04, tras DG-01.
 
 ### RN-02 — Cuatro conceptos distintos
 
@@ -266,9 +279,11 @@ Los ocho eventos V1 actuales permanecen sin cambios para consumidores existentes
 `group_completed`, `metrics_calculated`, `optimization_completed`, `optimization_failed`.
 
 El contrato debe definir eventos, payloads, correlación, orden, compatibilidad
-y límites de entrega. El PLAN comparará extensión compatible del contrato actual
-y perfil/versionado específico antes de elegir la alternativa mínima segura.
-Esta SPEC no prescribe `visual-v2`, un query parameter ni un número de versión.
+y límites de entrega. La comparación del PLAN se resolvió por elección expresa
+del solicitante: **B, perfil visual-v2 optativo**, con V1 predeterminado.
+[DG-01](DECISION-HU-017-DG-01-streaming-visual.md) concreta negociación,
+versiones, entrega, referencias y presupuestos iniciales; su implementación y
+pruebas quedan en T03. Esta concreción no altera los 26 CA funcionales.
 No enviar tipos nuevos a un parser incompatible ni
 degradar silenciosamente el contrato. El modo visual no modifica problema,
 stock, resolución ni política heurística.
@@ -298,7 +313,8 @@ incluido SIN_SOLUCION y faltantes; no volver a ejecutar el algoritmo para verlo.
   de evaluación llevan descriptores, no copias repetidas de sus celdas.
 - Descriptores y `mask_ref` ligados a snapshot/resolución/ángulo; recuperar solo
   la máscara visible mediante contrato autenticado acotado, reutilizando rangos
-  `spans_by_row`. URI/esquema concreto de recuperación pendiente de T03.
+  `spans_by_row`. URI/ventanas y retención según DG-01; schemas e implementación
+  concretos de recuperación pendientes de T03.
 - Los límites de HU-015 no se amplían para servir máscaras internas grandes.
   Si hace falta, ventanas/tiles o detalle visual reducido claramente rotulado;
   jamás cambiar por ello la máscara o resolución que usa el algoritmo.
@@ -371,8 +387,10 @@ de la visualización. TA-037 debe coordinar checkpoints durante preparación lar
 | CA-25 | Existen E2E del flujo unificado, incluidos parcial, recuperación y no consumo. | T06 |
 | CA-26 | La máscara/geometría visualizada corresponde a geometría, resolución efectiva y orientación de la ejecución backend real; la UI no presenta una rasterización independiente con reglas diferentes como si fuera la del optimizador ni usa un preview ajeno. | T02/T03/T04/T06 |
 
-Estos 26 CA son objetivos de implementación futura: no se declaran PASS por la
-existencia de código de HU-015/TA-019 ni por crear esta documentación.
+Los 26 textos se conservan respecto de la aprobación. Su cumplimiento local se
+traza en la matriz de evidencia de cierre, incluidas las condiciones de CA-17:
+BF/WF HTTP siguen fuera de alcance. No se atribuye cumplimiento solo por la
+existencia previa de HU-015/TA-019 ni por crear documentación.
 
 ## 11. Pruebas y evidencia previstas
 
@@ -393,22 +411,22 @@ existencia de código de HU-015/TA-019 ni por crear esta documentación.
 - E2E unificado real: no cambiar a `hu015`, multipedido/multimaterial, rotación,
   retazo/fallback, SIN_SOLUCION, resultado/confirmación explícita y stock intacto
   antes de confirmar. Responsive y límite de detalle representativo.
-- Evidencia futura: `docs/evidence/sprint-02/HU-017/`, con base, comandos,
-  resultados reales, capturas accesibles y medición de memoria/payload/latencia.
-  No se ejecutan ni se generan esas evidencias en esta tarea documental.
+- Evidencia de ejecución: `docs/evidence/sprint-02/HU-017/`, con base, comandos,
+  resultados reales, capturas y medición de memoria/payload. T01/T02 conservan
+  sus registros históricos y T03–T06 documentan la verificación final local.
 
 ## 12. Decisiones pendientes y dependencias
 
 | Dependencia / GAP | Decisión requerida |
 |---|---|
 | TA-016 | Generación incremental compartida de orientaciones, orden/deduplicación, geometría/máscara coherentes y observación sin rotación propia de UI. |
-| TA-018 / TA-019 | Instrumentación neutral del recorrido común, preservando políticas BF futura/WF actual. No reabrir su algoritmo. |
+| TA-018 / TA-019 | BF/WF integrados en dominio; instrumentación neutral del recorrido común, preservando sus políticas. La integración HTTP multimétodo sigue fuera de esta historia. |
 | TA-021 | Comparación/orquestación de FF/BF/WF sobre la misma instancia, sin selección del ganador. Definición comunicada por el solicitante; coordinar contrato/ownership de resultados y eventos. HU-017 los consume visualmente y no decide el método ganador. |
-| TA-037 | No se encontró SPEC propia local; hay referencias en TA-019. Coordinar límites de resolución y recursos, máscaras base, generación bajo demanda, throttling y checkpoints; sin selección automática en HU-017. |
-| Preparación base | GAP frente a `pack` actual; resolver preparación previa acotada y preservar generación/evaluación perezosa con TA-016/TA-037. |
+| TA-037 | SPEC y guardrails integrados. Coordinar límites de resolución y recursos, máscaras base, generación bajo demanda, throttling y checkpoints; sin selección automática en HU-017. |
+| Preparación base | Resuelta localmente mediante `PreparedRunGeometry` y orientaciones compartidas lazy; sin alterar políticas FF/BF/WF. |
 | GAP-VECTORIAL | Decidir necesidad y alcance de validación final independiente; tarea separable, sin ID inventado ni garantía anticipada. |
-| Contrato visual / máscaras | Revisar la negociación propuesta en el PLAN, URI de recuperación, TTL/retención y tamaños antes de implementar. No prometer persistencia de todos los intentos. |
-| Configuración visible | No hay API pública completa de Configuration; definir lectura autorizada/acotada o mostrar configuración al aceptar la corrida. |
+| Contrato visual / máscaras | DG-01 Closed, B implementada/probada: negociación, URI, retención y tamaños acotados; sin persistencia de todos los intentos. |
+| Configuración visible | Se muestra el snapshot efectivo al aceptar/recuperar la corrida. Sin nueva API pública de Configuration. |
 
 ## Historial de estado
 
@@ -418,3 +436,10 @@ existencia de código de HU-015/TA-019 ni por crear esta documentación.
 | 25/10/2026 | Draft | Revisión solicitada: máscaras base previas, orientaciones/posiciones lazy, resolución única sin mínimo automático, CA-26 de fidelidad visual y throttling explícito; negociación del contrato delegada al PLAN. |
 | 25/10/2026 | Draft | Precisada invariancia previa a FF/BF/WF y congelación geométrica; fidelidad de máscara/geometría, eventos acotados sin máscaras repetidas y comparación de alternativas de streaming en el PLAN. |
 | 25/10/2026 | Reviewed | Cierre documental autorizado por el solicitante. Revisión cruzada real pendiente; no Implemented ni Verified. TA-021 definida y HU-017 delimitada como consumidor visual sin selección del ganador. |
+| 27/10/2026 | Reviewed | Base revalidada en `4bcf54d`; inicio local de T01 autorizado. Se conservan los 26 CA, las exclusiones y DG-01 abierta antes de T03. |
+| 27/10/2026 | Reviewed | Primer incremento T01 implementado y validado localmente; [evidencia](../evidence/sprint-02/HU-017/t01-flujo-unificado.md). Sin cierre global ni publicación de HU-017. |
+| 27/10/2026 | Reviewed | Núcleo T02 implementado en `1291d65`: bases previas, resolución/configuración inmutables y orientaciones compartidas lazy. 2270 backend y 34 E2E correctos; sin cierre global, publicación ni revisión humana atribuida. |
+| 27/10/2026 | Reviewed | DG-01 Closed por elección expresa de B; contrato visual-v2 optativo documentado antes de T03. Sin código nuevo ni cambio de los 26 CA. |
+| 28/10/2026 UTC | Verified — local | T01–T06 implementadas y verificadas: 2312 backend, ampliación API visual 12/12, 161 unitarias frontend, 506 componentes y 38 E2E; lint/build correctos. PostgreSQL temporal autorizado para HU-017. Sin publicación, integración ni revisión humana atribuida; CA/estimación intactos. |
+| 27/10/2026 America/Lima | Implemented — PR #81 pendiente | Se distingue la evidencia local histórica del cierre formal. PR abierto; se diagnostican cuatro timeouts E2E por predicados de URL sin `stream_profile=visual-v2`. Corrección de tests sin cambios funcionales ni en los 26 CA; revisión cruzada, CI verde y merge pendientes. |
+| 28/10/2026 America/Lima | Implemented — regresión local correcta | Adaptación autorizada del observador Dashboard de `a8c3b38`, aislando peticiones por ciclo sin cambiar aserciones. Suite completa 108 passed / 0 failed / 6 skipped históricos HU-015; 167 unitarias, 240 componentes, lint/build correctos. Se conservan 26 CA y cambios previos; no commit/push/merge ni Verified formal. CI del PR y revisión cruzada pendientes. |

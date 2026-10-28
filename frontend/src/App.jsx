@@ -18,7 +18,7 @@ import { DashboardPage } from './features/dashboard';
 import { NavigationContext } from './shared/components/NavigationContext';
 import './App.css';
 
-function App() {
+function App({ optimizationMode = 'first-fit' }) {
   
  const { session, isChecking, notice, signIn, signOut, refresh } = useSession();
   const [view, setView] = useState('dashboard');
@@ -65,7 +65,7 @@ function App() {
   } else if (currentView === 'users') {
     page = <UsersPage currentUser={session.usuario} onSessionExpired={handleSignOut} toolbar={toolbar} onPermissionsChanged={refresh} />;
   } else if (currentView === 'optimization') {
-    page = <OptimizationPage initialRunId={originRunId} user={session.usuario} token={session.token || session.access_token} onSessionExpired={handleSignOut} toolbar={toolbar} />;
+    page = <OptimizationPage initialMode={optimizationMode} initialRunId={originRunId} user={session.usuario} token={session.token || session.access_token} onSessionExpired={handleSignOut} toolbar={toolbar} />;
   } else if (currentView === 'inventory') {
     page = <InventoryPage onOpenCut={id => { setOriginRunId(id); setView('optimization'); }} onSessionExpired={handleSignOut} toolbar={toolbar} user={session.usuario} />;
   } else page = <GestionPedidos

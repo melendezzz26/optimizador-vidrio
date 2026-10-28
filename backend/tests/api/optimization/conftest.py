@@ -35,3 +35,14 @@ def run_admission():
     app.dependency_overrides[get_run_admission] = lambda: admission
     yield admission
     app.dependency_overrides.pop(get_run_admission, None)
+
+
+@pytest.fixture(autouse=True)
+def visual_store():
+    from main import app
+    from app.modules.optimization.infrastructure.visual_store import InMemoryVisualStore
+    from app.modules.optimization.presentation.run_routes import get_visual_store
+    store = InMemoryVisualStore()
+    app.dependency_overrides[get_visual_store] = lambda: store
+    yield store
+    app.dependency_overrides.pop(get_visual_store, None)

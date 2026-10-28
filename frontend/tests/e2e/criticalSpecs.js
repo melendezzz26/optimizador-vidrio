@@ -6,6 +6,7 @@ export const CRITICAL_E2E_SPECS = Object.freeze([
   'hu012-client-order.spec.js',
   'hu014-inventory-writeoff.spec.js',
   'hu015-rasterization.spec.js',
+  'hu017-unified-flow.spec.js',
   's1-optimization-ui.spec.js',
   's1-post-review.spec.js',
   'ta-dashboard.spec.js',

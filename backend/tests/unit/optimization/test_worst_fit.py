@@ -16,6 +16,7 @@ from app.modules.optimization.domain.packing import FeasibleCandidate, _empty_la
 from app.modules.optimization.domain.placement import SheetLayout
 from app.modules.optimization.domain.problem import MaterialSource, OptimizationResult
 from app.modules.optimization.domain.rotation import RasterCache, RasterPreparationError
+from app.modules.optimization.domain.run_geometry import PreparedRunGeometry
 from app.modules.optimization.domain.worst_fit import WorstFitOptimizer, WorstFitSelector
 from app.modules.optimization.infrastructure.stock_adapter import InventoryStockAdapter
 from tests.unit.optimization.test_first_fit import config, problem, stock
@@ -84,7 +85,7 @@ def test_multiple_pieces_change_source_and_losing_trials_are_not_applied():
 
 
 def test_rotation_uses_common_component_and_first_feasible_angle():
-    with patch.object(RasterCache, "orientations", wraps=RasterCache().orientations) as orientations:
+    with patch.object(RasterCache, "iter_orientations", autospec=True, side_effect=RasterCache.iter_orientations) as orientations:
         result = optimize([piece(width=3, height=2)], [stock(width=2, height=3)])
     assert orientations.call_count == 1
     assert result.complete and result.placements[0].rotation_deg == 90
@@ -115,10 +116,10 @@ def test_failed_large_piece_does_not_suppress_smaller_units():
 def test_remnant_priority_prevents_even_evaluating_sheets():
     rem = stock(2, width=3, height=3, source=MaterialSource.REMNANT)
     unused_sheet = stock(3, width=10, height=10)
-    with patch.object(RasterCache, "material", wraps=RasterCache().material) as material:
+    with patch.object(PreparedRunGeometry, "material", autospec=True, side_effect=PreparedRunGeometry.material) as material:
         result = optimize([piece(width=2, height=2)], [unused_sheet, rem])
     assert result.placements[0].stock == rem
-    assert material.call_count == 1 and material.call_args.args[0] == rem
+    assert material.call_count == 1 and material.call_args.args[1] == rem
 
 
 def test_worst_fit_between_remnants():
@@ -278,7 +279,7 @@ def test_candidate_selection_is_incremental_and_releases_discarded_layouts(monke
 def test_first_fit_does_not_score_or_evaluate_later_sources():
     with patch.object(FeasibleCandidate, "remaining_free_cells_after_placement",
                       new=property(lambda _: pytest.fail("FF must not score candidates"))):
-        with patch.object(RasterCache, "material", wraps=RasterCache().material) as material:
+        with patch.object(PreparedRunGeometry, "material", autospec=True, side_effect=PreparedRunGeometry.material) as material:
             result = FirstFitOptimizer().optimize(problem(candidates=[stock(1), stock(2)]))
     assert result.placements[0].stock.material_id == 1 and result.method == "FF"
     assert material.call_count == 1

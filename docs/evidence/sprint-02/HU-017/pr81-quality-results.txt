@@ -1,0 +1,105 @@
+﻿HU-017 PR #81 - excerpts of actual local frontend checks; full logs in <TEMP>/newglass-hu017-pr81-repro.
+
+npm run test:unit
+exit code: 0
+  type: 'test'
+  ...
+1..161
+# tests 161
+# suites 0
+# pass 161
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 199.2118
+
+npm run test:component -- src/features/optimization --maxWorkers=2 --reporter=dot
+exit code: 0
+ Test Files  15 passed (15)
+      Tests  165 passed (165)
+   Duration  39.55s (environment 64%, tests 18%, setup 13%, transform 3%, import 2%)
+
+npm run lint
+exit code: 0
+
+> frontend@0.0.0 lint
+> eslint .
+
+
+npm run build
+exit code: 0
+vite v8.3.1 building client environment for production...
+✓ 1993 modules transformed.
+dist/index.html                            0.45 kB │ gzip:   0.29 kB
+dist/assets/fondo-vidrio-C4j_rIya.png  3,239.61 kB
+dist/assets/index-CTSNKx41.css            65.31 kB │ gzip:  10.62 kB
+dist/assets/index-XAyk6H_I.js            502.24 kB │ gzip: 149.94 kB
+(!) Some chunks are larger than 500 kB after minification. Consider:
+✓ built in 832ms
+
+=== 2026-10-28: deterministic observer regression, RED then GREEN ===
+
+node --test tests/unit/dashboardResponses.test.js (observer-red)
+RED reproduces the original extracted behavior; GREEN uses the reference fix.
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 3
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 177.6682
+
+node --test tests/unit/dashboardResponses.test.js (observer-green)
+RED reproduces the original extracted behavior; GREEN uses the reference fix.
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 144.4845
+
+=== 2026-10-28: final quality after Dashboard request-cycle fix ===
+
+npm run test:unit
+exit code: 0
+  ...
+1..167
+# tests 167
+# suites 0
+# pass 167
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 347.0293
+
+npm run test:component -- src/features/dashboard src/features/optimization --maxWorkers=2 --reporter=dot
+exit code: 0
+ Test Files  20 passed (20)
+      Tests  240 passed (240)
+   Duration  73.10s (environment 62%, tests 18%, setup 13%, import 5%, transform 2%)
+
+npm run lint
+exit code: 0
+
+> frontend@0.0.0 lint
+> eslint .
+
+
+npm run build
+exit code: 0
+✓ 1993 modules transformed.
+dist/index.html                            0.45 kB │ gzip:   0.29 kB
+dist/assets/fondo-vidrio-C4j_rIya.png  3,239.61 kB
+dist/assets/index-CTSNKx41.css            65.31 kB │ gzip:  10.62 kB
+dist/assets/index-XAyk6H_I.js            502.24 kB │ gzip: 149.94 kB
+(!) Some chunks are larger than 500 kB after minification. Consider:
+✓ built in 1.51s

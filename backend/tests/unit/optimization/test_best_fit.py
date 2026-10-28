@@ -11,6 +11,7 @@ from app.modules.optimization.domain.first_fit import FirstFitOptimizer
 from app.modules.optimization.domain.metrics import calculate_metrics
 from app.modules.optimization.domain.problem import MaterialSource
 from app.modules.optimization.domain.rotation import RasterCache
+from app.modules.optimization.domain.run_geometry import PreparedRunGeometry
 from app.modules.optimization.domain.worst_fit import WorstFitOptimizer
 from app.modules.optimization.infrastructure.stock_adapter import InventoryStockAdapter
 from tests.unit.optimization.test_first_fit import config, problem, stock
@@ -35,11 +36,11 @@ def test_normal_chooses_smallest_remaining_source_and_keeps_method_with_metrics(
 @pytest.mark.parametrize("optimizer", [FirstFitOptimizer, BestFitOptimizer, WorstFitOptimizer])
 @pytest.mark.parametrize("step", [5, 90])
 def test_all_heuristics_use_exact_same_rotation_component(optimizer, step):
-    with patch.object(RasterCache, "orientations", wraps=RasterCache().orientations) as orientations:
+    with patch.object(RasterCache, "iter_orientations", autospec=True, side_effect=RasterCache.iter_orientations) as orientations:
         result = optimizer().optimize(problem([piece(width=3, height=2)], [stock(width=2, height=3)],
                                              config(angular_step_deg=D(step))))
     assert orientations.call_count == 1
-    assert orientations.call_args.args[2] == step
+    assert orientations.call_args.args[3] == step
     assert result.complete and result.placements[0].rotation_deg == 90
     assert dict(result.placements[0].geometry) == dict(type="RECTANGULO", width_mm=2, height_mm=3)
 
@@ -92,10 +93,10 @@ def test_first_position_is_preserved_and_only_winning_layout_is_committed():
 def test_remnants_compete_only_with_remnants_and_sheets_are_not_evaluated():
     a = stock(1, width=5, height=5, source=MaterialSource.REMNANT)
     b = stock(2, width=4, height=4, source=MaterialSource.REMNANT)
-    with patch.object(RasterCache, "material", wraps=RasterCache().material) as material:
+    with patch.object(PreparedRunGeometry, "material", autospec=True, side_effect=PreparedRunGeometry.material) as material:
         result = optimize([piece(width=2, height=2)], [stock(3, width=2, height=2), a, b])
     assert result.placements[0].stock == b
-    assert all(call.args[0].source is MaterialSource.REMNANT for call in material.call_args_list)
+    assert all(call.args[1].source is MaterialSource.REMNANT for call in material.call_args_list)
 
 
 def test_sheet_fallback_and_physical_unit_exhaustion():

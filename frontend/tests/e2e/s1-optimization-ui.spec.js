@@ -15,8 +15,8 @@ test.afterEach(({ page }, info) => {
 test('S1-01 vista previa real conserva pendiente, permite First Fit y confirma con trazabilidad', async ({ page }, info) => {
   const data = await setup(page, 'single');
   const before = await stock(page, data);
-  await login(page, data.actors.all); await open(page);
-  await page.getByRole('button', { name: 'Vista previa de piezas', exact: true }).click();
+  await login(page, data.actors.all);
+  await page.goto('/hu015-compatibility.html'); await open(page);
   await page.getByRole('button', { name: new RegExp(`Pedido #${data.orders[0]}\\b`) }).click();
   await page.getByRole('button', { name: 'Preparar vista previa', exact: true }).click();
   await expect(page.getByLabel('Pieza del pedido')).toBeEnabled();
@@ -36,7 +36,7 @@ test('S1-01 vista previa real conserva pendiente, permite First Fit y confirma c
   await expect(page.getByRole('img', { name: `Detalle del corte de la pieza #${order.piezas[0].id_pieza}` })).toBeVisible();
   expect(await orderStates(page, data)).toEqual(['PENDIENTE']);
   expect(await stock(page, data)).toEqual(before);
-  await page.getByRole('button', { name: 'Distribución de corte', exact: true }).click();
+  await page.goto('/'); await open(page);
   const { result } = await run(page, data, info);
   expect(result.completo).toBe(true);
   expect(await orderStates(page, data)).toEqual(['OPTIMIZADO']);
@@ -53,7 +53,9 @@ test('E2E1 N=1 real: progreso, placements, métricas, confirmación, stock y ped
   const data = await setup(page, 'single'); await login(page, data.actors.all); await open(page);
   const { result, events } = await run(page, data, info);
   expect(result.completo).toBe(true); expect(result.metrics_available).toBe(true);
-  expect(new Set(events.map(e => e.event))).toEqual(new Set(['optimization_started', 'group_started', 'piece_started', 'piece_placed', 'group_completed', 'metrics_calculated', 'optimization_completed']));
+  const names = new Set(events.map(e => e.event));
+  for (const name of ['optimization_started', 'group_started', 'piece_started', 'piece_placed', 'group_completed', 'metrics_calculated', 'optimization_completed',
+    'preparation_started', 'piece_ready', 'preparation_completed', 'orientation_testing', 'source_selected']) expect(names.has(name)).toBe(true);
   await expect(page.getByRole('heading', { name: 'Resultado del corte' })).toBeVisible();
   const after = await confirm(page, data, result, info);
   expect(after.sheets[0].cantidad).toBe(0);

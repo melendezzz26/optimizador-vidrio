@@ -6,7 +6,9 @@ import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLay
 import { ConfirmDialog, EmptyState, FeedbackMessage, LoadingState } from '../../shared/components/feedback';
 import { createPendingOrdersSource } from './pendingOrdersSource';
 import { createBackendRunAdapter } from './runApi';
-import { STAGES, pieceCount, runErrorFeedback } from './optimizationModel';
+import { pieceCount, runErrorFeedback } from './optimizationModel';
+import { OptimizationStages } from './OptimizationStages';
+import { RunVisualization } from './RunVisualization';
 import { useFirstFit } from './useFirstFit';
 import { PlacementCanvas } from './PlacementCanvas';
 import { detectMaterialGroups } from './materialGroups';
@@ -37,7 +39,6 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired, user, result
   const canConfirm = hasPermission(user, 'optimization.confirm');
   const locked = !canExecute || confirming || ['preparing', 'running', 'loading_result'].includes(state.status);
   const fresh = state.runId ? state.orders.filter(o => !state.availableAtStart?.includes(o.id_pedido)).length : 0;
-  const stageIndex = STAGES.findIndex(([id]) => id === state.stage);
   const detected = detectMaterialGroups(state.orders.filter(o => state.selected.includes(o.id_pedido)), adapter.resolveMaterial);
   const preview = { ...detected, groups: glassGroups(detected.groups, catalog) };
   const rasterReady = state.snapshot?.groups.length > 0 && state.snapshot.groups.every(g => groupRasterReady(state.snapshot, g));
@@ -63,6 +64,13 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired, user, result
   }
   function reset(action) { setConfirmation(''); setConfirmationConflict(false); action(); }
   return <>
+    <OptimizationStages state={state} />
+    {state.method && <p>Método aplicado: {({ FF: 'Primer ajuste (First Fit)', BF: 'Mejor ajuste (Best Fit)', WF: 'Peor ajuste (Worst Fit)' })[state.method] ?? state.method}</p>}
+    {state.config && <details><summary>Configuración aplicada</summary><dl className="optimization-facts">
+      {Object.entries({ resolucion_raster_mm: 'Resolución (mm/celda)', margen_mm: 'Margen (mm)',
+        separacion_mm: 'Separación (mm)', paso_angular_grados: 'Paso angular (grados)' }).map(([key, label]) => <div key={key}><dt>{label}</dt><dd>{state.config[key]}</dd></div>)}
+    </dl></details>}
+    {state.optimizationId && adapter.loadVisualMask && <RunVisualization key={state.optimizationId} state={state} adapter={adapter} onSessionExpired={onSessionExpired} />}
     {adapter.loadResult && <form className="first-fit-result-lookup" onSubmit={event => { event.preventDefault(); if (Number.isSafeInteger(Number(lookupId)) && Number(lookupId) > 0) reset(() => flow.load(Number(lookupId))); }}>
       <label>Número de trabajo<input className="ng-control" type="number" min="1" step="1" value={lookupId} onChange={event => setLookupId(event.target.value)} /></label>
       <button className="ng-button" disabled={['running', 'preparing', 'loading_result'].includes(state.status) || confirming || !Number.isSafeInteger(Number(lookupId)) || Number(lookupId) <= 0}>Consultar resultado</button>
@@ -97,7 +105,7 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired, user, result
       : <FeedbackMessage variant="error">{feedback.message}</FeedbackMessage>)}
     {state.status === 'preparing' && <LoadingState>Revisando pedidos y vidrios…</LoadingState>}
     {(state.selected.length > 0 || state.snapshot) && <MaterialGroupsPanel groups={state.snapshot?.groups ?? preview.groups}
-      unresolved={state.snapshot ? [] : preview.unresolved} snapshot={state.snapshot} completedGroups={state.snapshot ? state.completedGroups : []} />}
+      unresolved={state.snapshot ? [] : preview.unresolved} snapshot={state.snapshot} completedGroups={state.snapshot ? state.completedGroups : []} showInspection={!state.visual.enabled} />}
     {state.snapshot && <section className="first-fit-section" aria-labelledby="groups-title">
       <h2 id="groups-title">Resumen del trabajo</h2>
       <p>Pedidos: {state.snapshot.orders.map(o => `#${o.id_pedido}`).join(', ')} · Piezas: {state.snapshot.total} · Vidrios del pedido: {state.snapshot.groups.length}</p>
@@ -106,17 +114,17 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired, user, result
       {(state.runId || state.optimizationId) && <>
         <h2>Progreso de optimización</h2>
         {state.snapshot.fixture && <p>Distribución ilustrativa con piezas de ejemplo.</p>}
-        <ol className="first-fit-stages" aria-label="Etapas de optimización">{STAGES.map(([id, label], i) => {
-          const status = state.status === 'failed' ? 'Interrumpido' : state.estado === 'COMPLETADA' || i < stageIndex ? 'Completado' : i === stageIndex ? 'Activo' : 'Pendiente';
-          return <li key={id} aria-current={status === 'Activo' ? 'step' : undefined}><span>{label}</span><small>{status}</small></li>;
-        })}</ol>
         {state.optimizationId && <p>Trabajo #{state.optimizationId}</p>}
       {state.status === 'failed' && <p role="status">No se pudo calcular el corte</p>}
         <p role="status">{state.placed_units} / {state.total_units} piezas colocadas</p>
         {state.status !== 'failed' && <progress aria-label="Piezas colocadas" value={state.placed_units} max={state.total_units} />}
-        <PlacementCanvas key={state.runId} snapshot={state.snapshot} placements={state.placements} />
+        <PlacementCanvas key={state.runId} snapshot={state.snapshot} placements={state.placements}
+          visualContext={adapter.loadVisualMask ? { runId: state.optimizationId, adapter, visual: state.visual, onSessionExpired } : undefined} />
       </>}
       {state.estado === 'SIN_SOLUCION' && <p role="status">No se encontró una distribución posible. Revisa las piezas que quedaron sin ubicar; no se puede confirmar este corte.</p>}
+      {!!state.unplaced_units.length && <section aria-label="Piezas sin colocar"><h3>Piezas sin colocar</h3>
+        <ul>{state.unplaced_units.map(unit => <li key={`${unit.id_pedido}:${unit.id_pieza}:${unit.unit_index}`}>Pedido #{unit.id_pedido} · Pieza #{unit.id_pieza} · unidad {unit.unit_index}: {unit.reason === 'NO_FIT' ? 'sin espacio factible' : unit.reason === 'INTERRUPTED' ? 'cálculo interrumpido' : 'pendiente de procesar'}</li>)}</ul>
+      </section>}
       {state.estado && !(state.status === 'failed' && state.estado === 'EN_EJECUCION')
         && <p role="status">Estado del trabajo: {calculationState(state.estado)}</p>}
       {state.confirmed && <p role="status">Corte ya confirmado.</p>}
@@ -145,7 +153,7 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired, user, result
 
 function OptimizationContent({ user, result, initialRunId, token, source: providedSource, adapter: providedAdapter, onSessionExpired }) {
   const source = useMemo(() => providedSource ?? (canExecuteOptimization(user) ? createPendingOrdersSource({ token }) : { load() {}, refresh() {}, subscribe() { return () => {}; }, dispose() {} }), [providedSource, token, user]);
-  const adapter = useMemo(() => providedAdapter ?? createBackendRunAdapter({ token }), [providedAdapter, token]);
+  const adapter = useMemo(() => providedAdapter ?? createBackendRunAdapter({ token, streamProfile: 'visual-v2' }), [providedAdapter, token]);
   const [originResult, setOriginResult] = useState(null);
   const [originError, setOriginError] = useState('');
   useEffect(() => {
@@ -160,7 +168,7 @@ function OptimizationContent({ user, result, initialRunId, token, source: provid
   return <PageCard className="optimization-page">
     <header className="optimization-section-heading"><h2>Distribución de corte</h2>
       <p>Selecciona los pedidos, revisa sus vidrios y calcula cómo cortar las piezas.</p>
-      <small>Método de cálculo: Primer ajuste (First Fit)</small></header>
+      </header>
     {catalog.status === 'error' && !providedAdapter && <FeedbackMessage variant="warning">No se pudieron consultar los nombres de los vidrios. <button type="button" className="ng-button" onClick={catalog.retry}>Reintentar catálogo</button></FeedbackMessage>}
     {providedAdapter?.isFixture && <FeedbackMessage variant="warning">Datos de ejemplo para pruebas; no se modifica inventario.</FeedbackMessage>}
     {!providedSource && canExecuteOptimization(user) && <p>La lista de pedidos se actualiza automáticamente. Las existencias se descuentan al confirmar el corte.</p>}
@@ -170,17 +178,13 @@ function OptimizationContent({ user, result, initialRunId, token, source: provid
   </PageCard>;
 }
 export function OptimizationPage({ user, toolbar, initialMode = 'first-fit', ...props }) {
-  const [mode, setMode] = useState(initialMode);
   return <AppShell activeItem="optimization" user={user}>{toolbar}
     {canViewResults(user) ? <>
       <div className="ng-ui optimization-workspace">
         <PageHeader title="Optimización de corte" context="Trabajo de vidriería" icon={ScanLine}
           description="Selecciona pedidos → revisa vidrios y piezas → calcula la distribución → confirma el corte." />
-        <nav className="optimization-tools" aria-label="Herramientas de corte">
-        <button className="ng-button" aria-pressed={mode === 'first-fit'} onClick={() => setMode('first-fit')}>Distribución de corte</button>
-        <button className="ng-button" aria-pressed={mode === 'hu015'} onClick={() => setMode('hu015')}>Vista previa de piezas</button>
-      </nav></div>
-      {mode === 'first-fit' ? <OptimizationContent {...props} user={user} />
+      </div>
+      {initialMode !== 'hu015' ? <OptimizationContent {...props} user={user} />
         : canExecuteOptimization(user) ? <Hu015Rasterization {...props} />
           : <FeedbackMessage variant="error">No tienes permiso para preparar la vista previa de piezas.</FeedbackMessage>}
     </> : <FeedbackMessage variant="error">No tienes permiso para consultar la optimización.</FeedbackMessage>}

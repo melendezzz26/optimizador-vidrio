@@ -13,7 +13,7 @@ function geometrySummary(geometry) {
   return `${geometry.vertices_mm.length} vértices; coordenadas en mm.`;
 }
 
-export function GeometryPreview({ geometry, pieceId, frame }) {
+export function GeometryPreview({ geometry, pieceId, frame, title }) {
   const id = useId();
   const bounds = getGeometryBounds(geometry);
   if (!bounds || !frame) return <p role="status">La geometría original de esta pieza no está disponible.</p>;
@@ -35,7 +35,7 @@ export function GeometryPreview({ geometry, pieceId, frame }) {
   return <>
     <svg className="optimization-preview__svg" viewBox={frame.viewBox} preserveAspectRatio="xMidYMid meet"
       role="img" aria-labelledby={titleId} aria-describedby={descriptionId}>
-      <title id={titleId}>Geometría original de la pieza #{pieceId}</title>
+      <title id={titleId}>{title ?? `Geometría original de la pieza #${pieceId}`}</title>
       <desc id={descriptionId}>{label}. {geometrySummary(geometry)} Una geometría.</desc>
       <g transform={translation}>{shape}</g>
     </svg>

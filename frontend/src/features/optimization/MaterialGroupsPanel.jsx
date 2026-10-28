@@ -3,7 +3,7 @@ import { RasterInspection } from './RasterInspection';
 import { groupRasterReady } from './rasterInspectionModel';
 import { groupOrdersLabel } from './workLabels';
 
-export function MaterialGroupsPanel({ groups, unresolved, snapshot, completedGroups }) {
+export function MaterialGroupsPanel({ groups, unresolved, snapshot, completedGroups, showInspection = true }) {
   const id = useId();
   const [chosen, setChosen] = useState('');
   const group = groups.find(g => g.id === chosen) ?? groups[0];
@@ -19,9 +19,9 @@ export function MaterialGroupsPanel({ groups, unresolved, snapshot, completedGro
         <span>{completedGroups.includes(g.id) ? 'Distribución calculada' : snapshot && (!snapshot.fixture || sheet && groupRasterReady(snapshot, g)) ? 'Listo para calcular' : 'Por revisar'}</span>
       </li>;
     })}</ul>
-    {snapshot && group && (snapshot.fixture || groupRasterReady(snapshot, group)) && <section aria-labelledby={`${id}-raster`}>
-      <h2 id={`${id}-raster`}>Vista previa del corte</h2>
-      <div className="first-fit-group-select"><label htmlFor={`${id}-select`}>Vidrio de la vista previa</label>
+    {showInspection && snapshot && group && <section aria-labelledby={`${id}-raster`}>
+      <h2 id={`${id}-raster`}>Inspección de piezas</h2>
+      <div className="first-fit-group-select"><label htmlFor={`${id}-select`}>Vidrio para inspeccionar</label>
         <select className="ng-control" id={`${id}-select`} value={group.id} onChange={e => setChosen(e.target.value)}>
           {groups.map(g => <option key={g.id} value={g.id}>{g.name} · {g.thickness} mm</option>)}
         </select></div>

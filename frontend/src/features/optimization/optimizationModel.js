@@ -1,5 +1,6 @@
 import { placementMatchesGroup } from './materialGroups.js';
 import { groupKey, parseEvent, parseRun, resultSnapshot, stockKey, unitKey, visualPlacement, visualStock } from './runContract.js';
+import { applyVisualFact, emptyVisual } from './visualState.js';
 export const STAGES = [
   ['preparing_orders', 'Preparando pedidos'], ['grouping_materials', 'Agrupando por material y espesor'],
   ['rasterizing', 'Preparando formas de corte'], ['sorting_pieces', 'Ordenando piezas'],
@@ -12,6 +13,7 @@ export const initialOptimization = {
   optimizationId: null, sequence: 0, estado: null, placed_units: 0, total_units: 0, progress_pct: '0',
   completo: false, metrics_available: false, confirmable: false, confirmed: false, resultUrl: null,
   errorKind: null, retryAfter: null,
+  visual: emptyVisual(), unplaced_units: [], method: null, config: null,
 };
 export const placementKey = unitKey;
 export const containerKey = stockKey;
@@ -35,7 +37,7 @@ export function optimizationReducer(state, action) {
 }
 
 // TA-037: only these actions classify their error; any other new error is generic.
-const CLASSIFIED = new Set(['connection_failed', 'event']);
+const CLASSIFIED = new Set(['connection_failed', 'event', 'visual_event']);
 function withErrorKind(previous, next, action) {
   if (next.error && (next.error === previous.error || CLASSIFIED.has(action.type))) return next;
   return next.errorKind || next.retryAfter ? { ...next, errorKind: null, retryAfter: null } : next;
@@ -77,7 +79,8 @@ function reduce(state, action) {
       if (['running', 'preparing'].includes(state.status)) return state;
       return { ...initialOptimization, orders: state.orders, connection: state.connection,
         selected: action.ids.filter(id => state.orders.some(o => o.id_pedido === id)), status: 'selection_ready' };
-    case 'preparing': return { ...state, status: 'preparing', error: '', snapshot: null, placements: [], metrics: null, runId: null, stage: null, completedGroups: [], confirmable: false, confirmed: false };
+    case 'preparing': return { ...state, status: 'preparing', error: '', snapshot: null, placements: [], metrics: null, runId: null, stage: null, completedGroups: [], confirmable: false, confirmed: false,
+      optimizationId: null, visual: emptyVisual(), unplaced_units: [], method: null, config: null };
     case 'prepared': {
       if (state.status !== 'preparing') return state;
       if (!action.snapshot.orders.every(o => state.selected.includes(o.id_pedido))) {
@@ -91,7 +94,8 @@ function reduce(state, action) {
       return { ...state, status: 'running', runId: action.runId, placements: [], metrics: null, optimizationId: null, sequence: 0,
         estado: 'EN_EJECUCION', placed_units: 0, total_units: state.snapshot.total, progress_pct: '0', completo: false,
         metrics_available: false, confirmable: false, confirmed: false, resultUrl: null,
-        completedGroups: [], stage: 'preparing_orders', error: '', availableAtStart: state.orders.map(o => o.id_pedido) };
+        completedGroups: [], stage: 'preparing_orders', error: '', availableAtStart: state.orders.map(o => o.id_pedido),
+        visual: emptyVisual(), unplaced_units: [], method: null, config: null };
     case 'discard': return { ...initialOptimization, orders: state.orders, selected: state.selected, connection: state.connection, status: 'selection_ready' };
     case 'connection_failed': {
       // A rejected POST has not created a run. Keep the reviewed work and allow
@@ -115,8 +119,36 @@ function reduce(state, action) {
         placed_units: dto.placed_units, total_units: dto.total_units, progress_pct: dto.progress_pct,
         completo: dto.completo, metrics_available: dto.metrics_available, metrics: dto.metrics ?? null,
         confirmable: dto.confirmable, confirmed: dto.confirmed,
+        method: dto.metodo, config: dto.configuracion, unplaced_units: dto.unplaced_units,
         error: dto.estado === 'FALLIDA' ? state.error || 'No se pudo calcular el corte. Consulta el resultado antes de preparar otro trabajo.' : '',
         stage: dto.estado === 'COMPLETADA' ? 'completed' : state.stage };
+    }
+    case 'visual_manifest': {
+      if (action.id !== state.optimizationId) return state;
+      if (action.error) return { ...state, visual: { ...state.visual, error: action.error } };
+      if (action.manifest.revision < state.visual.manifestRevision) return state;
+      const descriptors = Object.fromEntries(action.manifest.items.map(item => [item.mask_ref, item]));
+      if (Object.keys(descriptors).length > 1024) throw new Error('El manifiesto visual excede el presupuesto.');
+      return { ...state, visual: { ...state.visual, enabled: true, descriptors: { ...descriptors, ...state.visual.descriptors },
+        preparation: action.manifest.preparation_completed ? 'complete' : state.visual.preparation,
+        evaluations: Math.max(state.visual.evaluations, action.manifest.evaluations ?? 0),
+        processed: Math.max(state.visual.processed, action.manifest.processed_units ?? 0),
+        manifestRevision: action.manifest.revision, error: '' } };
+    }
+    case 'visual_event': {
+      if (state.status !== 'running' || action.runId !== state.runId) return state;
+      const { event, visual } = applyVisualFact(state, action.event);
+      const data = event.data;
+      const baseNames = ['optimization_started', 'group_started', 'piece_started', 'piece_placed',
+        'group_completed', 'metrics_calculated', 'optimization_completed', 'optimization_failed'];
+      let next = state;
+      if (baseNames.includes(event.event)) {
+        // Explicit projection into the old state machine, with its own contiguous
+        // sequence. V2 is validated separately; its envelope never reaches V1.
+        next = reduce(state, { ...action, type: 'event', event: { ...event, schema_version: 1, sequence: state.sequence + 1 } });
+      }
+      if (event.event === 'piece_unplaced') next = { ...next, unplaced_units: [...state.unplaced_units, data] };
+      return { ...next, optimizationId: event.id_optimizacion, visual };
     }
     case 'event': {
       if (state.status !== 'running' || action.runId !== state.runId) return state;
@@ -128,7 +160,7 @@ function reduce(state, action) {
       switch (event.event) {
         case 'optimization_started': {
           if (data.total_units !== state.snapshot.total || JSON.stringify([...data.order_ids].sort()) !== JSON.stringify(state.snapshot.orders.map(o => o.id_pedido).sort())) throw new Error('La selección cambió en el servidor. Recupera el resultado.');
-          return { ...next, total_units: data.total_units };
+          return { ...next, total_units: data.total_units, method: data.metodo, config: data.configuracion };
         }
         case 'group_started': return { ...next, activeGroup: groupKey(data), stage: 'first_fit' };
         case 'piece_started': return { ...next, activePiece: data.id_pieza };

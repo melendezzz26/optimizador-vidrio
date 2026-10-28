@@ -14,9 +14,14 @@ test('TA037 pedido sobre el límite: aviso comprensible, selección conservada, 
   const order = page.getByRole('checkbox', { name: new RegExp(`^#${data.orders[0]} ·`) });
   await order.check();
   await page.getByRole('button', { name: 'Revisar vidrios y piezas', exact: true }).click();
-  const runResponse = page.waitForResponse(r => r.url() === `${api}/api/optimization/runs` && r.request().method() === 'POST');
+  const runResponse = page.waitForResponse(r => {
+    const url = new URL(r.url());
+    return url.origin === api && url.pathname === '/api/optimization/runs' && r.request().method() === 'POST';
+  });
   await page.getByRole('button', { name: 'Calcular distribución', exact: true }).click();
   const response = await runResponse;
+  expect(new URL(response.url()).searchParams.get('stream_profile')).toBe('visual-v2');
+  expect(response.request().postDataJSON()).toEqual({ order_ids: data.orders });
   expect(response.status()).toBe(422);
   expect((await response.json()).detail).toMatchObject({ code: 'LOAD_LIMIT_EXCEEDED', limit: { name: 'units_per_run', maximum: 150, actual: 151 } });
 

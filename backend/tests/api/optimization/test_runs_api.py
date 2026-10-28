@@ -126,12 +126,12 @@ def test_unexpected_failure_has_safe_event_durable_failed_not_no_solution(run_ap
     from app.modules.optimization.domain.first_fit import FirstFitOptimizer
     client,ids,headers,*_ = run_api
     original = FirstFitOptimizer.optimize
-    def broken(self,problem,on_event=None):
+    def broken(self,problem,on_event=None,*,checkpoint=None):
         def callback(e):
             on_event(e)
             if e.kind == 'piece_placed':
                 raise RuntimeError('SQL PASSWORD PRIVATE INTERNAL synthetic crash')
-        return original(self,problem,callback)
+        return original(self,problem,callback,checkpoint=checkpoint)
     monkeypatch.setattr(FirstFitOptimizer,'optimize',broken)
     response = client.post(BASE,json={'order_ids':ids},headers=headers)
     events = parse(response)

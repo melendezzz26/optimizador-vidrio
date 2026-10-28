@@ -10,6 +10,7 @@ from app.modules.optimization.domain.best_fit import BestFitOptimizer
 from app.modules.optimization.domain.first_fit import FirstFitOptimizer
 from app.modules.optimization.domain.problem import MaterialSource
 from app.modules.optimization.domain.rotation import RasterCache
+from app.modules.optimization.domain.run_geometry import PreparedRunGeometry
 from app.modules.optimization.domain.worst_fit import WorstFitOptimizer
 from app.modules.optimization.infrastructure.stock_adapter import InventoryStockAdapter
 from tests.unit.optimization.test_first_fit import config, problem, stock
@@ -29,14 +30,14 @@ def test_feasible_remnant_excludes_sheets_from_evaluation(optimizer, step):
     remnants = [stock(8, width=4, height=4, source=MaterialSource.REMNANT),
                 stock(9, width=3, height=3, source=MaterialSource.REMNANT)]
     sources = [stock(1, width=2, height=2), stock(2, width=8, height=8), *remnants]
-    with patch.object(RasterCache, "material", wraps=RasterCache().material) as material:
+    with patch.object(PreparedRunGeometry, "material", autospec=True, side_effect=PreparedRunGeometry.material) as material:
         result = optimizer.optimize(problem([piece(width=2, height=2)], sources,
                                             config(angular_step_deg=D(step))))
     assert result.complete
     assert result.placements[0].stock.source is MaterialSource.REMNANT
     assert result.placements[0].stock.material_id == {"FF": 8, "BF": 9, "WF": 8}[result.method]
     assert material.call_args_list
-    assert all(call.args[0].source is MaterialSource.REMNANT for call in material.call_args_list)
+    assert all(call.args[1].source is MaterialSource.REMNANT for call in material.call_args_list)
 
 
 @pytest.mark.parametrize("remnants", [[], [stock(8, width=1, height=1, source=MaterialSource.REMNANT)]],

@@ -12,7 +12,7 @@ function Shape({ geometry }) {
   if (geometry.type === 'CIRCUNFERENCIA') return <circle r={geometry.radius_mm} />;
   return <polygon points={geometry.vertices_mm.map(p => p.join(',')).join(' ')} />;
 }
-export function PlacementCanvas({ snapshot, placements }) {
+export function PlacementCanvas({ snapshot, placements, visualContext }) {
   const titleId = useId();
   const [chosen, setChosen] = useState('');
   const [chosenGroup, setChosenGroup] = useState('');
@@ -47,7 +47,7 @@ export function PlacementCanvas({ snapshot, placements }) {
       <button type="button" className="ng-button" aria-pressed={view === '3d'} onClick={() => setView('3d')}>Ver en 3D</button>
       <button type="button" className="ng-button" aria-pressed={view === 'raster'} onClick={() => setView('raster')}>Ver detalle de piezas</button>
     </div>}
-    {view === 'raster' && canVisualize ? <RasterInspection key={group.id} snapshot={snapshot} group={group} placements={visible} />
+    {view === 'raster' && canVisualize ? <RasterInspection key={group.id} snapshot={snapshot} group={group} placements={visible} visualContext={visualContext} />
       : view === '3d' && canVisualize ? <PlacementScene3D snapshot={snapshot} container={container} placements={visible} yaw={yaw} onYawChange={setYaw} zoom={zoom3d} onZoomChange={setZoom3d} camera={camera} onCameraChange={setCamera} /> : <>
     <InspectionViewport label="2D">
     <svg className="first-fit-sheet" viewBox={`0 0 ${container.material_width_mm} ${container.material_height_mm}`}

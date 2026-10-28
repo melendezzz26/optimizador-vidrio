@@ -6,6 +6,7 @@ import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { parseRun, readNdjson } from '../../src/features/optimization/runContract.js';
+import { readVisualNdjson } from '../../src/features/optimization/visualContract.js';
 
 const backend = fileURLToPath(new URL('../../../backend/', import.meta.url));
 // Historical evidence is exported only when explicitly requested.
@@ -78,7 +79,7 @@ export async function run(page, data, info) {
   for (const id of data.orders) await page.getByRole('checkbox', { name: new RegExp(`^#${id} ·`) }).check();
   await capture(page, info, 'selection');
   await page.getByRole('button', { name: 'Revisar vidrios y piezas', exact: true }).click();
-  const post = page.waitForResponse(r => r.url() === `${api}/api/optimization/runs` && r.request().method() === 'POST');
+  const post = page.waitForResponse(r => new URL(r.url()).pathname === '/api/optimization/runs' && r.request().method() === 'POST');
   const get = page.waitForResponse(r => /^\/api\/optimization\/runs\/\d+$/.test(new URL(r.url()).pathname) && r.request().method() === 'GET');
   await page.getByRole('button', { name: 'Calcular distribución', exact: true }).click();
   const response = await post;
@@ -91,7 +92,8 @@ export async function run(page, data, info) {
   const bytes = new TextEncoder().encode(wire);
   async function* fragments() { for (let i = 0; i < bytes.length; i += 7) yield bytes.slice(i, i + 7); }
   const events = [];
-  for await (const event of readNdjson(fragments())) events.push(event);
+  const visual = new URL(response.url()).searchParams.get('stream_profile') === 'visual-v2';
+  for await (const event of (visual ? readVisualNdjson : readNdjson)(fragments())) events.push(event);
   expect(events.map(e => e.sequence)).toEqual(events.map((_, i) => i + 1));
   expect(events[0].event).toBe('optimization_started');
   expect(events.at(-1).event).toBe('optimization_completed');

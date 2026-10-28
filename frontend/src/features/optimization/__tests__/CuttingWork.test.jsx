@@ -18,7 +18,7 @@ test('configuration rejection retains reviewed orders, stops progress and allows
   const fetch = vi.spyOn(globalThis, 'fetch').mockImplementation(async (url, options = {}) => {
     if (String(url).endsWith('/tipos-vidrio')) return json([glass]);
     if (String(url).endsWith('/orders/61')) return json(order(61, 2));
-    if (String(url).endsWith('/runs') && options.method === 'POST') return json({ detail: { code: 'CONFIG_CONFLICT', message: technical } }, 409);
+    if (new URL(url).pathname.endsWith('/runs') && options.method === 'POST') return json({ detail: { code: 'CONFIG_CONFLICT', message: technical } }, 409);
     throw new Error(`Unexpected request: ${url}`);
   });
   render(<OptimizationPage user={operator} token="test-token" source={createFixturePendingOrdersSource([order(61, 2)])} />);
@@ -39,7 +39,7 @@ test('configuration rejection retains reviewed orders, stops progress and allows
     expect(fetch.mock.calls.filter(([, options]) => options.method === 'POST')).toHaveLength(attempt);
   }
   expect(log).toHaveBeenCalledWith('No se pudo iniciar el cálculo de corte', { status: 409, code: 'CONFIG_CONFLICT', detail: technical });
-  expect(fetch.mock.calls.filter(([, options]) => ['POST', 'PUT', 'PATCH', 'DELETE'].includes(options.method)).every(([url]) => String(url).endsWith('/optimization/runs'))).toBe(true);
+  expect(fetch.mock.calls.filter(([, options]) => ['POST', 'PUT', 'PATCH', 'DELETE'].includes(options.method)).every(([url]) => new URL(url).pathname.endsWith('/optimization/runs'))).toBe(true);
 });
 
 test('multiple orders share one named glass and retain quantities', async () => {

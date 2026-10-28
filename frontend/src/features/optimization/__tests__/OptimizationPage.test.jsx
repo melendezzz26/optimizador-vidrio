@@ -174,7 +174,7 @@ test('polling restart ignores late response from disposed StrictMode lifecycle',
   expect(request).toHaveBeenCalledTimes(2); source.dispose();
 });
 
-test('public-only stream renders progress, completed stages and confirmation without internal stage events', async () => {
+test('public-only stream preserves progress and confirmation without inventing preparation or orientation evidence', async () => {
   const adapter = createFixtureAdapter({ delayMs: 10, includeInternalStages: false });
   mount(fixtureOrders, adapter);
   await prepare(); click('Calcular distribución');
@@ -182,11 +182,11 @@ test('public-only stream renders progress, completed stages and confirmation wit
   expect(screen.getByText('1 / 4 piezas colocadas')).toBeVisible();
   expect(document.querySelectorAll('[data-placement]')).toHaveLength(1);
   const stages = screen.getByRole('list', { name: 'Etapas de optimización' });
-  expect(within(stages).getByText('Calculando distribución').closest('li')).toHaveAttribute('aria-current', 'step');
+  expect(within(stages).getByText('D · Colocación de piezas').closest('li')).toHaveAttribute('aria-current', 'step');
   await act(async () => vi.advanceTimersByTimeAsync(1000));
   expect(screen.getByText('4 / 4 piezas colocadas')).toBeVisible();
-  expect(within(stages).getAllByText('Completado')).toHaveLength(8);
-  expect(within(stages).queryByText('Pendiente')).not.toBeInTheDocument();
+  expect(within(stages).getAllByText('Sin detalle disponible')).toHaveLength(2);
+  expect(within(stages).getByText('E · Resultado').closest('li')).toHaveTextContent('Resultado completo');
   expect(screen.getByText('842 ms')).toBeVisible();
   click('Confirmar corte');
   expect(screen.getByRole('alertdialog')).toHaveTextContent('no guardará cambios');
