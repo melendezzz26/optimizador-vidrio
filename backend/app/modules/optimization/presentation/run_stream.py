@@ -68,6 +68,7 @@ class LiveRunStream:
         result_url = f"/api/optimization/runs/{identifier}"
         queue, stopped = Queue(maxsize=1), Event()
         sequence, placements, group_bases = 0, [], {}
+        recorded_units = set()
         clock = dict(started=None, delivery=0.0)  # L-12 excludes time spent delivering events
         group_totals = {g.key: len(g.units) for g in problem.groups}
         projection = VisualProjection(self.visual_session, lambda kind, data: send(EVENT_TYPES[kind], data),
@@ -117,9 +118,13 @@ class LiveRunStream:
             if self.clock() - clock["started"] - clock["delivery"] > self.time_budget_s:
                 raise TimeBudgetExceeded()                                  # TA-037 L-12
 
+        def record_placement(placement):
+            if placement is not None and placement.piece.identity not in recorded_units:
+                recorded_units.add(placement.piece.identity)
+                placements.append(placement)
+
         def milestone(event):
-            if event.placement is not None:
-                placements.append(event.placement)
+            record_placement(event.placement)
             checkpoint()
             key = event.group_key
             material_key = dict(id_tipo_vidrio=key[0], espesor_mm=key[1])
@@ -154,6 +159,7 @@ class LiveRunStream:
                     self.visual_session.finish()
 
         def visual(event):
+            record_placement(event.placement)
             # Includes sampling/reference registration as well as delivery. The
             # nested send() duration is counted only once by this outer callback.
             before, previous = self.clock(), clock['delivery']

@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from typing import Literal
 
-from .problem import OptimizationConfig, PieceUnit, StockCandidate
+from .problem import OptimizationConfig, PieceUnit, StockCandidate, Placement
 from .raster_mask import RasterMask
 from .rotation import Orientation
 
@@ -15,6 +15,7 @@ class VisualEvent:
     stock: StockCandidate | None = None
     orientation: Orientation | None = None
     material_mask: RasterMask | None = None
+    placement: Placement | None = None
     config: OptimizationConfig | None = None
     quantity: int = 0
     unique_pieces: int = 0

@@ -48,7 +48,7 @@ export function useFirstFit({ source, adapter, onSessionExpired, result }) {
       stream.current = adapter.createEventSource(buildRunRequest(state.snapshot.orders.map(o => o.id_pedido)), { snapshot: state.snapshot });
       const accept = event => {
         if (runId !== activeRun.current) return;
-        dispatch({ type: 'event', event, runId });
+        dispatch({ type: event.schema_version === 2 ? 'visual_event' : 'event', event, runId });
         if (['optimization_completed', 'optimization_failed'].includes(event.event) && adapter.loadResult) {
           Promise.resolve().then(() => adapter.loadResult(event.id_optimizacion, { resultUrl: event.data.result_url }))
             .then(result => { if (runId === activeRun.current) dispatch({ type: 'result', result, runId }); })
@@ -91,5 +91,30 @@ export function useFirstFit({ source, adapter, onSessionExpired, result }) {
       if (version === lifecycle.current) dispatch({ type: 'result_error', message: error.message });
     } finally { busy.current = false; }
   }
+  useEffect(() => {
+    const id = state.optimizationId;
+    if (!id || !adapter.loadVisualManifest || state.status === 'running' && state.runId) return undefined;
+    const controller = new AbortController();
+    (async () => {
+      try {
+        let offset = 0, items = [], revision = 0, metadata = {};
+        do {
+          const page = await adapter.loadVisualManifest(id, { offset, signal: controller.signal });
+          if (items.length && revision !== page.revision) throw new Error('El detalle visual cambió. Vuelve a consultar el resultado.');
+          revision = page.revision; items = [...items, ...page.items];
+          metadata = { preparation_completed: page.preparation_completed, evaluations: page.evaluations, processed_units: page.processed_units };
+          if (items.length > 1024 || page.next_offset !== null && page.next_offset <= offset) throw new Error('Manifiesto visual inválido.');
+          offset = page.next_offset;
+        } while (offset !== null);
+        if (!controller.signal.aborted) dispatch({ type: 'visual_manifest', id, manifest: { items, revision, ...metadata } });
+      } catch (error) {
+        if (controller.signal.aborted) return;
+        if (error.status === 401) onSessionExpired?.();
+        dispatch({ type: 'visual_manifest', id, error: error.status === 410
+          ? 'Las máscaras de esta corrida ya no están disponibles; el resultado guardado se conserva.' : error.message });
+      }
+    })();
+    return () => controller.abort();
+  }, [adapter, state.optimizationId, state.status, state.runId, onSessionExpired]);
   return { state, prepare, run, discard, recover, load, confirmed: () => dispatch({ type: 'confirmed' }), select: ids => dispatch({ type: 'select', ids }) };
 }

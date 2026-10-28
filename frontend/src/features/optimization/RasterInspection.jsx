@@ -5,8 +5,14 @@ import { GeometryPreview } from './GeometryPreview';
 import { getRasterComparisonFrame } from './visualizationGeometry';
 import { pieceRaster, validInspectionRaster } from './rasterInspectionModel';
 import { stockKey, unitKey } from './runContract.js';
+import { RunMaskInspection } from './RunMaskInspection';
 
-export function RasterInspection({ snapshot, group, placements = [], preparation = false }) {
+export function RasterInspection(props) {
+  if (props.visualContext) return <RunMaskInspection {...props.visualContext} group={props.group} placements={props.placements} />;
+  return <StaticRasterInspection {...props} />;
+}
+
+function StaticRasterInspection({ snapshot, group, placements = [], preparation = false }) {
   const id = useId();
   const [chosen, setChosen] = useState('');
   const [grid, setGrid] = useState(true);

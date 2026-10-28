@@ -147,6 +147,9 @@ class VisualManifestV2(v1.ContractV1):
     revision: v1.Count
     items: Annotated[list[MaskDescriptorV2], Field(max_length=64)]
     next_offset: v1.Count | None
+    preparation_completed: bool
+    evaluations: v1.Count
+    processed_units: v1.Count
 
 
 class WindowV2(v1.ContractV1):

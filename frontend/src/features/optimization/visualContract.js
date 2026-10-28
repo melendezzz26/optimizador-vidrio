@@ -110,6 +110,7 @@ export async function* readVisualNdjson(chunks) {
 export function parseVisualManifest(raw, runId) {
   check(object(raw) && raw.schema_version === 2 && raw.id_optimizacion === runId && count(raw.revision)
     && Array.isArray(raw.items) && raw.items.length <= 64 && raw.revision >= raw.items.length
+    && typeof raw.preparation_completed === 'boolean' && count(raw.evaluations) && count(raw.processed_units)
     && (raw.next_offset === null || count(raw.next_offset) && raw.next_offset <= raw.revision));
   const refs = new Set();
   raw.items.forEach(item => {
@@ -123,8 +124,10 @@ export function parseVisualMask(raw, runId, expected) {
   check(raw.schema_version === 2 && raw.available && raw.mask_ref === expected.mask_ref
     && decimalKey(raw.resolution_mm) === decimalKey(expected.resolution_mm)
     && decimalKey(raw.rotation_deg) === decimalKey(expected.rotation_deg)
-    && raw.kind === expected.kind && JSON.stringify(raw.piece) === JSON.stringify(expected.piece)
-    && JSON.stringify(raw.source) === JSON.stringify(expected.source)
+    && raw.columns === expected.columns && raw.row_count === expected.row_count && raw.occupied_cells === expected.occupied_cells
+    && raw.kind === expected.kind && (raw.kind === 'PIECE'
+      ? raw.piece.id_pedido === expected.piece.id_pedido && raw.piece.id_pieza === expected.piece.id_pieza
+      : ['material_source', 'material_id', 'stock_unit_index'].every(key => raw.source[key] === expected.source[key]))
     && getGeometryBounds(raw.geometria) && getGeometryBounds(raw.geometria_original));
   const w = raw.window;
   check(object(w) && count(w.row_start) && count(w.column_start) && id(w.row_count) && w.row_count <= 256

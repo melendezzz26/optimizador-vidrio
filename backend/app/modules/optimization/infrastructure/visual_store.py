@@ -14,6 +14,7 @@ class VisualSession:
     def __init__(self, store):
         self.store, self.run_id, self.finished_at = store, None, None
         self.resolution = None
+        self.revision, self.preparation_completed, self.evaluations, self.processed = 0, False, 0, 0
         self.records, self.keys, self.mask_ids = {}, {}, set()
         self.charged_bytes = 0
 
@@ -40,7 +41,20 @@ class VisualSession:
             self.keys[key] = reference
             self.mask_ids.add(id(mask))
             self.charged_bytes += charged
+            self.revision += 1
             return record
+
+    def progress(self, *, prepared=None, evaluations=None, processed=None):
+        with self.store.lock:
+            values = (self.preparation_completed, self.evaluations, self.processed)
+            if prepared is not None:
+                self.preparation_completed = prepared
+            if evaluations is not None:
+                self.evaluations = max(self.evaluations, evaluations)
+            if processed is not None:
+                self.processed = max(self.processed, processed)
+            if values != (self.preparation_completed, self.evaluations, self.processed):
+                self.revision += 1
 
     def material(self, stock, mask):
         return self.register('MATERIAL', stock, Orientation(Decimal(0), oriented_geometry(stock.geometry, 0), mask))

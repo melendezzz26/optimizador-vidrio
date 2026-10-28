@@ -34,6 +34,9 @@ class VisualProjection:
 
     def __call__(self, fact):
         kind = fact.kind
+        self.session.progress(prepared=True if kind == 'preparation_completed' else None,
+            evaluations=fact.evaluation_index if kind == 'orientation_testing' else None,
+            processed=fact.processed_units)
         if kind == 'orientation_testing' and not self.sampler.accept(fact.unit):
             return
         self.processed = fact.processed_units

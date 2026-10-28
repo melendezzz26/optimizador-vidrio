@@ -155,7 +155,8 @@ def get_visual_manifest(id_optimizacion: Annotated[int, Path(gt=0, le=2147483647
     session = store.get(id_optimizacion)
     items, revision, next_offset = session.manifest(offset, limit)
     return visual_response(VisualManifestV2(schema_version=2, id_optimizacion=id_optimizacion,
-        revision=revision, items=[describe_record(session, record) for record in items], next_offset=next_offset))
+        revision=session.revision, items=[describe_record(session, record) for record in items], next_offset=next_offset,
+        preparation_completed=session.preparation_completed, evaluations=session.evaluations, processed_units=session.processed))
 
 
 @router.get('/{id_optimizacion}/visual/masks/{mask_ref}', response_model=VisualMaskV2)

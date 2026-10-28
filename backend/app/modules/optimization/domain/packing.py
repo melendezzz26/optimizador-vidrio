@@ -174,7 +174,7 @@ def pack(problem: OptimizationProblem, on_event: Callable[[FirstFitEvent], None]
                 processed += 1
                 if on_visual is not None:
                     visual('source_selected', unit=unit, stock=stock, orientation=winner.orientation,
-                        material_mask=prepared.material(stock),
+                        material_mask=prepared.material(stock), placement=accepted,
                         score=winner.remaining_free_cells_after_placement if select is not None else None)
                 emit("piece_placed", group, unit, accepted)
                 break

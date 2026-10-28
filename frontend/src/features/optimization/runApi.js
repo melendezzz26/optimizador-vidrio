@@ -35,7 +35,22 @@ const messages = {
 // URL to another host, and never send a replacement layout on confirmation.
 export function createBackendRunAdapter({ token, fetchImpl = globalThis.fetch, readOrder = getOrder, streamProfile = 'v1' } = {}) {
   if (!['v1', 'visual-v2'].includes(streamProfile)) throw new RunApiError('Perfil visual inválido.', 422, 'INVALID_INPUT');
-  async function request(path, { method = 'GET', body, signal, stream = false } = {}) {
+  async function boundedJson(response, maximum) {
+    if (!maximum) return response.json();
+    const reader = response.body.getReader(), decoder = new TextDecoder('utf-8', { fatal: true });
+    let length = 0, text = '';
+    try {
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        length += value.byteLength;
+        if (length > maximum) throw new RunApiError('El detalle visual excede el tamaño permitido.', 422, 'INVALID_INPUT');
+        text += decoder.decode(value, { stream: true });
+      }
+      return JSON.parse(text + decoder.decode());
+    } finally { await reader.cancel(); reader.releaseLock(); }
+  }
+  async function request(path, { method = 'GET', body, signal, stream = false, maxBytes } = {}) {
     let response;
     try {
       const accessToken = token ?? getAccessToken();
@@ -53,7 +68,7 @@ export function createBackendRunAdapter({ token, fetchImpl = globalThis.fetch, r
       throw new RunApiError('No se pudo conectar. Consulta el resultado antes de preparar otro trabajo.', 0, 'NETWORK_ERROR');
     }
     if (!response.ok) {
-      const data = await response.json().catch(() => null);
+      const data = await boundedJson(response, maxBytes).catch(() => null);
       if (data?.detail?.code === 'CONFIG_CONFLICT') {
         console.error('No se pudo iniciar el cálculo de corte', { status: response.status, code: data.detail.code, detail: data.detail.message });
         throw new RunApiError('No se puede calcular el corte porque faltan los parámetros de trabajo. Solicita al administrador revisar la configuración.', response.status, 'CONFIG_CONFLICT');
@@ -62,7 +77,7 @@ export function createBackendRunAdapter({ token, fetchImpl = globalThis.fetch, r
         ?? 'El servidor no pudo completar la operación.', response.status, data?.detail?.code,
       { limit: data?.detail?.limit ?? null, retryAfter: retryAfterSeconds(response) });
     }
-    if (!stream) return response.json();
+    if (!stream) return boundedJson(response, maxBytes);
     if (!response.headers.get('content-type')?.startsWith('application/x-ndjson') || !response.body) {
       throw new RunApiError('No se pudo seguir el avance del trabajo. Consulta el resultado antes de continuar.', response.status, 'INVALID_STREAM');
     }
@@ -104,7 +119,7 @@ export function createBackendRunAdapter({ token, fetchImpl = globalThis.fetch, r
     ...transport,
     async loadVisualManifest(id, { offset = 0, signal } = {}) {
       if (!Number.isSafeInteger(id) || id <= 0 || !Number.isSafeInteger(offset) || offset < 0 || offset > 1024) throw new RunApiError('Consulta visual inválida.', 422, 'INVALID_INPUT');
-      return parseVisualManifest(await request(`/${id}/visual?offset=${offset}`, { signal }), id);
+      return parseVisualManifest(await request(`/${id}/visual?offset=${offset}`, { signal, maxBytes: 262144 }), id);
     },
     async loadVisualMask(id, descriptor, { signal, ...window } = {}) {
       parseMaskDescriptor(descriptor, id);
@@ -116,8 +131,9 @@ export function createBackendRunAdapter({ token, fetchImpl = globalThis.fetch, r
           || key === 'row_count' && value > 256 || key === 'column_count' && value > 1024) throw new RunApiError('Ventana visual inválida.', 422, 'INVALID_INPUT');
         query.set(key, value);
       }
-      const value = await request(`/${id}/visual/masks/${descriptor.mask_ref}?${query}`, { signal });
-      return parseVisualMask(value, id, descriptor);
+      const value = parseVisualMask(await request(`/${id}/visual/masks/${descriptor.mask_ref}?${query}`, { signal, maxBytes: 262144 }), id, descriptor);
+      for (const [key, expected] of Object.entries(window)) if (value.window[key] !== expected) throw new RunApiError('La máscara no corresponde a la ventana solicitada.', 422, 'INVALID_INPUT');
+      return value;
     },
   };
 }
