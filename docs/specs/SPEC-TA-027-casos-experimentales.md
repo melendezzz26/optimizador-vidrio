@@ -35,3 +35,5 @@ rotación y factibilidad de resultados; repetir FF/BF/WF en distinto orden.
 Matriz y fichas individuales en docs/evidence/sprint-02/TA-027; hashes SHA-256 de fixtures.
 ## Historial de estado
 28/10/2026: definida después de completar técnicamente SP-002. Review de Fabricio pendiente.
+
+28/10/2026: criterios técnicamente verificados; evidencia en `docs/evidence/sprint-02/TA-027/README.md`. Review de Fabricio y cierre formal pendientes.

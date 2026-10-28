@@ -1,0 +1,65 @@
+[
+  {
+    "case_id": "EXP-SMALL-001",
+    "method": "FF",
+    "placed_units": 3,
+    "total_units": 3,
+    "complete": true
+  },
+  {
+    "case_id": "EXP-SMALL-001",
+    "method": "BF",
+    "placed_units": 3,
+    "total_units": 3,
+    "complete": true
+  },
+  {
+    "case_id": "EXP-SMALL-001",
+    "method": "WF",
+    "placed_units": 3,
+    "total_units": 3,
+    "complete": true
+  },
+  {
+    "case_id": "EXP-MEDIUM-001",
+    "method": "FF",
+    "placed_units": 9,
+    "total_units": 9,
+    "complete": true
+  },
+  {
+    "case_id": "EXP-MEDIUM-001",
+    "method": "BF",
+    "placed_units": 9,
+    "total_units": 9,
+    "complete": true
+  },
+  {
+    "case_id": "EXP-MEDIUM-001",
+    "method": "WF",
+    "placed_units": 9,
+    "total_units": 9,
+    "complete": true
+  },
+  {
+    "case_id": "EXP-COMPLEX-001",
+    "method": "FF",
+    "placed_units": 24,
+    "total_units": 24,
+    "complete": true
+  },
+  {
+    "case_id": "EXP-COMPLEX-001",
+    "method": "BF",
+    "placed_units": 24,
+    "total_units": 24,
+    "complete": true
+  },
+  {
+    "case_id": "EXP-COMPLEX-001",
+    "method": "WF",
+    "placed_units": 24,
+    "total_units": 24,
+    "complete": true
+  }
+]
