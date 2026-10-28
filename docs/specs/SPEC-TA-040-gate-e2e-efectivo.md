@@ -10,14 +10,16 @@
 | Sprint | Sprint 2 |
 | Épica | EN-005 / Calidad y CI |
 | Prioridad / estimación | Alta / 1 SP |
-| Estado | **Draft** |
+| Versión | **1.1**: alternativa C implementada |
+| Estado | **Implemented** (pasa a Verified con el CI del PR en verde y la revisión) |
 | Responsable | Fabricio Aguilar |
 | Reviewer | Por asignar (distinto del autor) |
 | Rama | `enabler/TA-040-gate-e2e` |
-| Base | `origin/integration/sprint-01` en `f1fd38d` |
+| Base | `origin/integration/sprint-01` en `4bcf54d` |
 | Fecha | 27/10/2026 |
 | Dependencia | CI actual (`.github/workflows/ci.yml`), staging E2E (`backend/tests/e2e_server.py`) |
 | Dependientes | HU-016 T03 (integración, E2E y cierre del Dashboard) |
+| Evidencia | [docs/evidence/sprint-02/TA-040](../evidence/sprint-02/TA-040/README.md) |
 
 ## 1. Objetivo
 
@@ -31,7 +33,7 @@ verde representa la ejecución efectiva de los E2E críticos.
 
 ## 2. Situación actual (evidencia)
 
-Revisión de `integration/sprint-01` en `f1fd38d`:
+Revisión de `integration/sprint-01` en `4bcf54d` (sin cambios en CI ni E2E desde `f1fd38d`):
 
 - El job `e2e` ejecuta `npm run test:e2e` (`playwright test`) en escritorio y
   móvil. El último CI de integración aprobado registró 100 E2E aprobados y
@@ -178,18 +180,38 @@ ejecución de HU-015.
 
 ## 10. Decisiones y preguntas abiertas
 
-- **P-01:** ¿qué specs son críticos? Propuesta: **los 10 actuales**
+- **P-01 (decidida, 27/10/2026):** son críticos **los 10 specs actuales**
   (`hu007-custom-piece`, `hu007-order-integration`, `hu012-client-order`,
   `hu014-inventory-writeoff`, `hu015-rasterization`, `s1-optimization-ui`,
   `s1-post-review`, `ta-dashboard`, `ta036-retazo-personalizado`,
   `ta037-load-feedback`). Cada uno cubre una HU o tarea cerrada. Un spec nuevo se
   agrega a la lista en el mismo PR que lo crea.
-- **P-02:** aprobar la alternativa C frente a A o B.
-- **P-03:** avisar a Luis (HU-016 T03), porque su cierre depende de este gate.
-  `ta-dashboard.spec.js` no se modifica y hoy no tiene omisiones.
+- **P-02 (decidida, 27/10/2026):** se adopta la alternativa C.
+- **P-03 (en curso):** el responsable avisa a Luis (HU-016 T03), porque su cierre
+  depende de este gate. `ta-dashboard.spec.js` no se modifica y hoy no tiene
+  omisiones. La rama `feature/HU-016-dashboard-inicial` (sin integrar al
+  27/10/2026, 20:33) cambia `ta-dashboard.spec.js` y agrega `dashboardResponses.js`;
+  no se superpone con los archivos de esta tarea.
+
+## 11. Verificación de criterios de aceptación
+
+| CA | Resultado | Prueba |
+|---|---|---|
+| CA-01 | PASS local; CI pendiente | `e2eGate.test.js` (HU-015 sin `test.skip` ni variables de entorno). E2E completo con el gate: las 3 pruebas de HU-015 aprobadas en escritorio y móvil, 0 omitidas. |
+| CA-02 | PASS | `e2eGate.test.js`: omisión sin aprobación. Demostración real: HU-015 sin credenciales termina en exit 0 sin gate y en exit 1 con el gate, que lista las 3 omisiones. |
+| CA-03 | PASS | `e2eGate.test.js`: `approved-skip` con `TA-099` pasa y se lista; vacío, sin ID o en minúsculas, falla. |
+| CA-04 | PASS | `e2eGate.test.js`: spec crítico ausente en un proyecto, fallido o sin pruebas. Corrida real: el gate nombró `[chromium-mobile] ta036-retazo-personalizado.spec.js` cuando esa prueba falló en el entorno local. |
+| CA-05 | PASS (existente) | `postgres_support.py` hace `pytest.fail` sin binarios de PostgreSQL con `NEWGLASS_REQUIRE_POSTGRES=1`; el workflow además verifica `initdb` y `pg_ctl` con `test -x`. Sin cambios. |
+| CA-06 | PASS | `e2eGate.test.js` (`gateEnabled`); corrida local de un solo spec sin `CI` ni `NEWGLASS_E2E_GATE` termina igual que antes (exit 0 con omisiones). |
+| CA-07 | Pendiente del CI del PR | Local: unitarias 169/169, componentes 483/483, lint y build en verde; E2E con el gate: 106 pruebas, 0 omitidas. |
+
+Antes de implementar el gate, las 8 pruebas de `e2eGate.test.js` fallaban
+(161 aprobadas, 8 fallidas). Detalle en la evidencia.
 
 ## Historial de estado
 
 | Fecha | Versión | Estado | Cambio |
 |---|---|---|---|
 | 27/10/2026 | 0.1 | Draft | Borrador: diagnóstico de las 6 omisiones de HU-015, alternativas, reglas y prototipo validado. |
+| 27/10/2026 | 1.0 | Draft | P-01 (10 specs críticos) y P-02 (alternativa C) decididas; base actualizada a `4bcf54d`. Pendiente: revisión en el PR. |
+| 28/10/2026 | 1.1 | Implemented | Gate y HU-015 implementados; pruebas en rojo antes y en verde después; CA-01 a CA-06 verificados en local (§11). Pendiente: CI del PR (CA-07) y revisión para Verified. |
