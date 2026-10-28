@@ -17,9 +17,12 @@ el solicitante, mediante configuración explícita y fixtures apropiados para es
 entorno; esta excepción no autoriza reutilizar limpieza destructiva de fixtures
 temporales sobre una BD compartida. No se creó un archivo de credenciales.
 
-Todo queda local: sin push de HU-017, PR, merge, actualización de Notion ni
-ejecución de CI remoto/despliegue. La revisión de código y las comprobaciones
-locales las realizó Codex; no se atribuye revisión cruzada humana.
+Este checkpoint se registró antes de publicar HU-017 o abrir PR; sus resultados
+son locales y no acreditan CI remota/despliegue ni revisión cruzada humana.
+Actualmente la rama está publicada y propuesta en PR #81. El diagnóstico y la
+corrección local de sus cuatro fallos E2E se registran en
+[pr81-regresion-e2e.md](pr81-regresion-e2e.md), sin alterar los resultados
+históricos de este archivo ni publicar el ajuste antes de revisión.
 
 | Commit | Incremento |
 |---|---|
@@ -247,3 +250,16 @@ sigue separado y no se introduce una garantía geométrica nueva.
 La entrega queda preparada para la revisión humana e integración que el
 solicitante habilite después. Este registro no cambia el estado remoto del
 backlog, no acredita merge/CI remoto/staging y no sustituye esa revisión cruzada.
+
+Seguimiento PR #81: la matriz anterior conserva la evidencia histórica local.
+La regresión posterior de CA-21/22/23/24/25/26 y de TA-037/S1 se detalla en
+[la evidencia del ajuste E2E](pr81-regresion-e2e.md). Los seis skips históricos
+HU-015 de la ejecución equivalente a CI se reportan como omitidos, no como PASS.
+SPEC Implemented/PLAN Approved: CI verde, revisión cruzada y merge pendientes.
+
+Actualización 28/10: el arreglo autorizado del observador Dashboard deja la
+suite completa local en **108 passed / 0 failed / 6 skipped** con dos workers.
+Se conserva la ejecución previa 107/1/6 y se documentan referencia `a8c3b38`,
+prueba negativa/positiva, calidad y límites de la base en
+[el seguimiento definitivo del PR #81](pr81-regresion-e2e.md#resultado-definitivo-de-esta-corrección).
+Los seis HU-015 no cuentan como PASS; sin Verified formal ni merge/CI atribuidos.

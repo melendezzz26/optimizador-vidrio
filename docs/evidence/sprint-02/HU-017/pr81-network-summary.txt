@@ -1,0 +1,66 @@
+﻿PR #81: sanitized facts read from real local Playwright traces.
+No authorization headers, cookies, tokens or request credentials exported.
+
+CASE joint-after/s1-post-review-editar-tres-2caf9-y-selección-en-optimización-chromium-desktop
+POST http://127.0.0.1:8017/api/optimization/runs?stream_profile=visual-v2 -> 201
+pageErrors=0 consoleErrors=0
+
+CASE joint-after/s1-post-review-editar-tres-2caf9-y-selección-en-optimización-chromium-mobile
+POST http://127.0.0.1:8017/api/optimization/runs?stream_profile=visual-v2 -> 201
+pageErrors=0 consoleErrors=0
+
+CASE joint-after/ta037-load-feedback-TA037--d04a4-o-pendiente-y-stock-intacto-chromium-desktop
+POST http://127.0.0.1:8017/api/optimization/runs?stream_profile=visual-v2 -> 422
+pageErrors=0 consoleErrors=1
+
+CASE joint-after/ta037-load-feedback-TA037--d04a4-o-pendiente-y-stock-intacto-chromium-mobile
+POST http://127.0.0.1:8017/api/optimization/runs?stream_profile=visual-v2 -> 422
+pageErrors=0 consoleErrors=1
+
+CASE joint-before/s1-post-review-editar-tres-2caf9-y-selección-en-optimización-chromium-desktop
+POST http://127.0.0.1:8017/api/optimization/runs?stream_profile=visual-v2 -> 201
+pageErrors=0 consoleErrors=0
+- generic [ref=e86]: Resultado completo
+- button "Confirmar corte" [ref=e238] [cursor=pointer]
+
+CASE joint-before/s1-post-review-editar-tres-2caf9-y-selección-en-optimización-chromium-mobile
+POST http://127.0.0.1:8017/api/optimization/runs?stream_profile=visual-v2 -> 201
+pageErrors=0 consoleErrors=0
+- generic [ref=e86]: Resultado completo
+- button "Confirmar corte" [ref=e246] [cursor=pointer]
+
+CASE joint-before/ta037-load-feedback-TA037--d04a4-o-pendiente-y-stock-intacto-chromium-desktop
+POST http://127.0.0.1:8017/api/optimization/runs?stream_profile=visual-v2 -> 422
+pageErrors=0 consoleErrors=1
+- paragraph [ref=e114]: El trabajo es demasiado grande para un solo cálculo
+- paragraph [ref=e116]: Los pedidos seleccionados suman 151 unidades y el máximo por cálculo es 150. Divide la selección en lotes más pequeños.
+
+CASE joint-before/ta037-load-feedback-TA037--d04a4-o-pendiente-y-stock-intacto-chromium-mobile
+POST http://127.0.0.1:8017/api/optimization/runs?stream_profile=visual-v2 -> 422
+pageErrors=0 consoleErrors=1
+- paragraph [ref=e122]: El trabajo es demasiado grande para un solo cálculo
+- paragraph [ref=e124]: Los pedidos seleccionados suman 151 unidades y el máximo por cálculo es 150. Divide la selección en lotes más pequeños.
+
+CASE s1-chromium-desktop/s1-post-review-editar-tres-2caf9-y-selección-en-optimización-chromium-desktop
+POST http://127.0.0.1:8017/api/optimization/runs?stream_profile=visual-v2 -> 201
+pageErrors=0 consoleErrors=0
+- generic [ref=e86]: Resultado completo
+- button "Confirmar corte" [ref=e232] [cursor=pointer]
+
+CASE s1-chromium-mobile/s1-post-review-editar-tres-2caf9-y-selección-en-optimización-chromium-mobile
+POST http://127.0.0.1:8017/api/optimization/runs?stream_profile=visual-v2 -> 201
+pageErrors=0 consoleErrors=0
+- generic [ref=e86]: Resultado completo
+- button "Confirmar corte" [ref=e232] [cursor=pointer]
+
+CASE ta037-chromium-desktop/ta037-load-feedback-TA037--d04a4-o-pendiente-y-stock-intacto-chromium-desktop
+POST http://127.0.0.1:8017/api/optimization/runs?stream_profile=visual-v2 -> 422
+pageErrors=0 consoleErrors=1
+- paragraph [ref=e114]: El trabajo es demasiado grande para un solo cálculo
+- paragraph [ref=e116]: Los pedidos seleccionados suman 151 unidades y el máximo por cálculo es 150. Divide la selección en lotes más pequeños.
+
+CASE ta037-chromium-mobile/ta037-load-feedback-TA037--d04a4-o-pendiente-y-stock-intacto-chromium-mobile
+POST http://127.0.0.1:8017/api/optimization/runs?stream_profile=visual-v2 -> 422
+pageErrors=0 consoleErrors=1
+- paragraph [ref=e114]: El trabajo es demasiado grande para un solo cálculo
+- paragraph [ref=e116]: Los pedidos seleccionados suman 151 unidades y el máximo por cálculo es 150. Divide la selección en lotes más pequeños.
