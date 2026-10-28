@@ -66,9 +66,13 @@ test('editar tres veces conserva ID, cantidad de pedidos y selección en optimiz
   await expect(orderRow).toHaveCount(1);
   await orderRow.getByRole('checkbox').check();
   await page.getByRole('button', { name: 'Revisar vidrios y piezas', exact: true }).click();
-  const run = page.waitForResponse(result => result.url() === `${api}/api/optimization/runs` && result.request().method() === 'POST');
+  const run = page.waitForResponse(result => {
+    const url = new URL(result.url());
+    return url.origin === api && url.pathname === '/api/optimization/runs' && result.request().method() === 'POST';
+  });
   await page.getByRole('button', { name: 'Calcular distribución', exact: true }).click();
   const calculated = await run;
+  expect(new URL(calculated.url()).searchParams.get('stream_profile')).toBe('visual-v2');
   expect(calculated.status()).toBe(201);
   expect(calculated.request().postDataJSON()).toEqual({ order_ids: [id_pedido] });
   await page.getByRole('button', { name: 'Ver en 3D', exact: true }).click();
