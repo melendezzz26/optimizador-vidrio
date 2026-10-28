@@ -5,17 +5,18 @@
 | Campo | Valor |
 |---|---|
 | ID / nombre | HU-017 — Visualizar proceso de optimización |
-| Estado | **Verified — local, sin integrar** |
+| Estado | **Implemented — validación local; revisión cruzada, CI verde del PR y merge pendientes** |
 | Tipo / módulo | Historia de usuario / Optimization |
 | Responsable / revisor | Implementación y verificación local: Codex por encargo del solicitante. Responsable/revisor humano formal pendientes. |
 | Fecha | 28/10/2026 UTC |
 | Base inspeccionada | `4bcf54d`, `integration/sprint-01`; antecedente documental `783aac8` |
-| Ejecución | T01–T06 implementadas y verificadas en `feature/HU-017-proceso-visual-optimizacion`, con commits y evidencia local. Sin push, PR ni merge. |
+| Ejecución | T01–T06 implementadas con evidencia local en `feature/HU-017-proceso-visual-optimizacion`, publicada y propuesta en PR #81 hacia `integration/sprint-01`. Corrección E2E en revisión local, sin commit/push de este ajuste ni merge. |
 | PLAN | [PLAN-HU-017-proceso-visual-optimizacion.md](PLAN-HU-017-proceso-visual-optimizacion.md) |
 | Dependencias | HU-015/S1-01, SP-001, TA-016, TA-018, TA-019, TA-021 y TA-037 según contratos pendientes |
 | Decisión | Cierre técnico local autorizado y probado con PostgreSQL temporal para esta HU. Revisión cruzada humana e integración pendientes; sin cambiar backlog remoto. |
 | Streaming / DG-01 | **B implementada; DG-01 Closed.** Perfil visual-v2 optativo, V1 predeterminado; contrato en [DECISION-HU-017-DG-01](DECISION-HU-017-DG-01-streaming-visual.md). |
 | Evidencia de cierre | [T03–T06, matriz de 26 CA, pruebas, recursos y capturas](../evidence/sprint-02/HU-017/t03-t06-visualizacion-y-cierre-local.md). |
+| Seguimiento PR #81 | [Diagnóstico y regresión E2E](../evidence/sprint-02/HU-017/pr81-regresion-e2e.md). No se declara Verified formal sin revisión cruzada, CI verde e integración. |
 
 ## 1. Identificador, historia y propósito
 
@@ -440,3 +441,5 @@ existencia previa de HU-015/TA-019 ni por crear documentación.
 | 27/10/2026 | Reviewed | Núcleo T02 implementado en `1291d65`: bases previas, resolución/configuración inmutables y orientaciones compartidas lazy. 2270 backend y 34 E2E correctos; sin cierre global, publicación ni revisión humana atribuida. |
 | 27/10/2026 | Reviewed | DG-01 Closed por elección expresa de B; contrato visual-v2 optativo documentado antes de T03. Sin código nuevo ni cambio de los 26 CA. |
 | 28/10/2026 UTC | Verified — local | T01–T06 implementadas y verificadas: 2312 backend, ampliación API visual 12/12, 161 unitarias frontend, 506 componentes y 38 E2E; lint/build correctos. PostgreSQL temporal autorizado para HU-017. Sin publicación, integración ni revisión humana atribuida; CA/estimación intactos. |
+| 27/10/2026 America/Lima | Implemented — PR #81 pendiente | Se distingue la evidencia local histórica del cierre formal. PR abierto; se diagnostican cuatro timeouts E2E por predicados de URL sin `stream_profile=visual-v2`. Corrección de tests sin cambios funcionales ni en los 26 CA; revisión cruzada, CI verde y merge pendientes. |
+| 28/10/2026 America/Lima | Implemented — regresión local correcta | Adaptación autorizada del observador Dashboard de `a8c3b38`, aislando peticiones por ciclo sin cambiar aserciones. Suite completa 108 passed / 0 failed / 6 skipped históricos HU-015; 167 unitarias, 240 componentes, lint/build correctos. Se conservan 26 CA y cambios previos; no commit/push/merge ni Verified formal. CI del PR y revisión cruzada pendientes. |

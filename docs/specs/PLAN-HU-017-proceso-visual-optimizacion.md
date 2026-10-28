@@ -4,12 +4,12 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Verified — local, sin integrar** |
-| SPEC | [SPEC-HU-017-proceso-visual-optimizacion.md](SPEC-HU-017-proceso-visual-optimizacion.md), Verified local |
+| Estado | **Approved — T01–T06 implementadas; revisión cruzada, CI verde y merge pendientes** |
+| SPEC | [SPEC-HU-017-proceso-visual-optimizacion.md](SPEC-HU-017-proceso-visual-optimizacion.md), Implemented con evidencia local; sin Verified formal |
 | Responsable / revisor | Implementación y verificación local: Codex por encargo del solicitante. Responsable/revisor humano formal pendientes. |
 | Fecha / base | 27/10/2026 / `4bcf54d`, `integration/sprint-01` |
 | Estimación | Propuesta, 1 SP = 6 h; sin asignación ni compromiso de sprint. |
-| Ejecución actual | T01–T06 implementadas y verificadas en `feature/HU-017-proceso-visual-optimizacion`, con commits y evidencia local. Sin push de HU-017, PR ni merge. |
+| Ejecución actual | T01–T06 implementadas y probadas localmente; rama publicada y PR #81 abierto hacia `integration/sprint-01`. Ajuste E2E en revisión local, sin commit/push de este ajuste ni merge. |
 | DG-01 | **Closed — B (`visual-v2`)**, elegida expresamente e implementada; V1 conservado. |
 | Evidencia final | [Matriz de CA, suites, recursos y capturas T03–T06](../evidence/sprint-02/HU-017/t03-t06-visualizacion-y-cierre-local.md). |
 
@@ -421,9 +421,12 @@ El cierre técnico local cubre T01–T06. El primer punto permanece abierto por 
 asignación formal/revisión cruzada humana pendiente; no se inventa un responsable
 humano ni una aprobación independiente. SPEC/PLAN y DG-01 sí fueron aprobados
 por el solicitante. Las pruebas no sustituyen esa revisión ni la integración.
-No se cambió el backlog remoto, publicó HU-017, abrió PR o hizo merge. Las
-correcciones HU-016 publicadas por instrucción independiente y el cambio local
-de CI no forman parte de esta rama.
+El registro histórico de pruebas precedió a la publicación. Actualmente HU-017
+está publicada y propuesta en PR #81; revisión cruzada, CI verde e integración
+siguen pendientes. El ajuste E2E se documenta en
+[la regresión del PR](../evidence/sprint-02/HU-017/pr81-regresion-e2e.md), sin
+desarrollar TA-040 ni cambiar el backlog. Las correcciones HU-016 publicadas por
+instrucción independiente y el cambio local de CI no forman parte de esta rama.
 
 ## Historial de estado
 
@@ -437,3 +440,5 @@ de CI no forman parte de esta rama.
 | 27/10/2026 | Approved | Núcleo T02 implementado/validado en `1291d65`; DG-01 sigue abierta antes de T03. Sin cierre global, publicación ni cambios en los 26 CA o la estimación. |
 | 27/10/2026 | Approved | Solicitante elige B («Vamos por B»); DG-01 Closed con perfil visual-v2 optativo y reglas documentadas. T03 habilitada, aún no implementada; sin cambio de estimación ni cierre global. |
 | 28/10/2026 UTC | Verified — local | T01–T06 implementadas, pruebas completas y evidencia final/matriz CA; misma estimación 10 SP / 60 h. PostgreSQL temporal por autorización expresa. Cierre técnico local, sin publicación ni revisión humana atribuida. |
+| 27/10/2026 America/Lima | Approved — PR #81 pendiente | Corrección mínima de sincronización E2E para el perfil aprobado visual-v2; alcance/26 CA/10 SP intactos. No se declara verificación formal: revisión cruzada, CI verde del PR y merge pendientes. |
+| 28/10/2026 America/Lima | Approved — arreglo Dashboard validado localmente | Se adapta únicamente el aislamiento de peticiones por ciclo de `a8c3b38` y sus regresiones. 108/0/6 E2E completos con dos workers, Dashboard/S1/TA-037/HU-017 correctos; calidad local aprobada. TA-040/skips se reportan por separado; 26 CA y 10 SP intactos. Sin merge/rebase/commit/push; revisión cruzada y CI del PR pendientes. |
