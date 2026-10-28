@@ -115,3 +115,35 @@ formal antes de marcar TA-037 Closed. No se modifica Notion desde esta entrega.
 GAP-03 (varios procesos), GAP-04 (fallos tardíos residuales), GAP-05 (capacidad
 raster a 5°) y TA-038 siguen explícitamente separados. No se ocultan como
 resueltos, ni se amplía TA-037 para implementar otras tareas.
+
+
+## Verificación independiente y cierre (28/10/2026)
+
+Realizada por Fabricio Aguilar, distinto del autor del saneamiento, sobre
+`integration/sprint-01` en `e256bde`, con PostgreSQL efímero obligatorio
+(`NEWGLASS_REQUIRE_POSTGRES=1`). Prueba focal:
+
+```text
+pytest tests/unit/optimization/test_run_admission.py tests/api/optimization/test_run_concurrency.py tests/api/optimization/test_run_load_limits.py tests/api/optimization/test_run_load_stress.py tests/integration/optimization/test_run_load_limits_pg.py -q
+```
+
+| Código de admisión | Resultado |
+|---|---|
+| Actual (`e256bde`) | **39 passed** |
+| Anterior, con vencimiento a 300 s (`445886a`) | **6 failed, 33 passed** |
+
+Las 6 que fallan con el código anterior son exactamente las regresiones de T03:
+
+- `test_unreleased_slots_keep_global_and_user_limits_after_long_delivery[300]`, `[301]` y `[3600]`
+- `test_slow_live_stream_keeps_slot_past_300_seconds_until_worker_ends[complete]` y `[disconnect]`
+- `test_disconnect_cleanup_does_not_free_a_worker_still_computing`
+
+Esto demuestra que la falla es reproducible y que la corrección evita que se admita
+una segunda ejecución incompatible mientras la primera sigue activa (L-10 y L-11).
+
+Desde la integración del PR #74, el CI de integración volvió a ejecutar estas
+pruebas en verde en los PR #78, #83 y #85. Desde TA-040 (PR #83), el job E2E corre
+106 pruebas sin omisiones, incluidas las 6 de HU-015 que antes se saltaban.
+
+**Estado:** TA-037 pasa a Verified; T03 puede marcarse como Closed. GAP-03, GAP-04,
+GAP-05 y TA-038 siguen fuera de este alcance.

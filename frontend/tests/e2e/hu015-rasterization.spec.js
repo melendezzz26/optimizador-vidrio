@@ -1,12 +1,10 @@
-import process from 'node:process';
 import { expect, test } from '@playwright/test';
 import { capture } from './optimizationRealSupport.js';
 
 const apiOrigin = 'http://127.0.0.1:8017';
-const username = process.env.HU015_E2E_USERNAME?.trim();
-const password = process.env.HU015_E2E_PASSWORD;
-const hasHu015Credentials = Boolean(username && password);
-const credentials = { username, password };
+// TA-040: Operario sintético que crea tests.e2e_server en su PostgreSQL efímero de loopback.
+// No es una credencial real y no depende de variables de entorno: la suite nunca se omite.
+const credentials = { username: 'O70000001', password: 'Orders-test-2026!' };
 const glass = { id_tipo_vidrio: 7, espesor_mm: 6 };
 
 async function createPersistedOrder(page, piezas) {
@@ -52,7 +50,6 @@ async function tabTo(page, locator) {
 }
 
 test('HU-015: flujo real de pieza cantidad 5, raster, recuperación, resolución y responsive', async ({ page, baseURL }, info) => {
-  test.skip(!hasHu015Credentials, 'HU-015 real E2E requires configured synthetic test credentials');
   const order = await createPersistedOrder(page, [
     { tipo_forma: 'RECTANGULO', cantidad: 5, ...glass, width_mm: 800, height_mm: 600 },
     { tipo_forma: 'RECTANGULO', cantidad: 1, ...glass, width_mm: 1, height_mm: 10 },
@@ -210,7 +207,6 @@ test('HU-015: flujo real de pieza cantidad 5, raster, recuperación, resolución
 });
 
 test('HU-015: CIRCUNFERENCIA se compara con la máscara real del backend', async ({ page, baseURL }, info) => {
-  test.skip(!hasHu015Credentials, 'HU-015 real E2E requires configured synthetic test credentials');
   const order = await createPersistedOrder(page, [
     { tipo_forma: 'CIRCUNFERENCIA', cantidad: 2, ...glass, radius_mm: 30 },
   ]);
@@ -238,7 +234,6 @@ test('HU-015: CIRCUNFERENCIA se compara con la máscara real del backend', async
 });
 
 test('HU-015: POLIGONO_CONVEXO conserva vertices_mm negativos y columnas sobre 53', async ({ page, baseURL }, info) => {
-  test.skip(!hasHu015Credentials, 'HU-015 real E2E requires configured synthetic test credentials');
   const vertices = [[-150, -50], [150, -50], [150, 50], [-150, 50]];
   const order = await createPersistedOrder(page, [
     { tipo_forma: 'POLIGONO_CONVEXO', cantidad: 1, ...glass, vertices_mm: vertices },

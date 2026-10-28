@@ -9,10 +9,10 @@
 | Sprint | Sprint 2 |
 | Tipo / épica | Habilitador / Optimización segura |
 | Versión | **1.3**: saneamiento del ciclo de vida de plazas de T03; presupuestos y contratos de v1.2 conservados |
-| Estado | **Implemented** — T01–T04 validadas técnicamente; pendiente de CI y revisión del PR de saneamiento para Verified. |
+| Estado | **Verified**: T01–T04 y el saneamiento de T03 integrados (PR #66, #67, #68 y #74) con CI en verde; verificación independiente de T03 registrada en la evidencia v1.3. |
 | Responsable | Fabricio Aguilar |
 | Saneamiento T03 | Fabricio Melendez Quezada con asistencia de Codex; trabajo original T01–T04 de Fabricio Aguilar |
-| Revisor del cierre | Pendiente de revisión del PR; no se atribuye una aprobación humana |
+| Revisor del cierre | PR #74 integrado en `integration/sprint-01`; verificación independiente de T03 por Fabricio Aguilar (28/10/2026) |
 | Fecha | 26/10/2026 |
 | Rama | `fix/TA-037-admission-lifecycle`, desde `integration/sprint-01` en `445886a` |
 | Origen | Auditoría pre-Sprint 2, hallazgo **S1-02** (BLOCKER) y propuesta EN-S2-02 |
@@ -428,11 +428,11 @@ recibe el foco. El resto de errores conserva la presentación genérica de siemp
 | CA-02 | PASS | `tests/unit/optimization/test_load_budget.py` (exacto y + 1); `tests/api/optimization/test_run_load_limits.py` |
 | CA-03 | PASS | `tests/unit/optimization/test_accept_run_load_limits.py` (espía sobre `prepare_persisted_problem`) |
 | CA-04 | PASS | `tests/api/optimization/test_run_load_limits.py`, `tests/integration/optimization/test_run_load_limits_pg.py` (PostgreSQL) |
-| CA-05 | PASS técnico | Regresión de optimización: 717 PASS, sin cambiar las aserciones de FF/BF/WF, corte comercial o confirmación. La prueba de caducidad de TA-037 sí se sustituye deliberadamente; suite completa y E2E mediante CI del PR. |
+| CA-05 | PASS | Regresión de optimización: 717 PASS, sin cambiar las aserciones de FF/BF/WF, corte comercial o confirmación. La prueba de caducidad de TA-037 se sustituyó deliberadamente. Suite completa y E2E en verde en el CI de integración posterior (PR #78, #83 y #85; 106 E2E sin omisiones desde TA-040). |
 | CA-06 | PASS | Cantidad 2 147 483 647 rechazada en menos de 1 s (unitaria) y en ~0,12 s por HTTP (`test_run_load_stress.py`) |
 | CA-07 | PASS | Caso H-10 en `test_load_budget.py` y `test_accept_run_load_limits.py` |
-| CA-08 | PASS técnico | Reloj a 300/301/3600 s en `test_run_admission.py`; stream real con PostgreSQL por encima de 300 s en `test_run_concurrency.py`; límites global y por usuario preservados. |
-| CA-09 | PASS técnico | Éxito, fallo, rechazo, desconexión, L-12, arranque fallido, contrapresión y trabajador vivo después del join de limpieza; 100 ciclos sin fugas. [Evidencia v1.3](../evidence/sprint-02/TA-037/admission-lifecycle.md). |
+| CA-08 | PASS | Reloj a 300/301/3600 s en `test_run_admission.py`; stream real con PostgreSQL por encima de 300 s en `test_run_concurrency.py`; límites global y por usuario preservados. Reproducible: con la admisión anterior fallan estas regresiones (verificación independiente, 28/10/2026). |
+| CA-09 | PASS | Éxito, fallo, rechazo, desconexión, L-12, arranque fallido, contrapresión y trabajador vivo después del join de limpieza; 100 ciclos sin fugas. [Evidencia v1.3 y verificación independiente](../evidence/sprint-02/TA-037/admission-lifecycle.md). |
 | CA-10 | PASS | `test_run_concurrency.py`: 201, 422, 503, `TIME_BUDGET_EXCEEDED`; la confirmación funciona con el optimizador lleno |
 | CA-11 | PASS | `frontend/src/features/optimization/__tests__/LoadControlFeedback.test.jsx`; E2E `ta037-load-feedback.spec.js` (escritorio y móvil) |
 | CA-12 | PASS | `test_run_load_stress.py`: stock y piezas al máximo de la base, rechazados en menos de 5 s y sin OOM |
@@ -446,4 +446,5 @@ recibe el foco. El resto de errores conserva la presentación genérica de siemp
 | 26/10/2026 | 1.2 | Reviewed | Valores de v1.1 aprobados por el equipo (Scrum Master). Correcciones de implementación de T02: L-09 retirado por no tener cota segura; L-05 conserva `INVALID_INPUT`; L-13 calculado con cota inferior en coma flotante; P4 usa el adaptador de stock del cálculo. |
 | 26/10/2026 | 1.2 | Reviewed | T03 implementada según §5.1, §7.2 y §7.3. Detalle de implementación agregado en §5.1: puntos de liberación de la plaza y respaldo de expiración de 300 s. Sin cambios de valores ni de contrato. |
 | 26/10/2026 | 1.2 | Implemented | T04: avisos de frontend («divide el lote», «intenta más tarde», tiempo máximo), pruebas de peor caso y E2E real. CA-01 a CA-12 en PASS (§13). Pendiente: CI en verde y revisión para Verified. |
-| 27/10/2026 | 1.3 | Implemented | Retirado el respaldo de expiración de 300 s; CA-08/CA-09 precisan que la plaza sigue al trabajador. Presupuestos y contratos conservados. Regresión focalizada 39 PASS; optimización/geometría/API/PostgreSQL/confirmación 717 PASS. Trabajo original de Aguilar preservado; corrección y revisión técnica de Fabricio Melendez con Codex. CI y revisión del PR pendientes para cierre formal. |
+| 27/10/2026 | 1.3 | Implemented | Retirado el respaldo de expiración de 300 s; CA-08/CA-09 precisan que la plaza sigue al trabajador. Presupuestos y contratos conservados. Regresión focalizada 39 PASS; optimización/geometría/API/PostgreSQL/confirmación 717 PASS. Trabajo original de Aguilar preservado; corrección y revisión técnica de Fabricio Melendez. CI y revisión del PR pendientes para cierre formal. |
+| 28/10/2026 | 1.3 | Verified | Saneamiento de T03 (PR #74) integrado y verificado de forma independiente: sobre `e256bde`, 39 PASS en la regresión focal; con la admisión anterior (`445886a`) fallan las 6 regresiones de T03. CI de integración en verde (PR #78, #83 y #85). CA-01 a CA-12 en PASS. |

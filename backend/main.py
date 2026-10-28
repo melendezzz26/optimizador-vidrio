@@ -1,7 +1,9 @@
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from app.shared.config import cors_origins
 from app.shared.observability.health import router as health_router
+from app.shared.security.validation_errors import sanitized_validation_handler
 
 from app.modules.authentication.presentation.router import router as authentication_router
 from app.modules.inventory.presentation.router import router as inventory_router
@@ -15,6 +17,9 @@ app = FastAPI(
     title="Optimizador de Corte de Vidrio",
     version="1.0.0"
 )
+
+# TA-041: los errores 422 de validación nunca devuelven los datos enviados (p. ej., la contraseña).
+app.add_exception_handler(RequestValidationError, sanitized_validation_handler)
 
 app.add_middleware(
     CORSMiddleware,
