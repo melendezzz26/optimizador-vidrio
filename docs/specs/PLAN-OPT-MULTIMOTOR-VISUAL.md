@@ -217,8 +217,11 @@ por motor y hechos visuales/orden reales. Su
 [evidencia](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t02-coordinador.md)
 registra 817 pruebas del módulo, siete escenarios de recursos y sus límites.
 T00 conserva pendiente medir el recorrido HTTP/retención completo; siguen
-pendientes contratos HTTP, confirmación comparativa, recuperación de reinicios,
-stores comparativos e interfaz. No se declaran T01–T07 cerradas por estos avances.
+pendientes contratos HTTP, recuperación de reinicios, stores comparativos e
+interfaz. La confirmación comparativa interna (`4ccf74a`) ya valida el elegido,
+versión e idempotencia, con consumo/rollback exclusivos;
+[evidencia](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t03-confirmacion.md).
+No se declaran T01–T07 cerradas por estos avances.
 
 Inicio de T00: sonda de tres procesos `spawn`, entrada JSON común y comparación
 de resultados con ejecución directa en los tres casos congelados, ejecutada y
@@ -327,3 +330,5 @@ No atribuir cambios de estado a herramientas externas que no se actualizaron.
 | 31/10/2026 | Approved — desarrollo en curso | Codec parcial T01 `2323e94` y ampliación T00 `795c588`; 123 pruebas aprobadas. Medición de supervisor y tres workers en siete escenarios; T00 y la integración de producto siguen pendientes. Convención de commits documentada por indicación de Fabricio Melendez Quezada |
 | 31/10/2026 | Approved — desarrollo en curso | Persistencia interna `d4088e6`: tres ejecuciones, idempotencia, solicitud original y selección versionada sin consumo. Regresión 159 pruebas y selección específica posterior 22 pruebas, con superposición. API, runner, confirmación comparativa e interfaz pendientes |
 | 31/10/2026 | Approved — desarrollo en curso | Runner/coordinador `6493b15`: tres procesos supervisados, presupuestos aplicados, orden real y guardado independiente. 817 pruebas del módulo aprobadas. Ajuste de head en pruebas `9b960ca`: 81 pruebas afectadas aprobadas; repetición completa pendiente de registrar. API, confirmación comparativa, recuperación y UI pendientes |
+| 31/10/2026 | Approved — desarrollo en curso | Regresión completa de backend de la base `9b960ca`: 2429 pruebas aprobadas en 258.69s, sin fallos ni skips. Confirmación comparativa y recorrido HTTP/UI siguen pendientes de integrar |
+| 31/10/2026 | Approved — desarrollo en curso | Confirmación interna `4ccf74a`: consumo exclusivo FF/BF/WF elegido, recibo idempotente, carreras y rollback. Selección de regresión: 74 pruebas aprobadas. Rutas, recuperación, streaming y frontend pendientes |

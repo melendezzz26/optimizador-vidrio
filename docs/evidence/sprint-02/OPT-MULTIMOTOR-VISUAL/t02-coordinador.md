@@ -88,7 +88,8 @@ Se ejecutó además la suite completa y se detectaron referencias obsoletas al
 head anterior en dos archivos de pruebas. `9b960ca` las actualiza al nuevo head,
 conservando sus verificaciones de esquema e historia. La repetición específica
 de inventario y migración de clientes aprobó **81 pruebas en 23.26s**. La
-repetición de la suite completa permanece pendiente de registrar aquí.
+repetición completa, sobre la base `9b960ca` antes de la confirmación comparativa,
+aprobó **2429 pruebas en 258.69s**, sin fallos ni skips y con la misma advertencia.
 
 Sonda del runner, desde la raíz y con árbol limpio en `6493b15`:
 
