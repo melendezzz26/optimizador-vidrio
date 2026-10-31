@@ -184,6 +184,27 @@ class SqlComparisonRepository:
             **row.comparison_snapshot.get("worker_processes", {}), str(execution_id): {
                 "pid": identity["pid"], "start_ticks": identity["start_ticks"]}}}
 
+    def reconcile_stopped(self, comparison_id, *, supervisor_stopped=False):
+        """Prueba interna de terminación; nunca aceptar esta afirmación desde HTTP."""
+        row = self._lock(comparison_id)
+        current = self.get(comparison_id)
+        if current.terminal:
+            return current
+        if not supervisor_stopped:
+            from .process_lifecycle import process_identity
+            owner = row.comparison_snapshot.get("supervisor_identity")
+            children = row.comparison_snapshot.get("worker_processes", {}).values()
+            if not owner or process_identity(owner["pid"]) == owner:
+                return current
+            if any(process_identity(child["pid"]) == child for child in children):
+                return current
+            # Solo los hijos listos/registrados pudieron atravesar el gate.
+            # El resto verifica al padre e instala PDEATHSIG antes de calcular.
+        for execution in current.executions:
+            if execution.status == "EN_EJECUCION":
+                self.fail_execution(comparison_id, execution.execution_id, "WORKER_STOPPED")
+        return self.finish_after_workers_stopped(comparison_id)
+
     def save_result(self, comparison_id, execution_id, result, residuals):
         row = self._lock(comparison_id)
         current = self.get(comparison_id)

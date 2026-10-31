@@ -205,6 +205,7 @@ class ComparisonProcessRunner:
             "worker_peak_rss_bytes": {method: 0 for method in METHODS},
             "maximum_packet_bytes": 0, "maximum_queued_packets_per_worker": 0,
             "maximum_sample_gap_ms": 0, "all_workers_stopped": False}
+        report["owned_processes"] = {}
         self.last_report = report
         ready, terminal = set(), set()
         monitor = None
@@ -255,6 +256,8 @@ class ComparisonProcessRunner:
                 processes[method] = process
                 try:
                     process.start()
+                    report["owned_processes"][method] = {"pid": process.pid, "start_ticks": None}
+                    report["owned_processes"][method] = process_identity(process.pid) or report["owned_processes"][method]
                 finally:
                     sending.close()
                 reader = Thread(target=_reader, args=(receiving, channels[method], stop, budget.packet_bytes), daemon=True)

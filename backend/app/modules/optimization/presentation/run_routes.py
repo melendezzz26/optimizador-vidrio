@@ -36,7 +36,8 @@ class RunRoute(APIRoute):
                 status = {"NOT_FOUND":404, "STATE_CONFLICT":409, "CONFIG_CONFLICT":409, "INVALID_INPUT":422,
                           "STOCK_CONFLICT":409, "ALREADY_CONFIRMED":409, "NOT_CONFIRMABLE":422,
                           "LOAD_LIMIT_EXCEEDED":422, "OPTIMIZER_BUSY":503,
-                          "VISUAL_DATA_UNAVAILABLE":410}.get(error.code,500)
+                          "VISUAL_DATA_UNAVAILABLE":410, "RESOURCE_UNAVAILABLE":503,
+                          "EVENT_CURSOR_EXPIRED":409}.get(error.code,500)
                 # TA-037: public details (e.g. limit) only; internals stay in the server log.
                 retry = getattr(error, "retry_after", None)
                 raise HTTPException(status, detail=dict(code=error.code, message=error.message,
