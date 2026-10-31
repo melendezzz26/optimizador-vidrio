@@ -305,6 +305,10 @@ class Optimizacion(Base):
             name="ck_optimizaciones_estado",
         ),
         Index("ix_optimizaciones_pedido_fecha", "id_pedido", "fecha_inicio"),
+        UniqueConstraint("id_usuario_ejecutor", "comparison_key", name="uq_optimizaciones_comparison_key"),
+        CheckConstraint("comparison_version > 0", name="ck_optimizaciones_comparison_version"),
+        CheckConstraint("(comparison_key IS NULL) = (comparison_snapshot IS NULL)",
+                        name="ck_optimizaciones_comparison_metadata"),
     )
 
     id_optimizacion: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -317,6 +321,9 @@ class Optimizacion(Base):
     )
     id_usuario_ejecutor: Mapped[int] = mapped_column(ForeignKey("usuarios.id_usuario"), nullable=False)
     criterio_seleccion_version: Mapped[str] = mapped_column(String(20), nullable=False)
+    comparison_key: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    comparison_snapshot: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    comparison_version: Mapped[int] = mapped_column(Integer, nullable=False, server_default="1")
     id_ejecucion_seleccionada: Mapped[int | None] = mapped_column(
         ForeignKey(
             "ejecuciones_optimizacion.id_ejecucion",

@@ -11,9 +11,9 @@ import json
 from ..domain.best_fit import BestFitResult
 from ..domain.worst_fit import WorstFitResult
 from ..domain.problem import OptimizationProblem, OptimizationResult
+from ..application.comparison_contracts import METHODS
 from .run_snapshot import decode as decode_legacy, json_value
 
-METHODS = ("FF", "BF", "WF")
 RESULT_TYPES = {"FF": OptimizationResult, "BF": BestFitResult, "WF": WorstFitResult}
 MAX_INPUT_BYTES = 4 * 1024 * 1024
 MAX_RESULT_BYTES = 8 * 1024 * 1024
