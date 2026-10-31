@@ -61,3 +61,10 @@ resultado. Se excluyen web, retención visual y el auxiliar `resource_tracker`;
 las muestras pueden omitir picos y contar páginas compartidas varias veces.
 La [evidencia de recursos](../../docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t00-recursos.md)
 explica los límites; los escenarios no certifican el triple peor caso.
+
+`python experiments/optimization/probe_runner.py` ejercita el runner incorporado
+a la aplicación con sus límites, IPC acotado y cierre supervisado, en los siete
+escenarios. Comprueba fidelidad de los tres resultados y hechos de orden y
+registra memoria/colas/paquetes. No levanta servidor web ni certifica el
+presupuesto con retención visual completa. Véase la
+[evidencia del coordinador](../../docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t02-coordinador.md).
