@@ -210,6 +210,14 @@ de T00 en `795c588` añade muestreo agregado y cuatro escenarios de recursos;
 [evidencia](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t00-recursos.md).
 No cierra el presupuesto productivo ni constituye integración de interfaz.
 
+Actualización posterior: `d4088e6` incorpora la persistencia comparativa,
+aceptación idempotente, captura única de stock, solicitud original, resultados
+por ejecución y selección/liberación internas versionadas. La
+[evidencia de persistencia](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t01-persistencia.md)
+registra PostgreSQL temporal y regresión histórica. Sustituye la indicación
+anterior de persistencia pendiente; siguen pendientes los contratos HTTP,
+runner, confirmación comparativa y frontend. No cierra T00 ni T01–T07.
+
 Inicio de T00: sonda de tres procesos `spawn`, entrada JSON común y comparación
 de resultados con ejecución directa en los tres casos congelados, ejecutada y
 documentada en [la evidencia inicial](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t00-inicio.md).
@@ -315,3 +323,4 @@ No atribuir cambios de estado a herramientas externas que no se actualizaron.
 | 31/10/2026 | Approved | Fabricio Melendez Quezada aprueba el PLAN, confirma su autoría y asigna revisión a Andro Quispe. Desarrollo autorizado únicamente en la rama acordada; T00 en curso |
 | 31/10/2026 | Approved — T00 en curso | Sonda inicial `eb40a21`: tres procesos y resultados equivalentes en los casos SMALL/MEDIUM/COMPLEX. Evidencia registrada; umbrales agregados y contratos pendientes |
 | 31/10/2026 | Approved — desarrollo en curso | Codec parcial T01 `2323e94` y ampliación T00 `795c588`; 123 pruebas aprobadas. Medición de supervisor y tres workers en siete escenarios; T00 y la integración de producto siguen pendientes. Convención de commits documentada por indicación de Fabricio Melendez Quezada |
+| 31/10/2026 | Approved — desarrollo en curso | Persistencia interna `d4088e6`: tres ejecuciones, idempotencia, solicitud original y selección versionada sin consumo. Regresión 159 pruebas y selección específica posterior 22 pruebas, con superposición. API, runner, confirmación comparativa e interfaz pendientes |
