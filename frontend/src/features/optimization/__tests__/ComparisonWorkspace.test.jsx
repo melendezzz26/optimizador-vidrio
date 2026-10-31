@@ -64,7 +64,7 @@ test('default workspace has four stable tabs, real phases and no automatic choic
 });
 
 test('manual BF selection, original measures and confirmation use the same work', async () => {
-  const { api } = setup(); await execute();
+  const { api, source } = setup(); await execute();
   fireEvent.click(screen.getByRole('tab', { name: 'Comparación' }));
   fireEvent.click(screen.getByLabelText('Elegir Best Fit'));
   await waitFor(() => expect(screen.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeEnabled());
@@ -78,6 +78,16 @@ test('manual BF selection, original measures and confirmation use the same work'
   await waitFor(() => expect(api.confirm).toHaveBeenCalledTimes(1));
   expect(api.confirm.mock.calls[0][1]).toMatchObject({ executionId: 2, version: 6 });
   await screen.findByText('Corte confirmado');
+  const firstKey = api.start.mock.calls[0][1];
+  act(() => {
+    source.emit({ type: 'remove', id: 1 });
+    source.emit({ type: 'upsert', order: { id_pedido: 2, cliente: 'Segundo pedido', piezas: [] } });
+  });
+  fireEvent.click(screen.getByRole('checkbox', { name: /Pedido #2/ }));
+  fireEvent.click(screen.getByRole('button', { name: 'Comparar con los tres motores' }));
+  await waitFor(() => expect(api.start).toHaveBeenCalledTimes(2));
+  expect(api.start.mock.calls[1][0]).toEqual([2]);
+  expect(api.start.mock.calls[1][1]).not.toBe(firstKey);
 });
 
 test('reload recovers the saved comparison without starting another calculation', async () => {

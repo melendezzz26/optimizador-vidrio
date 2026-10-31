@@ -149,6 +149,7 @@ export function createComparisonController({ api, source, storageKey, initialId,
     }),
     start: () => action(async () => {
       if (!state.selected.length || state.comparison && !state.comparison.released && !state.comparison.confirmed) return;
+      if (state.comparison?.confirmed || state.comparison?.released) requestKey = null;
       const g = prepare(); requestKey ??= newKey(); operation = null; remember(true);
       const current = await api.start(state.selected, requestKey, request.signal);
       if (!valid(g)) return;
