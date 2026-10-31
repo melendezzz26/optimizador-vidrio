@@ -200,8 +200,15 @@ y su contrato de presentación pertenecen al segundo trabajo.
 
 ## 4. Secuencia de implementación propuesta
 
-**T00 en curso** tras aprobación expresa. T01–T07 pendientes de ejecución y
-evidencia; no se declaran criterios funcionales cumplidos por cambiar este estado.
+**T00 en curso** tras aprobación expresa. T01–T07 siguen sin cierre funcional;
+no se declaran criterios cumplidos por cambiar este estado.
+
+Avance de implementación: el codec multimétodo de T01 está disponible y validado
+aisladamente en `2323e94`; [evidencia](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t01-codec.md).
+La persistencia/API de T01 y el resto de tareas siguen pendientes. La ampliación
+de T00 en `795c588` añade muestreo agregado y cuatro escenarios de recursos;
+[evidencia](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t00-recursos.md).
+No cierra el presupuesto productivo ni constituye integración de interfaz.
 
 Inicio de T00: sonda de tres procesos `spawn`, entrada JSON común y comparación
 de resultados con ejecución directa en los tres casos congelados, ejecutada y
@@ -224,6 +231,16 @@ productivo ni satisface por sí sola los CA de integración.
 Mantener commits por contrato/persistencia, coordinador, API, eventos, UI y
 pruebas/evidencia. El PR será hacia `integration/sprint-01`; crear PR/merge o
 desplegar no forman parte de la autorización de desarrollo actual.
+
+### Convención de commits acordada
+
+Cada cambio concreto y verificado mantiene trazabilidad con esta SPEC/PLAN:
+`docs:` para documentación/estado/evidencia, `feat:` para funcionalidad,
+`fix:` para correcciones, `test:` para pruebas/sondas y `refactor:` para
+reestructuración sin cambio funcional. Puede indicarse el módulo, por ejemplo
+`feat(optimization): ...`. La autoría de los nuevos commits corresponde a
+Fabricio Melendez Quezada; Andro Quispe es revisor asignado, sin atribuirle
+revisiones no realizadas. Se conservan los commits anteriores sin reescribirlos.
 
 ## 5. Estrategia de pruebas
 
@@ -297,3 +314,4 @@ No atribuir cambios de estado a herramientas externas que no se actualizaron.
 | 31/10/2026 | Draft | PLAN preparado junto con la SPEC; ninguna tarea de implementación ejecutada |
 | 31/10/2026 | Approved | Fabricio Melendez Quezada aprueba el PLAN, confirma su autoría y asigna revisión a Andro Quispe. Desarrollo autorizado únicamente en la rama acordada; T00 en curso |
 | 31/10/2026 | Approved — T00 en curso | Sonda inicial `eb40a21`: tres procesos y resultados equivalentes en los casos SMALL/MEDIUM/COMPLEX. Evidencia registrada; umbrales agregados y contratos pendientes |
+| 31/10/2026 | Approved — desarrollo en curso | Codec parcial T01 `2323e94` y ampliación T00 `795c588`; 123 pruebas aprobadas. Medición de supervisor y tres workers en siete escenarios; T00 y la integración de producto siguen pendientes. Convención de commits documentada por indicación de Fabricio Melendez Quezada |

@@ -1,0 +1,629 @@
+{
+  "schema_version": 2,
+  "author": "Fabricio Melendez Quezada",
+  "assigned_reviewer": "Andro Quispe",
+  "source_commit": "795c5881d0553d6aaf001cfa52200b995489dfc1",
+  "python": "3.11.9",
+  "platform": "Linux",
+  "start_method": "spawn",
+  "probe_only": true,
+  "measurement_notes": [
+    "Barrera instrumentada dentro del primer hecho real; tiempos no aptos para ranking.",
+    "La suma de máximos RSS de workers no es un pico agregado simultáneo medido.",
+    "El agregado RSS se muestrea: puede omitir picos y cuenta páginas compartidas varias veces.",
+    "Incluye supervisor y tres workers; excluye resource_tracker, web y retención visual productiva.",
+    "Casos congelados pequeños: no certifica el peor caso ni capacidad de producción.",
+    "No implementa streaming/API productivos ni aplica escrituras de inventario."
+  ],
+  "cases": [
+    {
+      "case_id": "EXP-SMALL-001",
+      "input_sha256": "5ca34870ff34fcc6690bfc68614092a506ba12755c8b676813b36015a0236af0",
+      "input_snapshot_bytes": 1044,
+      "aggregate_memory": {
+        "metric": "sampled_supervisor_and_three_workers_rss_sum",
+        "sample_interval_ms": 10.0,
+        "samples": 17,
+        "maximum_gap_ms": 39.41925999970408,
+        "maximum_processes": 4,
+        "maximum_rss_sum_bytes": 83783680
+      },
+      "common_overlap_ms": 9.265187,
+      "all_methods_match_direct_execution": true,
+      "sum_worker_peak_rss_bytes": 62914560,
+      "workers": [
+        {
+          "ok": true,
+          "method": "FF",
+          "pid": 18112,
+          "input_sha256": "5ca34870ff34fcc6690bfc68614092a506ba12755c8b676813b36015a0236af0",
+          "started_ns": 12186582199553,
+          "ended_ns": 12186591592297,
+          "instrumented_elapsed_ms": 9.392744,
+          "cpu_ms": 9.17904,
+          "peak_rss_bytes": 20971520,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 1,
+            "piece_ready": 1,
+            "preparation_completed": 1,
+            "orientation_testing": 7,
+            "source_selected": 3
+          },
+          "result_snapshot_bytes": 2654,
+          "total_units": 3,
+          "placed_units": 3,
+          "functional_sha256": "8f63841d8d1bb5d522ed58a68361e2493d2a08c493099b660be6ef1b06f38f73"
+        },
+        {
+          "ok": true,
+          "method": "BF",
+          "pid": 18113,
+          "input_sha256": "5ca34870ff34fcc6690bfc68614092a506ba12755c8b676813b36015a0236af0",
+          "started_ns": 12186582171511,
+          "ended_ns": 12186591783725,
+          "instrumented_elapsed_ms": 9.612214,
+          "cpu_ms": 9.312848,
+          "peak_rss_bytes": 20971520,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 1,
+            "piece_ready": 1,
+            "preparation_completed": 1,
+            "orientation_testing": 7,
+            "source_selected": 3
+          },
+          "result_snapshot_bytes": 2654,
+          "total_units": 3,
+          "placed_units": 3,
+          "functional_sha256": "1d448cc7cb7a607bc976361b6db793f563eb0015e1644215d39988adb1ba793d"
+        },
+        {
+          "ok": true,
+          "method": "WF",
+          "pid": 18114,
+          "input_sha256": "5ca34870ff34fcc6690bfc68614092a506ba12755c8b676813b36015a0236af0",
+          "started_ns": 12186582128080,
+          "ended_ns": 12186591464740,
+          "instrumented_elapsed_ms": 9.33666,
+          "cpu_ms": 8.970169,
+          "peak_rss_bytes": 20971520,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 1,
+            "piece_ready": 1,
+            "preparation_completed": 1,
+            "orientation_testing": 7,
+            "source_selected": 3
+          },
+          "result_snapshot_bytes": 2654,
+          "total_units": 3,
+          "placed_units": 3,
+          "functional_sha256": "488a922fa5c6723cc7fa36ed4310698c9bff50739493ca30778018c23d541ba1"
+        }
+      ]
+    },
+    {
+      "case_id": "EXP-MEDIUM-001",
+      "input_sha256": "5658263478c577c4389f278e67c06948e5d6a4d5041fc6589e56aa662f1c67b5",
+      "input_snapshot_bytes": 2341,
+      "aggregate_memory": {
+        "metric": "sampled_supervisor_and_three_workers_rss_sum",
+        "sample_interval_ms": 10.0,
+        "samples": 16,
+        "maximum_gap_ms": 43.563770999753615,
+        "maximum_processes": 4,
+        "maximum_rss_sum_bytes": 84602880
+      },
+      "common_overlap_ms": 15.533617,
+      "all_methods_match_direct_execution": true,
+      "sum_worker_peak_rss_bytes": 64094208,
+      "workers": [
+        {
+          "ok": true,
+          "method": "FF",
+          "pid": 18119,
+          "input_sha256": "5658263478c577c4389f278e67c06948e5d6a4d5041fc6589e56aa662f1c67b5",
+          "started_ns": 12186768952662,
+          "ended_ns": 12186784576449,
+          "instrumented_elapsed_ms": 15.623787,
+          "cpu_ms": 15.22202,
+          "peak_rss_bytes": 21364736,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 3,
+            "piece_ready": 3,
+            "preparation_completed": 1,
+            "orientation_testing": 118,
+            "source_selected": 9
+          },
+          "result_snapshot_bytes": 6683,
+          "total_units": 9,
+          "placed_units": 9,
+          "functional_sha256": "e718714d51c0b3231d76bbae05720c1064d9d8f0102cf5fb72672678cf0e375f"
+        },
+        {
+          "ok": true,
+          "method": "BF",
+          "pid": 18120,
+          "input_sha256": "5658263478c577c4389f278e67c06948e5d6a4d5041fc6589e56aa662f1c67b5",
+          "started_ns": 12186769017504,
+          "ended_ns": 12186790909310,
+          "instrumented_elapsed_ms": 21.891806,
+          "cpu_ms": 21.443866,
+          "peak_rss_bytes": 21364736,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 3,
+            "piece_ready": 3,
+            "preparation_completed": 1,
+            "orientation_testing": 146,
+            "source_selected": 9
+          },
+          "result_snapshot_bytes": 6684,
+          "total_units": 9,
+          "placed_units": 9,
+          "functional_sha256": "f81990bf7f46f65d282b339d0527e2b02b89542aa2035767945238c5e033e2c0"
+        },
+        {
+          "ok": true,
+          "method": "WF",
+          "pid": 18121,
+          "input_sha256": "5658263478c577c4389f278e67c06948e5d6a4d5041fc6589e56aa662f1c67b5",
+          "started_ns": 12186769042832,
+          "ended_ns": 12186784612438,
+          "instrumented_elapsed_ms": 15.569606,
+          "cpu_ms": 15.391711,
+          "peak_rss_bytes": 21364736,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 3,
+            "piece_ready": 3,
+            "preparation_completed": 1,
+            "orientation_testing": 108,
+            "source_selected": 9
+          },
+          "result_snapshot_bytes": 6683,
+          "total_units": 9,
+          "placed_units": 9,
+          "functional_sha256": "add5d5c744b602dfe64ac3286285a7f28cf983f1ef571ac640b629483bbfb2d9"
+        }
+      ]
+    },
+    {
+      "case_id": "EXP-COMPLEX-001",
+      "input_sha256": "a9f64f47a05d4ebffcf61e5b9a109712bfeea71a49c1204f54be8925b54ca29d",
+      "input_snapshot_bytes": 5445,
+      "aggregate_memory": {
+        "metric": "sampled_supervisor_and_three_workers_rss_sum",
+        "sample_interval_ms": 10.0,
+        "samples": 23,
+        "maximum_gap_ms": 38.359403999493225,
+        "maximum_processes": 4,
+        "maximum_rss_sum_bytes": 87855104
+      },
+      "common_overlap_ms": 101.65976,
+      "all_methods_match_direct_execution": true,
+      "sum_worker_peak_rss_bytes": 65130496,
+      "workers": [
+        {
+          "ok": true,
+          "method": "FF",
+          "pid": 18126,
+          "input_sha256": "a9f64f47a05d4ebffcf61e5b9a109712bfeea71a49c1204f54be8925b54ca29d",
+          "started_ns": 12187039846759,
+          "ended_ns": 12187141547986,
+          "instrumented_elapsed_ms": 101.701227,
+          "cpu_ms": 74.876931,
+          "peak_rss_bytes": 21708800,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 6,
+            "piece_ready": 6,
+            "preparation_completed": 1,
+            "orientation_testing": 1263,
+            "source_selected": 24
+          },
+          "result_snapshot_bytes": 17128,
+          "total_units": 24,
+          "placed_units": 24,
+          "functional_sha256": "eac7e701bc9cc7090570d89e83fc827c0c2b7f24bd6ccdc4ead8cb3064d2da7f"
+        },
+        {
+          "ok": true,
+          "method": "BF",
+          "pid": 18127,
+          "input_sha256": "a9f64f47a05d4ebffcf61e5b9a109712bfeea71a49c1204f54be8925b54ca29d",
+          "started_ns": 12187039570848,
+          "ended_ns": 12187147462357,
+          "instrumented_elapsed_ms": 107.891509,
+          "cpu_ms": 79.257201,
+          "peak_rss_bytes": 21708800,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 6,
+            "piece_ready": 6,
+            "preparation_completed": 1,
+            "orientation_testing": 1311,
+            "source_selected": 24
+          },
+          "result_snapshot_bytes": 17128,
+          "total_units": 24,
+          "placed_units": 24,
+          "functional_sha256": "4f2c656381576c95f4c11686a14d3ae00149b8e3874cb55cafa12233bb613208"
+        },
+        {
+          "ok": true,
+          "method": "WF",
+          "pid": 18128,
+          "input_sha256": "a9f64f47a05d4ebffcf61e5b9a109712bfeea71a49c1204f54be8925b54ca29d",
+          "started_ns": 12187039888226,
+          "ended_ns": 12187149132221,
+          "instrumented_elapsed_ms": 109.243995,
+          "cpu_ms": 82.569534,
+          "peak_rss_bytes": 21712896,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 6,
+            "piece_ready": 6,
+            "preparation_completed": 1,
+            "orientation_testing": 1199,
+            "source_selected": 24
+          },
+          "result_snapshot_bytes": 17125,
+          "total_units": 24,
+          "placed_units": 24,
+          "functional_sha256": "b23566e78331d7fef252f649776d0ccd066288ced098152c33de4a2c5e08e718"
+        }
+      ]
+    },
+    {
+      "case_id": "T00-UNITS-150",
+      "input_sha256": "78b9aff9b3bc4976d5bb7c35e8047713cc58ec3249a3dd9d7a090372fad9c5bd",
+      "input_snapshot_bytes": 33151,
+      "aggregate_memory": {
+        "metric": "sampled_supervisor_and_three_workers_rss_sum",
+        "sample_interval_ms": 10.0,
+        "samples": 53,
+        "maximum_gap_ms": 38.26914800083614,
+        "maximum_processes": 4,
+        "maximum_rss_sum_bytes": 89362432
+      },
+      "common_overlap_ms": 57.218511,
+      "all_methods_match_direct_execution": true,
+      "sum_worker_peak_rss_bytes": 69599232,
+      "workers": [
+        {
+          "ok": true,
+          "method": "FF",
+          "pid": 18133,
+          "input_sha256": "78b9aff9b3bc4976d5bb7c35e8047713cc58ec3249a3dd9d7a090372fad9c5bd",
+          "started_ns": 12187588519402,
+          "ended_ns": 12187645916282,
+          "instrumented_elapsed_ms": 57.39688,
+          "cpu_ms": 46.749863,
+          "peak_rss_bytes": 23199744,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 1,
+            "piece_ready": 1,
+            "preparation_completed": 1,
+            "orientation_testing": 250,
+            "source_selected": 150
+          },
+          "result_snapshot_bytes": 102860,
+          "total_units": 150,
+          "placed_units": 150,
+          "functional_sha256": "43afe72e60eef61007eaf414510d2a8101ed31ac7d8cc4815d47e8c9f397f38e"
+        },
+        {
+          "ok": true,
+          "method": "BF",
+          "pid": 18134,
+          "input_sha256": "78b9aff9b3bc4976d5bb7c35e8047713cc58ec3249a3dd9d7a090372fad9c5bd",
+          "started_ns": 12187588464063,
+          "ended_ns": 12187994865356,
+          "instrumented_elapsed_ms": 406.401293,
+          "cpu_ms": 333.241123,
+          "peak_rss_bytes": 23199744,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 1,
+            "piece_ready": 1,
+            "preparation_completed": 1,
+            "orientation_testing": 7550,
+            "source_selected": 150
+          },
+          "result_snapshot_bytes": 102860,
+          "total_units": 150,
+          "placed_units": 150,
+          "functional_sha256": "c0835d8e7c5b27a24800fd447ff01472c2eb7a76ebd7ee8e1ca88ac56871faa6"
+        },
+        {
+          "ok": true,
+          "method": "WF",
+          "pid": 18135,
+          "input_sha256": "78b9aff9b3bc4976d5bb7c35e8047713cc58ec3249a3dd9d7a090372fad9c5bd",
+          "started_ns": 12187588697771,
+          "ended_ns": 12187943807376,
+          "instrumented_elapsed_ms": 355.109605,
+          "cpu_ms": 285.850362,
+          "peak_rss_bytes": 23199744,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 1,
+            "piece_ready": 1,
+            "preparation_completed": 1,
+            "orientation_testing": 7500,
+            "source_selected": 150
+          },
+          "result_snapshot_bytes": 102865,
+          "total_units": 150,
+          "placed_units": 150,
+          "functional_sha256": "4536ff4efe6ac2964460663bc965fc0479f1465b9bac3bcb884cf5dc9a4ca3eb"
+        }
+      ]
+    },
+    {
+      "case_id": "T00-STOCK-50",
+      "input_sha256": "1d73ffad820d7b4024ee2dbaba601fb01ab167b358bce2650fc3b4b421bedac2",
+      "input_snapshot_bytes": 11158,
+      "aggregate_memory": {
+        "metric": "sampled_supervisor_and_three_workers_rss_sum",
+        "sample_interval_ms": 10.0,
+        "samples": 16,
+        "maximum_gap_ms": 32.16712900029961,
+        "maximum_processes": 4,
+        "maximum_rss_sum_bytes": 88104960
+      },
+      "common_overlap_ms": 4.541764,
+      "all_methods_match_direct_execution": true,
+      "sum_worker_peak_rss_bytes": 73531392,
+      "workers": [
+        {
+          "ok": true,
+          "method": "FF",
+          "pid": 18152,
+          "input_sha256": "1d73ffad820d7b4024ee2dbaba601fb01ab167b358bce2650fc3b4b421bedac2",
+          "started_ns": 12188596122508,
+          "ended_ns": 12188600752390,
+          "instrumented_elapsed_ms": 4.629882,
+          "cpu_ms": 4.3165,
+          "peak_rss_bytes": 24510464,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 1,
+            "piece_ready": 1,
+            "preparation_completed": 1,
+            "orientation_testing": 12,
+            "source_selected": 12
+          },
+          "result_snapshot_bytes": 16940,
+          "total_units": 12,
+          "placed_units": 12,
+          "functional_sha256": "b8d2f76cf328670aed8c960be4dc8e0db295f7552d7831dd016b524f34394e98"
+        },
+        {
+          "ok": true,
+          "method": "BF",
+          "pid": 18153,
+          "input_sha256": "1d73ffad820d7b4024ee2dbaba601fb01ab167b358bce2650fc3b4b421bedac2",
+          "started_ns": 12188596194181,
+          "ended_ns": 12188645281770,
+          "instrumented_elapsed_ms": 49.087589,
+          "cpu_ms": 22.042843,
+          "peak_rss_bytes": 24510464,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 1,
+            "piece_ready": 1,
+            "preparation_completed": 1,
+            "orientation_testing": 600,
+            "source_selected": 12
+          },
+          "result_snapshot_bytes": 16940,
+          "total_units": 12,
+          "placed_units": 12,
+          "functional_sha256": "2597ded01a0fec936f7b104562221821949de4e57a16fe5a7246dce74ae4e112"
+        },
+        {
+          "ok": true,
+          "method": "WF",
+          "pid": 18154,
+          "input_sha256": "1d73ffad820d7b4024ee2dbaba601fb01ab167b358bce2650fc3b4b421bedac2",
+          "started_ns": 12188596210626,
+          "ended_ns": 12188644646773,
+          "instrumented_elapsed_ms": 48.436147,
+          "cpu_ms": 21.727256,
+          "peak_rss_bytes": 24510464,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 1,
+            "piece_ready": 1,
+            "preparation_completed": 1,
+            "orientation_testing": 600,
+            "source_selected": 12
+          },
+          "result_snapshot_bytes": 16941,
+          "total_units": 12,
+          "placed_units": 12,
+          "functional_sha256": "7744caba9b34ce89dd590cbf5738c80fcba867c88187e63cddbe5278d926bbe6"
+        }
+      ]
+    },
+    {
+      "case_id": "T00-VERTICES-128",
+      "input_sha256": "23eef9df8d1b5fcf71ad8aaf730bd1f47b393b03ece3bce31116be7df4416e84",
+      "input_snapshot_bytes": 23046,
+      "aggregate_memory": {
+        "metric": "sampled_supervisor_and_three_workers_rss_sum",
+        "sample_interval_ms": 10.0,
+        "samples": 51,
+        "maximum_gap_ms": 35.23857400068664,
+        "maximum_processes": 4,
+        "maximum_rss_sum_bytes": 90951680
+      },
+      "common_overlap_ms": 58.083635,
+      "all_methods_match_direct_execution": true,
+      "sum_worker_peak_rss_bytes": 74317824,
+      "workers": [
+        {
+          "ok": true,
+          "method": "FF",
+          "pid": 18159,
+          "input_sha256": "23eef9df8d1b5fcf71ad8aaf730bd1f47b393b03ece3bce31116be7df4416e84",
+          "started_ns": 12188879778246,
+          "ended_ns": 12189243498162,
+          "instrumented_elapsed_ms": 363.719916,
+          "cpu_ms": 302.776815,
+          "peak_rss_bytes": 24903680,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 1,
+            "piece_ready": 1,
+            "preparation_completed": 1,
+            "orientation_testing": 16,
+            "source_selected": 8
+          },
+          "result_snapshot_bytes": 68531,
+          "total_units": 8,
+          "placed_units": 8,
+          "functional_sha256": "27fc5089b361a5811c23a96bc28c23da9d1c5813b5be1ea34a77e46ba1e96caf"
+        },
+        {
+          "ok": true,
+          "method": "BF",
+          "pid": 18160,
+          "input_sha256": "23eef9df8d1b5fcf71ad8aaf730bd1f47b393b03ece3bce31116be7df4416e84",
+          "started_ns": 12188879802918,
+          "ended_ns": 12189264978133,
+          "instrumented_elapsed_ms": 385.175215,
+          "cpu_ms": 325.552356,
+          "peak_rss_bytes": 24903680,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 1,
+            "piece_ready": 1,
+            "preparation_completed": 1,
+            "orientation_testing": 28,
+            "source_selected": 8
+          },
+          "result_snapshot_bytes": 68531,
+          "total_units": 8,
+          "placed_units": 8,
+          "functional_sha256": "51c162bb3399b829d5fcaae34ace21cbf5e32cbe956d9d3cc6e33c6641cb10a7"
+        },
+        {
+          "ok": true,
+          "method": "WF",
+          "pid": 18161,
+          "input_sha256": "23eef9df8d1b5fcf71ad8aaf730bd1f47b393b03ece3bce31116be7df4416e84",
+          "started_ns": 12188879845587,
+          "ended_ns": 12188937929222,
+          "instrumented_elapsed_ms": 58.083635,
+          "cpu_ms": 27.490069,
+          "peak_rss_bytes": 24510464,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 1,
+            "piece_ready": 1,
+            "preparation_completed": 1,
+            "orientation_testing": 24,
+            "source_selected": 8
+          },
+          "result_snapshot_bytes": 68529,
+          "total_units": 8,
+          "placed_units": 8,
+          "functional_sha256": "347db23210366f4c79df64415ffa577667875a9c2e9bee1b58949c1e82bf7089"
+        }
+      ]
+    },
+    {
+      "case_id": "T00-GRID-4M",
+      "input_sha256": "0a387b14517f02ed2b9fa70a0314eec6b7c781f2d9a82821854288de9b5228bd",
+      "input_snapshot_bytes": 576,
+      "aggregate_memory": {
+        "metric": "sampled_supervisor_and_three_workers_rss_sum",
+        "sample_interval_ms": 10.0,
+        "samples": 20,
+        "maximum_gap_ms": 36.85022100034985,
+        "maximum_processes": 4,
+        "maximum_rss_sum_bytes": 93065216
+      },
+      "common_overlap_ms": 63.794981,
+      "all_methods_match_direct_execution": true,
+      "sum_worker_peak_rss_bytes": 78249984,
+      "workers": [
+        {
+          "ok": true,
+          "method": "FF",
+          "pid": 18166,
+          "input_sha256": "0a387b14517f02ed2b9fa70a0314eec6b7c781f2d9a82821854288de9b5228bd",
+          "started_ns": 12190188701890,
+          "ended_ns": 12190252543496,
+          "instrumented_elapsed_ms": 63.841606,
+          "cpu_ms": 37.118514,
+          "peak_rss_bytes": 26083328,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 1,
+            "piece_ready": 1,
+            "preparation_completed": 1,
+            "orientation_testing": 1,
+            "source_selected": 1
+          },
+          "result_snapshot_bytes": 1319,
+          "total_units": 1,
+          "placed_units": 1,
+          "functional_sha256": "70ad91b1ea75f5f6194232812a4c1609bcced8bb1e057cfbc4471f66917b6136"
+        },
+        {
+          "ok": true,
+          "method": "BF",
+          "pid": 18167,
+          "input_sha256": "0a387b14517f02ed2b9fa70a0314eec6b7c781f2d9a82821854288de9b5228bd",
+          "started_ns": 12190188677213,
+          "ended_ns": 12190264960283,
+          "instrumented_elapsed_ms": 76.28307,
+          "cpu_ms": 43.962953,
+          "peak_rss_bytes": 26083328,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 1,
+            "piece_ready": 1,
+            "preparation_completed": 1,
+            "orientation_testing": 1,
+            "source_selected": 1
+          },
+          "result_snapshot_bytes": 1319,
+          "total_units": 1,
+          "placed_units": 1,
+          "functional_sha256": "5eecf73e6a72b7c61856104573ef16436d6c11c90f620a0f7c88f4dfcaad330b"
+        },
+        {
+          "ok": true,
+          "method": "WF",
+          "pid": 18168,
+          "input_sha256": "0a387b14517f02ed2b9fa70a0314eec6b7c781f2d9a82821854288de9b5228bd",
+          "started_ns": 12190188748515,
+          "ended_ns": 12190253332859,
+          "instrumented_elapsed_ms": 64.584344,
+          "cpu_ms": 38.01139,
+          "peak_rss_bytes": 26083328,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 1,
+            "piece_ready": 1,
+            "preparation_completed": 1,
+            "orientation_testing": 1,
+            "source_selected": 1
+          },
+          "result_snapshot_bytes": 1319,
+          "total_units": 1,
+          "placed_units": 1,
+          "functional_sha256": "17c6be3be95d6219e9e890a0e74d0d91eaa7bb5fc3c61115cb1b6316c31ed317"
+        }
+      ]
+    }
+  ]
+}

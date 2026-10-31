@@ -51,3 +51,13 @@ datos sintéticos; no conecta a la base. Sus tiempos incluyen instrumentación y
 no sirven para elegir el mejor motor. La suma de RSS máximos de workers no
 equivale al pico agregado simultáneo ni certifica capacidad de producción.
 La aplicación nunca importa esta sonda; no es un coordinador productivo.
+
+Esta versión de la sonda necesita Linux con procfs para la medición agregada.
+Añadir `--resource-cases` ejecuta también escenarios de
+150 unidades, 50 unidades físicas de stock, 128 vértices y una rejilla de cuatro
+millones de celdas. La sonda muestrea RSS del supervisor y los tres trabajadores
+por PID, verifica que observó los cuatro y conserva tamaños JSON de entrada y
+resultado. Se excluyen web, retención visual y el auxiliar `resource_tracker`;
+las muestras pueden omitir picos y contar páginas compartidas varias veces.
+La [evidencia de recursos](../../docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t00-recursos.md)
+explica los límites; los escenarios no certifican el triple peor caso.
