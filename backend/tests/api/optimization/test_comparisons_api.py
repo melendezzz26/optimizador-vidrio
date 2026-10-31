@@ -12,6 +12,9 @@ from app.modules.optimization.presentation.comparison_routes import get_comparis
 from app.modules.optimization.presentation.comparison_runtime import ComparisonRuntime
 from app.modules.optimization.presentation.comparison_schemas import ComparisonSummary, ComparisonEvent, ExecutionResponse
 from main import app
+from app.modules.inventory.presentation.dependencies import get_inventory_service
+from app.modules.inventory.application.service import InventoryService
+from app.modules.inventory.infrastructure.repository import SqlAlchemyInventoryRepository
 from tests.integration.optimization.test_runs import prepared  # noqa: F401
 
 BASE = "/api/optimization/comparisons"
@@ -23,6 +26,7 @@ def api(client, session_factory, prepared):
     uow, runtime = partial(SqlComparisonUnitOfWork, session_factory), ComparisonRuntime()
     app.dependency_overrides[get_comparison_uow] = lambda: uow
     app.dependency_overrides[get_comparison_runtime] = lambda: runtime
+    app.dependency_overrides[get_inventory_service] = lambda: InventoryService(SqlAlchemyInventoryRepository(session_factory))
     headers = {"Authorization": "Bearer " + create_access_token(actor, "O73000001", "Operario")}
     try:
         yield client, ids, headers, runtime, uow
@@ -30,6 +34,7 @@ def api(client, session_factory, prepared):
         runtime.shutdown()
         app.dependency_overrides.pop(get_comparison_uow, None)
         app.dependency_overrides.pop(get_comparison_runtime, None)
+        app.dependency_overrides.pop(get_inventory_service, None)
 
 
 def start(api, key="comparison-api-key"):
@@ -53,7 +58,7 @@ def completed(api, path):
     pytest.fail("Comparison did not finish")
 
 
-def test_full_http_three_engines_masks_order_selection_confirmation_and_reload(api, session_factory):
+def test_full_http_three_engines_masks_order_selection_confirmation_and_reload(api, session_factory, record_property):
     client, ids, headers, runtime, _ = api
     path, accepted = start(api)
     assert accepted.selected_execution_id is None
@@ -98,6 +103,9 @@ def test_full_http_three_engines_masks_order_selection_confirmation_and_reload(a
     assert client.post(path + "/confirm", json=body, headers=confirm_headers).json() == left.json()
     assert client.get(path, headers=headers).json()["confirmed"]
     assert runtime.job.finished and runtime.job.observers == 0
+    record_property("comparison_resources", json.dumps({"runner": runtime.job.runner.last_report,
+        "retained_visual_bytes": sum(s.charged_bytes for s in runtime.job.sessions.values()),
+        "retained_event_bytes": runtime.job.record_bytes, "event_count": len(runtime.job.records)}))
 
 
 def test_idempotency_and_request_lookup_do_not_recalculate(api, session_factory):
@@ -200,3 +208,36 @@ def test_browser_can_send_idempotency_header(api):
         "Access-Control-Request-Headers": "authorization,content-type,idempotency-key"})
     assert response.status_code == 200
     assert "idempotency-key" in response.headers["access-control-allow-headers"].lower()
+
+
+def test_memory_preflight_rejects_before_acceptance_and_frees_admission(api, session_factory, run_admission, monkeypatch):
+    from app.modules.optimization.infrastructure import comparison_runner
+    monkeypatch.setattr(comparison_runner, "available_memory", lambda: 0)
+    client, ids, headers, *_ = api
+    response = client.post(BASE, json={"order_ids": ids}, headers={**headers, "Idempotency-Key": "memory-preflight-key"})
+    assert response.status_code == 503 and response.json()["detail"]["code"] == "RESOURCE_UNAVAILABLE"
+    assert run_admission.active() == 0
+    with session_factory() as s:
+        assert s.scalar(select(func.count()).select_from(Optimizacion)) == 0
+        assert [s.get(Pedido, i).estado for i in ids] == ["PENDIENTE"] * 2
+
+
+def test_selected_wf_remnant_has_physical_origin_through_inventory_api(api, session_factory):
+    client, ids, headers, *_ = api
+    with session_factory() as s:
+        s.get(Plancha, 5).ancho_mm = 5
+        s.commit()
+    path, _ = start(api)
+    current = completed(api, path)
+    execution = next(e for e in current["executions"] if e["method"] == "WF")
+    chosen = client.put(path + "/selection", json={"execution_id": execution["execution_id"], "expected_version": current["version"]}, headers=headers).json()
+    response = client.post(path + "/confirm", headers={**headers, "Idempotency-Key": "wf-origin-confirm-key"},
+        json={"execution_id": execution["execution_id"], "expected_version": chosen["version"]})
+    assert response.status_code == 200, response.text
+    remnants = response.json()["receipt"]["remnants_created"]
+    assert remnants
+    for remnant in remnants:
+        origin = client.get(f"/api/inventory/retazos/{remnant['id_retazo']}/origen", headers=headers)
+        assert origin.status_code == 200, origin.text
+        assert origin.json()["source"] == remnant["source"]
+        assert origin.json()["id_ejecucion_origen"] == execution["execution_id"]

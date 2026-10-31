@@ -42,6 +42,7 @@ class ComparisonJob:
         self.method_sequences = {method: 0 for method in self.sessions}
         self.orders = {method: [] for method in self.sessions}
         self.current = {method: None for method in self.sessions}
+        self.last_orientation = {method: None for method in self.sessions}
         self.phases = {method: "PREPARING" for method in self.sessions}
         self.group_bases = {method: {} for method in self.sessions}
         self.finished, self.finished_at, self.unsafe = False, None, False
@@ -101,6 +102,8 @@ class ComparisonJob:
             self.current[method] = plain({**data, "kind": kind})
         if kind in ("orientation_testing", "source_selected", "piece_unplaced"):
             self.phases[method] = "CALCULATING"
+        if kind in ("orientation_testing", "source_selected"):
+            self.last_orientation[method] = plain({**data, "kind": kind})
         self.emit(method, kind, data)
 
     def accept(self, signal):
@@ -165,8 +168,10 @@ class ComparisonJob:
             items, total, next_offset = session.manifest(offset)
             return dict(profile="comparison-v1", schema_version=1, comparison_id=self.comparison.comparison_id,
                 execution_id=execution_id, method=method, revision=session.revision,
+                execution_sequence=self.method_sequences[method],
                 preparation_completed=session.preparation_completed, processed_units=session.processed,
                 evaluations=session.evaluations, phase=self.phases[method], current=self.current[method],
+                last_orientation=self.last_orientation[method],
                 ordered_units=plain(self.orders[method]), total=total, next_offset=next_offset,
                 items=[self.descriptor(method, describe_record(session, r)) for r in items])
 
@@ -212,10 +217,12 @@ class ComparisonJob:
             self.condition.notify_all()
 
     def dispose(self):
-        for session in self.sessions.values():
-            session.abort()
-        self.records.clear()
-        self.record_bytes = 0
+        with self.condition:
+            for session in self.sessions.values():
+                session.abort()
+            self.records.clear()
+            self.record_bytes = 0
+            self.condition.notify_all()
 
 
 class ComparisonRuntime:
@@ -227,6 +234,8 @@ class ComparisonRuntime:
             if self.job is not None:
                 if not self.job.finished:
                     raise OptimizerBusy("active_runs", 1, 1)
+                with self.job.uow() as tx:
+                    tx.comparisons.reconcile_stopped(self.job.comparison.comparison_id, supervisor_stopped=True)
                 self.job.dispose()
                 self.job = None
             runner = self.runner_factory()
@@ -244,6 +253,7 @@ class ComparisonRuntime:
     def start(self, job, comparison, uow, lease):
         job.bind(comparison)
         job.lease = lease
+        job.uow = uow
         def work():
             safe = True
             try:
@@ -268,10 +278,10 @@ class ComparisonRuntime:
             return self.job
 
     def stopped(self, comparison_id):
-        try:
-            job = self.get(comparison_id)
-        except RunError:
-            return False
+        with self.lock:
+            job = self.job
+            if job is None or job.comparison is None or job.comparison.comparison_id != comparison_id:
+                return False
         if job.thread is not None and job.thread.is_alive():
             return False
         if job.unsafe:

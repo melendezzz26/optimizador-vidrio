@@ -83,11 +83,13 @@ class SqlComparisonConfirmationRepository(SqlConfirmationRepository):
                 raise RunError("NOT_CONFIRMABLE", "No se encontraron las métricas de la solución elegida.")
             metric.retazo_recuperable_mm2 = result.metrics.recoverable_remnant_mm2
             metric.merma_mm2 = result.metrics.waste_mm2
-        execution.patron_resultado = {**execution.patron_resultado, "snapshot": encode_result(result)}
         row = self.comparisons._lock(context.run.optimization_id)
-        row.comparison_snapshot = {**row.comparison_snapshot, "confirmation": {
+        confirmation = {
             "receipt_version": 1, "key": self.key, "expected_version": self.expected_version,
             "execution_id": context.execution_id, "method": result.method, "actor_id": actor_id,
             "confirmed_at": datetime.now(timezone.utc).isoformat(), "receipt": json_value(receipt),
-            "skipped_residuals": self.skipped}}
+            "skipped_residuals": self.skipped}
+        # Inventory consulta el origen por ejecución; conservar ese contrato de lectura.
+        execution.patron_resultado = {**execution.patron_resultado, "snapshot": encode_result(result), "confirmation": confirmation}
+        row.comparison_snapshot = {**row.comparison_snapshot, "confirmation": confirmation}
         row.comparison_version += 1

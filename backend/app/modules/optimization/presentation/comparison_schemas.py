@@ -150,6 +150,8 @@ class ComparisonEvent(ContractV1):
         if self.event == "ordering_ready" and (self.data.get("criterion") != "area_desc_max_side_desc_order_piece_unit_asc"
                 or not isinstance(self.data.get("units"), list)):
             raise ValueError("Ordering requires real ordered references")
+        if self.event == "preparation_started" and self.data.get("metodo") != self.method:
+            raise ValueError("Preparation method differs from execution")
         EVENT_DATA[self.event].model_validate(self.data)
         return self
 
