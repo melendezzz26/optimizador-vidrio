@@ -107,6 +107,12 @@ class SqlComparisonRepository:
                     residuals = tuple(ResidualRectangle(**{k: Decimal(v) if k in (
                         "x_mm", "y_mm", "width_mm", "height_mm", "area_mm2") else v
                         for k, v in region.items()}) for region in stored["residual_rectangles"])
+                    if execution.id_ejecucion == row.id_ejecucion_seleccionada and snapshot.get("confirmation"):
+                        created = snapshot["confirmation"]["receipt"]["remnants_created"]
+                        persisted = {(r["source"]["source"], r["source"]["material_id"],
+                                      r["source"]["physical_unit_index"]) for r in created}
+                        residuals = tuple(r for r in residuals if
+                            (r.material_source, r.material_id, r.stock_unit_index) in persisted)
                 elif execution.completo or execution.estado not in ("EN_EJECUCION", "FALLIDA"):
                     raise ValueError("Invalid execution state")
                 executions.append(ComparisonExecution(execution_id=execution.id_ejecucion, method=method,
@@ -275,4 +281,6 @@ class SqlComparisonUnitOfWork(SqlRunUnitOfWork):
         self.orders = SqlComparisonOrders(self.session)
         self.comparisons = SqlComparisonRepository(self.session)
         self.stock = SqlComparisonStock(self.session)
+        from .comparison_confirmation import SqlComparisonConfirmationRepository
+        self.comparison_confirmation = SqlComparisonConfirmationRepository(self.session, self.comparisons)
         return self
