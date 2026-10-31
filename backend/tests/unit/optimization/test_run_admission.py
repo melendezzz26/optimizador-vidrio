@@ -119,3 +119,27 @@ def test_a_running_worker_keeps_its_slot_until_it_ends():
     stream.worker_started = True
     stream.release_if_idle()
     assert lease.releases == 0
+
+
+def test_comparison_reserves_all_capacity_until_idempotent_release():
+    admission = InProcessRunAdmission()
+    lease = admission.acquire_comparison(1)
+    busy(admission, 2)
+    with pytest.raises(OptimizerBusy):
+        admission.acquire_comparison(3)
+    lease.release()
+    admission.acquire(2)
+    lease.release()
+    assert admission.active() == 1
+
+
+def test_legacy_and_comparison_requests_never_overlap():
+    admission = InProcessRunAdmission()
+    legacy = admission.acquire(1)
+    with pytest.raises(OptimizerBusy):
+        admission.acquire_comparison(2)
+    legacy.release()
+    comparison = admission.acquire_comparison(2)
+    assert admission.active() == 1
+    comparison.release()
+    assert admission.active() == 0

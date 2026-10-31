@@ -155,6 +155,29 @@ class SqlComparisonRepository:
             raise RunError("NOT_FOUND", "La ejecución no pertenece a la comparación.")
         return row
 
+    def claim_supervisor(self, comparison_id, token, supervisor_identity=None):
+        row = self._lock(comparison_id)
+        if row.estado != "EN_EJECUCION" or row.comparison_snapshot.get("supervisor_token") is not None:
+            return False
+        if any(e.status != "EN_EJECUCION" for e in self.get(comparison_id).executions):
+            return False
+        row.comparison_snapshot = {**row.comparison_snapshot, "supervisor_token": token,
+                                   "supervisor_identity": supervisor_identity}
+        row.comparison_version += 1
+        return True
+
+    def record_worker(self, comparison_id, execution_id, identity):
+        row = self._lock(comparison_id)
+        self._execution(comparison_id, execution_id)
+        if row.estado != "EN_EJECUCION" or not row.comparison_snapshot.get("supervisor_token"):
+            raise RunError("STATE_CONFLICT", "La comparación no tiene un supervisor activo.")
+        if (type(identity.get("pid")) is not int or identity["pid"] <= 0
+                or not isinstance(identity.get("start_ticks"), str) or not identity["start_ticks"].isdigit()):
+            raise RunError("STATE_CONFLICT", "No se pudo registrar el proceso de cálculo.")
+        row.comparison_snapshot = {**row.comparison_snapshot, "worker_processes": {
+            **row.comparison_snapshot.get("worker_processes", {}), str(execution_id): {
+                "pid": identity["pid"], "start_ticks": identity["start_ticks"]}}}
+
     def save_result(self, comparison_id, execution_id, result, residuals):
         row = self._lock(comparison_id)
         current = self.get(comparison_id)

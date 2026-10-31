@@ -123,6 +123,10 @@ def pack(problem: OptimizationProblem, on_event: Callable[[FirstFitEvent], None]
     problem = replace(problem, order_ids=tuple(sorted(problem.order_ids)), groups=groups)
     checkpoint = checkpoint if checkpoint is not None else lambda: None
     prepared = prepare_run_geometry(problem, checkpoint=checkpoint, on_visual=on_visual)
+    if on_visual is not None:
+        # El orden ya se calculó arriba; este hecho permite presentarlo después
+        # de las máscaras sin ejecutar otro ordenamiento ni alterar la búsqueda.
+        on_visual(VisualEvent(kind='ordering_ready', ordered_units=problem.units, total_units=len(problem.units)))
     layouts, placements = {}, []
     layout_bytes = 0
     total = len(problem.units)

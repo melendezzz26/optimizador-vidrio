@@ -75,3 +75,18 @@ class ComparisonUnitOfWork(Protocol):
     def configuration(self): ...
     def __enter__(self) -> "ComparisonUnitOfWork": ...
     def __exit__(self, exc_type, exc, traceback): ...
+
+
+@dataclass(frozen=True, kw_only=True)
+class CalculatedExecution:
+    result: OptimizationResult
+    residuals: tuple[ResidualRectangle, ...]
+
+
+@dataclass(frozen=True, kw_only=True)
+class ComparisonSignal:
+    comparison_id: int
+    execution_id: int | None
+    method: str | None
+    kind: str
+    payload: object
