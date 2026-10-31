@@ -96,12 +96,12 @@
   "artifact_sha256": {
     "comparison-events-desktop.json": "27c35938a29f408c629b85507287127e59737fe81bb1554d04529d4a94b1ab6f",
     "logs/backend-full.txt": "ff1030dcba5584b09f67c31606eb36de40792b379c7fa689df3cd6e593be76cf",
-    "logs/build.txt": "c3de5ba04b26c68d207530813438cfd5437e682e91c77835eb0729a6e3d84973",
-    "logs/components-auto-phase.txt": "5aa88cb09bd6e43ed7575513bbeef0e0af0b3d797c1275b7a514a9c1e3f4b370",
-    "logs/components.txt": "edef1d4e265425bf912580ccbb267785204201b35361ade483095cbcde18eb27",
+    "logs/build.txt": "928ea70ac779e4d9e78fc51646ea0014b2b9678848c044b4919892186e36c1cd",
+    "logs/components-auto-phase.txt": "848cd3667ecf715a84d7046d14e760df1cd8da3003deb4810782e80692bdd389",
+    "logs/components.txt": "ed403d4b5d8bc1547b8268a198a942c63c30e04fe5e46fd644250764c83eee74",
     "logs/e2e-focused.txt": "45c92be3c93f9f74dc02c69306f003dbb4371e7649bd8d88266474c554baeebb",
     "logs/e2e-full.txt": "8dee6614a3d8291fd2b69326b2b0a12fd022ab1ce13d90f43ba07648f92536dd",
-    "logs/lint.txt": "0d4695f4da2780a75fa8d28ae5fabe88093b7de3774417c514e2ecd90774e01f",
+    "logs/lint.txt": "31298a090b4d326219614a2b109f11bc9be6ea420c4b2fa47c181368d3733a26",
     "logs/unit.txt": "4d081e81b6dbbe961e77e6c5059aea2c873c6834f23b993c63fac3d7a513c57f",
     "screenshots/desktop/comparacion-antes-de-confirmar.png": "b17505d648e94087b71f720ae3b6382d6bd1f5801c6ad9fc70694fe2498bf0b2",
     "screenshots/desktop/giro-real-best-fit.png": "87de5834e769b13b28624ed68ee55f393e0df2dd7663326fae2d5ac4d9557a95",
@@ -118,5 +118,6 @@
     "screenshots/mobile/orden-first-fit.png": "f4eea6e7974b98bdfaf39c31c2ec7264785cafdd0d8dbce560225c8bd0ae991e",
     "screenshots/mobile/solicitud-original.png": "9f7ef5ecce51e275ea1a1b2b4e84e38c60f1278cb932f5e037d3fd1e999856ea",
     "t04-http-resources.json": "8c9b48305babaa87f986d897db70571b268b893c042552cb23f2e6fe2879d79d"
-  }
+  },
+  "log_normalization": "Trailing spaces and final empty lines removed; test output content preserved."
 }
