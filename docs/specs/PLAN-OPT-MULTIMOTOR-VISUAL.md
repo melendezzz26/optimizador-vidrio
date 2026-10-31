@@ -4,13 +4,14 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Draft — diseño propuesto, pendiente de revisión** |
+| Estado | **Approved — implementación autorizada por Fabricio Melendez Quezada; T00 en curso** |
 | SPEC | [SPEC-OPT-MULTIMOTOR-VISUAL.md](SPEC-OPT-MULTIMOTOR-VISUAL.md) |
 | Fecha | 31/10/2026, America/Lima |
 | Rama / destino | `feature/optimization-multimotor-visual` → `integration/sprint-01` |
 | Base inspeccionada | `afd5f85f9dd1495e4237e1029555f7e56cd53f30` |
-| Redacción / revisión humana | Codex / pendiente de asignación |
-| Autorización de esta entrega | Preparación documental y creación de primera rama; sin implementación, migración aplicada, merge ni despliegue |
+| Autor | Fabricio Melendez Quezada |
+| Revisor | Andro Quispe; revisión cruzada pendiente de ejecución |
+| Autorización de esta entrega | Fabricio Melendez Quezada aprueba el PLAN y autoriza desarrollar su alcance en `feature/optimization-multimotor-visual`; no autoriza merge ni despliegue |
 | Estimación | No se fija SP/plazo sin validar contratos y presupuesto agregado; no se traslada automáticamente la estimación histórica de HU-017 |
 
 ## 1. Resultado esperado y límites
@@ -76,8 +77,8 @@ demuestra por sí solo paralelismo de CPU en este backend Python.
 - El supervisor posee la persistencia y las identidades. Los trabajadores solo
   calculan y emiten hechos; no acceden a DB ni a inventario mutable.
 - La primera entrega propone como máximo **una comparación activa por proceso
-  web y una por persona**, con tres trabajadores. Es una decisión técnica nueva
-  a revisar; no significa que el límite FF de dos corridas permita seis motores.
+  web y una por persona**, con tres trabajadores. Es la decisión técnica
+  aprobada; no significa que el límite FF de dos corridas permita seis motores.
 - Un coordinador de admisión compartido contabiliza trabajo legacy y comparativo:
   una comparación reserva capacidad para sus tres motores antes de aceptar;
   no se acepta si faltan unidades de capacidad o memoria agregada.
@@ -199,7 +200,8 @@ y su contrato de presentación pertenecen al segundo trabajo.
 
 ## 4. Secuencia de implementación propuesta
 
-Todas las tareas siguientes están **pendientes**. Esta entrega no inicia T00.
+**T00 en curso** tras aprobación expresa. T01–T07 pendientes de ejecución y
+evidencia; no se declaran criterios funcionales cumplidos por cambiar este estado.
 
 | Tarea | Salida verificable | Dependencias | CA |
 |---|---|---|---|
@@ -214,7 +216,7 @@ Todas las tareas siguientes están **pendientes**. Esta entrega no inicia T00.
 
 Mantener commits por contrato/persistencia, coordinador, API, eventos, UI y
 pruebas/evidencia. El PR será hacia `integration/sprint-01`; crear PR/merge o
-desplegar no forman parte de la autorización documental actual.
+desplegar no forman parte de la autorización de desarrollo actual.
 
 ## 5. Estrategia de pruebas
 
@@ -257,14 +259,14 @@ sin reproducirla y resolver o delimitar formalmente la discrepancia.
 | Confirmación de otra selección o stock cambiado | Versión y locks; solo elegido, transacción única y salida explícita de liberación/reintento |
 | Históricos sin medidas digitadas | Mostrar únicamente lo conservado; etiquetar derivaciones; coordinar metadatos de la futura rama cm |
 | Máscaras efímeras o presupuesto visual | Contrato de disponibilidad y namespaces; resultado durable independiente; no sustituir referencias entre motores |
-| Semántica al fallar uno de tres | Propuesta de SPEC RN-07: comparación incompleta y éxitos elegibles tras tres terminales; requiere revisión funcional |
+| Semántica al fallar uno de tres | SPEC RN-07 aprobada: comparación incompleta y éxitos elegibles tras tres terminales; verificar mediante pruebas |
 | Integridad general de inventario | Reactivación de retazos consumidos y ajustes sin movimiento son hallazgos previos; no se declaran corregidos por esta rama |
 
 No quedan abiertas la elección humana, las cuatro pestañas ni la ejecución
-concurrente: son requisitos expresos del solicitante. Sí son propuestas a revisar
-las rutas exactas, estados/versionado, regla de fallo parcial, capacidad agregada
-y diseño de supervisión. Si una decisión cambia la SPEC, actualizar ambos
-documentos antes de presentar esa decisión como aprobada.
+concurrente: son requisitos expresos del solicitante. Las rutas, versionado,
+regla de fallo parcial y supervisión quedan aprobados para implementación;
+T00 debe concretar los umbrales agregados con mediciones. Registrar cualquier
+ajuste técnico y su evidencia, conservando los requisitos de la SPEC aprobada.
 
 ## 7. Cierre y evidencia
 
@@ -276,12 +278,14 @@ documentos antes de presentar esa decisión como aprobada.
 - Guías actualizadas para la API comparativa, recuperación, límites y distinción
   entre contratos legacy, selección y confirmación.
 
-Los documentos permanecen Draft hasta revisión; Implemented/Verified exigen
-implementación y evidencia posteriores. No atribuir aprobaciones, responsables
-o estados a herramientas externas que no se hayan actualizado expresamente.
+La SPEC queda Reviewed y este PLAN Approved por autorización expresa de Fabricio
+Melendez Quezada. Implemented/Verified exigen implementación y evidencia; Andro
+Quispe figura como revisor asignado, sin atribuirle una revisión ya ejecutada.
+No atribuir cambios de estado a herramientas externas que no se actualizaron.
 
 ## Historial de estado
 
 | Fecha | Estado | Registro |
 |---|---|---|
 | 31/10/2026 | Draft | PLAN preparado junto con la SPEC; ninguna tarea de implementación ejecutada |
+| 31/10/2026 | Approved | Fabricio Melendez Quezada aprueba el PLAN, confirma su autoría y asigna revisión a Andro Quispe. Desarrollo autorizado únicamente en la rama acordada; T00 en curso |

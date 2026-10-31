@@ -4,17 +4,16 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Draft — propuesta para revisión; sin implementación de este alcance** |
+| Estado | **Reviewed — aprobada para implementación por Fabricio Melendez Quezada** |
 | Identificador documental | OPT-MULTIMOTOR-VISUAL; no atribuye un nuevo ID al backlog externo |
 | PBI relacionados | HU-017, TA-021 y responsabilidades relacionadas de TA-025/TA-026/TA-038; los documentos disponibles se enlazan abajo |
-| Responsable funcional | Solicitante de la conversación; nombre y asignación formal no indicados |
-| Redacción | Codex, por encargo del solicitante |
-| Reviewer | Pendiente de asignación |
+| Autor y responsable funcional | Fabricio Melendez Quezada |
+| Revisor | Andro Quispe; revisión cruzada pendiente de ejecución |
 | Fecha | 31/10/2026, America/Lima |
 | Rama | `feature/optimization-multimotor-visual` |
 | Base | `integration/sprint-01`, `afd5f85f9dd1495e4237e1029555f7e56cd53f30` |
 | PLAN | [PLAN-OPT-MULTIMOTOR-VISUAL.md](PLAN-OPT-MULTIMOTOR-VISUAL.md) |
-| Autorización actual | Crear esta primera rama y preparar SPEC/PLAN. No constituye aprobación del contenido ni autorización para iniciar implementación |
+| Autorización actual | Fabricio Melendez Quezada aprueba la SPEC y el PLAN y autoriza la implementación exclusivamente en esta rama, tras corregir autoría y revisión |
 
 ## 1. Objetivo
 
@@ -44,10 +43,10 @@ piezas solicitadas y las medidas originales que el sistema haya conservado.
 - El snapshot actual reconstruye el resultado base FF: un round-trip de BF/WF
   pierde su identidad. Las nuevas comparaciones necesitan persistencia versionada.
 
-Esta SPEC propone el alcance de integración solicitado, ampliando las fronteras
+Esta SPEC define el alcance de integración aprobado, ampliando las fronteras
 anteriores sin reescribir retrospectivamente los cierres de esas tareas. Las
-decisiones nuevas de API, persistencia y concurrencia del PLAN son propuestas;
-no se presentan como contratos ya implementados o aprobaciones externas.
+decisiones nuevas de API, persistencia y concurrencia del PLAN quedan autorizadas
+para desarrollo; su aprobación no constituye implementación ni verificación.
 
 ## 2. Alcance
 
@@ -285,10 +284,12 @@ La auditoría de la base obtuvo 2364 pruebas backend, 175 unitarias frontend y
 506 de componentes aprobadas; E2E escritorio 57/57 y móvil aislado 56/57, con
 fallo del registro de retazo personalizado. El CI de `afd5f85` había aprobado
 114 E2E. Son antecedentes de la base, no evidencia de esta implementación.
-En esta entrega solo se verifica documentación; ningún CA funcional se declara PASS.
+Estos antecedentes no satisfacen por sí mismos ningún CA de la nueva integración.
+La autorización de desarrollo no declara criterios implementados ni verificados.
 
 ## Historial de estado
 
 | Fecha | Estado | Registro |
 |---|---|---|
 | 31/10/2026 | Draft | SPEC preparada por solicitud expresa; pendiente revisión y aprobación. Sin implementación ni cierre de tareas externas |
+| 31/10/2026 | Reviewed | Fabricio Melendez Quezada confirma autoría, asigna revisión a Andro Quispe, aprueba SPEC/PLAN y autoriza iniciar desarrollo en `feature/optimization-multimotor-visual`. Revisión cruzada y verificación funcional pendientes |
