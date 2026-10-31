@@ -28,6 +28,7 @@ test('retazo personalizado: editor compartido, POST real sin Decimal no serializ
   await page.getByRole('button',{name:'Seleccionar vértice V2',exact:true}).click();
   await page.getByRole('button',{name:'Fijar ángulo V2',exact:true}).click();
   await page.getByRole('spinbutton',{name:/Ángulo interior en V2/}).fill('100');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   const saved=page.waitForResponse(r=>r.url()===`${api}/api/inventory/retazos` && r.request().method()==='POST');
   await page.getByRole('button',{name:'Registrar retazo',exact:true}).last().click();
   const response=await saved; expect(response.status()).toBe(201);

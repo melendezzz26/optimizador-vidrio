@@ -318,6 +318,6 @@
 }
 
 @media (max-width: 900px) {
-  .custom-piece-editor__split-layout { grid-template-columns: 1fr; gap: var(--ng-space-8); }
+  .custom-piece-editor__split-layout { grid-template-columns: minmax(0, 1fr); gap: var(--ng-space-8); }
   .custom-piece-editor__canvas { height: 350px; }
 }

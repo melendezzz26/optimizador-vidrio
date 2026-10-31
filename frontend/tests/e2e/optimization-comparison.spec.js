@@ -81,7 +81,7 @@ test('comparar tres motores, revisar fases y solicitud, elegir BF y confirmar un
   await expect(page.getByText('Medidas guardadas del pedido').first()).toBeVisible();
   save(info, 'comparison-events.json', events);
   expect(errors).toEqual([]);
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
 });
 
 test('rotación real de 90 grados y movimiento reducido sin ejecutar otro trabajo al cambiar pestañas', async ({ page }, info) => {
