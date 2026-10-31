@@ -36,8 +36,12 @@ test('comparar tres motores, revisar fases y solicitud, elegir BF y confirmar un
     expect(new Set(own.map(e => e.execution_id)).size).toBe(1);
   }
   const first = page.getByRole('tabpanel', { name: /First Fit/ });
+  await first.getByRole('button', { name: /Máscaras/ }).click();
+  await expect(first.locator('[data-mask-ref]')).toHaveCount(1);
+  await capture(page, info, 'mascaras-first-fit', first);
   await first.getByRole('button', { name: /Orden de piezas/ }).click();
   await expect(first.getByRole('heading', { name: 'Orden de procesamiento' })).toBeVisible();
+  await capture(page, info, 'orden-first-fit', first);
   await first.getByRole('button', { name: /Giros y colocación/ }).click();
   await expect(first.locator('[data-mask-ref]')).toHaveCount(1);
   await first.getByRole('button', { name: 'Pausar vista' }).click();
@@ -47,6 +51,7 @@ test('comparar tres motores, revisar fases y solicitud, elegir BF y confirmar un
   await page.getByText(/Piezas y medidas solicitadas/).click();
   await expect(page.getByText('Medidas guardadas del pedido').first()).toBeVisible();
   await expect(page.locator('.comparison-request-grid article')).toHaveCount(6);
+  await capture(page, info, 'solicitud-original', page.locator('.comparison-request'));
   await page.getByText(/Piezas y medidas solicitadas/).click();
   await page.getByRole('tab', { name: 'Comparación', exact: true }).click();
   await expect(page.getByRole('radio', { checked: true })).toHaveCount(0);
@@ -70,6 +75,10 @@ test('comparar tres motores, revisar fases y solicitud, elegir BF y confirmar un
   const done = await (await page.request.get(path, { headers: data.headers })).json();
   expect(done.confirmation.method).toBe('BF');
   expect(done.confirmed).toBe(true);
+  expect(done.requested_pieces).toEqual(current.requested_pieces);
+  await page.getByText(/Piezas y medidas solicitadas/).click();
+  await expect(page.locator('.comparison-request-grid article')).toHaveCount(6);
+  await expect(page.getByText('Medidas guardadas del pedido').first()).toBeVisible();
   save(info, 'comparison-events.json', events);
   expect(errors).toEqual([]);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -91,8 +100,8 @@ test('rotación real de 90 grados y movimiento reducido sin ejecutar otro trabaj
     await expect(panel.getByRole('img', { name: /90 grados/ })).toBeVisible();
     await expect(panel.locator('[data-mask-angle]')).toHaveAttribute('data-mask-angle', /^90(?:\.0+)?$/);
     expect(await panel.locator('.comparison-turning-shape').evaluate(e => getComputedStyle(e).transitionDuration)).toBe('0s');
+    await capture(page, info, `giro-real-${name.toLowerCase().replaceAll(' ', '-')}`, panel);
   }
-  await capture(page, info, 'giro-real-worst-fit');
   const firstTab = page.getByRole('tab', { name: /First Fit/ });
   await firstTab.focus(); await page.keyboard.press('End');
   await expect(page.getByRole('tab', { name: 'Comparación', exact: true })).toBeFocused();
@@ -115,7 +124,7 @@ test('consulta sin permisos de ejecución recupera resultados sin permitir elecc
   for (const radio of await page.getByRole('radio').all()) await expect(radio).toBeDisabled();
   await expect(page.getByRole('button', { name: 'Comparar con los tres motores' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Confirmar distribución elegida' })).toHaveCount(0);
-  const headers = await loginApi(page, data.actors.view);
+  const headers = await loginApi(page.request, data.actors.view);
   const rejected = await page.request.put(`${api}/api/optimization/comparisons/${comparison.comparison_id}/selection`, {
     headers, data: { execution_id: comparison.executions[0].execution_id, expected_version: comparison.version } });
   expect(rejected.status()).toBe(403);
