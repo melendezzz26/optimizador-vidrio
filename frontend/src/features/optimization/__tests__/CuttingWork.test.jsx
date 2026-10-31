@@ -1,6 +1,8 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { expect, test, vi } from 'vitest';
-import { OptimizationPage } from '../OptimizationPage';
+import { OptimizationPage as OptimizationHost } from '../OptimizationPage';
+// Regresión del consumidor FF histórico; ComparisonWorkspace.test cubre el nuevo recorrido por defecto.
+const OptimizationPage = props => <OptimizationHost initialMode="legacy-first-fit" {...props} />;
 import { createFixturePendingOrdersSource } from '../pendingOrdersSource';
 import shared from '../contractV1Fixture.json';
 

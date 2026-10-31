@@ -123,7 +123,7 @@ test('loading, 401, no mutation and unmount cleanup', () => {
   let listener;
   const source = { load: vi.fn(), subscribe(fn) { listener = fn; return vi.fn(); }, dispose: vi.fn() };
   const expired = vi.fn();
-  const view = render(<OptimizationPage user={user} source={source} onSessionExpired={expired} />);
+  const view = render(<OptimizationPage initialMode="legacy-first-fit" user={user} source={source} onSessionExpired={expired} />);
   expect(screen.getByText('Cargando pedidos...')).toBeVisible();
   act(() => listener({ type: 'error', error: { status: 401, message: 'Sesión vencida' } }));
   expect(expired).toHaveBeenCalledOnce(); expect(screen.getByRole('alert')).toHaveTextContent('Sesión vencida');
@@ -133,7 +133,7 @@ test('real adapter prepares persisted pieces without starting a run or inventing
   const read = vi.spyOn(ordersApi, 'getOrder').mockImplementation(async id => structuredClone(fixtureOrders.find(o => o.id_pedido === id)));
   const fetch = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify([{ id_tipo_vidrio: 1, nombre: 'Templado' }, { id_tipo_vidrio: 2, nombre: 'Bronce' }])));
   const source = createFixturePendingOrdersSource(fixtureOrders);
-  render(<OptimizationPage user={user} source={source} />); await prepare();
+  render(<OptimizationPage initialMode="legacy-first-fit" user={user} source={source} />); await prepare();
   expect(read).toHaveBeenCalledTimes(2);
   expect(fetch).toHaveBeenCalledOnce();
   expect(fetch.mock.calls[0][0]).toMatch(/\/inventory\/tipos-vidrio$/);

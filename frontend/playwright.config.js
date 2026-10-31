@@ -7,7 +7,8 @@ export default defineConfig({
   forbidOnly: true,
   retries: 0,
   globalTeardown: './tests/e2e/globalTeardown.js',
-  workers: 2,
+  // Un servidor compartido admite una comparación exclusiva con tres motores.
+  workers: 1,
   // TA-040: el gate convierte en fallo las omisiones no aprobadas y los specs críticos sin ejecutar.
   reporter: [['list'], ['html', { open: 'never' }], ['./tests/e2e/e2eGateReporter.js']],
   use: {

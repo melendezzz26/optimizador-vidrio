@@ -46,8 +46,8 @@ export async function setup(page, scenario, { createOrders = true } = {}) {
   }
   return { ...data, headers, orders };
 }
-export async function login(page, credentials) {
-  await page.goto('/');
+export async function login(page, credentials, { comparative = false } = {}) {
+  await page.goto(comparative ? '/' : '/first-fit-compatibility.html');
   await page.getByLabel('Usuario', { exact: true }).fill(credentials.username);
   await page.getByLabel('Contraseña', { exact: true }).fill(credentials.password);
   await page.getByRole('button', { name: 'Ingresar', exact: true }).click();

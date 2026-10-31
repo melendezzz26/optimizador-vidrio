@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 const api = 'http://127.0.0.1:8017';
 test.beforeEach(async ({ page, baseURL }) => {
   await page.route('**/*', route => [baseURL, api].includes(new URL(route.request().url()).origin) ? route.continue() : route.abort());
-  await page.goto('/');
+  await page.goto('/first-fit-compatibility.html');
   await page.getByLabel('Usuario', { exact: true }).fill('A70000003');
   await page.getByLabel('Contraseña', { exact: true }).fill('Admin-test-2026!');
   await page.getByRole('button', { name: 'Ingresar', exact: true }).click();
