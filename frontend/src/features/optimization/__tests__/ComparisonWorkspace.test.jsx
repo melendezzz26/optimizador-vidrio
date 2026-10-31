@@ -47,6 +47,9 @@ test('default workspace has four stable tabs, real phases and no automatic choic
   await execute();
   expect(screen.getAllByRole('tab')).toHaveLength(4);
   const first = screen.getByRole('tabpanel', { name: /First Fit/ });
+  await within(first).findByRole('heading', { name: 'Orden de procesamiento' }, { timeout: 3000 });
+  await within(first).findByRole('heading', { name: 'Giros y colocación' }, { timeout: 3000 });
+  await within(first).findByRole('heading', { name: 'Resultado de First Fit' }, { timeout: 3000 });
   fireEvent.click(within(first).getByRole('button', { name: /Orden de piezas/ }));
   expect(within(first).getByRole('list', { name: 'Fases del motor' })).toHaveTextContent('Máscaras');
   expect(within(first).getByText('Pedido #1 · Pieza #1 · unidad 3')).toBeVisible();
