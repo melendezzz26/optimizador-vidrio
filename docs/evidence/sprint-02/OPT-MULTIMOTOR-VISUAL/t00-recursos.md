@@ -5,6 +5,11 @@ Revisor asignado: Andro Quispe; revisión pendiente.
 Fecha: 31/10/2026.
 Estado: evidencia adicional de T00; presupuesto productivo pendiente.
 
+Registro histórico de la sonda inicial. El presupuesto del runner y su
+aplicación posterior en HTTP/retención se documentan en
+[T02](t02-coordinador.md) y [T04](t04-api-ui.md); consultar el
+[estado consolidado](README.md) para el avance actual.
+
 ## Reproducción
 
 Código medido: `795c5881d0553d6aaf001cfa52200b995489dfc1`,

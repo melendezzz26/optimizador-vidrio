@@ -1,5 +1,19 @@
 # Frontend de NewGlass
 
+## Optimización comparativa FF/BF/WF
+
+La vista principal de Optimización usa la API `comparison-v1`: tres pestañas de
+motor y una de comparación, fases reales, solicitud original, elección manual y
+confirmación del elegido. Las unidades de esta entrega siguen siendo mm/mm².
+Consultar la [guía del contrato](../docs/contracts/optimization/comparison-v1.md)
+y la [evidencia de integración](../docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/README.md).
+
+Las máscaras y eventos son temporales; los resultados y medidas guardadas se
+recuperan desde la API. Pausar la vista o cambiar pestaña no detiene el cálculo.
+`first-fit-compatibility.html` es una entrada de pruebas para el recorrido FF
+histórico, excluida del build productivo. Los E2E comparativos usan la entrada
+principal y servicios reales, con PostgreSQL temporal.
+
 ## Build Staging (TA-DEPLOY-001 T05)
 
 `npm run build` conserva el build local. Para el artefacto Pages, suministrar

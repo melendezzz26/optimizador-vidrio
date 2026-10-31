@@ -1,0 +1,21 @@
+[WebServer] (node:43330) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:43346) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 8 tests using 1 worker
+
+(node:43365) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:5:1 › comparar tres motores, revisar fases y solicitud, elegir BF y confirmar una sola vez (9.3s)
+  ✓  2 [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:87:1 › rotación real de 90 grados y movimiento reducido sin ejecutar otro trabajo al cambiar pestañas (11.0s)
+  ✓  3 [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:113:1 › consulta sin permisos de ejecución recupera resultados sin permitir elección ni consumo (6.3s)
+  ✓  4 [chromium-desktop] › tests/e2e/ta036-retazo-personalizado.spec.js:4:1 › retazo personalizado: editor compartido, POST real sin Decimal no serializable y lectura numérica (3.0s)
+(node:43789) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  5 [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:5:1 › comparar tres motores, revisar fases y solicitud, elegir BF y confirmar una sola vez (8.6s)
+  ✓  6 [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:87:1 › rotación real de 90 grados y movimiento reducido sin ejecutar otro trabajo al cambiar pestañas (7.1s)
+  ✓  7 [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:113:1 › consulta sin permisos de ejecución recupera resultados sin permitir elección ni consumo (5.5s)
+  ✓  8 [chromium-mobile] › tests/e2e/ta036-retazo-personalizado.spec.js:4:1 › retazo personalizado: editor compartido, POST real sin Decimal no serializable y lectura numérica (3.0s)
+
+  8 passed (1.0m)

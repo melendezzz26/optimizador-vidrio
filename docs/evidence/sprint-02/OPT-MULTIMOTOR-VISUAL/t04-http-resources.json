@@ -1,0 +1,36 @@
+{
+  "runner": {
+    "metric": "sampled_supervisor_and_workers_rss_plus_helper_reserve",
+    "helper_reserve_bytes": 16777216,
+    "samples": 12,
+    "maximum_rss_sum_bytes": 175800320,
+    "supervisor_peak_rss_bytes": 99696640,
+    "worker_peak_rss_bytes": {
+      "FF": 19951616,
+      "BF": 19931136,
+      "WF": 19927040
+    },
+    "maximum_packet_bytes": 3468,
+    "maximum_queued_packets_per_worker": 1,
+    "maximum_sample_gap_ms": 38.30834999826038,
+    "all_workers_stopped": true,
+    "owned_processes": {
+      "FF": {
+        "pid": 31272,
+        "start_ticks": "2037439"
+      },
+      "BF": {
+        "pid": 31274,
+        "start_ticks": "2037439"
+      },
+      "WF": {
+        "pid": 31276,
+        "start_ticks": "2037440"
+      }
+    },
+    "elapsed_ms_including_ipc_and_cleanup": 368.6999530000321
+  },
+  "retained_visual_bytes": 56484,
+  "retained_event_bytes": 53988,
+  "event_count": 89
+}

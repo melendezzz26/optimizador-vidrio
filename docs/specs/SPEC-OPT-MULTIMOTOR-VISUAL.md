@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Reviewed — aprobada para implementación por Fabricio Melendez Quezada** |
+| Estado | **Implemented — verificación local completa; revisión cruzada y CI remoto pendientes** |
 | Identificador documental | OPT-MULTIMOTOR-VISUAL; no atribuye un nuevo ID al backlog externo |
 | PBI relacionados | HU-017, TA-021 y responsabilidades relacionadas de TA-025/TA-026/TA-038; los documentos disponibles se enlazan abajo |
 | Autor y responsable funcional | Fabricio Melendez Quezada |
@@ -249,14 +249,16 @@ de pedidos históricos retenidos de otros flujos.
 Inventory aporta stock y confirma los efectos a través de contratos existentes;
 Authentication/RBAC mantiene la autorización. No copiar lógica heurística a UI.
 
-**API:** recurso comparativo y contratos/eventos versionados propuestos en el
-PLAN. Preservar las rutas FF históricas; el flujo principal usará la nueva API.
-La selección debe incluir identidad explícita de ejecución y versión.
+**API:** recurso comparativo `comparison-v1` con aceptación, consulta,
+observación, selección versionada, confirmación idempotente y liberación.
+Las rutas FF históricas se preservan; el flujo principal usa `/comparisons`.
+Consultar la [guía de contrato](../contracts/optimization/comparison-v1.md).
 
-**BD/migración:** el esquema ya admite métodos FF/BF/WF. La integración requiere
-adaptar repositorios/codec y evaluar metadatos de comparación, snapshot común,
-versionado, selección y estados. Una migración aditiva se diseña y prueba si es
-necesaria; no se asume que añadir pestañas resuelve la persistencia.
+**BD/migración:** migración aditiva `s2cmp01a1b2c`, con clave, snapshot común y
+versión de comparación en el agregado existente; mantiene las tablas de
+ejecución por método. El codec de resultado V2 conserva FF/BF/WF y sigue leyendo
+FF V1 histórico. Las pruebas verifican migración, recuperación y bloqueo del
+downgrade cuando existe historia comparativa; no se migró la base remota.
 
 **UI:** un controlador por comparación, estados por motor, pestañas accesibles,
 fase visual/inspección separadas del cálculo, comparación y detalle de solicitud.
@@ -285,7 +287,11 @@ La auditoría de la base obtuvo 2364 pruebas backend, 175 unitarias frontend y
 fallo del registro de retazo personalizado. El CI de `afd5f85` había aprobado
 114 E2E. Son antecedentes de la base, no evidencia de esta implementación.
 Estos antecedentes no satisfacen por sí mismos ningún CA de la nueva integración.
-La autorización de desarrollo no declara criterios implementados ni verificados.
+La autorización de desarrollo por sí sola no declara criterios cumplidos. El
+cierre posterior de esta rama registra 2453 pruebas backend, 175 unitarias
+frontend, 514 de componentes y 120 E2E aprobadas, además de 8 pruebas enfocadas
+de avance automático/contrato. Consultar la [matriz de los 26 CA](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/README.md)
+para fuentes, comandos, capturas y límites. Revisión cruzada y CI remoto pendientes.
 
 ## Historial de estado
 
@@ -293,3 +299,5 @@ La autorización de desarrollo no declara criterios implementados ni verificados
 |---|---|---|
 | 31/10/2026 | Draft | SPEC preparada por solicitud expresa; pendiente revisión y aprobación. Sin implementación ni cierre de tareas externas |
 | 31/10/2026 | Reviewed | Fabricio Melendez Quezada confirma autoría, asigna revisión a Andro Quispe, aprueba SPEC/PLAN y autoriza iniciar desarrollo en `feature/optimization-multimotor-visual`. Revisión cruzada y verificación funcional pendientes |
+
+| 31/10/2026 | Implemented | T00–T07 desarrolladas y verificadas localmente: tres motores supervisados, API/recuperación, cuatro pestañas, fases/giros, solicitud original, selección y confirmación exclusiva. Evidencia de 2453 backend, 175 unitarias frontend, 514 componentes y 120 E2E aprobadas; 26 CA trazados. Revisión de Andro Quispe y CI remoto pendientes; sin PR/merge/despliegue |

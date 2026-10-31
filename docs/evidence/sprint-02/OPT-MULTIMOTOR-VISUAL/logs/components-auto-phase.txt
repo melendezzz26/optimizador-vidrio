@@ -1,0 +1,9 @@
+
+ RUN  v5.0.3 /workspace/optimizador-vidrio/frontend
+
+
+ Test Files  2 passed (2)
+      Tests  8 passed (8)
+   Start at  21:57:13
+   Duration  7.35s (tests 50%, environment 28%, transform 13%, setup 5%, import 3%)
+

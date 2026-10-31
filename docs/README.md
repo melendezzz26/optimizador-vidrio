@@ -34,6 +34,12 @@ Sprint 1 incorpora First Fit y su integración real; consultar el
 [evidencia consolidada](evidence/sprint-01/S1-OPT-UI/README.md).
 Best Fit y Worst Fit quedan fuera de este cierre.
 
+La integración comparativa posterior de Sprint 2 se documenta por separado:
+[SPEC](specs/SPEC-OPT-MULTIMOTOR-VISUAL.md),
+[PLAN](specs/PLAN-OPT-MULTIMOTOR-VISUAL.md),
+[API comparison-v1](contracts/optimization/comparison-v1.md) y
+[evidencia](evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/README.md).
+
 ## Flujo documental
 
 `PBI/HU -> SPEC -> implementación -> pruebas -> evidencia -> PR`

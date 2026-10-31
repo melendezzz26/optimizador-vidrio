@@ -4,6 +4,21 @@ API FastAPI organizada progresivamente como monolito modular.
 La versión de Python actualmente validada es **3.11.9**.
 Los comandos siguientes se ejecutan desde `backend/`.
 
+## Comparación concurrente de motores
+
+`/api/optimization/comparisons` ejecuta FF/BF/WF sobre una entrada congelada,
+con eventos independientes, resultados persistidos y selección humana. La
+confirmación aplica exclusivamente el elegido. El contrato anterior `/runs`
+mantiene FF V1 y `visual-v2`.
+
+Este nuevo recorrido requiere **Linux con procfs, un proceso web y capacidad
+agregada disponible**; rechaza entornos insuficientes sin degradar a secuencial.
+Incluye la migración aditiva `s2cmp01a1b2c`. Revisar rutas, límites, idempotencia,
+recuperación y compatibilidad en la
+[guía comparison-v1](../docs/contracts/optimization/comparison-v1.md) y sus
+[pruebas/evidencia](../docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/README.md)
+antes de habilitarlo en otro entorno. La implementación no acredita un despliegue.
+
 ## Entorno e instalación
 
 En Windows con PowerShell, utilizando una instalación de Python 3.11.9:

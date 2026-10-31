@@ -6,6 +6,10 @@ Fecha: 31/10/2026.
 Commit: `4ccf74a` — `feat(optimization): confirmar únicamente el motor elegido de forma idempotente`.
 Estado: caso de uso interno validado; rutas HTTP e interfaz pendientes.
 
+Este registro corresponde al caso de uso interno de ese commit. Para las rutas,
+interfaz y confirmación real posterior, consultar [T04](t04-api-ui.md) y el
+[estado consolidado](README.md).
+
 La confirmación exige comparación terminal, ejecución completa guardada,
 selección manual coincidente y versión esperada. Revalida geometría, pedidos,
 propuestas y disponibilidad física dentro de una transacción. Solo descuenta

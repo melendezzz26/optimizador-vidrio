@@ -6,6 +6,10 @@ Fecha: 31/10/2026.
 Commit de implementación: `6493b155d481a09d02337a8e172502d5e05f649e`.
 Estado: runner y coordinación/persistencia internos implementados; integración HTTP/UI pendiente.
 
+Este es el estado histórico de ese commit. La integración posterior de API,
+retención e interfaz se registra en [T04](t04-api-ui.md) y el
+[cierre consolidado](README.md).
+
 ## Ejecución y coherencia
 
 El coordinador de aplicación adquiere una reclamación transaccional del trabajo.

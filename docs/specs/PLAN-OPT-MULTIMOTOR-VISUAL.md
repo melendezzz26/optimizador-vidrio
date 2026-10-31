@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Approved — implementación autorizada por Fabricio Melendez Quezada; T00 en curso** |
+| Estado | **Implemented — T00–T07 completadas; revisión cruzada y CI remoto pendientes** |
 | SPEC | [SPEC-OPT-MULTIMOTOR-VISUAL.md](SPEC-OPT-MULTIMOTOR-VISUAL.md) |
 | Fecha | 31/10/2026, America/Lima |
 | Rama / destino | `feature/optimization-multimotor-visual` → `integration/sprint-01` |
@@ -22,12 +22,12 @@ confirmación del resultado elegido. Reutilizar los motores y renderizadores.
 El cambio a centímetros pertenece a la segunda rama acordada y queda fuera de
 los commits de esta primera rama. No se modifica el backlog externo.
 
-## 2. Base técnica y brechas verificadas
+## 2. Base técnica y brechas verificadas antes de implementar
 
 Las rutas backend siguientes son relativas a `backend/app/modules/optimization/`;
 las frontend a `frontend/src/features/optimization/`.
 
-| Capacidad actual | Reutilización y trabajo pendiente |
+| Capacidad de la base inspeccionada | Reutilización y trabajo previsto |
 |---|---|
 | `domain/{first_fit,best_fit,worst_fit,packing}.py` | Los tres calculan y aceptan observación; conservar sus políticas, métricas y salida temprana |
 | `application/comparison.py` | Orquesta secuencialmente y no conecta callbacks visuales; conservar el comparador interno y añadir un coordinador concurrente de producto |
@@ -97,9 +97,13 @@ demuestra por sí solo paralelismo de CPU en este backend Python.
 - Si la plataforma no permite el trabajo concurrente, responder un rechazo claro;
   no cambiar a secuencial mientras la UI afirma ejecutar los tres simultáneamente.
 
-Los umbrales agregados son una salida de medición de T00, pendiente; no se afirma
-que el despliegue remoto tenga recursos suficientes. No se introduce aquí una
-cola distribuida ni se escala a varios procesos web sin coordinación compartida.
+Los umbrales iniciales de T00 ya están aplicados: RSS agregado 1 GiB,
+supervisor 240 MiB, espacio virtual duro por trabajador 256 MiB, reserva
+auxiliar 16 MiB, arranque 30 s, cálculo 120 s y global 180 s. La retención es
+32 MiB visuales compartidos y 8 MiB/4096 eventos. La
+[evidencia HTTP](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t04-api-ui.md)
+completa la medición del runner. No se afirma capacidad del despliegue remoto
+ni del peor caso combinado; se mantiene un solo proceso web, sin cola distribuida.
 
 ### 3.3 API comparativa versionada
 
@@ -200,35 +204,24 @@ y su contrato de presentación pertenecen al segundo trabajo.
 
 ## 4. Secuencia de implementación propuesta
 
-**T00 en curso** tras aprobación expresa. T01–T07 siguen sin cierre funcional;
-no se declaran criterios cumplidos por cambiar este estado.
+T00–T07 están desarrolladas y verificadas localmente en la rama autorizada.
+La regresión completa y sus evidencias están registradas. El cierre se acredita con
+resultados concretos en la [matriz de los 26 CA](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/README.md),
+sin atribuir una revisión ejecutada a Andro Quispe.
 
-El codec de T01 (`2323e94`) conserva identidad FF/BF/WF y entrada desconectada;
-[evidencia](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t01-codec.md).
-La persistencia (`d4088e6`) incorpora aceptación idempotente, captura única de
-stock, solicitud original, resultados por ejecución y selección/liberación
-internas versionadas. La
-[evidencia de persistencia](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t01-persistencia.md)
-registra PostgreSQL temporal y regresión histórica.
+| Tarea | Estado actual / evidencia |
+|---|---|
+| T00 | Presupuesto inicial aplicado y medido: [sonda](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t00-inicio.md), [recursos](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t00-recursos.md), [runner](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t02-coordinador.md) y [HTTP](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t04-api-ui.md); no certifica capacidad remota |
+| T01 | Codec `2323e94`, persistencia `d4088e6`, migración aditiva y [fixture compartida](../contracts/optimization/comparison-v1.json) de backend/frontend |
+| T02 | Runner/coordinador `6493b15`: tres procesos, barrera, entrada común, admisión y limpieza supervisada |
+| T03 | Confirmación `4ccf74a`, API `da659f2`, trazabilidad/recuperación `d9d0ee4`; [guía del contrato](../contracts/optimization/comparison-v1.md) |
+| T04 | `da659f2`: NDJSON, cursores/snapshot, dos observadores, namespaces de máscaras y presupuestos agregados |
+| T05 | `0b30ef4`: controlador estable, cuatro pestañas, fases reales, giros, pausa de vista y movimiento reducido |
+| T06 | `0b30ef4`: métricas, solicitud original, elección manual/versionada, confirmación y recuperación |
+| T07 | Completada localmente: 2453 backend, 175 unitarias frontend, 514 componentes y 120 E2E aprobadas; 8 pruebas enfocadas de avance automático/contrato; 14 capturas y matriz de 26 CA. Revisión cruzada y CI remoto pendientes |
 
-El runner/coordinador interno (`6493b15`) ejecuta tres procesos spawn con
-admisión compartida/exclusiva, presupuestos iniciales aplicados, persistencia
-por motor y hechos visuales/orden reales. Su
-[evidencia](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t02-coordinador.md)
-registra 817 pruebas del módulo, siete escenarios de recursos y sus límites.
-T00 conserva pendiente medir el recorrido HTTP/retención completo; siguen
-pendientes contratos HTTP, recuperación de reinicios, stores comparativos e
-interfaz. La confirmación comparativa interna (`4ccf74a`) ya valida el elegido,
-versión e idempotencia, con consumo/rollback exclusivos;
-[evidencia](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t03-confirmacion.md).
-No se declaran T01–T07 cerradas por estos avances.
-
-Inicio de T00: sonda de tres procesos `spawn`, entrada JSON común y comparación
-de resultados con ejecución directa en los tres casos congelados, ejecutada y
-documentada en [la evidencia inicial](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t00-inicio.md).
-La sonda demuestra viabilidad inicial y solapamiento instrumentado; todavía no
-cierra los contratos ni el presupuesto agregado de producción. No es el runner
-productivo ni satisface por sí sola los CA de integración.
+La secuencia aprobada y sus dependencias se conservan a continuación como
+trazabilidad del alcance:
 
 | Tarea | Salida verificable | Dependencias | CA |
 |---|---|---|---|
@@ -302,8 +295,8 @@ sin reproducirla y resolver o delimitar formalmente la discrepancia.
 No quedan abiertas la elección humana, las cuatro pestañas ni la ejecución
 concurrente: son requisitos expresos del solicitante. Las rutas, versionado,
 regla de fallo parcial y supervisión quedan aprobados para implementación;
-T00 debe concretar los umbrales agregados con mediciones. Registrar cualquier
-ajuste técnico y su evidencia, conservando los requisitos de la SPEC aprobada.
+T00 registra los umbrales iniciales y sus límites de medición. Registrar
+cualquier ajuste técnico con evidencia, conservando la SPEC aprobada.
 
 ## 7. Cierre y evidencia
 
@@ -315,10 +308,11 @@ ajuste técnico y su evidencia, conservando los requisitos de la SPEC aprobada.
 - Guías actualizadas para la API comparativa, recuperación, límites y distinción
   entre contratos legacy, selección y confirmación.
 
-La SPEC queda Reviewed y este PLAN Approved por autorización expresa de Fabricio
-Melendez Quezada. Implemented/Verified exigen implementación y evidencia; Andro
-Quispe figura como revisor asignado, sin atribuirle una revisión ya ejecutada.
-No atribuir cambios de estado a herramientas externas que no se actualizaron.
+La aprobación Reviewed/Approved de Fabricio Melendez Quezada se conserva en
+el historial. SPEC y PLAN pasan a Implemented con implementación y evidencia
+local; no se declaran Verified por revisión cruzada ni CI remoto. Andro Quispe
+sigue como revisor asignado. No se actualizaron herramientas externas ni se
+crearon PR, merges o despliegues.
 
 ## Historial de estado
 
@@ -332,3 +326,5 @@ No atribuir cambios de estado a herramientas externas que no se actualizaron.
 | 31/10/2026 | Approved — desarrollo en curso | Runner/coordinador `6493b15`: tres procesos supervisados, presupuestos aplicados, orden real y guardado independiente. 817 pruebas del módulo aprobadas. Ajuste de head en pruebas `9b960ca`: 81 pruebas afectadas aprobadas; repetición completa pendiente de registrar. API, confirmación comparativa, recuperación y UI pendientes |
 | 31/10/2026 | Approved — desarrollo en curso | Regresión completa de backend de la base `9b960ca`: 2429 pruebas aprobadas en 258.69s, sin fallos ni skips. Confirmación comparativa y recorrido HTTP/UI siguen pendientes de integrar |
 | 31/10/2026 | Approved — desarrollo en curso | Confirmación interna `4ccf74a`: consumo exclusivo FF/BF/WF elegido, recibo idempotente, carreras y rollback. Selección de regresión: 74 pruebas aprobadas. Rutas, recuperación, streaming y frontend pendientes |
+
+| 31/10/2026 | Implemented | API `da659f2`, trazabilidad/recuperación `d9d0ee4`, UI `0b30ef4`, nueva solicitud tras confirmar `59115f4`, E2E/capturas `ec3c2b6`, corrección responsive `0a2a544` y prueba de avance automático `095ea67`. T00–T07 cerradas localmente con 2453 backend, 175 unitarias frontend, 514 componentes y 120 E2E aprobadas; gate 12 specs/2 proyectos sin skips. Revisión de Andro Quispe y CI remoto pendientes |
