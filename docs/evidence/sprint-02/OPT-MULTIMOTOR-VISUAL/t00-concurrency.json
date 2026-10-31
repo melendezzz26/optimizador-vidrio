@@ -1,0 +1,243 @@
+{
+  "schema_version": 1,
+  "author": "Fabricio Melendez Quezada",
+  "assigned_reviewer": "Andro Quispe",
+  "source_commit": "eb40a2134a224ac2cb9571928b9e117be9184e4a",
+  "python": "3.11.9",
+  "platform": "Linux",
+  "start_method": "spawn",
+  "probe_only": true,
+  "measurement_notes": [
+    "Barrera instrumentada dentro del primer hecho real; tiempos no aptos para ranking.",
+    "La suma de máximos RSS de workers no es un pico agregado simultáneo medido.",
+    "Casos congelados pequeños: no certifica el peor caso ni capacidad de producción.",
+    "No implementa streaming/API productivos ni aplica escrituras de inventario."
+  ],
+  "cases": [
+    {
+      "case_id": "EXP-SMALL-001",
+      "input_sha256": "6682203e831b680c00bcc5c2a403d6bf4c3b5b1ed56d9da5e1277cef9bbe4359",
+      "common_overlap_ms": 10.134538,
+      "all_methods_match_direct_execution": true,
+      "sum_worker_peak_rss_bytes": 62337024,
+      "workers": [
+        {
+          "ok": true,
+          "method": "FF",
+          "pid": 16868,
+          "input_sha256": "6682203e831b680c00bcc5c2a403d6bf4c3b5b1ed56d9da5e1277cef9bbe4359",
+          "started_ns": 10858859014922,
+          "ended_ns": 10858869334648,
+          "instrumented_elapsed_ms": 10.319726,
+          "cpu_ms": 9.997193,
+          "peak_rss_bytes": 20779008,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 1,
+            "piece_ready": 1,
+            "preparation_completed": 1,
+            "orientation_testing": 7,
+            "source_selected": 3
+          },
+          "total_units": 3,
+          "placed_units": 3,
+          "functional_sha256": "8f63841d8d1bb5d522ed58a68361e2493d2a08c493099b660be6ef1b06f38f73"
+        },
+        {
+          "ok": true,
+          "method": "BF",
+          "pid": 16869,
+          "input_sha256": "6682203e831b680c00bcc5c2a403d6bf4c3b5b1ed56d9da5e1277cef9bbe4359",
+          "started_ns": 10858859099459,
+          "ended_ns": 10858869384994,
+          "instrumented_elapsed_ms": 10.285535,
+          "cpu_ms": 10.188597,
+          "peak_rss_bytes": 20779008,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 1,
+            "piece_ready": 1,
+            "preparation_completed": 1,
+            "orientation_testing": 7,
+            "source_selected": 3
+          },
+          "total_units": 3,
+          "placed_units": 3,
+          "functional_sha256": "1d448cc7cb7a607bc976361b6db793f563eb0015e1644215d39988adb1ba793d"
+        },
+        {
+          "ok": true,
+          "method": "WF",
+          "pid": 16870,
+          "input_sha256": "6682203e831b680c00bcc5c2a403d6bf4c3b5b1ed56d9da5e1277cef9bbe4359",
+          "started_ns": 10858859038047,
+          "ended_ns": 10858869233997,
+          "instrumented_elapsed_ms": 10.19595,
+          "cpu_ms": 9.893709,
+          "peak_rss_bytes": 20779008,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 1,
+            "piece_ready": 1,
+            "preparation_completed": 1,
+            "orientation_testing": 7,
+            "source_selected": 3
+          },
+          "total_units": 3,
+          "placed_units": 3,
+          "functional_sha256": "488a922fa5c6723cc7fa36ed4310698c9bff50739493ca30778018c23d541ba1"
+        }
+      ]
+    },
+    {
+      "case_id": "EXP-MEDIUM-001",
+      "input_sha256": "d6bda8065f1f899b3c10294c14cff2a95790dc2324d08dab7d7a024fac91e356",
+      "common_overlap_ms": 15.934879,
+      "all_methods_match_direct_execution": true,
+      "sum_worker_peak_rss_bytes": 63909888,
+      "workers": [
+        {
+          "ok": true,
+          "method": "FF",
+          "pid": 16875,
+          "input_sha256": "d6bda8065f1f899b3c10294c14cff2a95790dc2324d08dab7d7a024fac91e356",
+          "started_ns": 10859052278224,
+          "ended_ns": 10859068234204,
+          "instrumented_elapsed_ms": 15.95598,
+          "cpu_ms": 15.797402,
+          "peak_rss_bytes": 21303296,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 3,
+            "piece_ready": 3,
+            "preparation_completed": 1,
+            "orientation_testing": 118,
+            "source_selected": 9
+          },
+          "total_units": 9,
+          "placed_units": 9,
+          "functional_sha256": "e718714d51c0b3231d76bbae05720c1064d9d8f0102cf5fb72672678cf0e375f"
+        },
+        {
+          "ok": true,
+          "method": "BF",
+          "pid": 16876,
+          "input_sha256": "d6bda8065f1f899b3c10294c14cff2a95790dc2324d08dab7d7a024fac91e356",
+          "started_ns": 10859052203621,
+          "ended_ns": 10859075084273,
+          "instrumented_elapsed_ms": 22.880652,
+          "cpu_ms": 22.691835,
+          "peak_rss_bytes": 21303296,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 3,
+            "piece_ready": 3,
+            "preparation_completed": 1,
+            "orientation_testing": 146,
+            "source_selected": 9
+          },
+          "total_units": 9,
+          "placed_units": 9,
+          "functional_sha256": "f81990bf7f46f65d282b339d0527e2b02b89542aa2035767945238c5e033e2c0"
+        },
+        {
+          "ok": true,
+          "method": "WF",
+          "pid": 16877,
+          "input_sha256": "d6bda8065f1f899b3c10294c14cff2a95790dc2324d08dab7d7a024fac91e356",
+          "started_ns": 10859052299325,
+          "ended_ns": 10859069240066,
+          "instrumented_elapsed_ms": 16.940741,
+          "cpu_ms": 16.902232,
+          "peak_rss_bytes": 21303296,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 3,
+            "piece_ready": 3,
+            "preparation_completed": 1,
+            "orientation_testing": 108,
+            "source_selected": 9
+          },
+          "total_units": 9,
+          "placed_units": 9,
+          "functional_sha256": "add5d5c744b602dfe64ac3286285a7f28cf983f1ef571ac640b629483bbfb2d9"
+        }
+      ]
+    },
+    {
+      "case_id": "EXP-COMPLEX-001",
+      "input_sha256": "1656a5c07a33fac37d484d4040de5adb7fc1769e05f591bc82a7ea5a22ed36db",
+      "common_overlap_ms": 113.980932,
+      "all_methods_match_direct_execution": true,
+      "sum_worker_peak_rss_bytes": 64696320,
+      "workers": [
+        {
+          "ok": true,
+          "method": "FF",
+          "pid": 16881,
+          "input_sha256": "1656a5c07a33fac37d484d4040de5adb7fc1769e05f591bc82a7ea5a22ed36db",
+          "started_ns": 10859268861419,
+          "ended_ns": 10859382885436,
+          "instrumented_elapsed_ms": 114.024017,
+          "cpu_ms": 83.518873,
+          "peak_rss_bytes": 21565440,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 6,
+            "piece_ready": 6,
+            "preparation_completed": 1,
+            "orientation_testing": 1263,
+            "source_selected": 24
+          },
+          "total_units": 24,
+          "placed_units": 24,
+          "functional_sha256": "eac7e701bc9cc7090570d89e83fc827c0c2b7f24bd6ccdc4ead8cb3064d2da7f"
+        },
+        {
+          "ok": true,
+          "method": "BF",
+          "pid": 16882,
+          "input_sha256": "1656a5c07a33fac37d484d4040de5adb7fc1769e05f591bc82a7ea5a22ed36db",
+          "started_ns": 10859268904504,
+          "ended_ns": 10859384048724,
+          "instrumented_elapsed_ms": 115.14422,
+          "cpu_ms": 84.674636,
+          "peak_rss_bytes": 21565440,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 6,
+            "piece_ready": 6,
+            "preparation_completed": 1,
+            "orientation_testing": 1311,
+            "source_selected": 24
+          },
+          "total_units": 24,
+          "placed_units": 24,
+          "functional_sha256": "4f2c656381576c95f4c11686a14d3ae00149b8e3874cb55cafa12233bb613208"
+        },
+        {
+          "ok": true,
+          "method": "WF",
+          "pid": 16883,
+          "input_sha256": "1656a5c07a33fac37d484d4040de5adb7fc1769e05f591bc82a7ea5a22ed36db",
+          "started_ns": 10859268825295,
+          "ended_ns": 10859386566529,
+          "instrumented_elapsed_ms": 117.741234,
+          "cpu_ms": 83.188932,
+          "peak_rss_bytes": 21565440,
+          "visual_facts": {
+            "preparation_started": 1,
+            "piece_rasterizing": 6,
+            "piece_ready": 6,
+            "preparation_completed": 1,
+            "orientation_testing": 1199,
+            "source_selected": 24
+          },
+          "total_units": 24,
+          "placed_units": 24,
+          "functional_sha256": "b23566e78331d7fef252f649776d0ccd066288ced098152c33de4a2c5e08e718"
+        }
+      ]
+    }
+  ]
+}

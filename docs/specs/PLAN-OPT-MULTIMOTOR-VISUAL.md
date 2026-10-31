@@ -203,6 +203,13 @@ y su contrato de presentación pertenecen al segundo trabajo.
 **T00 en curso** tras aprobación expresa. T01–T07 pendientes de ejecución y
 evidencia; no se declaran criterios funcionales cumplidos por cambiar este estado.
 
+Inicio de T00: sonda de tres procesos `spawn`, entrada JSON común y comparación
+de resultados con ejecución directa en los tres casos congelados, ejecutada y
+documentada en [la evidencia inicial](../evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t00-inicio.md).
+La sonda demuestra viabilidad inicial y solapamiento instrumentado; todavía no
+cierra los contratos ni el presupuesto agregado de producción. No es el runner
+productivo ni satisface por sí sola los CA de integración.
+
 | Tarea | Salida verificable | Dependencias | CA |
 |---|---|---|---|
 | T00 — Cerrar diseño y presupuesto | Matriz baseline/compatibilidad, contratos propuestos, prueba de viabilidad de tres procesos y límites agregados medidos | Revisión de SPEC/PLAN | 02,03,20,25 |
@@ -289,3 +296,4 @@ No atribuir cambios de estado a herramientas externas que no se actualizaron.
 |---|---|---|
 | 31/10/2026 | Draft | PLAN preparado junto con la SPEC; ninguna tarea de implementación ejecutada |
 | 31/10/2026 | Approved | Fabricio Melendez Quezada aprueba el PLAN, confirma su autoría y asigna revisión a Andro Quispe. Desarrollo autorizado únicamente en la rama acordada; T00 en curso |
+| 31/10/2026 | Approved — T00 en curso | Sonda inicial `eb40a21`: tres procesos y resultados equivalentes en los casos SMALL/MEDIUM/COMPLEX. Evidencia registrada; umbrales agregados y contratos pendientes |
