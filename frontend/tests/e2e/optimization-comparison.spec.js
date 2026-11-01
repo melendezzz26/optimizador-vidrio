@@ -65,10 +65,23 @@ test('comparar tres motores, revisar fases y solicitud, elegir BF y confirmar un
   const selected = await (await page.request.get(path, { headers: data.headers })).json();
   const best = selected.executions.find(e => e.method === 'BF');
   expect(selected.selected_execution_id).toBe(best.execution_id);
+  const nextOrder = await page.request.post(`${api}/api/orders`, { headers: data.headers, data: { id_cliente: 41,
+    piezas: [{ ...data.materials[0], tipo_forma: 'RECTANGULO', cantidad: 1, width_mm: 10, height_mm: 10 }] } });
+  expect(nextOrder.status()).toBe(201);
+  const nextId = (await nextOrder.json()).id_pedido;
   await page.getByRole('button', { name: 'Confirmar distribución elegida' }).click();
   await page.getByRole('alertdialog').getByRole('button', { name: 'Confirmar corte', exact: true }).click();
-  await expect(page.getByText('Corte confirmado', { exact: true })).toBeVisible();
+  await expect(page.getByText(new RegExp(`Trabajo #${current.comparison_id} confirmado`))).toBeVisible();
+  await expect(page.getByText(new RegExp(`Trabajo #${current.comparison_id} confirmado`))).toBeInViewport();
+  await expect(page.getByRole('tab')).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Pedidos pendientes', exact: true })).toBeFocused();
+  for (const id of data.orders) await expect(page.getByRole('checkbox', { name: new RegExp(`Pedido #${id}\\b`) })).toHaveCount(0);
+  await expect(page.getByRole('checkbox', { name: new RegExp(`Pedido #${nextId}\\b`) })).toBeVisible();
+  await capture(page, info, 'confirmacion-limpia-pedidos-pendientes');
   await page.reload(); await open(page);
+  await expect(page.getByRole('tab')).toHaveCount(0);
+  await page.getByLabel('Consultar trabajo guardado').fill(String(current.comparison_id));
+  await page.getByRole('button', { name: 'Consultar', exact: true }).click();
   await expect(page.getByText('Corte confirmado', { exact: true })).toBeVisible();
   await page.getByRole('tab', { name: 'Comparación', exact: true }).click();
   await expect(page.getByLabel('Elegir Best Fit', { exact: true })).toBeChecked();
@@ -82,6 +95,60 @@ test('comparar tres motores, revisar fases y solicitud, elegir BF y confirmar un
   save(info, 'comparison-events.json', events);
   expect(errors).toEqual([]);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+  await page.getByRole('button', { name: 'Preparar otro trabajo', exact: true }).click();
+  await page.getByRole('checkbox', { name: new RegExp(`Pedido #${nextId}\\b`) }).check();
+  const newRequest = page.waitForResponse(r => new URL(r.url()).pathname === '/api/optimization/comparisons' && r.request().method() === 'POST');
+  await page.getByRole('button', { name: 'Comparar con los tres motores', exact: true }).click();
+  const newResponse = await newRequest;
+  expect(newResponse.status()).toBe(201);
+  const newComparison = await newResponse.json();
+  expect(newComparison.comparison_id).not.toBe(current.comparison_id);
+  await expect(page.getByText('Comparación finalizada', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Liberar pedidos sin confirmar', exact: true }).click();
+  await expect(page.getByText(new RegExp(`Trabajo #${newComparison.comparison_id} liberado sin confirmar`))).toBeVisible();
+  await expect(page.getByRole('tab')).toHaveCount(0);
+  await expect(page.getByRole('checkbox', { name: new RegExp(`Pedido #${nextId}\\b`) })).not.toBeChecked();
+});
+
+test('FF falla al persistir y BF se confirma una vez, regresando al listado', async ({ page }, info) => {
+  const data = await setup(page, 'ff-save-failure');
+  const before = await stock(page, data);
+  await login(page, data.actors.all, { comparative: true }); await open(page);
+  await page.getByRole('checkbox', { name: new RegExp(`Pedido #${data.orders[0]}\\b`) }).check();
+  const started = page.waitForResponse(r => new URL(r.url()).pathname === '/api/optimization/comparisons' && r.request().method() === 'POST');
+  await page.getByRole('button', { name: 'Comparar con los tres motores' }).click();
+  const current = await (await started).json(), path = `${api}/api/optimization/comparisons/${current.comparison_id}`;
+  await expect(page.getByText('Comparación finalizada', { exact: true })).toBeVisible();
+  await expect(page.getByText(/No se pudo guardar el resultado de este motor/)).toBeVisible();
+  expect(await stock(page, data)).toEqual(before);
+  await page.getByRole('tab', { name: 'Comparación', exact: true }).click();
+  await expect(page.getByLabel('Elegir First Fit', { exact: true })).toBeDisabled();
+  await page.getByLabel('Elegir Best Fit', { exact: true }).click();
+  await expect(page.getByLabel('Elegir Best Fit', { exact: true })).toBeChecked();
+  await expect(page.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeEnabled();
+  await capture(page, info, 'ff-fallido-bf-elegido');
+  let confirmations = 0;
+  page.on('request', request => { if (request.url() === path + '/confirm' && request.method() === 'POST') confirmations++; });
+  const confirmed = page.waitForResponse(response => response.url() === path + '/confirm' && response.request().method() === 'POST');
+  await page.getByRole('button', { name: 'Confirmar distribución elegida' }).click();
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Confirmar corte', exact: true }).dblclick();
+  const response = await confirmed;
+  expect(response.status()).toBe(200);
+  await expect(page.getByText(new RegExp(`Trabajo #${current.comparison_id} confirmado`))).toBeVisible();
+  await expect(page.getByText(new RegExp(`Trabajo #${current.comparison_id} confirmado`))).toBeInViewport();
+  await expect(page.getByRole('tab')).toHaveCount(0);
+  expect(confirmations).toBe(1);
+  const after = await stock(page, data);
+  expect(after.sheets[0].cantidad).toBe(before.sheets[0].cantidad - 1);
+  const replay = await page.request.post(path + '/confirm', { headers: { ...data.headers,
+    'Idempotency-Key': response.request().headers()['idempotency-key'] }, data: response.request().postDataJSON() });
+  expect(replay.status()).toBe(200);
+  expect(await replay.json()).toEqual(await response.json());
+  expect(await stock(page, data)).toEqual(after);
+  const recovered = await (await page.request.get(path, { headers: data.headers })).json();
+  expect(recovered.confirmation.method).toBe('BF');
+  expect(recovered.executions.find(e => e.method === 'FF').failure_code).toBe('RESULT_SAVE_FAILED');
+  await capture(page, info, 'confirmacion-parcial-limpia');
 });
 
 test('rotación real de 90 grados y movimiento reducido sin ejecutar otro trabajo al cambiar pestañas', async ({ page }, info) => {

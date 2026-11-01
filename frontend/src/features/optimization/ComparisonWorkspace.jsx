@@ -1,5 +1,5 @@
 // Autor: Fabricio Melendez Quezada. Revisor asignado: Andro Quispe.
-import { useEffect, useId, useMemo, useState, useSyncExternalStore } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { canExecuteOptimization, hasPermission } from '../authentication';
 import { PageCard } from '../../shared/components/PageLayout';
 import { ConfirmDialog, FeedbackMessage, LoadingState } from '../../shared/components/feedback';
@@ -149,8 +149,20 @@ export function ComparisonWorkspace({ token, user, initialRunId, onSessionExpire
     onExpired: onSessionExpired, onLegacy }), [api, source, storageKey, initialRunId, onSessionExpired, onLegacy]);
   const state = useSyncExternalStore(flow.subscribe, flow.getSnapshot, flow.getSnapshot);
   useEffect(() => { flow.mount(); return () => flow.dispose(); }, [flow]);
+  return <ComparisonView key={state.comparison?.comparison_id ?? 'pending'} state={state} flow={flow}
+    api={api} execute={execute} canConfirm={canConfirm} onSessionExpired={onSessionExpired} />;
+}
+
+function ComparisonView({ state, flow, api, execute, canConfirm, onSessionExpired }) {
   const [tab, setTab] = useState('FF'), [lookup, setLookup] = useState(''), [dialog, setDialog] = useState(false);
+  const pendingHeading = useRef(null);
   const id = useId(), current = state.comparison;
+  useEffect(() => {
+    if (!current && state.success) {
+      pendingHeading.current?.focus({ preventScroll: true });
+      pendingHeading.current?.closest('.comparison-workspace')?.scrollIntoView?.({ block: 'start' });
+    }
+  }, [current, state.success]);
   const selected = current?.executions.find(e => e.execution_id === current.selected_execution_id);
   const tabs = [...METHODS, 'comparison'];
   const locked = state.busy || current && !current.released && !current.confirmed;
@@ -159,13 +171,14 @@ export function ComparisonWorkspace({ token, user, initialRunId, onSessionExpire
       <p>Revisa el proceso de cada motor, compara sus métricas y elige una distribución.</p></div>
       {current && <div className="comparison-job">Trabajo <strong>#{current.comparison_id}</strong><small>{current.confirmed ? 'Corte confirmado' : current.released ? 'Pedidos liberados' : current.terminal ? 'Comparación finalizada' : 'Comparación en curso'}</small>{selected && <small>Elegido: {METHOD_NAMES[selected.method]}</small>}</div>}</header>
     {state.error && <FeedbackMessage variant="error">{state.error}</FeedbackMessage>}
+    {state.success && <FeedbackMessage variant="success">{state.success}</FeedbackMessage>}
     <div className="comparison-toolbar"><form onSubmit={e => { e.preventDefault(); if (Number(lookup) > 0) flow.load(Number(lookup)); }}>
       <label>Consultar trabajo guardado<input className="ng-control" type="number" min="1" value={lookup} onChange={e => setLookup(e.target.value)} /></label>
       <button className="ng-button" disabled={state.busy || !Number.isSafeInteger(Number(lookup)) || Number(lookup) <= 0}>Consultar</button></form>
       <button className="ng-button" disabled={state.busy} onClick={flow.refresh}>Recuperar estado</button></div>
     {state.loading && <LoadingState>Consultando pedidos y trabajo guardado…</LoadingState>}
     {execute && (!current || current.released || current.confirmed) && <section className="comparison-pending" aria-label="Seleccionar pedidos">
-      <h3>Pedidos pendientes</h3><p>Las existencias se descuentan al confirmar la distribución que elijas.</p>
+      <h3 ref={pendingHeading} tabIndex={-1}>Pedidos pendientes</h3><p>Las existencias se descuentan al confirmar la distribución que elijas.</p>
       {!state.orders.length && <p>No hay pedidos pendientes.</p>}
       <div className="comparison-pending-list">{state.orders.map(order => <label key={order.id_pedido}>
         <input type="checkbox" disabled={!!locked} checked={state.selected.includes(order.id_pedido)} onChange={e => flow.select(e.target.checked
@@ -204,7 +217,7 @@ export function ComparisonWorkspace({ token, user, initialRunId, onSessionExpire
         {!current.terminal && <p role="status">La elección se habilita cuando terminan los tres procesos y sus resultados están guardados.</p>}
         <div className="comparison-choice"><div><strong>{selected ? `${METHOD_NAMES[selected.method]} seleccionado` : 'Todavía no has elegido un motor'}</strong>
           <p>{current.confirmed ? 'El inventario y los pedidos reflejan únicamente la distribución elegida.' : 'Elegir un motor conserva el inventario. Confirma cuando hayas revisado su distribución.'}</p></div>
-          {canConfirm && <button className="ng-button ng-button--primary" disabled={state.busy || !current.confirmable} onClick={() => setDialog(true)}>Confirmar distribución elegida</button>}
+          {canConfirm && <button className="ng-button ng-button--primary" disabled={state.busy || !current.confirmable} onClick={() => setDialog(true)}>{state.busy ? 'Procesando…' : 'Confirmar distribución elegida'}</button>}
         </div>
       </section>
       <footer className="comparison-footer">

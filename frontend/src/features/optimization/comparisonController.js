@@ -7,13 +7,30 @@ const newKey = () => globalThis.crypto?.randomUUID?.() ?? `cmp-${Date.now()}-${M
 
 export function createComparisonController({ api, source, storageKey, initialId, onExpired, onLegacy }) {
   let state = { orders: [], selected: [], comparison: null, results: {}, visuals: {}, live: {}, cursor: 0,
-    busy: false, loading: true, error: '', connection: 'connecting', partial: false };
+    busy: false, loading: true, error: '', success: '', history: false, connection: 'connecting', partial: false };
   let active = false, generation = 0, observer, request, retry, unsubscribe, requestKey, operation, syncTimer;
+  let actionSequence = 0;
+  const confirmedOrders = new Set();
   const listeners = new Set();
   const set = patch => { state = { ...state, ...patch }; listeners.forEach(fn => fn()); };
   const remember = (pending = false) => { try { localStorage.setItem(storageKey, JSON.stringify({ id: pending ? null : state.comparison?.comparison_id, requestKey, operation })); } catch { /* Almacenamiento opcional. */ } };
   const valid = g => active && g === generation;
   const fail = error => { if (error.status === 401) onExpired?.(); set({ error: error.message, loading: false }); };
+  function clearWork(success = '') {
+    prepare(); actionSequence++; requestKey = null; operation = null;
+    try { localStorage.removeItem(storageKey); } catch { /* Almacenamiento opcional. */ }
+    set({ comparison: null, results: {}, visuals: {}, live: {}, cursor: 0, selected: [], error: '',
+      partial: false, history: false, busy: false, loading: true, success, connection: 'connecting',
+      orders: state.orders.filter(order => !confirmedOrders.has(order.id_pedido)) });
+    source.refresh?.({ force: true });
+  }
+  function confirmed(current) {
+    current.order_ids.forEach(id => confirmedOrders.add(id));
+    clearWork(`Trabajo #${current.comparison_id} confirmado. Los pedidos y el inventario se actualizaron con la distribución elegida.`);
+  }
+  function released(current) {
+    clearWork(`Trabajo #${current.comparison_id} liberado sin confirmar. Los pedidos vuelven a pendientes y el inventario se conserva.`);
+  }
   function apply(current) {
     if (state.comparison?.comparison_id === current.comparison_id && state.comparison.version > current.version) return;
     set({ comparison: current, loading: false }); remember();
@@ -23,6 +40,8 @@ export function createComparisonController({ api, source, storageKey, initialId,
     if (!current) return;
     const next = await api.load(current.comparison_id, request?.signal);
     if (!valid(g)) return;
+    if (next.confirmed && !state.history) { confirmed(next); return; }
+    if (next.released && !state.history) { released(next); return; }
     apply(next);
     await Promise.all(next.executions.map(async execution => {
       if (execution.status === 'COMPLETADA') {
@@ -52,7 +71,10 @@ export function createComparisonController({ api, source, storageKey, initialId,
   }
   function delayedSync(visual = false) {
     clearTimeout(syncTimer);
-    syncTimer = setTimeout(() => { if (active) sync(visual).catch(fail); }, 40);
+    const g = generation;
+    syncTimer = setTimeout(() => { if (valid(g)) sync(visual).catch(error => {
+      if (valid(g) && error.name !== 'AbortError') fail(error);
+    }); }, 40);
   }
   function event(value) {
     set({ cursor: value.sequence, connection: 'connected' });
@@ -99,11 +121,14 @@ export function createComparisonController({ api, source, storageKey, initialId,
     request = new AbortController();
     return generation;
   }
-  async function load(id) {
-    const g = prepare(); set({ loading: true, error: '', cursor: 0, visuals: {}, results: {}, live: {}, partial: false });
+  async function load(id, { automatic = false } = {}) {
+    const g = prepare(); set({ loading: true, error: '', success: '', history: false, cursor: 0, visuals: {}, results: {}, live: {}, partial: false });
     try {
       const current = await api.load(id, request.signal);
       if (!valid(g)) return;
+      if (automatic && current.confirmed) { confirmed(current); return; }
+      if (automatic && current.released) { released(current); return; }
+      set({ history: current.confirmed || current.released });
       apply(current); await sync(true);
       if (valid(g) && !state.comparison.terminal) follow(g);
     } catch (error) {
@@ -114,13 +139,14 @@ export function createComparisonController({ api, source, storageKey, initialId,
   }
   async function action(fn) {
     if (state.busy) return;
+    const sequence = ++actionSequence;
     set({ busy: true, error: '' });
     try { await fn(); } catch (error) {
-      if (active && error.name !== 'AbortError') {
+      if (active && sequence === actionSequence && error.name !== 'AbortError') {
         fail(error);
-        if (error.status === 409) { try { await sync(); operation = null; remember(); } catch { /* Mantener el error original. */ } }
+        if (error.status === 409) { try { await sync(); if (sequence === actionSequence) { operation = null; remember(); } } catch { /* Mantener el error original. */ } }
       }
-    } finally { if (active) set({ busy: false }); }
+    } finally { if (active && sequence === actionSequence) set({ busy: false }); }
   }
   return {
     subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn); },
@@ -129,15 +155,19 @@ export function createComparisonController({ api, source, storageKey, initialId,
       active = true;
       unsubscribe = source.subscribe(e => {
         if (!active) return;
-        if (e.type === 'orders') set({ orders: e.orders, selected: state.selected.filter(id => e.orders.some(o => o.id_pedido === id)), loading: false });
+        if (e.type === 'orders') {
+          const orders = e.orders.filter(order => !confirmedOrders.has(order.id_pedido));
+          set({ orders, selected: state.selected.filter(id => orders.some(o => o.id_pedido === id)), loading: false });
+        }
         else { set({ connection: 'reconnecting' }); fail(e.error); }
       });
       source.load();
       let saved = {};
-      try { saved = JSON.parse(localStorage.getItem(storageKey) ?? '{}'); } catch { /* Sin estado local. */ }
+      try { const value = JSON.parse(localStorage.getItem(storageKey) ?? '{}'); if (value && typeof value === 'object') saved = value; } catch { /* Sin estado local. */ }
       requestKey = saved.requestKey; operation = saved.operation;
-      if (initialId ?? saved.id) load(initialId ?? saved.id);
-      else if (requestKey) api.lookup(requestKey).then(current => { if (active) load(current.comparison_id); }).catch(error => { if (active && error.status !== 404) fail(error); });
+      const g = generation;
+      if (initialId ?? saved.id) load(initialId ?? saved.id, { automatic: !initialId });
+      else if (requestKey) api.lookup(requestKey).then(current => { if (valid(g)) load(current.comparison_id, { automatic: true }); }).catch(error => { if (valid(g) && error.status !== 404) fail(error); });
     },
     dispose() { active = false; prepare(); unsubscribe?.(); source.dispose(); },
     select: ids => set({ selected: ids }),
@@ -153,20 +183,31 @@ export function createComparisonController({ api, source, storageKey, initialId,
       const g = prepare(); requestKey ??= newKey(); operation = null; remember(true);
       const current = await api.start(state.selected, requestKey, request.signal);
       if (!valid(g)) return;
-      set({ visuals: {}, results: {}, live: {}, cursor: 0, partial: false }); apply(current); source.refresh?.(); follow(g);
+      set({ visuals: {}, results: {}, live: {}, cursor: 0, partial: false, success: '', history: false }); apply(current); source.refresh?.(); follow(g);
     }),
-    choose: id => action(async () => { apply(await api.choose(state.comparison, id)); operation = null; remember(); }),
+    choose: id => action(async () => {
+      const current = state.comparison, g = generation;
+      if (!current?.selection_allowed) return;
+      const next = await api.choose(current, id);
+      if (valid(g)) { apply(next); operation = null; remember(); }
+    }),
     confirm: () => action(async () => {
       const current = state.comparison;
-      if (!current?.confirmable) return;
+      if (!current?.confirmable || current.confirmed || current.released) return;
+      const g = generation;
       if (!operation || operation.executionId !== current.selected_execution_id) operation = { executionId: current.selected_execution_id, version: current.version, key: newKey() };
-      remember(); await api.confirm(current, operation); operation = null; remember(); await sync(); source.refresh?.();
+      remember(); await api.confirm(current, operation);
+      if (valid(g)) confirmed(current);
     }),
-    release: () => action(async () => { apply(await api.release(state.comparison)); requestKey = null; operation = null; remember(); source.refresh?.(); }),
+    release: () => action(async () => {
+      const current = state.comparison, g = generation;
+      if (!current?.terminal || current.confirmed || current.released) return;
+      const next = await api.release(current);
+      if (valid(g)) released(next);
+    }),
     reset() {
       if (state.comparison && !state.comparison.released && !state.comparison.confirmed) return;
-      prepare(); requestKey = null; operation = null;
-      set({ comparison: null, results: {}, visuals: {}, live: {}, cursor: 0, selected: [], error: '' }); remember(); source.refresh?.();
+      clearWork();
     },
   };
 }

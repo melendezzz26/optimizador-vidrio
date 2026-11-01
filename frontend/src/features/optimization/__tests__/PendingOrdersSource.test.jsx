@@ -15,3 +15,20 @@ test('pagination deduplicates repeated IDs while preserving distinct orders for 
   expect(listener).toHaveBeenCalledWith({ type: 'orders', orders: [first, historical] });
   source.dispose();
 });
+
+test('forced refresh cancels a pre-confirmation request and ignores its late snapshot', async () => {
+  let resolveOld;
+  const request = vi.fn().mockImplementationOnce(() => new Promise(resolve => { resolveOld = resolve; }))
+    .mockResolvedValueOnce({ items: [{ id_pedido: 99 }], total_pages: 1 });
+  const source = createPendingOrdersSource({ request, schedule: vi.fn(), cancel: vi.fn() });
+  const listener = vi.fn(); source.subscribe(listener);
+  try {
+    const first = source.load();
+    const signal = request.mock.calls[0][1].signal;
+    await source.refresh({ force: true });
+    expect(signal.aborted).toBe(true);
+    resolveOld({ items: [{ id_pedido: 1 }], total_pages: 1 }); await first;
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(listener).toHaveBeenCalledWith({ type: 'orders', orders: [{ id_pedido: 99 }] });
+  } finally { source.dispose(); }
+});

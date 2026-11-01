@@ -11,11 +11,12 @@ beforeEach(() => {
   localStorage.clear();
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({ fillRect: vi.fn(), setTransform: vi.fn() });
 });
-function setup({ failStart = false, partial = false, ambiguous = false } = {}) {
+function setup({ failStart = false, partial = false, partialFF = false, ambiguous = false } = {}) {
   let current = structuredClone(fixture.completed);
-  if (partial) {
+  if (partial || partialFF) {
     current.incomplete = true;
-    current.executions[1] = { ...current.executions[1], status: 'FALLIDA', complete: false, eligible: false,
+    const failed = partialFF ? 0 : 1;
+    current.executions[failed] = { ...current.executions[failed], status: 'FALLIDA', complete: false, eligible: false,
       placed_units: 0, metrics: null, computation_time_ms: null, failure_code: 'EXECUTION_FAILED' };
   }
   const api = {
@@ -25,7 +26,7 @@ function setup({ failStart = false, partial = false, ambiguous = false } = {}) {
     load: vi.fn(async () => structuredClone(current)),
     result: vi.fn(async (_, e) => structuredClone(fixture.results[e.execution_id])),
     manifest: vi.fn(async (_, e) => structuredClone(fixture.manifests[e.execution_id])),
-    observe: vi.fn(async (_, cursor, callback) => { if (!partial) for (const e of fixture.events) if (e.sequence > cursor) callback(structuredClone(e)); }),
+    observe: vi.fn(async (_, cursor, callback) => { if (!partial && !partialFF) for (const e of fixture.events) if (e.sequence > cursor) callback(structuredClone(e)); }),
     forExecution: vi.fn(() => ({ loadVisualMask: vi.fn(async (_, descriptor) => structuredClone(fixture.masks[descriptor.mask_ref])) })),
     choose: vi.fn(async (_, id) => { current = { ...current, version: current.version + 1, selected_execution_id: id, confirmable: true }; return structuredClone(current); }),
     confirm: vi.fn(async () => { current = { ...current, version: current.version + 1, confirmed: true, confirmable: false, selection_allowed: false }; }),
@@ -80,7 +81,10 @@ test('manual BF selection, original measures and confirmation use the same work'
   fireEvent.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Confirmar corte' }));
   await waitFor(() => expect(api.confirm).toHaveBeenCalledTimes(1));
   expect(api.confirm.mock.calls[0][1]).toMatchObject({ executionId: 2, version: 6 });
-  await screen.findByText('Corte confirmado');
+  await screen.findByText(/Trabajo #1 confirmado/);
+  expect(screen.queryByRole('tab')).not.toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Pedidos pendientes' })).toBeVisible();
+  expect(screen.queryByRole('checkbox', { name: /Pedido #1/ })).not.toBeInTheDocument();
   const firstKey = api.start.mock.calls[0][1];
   act(() => {
     source.emit({ type: 'remove', id: 1 });
@@ -120,6 +124,22 @@ test('failed engine has no fake zero metrics and successful results stay eligibl
   expect(within(row).getAllByText('—')).toHaveLength(6);
   expect(screen.getByLabelText('Elegir Worst Fit')).toBeEnabled();
   expect(screen.getByText(/La comparación está incompleta/)).toBeVisible();
+});
+
+test('FF failure does not prevent confirming BF and returning to a clean pending selector', async () => {
+  const { api } = setup({ partialFF: true });
+  await execute();
+  fireEvent.click(screen.getByRole('tab', { name: 'Comparación' }));
+  expect(screen.getByLabelText('Elegir First Fit')).toBeDisabled();
+  fireEvent.click(screen.getByLabelText('Elegir Best Fit'));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeEnabled());
+  fireEvent.click(screen.getByRole('button', { name: 'Confirmar distribución elegida' }));
+  fireEvent.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Confirmar corte' }));
+  await screen.findByText(/Trabajo #1 confirmado/);
+  expect(api.confirm).toHaveBeenCalledTimes(1);
+  expect(api.confirm.mock.calls[0][1].executionId).toBe(2);
+  expect(screen.queryByRole('tab')).not.toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Pedidos pendientes' })).toHaveFocus();
 });
 
 test('ambiguous acceptance is recovered by request key without submitting another calculation', async () => {

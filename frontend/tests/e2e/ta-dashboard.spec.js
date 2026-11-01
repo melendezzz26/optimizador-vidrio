@@ -4,7 +4,6 @@ import path from 'node:path';
 import { expect, test } from '@playwright/test';
 import { watchDashboardResponses } from './dashboardResponses.js';
 
-const appOrigin = 'http://127.0.0.1:5173';
 // These actors exist only in tests.e2e_server's owned loopback PostgreSQL.
 // Missing setup must fail the suite instead of silently skipping acceptance tests.
 const apiOrigin = 'http://127.0.0.1:8017';
@@ -39,6 +38,7 @@ const roles = {
 
 const noFunctions = { label: 'Sin funciones E2E', username: 'O70000004', password: 'Dashboard-test-2026!' };
 async function restrictOrigins(page) {
+  const appOrigin = new URL(test.info().project.use.baseURL).origin;
   await page.route('**/*', route => {
     const origin = new URL(route.request().url()).origin;
     return [appOrigin, apiOrigin].includes(origin) ? route.fallback() : route.abort();

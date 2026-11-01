@@ -6,7 +6,12 @@ export function createPendingOrdersSource({ token, intervalMs = 15000, request =
   const listeners = new Set();
   let controller, timer, busy = false, disposed = false, generation = 0;
   const publish = event => listeners.forEach(listener => listener(event));
-  async function refresh() {
+  async function refresh({ force = false } = {}) {
+    if (force && !disposed) {
+      generation++;
+      controller?.abort();
+      busy = false;
+    }
     if (disposed || busy) return;
     busy = true;
     const current = generation;
