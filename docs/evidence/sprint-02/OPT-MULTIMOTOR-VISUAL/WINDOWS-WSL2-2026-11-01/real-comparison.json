@@ -1,0 +1,52 @@
+{
+  "comparison_id": 1,
+  "results": [
+    {
+      "method": "FF",
+      "execution_id": 1,
+      "placed_units": 4
+    },
+    {
+      "method": "BF",
+      "execution_id": 2,
+      "placed_units": 4
+    },
+    {
+      "method": "WF",
+      "execution_id": 3,
+      "placed_units": 4
+    }
+  ],
+  "inventory_unchanged": true,
+  "runner": {
+    "metric": "sampled_supervisor_and_workers_rss_plus_helper_reserve",
+    "helper_reserve_bytes": 16777216,
+    "samples": 103,
+    "maximum_rss_sum_bytes": 247820288,
+    "supervisor_peak_rss_bytes": 161132544,
+    "worker_peak_rss_bytes": {
+      "FF": 23490560,
+      "BF": 23552000,
+      "WF": 23367680
+    },
+    "maximum_packet_bytes": 3466,
+    "maximum_queued_packets_per_worker": 1,
+    "maximum_sample_gap_ms": 31.954701000131536,
+    "all_workers_stopped": true,
+    "owned_processes": {
+      "FF": {
+        "pid": 5104,
+        "start_ticks": "129341"
+      },
+      "BF": {
+        "pid": 5106,
+        "start_ticks": "129343"
+      },
+      "WF": {
+        "pid": 5108,
+        "start_ticks": "129345"
+      }
+    },
+    "elapsed_ms_including_ipc_and_cleanup": 2789.0523409998877
+  }
+}

@@ -1,0 +1,76 @@
+[
+  {
+    "scenario": "no-fit",
+    "http": 201,
+    "detail": null,
+    "final_status": "SIN_SOLUCION",
+    "orders_pending": true,
+    "inventory_unchanged": true,
+    "accepted_before_failure": true,
+    "workers_started": true
+  },
+  {
+    "scenario": "oversized-piece",
+    "http": 422,
+    "detail": {
+      "code": "INVALID_INPUT",
+      "message": "Las piezas, par\u00e1metros o stock exceden las condiciones v\u00e1lidas."
+    },
+    "final_status": null,
+    "orders_pending": true,
+    "inventory_unchanged": true,
+    "accepted_before_failure": false,
+    "workers_started": false
+  },
+  {
+    "scenario": "stock-count",
+    "http": 422,
+    "detail": {
+      "code": "LOAD_LIMIT_EXCEEDED",
+      "message": "Hay 51 unidades de stock compatibles para un mismo material y un c\u00e1lculo admite 50. Solicita al almacenero revisar el inventario activo.",
+      "limit": {
+        "name": "stock_units_per_material",
+        "maximum": 50,
+        "actual": 51,
+        "scope": {
+          "id_tipo_vidrio": 7,
+          "espesor_mm": "6.0"
+        }
+      }
+    },
+    "final_status": null,
+    "orders_pending": true,
+    "inventory_unchanged": true,
+    "accepted_before_failure": false,
+    "workers_started": false
+  },
+  {
+    "scenario": "oversized-stock-with-usable-source",
+    "http": 201,
+    "detail": null,
+    "final_status": "FALLIDA",
+    "orders_pending": true,
+    "inventory_unchanged": true,
+    "accepted_before_failure": true,
+    "workers_started": true
+  },
+  {
+    "scenario": "raster-estimate",
+    "http": 422,
+    "detail": {
+      "code": "LOAD_LIMIT_EXCEEDED",
+      "message": "Las piezas seleccionadas tienen demasiadas formas grandes distintas para un solo c\u00e1lculo. Divide la selecci\u00f3n en lotes m\u00e1s peque\u00f1os.",
+      "limit": {
+        "name": "raster_memory",
+        "maximum": 67108864,
+        "actual": 853293760,
+        "scope": null
+      }
+    },
+    "final_status": null,
+    "orders_pending": true,
+    "inventory_unchanged": true,
+    "accepted_before_failure": false,
+    "workers_started": false
+  }
+]

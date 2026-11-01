@@ -1,0 +1,91 @@
+{
+  "date": "2026-11-01",
+  "excluded_pending_tracked_or_untracked": [],
+  "ignored_or_external_scope": [
+    {
+      "path": "backend/.venv/",
+      "reason": "Windows/WSL environments, validation helpers, XML/logs, private remote snapshots and temporary proposed index/object store"
+    },
+    {
+      "path": "backend/venv/",
+      "reason": "Virtual environment"
+    },
+    {
+      "path": "backend/.env",
+      "reason": "Private configuration; never read or staged"
+    },
+    {
+      "path": "frontend/.env",
+      "reason": "Private local configuration; never read or staged"
+    },
+    {
+      "path": "frontend/node_modules/",
+      "reason": "Dependencies"
+    },
+    {
+      "path": "frontend/dist/",
+      "reason": "Build artifact"
+    },
+    {
+      "path": "frontend/test-results/",
+      "reason": "Raw runtime/test artifacts"
+    },
+    {
+      "path": "frontend/playwright-report/",
+      "reason": "Generated browser report"
+    },
+    {
+      "path": "**/__pycache__/, **/.pytest_cache/, frontend/.vitest/",
+      "reason": "Caches"
+    },
+    {
+      "path": "*.env, .env.*, *.env.* (except sanitized tracked .env.example)",
+      "reason": "Environment secrets/local config"
+    },
+    {
+      "path": "backend/.venv/validation/final-private-comparisons.json",
+      "reason": "Business data from read-only remote diagnosis; private"
+    },
+    {
+      "path": "backend/.venv/validation/final-private-replay.json",
+      "reason": "Detailed replay of private business snapshots"
+    },
+    {
+      "path": "backend/.venv/validation/pr-preparation/",
+      "reason": "Temporary index, object store and machine-specific staging-validation result"
+    },
+    {
+      "path": "WSL owned validation cache and temporary PostgreSQL clusters (outside checkout)",
+      "reason": "Runtime/database artifacts; not part of Git"
+    },
+    {
+      "path": "User Downloads/attachments and original backend operational logs (outside checkout)",
+      "reason": "Private source material, not copied into the PR"
+    }
+  ],
+  "retained_evidence_exception": {
+    "paths": [
+      "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/logs/backend-full.txt",
+      "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/logs/build.txt",
+      "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/logs/components-auto-phase.txt",
+      "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/logs/components.txt",
+      "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/logs/e2e-focused.txt",
+      "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/logs/e2e-full.txt",
+      "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/logs/lint.txt",
+      "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/logs/unit.txt"
+    ],
+    "reason": "Eight already committed normalized synthetic-test records, not private raw operational logs. Preserved with their existing provenance; no evidence deleted."
+  },
+  "outside_scope": [
+    "No M4/M5/M6",
+    "No UI redesign",
+    "No heuristic rewrite",
+    "No raster/resource increase",
+    "No database data/configuration changes"
+  ],
+  "privacy_revision": {
+    "authorized": true,
+    "original_documents": "Retained only in ignored local validation storage; never staged",
+    "publication": "Not authorized in this delivery"
+  }
+}

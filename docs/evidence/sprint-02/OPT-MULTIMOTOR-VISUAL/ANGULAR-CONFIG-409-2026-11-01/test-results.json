@@ -1,0 +1,36 @@
+{
+  "scope": "isolated synthetic test fixtures only",
+  "backend": {
+    "pure_unit": {
+      "tests": 116,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "prepublication": {
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "regression": {
+      "tests": 64,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "distinct_cases": 190
+  },
+  "frontend": {
+    "unit_passed": 175,
+    "component_passed": 173,
+    "component_failed": 0,
+    "component_files": 17
+  },
+  "e2e": {
+    "expected": 6,
+    "unexpected": 0,
+    "skipped": 0,
+    "flaky": 0
+  }
+}

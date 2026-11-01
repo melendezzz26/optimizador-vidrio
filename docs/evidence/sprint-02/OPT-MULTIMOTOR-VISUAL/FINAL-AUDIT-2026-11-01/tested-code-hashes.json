@@ -1,0 +1,2873 @@
+{
+  "files_checked": 573,
+  "all_tested_copies_match": true,
+  "files": [
+    {
+      "path": "backend/app/models.py",
+      "sha256": "4b20027eaba46baedd22461532ab903f693978751974ad00a6fb8970c039a370",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/core/permissions.py",
+      "sha256": "236ad6f0054f4e92b673ca103ae8eb3d035856ecb64629ddf2f450ba70bc2e5e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/core/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/authentication/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/authentication/application/ports.py",
+      "sha256": "406e310ee61ac577db83e0e8de6784bcc36b63b50bc6e5651b46b13a0c160cb2",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/authentication/application/use_cases.py",
+      "sha256": "bd14a30d0b10c49c66d1654bce14b11235bd58e2a78211e7487a6da0e0e47b38",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/authentication/application/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/authentication/domain/errors.py",
+      "sha256": "547d79589b1da4d219ecc0c1bc87077f72cad5bbf8a174d42c7bca4d689f417b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/authentication/domain/user.py",
+      "sha256": "4b4b02e273c5ac578deadcc4e84e10c7f333b35e9a1617657f27bce1c0c39ba0",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/authentication/domain/username.py",
+      "sha256": "5e258d2ba38373afd3dfb27d526536632c1518a5b9c6d8eac60323df049e4ebe",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/authentication/domain/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/authentication/infrastructure/permission_seed.py",
+      "sha256": "331d2164e0a8707841a12b27f694295776812ede992e098b4e6641c3c09fce14",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/authentication/infrastructure/sqlalchemy_permission_reader.py",
+      "sha256": "98854b97304982f8fa3396b7ce48b21df2808004511b1d9132c3a8b4f6689a87",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/authentication/infrastructure/sqlalchemy_user_reader.py",
+      "sha256": "b26a15d599350fb5c0cb4e37cf8b518c5467f9ec101fac447ada7f803e2710ba",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/authentication/infrastructure/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/authentication/presentation/dependencies.py",
+      "sha256": "da76b3919df8284e058a930c44bcc73d71ff6c5441c4c013efc97c0c773f5ea8",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/authentication/presentation/router.py",
+      "sha256": "f3f62ca4cabf8a70efc465db402b21d3f3e9786c4a50e6ecc55c2635e264cf46",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/authentication/presentation/schemas.py",
+      "sha256": "7ba9a6eb3c78d3620eedc00251d8864db1499de593464d5e68e1f841fe18140d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/authentication/presentation/__init__.py",
+      "sha256": "6d7108c4bff7309d4ba1e77ebca0500fb1818c10a877f1856fdadd0499ef4f00",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/clients/__init__.py",
+      "sha256": "10d1717e41881097420d49045847307999d15d798079f23f08622ae3a7f5da94",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/clients/application/dto.py",
+      "sha256": "048a1e5533e82d181855c6b423296b38c5807fd8ddbdf242740cafb63e23ac8c",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/clients/application/ports.py",
+      "sha256": "5ef009beb22dbe3e1a4c73f250c936548c559c079afc1e150cbf91ad9e660f48",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/clients/application/use_cases.py",
+      "sha256": "02fce7966356f35278452306635b465073b85b7c4487f608d3d6c793cca78345",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/clients/application/__init__.py",
+      "sha256": "da687d3c77df1c3e1bbedc56e16a50f24488037848d82b17d755d7e8b73e3d2e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/clients/domain/client.py",
+      "sha256": "ac0593d360f83984038591fe3a1e6267c27cd4ed028a48f0da200a76c6bf432b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/clients/domain/errors.py",
+      "sha256": "b075ff3a055ae954bcbac5ffdd22bcdf8eb14c5268351f19151e9d7dc9ea5d28",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/clients/domain/rules.py",
+      "sha256": "606050e1c00014ba853258c3f92ab47a3c60f91d9bb5810a9f4410878e713ae2",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/clients/domain/__init__.py",
+      "sha256": "4db6d02bcc10bbaab4d239197947b80f515a234849499ccd60e8c72fdb361183",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/clients/infrastructure/sqlalchemy_client_repository.py",
+      "sha256": "39fa14dde37b415333df6aedc2d206e0eb620cdf45d167c4583b050e2401bd21",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/clients/infrastructure/__init__.py",
+      "sha256": "0169c76d3b583430e94d7111e327ec7677d6c04d3325344cf8ab1af71c5777be",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/clients/presentation/dependencies.py",
+      "sha256": "b8de89f5e1e5475acc0f41d457564b9d710dceb9cb03b444aa3da6098f95ab18",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/clients/presentation/router.py",
+      "sha256": "bd75ac0e798e19beca394915ea25c9fdbf3ec6528fca2e2fcb299479ac70fc8f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/clients/presentation/schemas.py",
+      "sha256": "e4d275b0f8ef3cc4bf0af0326427fcda25352b1957a32012211c994131745c86",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/clients/presentation/__init__.py",
+      "sha256": "6c6a25a43b4b0da5427f4392a940e3e0b6ad7ebf74f012c84e402fac0150e91d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/configuration/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/configuration/application/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/configuration/domain/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/configuration/infrastructure/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/configuration/presentation/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/inventory/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/inventory/application/catalog.py",
+      "sha256": "c9ef03b17654611b23501d39badbe109239738cf2f0f7aa9656922d7f8bc9f97",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/inventory/application/dto.py",
+      "sha256": "6f8865ff50bef84b28548e85a120a901a9ae3ea15f8eced5642fda24b0ffa916",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/inventory/application/ports.py",
+      "sha256": "07ad02ebbe5fc44314cdb0906e4c7c22758df0024c39befcd5be73336c636b0b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/inventory/application/service.py",
+      "sha256": "158204528c62c873eadf1e1f68634259913e5bff2380866620dd95cb50c4bff8",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/inventory/application/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/inventory/domain/exceptions.py",
+      "sha256": "052fffc08ab6c6e3f2584098d55c9019ba1a4a6bbb5b236f7f697aabe49997fb",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/inventory/domain/geometry.py",
+      "sha256": "8f653ebf45bcbb54cdfb4dfe183ef798ecbeffb505c51fb98dbd9a6853a7e123",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/inventory/domain/writeoff.py",
+      "sha256": "36be289b059ad4af176b6369925432f167a3c60d951cd39fd422c8f3a0770a59",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/inventory/domain/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/inventory/infrastructure/repository.py",
+      "sha256": "462a34bf4a0764aac492e5ad6568a10b042657035701b75a2be4044fba73316f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/inventory/infrastructure/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/inventory/presentation/dependencies.py",
+      "sha256": "1dc03b8607131e19e3e4900fa7539b20f022d4ec3675bb11979a8fd154948015",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/inventory/presentation/router.py",
+      "sha256": "0e4295c970dae0b32769dd5a7287ae204d6bd756da350b31d900d232e4799bea",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/inventory/presentation/schemas.py",
+      "sha256": "854c60ab9575c502cfe499b091c29efbbd538ea4d3ee2e8dc245fd46583fce92",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/inventory/presentation/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/admission.py",
+      "sha256": "0c3fab809a94d6638003f98decb2ed93b713bccd5c19215745f0d1b50096456d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/best_fit.py",
+      "sha256": "45b24cd1093570cbdbdc90e104f618195f2cdd7864ad2e0b70addf4aa7bba7a1",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/calculation.py",
+      "sha256": "8092941aebb81a2049f21c9cc20010b959ec8d1d5756bab8d8c84775236db9d0",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/comparison.py",
+      "sha256": "84b5931f6a236b5cad66ae54f15de313ae9f45c7f32b939a0b45b6990bee7104",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/comparisons.py",
+      "sha256": "865335bc73d8fa44368fbda4ad166a2504308f5ac3c579e4a313bf9570968976",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/comparison_calculation.py",
+      "sha256": "ed55f69c6cc67794a7aed63ea7f29b54e198199f785f423067417bca925b437a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/comparison_confirmation.py",
+      "sha256": "c2db0498768701bb4575b0548d088a787e59adb75da80aa449895e5675018dbb",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/comparison_contracts.py",
+      "sha256": "1be6372874be51beca1cd12cede4fddf333945aba2fdeb8647e3ca5e9001467a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/comparison_limits.py",
+      "sha256": "77e158cae8c852b6d2fa62a6e3ba0381c4e26cd5cf5367431b48ba9b89e1fa6d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/confirmation.py",
+      "sha256": "c35c5ceb7ad7b9fe04fea57c4db1955b810201ed8b54a2e8c7fcc570e1ec2726",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/dto.py",
+      "sha256": "20f6d4ad4d3550707f157b5c802234fba5caae9887e8ab2792d6eb031767f430",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/errors.py",
+      "sha256": "91f8d425fac9734da4e148bc04e0da943434a50a868cd5ffe8959e2ccaaf97cf",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/first_fit.py",
+      "sha256": "b2db77415c27fb05b0e4c3d72cac57cce0064838816b53ab51b68afc7b928b06",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/load_budget.py",
+      "sha256": "fa9a1123274ec75293778082d8b82abb2ca6e1d808aa61a6bf77e94f9afd8820",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/ports.py",
+      "sha256": "f6295a1f0bb0281bfef4557d7137b194db6a5c12e8502807b54af41deddeb08f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/preparation.py",
+      "sha256": "c6f1e792f6c0bec03b4bd529d32573cac41f52b6a5783d7647876c6fa16c59d9",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/resource_policy.py",
+      "sha256": "2e6ad945e8674145dc672f62c8b00b03b0ede5d211eb5793cbafc108f60cef32",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/runs.py",
+      "sha256": "6acc43b7804109eaddf3bdb281ea9c4cc8a59010a7f23d6b29bbcfc8c4572d2a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/run_ports.py",
+      "sha256": "865da13e8e01165e87f0af86d60c0fd9446ea280fa6aaadcb1c5d691e21c2fbf",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/stock.py",
+      "sha256": "dc9fdf7df55594c8c5832fed63d0042f0cfe47caea16e581d3c0152fad005361",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/use_cases.py",
+      "sha256": "252ad7e15e9bbb40f8d062ffa41df43360e97f0195053b387dc606b04533c173",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/visual.py",
+      "sha256": "e43a90e5e5c2017ec53ef6047ba2b74f4c46a63122e6f8ddadff6051baeb035e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/domain/best_fit.py",
+      "sha256": "0f54370e6713364dd4af91f5c559e6667443bc678d39dd30367bfaf506e5e1d8",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/domain/confirmation.py",
+      "sha256": "5d3ad4c29a79019afbc47cd970a2d6819b78ffd7286017f309822cea60e83fa8",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/domain/first_fit.py",
+      "sha256": "34bb02122398d1cd7355d4261af8152bb9de67800121ae6f023cf8ce4a579d19",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/domain/metrics.py",
+      "sha256": "e1f2dc5addc7ff7ad44c6bbbbcadd272ce2cf6e84fd87ab7bb54561147208de1",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/domain/packing.py",
+      "sha256": "3592eac181cb18ac4b3da937482b7cd5c6e86fedf2f12da40d5655b1fa774d91",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/domain/placement.py",
+      "sha256": "4a8960567ff4f8f99e55c6447daa918bfbbab5752748a47fc41d1a024e11666f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/domain/preparation.py",
+      "sha256": "6b8cf5430da9a4421f116654d0b96ae4c584c809c576f1ee7dc30a01b1b2594b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/domain/problem.py",
+      "sha256": "62246caee359a3db7f57f35ca1b49a7c8a24755ac388f0096b0db26a3259c136",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/domain/rasterizer.py",
+      "sha256": "c8be33b04d5687013d9d30b66e5185bd43fa409e9bfc854a6df507f764b30556",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/domain/raster_mask.py",
+      "sha256": "3838e10bd8f0c3fee8393ce0ce3f7e2baf726019d1e5374757a0096e417a8213",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/domain/rotation.py",
+      "sha256": "29882a5eb4a8477505442656a056ab3568ddcab34bcc16a0166ab398fa4ef751",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/domain/run_geometry.py",
+      "sha256": "28eaf5ee6ac27a2e041affe17a9e2ab8ffdd0682e17ca7ea50e4297665c9aa56",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/domain/visual_events.py",
+      "sha256": "b15ce685709101bc020d8090dc69e2341cf947c3d3c3954c36ef82327452b87d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/domain/worst_fit.py",
+      "sha256": "45dac09ba4edddc879196d2b3f1b656ff35cdce8df87dd351bd59c513cec55e1",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/domain/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/comparison_confirmation.py",
+      "sha256": "32b4c399f0769c10c9ec4e7b66725a56e7721b49861d98b40580c1f246cabc77",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/comparison_runner.py",
+      "sha256": "a702b53f0e99fe3ba04bb2942ccd2187ae176daee8f5835cc1817ffa69585577",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/comparison_snapshot.py",
+      "sha256": "a23867fae76deffab03b428dbb490dfffd85496ff1d14fa6d5733e422959a416",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/comparison_stock.py",
+      "sha256": "41adf7a1d3ac55ce96143d3b53e968a479be27b4615e9560f59da88aef0dd53b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/comparison_transport.py",
+      "sha256": "1d57a07c357f4aaeac5c72aa38f79370777f374f5c35cd9c2b618028aaf3d299",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/comparison_uow.py",
+      "sha256": "43bd5d3c453aeaba225a68a36f2bfabbe7406cc4c2a438490a1cb73528fb2a7b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/configuration_publication.py",
+      "sha256": "92cec9e0ef4b35b15946f5685c3265e05182d7fcd84aaddb8582c5d2bdcf31ad",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/configuration_seed.py",
+      "sha256": "dbedbe458b3e41827b0681e48b54bed29edd43ce7a7c81d60ddacf8860d76161",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/confirmation_adapter.py",
+      "sha256": "f5932234b7618a9dd99560bf0f9943b25451f31225b0f06b60de2cf95a66895a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/in_process_admission.py",
+      "sha256": "c1b1ff9c1b1b9589bdec68b7829be7a5fbd2a5cad84f3bbed688e63829218c79",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/orders_adapter.py",
+      "sha256": "fad9df7013fdd331804ff65cb6b8183056077627eae4985f07f96aff50eaf986",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/process_lifecycle.py",
+      "sha256": "68ed29b5a310e11257c71b1d0eaff1fa37f6508948c9b772f6e79b6d4595ca04",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/run_snapshot.py",
+      "sha256": "5d6c83a2af6e904a501881c01dcb7d9b2ef061b9f2a5547d86e1d0e40941e76a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/run_uow.py",
+      "sha256": "1a18d266d55eb3d18fe79576108f5c19335a317db76ecbaef6a2ab1fc6dafd53",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/stock_adapter.py",
+      "sha256": "2f66b5bf492b141d551167ce764d966f957d33328446e9398193bee8f9984bb8",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/visual_store.py",
+      "sha256": "f03b2273b91189396ff6ea9f8854808554846731044e693869e84bd8486b1888",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/comparison_routes.py",
+      "sha256": "dc6c75cef6abf97835d791e041eb696c9baef69dc6d5c08f189037674e215718",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/comparison_runtime.py",
+      "sha256": "dac6ea94375d992c076555f75b83aef607e5087783eda2b7ef745648c564f36e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/comparison_schemas.py",
+      "sha256": "7fe06ae93b9638a6e72d2bec0d9ee25c4984d32a0fc2c9a946424e0a85e89ae5",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/comparison_serialization.py",
+      "sha256": "033ee9fe8e17f0ba8fa832773efdac69b96c7958dae3c033eefc4bb7ccb906df",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/confirmation_serialization.py",
+      "sha256": "28dd35e2bd97d86a19a35d03a75e438981c8cebf5dd3768af9f770de105c65c9",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/dependencies.py",
+      "sha256": "682eca1e0e876fdfd3d157d3ccc9a07fe00be652c5cc9369cf08f063cde55345",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/router.py",
+      "sha256": "1eb6137d94920bfa9790276ebf4340be120d3ff06b393304fb8b0c729474f7b9",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/run_auth.py",
+      "sha256": "a9956b058b3a13d9118fcd98ef6f02796ef33ce2eea9e4078813d2503bd38a0d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/run_routes.py",
+      "sha256": "f2b1032ce531b2d387a3542e8f3776240ead0bb3e615c41ff9a22a73ffe3b72c",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/run_schemas.py",
+      "sha256": "47576a347e8cc73190715bcd721865e5fae3c2d1bffbf8929c694feb49fdd489",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/run_serialization.py",
+      "sha256": "c60c20d847674ba3d5965cf33d87f36d11d23fc244be495db5fa40eba3d22b91",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/run_stream.py",
+      "sha256": "1f12b184769151649928a529163f27e3ee40b1c9af95fb29f731a3e857bbee8e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/schemas.py",
+      "sha256": "154a4fd220ea2a21b0b00975237de3917f05fac5aa7db0adcf0bda476e873599",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/serialization.py",
+      "sha256": "041f4f8a310fb34c91779d74888fe7cb64a894e7a097885c0de6d7f4a2a0cc02",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/visual_schemas.py",
+      "sha256": "4b9cab96f5ec60275f9e222a83b5167d5ddae504b062e7b31577d7086d4bedc1",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/visual_serialization.py",
+      "sha256": "d1052a0c0f8fe3ce98190f0f306633c013593f2b125d756d89b2c24d1eea61a3",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/orders/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/orders/application/persisted_pieces.py",
+      "sha256": "511f9070ad3a45a547695affd4dbd7648548117bcf9eeaee327442f4d2ac8b38",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/orders/application/ports.py",
+      "sha256": "af3db54dc153d3a6ebd14e8f25c6db48838fe244d57a4d10c4c8ead1fefa3339",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/orders/application/use_cases.py",
+      "sha256": "212c24a1f166c37525bae42baa8ae6f4c98bd6f9a7fa7c0633cdb01a5df5086e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/orders/application/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/orders/domain/exceptions.py",
+      "sha256": "2801793eecc3740363853eee3a90acd3e8d96fc37179f38136f5a54a96c9b90a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/orders/domain/geometry.py",
+      "sha256": "850c184b07655f371a9c0d93345a6fe26974d4069cfe9d2295e1d710d6ac4088",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/orders/domain/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/orders/infrastructure/repositories.py",
+      "sha256": "f9c0be8478cf663661add24fcc3cc77fc498caa33ea77acd7674f5bb1ef1a2a0",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/orders/infrastructure/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/orders/presentation/dependencies.py",
+      "sha256": "cdec052b3d6c31e5a620f4e452b16a11ab90bc6ea4006cc80e57060e4e10ff0a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/orders/presentation/router.py",
+      "sha256": "0275a2703c244314169b63af1425e9c3744cd15d399fd7c2a8586a20a07e2a47",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/orders/presentation/schemas.py",
+      "sha256": "74bda907dce2b8337d768386f6af6242b24b59e60b06a2fa55df94c7fd49e6fa",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/orders/presentation/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/results/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/results/application/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/results/domain/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/results/infrastructure/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/results/presentation/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/application/dto.py",
+      "sha256": "cf27f7ba6811344b30b6d72408afb1c8287f8eed5a91f931c334be84f73195db",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/application/ports.py",
+      "sha256": "22f84bbb46405844a485ecef40ed66c5d18d9a8f820281bc34c0993948ea129c",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/application/role_use_cases.py",
+      "sha256": "6924fb5322c127c8f284167a105d86879890b289a38c3eed598f566b0b80090a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/application/use_cases.py",
+      "sha256": "024e3defae531686b41ff399b7928fe870ff711fa04b1558c156acfd367b43c5",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/application/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/domain/errors.py",
+      "sha256": "7e29c813fa47b162291991fa0ca96feba9216d24989f8f63cdfa771d6cb02523",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/domain/role_permissions.py",
+      "sha256": "0d88627316553ddac602f312a06fd98c3068606e0d58587a8dacf57f430e6dfc",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/domain/rules.py",
+      "sha256": "c014ab059dacbf672904954a5e507abd505ef57ac2e61ee49e6f93d02d794722",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/domain/user.py",
+      "sha256": "61ca8240383319cf57159d808e21b1e54fbcedba07a5afb283f02c55ea5b82d0",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/domain/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/infrastructure/sqlalchemy_role_permission_repository.py",
+      "sha256": "4d36a232805b203ed48acea3ba63af02407a4ead854a4d5643f95e45341ca9ea",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/infrastructure/sqlalchemy_user_repository.py",
+      "sha256": "0e7998176410b488a65b42fc9ebe8ccb44192b1088ffb0d77d738659568192a4",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/infrastructure/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/presentation/dependencies.py",
+      "sha256": "b4da4f21b63322e3256d3f6c64f403614884211ca8b5d56ea0d8523d231aef71",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/presentation/roles_router.py",
+      "sha256": "94134004bc7011033bd1320614c26eccbe420c90dddb08006514e51e93cea16f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/presentation/role_schemas.py",
+      "sha256": "2c986b5042a6b9ca964be8c9b4de2d20b3ba6b6186c4d61dadfdd9d64873ec32",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/presentation/router.py",
+      "sha256": "c5b857dbdc53e52e7a2f5896f2a206dd6e8e8817a3ee1e3d99e558a6d1372cc4",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/presentation/schemas.py",
+      "sha256": "9f725e4a82dbe26faca8265e0270bb0af9ed97db5ecf21c07b8d31bf70e5c22f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/modules/users/presentation/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/shared/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/shared/config/__init__.py",
+      "sha256": "ce471ca0228b3f29d083d5faab8e8653e1e5d09099be30a574789143908a34ff",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/shared/database/session.py",
+      "sha256": "c084acc3d1cc39693e0dad424984c5a2bc644b2968222e0d14e09a7969f6a396",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/shared/database/__init__.py",
+      "sha256": "0b79e4fdc38df1fc7a089d0f4468042b64a832699c44f764e9d7cf58ad0dee3f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/shared/observability/health.py",
+      "sha256": "1383d797d364997b7519091a22369775fd30d9a4ed1514fd7115f8691d5bd2a6",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/shared/observability/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/shared/security/passwords.py",
+      "sha256": "0eddaa70cb8952434f768a8f06adf6d587d06d431a55a75c7e4d954da2e0eb6c",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/shared/security/tokens.py",
+      "sha256": "9f1ab559d0638357d7ea8818d2dd117e6b7cba65d07934577fbd7e38645f2d02",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/shared/security/validation_errors.py",
+      "sha256": "22fe229c4eb89fcf2a63f283fa5e27c328e8ecc560223da49590e1612c9fae5e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/app/shared/security/__init__.py",
+      "sha256": "0dc1851821c4021da4e2596007fffcad557e6376929032ebd0c2ba431deacf29",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/auth_support.py",
+      "sha256": "8a1029b636aa3353c4da0e04d859d8bf67784f7ec100d1d917bade0286d2f05e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/catalog_contract.py",
+      "sha256": "28796bc8d9cde4f855280e609d23d0d285d8de86e12afc9a145183c57f0883da",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/clients_support.py",
+      "sha256": "eed848504b47b30ea9f7eced1d956c202a045e383fd153ad2a03de81eb9bbcbe",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/conftest.py",
+      "sha256": "23ecdb064008deb9522756f20b19eb5cf1b9126103c918ea8a26d4f41d7cc65f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/e2e_server.py",
+      "sha256": "7850a930b58bfe1f6deba42fd614a0804d2427c7ee4e1596d1beaeaabe855618",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/model_contracts.py",
+      "sha256": "553d881c580e966d2c62793fe8f114e17e5fb7555647757739f44c4ec050d20c",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/optimization_e2e_data.py",
+      "sha256": "328b0320b83ccb7f839305c45bb10ce05e7ca702223eeebd0a50dbe820bd0af7",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/orders_support.py",
+      "sha256": "40998fd530791e9ffcdce1a5252d1d991980a86db173efb4b688f9c933243e61",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/test_auth_api.py",
+      "sha256": "630a53ce28f3ea243b0eff399ae603693749d78abfb79757c59afb0d59e7b0b0",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/test_health_api.py",
+      "sha256": "456c0719e9a8deedfac694455255ba94c36ba44343b201a64975643cd3917a61",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/test_require_permission.py",
+      "sha256": "b60364307e6babfa5492b18f04e310ff71ba803cad7bedebbc4cd8352ed76b81",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/test_users_api.py",
+      "sha256": "dbdc9c34f65481e664e48fbeb13549ad746482e83cf9eb09a9ab318a6a029006",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/test_validation_errors_sanitized.py",
+      "sha256": "c05098a8a5d0c2bf7553db3f55c59976a47df8ae58ad689ac6470e393e830421",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/authorization/test_endpoint_permissions.py",
+      "sha256": "1d02f9afb698391a7ea435ac51aad98c3138257c05b72c8e8b58d00283a78f62",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/authorization/test_permissions_from_database.py",
+      "sha256": "d009eb812f70e0f8c5d2f2845ff0750632124aec54b3d0db643e4f4dbae4bded",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/authorization/test_roles_api.py",
+      "sha256": "0b360bade9c4efb3ba0ddce311f22108c6b15181c2f52fcaf12fe9f5d548597c",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/authorization/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/clients/conftest.py",
+      "sha256": "4b603f5ead877079f151c694f1db49116ddee5c6c90d0461b30f2df050a5bf10",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/clients/test_clients_api.py",
+      "sha256": "f75f0c5019c9365976c33f9e8a05b7f9d37b21cf0372b5f5413d978afd31bbc3",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/clients/__init__.py",
+      "sha256": "a3307beb24c027120cece3a7332b7acb5e2ab91b351c136e55d2615b1141ecf2",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/inventory/test_inventory_api.py",
+      "sha256": "c0e417a89bee350b91fd9450db546279c1bbd83d518ffd93e946e5996f7465d0",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/inventory/test_lazy_db_import.py",
+      "sha256": "6d6f341c07836566993ca7aac024e93316d0edcdc94f6f7d0ff1eb0635368bcb",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/inventory/test_movement_history_api.py",
+      "sha256": "0570111bfed20ec730d357721b78050ae1fc18fb4bb2855fed51034211b29ac8",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/inventory/test_writeoff_api.py",
+      "sha256": "4447221222de97002f97598240521d19193e4e7e103c9baa77f1731373c78193",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/inventory/test_writeoff_schema.py",
+      "sha256": "db450f323778a60dea8ff48c880cd46113569a35402ac3c08ffa51eeb67b96ea",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/optimization/conftest.py",
+      "sha256": "54583274d7d612802bb8c5a01945033c370f7279d99e9d68190828651c0892bf",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/optimization/test_commercial_cut.py",
+      "sha256": "684a441d86b8690aae7c7517b880d1a9184e43b065b8731b1b098290a4ca6511",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/optimization/test_comparisons_api.py",
+      "sha256": "a77e6e0fe97eab34607c00306407cf5dc0637e10260fc13763691b900edffc7c",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/optimization/test_comparison_connection_lifecycle.py",
+      "sha256": "22c74f3f57482ece910a41d9474951109cbd682e36dd2fbbebf296583d4ed9fe",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/optimization/test_confirmation_api.py",
+      "sha256": "3eecb74fb99a4685ff9aebf5962c85dbb86f4cc03ed4d83b1113a716e1812448",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/optimization/test_final_capacity_diagnostic.py",
+      "sha256": "42554c0a2e8bd5f177d75f9a6ecac9faa2736b01068088f989f4102a341c5368",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/optimization/test_final_multimethod_audit.py",
+      "sha256": "910a278b6df708e76ec4fd08e8dd5788b59080c9e94b0ba5e83c1a88d1d03d1f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/optimization/test_optimization_api.py",
+      "sha256": "3691078732746564a2b2c21229c92b7d823ffe424702da7da4ae47a44dd5b8fd",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/optimization/test_preview_first_fit.py",
+      "sha256": "ba9106560594b57c8e413b9b99218fd9dc7cbd56506a7bd199c89ae39984c55d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/optimization/test_runs_api.py",
+      "sha256": "60e1d44a859bb9cd62ffb157e6cec0bb2c77e1124931ee395cce7388451ed660",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/optimization/test_run_concurrency.py",
+      "sha256": "883830577f800602bf4a238fe9a87bb811c12403244cf53d22da77144dd20c5c",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/optimization/test_run_contract.py",
+      "sha256": "caf4a87bfe0138170ed715025f7e3459a9273ec34ba44e30ab5fb9f0c3b736a1",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/optimization/test_run_geometry_api.py",
+      "sha256": "c117d6d147ce25909f84393e50402eaf435d4c1136a6c3faf0f8c89cb1d7c1cf",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/optimization/test_run_load_limits.py",
+      "sha256": "28e1e05972eda29f424747e3f08dee02a6f293914f6366af088d102f8b91377f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/optimization/test_run_load_stress.py",
+      "sha256": "50eaa1719eb6c1e902d8d14750589df922c4d86d8a5b941443b3939dcf610f9f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/optimization/test_visual_runs_api.py",
+      "sha256": "596b3eb8c5b36327255dc80b91e4667c1cbcd819793ad09f4591fc58ce6200ee",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/optimization/__init__.py",
+      "sha256": "8598d80f94a08ce31172316930d51acb78c355ba2386649f03b9fbce25dbcfdf",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/optimization/fixtures/s1_contract_v1.json",
+      "sha256": "a4118b48c77ad11a4cd25a75afedb369b1734c7058a19f812791bd1b41902854",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/orders/conftest.py",
+      "sha256": "a0b2f45823a6a86a1ba04800b0523828c02e7b59b68c4e3590e82c0e7b126982",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/api/orders/test_orders_api.py",
+      "sha256": "c837923c845e119e12049ef8f915c27627672a5dd82d369d786e18e9b0cef3f5",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/contracts/hu006_models.py",
+      "sha256": "7a4d9180cad73ec5d1c73e2b0ec6b6226b4dcd0cd37258192146f055aed51a33",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/contracts/r1_models.py",
+      "sha256": "1d181d27f786935d0e291beb27b33d988496752c6588ac4b45de7c263d1660e7",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/contracts/r3_models.py",
+      "sha256": "67e3ae0ceb31038fdecf898fcd6e375cbac2fdce70add7340173958d23caac85",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/contracts/r4_models.py",
+      "sha256": "e0d10c1ffceee249f674f1a6f92cd0e881bed654bd135566c415c0d27cbaa698",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/contracts/s1rbac_models.py",
+      "sha256": "270cb96f2f5cc99194026c6d911a39e50273c3a8938a87af0012b0a422d7c489",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/contracts/ta013_models.py",
+      "sha256": "e84b83beff01234cdbf2fbe8377e7cded96e1ef5ee88ff0133ecc433308dd0f8",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/conftest.py",
+      "sha256": "a715d46a61563618529241d3965a3f619ab6c2b09be554b1572bada0369c8d14",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/postgres_support.py",
+      "sha256": "01b0d801126d4be14ec81cefa3f0bd044062f97017df3fe24155d066b95bdf0d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/test_clients_migration.py",
+      "sha256": "d96ceadf19967f63aa91cb7d82ca1041441b61a75b07fa326277921648b2449a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/test_create_first_admin.py",
+      "sha256": "3647259e82658260fffed6875b273accda24fd439040388a3d0927a3065d8a98",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/test_health_database.py",
+      "sha256": "54c386442226d962306eb09d78ad396b078b6f627db1c2d49be9dc01787ddbfe",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/test_hu014_movement_migration.py",
+      "sha256": "73267d1fedd0663ad813985a4d6ba7b397041ccc735da1df1ac514e8aca9430e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/test_orders_multimaterial_migration.py",
+      "sha256": "bb8b25f4dd43d8b00e3c852ecc218c749de6dea64a9f31d255468b272185a1ea",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/test_r1_migration.py",
+      "sha256": "9d8c1d5d882da5721701777add5f2a4f105661ea84810b582b6c2d4852b842fa",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/test_r2_migration.py",
+      "sha256": "1ccc2102e3f3aec52f4b7cb845791768349d8266d4689bb918b60e9935835dbc",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/test_r3_migration.py",
+      "sha256": "b609e9b6dc9b606c446c3ae86e88c6dfc20f281526ee67ab5dc9f1203a2b6f4f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/test_r4_migration.py",
+      "sha256": "14f92d5be7079121274415e857cb5b010fd46e7f1d86144ff549723b878c140d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/test_role_permission_repository.py",
+      "sha256": "8cfd6c907c6dc06fb70db4affe09d29b7a99d47568c9dfe95356218b6aefb329",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/test_s1_rbac_migration.py",
+      "sha256": "cf20d43231559982bd917ae1f20fbaedab4a92e168db4247dcbb57706a46989d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/test_sqlalchemy_user_reader.py",
+      "sha256": "7a725739d7668d99ecfacf0b6ad1eff8c473e7e48433e122f8be511027feb6ba",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/test_sqlalchemy_user_repository.py",
+      "sha256": "f96ce8a3c205ec9e53d7f9f581fbfb8a11ac943d2ca94183652dc5d58d9321c5",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/test_staging_bootstrap.py",
+      "sha256": "fd0228ea15269ea05359c63412ffc7aa769080ad18b4ae9387e5835392fc2b56",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/test_ta036_migration.py",
+      "sha256": "59d0fc431c79ff12a8bb8f2d760182161d2be5fc7d12a0397f4efbc66eaea960",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/clients/conftest.py",
+      "sha256": "84c5f41a6abeff44de2896b381123cef3d707669f0d7e8576feba09381ee2427",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/clients/test_repository.py",
+      "sha256": "e61bccc6f71d0ff5c0dc7902f45eb73f52c094af3d7bc678d472d0aa85eef39c",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/clients/__init__.py",
+      "sha256": "1c4c4245d82e2d4205de13f365fc318f0393e9e6b505607d36266e1517a53934",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/inventory/test_catalog.py",
+      "sha256": "74d43a5d42a593f0ac49ee41dd2e75fa63751ae9d69cf9bf171f4a894146e136",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/inventory/test_repository.py",
+      "sha256": "9cdba7582b76a32d24f370da9cff18c21d6dcfed2ab9941ec2dfc7bbf68fe10c",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/inventory/__init__.py",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/modules/orders/conftest.py",
+      "sha256": "5aa7537dd7f248739ed5ce5c8ccb975d817e7dbc1b28fbc04470882916df25c4",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/modules/orders/infrastructure/test_repositories.py",
+      "sha256": "be416499984ab092732e57b454e50211bfdb2815d05b4c65df68617babad2cf7",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/conftest.py",
+      "sha256": "5aa7537dd7f248739ed5ce5c8ccb975d817e7dbc1b28fbc04470882916df25c4",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_best_fit_slice.py",
+      "sha256": "63c7d28d548c700ac5898dc5d9da8d0e6d0204ebc4572d4e9dd9c3d473c8d8a9",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_comparison_calculation.py",
+      "sha256": "35c7775e97694ca75b3643f33b3e6a10b59848f60bea0d290319a05d64bf62d5",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_comparison_confirmation.py",
+      "sha256": "917054c38df9a8203fa5673417e0c4121c979cb455b81dcfb5706c4e1bb689c9",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_comparison_migration.py",
+      "sha256": "b783d793e44a28f1681acabb6c2fda0bfa16c9147e4effd5a9cd31c3a94bd192",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_comparison_persistence.py",
+      "sha256": "7681d978e633842f1777f49d2f8d43a70747e6d113fd44bfe30b166945b48d7e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_comparison_slice.py",
+      "sha256": "e8f65607b66c81fe867a9ed001ff0bf9f0b8355fbc701a2a9bec9a6d4c4e70b7",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_configuration_publication.py",
+      "sha256": "d3141d6d166791a0e5dfbe996e7c17a0ada838d730c7410f71a4895fc2724671",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_configuration_seed.py",
+      "sha256": "809a0adfe1ba55a385aafa8e82d593d1031127bc246bfd42b091405a1657a6a4",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_confirmation.py",
+      "sha256": "ce0bf7f334bc5ce9ac955b5cd95fd4b25d5edd71cda68252ce22ce7ac77bbd97",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_confirmation_concurrency.py",
+      "sha256": "6964cc1785327a89c60b058f51f31a958674a21530892562e6e8a4363f5ba745",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_confirmation_rollback.py",
+      "sha256": "44c3be08915e1aeaffea2af9dc435b1bc9ba4dd444c846cb2bd99021f6db74a1",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_first_fit_slice.py",
+      "sha256": "72ff7c7d4de26718c8df6062eb3fea492e11758a02c046d3ad8866018743ea1a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_multipedido_migration.py",
+      "sha256": "3de7868ecb3a0665a7598ba4dd1a8732691731689fbed90d4b79f58b1a057927",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_runs.py",
+      "sha256": "3429313cd496af9db188744898f55c995d54dcf7238bf8aeb18b824ad9216c33",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_run_load_limits_pg.py",
+      "sha256": "7fc8079f65eaa0aafb49f3ead37b66fc41e40bd753cc97655da37200c1a40d3d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_run_states.py",
+      "sha256": "6b786e2dc00396be4c83341c9a0859834244f2fe15e86224451f5501630785d2",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_start_concurrency.py",
+      "sha256": "e1a5bd7e584660e744c3b133643f126f6669cfacf6058bb75220290da70d7e7b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_stock_adapter.py",
+      "sha256": "76c69ae7b42243c7d979f3e322af096dbb4d46db1d5298fb1ca9031dedffb9d9",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_worst_fit_slice.py",
+      "sha256": "b02cbc8a66aed76a646656c44584a70f0b741d5f657ba9d310267bfb13a2bcf9",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/__init__.py",
+      "sha256": "17710838fe25e66553c79eedf2400cc7c812d5c28605f462a639f70e4de7b20a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/optimization/final_audit_support.py",
+      "sha256": "813225199e7fc274e3d9144230b4e474d625a88cf70bad84082ddd8c315c2260",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/optimization/test_placement.py",
+      "sha256": "1aa6b0e7eab7f45bebc7e88f867abf29e81e61d8c32f3deaddb9ab27b0082adc",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/optimization/test_rasterize_material.py",
+      "sha256": "73e1838835da26f426eb136f57fd5a2995880c24334fdfebc0ab4f62af704504",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/optimization/test_rasterize_polygon.py",
+      "sha256": "d0dbaf763c1312c6b0117d49721b7e11edf8bc31b5010dac3309259dd3eded6e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/optimization/test_rasterize_standard.py",
+      "sha256": "c93292c6ce9d29b832bbbb5525ed0c74aab6e83e09f8494af99ceacc950c711e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/optimization/test_raster_mask.py",
+      "sha256": "c55adb927bb2adcb30fa96a298f6972d5f9d60f0890bea84c040b4c2e1014ef9",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/optimization/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/test_ci_contract.py",
+      "sha256": "698a4ab2eff21ba2b9445e41d43127855b0314ada95c6fba8ee2b4c3448aa323",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/test_database_structure.py",
+      "sha256": "49fff695c66a3998a5f67afa4b61e4fa5e4067f625de17f44a14fdd9064880c7",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/test_r1_models.py",
+      "sha256": "077c0caa15293b673517e5591b150a0b2ab59f4448767f6a50d137d15e6229c0",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/test_r2_models.py",
+      "sha256": "ac6f20a45aa48faccd3038d0981b754ba0d8ede0b006a3ec5ca0cfa69dd28ecb",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/test_r3_models.py",
+      "sha256": "c8d94d172b452fdd4db64ab8fbe347cf478223d64525db223e6a6ab049c945f3",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/test_r4_models.py",
+      "sha256": "d7e42c26d7e8bf4e3f89d9322277e3a70e4facd6b7870873a3698fef241970a6",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/authentication/test_layer_dependencies.py",
+      "sha256": "6ae50baa090c23ebb1ac49c2c982dbe04ccccb4fa5785636610a9d53793cc511",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/authentication/test_permission_catalog.py",
+      "sha256": "87c521863ab304c93e2cb51c60cbd287976377f53692b7a7424f5fc6faa4a186",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/authentication/test_permission_seed.py",
+      "sha256": "90fcbacc672bf9ff1675b64d5324c6d98e457b3ebdc400996738c2d6012b63de",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/authentication/test_username.py",
+      "sha256": "55f75c80bbae7d49641ba776bdda6b3d5067dbc97640ce7183a29fd826bf4a3c",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/authentication/test_use_cases.py",
+      "sha256": "bb24e51f85a639e80942ca0a0380c3f3e2d25aaec83653cceed54d2d51a852a9",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/authentication/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/clients/test_layer_dependencies.py",
+      "sha256": "828cfd38dc6bf6ef527586ef8401a8673b56d50dc00a0a2984a4cc9fd513ab7e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/clients/test_use_cases.py",
+      "sha256": "8a29dee9aa7c1e3e85c270babdf6fc2ef4434c698b4ca79be6f3579741d9eac0",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/clients/__init__.py",
+      "sha256": "c8a42a09c38d818affd4b79ff4803a9461aef452a4f99cb1564a4e5b004c28e6",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/inventory/test_catalog.py",
+      "sha256": "56b4974b338cad2d49a1c8e3bc5156a16347c13f5233f9b2d91db3ccdf838598",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/inventory/test_geometry.py",
+      "sha256": "b293d549e487b8eae10e9717a542dafe682b0a5bcafb3c1eced737ff45604e7a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/inventory/test_movement_history.py",
+      "sha256": "bf6936b68c60a886b9bac9857e61980a6cc60df4d912e6ff537dc72a4feba830",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/inventory/test_movement_model.py",
+      "sha256": "41a44e3ae12117d797057824aa566d82f1b7e4dbf51272bc0e759c27227e8ba9",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/inventory/test_service.py",
+      "sha256": "d9a411bd9bc36a79293b44d32f159b1a903023b8f8c8be0562667f45df3bfc6f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/inventory/test_writeoff.py",
+      "sha256": "b9b0d69b7b8bf85de616eed9a124ed60ad3c4830cc623fe0695d8155f8db5e68",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/modules/orders/test_layer_dependencies.py",
+      "sha256": "d44a1d5337f81c788a119f868503b08f15d52c5aced031e7143d89d0adb5806d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/modules/orders/application/test_use_cases.py",
+      "sha256": "b05e01f7f248f1a540d1a106e2da2629133c142bcff418fdaac7dac1ab36b526",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/modules/orders/domain/test_domain_geometry.py",
+      "sha256": "511dd44cb6120f11ba58c8bec9c78de8f434b34ad0a8cb807905d97bfb04dd35",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_accept_run_load_limits.py",
+      "sha256": "5d71e980465623415d2db007c73b4023631956097ff99da367f7ffa96e8e4146",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_best_fit.py",
+      "sha256": "8332fcdec9e64ab34803020c4d4b688e1bdbcadd0e5508793068bd8179f991a8",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_commercial_raster.py",
+      "sha256": "574d05f694f196e24122e3cfc125cb1cd53ca62c3706984e6938f2b306a72e38",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_common_rules.py",
+      "sha256": "7a7a42d70fa9b7b20ad6cf8cc4874a3349c3b146ca174255096931f19a5e6caa",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_comparison.py",
+      "sha256": "16aaee3f74595a43b63b5318140166f63bf9666081c48480e813c0dc8a18f82d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_comparison_contract.py",
+      "sha256": "26fe06b95d751b0eb8bf176832d1c2c4a5a1a4941b3792b1ae032ca23982b8f0",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_comparison_runner.py",
+      "sha256": "803145d4457420c5db5a73c60aa48906e105cb53040fd70cf0863db01dfd4067",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_comparison_snapshot.py",
+      "sha256": "d5849871b9af0ca31bb6d3e47f428944aa607181553deb5aa9d8f7c8e297b6a2",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_confirmation.py",
+      "sha256": "795217302511b005fc1a3583e66eb3920f3cab42e692dd50ed374428688dd6fb",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_experimental_cases.py",
+      "sha256": "286c3ca9a7d56c76aca67ab327b05fa9835d51be011baec00518fb04d3ce18d6",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_first_fit.py",
+      "sha256": "ccaf226c5c32c66c09907db09fdfb668cea3b441b96b57ce49ffc0a770c76aba",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_load_budget.py",
+      "sha256": "b4c3af1e7e223e22ce37ceeab3225e0ea7fd0146c51ef9dd78badb6fbc035333",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_metrics.py",
+      "sha256": "91eb73bd0e2c95dd50e5f353c5551e9f04edce4a2f9191bd1e8865d4325cbbe3",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_preparation.py",
+      "sha256": "852a2ea4ec5aa50fbc94d7c31afd28ab43b96e60a0ea4551884276b81fd773af",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_problem_contract.py",
+      "sha256": "f28161b4bf5b7e160f44ff2fade73bb9b8c69f1a42204eccfb32bd263c18c930",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_retazo_priority.py",
+      "sha256": "8e956805fd3da836a5e1b39f32315a89c616e312efcafb87db96f0aa73ac3df7",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_rotation.py",
+      "sha256": "c91ae9a26ae2b717559f59bbfd69d95743425a5c30a81ff7a601ead0f27a9303",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_run_admission.py",
+      "sha256": "593490292a2c9def532afc257b41814659c92ed2f7ed1416c4f3c3b6491d9359",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_run_geometry.py",
+      "sha256": "a58bcdfdeae2bdf7a935a5ad50204c35afd3e5551bb92e85fbf5033fc240da41",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_serialization.py",
+      "sha256": "896b9ce202807c6d1879425a02115b1367402bc38934882f4e3315668972f33f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_sprint2_angles.py",
+      "sha256": "ada59cc15cb4e279517abe1f418a634eab9fef536ae4f274fb96f30a0f6d117a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_stock.py",
+      "sha256": "3522f68f6e42141109109f5c30664f971edc1aab1630faed17a95e7a1aa45afb",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_use_cases.py",
+      "sha256": "b5916ec4a3cd35ca923206c91267169b1a6496aee1102a17321e5cd49880a2a3",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_visual_facts.py",
+      "sha256": "dcb4408874c6509075598d1ba6a5832febf4481b4e68e04a384de3e36c174b57",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_visual_store.py",
+      "sha256": "4d7af8c8a0e88051e55e0eeb38e77842c589e04555033823d8c150bf3e81d000",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_worst_fit.py",
+      "sha256": "184a9569795584028e45a673a641a5c8dca2cc278e1216d5937a0b8ac1ff809b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/__init__.py",
+      "sha256": "eae06e68ea4e8726ff8cb8973994aa2747178420d640b92e386552226c1c4070",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/shared/test_alembic_config.py",
+      "sha256": "b67ce28baee6028a8128ed32712a5fd1f5ebc3c4b62d50a1c44d552d4e407ab1",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/shared/test_config.py",
+      "sha256": "8161ee55e23b35b412bf1c9b34d9aa08ed80963ba6b7634bf2f3776b76583c62",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/shared/test_database_session.py",
+      "sha256": "7e2b4a4f0c659a082bbd6ce62b723eb2da5e83b3550184163876fe9769420dbd",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/shared/test_dev_server.py",
+      "sha256": "6c5b31fc05b716f7463ae763d0c264410fb9f989b08bd6b95b10c7514fd237ee",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/shared/test_passwords.py",
+      "sha256": "a0341e15e42c0b8162a2531357a360fe8cdc737f55ae2830fe329340c804a6ff",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/shared/test_tokens.py",
+      "sha256": "0649a11ae341d5b797142da119afac666c4203dae9a56ba0ca2b585acd3fd33d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/shared/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/users/test_layer_dependencies.py",
+      "sha256": "feb9607fd6144924a9b149e801257904c6cf2ac473ae4d33f1284804888f3597",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/users/test_role_use_cases.py",
+      "sha256": "ff62720375c86487567267be7d6762737ab3c956761779cd032b3071363059fe",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/users/test_rules.py",
+      "sha256": "1c2e12f94b15bec0047b6309be3e60dc9604223849342bdc1ff3d20846cfa265",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/users/test_use_cases.py",
+      "sha256": "af68b3b4c1fa25d371d497bfdf227415aa31e3a3ca8168b0b31202dbfd1fc131",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/tests/unit/users/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/scripts/benchmark_commercial_cutting.py",
+      "sha256": "3e292e525859da470d03106f797aabd8c18ff925245bb4f4e86dbbc9ec45225f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/scripts/check_comparison_environment.py",
+      "sha256": "75d364029aad5f91d5d33267966e5d45af2314237c962a0f852e075c915e6057",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/scripts/create_first_admin.py",
+      "sha256": "536e5eeb0fb4ee7648f89d2a60a4455ab44afac5af8d8be341279104be47cc06",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/scripts/dev_server.py",
+      "sha256": "cbfec23b634c1b39d41f06cb33b75862607ca7c0a214c7d6973204093a8342ea",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/scripts/publish_configuration.py",
+      "sha256": "6965685fbbbdaaecc087c05e64e60205f04733607c23e16021731936f08ab120",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/scripts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/alembic/env.py",
+      "sha256": "023017e95ce4483a963ee34d1cf9656db54e078be991678522014103a39ec7a1",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/alembic/versions/1c8754481a08_ta_013_catalogo_tipos_y_espesores.py",
+      "sha256": "d1119b580ec9d213c9c723287bdffb096c7eff83b0bfb6416c3cb360471d8252",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/alembic/versions/9b9f04eb67f6_crear_esquema_inicial.py",
+      "sha256": "d61efb7de9a27057ec7be9a1204643e346a1f1f68814c441e195a99fc31cb3c3",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/alembic/versions/a3c4d5e6f7b8_r3_trazabilidad_optimizacion.py",
+      "sha256": "d155f3aea4ddf679c2c109da5475ba8ed90887a1d930969590bd7dc582535db0",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/alembic/versions/b4d5e6f7a8c9_r4_metricas_ejecucion.py",
+      "sha256": "dd1ae79f9c9a4b0745f268277affc599cd671937f226ccb986b913fe6eccf3a4",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/alembic/versions/c4e8a1f2b3d5_hu003_agregar_dni_y_usuario.py",
+      "sha256": "4442231f849bdbc3316c434eec9d1cecf65381085c73b6dbb9e0312f6a6ca626",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/alembic/versions/d6e7f8a9b0c1_hu006_material_por_pieza.py",
+      "sha256": "9eef7dc038d3d089c6459974195a3beae316c3e7066f113132d0bbbae2456a7a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/alembic/versions/e1a2b3c4d5f6_r1_identidad_inventario_pedidos.py",
+      "sha256": "7bc57c8cdbdcc43d4097eb6e03613718b535dbd523deeb5fb2b736ab457cfc22",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/alembic/versions/ef6564220e70_hu_012_clientes_y_pedido.py",
+      "sha256": "29c1b326664c98c67bdcd96fcad84b8faede08b6427e3b014b7feb3e12528934",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/alembic/versions/f2b3c4d5e6a7_r2_configuracion_versionada.py",
+      "sha256": "83645598d98f236b8f06ded02a009c51c38b7b8346df1f114e7eedaa7c64f33c",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/alembic/versions/fa014e1a2b3c_hu014_movimientos_inventario.py",
+      "sha256": "bda647d7ed610f94a7c3ff7c51250c660d918ca447208e57a64761f4e8d2043e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/alembic/versions/s1opt02b4c6d_optimization_multipedido.py",
+      "sha256": "b22ef03a682d087a59c3f31c877cfda273a823d6dc6561f8043f1eadeddbe6e3",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/alembic/versions/s1rbac01a2b3_s1_rbac_permisos.py",
+      "sha256": "cbab9f2ad99ee43f4c3f3442f323f3b4151b96303890e4ae405fd46bccd0a29e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/alembic/versions/s2cmp01a1b2c_comparison_metadata.py",
+      "sha256": "89a4346508376de430cac9f86d26951004bfc97c0c873bb6dee4557ff3aed7c7",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "backend/alembic/versions/ta036a1b2c3d_baja_parcial.py",
+      "sha256": "c6a1cd2b0efe4a05db394d5a6c01d75cee0cfbaa41711f5020e050cb0c32b4f3",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/App.css",
+      "sha256": "a938b7e8f0787a0e62dace6708a1347696abedb7199aed53ae9656966706a84f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/App.jsx",
+      "sha256": "9ca325f96ba8cabff6e0b70621b22e6a05004c4e365f09b2b99bd109744fb7b5",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/index.css",
+      "sha256": "9d73ed00f03033de1a68ec8be46f720888cde7be39a8ea5b506ff3a972bcfdcf",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/main.jsx",
+      "sha256": "4b4b864dbe45253425d0c925337180ec07e204295179f80f59551216f466f618",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/authentication/authApi.js",
+      "sha256": "7e24e901b54cc0075a7fa752349ffd563765afaea2fa05482e0952ebd2c5cd1a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/authentication/index.js",
+      "sha256": "98b4fca3fbcdf313d9ff0424d28ada719d18a405978e708b42d33418cb0e740b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/authentication/LoginForm.css",
+      "sha256": "6cedd9b907bb7d0e6fa1b73738105a89280109709b0c4e13b068310e7746f458",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/authentication/LoginForm.jsx",
+      "sha256": "f6c0234756165709b830a68955bda2dc9df4b5612c76f07fd2f23470d6f2339f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/authentication/permissions.js",
+      "sha256": "aad9b90c5eb320243878b33eb30f4bff44ff543dea8da32e61f95df2cca47dc8",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/authentication/SessionBar.css",
+      "sha256": "c917c2a1692e2733d79ffaa10632453e72336798e701921f86c8b506edeed284",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/authentication/SessionBar.jsx",
+      "sha256": "d445996f02b1819ee6a481affb5ae0aa8a65f6801c9682103d268462112503cb",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/authentication/username.js",
+      "sha256": "b9fdba6ba2fe565a7d696fccfedd7e3b0b29c36db61574bba04b1c65c1cc725a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/authentication/useSession.js",
+      "sha256": "f5e11ff5a7768510f15f5ea49942b3ec6c8bd8082b61b76f1a317cfc94286cff",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/authentication/__tests__/permissionFixtures.js",
+      "sha256": "593b71d49582b28694742e708046d9f1fc07c7a47566c01d3c6c156c851ed947",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/authentication/__tests__/permissions.test.jsx",
+      "sha256": "612513e52f43408d628d9e3d843477e4531200b72f301b59c3385a0d42006bb7",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/clients/clientsApi.js",
+      "sha256": "835b84a1007b8dea1db02f60e5841c0a85de433dcf28085b0d355fdb9393cbed",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/dashboard/dashboardApi.js",
+      "sha256": "9eba0524db41b6f53fb3a119ea4d237536953e56c576231f05075f11ee12a424",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/dashboard/dashboardModel.js",
+      "sha256": "e4a0e7898a64cae287c52b3275a74f2e965523d24cb39f1645f8ad93524577b0",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/dashboard/DashboardOrders.jsx",
+      "sha256": "21df73876a5b6fb44fd605f0b78d58ab393a8ce58eaec32e7e41301f91016b45",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/dashboard/DashboardPage.css",
+      "sha256": "5ae4477ae5dba280e059f3426afdc9622b66b7df17adb0006a0b4e4e22f66c82",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/dashboard/DashboardPage.jsx",
+      "sha256": "42d5875d42f692d2a09c581bd9a1b7e04441fa10c86244964bafca9e49754a05",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/dashboard/DashboardQuickActions.jsx",
+      "sha256": "6d07839d8e42e78e6eb68a61a61a8698ec494ac97bac407ece167a1507c6716f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/dashboard/DashboardSource.jsx",
+      "sha256": "f29f88c0fa1c2eec22c41e18abb679124af713bbf86102ac55dd2277bab6533e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/dashboard/DashboardSummary.jsx",
+      "sha256": "530d9e25a467e86af3eea1009505d9bee8b5e9bad74695aa1b896ed61972e3e8",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/dashboard/index.js",
+      "sha256": "c7af7ce0600fb2a09a627137e83bebc0aca938bdc42f5cce74e52e84f4194ccf",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/dashboard/useDashboard.js",
+      "sha256": "4dbe1fcbed94ea247b29df9665dccf4f7d4ef5488052607feabc1cecd467e692",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/dashboard/__tests__/dashboardApi.test.jsx",
+      "sha256": "5e68cd276176100cef4c367ed317e02494c328caca42e65386e2433df4eca1d3",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/dashboard/__tests__/dashboardModel.test.jsx",
+      "sha256": "ad01dfea996ff9b28cdbba382c0745a0b8e7f5487ebaf92473494ea68b6d40ae",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/dashboard/__tests__/DashboardNavigation.test.jsx",
+      "sha256": "dd816ae8b854d47db4d8a516b13621ee98990e14e827b548fdf332e6f9424dc7",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/dashboard/__tests__/DashboardPage.test.jsx",
+      "sha256": "3b1530a2ba3b7d462f8f695ca3a1aa84060425d41ea5f68438eec9764c666d0a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/dashboard/__tests__/fixtures.js",
+      "sha256": "b46f7528b20747fcc8a92851a5157510203a6fecc00104c77025da9eebabed18",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/dashboard/__tests__/useDashboard.test.jsx",
+      "sha256": "c68286a73090c2377357c22d0214102815b7c9bb5caa7fa37942dae72c793022",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/inventory/inventory.css",
+      "sha256": "4c2ee406747ce6fae12e36954f6754dd7f6f8d02469c68304c94474364c07124",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/inventory/inventoryApi.js",
+      "sha256": "d1c4a8286d48a11cfa883f1b09b43b1bb528e360b0cf5578feb454bc4800d601",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/inventory/InventoryDialog.jsx",
+      "sha256": "53d765b90353839ccd99c5e3f16ff8bd1bf3462dd66aad34afb4cdc8e6ca4f75",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/inventory/InventoryPage.jsx",
+      "sha256": "016de853b8f2973f464c7f89334c3de255442780b35ee9709d3b68dffb14ac66",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/inventory/MovementHistoryDialog.jsx",
+      "sha256": "8911a15d9d72b0f9a4db06c38d187f0af5610d1ad0c8136a085923933e5ee672",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/inventory/RegistrarPlanchaForm.css",
+      "sha256": "004754ffbbb86522b4574c02f108ac3390f820d2386d396d83f0263cf7d6f425",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/inventory/RegistrarPlanchaForm.jsx",
+      "sha256": "17fa8347332e47c212c8f18c29611b5e49609dd7e08f1de29bc30d22a3b0327a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/inventory/RegistrarPlanchaPage.jsx",
+      "sha256": "d3b72593606df990ba84ccd0485cb66426d6d076fb4ef8854d8eaf2d56914256",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/inventory/RegistrarRetazoForm.css",
+      "sha256": "fbff2adedb0f26b6ec3825cb7cc595aa44814151d1ced9f36ee64cc94d055e4c",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/inventory/RegistrarRetazoForm.jsx",
+      "sha256": "29eac28a353af2069ffb9902d87187f4f345d95cb25d01573ef6d0a723d585c7",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/inventory/RegistrarRetazoPage.jsx",
+      "sha256": "4d426ca5485a4fc8c1e96557bbe83846e3cbbcfd9381c42d23a0196869db8fd4",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/inventory/RemnantOrigin.jsx",
+      "sha256": "2495cb7167921640c807c21d2485b520d721e01e5246b96fc8ff2a20d45277c3",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/inventory/WriteoffDialog.jsx",
+      "sha256": "6830338eee3754f9c546b558b0a4d2ccb2891bf4297985d30a4707719d88767d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/inventory/__tests__/Hu014Inventory.test.jsx",
+      "sha256": "edd7b18b4958a75a36421ec677df39bde16150c8d25197c96142eb78115f9883",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/inventory/__tests__/inventoryApi.test.jsx",
+      "sha256": "51e49820795a66a8b624240a65a48c6a079441fbd4f301d0554ed2b3c46f238c",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/inventory/__tests__/InventoryPage.test.jsx",
+      "sha256": "bd4bf02d4b6389f6c4edb4ce874e99b84265f23976f13be1bf11747822bde395",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/inventory/__tests__/RegistrarRetazoGeometry.test.jsx",
+      "sha256": "62d748f514bf5638e5236d01affa9bf52e2d94b40aa5819826309ba8deaed692",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/inventory/__tests__/RemnantOrigin.test.jsx",
+      "sha256": "364dc59f6a36aa6ea74a1e3709daa109b5893423c261dcde6130993a96a3e82d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/comparisonApi.js",
+      "sha256": "1749559ca3f2e7fd349a558a2a6b4ff7f39d4fa83452437199d05e49c031153b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/comparisonController.js",
+      "sha256": "d0d6d55c7a11e860d93d6e5d13684cbf7a9d2aee23b3e7ce29452daa815c8e1e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/ComparisonWorkspace.css",
+      "sha256": "6ed116b80d8a2add7f98c001b027e44a782b1e2ac4c459cd08f8b23f6b2330af",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/ComparisonWorkspace.jsx",
+      "sha256": "818d90188ad7ee6a460bef349363c5edd1f8903173ce09a583851ddc28ee3601",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/contractV1Fixture.json",
+      "sha256": "a4118b48c77ad11a4cd25a75afedb369b1734c7058a19f812791bd1b41902854",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/firstFitFixture.js",
+      "sha256": "8be6040a31479b00472cbf7ed11ba30b07227d6a947e5827c063c356094a94c8",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/GeometryPreview.jsx",
+      "sha256": "7e43ce13286fec9182b132b1a3625996bd9ad895309640cec6b98f0122b80c3b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/Hu015Rasterization.jsx",
+      "sha256": "375be686aad678eea0090e122fcb896d8faa32a0a57f976d0a9142ab7bd7b331",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/index.js",
+      "sha256": "16a301d5065236072cece584950ed137a4d205e3118d801e0b514a6bf3cd08c1",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/InspectionViewport.css",
+      "sha256": "dc7201a3f115b3750964b49142706cbb4bbe3304ad8fcfda9f372e34480c9e03",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/InspectionViewport.jsx",
+      "sha256": "c87484f4c261180e50d54e1fe6dcb91864dd96c62fc371433ef2cfb544977cd4",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/materialGroups.js",
+      "sha256": "fec1e500d85a0ab2f700e323da897cf455f1c990e4ced48cd700fd08bab064f4",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/MaterialGroupsPanel.jsx",
+      "sha256": "9081169324930fdd3b6606e37c13c3dfb926f364c2c4e41351c24e3d009b7922",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/optimizationApi.js",
+      "sha256": "c3816c6463318400e785f8f9ae4164cae81801851be61f91b3b48754f76fac52",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/optimizationModel.js",
+      "sha256": "a3789f484863e6cdda961161533fb35de641656f147bde9e47828709a26f118f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/OptimizationPage.css",
+      "sha256": "ec1adf31881b9996e2c3f2d1135667adf6b5ecec1ca7d36897aa7115f20c6aeb",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/OptimizationPage.jsx",
+      "sha256": "5d1c849ba05ab64e4dad0db30edc8fbda4b19494e6b599b2fefac4b08845f2ee",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/OptimizationStages.jsx",
+      "sha256": "f2d357c95cb091b177a04c5b6362c7705342515215722a7392058ad75172d7b8",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/pendingOrdersSource.js",
+      "sha256": "c944a15fdfd58de1eee4ad588216f024f12513770374d6ea72d6419c001a519b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/PlacementCanvas.jsx",
+      "sha256": "ef990b124fd82b6e92799b963b5e422ca156fdfbbf8a247c0107f494d887c183",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/placementScene.js",
+      "sha256": "1defd030a91c0b313b30a1d2313b855130bdb4a92d25488a18831ce26989a07f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/PlacementScene3D.css",
+      "sha256": "a33500f596118b808a007eb6c746bfca22a4fb3754a46858262852c19d05743a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/PlacementScene3D.jsx",
+      "sha256": "a380ee154acd53ffd6d621d66eec4661b08cab42499fc441529ec8308017debd",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/rasterCanvas.js",
+      "sha256": "5a03e1b5811e67bde7132ef39fd6dd954b23a4520bf6c43788e40bfced99eb06",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/RasterComparison.jsx",
+      "sha256": "b2f3c73dae57b20e60373d979534e7f81c6862980c514ccd742f14e7d3b444af",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/RasterInspection.jsx",
+      "sha256": "a421c99434f029a481eb80dd2fdd015e5327bb602e45e17c7c4482f78fe233ad",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/rasterInspectionModel.js",
+      "sha256": "aff0e4538a9350179c8ffac612a8cec6e7b7d558bbc5c9f6ac81e92792832ebd",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/RasterPreview.jsx",
+      "sha256": "60d760a880a61f4fafa20d365431c911742d8cae8f692247fbce4e11aae127a2",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/runApi.js",
+      "sha256": "fa7b18950f4fd49cf2edc4b5960a3fc6552d75999a76c74baae3b4629e7f6a2b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/runContract.js",
+      "sha256": "1e65aaca873b09b3b47fbba0fdcc98baa6a4ccc4793ae2920f4917d4ad5b80ea",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/runFixtures.js",
+      "sha256": "98fbb174d813238359b7e61af6439d54782b3268f57f176f5834280fe32a438c",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/RunMaskInspection.jsx",
+      "sha256": "ba0576237258c88cc7029a1d3799fd2c41b270abe6be309b0f39df3c41422a64",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/runTransport.js",
+      "sha256": "efe4b976bbfd6a62ea25363acd415f5d1741d9487fcdf59cf12475e3f42aa27b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/RunVisualization.jsx",
+      "sha256": "8841d15d19db04cce14393406f22721731e7fe653f7e87adbd8f73f96cf4f7c5",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/useFirstFit.js",
+      "sha256": "80734d53634da1f512363170f8087a0318140f7936573389ffd5a9f111023e2e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/useGlassCatalog.js",
+      "sha256": "f099b07aef1de72463b2680d405b23edc7de8eab06a6975851184a27f79dc3ab",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/useOptimization.js",
+      "sha256": "78f7ee218844c316c3f498be272eac9e8244131e94c80e026ad77ef646616d4d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/visualContract.js",
+      "sha256": "aac4ffa0866091b0d7e552d14ad4b0f9a86540807b33cf96d27a48ff9e268f0e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/visualizationGeometry.js",
+      "sha256": "3bf24c38926df1dd69ffccff9ef7078c7d34e8f2569ade3782ae8ba04b13b628",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/visualState.js",
+      "sha256": "94f2f25e8a3fbda405538148f8eca48ebf3bebf7105a08bcf5eb0921a10779f3",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/workLabels.js",
+      "sha256": "e5b7688eca5af76f5621e3f93ac5b4899f5770d4bb9defd26415d55984acf991",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/ComparisonContract.test.jsx",
+      "sha256": "e4fc7cf25cf593af6f9c24d699ea541752435a0d739526b6a1291cae145d291b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/ComparisonLifecycle.test.jsx",
+      "sha256": "3babc314aeb78711111940c9bb1a65d40406a92cf253ab3d289414064bc7f17f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/ComparisonWorkspace.test.jsx",
+      "sha256": "e3cbd17842fad161b7841478f5d6c01eb1f31b062c1d35c5da129e87b1df3238",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/ContractRunUI.test.jsx",
+      "sha256": "dc0f2394b9ab27bd16009ff2cdc2aec6eeb4418333f566550c8ecf2c54fcb1d4",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/CuttingWork.test.jsx",
+      "sha256": "b3ecaa14f7e617b64f7a867e88cf9c094f760973f8d2df5501e60a0a70b2bf7a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/fixtures.js",
+      "sha256": "33c787c63b47974394bb12d0a59cf531dc9b813a5929f6536e5009227d997c6b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/GroupRasterInspection.test.jsx",
+      "sha256": "3b6faea39d7b414b55f112d21eaec7c473e334b113e217295b0412b25ffd003e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/Hu015Rasterization.test.jsx",
+      "sha256": "9be2499226619c44f78df67d5b42c1d4f509d8faa6dc2abdf84aaa2bd0904238",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/LoadControlFeedback.test.jsx",
+      "sha256": "383b641b5f0befc27e3acef5fb4b10e082e5f00a704a6d1684b8eef593e0f324",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/optimizationApi.test.jsx",
+      "sha256": "a2aa3c06e7dc71d26f447a148d7d92fe2452b855bcc373a939c42cf16b6b9deb",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/OptimizationPage.test.jsx",
+      "sha256": "d591d98c255d66e139ee992b7b63d85ef4d678d0c1ba2ea361b62592c12cd448",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/OptimizationVisualizations.test.jsx",
+      "sha256": "d2fdc47e40e01d142f5b16a5755b2b80729aac233efa67bf97cab56acd89644b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/PendingOrdersSource.test.jsx",
+      "sha256": "75ddb02e18ef3286641434f658c25a793a92c0271959ca653d1057648bdec761",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/PlacementScene3D.test.jsx",
+      "sha256": "f2e1240234c2549045326c7f4ce63c9d75d45fd518fcde6f0079d4dab127df12",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/runApi.test.jsx",
+      "sha256": "2c099d6dce77b0314493ec0f2af893fed640da0e28f7dbd6ec38dad77da421a7",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/RunVisualization.test.jsx",
+      "sha256": "a1042cd1559919eec871feb036c442e9c2a8491dcb6c827a9f784c22b3261971",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/UnifiedOptimization.test.jsx",
+      "sha256": "7f6e2ace5a8c1564d52923ee798c485ce07624e699d6118d9637fed469f51ac8",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/VisualContract.test.jsx",
+      "sha256": "d374889057e32da901ef7c9c4af638300d3738ce080c5ff91f9ad5ebfc889989",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/VisualState.test.jsx",
+      "sha256": "4608a2099f4733ccd819a039ebab521d44573222126ac290aea019dba4784237",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/angularConstraints.js",
+      "sha256": "b4ac51046fafd22eba1eb7e916095f5285b95fab77ce6f597c38067cee4d14c4",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/constrainedGeometry.js",
+      "sha256": "3966c64f7e97d4ee6557d42b2efed5dc419915d1c65cde3b3371330ab1dc6e9d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/convexityValidation.js",
+      "sha256": "c4741e3adb5d05af8401770a66e7bb59c6c045010bd7cf083446da5184f3cd6e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/CustomPieceEditor.css",
+      "sha256": "953b001ef104b395fa04dce1b325d87af0023bd2b4b1e2227b2dbb3806daf0f8",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/CustomPieceEditor.jsx",
+      "sha256": "9d5b8e5f67e0fe055049f2bd83ded21420d199de33581c8c1afbb7aca86ec355",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/FormularioPedido.jsx",
+      "sha256": "e1b8cc70e473a1f7d079c4f784204aa21ec9b134e1f5af19fd842dd3665d5e62",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/geometryScaling.js",
+      "sha256": "9a9dce22897ecc70296d27ee07c1de27079c2a8ee58351e15a6b13b107499838",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/GestionPedidos.css",
+      "sha256": "726281c693a227f0a766107e2bb0d91d038436ae756015603f49aed6550509f1",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/GestionPedidos.jsx",
+      "sha256": "6af581d8baa86039de1bf919f76998acc8c9e3cc6115daf45a29f628fbc698c7",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/NuevoPedido.css",
+      "sha256": "7435a66f1fac0c6ffc5ba7c3b6eacf43f5e7cf02040759ede61db70d95b831aa",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/NuevoPedido.jsx",
+      "sha256": "46da11c35b5dc7cfff24e183a4b2f25c0478e5439e1c8afa48c596b350611953",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/OrderClientSelector.css",
+      "sha256": "9127a2df71b265f7cc787c920098f54b63205c9df588b61af49f823afd4ec041",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/OrderClientSelector.jsx",
+      "sha256": "3f1be772ffbcdcd1e22eef217bada148ff04f24967670e398bc911587cce71a1",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/ordersApi.js",
+      "sha256": "71e449a590dd5a6ab3476ef56da21562b0681a04df8ef0a9c421465c3d84aad4",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/polygonMeasurements.js",
+      "sha256": "7530a6e7dd4e492c505d666db0b01bf76bf02397d6d0dd153f0a8db2abd5c1a6",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/segmentGeometry.js",
+      "sha256": "c5ae17a54065247dc324f6e484b8f34a26dbf4579369edc96379e1fa0971eec3",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/__tests__/ConstrainedPieceEditor.test.jsx",
+      "sha256": "e7682872430f1063f803e56c89e1feeeb4be96978d6c2f8fa8b0433d1da4cc3f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/__tests__/CustomPieceEditor.test.jsx",
+      "sha256": "7638623f15e7c1716a8f5fc028b24f522c81c0ee73ef77a140ef04e5cd7fef9a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/__tests__/FormularioPedido.test.jsx",
+      "sha256": "5fd8c32bbcb0399cfdf5b488b743119618fd2b4ef55ee81b462a4577b12c6418",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/__tests__/GestionPedidos.test.jsx",
+      "sha256": "473ba1be22c9f3677a8639b02e6a7567bdcb1f44cf3118c5c99bded79f0c021a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/__tests__/MaterialGroups.test.jsx",
+      "sha256": "aa1565c4a6dd582352e1683fe91204cdb6063681dfd6bc58f8dc58b1b2465dde",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/__tests__/NuevoPedido.test.jsx",
+      "sha256": "ab97ee111352e5becb063b0ef8a689f67c23b5fcf813bac3cce6d53bb1f15628",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/__tests__/NuevoPedidoFeedback.test.jsx",
+      "sha256": "aab476da744067af032c4a92c579e7a633a5461fc0d1567999267810a8ed47b2",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/__tests__/NuevoPedidoT03.test.jsx",
+      "sha256": "b5f789559e2552f608d37074fe2d7cd802149b017cf7d60a89552c6b86ec35ce",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/orders/__tests__/OrderClientSelector.test.jsx",
+      "sha256": "19be6e39e6e8dc4619ed3335f4bd6dd071f70d082d0703a6d6074c82ae6a7787",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/users/index.js",
+      "sha256": "587650f5d7ad3d7c02c65551f4b472522333f8420179c0c1f5852f095ce729dd",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/users/RolePermissionsPanel.jsx",
+      "sha256": "7be662c782b0bf8b3f59575006d0b4ed1e91418ff4fc06a5f3e95ac282a354a6",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/users/rolesApi.js",
+      "sha256": "9c63f9e9bfe6105a044301f3dfb16648f33677d5ef686d8eab11cba3c659e40b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/users/userFilters.js",
+      "sha256": "8388e9ab474438297ea0a4cda3cc8477b84873b9068fa1b40d9f98ac6940f54a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/users/UserForm.jsx",
+      "sha256": "a884fd825d722f1bc50bbaf39777be3978b1805fc1fe3d8a9f3a32b654273d55",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/users/userFormRules.js",
+      "sha256": "42cad7ca23bd59c8b886a6edf35a52a8450cecc8f1bc930032be3bb626190eb7",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/users/users.css",
+      "sha256": "77099b17ebdd517786420091d56993c41dc6296089c481bc8444f1c8c9fa692f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/users/usersApi.js",
+      "sha256": "bd58e0321d5a9faea8699c2dd562b85b1c7917938b7255a932e83d526d0f0d7d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/users/UsersFilters.jsx",
+      "sha256": "cc87049028d25faa0e7a16e2ee1fe524f120f77ea56eb600dc4fab8e292c9960",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/users/UsersPage.jsx",
+      "sha256": "871ee047b22b7775550b2073333f8ca7db7ca1bdab3d736ee410035c7ee94901",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/users/UsersTable.jsx",
+      "sha256": "55d45f3516028a3797bc7edc4481ce1d0f6bb5a2ef1d5e03b273298ccaca1fb0",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/users/__tests__/RolePermissions.test.jsx",
+      "sha256": "861cb575c67dab7a82f7a98259132cee85998dad7ff28fd7e839ec590964204d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/users/__tests__/userFilters.test.jsx",
+      "sha256": "46ef0d83a5498c66798bf9a52fea8b6d8fe18e78a6a20445e95f0f555abeff21",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/users/__tests__/UsersPage.test.jsx",
+      "sha256": "e46fbb56dcb1e014f7cd681bc1e8b897ed5b0eb766007f5b5297324d7244301d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/users/__tests__/UsersPageFilters.test.jsx",
+      "sha256": "3e92a0d432ae7d0c1865cf3d58fbb2fce51af790396bc1a1f0cd0ce818ee2b9e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/features/users/__tests__/UsersPageManagement.test.jsx",
+      "sha256": "f436ff76555773c4af5dcedba15b0d37075d0bd555b2683e4a1609dfb679bd83",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/apiRequest.js",
+      "sha256": "d1fef2dcb36841b2f52fbd828c1d9b0a3b6abca1c5949c261501433ba9e8bbde",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/apiUrl.js",
+      "sha256": "347b2fde49980587b1e1f229123ff827d20ae9d9a259264f12a094c1ee3d0e6e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/components/AppShell.jsx",
+      "sha256": "877ea518bb436aa93d8cf5d3907acf8491a3aa31420e288e8a7abad715a89837",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/components/NavigationContext.js",
+      "sha256": "a542cdb23e16f579a8d98a077a58969cd844c9aa6a3bbe47d06e0a981058eeb7",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/components/PageLayout.jsx",
+      "sha256": "1b89816ef05c038f290d10c2dcaed7cd43e7da888ef6b54ce28a04984b8025f2",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/components/Sidebar.jsx",
+      "sha256": "d661a61691a12db281d0099bac18b8cbe8e2a0825bff4b0dc3d4fe95a2bd984a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/components/tokens.css",
+      "sha256": "022e7fedb1ddfa426f193439202a2d0b4ec80b13650901ff627a5900043a685a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/components/ui.css",
+      "sha256": "5a01e188719eb8f5829b857c5f9abd16a275b53f51b9bc48257fb5a1d5726b0e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/components/feedback/ConfirmDialog.jsx",
+      "sha256": "4a8842d567aa94dd22f2fd9d7c911e4798aa579a5579ace2b730676aac920378",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/components/feedback/EmptyState.jsx",
+      "sha256": "6b1866d85c981c7bc815a0e0e2904a0ecc4c840f87eb7777f5aa0d1fd37ffa6e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/components/feedback/feedback.css",
+      "sha256": "7c8ee7af1a9bbdf9031c69872e8bb8b2ba742f956d0b5eaac5a23b868ba295e2",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/components/feedback/FeedbackMessage.jsx",
+      "sha256": "38352f234d4f00a88688d3d90f2d32fa64fd6c38dae6ad8c82ff6fe1c6d03a2e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/components/feedback/FieldError.jsx",
+      "sha256": "f0a8bc83c61ed54cf0cb37a1244bc5ab9c610b2574a183909f9f9c74a56a397a",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/components/feedback/index.js",
+      "sha256": "7f26eaa0ed067ab2fc2409f1893e6e21ad533ff67540e3d849e916aa597191e7",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/components/feedback/LoadingState.jsx",
+      "sha256": "86769ce8fc94f7c7d689afc87136a37efb186ce9a1e2f805d88baa43a85e2378",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/components/__tests__/ConfirmDialog.test.jsx",
+      "sha256": "a7d73abe3e347ad29a66a908f8b143fe5c3192df387f4bc252ad33bde35c9098",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/components/__tests__/FeedbackMessage.test.jsx",
+      "sha256": "d99f7a82c8772da9382ce74f8613e3644add3e9e2e03805434b44c82487d8a15",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/components/__tests__/FieldError.test.jsx",
+      "sha256": "f68656b7ecc7013e3172b47241dda30b96313cbeedfa17a7b5c620550d3ab11f",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/components/__tests__/LoadingAndEmptyState.test.jsx",
+      "sha256": "b66421425ef0686fe10746a12e5dbe9932ccb9271102aeea8e267a530b8d9e2d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/hooks/useManagementView.js",
+      "sha256": "082cc2d7eaf5bc1958e71af6484399e7f12e2f091edf4da30d755d249518381b",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/hooks/__tests__/useManagementView.test.jsx",
+      "sha256": "f9220d59eac3be53ae33a3697b0c381d0c2900c9a0682f95e488bf29c0369013",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/__tests__/sidebarNavigation.test.jsx",
+      "sha256": "c05a8a32b04909e0a432ea45018422a963dfcdff18b429e8b7946619ed26679c",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/src/shared/__tests__/stagingNavigation.test.jsx",
+      "sha256": "1221d46fdef540d8cb0710c22151bbf5ffa2982c10bba7b9f82a41aa868baeeb",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/tests/e2e/criticalSpecs.js",
+      "sha256": "e4fe898804f5ddbf68cf4b00e5dc3130269e29514b9a2b873ec0b0ab5d3de113",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/tests/e2e/dashboardResponses.js",
+      "sha256": "72f4b53c8ea9fa1d7c24d1142fed753c3ed0648404f500595db0bafe92dc49da",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/tests/e2e/e2eGateReporter.js",
+      "sha256": "bfe6baf7af64ea263162eda3178c3068cd4ee9e8a1e68f3ed219433cab1c591e",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/tests/e2e/globalTeardown.js",
+      "sha256": "87efb70200a76b720778c5809c578181c1fe833bf58019e266c945e769c9e7e7",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/tests/e2e/hu007-custom-piece.spec.js",
+      "sha256": "9bb7b5d85cc0a7a6eaefe0fde4341a194619034b2edec04e59cfadcf2fdecdd3",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/tests/e2e/hu007-order-integration.spec.js",
+      "sha256": "9c62fdfd2a728e13062fc623cad1f99e6b3e0c093c96a331be744f26bd18fed6",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/tests/e2e/hu012-client-order.spec.js",
+      "sha256": "e4079e612a927d2672f4f78ccbf89b5eec4ffa37fd0cc1858e5deec39a2b08a0",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/tests/e2e/hu014-inventory-writeoff.spec.js",
+      "sha256": "c3c6aad04cd6be685c5c9716f8658a7b87b7afa9ae25afaab694e004837a456d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/tests/e2e/hu015-rasterization.spec.js",
+      "sha256": "3b236aff251b89ce997954e99617ac2efef7929d41867c2d30ba47019241bec7",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/tests/e2e/hu017-unified-flow.spec.js",
+      "sha256": "3181ae92389065c9bbd1ad1a028e746ba2b6e402693b9bde206b35bfc690c984",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/tests/e2e/optimization-comparison.spec.js",
+      "sha256": "5924ecf859ea402ebc22ed2e3262d54e38301841d4a2a1d8793616d1145a8522",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/tests/e2e/optimization-policy-audit.spec.js",
+      "sha256": "fbec191616eaa6d00fda0862322044be5b32ad20a4f8bd4877f06a7b86258aed",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/tests/e2e/optimizationRealSupport.js",
+      "sha256": "456953dd898d498b3bc08fa4f1514ec2bb168304b2903b6b080a5b20bdcb4bf9",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/tests/e2e/s1-optimization-ui.spec.js",
+      "sha256": "124c713b83081b29a831ebbc979b2797dc8fb62757ac7f0591d37b46802f1431",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/tests/e2e/s1-post-review.spec.js",
+      "sha256": "c7590422afe19beee516f12f53f174130a184c004259630ca8931d9ff3f8db6d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/tests/e2e/ta-dashboard.spec.js",
+      "sha256": "b7ee24359af878e2ef477704dcddea898dfb527320d92eccc58f0de81262d71d",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/tests/e2e/ta036-retazo-personalizado.spec.js",
+      "sha256": "2188dc3630c693e2f8a7f51164dcff273872ba32ee2a3bb945a1023b40d56546",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "frontend/tests/e2e/ta037-load-feedback.spec.js",
+      "sha256": "26cd33d97a74179b1f71c47fb4576a6bd91bbd1909c2fffc0a42f71a14849b04",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "experiments/optimization/export_comparison_contract.py",
+      "sha256": "e9a0117bf6746b61daa639b1c363cb1e4d7c01b56f8bdd9b9330c8e9bf8ba5e7",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "experiments/optimization/final_audit_cases.py",
+      "sha256": "442dd4a0298bfb3e643ae19da23643b4f06324ccd26e039932c81beba933a998",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "experiments/optimization/loader.py",
+      "sha256": "d355a23f4106ff9d71c21b05655d7f47b6b7cf0bd9f244957e71f747452dc844",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "experiments/optimization/probe_concurrency.py",
+      "sha256": "fde052b7b46cc44ebceca526dba573692d27af45f69f7efea8d913f8922bcb7c",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "experiments/optimization/probe_runner.py",
+      "sha256": "6075f8b0ab309ab9783144a4384d90fbbca2a2b682fb401f35c9fd807637fbfd",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "experiments/optimization/resource_cases.py",
+      "sha256": "39abbb0946019c4daaec184fb5b14f1f48bcfc128a06255bfccf8dedf97032e0",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "experiments/optimization/resource_sampling.py",
+      "sha256": "a557750b06610d38cdfbd7936b8f927cf170a9b7f758fac193df3dff21e16ce2",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "experiments/optimization/cases/EXP-COMPLEX-001.json",
+      "sha256": "c844a23d849a8f0f1903a827bb7d2f1b6782a386610dda14c2789520a5670478",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "experiments/optimization/cases/EXP-MEDIUM-001.json",
+      "sha256": "eb50a3beaa2312fc94e4cd879b8961401b119f6370c08a5357680bb2b76535d9",
+      "tested_copy_matches": true
+    },
+    {
+      "path": "experiments/optimization/cases/EXP-SMALL-001.json",
+      "sha256": "8983a8291a272938650bbc0a5c0fb0a5affc33bef5a61ee9afc73a75caa583f5",
+      "tested_copy_matches": true
+    }
+  ],
+  "initial_pending_files_preserved": 96,
+  "broken_local_links": []
+}

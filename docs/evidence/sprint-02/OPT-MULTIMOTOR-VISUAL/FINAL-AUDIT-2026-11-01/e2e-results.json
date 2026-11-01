@@ -1,0 +1,1450 @@
+{
+  "stats": {
+    "startTime": "2026-11-01T22:17:29.639Z",
+    "duration": 383436.634,
+    "expected": 128,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "projects": [
+    "chromium-desktop",
+    "chromium-mobile"
+  ],
+  "gate": {
+    "ok": true,
+    "problems": [],
+    "approved": [],
+    "evaluation": "evaluateE2EGate applied after completion to every actual JSON test outcome; CI environment flag was not set during the local run"
+  },
+  "repository_tests": 126,
+  "additional_ui_evidence_tests": 2,
+  "tests": [
+    {
+      "project": "chromium-desktop",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "5 lados: fijar hasta n-3 ángulos y liberar para elegir otro vértice",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1497
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "6 lados: fijar hasta n-3 ángulos y liberar para elegir otro vértice",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1300
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "lados independientes: triángulo 50/70/65 y rechazo de 10/10/30",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 688
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "lados independientes: ángulo fijado cambia cuadrilátero sin cambiar lados",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 698
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "lados independientes: pentágono irregular con restricción cíclica explícita",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 690
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "TA-036: longitudes independientes y selección accesible en el lienzo único",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 898
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "TA-036: multiplicar explícitamente todos los lados conserva los ángulos",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 948
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "T02-E03: entrada numérica inválida 0 muestra error y se recupera",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 944
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "T02-E03: entrada numérica inválida -1 muestra error y se recupera",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 873
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "T02-E03: entrada numérica inválida 1e muestra error y se recupera",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 923
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "T01-T02-E04: reiniciar invalida medidas; deshacer abierto elimina el último vértice",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1254
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "T03-E05: dimensiones completas validan convexidad automáticamente y borrar retira el éxito",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 888
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "TA-036: escalar un contorno cóncavo conserva su rechazo",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 827
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "T03-E07: bow-tie simétrico completo se rechaza por autointersección",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 785
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "T03-E08: estado accesible conserva el motivo actual del bloqueo",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1118
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "5 lados: fijar hasta n-3 ángulos y liberar para elegir otro vértice",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1358
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "6 lados: fijar hasta n-3 ángulos y liberar para elegir otro vértice",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1364
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "lados independientes: triángulo 50/70/65 y rechazo de 10/10/30",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 701
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "lados independientes: ángulo fijado cambia cuadrilátero sin cambiar lados",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 860
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "lados independientes: pentágono irregular con restricción cíclica explícita",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 715
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "TA-036: longitudes independientes y selección accesible en el lienzo único",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 934
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "TA-036: multiplicar explícitamente todos los lados conserva los ángulos",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1069
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "T02-E03: entrada numérica inválida 0 muestra error y se recupera",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1101
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "T02-E03: entrada numérica inválida -1 muestra error y se recupera",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1210
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "T02-E03: entrada numérica inválida 1e muestra error y se recupera",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 980
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "T01-T02-E04: reiniciar invalida medidas; deshacer abierto elimina el último vértice",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1874
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "T03-E05: dimensiones completas validan convexidad automáticamente y borrar retira el éxito",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 959
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "TA-036: escalar un contorno cóncavo conserva su rechazo",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 895
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "T03-E07: bow-tie simétrico completo se rechaza por autointersección",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 746
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu007-custom-piece.spec.js",
+      "title": "T03-E08: estado accesible conserva el motivo actual del bloqueo",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1155
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu007-order-integration.spec.js",
+      "title": "lados independientes: POST y lectura real conservan triángulo, cuadrilátero angular y pentágono",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 2553
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu007-order-integration.spec.js",
+      "title": "T04: login JWT real, múltiples piezas locales, POST único y 201",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 2018
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu007-order-integration.spec.js",
+      "title": "T04: error de red conserva pieza y reintento llega al backend real",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1753
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu007-order-integration.spec.js",
+      "title": "lados independientes: POST y lectura real conservan triángulo, cuadrilátero angular y pentágono",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 2697
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu007-order-integration.spec.js",
+      "title": "T04: login JWT real, múltiples piezas locales, POST único y 201",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 2426
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu007-order-integration.spec.js",
+      "title": "T04: error de red conserva pieza y reintento llega al backend real",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 2299
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu012-client-order.spec.js",
+      "title": "T03: alta contextual, bloqueo sin cliente, persistencia y lectura real",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1412
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu012-client-order.spec.js",
+      "title": "T03: duplicado controlado, búsqueda documental y cambio a cliente inactivo",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1684
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu012-client-order.spec.js",
+      "title": "vidrios plegables conservan piezas, edición contraída, teclado y footer visible",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1959
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu012-client-order.spec.js",
+      "title": "T03: alta contextual, bloqueo sin cliente, persistencia y lectura real",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1983
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu012-client-order.spec.js",
+      "title": "T03: duplicado controlado, búsqueda documental y cambio a cliente inactivo",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 2517
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu012-client-order.spec.js",
+      "title": "vidrios plegables conservan piezas, edición contraída, teclado y footer visible",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 2479
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu014-inventory-writeoff.spec.js",
+      "title": "HU-014: Almacenero registra una baja y consulta el movimiento persistido",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1504
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu014-inventory-writeoff.spec.js",
+      "title": "HU-014: Operario consulta inventario, pero no ve acciones de gestión",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1007
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu014-inventory-writeoff.spec.js",
+      "title": "HU-014: Almacenero registra una baja y consulta el movimiento persistido",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1994
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu014-inventory-writeoff.spec.js",
+      "title": "HU-014: Operario consulta inventario, pero no ve acciones de gestión",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1018
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu015-rasterization.spec.js",
+      "title": "HU-015: flujo real de pieza cantidad 5, raster, recuperación, resolución y responsive",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 2680
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu015-rasterization.spec.js",
+      "title": "HU-015: CIRCUNFERENCIA se compara con la máscara real del backend",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1873
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu015-rasterization.spec.js",
+      "title": "HU-015: POLIGONO_CONVEXO conserva vertices_mm negativos y columnas sobre 53",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1912
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu015-rasterization.spec.js",
+      "title": "HU-015: flujo real de pieza cantidad 5, raster, recuperación, resolución y responsive",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 2839
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu015-rasterization.spec.js",
+      "title": "HU-015: CIRCUNFERENCIA se compara con la máscara real del backend",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1831
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu015-rasterization.spec.js",
+      "title": "HU-015: POLIGONO_CONVEXO conserva vertices_mm negativos y columnas sobre 53",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1636
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu017-unified-flow.spec.js",
+      "title": "HU-017 T01: multipedido unificado, inspección honesta y simulación sin consumo",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 4026
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu017-unified-flow.spec.js",
+      "title": "HU-017: máscara orientada, controles por teclado y recuperación sin recalcular",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 4905
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu017-unified-flow.spec.js",
+      "title": "HU-017: el POST sin perfil conserva V1 y sus permisos de consulta",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 2252
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "hu017-unified-flow.spec.js",
+      "title": "HU-017 T01: SIN_SOLUCION conserva resultado parcial sin certificar etapas no observadas",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 3596
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu017-unified-flow.spec.js",
+      "title": "HU-017 T01: multipedido unificado, inspección honesta y simulación sin consumo",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 3851
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu017-unified-flow.spec.js",
+      "title": "HU-017: máscara orientada, controles por teclado y recuperación sin recalcular",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 5053
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu017-unified-flow.spec.js",
+      "title": "HU-017: el POST sin perfil conserva V1 y sus permisos de consulta",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 2490
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "hu017-unified-flow.spec.js",
+      "title": "HU-017 T01: SIN_SOLUCION conserva resultado parcial sin certificar etapas no observadas",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 3456
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "optimization-comparison.spec.js",
+      "title": "comparar tres motores, revisar fases y solicitud, elegir BF y confirmar una sola vez",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 7292
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "optimization-comparison.spec.js",
+      "title": "FF falla al persistir y BF se confirma una vez, regresando al listado",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 4384
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "optimization-comparison.spec.js",
+      "title": "rotación real de 90 grados y movimiento reducido sin ejecutar otro trabajo al cambiar pestañas",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 4782
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "optimization-comparison.spec.js",
+      "title": "consulta sin permisos de ejecución recupera resultados sin permitir elección ni consumo",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 3251
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "optimization-comparison.spec.js",
+      "title": "comparar tres motores, revisar fases y solicitud, elegir BF y confirmar una sola vez",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 9469
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "optimization-comparison.spec.js",
+      "title": "FF falla al persistir y BF se confirma una vez, regresando al listado",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 4307
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "optimization-comparison.spec.js",
+      "title": "rotación real de 90 grados y movimiento reducido sin ejecutar otro trabajo al cambiar pestañas",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 4680
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "optimization-comparison.spec.js",
+      "title": "consulta sin permisos de ejecución recupera resultados sin permitir elección ni consumo",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 3341
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "optimization-policy-audit.spec.js",
+      "title": "políticas reales differential: fuentes y contornos 2D/3D corresponden al backend",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 6128
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "optimization-policy-audit.spec.js",
+      "title": "políticas reales mixed: fuentes y contornos 2D/3D corresponden al backend",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 6829
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "optimization-policy-audit.spec.js",
+      "title": "políticas reales differential: fuentes y contornos 2D/3D corresponden al backend",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 6566
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "optimization-policy-audit.spec.js",
+      "title": "políticas reales mixed: fuentes y contornos 2D/3D corresponden al backend",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 7112
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "S1-01 vista previa real conserva pendiente, permite First Fit y confirma con trazabilidad",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 5706
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E1 N=1 real: progreso, placements, métricas, confirmación, stock y pedido",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 4948
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E2 multipedido real: una corrida confirma todos",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 4200
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E3 multimaterial real: layouts y métricas separados",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 4332
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E4 plancha multiunidad real: 3 placements consumen 2 unidades",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 4627
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E5 retazo primero real: dos piezas consumen un retazo una sola vez",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 4086
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E6 SIN_SOLUCION real: diagnóstico, pedidos PENDIENTE y stock intacto",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 3527
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E7 409 real: stock cambiado, feedback y ninguna confirmación parcial",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 3712
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E8 RBAC real: sin view, view, execute y confirm independientes",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 6776
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E9 rotación real: contorno orientado se traduce una sola vez en 2D y 3D",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 4127
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E10 CA-28 conjunto: dos pedidos, dos materiales, cantidad y unidades físicas reales",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 4132
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E11 comercial: pedido UI, 8/8 a 1 mm, cámara XYZ, merma, confirmación y origen del retazo",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 6715
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "S1-01 vista previa real conserva pendiente, permite First Fit y confirma con trazabilidad",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 6298
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E1 N=1 real: progreso, placements, métricas, confirmación, stock y pedido",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 4618
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E2 multipedido real: una corrida confirma todos",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 3908
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E3 multimaterial real: layouts y métricas separados",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 3842
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E4 plancha multiunidad real: 3 placements consumen 2 unidades",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 5160
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E5 retazo primero real: dos piezas consumen un retazo una sola vez",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 4262
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E6 SIN_SOLUCION real: diagnóstico, pedidos PENDIENTE y stock intacto",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 3439
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E7 409 real: stock cambiado, feedback y ninguna confirmación parcial",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 4398
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E8 RBAC real: sin view, view, execute y confirm independientes",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 7990
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E9 rotación real: contorno orientado se traduce una sola vez en 2D y 3D",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 3989
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E10 CA-28 conjunto: dos pedidos, dos materiales, cantidad y unidades físicas reales",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 4071
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "s1-optimization-ui.spec.js",
+      "title": "E2E11 comercial: pedido UI, 8/8 a 1 mm, cámara XYZ, merma, confirmación y origen del retazo",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 7164
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "s1-post-review.spec.js",
+      "title": "editar tres veces conserva ID, cantidad de pedidos y selección en optimización",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 4293
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "s1-post-review.spec.js",
+      "title": "crear polígono actualiza medidas parciales y mantiene referencia provisional",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1663
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "s1-post-review.spec.js",
+      "title": "editar tres veces conserva ID, cantidad de pedidos y selección en optimización",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 5197
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "s1-post-review.spec.js",
+      "title": "crear polígono actualiza medidas parciales y mantiene referencia provisional",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 2069
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "ta-dashboard.spec.js",
+      "title": "Dashboard real para Administrador: datos, permisos y navegación",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 2872
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "ta-dashboard.spec.js",
+      "title": "Dashboard real para Operario: datos, permisos y navegación",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 2418
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "ta-dashboard.spec.js",
+      "title": "Dashboard real para Almacenero: datos, permisos y navegación",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 2005
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "ta-dashboard.spec.js",
+      "title": "refresh conserva sesión real mediante GET /api/auth/me",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1645
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "ta-dashboard.spec.js",
+      "title": "logout elimina la sesión real y devuelve al login",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1073
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "ta-dashboard.spec.js",
+      "title": "Dashboard real a 1440px: sin overflow y Sidebar utilizable",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1514
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "ta-dashboard.spec.js",
+      "title": "Dashboard real a 1024px: sin overflow y Sidebar utilizable",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1478
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "ta-dashboard.spec.js",
+      "title": "Dashboard real a 800px: sin overflow y Sidebar utilizable",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1549
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "ta-dashboard.spec.js",
+      "title": "Dashboard real a 390px: sin overflow y Sidebar utilizable",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1515
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "ta-dashboard.spec.js",
+      "title": "sesión real sin permisos conserva Inicio y logout sin consultar módulos restringidos",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1507
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "ta-dashboard.spec.js",
+      "title": "CONTROLLED FAILURE SCENARIO — NOT REAL BACKEND FAILURE: muestra error parcial conservando otras fuentes reales",
+      "outcome": "expected",
+      "annotations": [
+        {
+          "type": "scenario",
+          "description": "CONTROLLED FAILURE SCENARIO — NOT REAL BACKEND FAILURE"
+        },
+        {
+          "type": "scenario",
+          "description": "CONTROLLED FAILURE SCENARIO — NOT REAL BACKEND FAILURE"
+        }
+      ],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1350
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "ta-dashboard.spec.js",
+      "title": "Dashboard real para Administrador: datos, permisos y navegación",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 3416
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "ta-dashboard.spec.js",
+      "title": "Dashboard real para Operario: datos, permisos y navegación",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 2954
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "ta-dashboard.spec.js",
+      "title": "Dashboard real para Almacenero: datos, permisos y navegación",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 2650
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "ta-dashboard.spec.js",
+      "title": "refresh conserva sesión real mediante GET /api/auth/me",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1698
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "ta-dashboard.spec.js",
+      "title": "logout elimina la sesión real y devuelve al login",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1106
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "ta-dashboard.spec.js",
+      "title": "Dashboard real a 1440px: sin overflow y Sidebar utilizable",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1675
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "ta-dashboard.spec.js",
+      "title": "Dashboard real a 1024px: sin overflow y Sidebar utilizable",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1657
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "ta-dashboard.spec.js",
+      "title": "Dashboard real a 800px: sin overflow y Sidebar utilizable",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1561
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "ta-dashboard.spec.js",
+      "title": "Dashboard real a 390px: sin overflow y Sidebar utilizable",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1540
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "ta-dashboard.spec.js",
+      "title": "sesión real sin permisos conserva Inicio y logout sin consultar módulos restringidos",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1400
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "ta-dashboard.spec.js",
+      "title": "CONTROLLED FAILURE SCENARIO — NOT REAL BACKEND FAILURE: muestra error parcial conservando otras fuentes reales",
+      "outcome": "expected",
+      "annotations": [
+        {
+          "type": "scenario",
+          "description": "CONTROLLED FAILURE SCENARIO — NOT REAL BACKEND FAILURE"
+        },
+        {
+          "type": "scenario",
+          "description": "CONTROLLED FAILURE SCENARIO — NOT REAL BACKEND FAILURE"
+        }
+      ],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1287
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "ta036-retazo-personalizado.spec.js",
+      "title": "retazo personalizado: editor compartido, POST real sin Decimal no serializable y lectura numérica",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1811
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "ta036-retazo-personalizado.spec.js",
+      "title": "retazo personalizado: editor compartido, POST real sin Decimal no serializable y lectura numérica",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 1749
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "ta037-load-feedback.spec.js",
+      "title": "TA037 pedido sobre el límite: aviso comprensible, selección conservada, pedido pendiente y stock intacto",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 3129
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "ta037-load-feedback.spec.js",
+      "title": "TA037 pedido sobre el límite: aviso comprensible, selección conservada, pedido pendiente y stock intacto",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 3495
+    },
+    {
+      "project": "chromium-desktop",
+      "file": "ui-audit.spec.js",
+      "title": "auditoría transversal con API real, formularios, teclado y roles",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 10616
+    },
+    {
+      "project": "chromium-mobile",
+      "file": "ui-audit.spec.js",
+      "title": "auditoría transversal con API real, formularios, teclado y roles",
+      "outcome": "expected",
+      "annotations": [],
+      "statuses": [
+        "passed"
+      ],
+      "duration_ms": 11370
+    }
+  ]
+}

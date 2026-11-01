@@ -1,0 +1,604 @@
+{
+  "date": "2026-11-01",
+  "branch": "feature/optimization-multimotor-visual",
+  "head": "5e836cdd9cc61eb212402d90dbe94a6776afcc75",
+  "base": "afd5f85f9dd1495e4237e1029555f7e56cd53f30",
+  "preserve_existing_commits": 23,
+  "create_commits": true,
+  "counts": {
+    "existing_committed_diff": 115,
+    "original_pending": 130,
+    "preparation_documents": 6,
+    "pending_proposed": 136,
+    "full_pr": 239
+  },
+  "metadata_hash_note": "Six preparation documents omit self-referential hashes; exact contents are verified through local staged trees and the resulting four local commits.",
+  "dependencies": [
+    "1 before 2: isolated fault injection fixtures used by confirmation E2E",
+    "3 keeps fixtures/oracles and consuming API/E2E tests together",
+    "4 records historical and final evidence without claiming remote CI or human review"
+  ],
+  "groups": [
+    {
+      "number": 1,
+      "message": "fix(optimization): estabilizar persistencia y supervisión local",
+      "files": [
+        {
+          "path": ".github/workflows/ci.yml",
+          "working_sha256": "f03481192675206808413e212f5db01b4ef34d1a8561ab23c66f44f8c146f26b"
+        },
+        {
+          "path": "backend/README.md",
+          "working_sha256": "ff3e471a02f98d57089c9f40158b126a35d260565f1305dbf2266cad8986ed41"
+        },
+        {
+          "path": "backend/app/modules/authentication/presentation/dependencies.py",
+          "working_sha256": "da76b3919df8284e058a930c44bcc73d71ff6c5441c4c013efc97c0c773f5ea8"
+        },
+        {
+          "path": "backend/app/modules/optimization/application/comparison_calculation.py",
+          "working_sha256": "ed55f69c6cc67794a7aed63ea7f29b54e198199f785f423067417bca925b437a"
+        },
+        {
+          "path": "backend/app/modules/optimization/infrastructure/comparison_runner.py",
+          "working_sha256": "a702b53f0e99fe3ba04bb2942ccd2187ae176daee8f5835cc1817ffa69585577"
+        },
+        {
+          "path": "backend/app/modules/optimization/presentation/run_auth.py",
+          "working_sha256": "a9956b058b3a13d9118fcd98ef6f02796ef33ce2eea9e4078813d2503bd38a0d"
+        },
+        {
+          "path": "backend/app/shared/config/__init__.py",
+          "working_sha256": "ce471ca0228b3f29d083d5faab8e8653e1e5d09099be30a574789143908a34ff"
+        },
+        {
+          "path": "backend/scripts/check_comparison_environment.py",
+          "working_sha256": "75d364029aad5f91d5d33267966e5d45af2314237c962a0f852e075c915e6057"
+        },
+        {
+          "path": "backend/scripts/dev_server.py",
+          "working_sha256": "cbfec23b634c1b39d41f06cb33b75862607ca7c0a214c7d6973204093a8342ea"
+        },
+        {
+          "path": "backend/tests/api/optimization/test_comparison_connection_lifecycle.py",
+          "working_sha256": "22c74f3f57482ece910a41d9474951109cbd682e36dd2fbbebf296583d4ed9fe"
+        },
+        {
+          "path": "backend/tests/api/optimization/test_comparisons_api.py",
+          "working_sha256": "a77e6e0fe97eab34607c00306407cf5dc0637e10260fc13763691b900edffc7c"
+        },
+        {
+          "path": "backend/tests/integration/optimization/test_comparison_calculation.py",
+          "working_sha256": "35c7775e97694ca75b3643f33b3e6a10b59848f60bea0d290319a05d64bf62d5"
+        },
+        {
+          "path": "backend/tests/optimization_e2e_data.py",
+          "working_sha256": "328b0320b83ccb7f839305c45bb10ce05e7ca702223eeebd0a50dbe820bd0af7"
+        },
+        {
+          "path": "backend/tests/unit/optimization/test_comparison_runner.py",
+          "working_sha256": "803145d4457420c5db5a73c60aa48906e105cb53040fd70cf0863db01dfd4067"
+        },
+        {
+          "path": "backend/tests/unit/shared/test_config.py",
+          "working_sha256": "8161ee55e23b35b412bf1c9b34d9aa08ed80963ba6b7634bf2f3776b76583c62"
+        },
+        {
+          "path": "backend/tests/unit/shared/test_dev_server.py",
+          "working_sha256": "6c5b31fc05b716f7463ae763d0c264410fb9f989b08bd6b95b10c7514fd237ee"
+        },
+        {
+          "path": "backend/tests/unit/test_ci_contract.py",
+          "working_sha256": "698a4ab2eff21ba2b9445e41d43127855b0314ada95c6fba8ee2b4c3448aa323"
+        },
+        {
+          "path": "docs/development/optimization-wsl2.md",
+          "working_sha256": "7d7382217a076a530094eb560d26781b5b863e046f5c1d1083c9c12286b86c5d"
+        },
+        {
+          "path": "docs/testing/README.md",
+          "working_sha256": "0d6cf285e7cb0245f447a5ce64b55140dc3069537221bedf991ae0c741030cd2"
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "message": "fix(optimization): limpiar el flujo tras confirmar una distribución",
+      "files": [
+        {
+          "path": "frontend/src/features/optimization/ComparisonWorkspace.jsx",
+          "working_sha256": "818d90188ad7ee6a460bef349363c5edd1f8903173ce09a583851ddc28ee3601"
+        },
+        {
+          "path": "frontend/src/features/optimization/__tests__/ComparisonLifecycle.test.jsx",
+          "working_sha256": "3babc314aeb78711111940c9bb1a65d40406a92cf253ab3d289414064bc7f17f"
+        },
+        {
+          "path": "frontend/src/features/optimization/__tests__/ComparisonWorkspace.test.jsx",
+          "working_sha256": "e3cbd17842fad161b7841478f5d6c01eb1f31b062c1d35c5da129e87b1df3238"
+        },
+        {
+          "path": "frontend/src/features/optimization/__tests__/PendingOrdersSource.test.jsx",
+          "working_sha256": "75ddb02e18ef3286641434f658c25a793a92c0271959ca653d1057648bdec761"
+        },
+        {
+          "path": "frontend/src/features/optimization/comparisonController.js",
+          "working_sha256": "d0d6d55c7a11e860d93d6e5d13684cbf7a9d2aee23b3e7ce29452daa815c8e1e"
+        },
+        {
+          "path": "frontend/src/features/optimization/pendingOrdersSource.js",
+          "working_sha256": "c944a15fdfd58de1eee4ad588216f024f12513770374d6ea72d6419c001a519b"
+        },
+        {
+          "path": "frontend/tests/e2e/optimization-comparison.spec.js",
+          "working_sha256": "5924ecf859ea402ebc22ed2e3262d54e38301841d4a2a1d8793616d1145a8522"
+        },
+        {
+          "path": "frontend/tests/e2e/ta-dashboard.spec.js",
+          "working_sha256": "b7ee24359af878e2ef477704dcddea898dfb527320d92eccc58f0de81262d71d"
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "message": "test(optimization): demostrar políticas FF BF WF y geometría real",
+      "files": [
+        {
+          "path": "backend/tests/api/optimization/test_final_capacity_diagnostic.py",
+          "working_sha256": "42554c0a2e8bd5f177d75f9a6ecac9faa2736b01068088f989f4102a341c5368"
+        },
+        {
+          "path": "backend/tests/api/optimization/test_final_multimethod_audit.py",
+          "working_sha256": "910a278b6df708e76ec4fd08e8dd5788b59080c9e94b0ba5e83c1a88d1d03d1f"
+        },
+        {
+          "path": "backend/tests/optimization/final_audit_support.py",
+          "working_sha256": "813225199e7fc274e3d9144230b4e474d625a88cf70bad84082ddd8c315c2260"
+        },
+        {
+          "path": "experiments/optimization/final_audit_cases.py",
+          "working_sha256": "442dd4a0298bfb3e643ae19da23643b4f06324ccd26e039932c81beba933a998"
+        },
+        {
+          "path": "frontend/tests/e2e/criticalSpecs.js",
+          "working_sha256": "e4fe898804f5ddbf68cf4b00e5dc3130269e29514b9a2b873ec0b0ab5d3de113"
+        },
+        {
+          "path": "frontend/tests/e2e/optimization-policy-audit.spec.js",
+          "working_sha256": "fbec191616eaa6d00fda0862322044be5b32ad20a4f8bd4877f06a7b86258aed"
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "message": "docs(optimization): registrar auditoría final y preparación del PR",
+      "files": [
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/ANGULAR-CONFIG-409-2026-11-01/README.md",
+          "working_sha256": "52c1e82be490c6784cf3c1dbf5d9f40348bb4d2635edd589795580c27f8f7f2b"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/ANGULAR-CONFIG-409-2026-11-01/test-results.json",
+          "working_sha256": "d40a12efb90ae766006b41ca891ee519b1e6df4cd4d01ada84300db57c8a305f"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/README.md",
+          "working_sha256": "38b529cd78559a16ae9b22c76ba93729bf81cbb04be6349108d70cb679b0f8f0"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/UI-UX-AUDIT.md",
+          "working_sha256": "498ca156c995320bc738a8437abf108da168b62af59b40d1fe94b6d396752e87"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/browser-summary.json",
+          "working_sha256": "1bca4eb109cbfa7b191ff48dcdc3f9c59f80d1fc84797b6ddc711465d28e477a"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/code-hashes.json",
+          "working_sha256": "69934e6f5f6523a25deaa8240c9e6eace9849ddde270a00ea702a4bdeb4dfbe4"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/connection-measurements.json",
+          "working_sha256": "c8fc843eb208ee4d807e43057750343baa8479eda2e2a4d26338a2482658878b"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/pytest-memory-profile.json",
+          "working_sha256": "a13b7cb6a9fac17e28a293968b97afce14d6af01e0780672aa0ddeb8f50631c1"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/after-desktop-FF-confirmacion-parcial-limpia.png",
+          "working_sha256": "8132bb45a45eed6fb6370ed57d9c250bf7cdeb235643591bff62007e27fe6912"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/after-desktop-FF-ff-fallido-bf-elegido.png",
+          "working_sha256": "42b4bfa89805b64291484fef01836f925190296793d1dab5e24b070bc81f7d1c"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/after-desktop-comparar-confirmacion-limpia-pedidos-pendientes.png",
+          "working_sha256": "7ca00d21361657b9f246bc01fad4fad547f2e553c200a6b95c7bf0e37f68347f"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/after-mobile-FF-confirmacion-parcial-limpia.png",
+          "working_sha256": "a4f6a30d400fadfd6efd7347e5c4306c70f7cbadc71b4f2a8a3c2c03bee7aa00"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/after-mobile-FF-ff-fallido-bf-elegido.png",
+          "working_sha256": "6a5ff89e7f3b42e640423eedc57f62facf7d565083fd35ad0e6a57c09babe7d8"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/after-mobile-comparar-confirmacion-limpia-pedidos-pendientes.png",
+          "working_sha256": "1431c22ea3cc32caf5fcc403191588532fe57504d5685ee67f221483164d1d31"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/before-desktop-comparar-estado-residual-antes-del-arreglo.png",
+          "working_sha256": "369701a9952cac5e733510c6fba76e0f8d8516c68562937c9ef2fb4de47d755a"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/before-mobile-comparar-estado-residual-antes-del-arreglo.png",
+          "working_sha256": "5e1aaba5943617c2ea742637e282ccc5a7a02d06967c12b9d06361b08fb472b6"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-01-login.png",
+          "working_sha256": "3c72407c35cea42b2b00cb0ad74108946b81e57dee7e80c0f0c0e2b41e162f66"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-02-login-error.png",
+          "working_sha256": "7a218685c764a364b0b8c7d72f32c4c275143b26c40c73c8f128d3bb36cc7f61"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-03-dashboard-admin.png",
+          "working_sha256": "a7578f422924e65153c20be8dff4997771f75c801a7917ea765643bcfc1bda84"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-04-usuarios.png",
+          "working_sha256": "1e5417b7771032d9c04d3ce17a8aa672162df1de3f7b48cf3ab17e6f1ad0cdce"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-05-usuario-formulario.png",
+          "working_sha256": "1dc291a7b083089fedaee9b53b9588224a35468f23035fbd44a0b75e656ef06e"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-05b-usuario-retorno.png",
+          "working_sha256": "1e5417b7771032d9c04d3ce17a8aa672162df1de3f7b48cf3ab17e6f1ad0cdce"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-06-roles-permisos.png",
+          "working_sha256": "b49daf348b96dfba9e5d637415294bf9e595030a117cc32dc1de646af51a911a"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-07-inventario-planchas.png",
+          "working_sha256": "0ab45aa8e0ac2833834a662f773f7cf6b11c742d764eb47a6c9799268b11395f"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-08-plancha-formulario.png",
+          "working_sha256": "23ad188cd20b4de8f50b74df941da497e95e2af9352e0f3aa49e8725335f7755"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-09-inventario-retazos.png",
+          "working_sha256": "ca034005f5d4f388ab8f5aad321de39d0bb594a4b39b089724e5dcea076ad62e"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-10-retazo-formulario.png",
+          "working_sha256": "803b32cad3c396c52093621e5c9034ff8cd69605a4de8bf0a497b919381ac9d9"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-10b-retazo-registrado.png",
+          "working_sha256": "f851c74053343ef5f7519ed37fc3745f412dd1fc4f15c76af134742250b280a2"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-11-pedidos.png",
+          "working_sha256": "779ecfefb7378f9a3570adb7ebbbc7f7e5b8fd8846adbfbfb00cb8a054f1e478"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-12-pedido-formulario.png",
+          "working_sha256": "30a5f62ef7f82a9c80d1b0333f67aabe61f49729834ce1f6adee3f553c0cfe89"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-13-pedido-editar.png",
+          "working_sha256": "243f16b04c0132f324ac09dcac5902aa41cf0b80ddc90cd26028d69467850fa8"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-13b-pedido-reabrir-despues-escape.png",
+          "working_sha256": "df27f4eac27a3fd68d83a18d7a8b6b459d4ef990b2712265bd536ac34c4c08f0"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-14-optimizacion-pendientes.png",
+          "working_sha256": "ba41170869fbc8f2afdb4d1f4ef62adcb077ccc6c81ae9378a1b2e1909090694"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-14b-optimizacion-resultado.png",
+          "working_sha256": "1639b100e1cf1d335ceb0f2d8c4a9b661f49fb34aedd166b5e2b1e78774d3a70"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-14c-optimizacion-tabla.png",
+          "working_sha256": "3c9e7c0439513aefbd4b4b301a04ad98b43a73010de988215a6e90569c038ddd"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-15-reflow-320.png",
+          "working_sha256": "eff8973231b459bc1703e632c748a439efc0bc38af973e65fdb4f291bd2303fe"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-16-dashboard-almacenero.png",
+          "working_sha256": "72c8d4c50a233cc1cf6fdba74067273f2aba480b17bb76d4bc6ddf7edafd2fa8"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-16-dashboard-operario.png",
+          "working_sha256": "8d69985b1c98a9e08ca4da342f19ba3196dd10d94e83f59d491e9291c855c06d"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-16-dashboard-sin-funciones.png",
+          "working_sha256": "9bf9f0598bfc294aaf78e73ec486f75fe2e2642aaf05049a688aa7fbd5399e2d"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-01-login.png",
+          "working_sha256": "e148d0339ef1edc74b5874eede1ab53d75e6655b1293a15f49468604badc83bb"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-02-login-error.png",
+          "working_sha256": "2853364e807cef9a90f98d09f5cae3f28a7814705b9945dfb5e7bc8fd105d031"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-03-dashboard-admin.png",
+          "working_sha256": "f1a8bb604a45365165f4e493d62a799adc7034cef1029663a77c96e97e333b33"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-04-usuarios.png",
+          "working_sha256": "372abe70d81c6927b6c06bb011ad2e314e3359ff035aadfd117552252e080f51"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-05-usuario-formulario.png",
+          "working_sha256": "18417738dbbeb63b4c3e440615757947098c151423a7a3e557a1dd0869154e1e"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-05b-usuario-retorno.png",
+          "working_sha256": "07e52e69a2d5272086ce03b2f1cde4619e5105670688dca3d33143b6990f1e96"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-06-roles-permisos.png",
+          "working_sha256": "311e261bf7c2049b5c9312498f5eb44bdc75d200f496fc8158b162fd961ad556"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-07-inventario-planchas.png",
+          "working_sha256": "81af8957332a73b1631cdfcfb3d62a7ac0c1fcb60c405f91be971896bcecdbfa"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-08-plancha-formulario.png",
+          "working_sha256": "e06a00f7c3ecf782c830f42fca640f93209e915fd8520dcd4f45e0942131c0dc"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-09-inventario-retazos.png",
+          "working_sha256": "43ac658218c0c82da8230a8428dffe214def4e84c99b5f1e728926d5ef34091a"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-10-retazo-formulario.png",
+          "working_sha256": "81faad52c7aa8af338b7e0eec8bddb87148b7302fc4805fc2b8b05d47f4c8e5a"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-10b-retazo-registrado.png",
+          "working_sha256": "934c3fdcb615e0d1bc3dcfeab46f7abb9fa279c80100f536f8c767fbd56884c5"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-11-pedidos.png",
+          "working_sha256": "4a09478543d973be38dc8e084bfb2a6f0d08b858c9337fc90083c8ec42a4b893"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-12-pedido-formulario.png",
+          "working_sha256": "0084712e908c715ebdf18cce53221f634fdaf51b44a59045c50ddd510ed6727c"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-13-pedido-editar.png",
+          "working_sha256": "335f347b4752df71c4c8744f357308b7345c3ef65c32b67cf81ea2acca22cef8"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-13b-pedido-reabrir-despues-escape.png",
+          "working_sha256": "e0d1b2b6c6be0c770b450a41b6b6422bf1303a7fada0e3df95f716267753e857"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-14-optimizacion-pendientes.png",
+          "working_sha256": "26651e25780d1b9a416b2aa78efcd2067501d8862903aed0f7ed13b36234d050"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-14b-optimizacion-resultado.png",
+          "working_sha256": "c28fec0ed29dca72e5070202c8ff2397cf3836af12c0126ff24db692b586e1d1"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-14c-optimizacion-tabla.png",
+          "working_sha256": "edc2eba52823d36b2d0c92ad8a1deee46e43ed4329746d2a08cd9dea939e3ee1"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-15-reflow-320.png",
+          "working_sha256": "3095afad0dcd76b3cb8398d5a54775127ab1ef7e3d0ebe3ecf15af8dea3232a9"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-16-dashboard-almacenero.png",
+          "working_sha256": "16571334080bcf5f27de3ef3d4abf13ed2f24d019ddceebe345d36a17b113355"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-16-dashboard-operario.png",
+          "working_sha256": "6d8da3ea246de6ba465a309b8ab3246813bac8a7035b4d6ee541a417ee4825a7"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-16-dashboard-sin-funciones.png",
+          "working_sha256": "d30ea857dff605e5401640d79aa5897575c11654d477bb2ae89fd38b32c67201"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/test-summary.json",
+          "working_sha256": "57b5d9a3bdabd7438d88f8d4cce8b25f000ac7f282f56f2821d70c91a5f4a772"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/ui-audit.spec.js",
+          "working_sha256": "491a10f0e87920c93fd944f0d5199117adf94ae4f972e2563ab90f3defc10fa8"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/ui-observations-desktop.json",
+          "working_sha256": "45063245f3802ca9c6a9fbfa0350becdee71b299d0f144dcf8f1d4c35ab5fd5d"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/ui-observations-mobile.json",
+          "working_sha256": "ba9282f26410f7e605c82fa85338cd810f61c369ff7bb2e47ada4a62339b4c9c"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/CASE-RESULTS.md",
+          "working_sha256": "a890698ffb245170a1c14b34cf6464f096684b3e03a85fe9f6a6f223c9c3f552"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/README.md",
+          "working_sha256": "a5a9dd699dffbd259e56725e45ea7249c207af0c3632811437fb38f0a175fb6c"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/backend-results.json",
+          "working_sha256": "ea98d9bca5d2c460a954433742b5a638fd1cb6e278143fc4e4c4e012ced3384a"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/capacity-diagnostic.json",
+          "working_sha256": "41de7ab7ad96965f389e966274dec03995f0aaf3567918e6f2842c29e410a24e"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/collection-comparison.json",
+          "working_sha256": "7fc0727dc0c1cb4c2cb91758c01f8fc96609c8d105e2fe2b3dfd748c2360c19e"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/collection-current.json",
+          "working_sha256": "4e82db4dd8763bcaa10aea5d0e02cd3ea9cd60573907a68da16c4201ac33ebe8"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/collection-head.json",
+          "working_sha256": "e216f1128dfc11c30dfdd3312cbf61a90bcb86a25c2cba7501b8ec347eaeb8f0"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/collection-historical-2068.json",
+          "working_sha256": "0670476999b8dadc7e3dfab73d6c22d3f47077885bb0e409ec72c583fabdec37"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/collection-integration.json",
+          "working_sha256": "3087b5ce6b3a6d031b872c9610a5a5977376c9773bd596ffe51c032cc00943eb"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/differential-results.json",
+          "working_sha256": "1acfb466c9f287531d179b59bae60486818eaceb0fc81e671b4d6f55ba04ec80"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/e2e-results.json",
+          "working_sha256": "14cdc5a6fbfa390305b6c7b8e2e35a3b62df8317f9b0cdfb95f7326bb8ece997"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/git-review.json",
+          "working_sha256": "bdb4b9e0832e8af6136674b0f446be6a6792df51899386bc3d76eba121ad5aeb"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/initial-state.json",
+          "working_sha256": "b37c00b6b4cdc0c2681c15a6908acd5f12e04bb5b7e4d1b9cae62078132446f1"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/policy-browser-summary.json",
+          "working_sha256": "98fc06e37ca76951e0a8de089a2d43f7429355727d12fee1bb9178183e74880a"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/desktop-polticas-differential-BF-backend-3d.png",
+          "working_sha256": "0146a488305c6e79b15a1e3795cdf8a37ae38be24a94a1ae4704fcfd321039a0"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/desktop-polticas-differential-FF-backend-3d.png",
+          "working_sha256": "a46041780a77a119e6da53f56cc0bb7382dc2603c8aedf6dc1106496f90fe8b7"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/desktop-polticas-differential-WF-backend-3d.png",
+          "working_sha256": "925e75d70ca590e88a9bc178fd878a25298ecddbb9682410e384a41c2a141000"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/desktop-polticas-mixed-BF-backend-3d.png",
+          "working_sha256": "83b899cd6b69182e94f90fbd14ab1d5430923faf9ae41427ebc878ae2f307b9c"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/desktop-polticas-mixed-FF-backend-3d.png",
+          "working_sha256": "823faf451891e2c1dd99a35a25b7071c98c44b91760885c55713b5b302d37911"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/desktop-polticas-mixed-WF-backend-3d.png",
+          "working_sha256": "462158b5a4b7fdbff59a01b3e27589a54a05d1c4cdced796c3ce61ae366216af"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/mobile-polticas-differential-BF-backend-3d.png",
+          "working_sha256": "76f1b532d2139352c51692edf77dc7543a192dadf95edf60e2e8e7915735dd0d"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/mobile-polticas-differential-FF-backend-3d.png",
+          "working_sha256": "01b2390fcb3cc1e3c87919ae995832a09e045547439c7ddf5199e7e9ca791411"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/mobile-polticas-differential-WF-backend-3d.png",
+          "working_sha256": "61d0198f1cf85f6502874eb82ed289fe2b7a8a541e0199216bd18d713f5dde2b"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/mobile-polticas-mixed-BF-backend-3d.png",
+          "working_sha256": "6066b208d27d13c01da6edddd5ea2046ea40613903ec4442c63cc29f6c6bbaa8"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/mobile-polticas-mixed-FF-backend-3d.png",
+          "working_sha256": "3738963460ab1c6d0315211ca5e3209cdec610529940bf98ead220a61c8bdff4"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/mobile-polticas-mixed-WF-backend-3d.png",
+          "working_sha256": "90b719d6f7c21a16c99618774ca02c73a4473709829734a7a8eb9a35c10f5ea8"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/tested-code-hashes.json",
+          "working_sha256": "5629f1a6b7be53f2647523dd732a6849138efd18385b1aef19c8d43db3d0dd63"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/validation-summary.json",
+          "working_sha256": "bbb251ab65e2207a933ca972b81baeafa43097a4eb340415ed24f53e1e62cd7f"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/WINDOWS-WSL2-2026-11-01/README.md",
+          "working_sha256": "d5c980d4d77e4929dc449e99b8066d48d6624d99bf06a128c136d152a7d98a09"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/WINDOWS-WSL2-2026-11-01/real-comparison.json",
+          "working_sha256": "bed1726e7238e0e8c6bf3f507a403c6f2000d3681c4188e902cffbaff9459f26"
+        },
+        {
+          "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/WINDOWS-WSL2-2026-11-01/validation-summary.json",
+          "working_sha256": "ad7aac935e6b94d82e8eb2a50e1b5a2c088d73d0e72024fddf4253f2ecbb3fca"
+        },
+        {
+          "path": "docs/reviews/PR-OPT-MULTIMOTOR-2026-11-01/PR.md",
+          "working_sha256": null
+        },
+        {
+          "path": "docs/reviews/PR-OPT-MULTIMOTOR-2026-11-01/README.md",
+          "working_sha256": null
+        },
+        {
+          "path": "docs/reviews/PR-OPT-MULTIMOTOR-2026-11-01/commit-plan.json",
+          "working_sha256": null
+        },
+        {
+          "path": "docs/reviews/PR-OPT-MULTIMOTOR-2026-11-01/exclude.json",
+          "working_sha256": null
+        },
+        {
+          "path": "docs/reviews/PR-OPT-MULTIMOTOR-2026-11-01/include-pending.txt",
+          "working_sha256": null
+        },
+        {
+          "path": "docs/reviews/PR-OPT-MULTIMOTOR-2026-11-01/include-pr.txt",
+          "working_sha256": null
+        }
+      ]
+    }
+  ],
+  "execution_scope": {
+    "local_branch_only": "feature/optimization-multimotor-visual",
+    "append_commits": 4,
+    "push": false,
+    "remote_pull_request": false,
+    "merge": false,
+    "rebase": false,
+    "shared_database_writes": false
+  },
+  "authorized_documentation_revision": {
+    "reason": "Remove private operational details and update only public documentation/manifests; preserve originals outside Git",
+    "functional_changes": false
+  }
+}
