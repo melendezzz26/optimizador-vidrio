@@ -53,7 +53,8 @@ class CalculateComparison:
                             emit(execution, "result_persisted", next(e for e in saved.executions
                                 if e.execution_id == execution.execution_id))
                         except Exception:
-                            logger.exception("Comparison result could not be saved")
+                            logger.exception("Comparison result could not be saved: comparison_id=%s execution_id=%s method=%s",
+                                comparison_id, execution.execution_id, execution.method)
                             with self.unit_of_work() as tx:
                                 failed = tx.comparisons.fail_execution(comparison_id, execution.execution_id, "RESULT_SAVE_FAILED")
                             emit(execution, "failed", next(e for e in failed.executions if e.execution_id == execution.execution_id))

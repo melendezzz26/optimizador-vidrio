@@ -147,6 +147,40 @@ def test_preflight_rejects_unavailable_memory_before_spawning(monkeypatch):
     assert error.value.code == "RESOURCE_UNAVAILABLE"
 
 
+@pytest.mark.parametrize("platform", ["win32", "darwin"])
+def test_unsupported_platform_explains_safe_environment_before_resource_access(monkeypatch, platform):
+    monkeypatch.setattr(runner.sys, "platform", platform)
+    def unexpected_read(*args):
+        pytest.fail("Unsupported platforms must be rejected before reading Linux resources")
+    monkeypatch.setattr(runner, "resident_bytes", unexpected_read)
+    with pytest.raises(RunError) as error:
+        runner.ComparisonProcessRunner().preflight()
+    assert error.value.code == "RESOURCE_UNAVAILABLE"
+    assert "WSL2" in error.value.message and "RLIMIT_AS" in error.value.message
+    assert isinstance(error.value.__cause__, ValueError)
+    assert str(error.value.__cause__) == "Linux procfs required"
+
+
+def test_global_deadline_terminates_workers_even_before_startup_deadline():
+    budget = replace(ComparisonBudget(), startup_seconds=10, global_seconds=.15)
+    service = runner.ComparisonProcessRunner(budget, worker_target=never_ready)
+    packets = list(service.events(*input_for(CASES[0])))
+    assert len(packets) == 3
+    assert all(p["kind"] == "failed" and p["payload"]["code"] == "TIME_BUDGET_EXCEEDED" for p in packets)
+    assert service.last_report["all_workers_stopped"]
+
+
+def test_aggregate_memory_budget_stops_all_workers_and_joins_them():
+    budget = replace(ComparisonBudget(), aggregate_rss_bytes=(
+        runner.resident_bytes(os.getpid()) + ComparisonBudget().helper_reserve_bytes + MIB))
+    service = runner.ComparisonProcessRunner(budget, worker_target=never_ready)
+    packets = list(service.events(*input_for(CASES[0])))
+    assert len(packets) == 3
+    assert all(p["kind"] == "failed" and p["payload"]["code"] == "MEMORY_BUDGET_EXCEEDED" for p in packets)
+    assert service.last_report["maximum_rss_sum_bytes"] > budget.aggregate_rss_bytes
+    assert service.last_report["all_workers_stopped"]
+
+
 def test_lossless_mask_transport_preserves_wide_rows_and_holes():
     mask = RasterMask(0.25, 200, (1 | (1 << 199), 0, (1 << 200) - 1))
     # Simula JSON: las tuplas de tramos se convierten en listas.

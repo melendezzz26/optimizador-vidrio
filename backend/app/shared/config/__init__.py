@@ -87,8 +87,8 @@ def database_engine_options(url: str, *, pooled: bool = True) -> dict:
     """Una configuración por engine; no abre conexiones ni altera la URL/TLS."""
     options = {"pool_pre_ping": True}
     pool_options = {
-        "pool_size": integer_value("DB_POOL_SIZE"),
-        "max_overflow": integer_value("DB_MAX_OVERFLOW", minimum=0),
+        "pool_size": integer_value("DB_POOL_SIZE", default=5),
+        "max_overflow": integer_value("DB_MAX_OVERFLOW", minimum=0, default=0),
         "pool_timeout": integer_value("DB_POOL_TIMEOUT"),
     }
     connect_timeout = integer_value("DB_CONNECT_TIMEOUT")

@@ -41,6 +41,18 @@ def seed(scenario):
         'none': ['orders.view'],
     }
     with Session(engine) as db, db.begin():
+        # Fault injection belongs exclusively to the owned loopback fixture above.
+        db.execute(sa.text('DROP TRIGGER IF EXISTS e2e_ff_save_failure ON metricas_ejecucion'))
+        db.execute(sa.text('DROP FUNCTION IF EXISTS e2e_ff_save_failure()'))
+        if scenario == 'ff-save-failure':
+            db.execute(sa.text("""CREATE FUNCTION e2e_ff_save_failure() RETURNS trigger LANGUAGE plpgsql AS $$
+                BEGIN
+                  IF EXISTS (SELECT 1 FROM ejecuciones_optimizacion WHERE id_ejecucion=NEW.id_ejecucion AND metodo='FF') THEN
+                    RAISE EXCEPTION 'Synthetic FF persistence failure';
+                  END IF;
+                  RETURN NEW;
+                END $$"""))
+            db.execute(sa.text('CREATE TRIGGER e2e_ff_save_failure BEFORE INSERT ON metricas_ejecucion FOR EACH ROW EXECUTE FUNCTION e2e_ff_save_failure()'))
         runtime = dict(database='owned loopback PostgreSQL', dialect=engine.dialect.name,
                        version=db.scalar(sa.text('SHOW server_version')),
                        alembic_heads=list(db.scalars(sa.text('SELECT version_num FROM alembic_version'))))
@@ -88,5 +100,5 @@ def seed(scenario):
 
 
 if __name__ == '__main__':
-    assert sys.argv[1] in {'single', 'multiple', 'multimaterial', 'multiunit', 'remnant', 'incomplete', 'conflict', 'rbac', 'rotated', 'combined', 'commercial'}
+    assert sys.argv[1] in {'single', 'multiple', 'multimaterial', 'multiunit', 'remnant', 'incomplete', 'conflict', 'rbac', 'rotated', 'combined', 'commercial', 'ff-save-failure'}
     print(json.dumps(seed(sys.argv[1])))

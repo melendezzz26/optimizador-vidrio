@@ -60,7 +60,10 @@ def check_environment(budget=DEFAULT_COMPARISON_BUDGET):
         if available_memory() < budget.aggregate_rss_bytes or resident_bytes(os.getpid()) > budget.supervisor_rss_bytes:
             raise RunError("RESOURCE_UNAVAILABLE", "El servidor no dispone de memoria para los tres motores. Intenta más tarde.")
     except (OSError, ValueError, KeyError, ImportError) as error:
-        raise RunError("RESOURCE_UNAVAILABLE", "La plataforma no permite ejecutar los tres motores con supervisión de recursos.") from error
+        message = "La plataforma no permite ejecutar los tres motores con supervisión de recursos."
+        if sys.platform != "linux":
+            message += " Se requiere Linux con procfs, RLIMIT_AS y prctl; en Windows, inicia el backend en WSL2."
+        raise RunError("RESOURCE_UNAVAILABLE", message) from error
 
 
 def calculation_worker(method, payload, minimums, connection, gate, budget, parent_identity=None):

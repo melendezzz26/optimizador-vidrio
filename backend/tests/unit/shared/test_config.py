@@ -125,8 +125,9 @@ def test_invalid_token_lifetime_has_clear_error(monkeypatch, value):
         token_minutes()
 
 
-def test_engine_defaults_only_enable_pre_ping():
-    assert database_engine_options(SYNTHETIC_URL) == {"pool_pre_ping": True}
+def test_postgres_pool_defaults_keep_base_capacity_without_overflow():
+    assert database_engine_options(SYNTHETIC_URL) == {"pool_pre_ping": True, "pool_size": 5, "max_overflow": 0}
+    assert database_engine_options(SYNTHETIC_URL, pooled=False) == {"pool_pre_ping": True}
 
 
 def test_postgres_engine_uses_options_without_connecting(monkeypatch):

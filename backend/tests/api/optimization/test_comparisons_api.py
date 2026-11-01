@@ -1,11 +1,12 @@
 """Flujo HTTP comparativo real. Autor: Fabricio Melendez Quezada. Revisor: Andro Quispe."""
 import json
 import time
+from decimal import Decimal
 from functools import partial
 
 import pytest
 from sqlalchemy import delete, func, select
-from app.models import MovimientoInventario, Optimizacion, Pedido, Permiso, Plancha, RolPermiso
+from app.models import Configuracion, MovimientoInventario, Optimizacion, Pedido, Permiso, Plancha, Retazo, RolPermiso
 from app.shared.security import create_access_token
 from app.modules.optimization.infrastructure.comparison_uow import SqlComparisonUnitOfWork
 from app.modules.optimization.presentation.comparison_routes import get_comparison_uow, get_comparison_runtime
@@ -220,6 +221,131 @@ def test_memory_preflight_rejects_before_acceptance_and_frees_admission(api, ses
     with session_factory() as s:
         assert s.scalar(select(func.count()).select_from(Optimizacion)) == 0
         assert [s.get(Pedido, i).estado for i in ids] == ["PENDIENTE"] * 2
+
+
+def test_windows_rejection_is_actionable_read_only_and_frees_admission(api, session_factory, run_admission, monkeypatch):
+    from app.modules.optimization.infrastructure import comparison_runner
+    client, ids, headers, runtime, _ = api
+    with session_factory() as s:
+        stock_before = s.get(Plancha, 5).cantidad
+        movements_before = s.scalar(select(func.count()).select_from(MovimientoInventario))
+    with monkeypatch.context() as patch:
+        patch.setattr(comparison_runner.sys, "platform", "win32")
+        response = client.post(BASE, json={"order_ids": ids}, headers={**headers, "Idempotency-Key": "windows-preflight-key"})
+    assert response.status_code == 503
+    detail = response.json()["detail"]
+    assert detail["code"] == "RESOURCE_UNAVAILABLE" and "WSL2" in detail["message"]
+    assert run_admission.active() == 0 and runtime.job is None
+    with session_factory() as s:
+        assert s.scalar(select(func.count()).select_from(Optimizacion)) == 0
+        assert [s.get(Pedido, i).estado for i in ids] == ["PENDIENTE"] * 2
+        assert s.get(Plancha, 5).cantidad == stock_before
+        assert s.scalar(select(func.count()).select_from(MovimientoInventario)) == movements_before
+    # El mismo endpoint vuelve a admitir trabajo con el entorno real de Linux.
+    path, _ = start(api, key="linux-after-rejection-key")
+    assert completed(api, path)["status"] == "COMPLETADA"
+
+
+def test_real_comparison_preserves_entire_inventory_and_returns_three_owned_results(api, session_factory, run_admission, record_property):
+    client, _, headers, runtime, _ = api
+    def inventory():
+        with session_factory() as s:
+            return {model.__tablename__: [dict(row) for row in s.execute(
+                select(model.__table__).order_by(*model.__table__.primary_key.columns)).mappings()]
+                for model in (Plancha, Retazo, MovimientoInventario)}
+    before = inventory()
+    path, accepted = start(api)
+    current = completed(api, path)
+    runtime.job.thread.join(timeout=5)
+    assert current["status"] == "COMPLETADA" and not current["confirmed"]
+    assert {e.method for e in accepted.executions} == {"FF", "BF", "WF"}
+    assert len({e.execution_id for e in accepted.executions}) == 3
+    results = []
+    for execution in accepted.executions:
+        response = client.get(f"{path}/executions/{execution.execution_id}", headers=headers)
+        assert response.status_code == 200
+        data = response.json()
+        assert data["execution"]["execution_id"] == execution.execution_id
+        assert data["result"]["metodo"] == execution.method and data["result"]["completo"]
+        results.append({"method": execution.method, "execution_id": execution.execution_id,
+                        "placed_units": data["result"]["placed_units"]})
+    assert inventory() == before
+    assert run_admission.active() == 0 and runtime.job.runner.last_report["all_workers_stopped"]
+    record_property("real_comparison", json.dumps({"comparison_id": accepted.comparison_id,
+        "results": results, "inventory_unchanged": True, "runner": runtime.job.runner.last_report}))
+
+
+def test_busy_comparison_has_no_accepted_work_and_runs_after_capacity_is_released(api, session_factory, run_admission):
+    client, ids, headers, runtime, _ = api
+    lease = run_admission.acquire(9999)
+    try:
+        response = client.post(BASE, json={"order_ids": ids}, headers={**headers, "Idempotency-Key": "overload-comparison-key"})
+        assert response.status_code == 503 and response.json()["detail"]["code"] == "OPTIMIZER_BUSY"
+        assert response.headers["Retry-After"] == "15"
+        assert runtime.job is None and run_admission.active() == 1
+        with session_factory() as s:
+            assert s.scalar(select(func.count()).select_from(Optimizacion)) == 0
+            assert [s.get(Pedido, i).estado for i in ids] == ["PENDIENTE"] * 2
+            assert s.get(Plancha, 5).cantidad == 2
+            assert s.scalar(select(func.count()).select_from(MovimientoInventario)) == 0
+    finally:
+        lease.release()
+    path, _ = start(api, key="overload-comparison-key")
+    assert completed(api, path)["status"] == "COMPLETADA"
+    runtime.job.thread.join(timeout=5)
+    assert run_admission.active() == 0 and runtime.job.runner.last_report["all_workers_stopped"]
+
+
+def test_publishing_angular_version_unblocks_three_engines_without_inventory_changes(api, session_factory, run_admission, record_property):
+    from app.modules.optimization.infrastructure.configuration_publication import publish_angular_step_version
+    client, ids, headers, runtime, _ = api
+    def inventory():
+        with session_factory() as s:
+            return {model.__tablename__: [dict(row) for row in s.execute(
+                select(model.__table__).order_by(*model.__table__.primary_key.columns)).mappings()]
+                for model in (Plancha, Retazo, MovimientoInventario)}
+    with session_factory() as s:
+        old = s.scalar(select(Configuracion).where(Configuracion.vigente.is_(True)))
+        old.paso_angular_grados = 90
+        s.commit()
+        old_id = old.id_configuracion
+        before = {c.name: getattr(old, c.name) for c in Configuracion.__table__.columns}
+    stock_before = inventory()
+    key = "published-angular-key"
+    rejected = client.post(BASE, json={"order_ids": ids}, headers={**headers, "Idempotency-Key": key})
+    assert rejected.status_code == 409 and rejected.json()["detail"]["code"] == "CONFIG_CONFLICT"
+    assert run_admission.active() == 0 and runtime.job is None
+    with session_factory() as s:
+        assert s.scalar(select(func.count()).select_from(Optimizacion)) == 0
+        assert [s.get(Pedido, i).estado for i in ids] == ["PENDIENTE"] * 2
+        published = publish_angular_step_version(s, "O73000001")
+        assert published.changed and published.current_version == 2
+        old = s.get(Configuracion, old_id)
+        assert {c.name: getattr(old, c.name) for c in Configuracion.__table__.columns} == {**before, "vigente": False}
+        new = s.scalar(select(Configuracion).where(Configuracion.vigente.is_(True)))
+        assert new.paso_angular_grados == 5
+        assert all(getattr(new, name) == before[name] for name in (
+            "separacion_mm", "margen_mm", "resolucion_raster_mm", "ancho_min_retazo_mm", "alto_min_retazo_mm"))
+        new_id = new.id_configuracion
+    path, accepted = start(api, key=key)
+    assert accepted.configuration_id == new_id and accepted.configuration_version == 2
+    assert accepted.configuration.paso_angular_grados == 5
+    assert completed(api, path)["status"] == "COMPLETADA"
+    runtime.job.thread.join(timeout=5)
+    for execution in accepted.executions:
+        response = client.get(f"{path}/executions/{execution.execution_id}", headers=headers)
+        assert response.status_code == 200
+        result = response.json()["result"]
+        assert result["metodo"] == execution.method and result["completo"]
+        assert Decimal(result["configuracion"]["paso_angular_grados"]) == 5
+        assert all(Decimal(p["rotation_deg"]) % 5 == 0 for p in result["placements"])
+    assert inventory() == stock_before
+    assert run_admission.active() == 0 and runtime.job.runner.last_report["all_workers_stopped"]
+    record_property("angular_publication_comparison", json.dumps({"rejected_status": rejected.status_code,
+        "accepted_status": 201, "configuration_version": accepted.configuration_version,
+        "angular_step_deg": str(accepted.configuration.paso_angular_grados),
+        "executions": [{"execution_id": e.execution_id, "method": e.method} for e in accepted.executions],
+        "inventory_unchanged": True, "all_workers_stopped": True}))
 
 
 def test_selected_wf_remnant_has_physical_origin_through_inventory_api(api, session_factory):

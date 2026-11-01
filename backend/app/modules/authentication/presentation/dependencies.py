@@ -1,5 +1,6 @@
 """Dependencias de FastAPI: conectan las rutas con los casos de uso."""
 import jwt
+from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
@@ -91,12 +92,21 @@ def require_permission(permission: str):
     def checker(
         user: AuthenticatedUser = Depends(get_current_user),
         permission_reader: PermissionReader = Depends(get_permission_reader),
+        db: Annotated[Session | None, Depends(get_database_session)] = None,
     ) -> AuthenticatedUser:
         # El rol es el vigente en la base, no el que traía el token.
-        if not permission_reader.role_has_permission(user.role, permission):
-            # Mensaje genérico: no se revela qué permiso falta (PLAN §2.4).
-            raise HTTPException(status.HTTP_403_FORBIDDEN, FORBIDDEN_MESSAGE)
-        return user
+        try:
+            if not permission_reader.role_has_permission(user.role, permission):
+                # Mensaje genérico: no se revela qué permiso falta (PLAN §2.4).
+                raise HTTPException(status.HTTP_403_FORBIDDEN, FORBIDDEN_MESSAGE)
+            return user
+        finally:
+            # Authentication/permission reads precede endpoint writes. Return
+            # their connection before a separate repository/UoW needs one.
+            # The dependency still owns Session.close; shared-session endpoints
+            # begin a fresh transaction normally. Direct port tests pass no DB.
+            if db is not None:
+                db.rollback()
 
     checker.permission = permission  # Lo usa la verificación de CA-11.
     return checker

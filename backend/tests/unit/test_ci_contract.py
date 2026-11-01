@@ -30,6 +30,9 @@ def test_ci_covers_backend_frontend_e2e_without_staging_secrets():
     assert "integration/sprint-01" in ci["on"]["push"]["branches"]
     assert ci["permissions"] == {"contents": "read"}
     jobs = ci["jobs"]
+    backend_commands = '\n'.join(step.get('run', '') for step in jobs['backend']['steps'])
+    assert 'python -m pytest tests --ignore=tests/unit/optimization/test_comparison_runner.py -q -ra' in backend_commands
+    assert 'python -m pytest tests/unit/optimization/test_comparison_runner.py -q -ra' in backend_commands
     for name in ("backend", "e2e"):
         assert jobs[name]["env"]["NEWGLASS_REQUIRE_POSTGRES"] == "1"
         commands = "\n".join(step.get("run", "") for step in jobs[name]["steps"])
