@@ -1,0 +1,13 @@
+caso,metodo_codigo,metodo_nombre,piezas_colocadas,piezas_totales,planchas_nuevas,utilizacion_pct,desperdicio_mm2,retazo_recuperable_mm2,area_material_usado_mm2,area_piezas_colocadas_mm2,tiempo_ms,memoria_pico_kb,completo
+EXP-SMALL-001,FF,First Fit,3,3,1,60.0,0.0,8.0,20.0,12.0,59.78,185.46,True
+EXP-SMALL-001,BF,Best Fit,3,3,1,60.0,0.0,8.0,20.0,12.0,52.6,157.69,True
+EXP-SMALL-001,WF,Worst Fit,3,3,1,60.0,0.0,8.0,20.0,12.0,57.07,156.61,True
+EXP-SMALL-001,M5,Best Residual Fit,3,3,1,60.0,0.0,8.0,20.0,12.0,52.69,151.68,True
+EXP-MEDIUM-001,FF,First Fit,9,9,1,28.413,201.86,58.0,363.0,103.14,100.64,226.24,True
+EXP-MEDIUM-001,BF,Best Fit,9,9,1,28.413,193.86,66.0,363.0,103.14,128.9,328.53,True
+EXP-MEDIUM-001,WF,Worst Fit,9,9,2,18.584,301.86,150.0,555.0,103.14,96.69,220.74,True
+EXP-MEDIUM-001,M5,Best Residual Fit,9,9,2,18.584,281.86,170.0,555.0,103.14,90.59,221.78,True
+EXP-COMPLEX-001,FF,First Fit,24,24,3,29.598,746.72,184.0,1322.0,391.28,448.77,1058.76,True
+EXP-COMPLEX-001,BF,Best Fit,24,24,3,29.598,746.72,184.0,1322.0,391.28,464.41,1058.28,True
+EXP-COMPLEX-001,WF,Worst Fit,24,24,4,25.309,886.72,268.0,1546.0,391.28,448.37,1031.98,True
+EXP-COMPLEX-001,M5,Best Residual Fit,24,24,4,25.309,836.72,318.0,1546.0,391.28,458.25,900.74,True
