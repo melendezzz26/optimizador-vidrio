@@ -1,0 +1,109 @@
+{
+  "backend_rest": {
+    "counts": {
+      "passed": 2456
+    },
+    "tests": 2456,
+    "seconds": 387.482,
+    "nonpassing": []
+  },
+  "supervisor_fresh": {
+    "counts": {
+      "passed": 14
+    },
+    "tests": 14,
+    "seconds": 3.892,
+    "nonpassing": []
+  },
+  "auth_focused": {
+    "counts": {
+      "passed": 267
+    },
+    "tests": 267,
+    "seconds": 24.007,
+    "nonpassing": []
+  },
+  "monolithic_attempt": {
+    "counts": {
+      "passed": 2460,
+      "failed": 10
+    },
+    "tests": 2470,
+    "seconds": 434.451,
+    "nonpassing": [
+      {
+        "test": "tests.unit.optimization.test_comparison_runner::test_three_real_engines_enter_together_and_match_direct_results[EXP-SMALL-001]",
+        "status": "failed"
+      },
+      {
+        "test": "tests.unit.optimization.test_comparison_runner::test_three_real_engines_enter_together_and_match_direct_results[EXP-MEDIUM-001]",
+        "status": "failed"
+      },
+      {
+        "test": "tests.unit.optimization.test_comparison_runner::test_three_real_engines_enter_together_and_match_direct_results[EXP-COMPLEX-001]",
+        "status": "failed"
+      },
+      {
+        "test": "tests.unit.optimization.test_comparison_runner::test_crashed_worker_does_not_erase_the_other_two",
+        "status": "failed"
+      },
+      {
+        "test": "tests.unit.optimization.test_comparison_runner::test_address_space_limit_rejects_worker_allocation_and_preserves_others",
+        "status": "failed"
+      },
+      {
+        "test": "tests.unit.optimization.test_comparison_runner::test_unresponsive_startup_is_terminated_and_joined",
+        "status": "failed"
+      },
+      {
+        "test": "tests.unit.optimization.test_comparison_runner::test_calculation_timeout_is_not_reported_as_no_fit",
+        "status": "failed"
+      },
+      {
+        "test": "tests.unit.optimization.test_comparison_runner::test_closing_consumer_terminates_owned_workers",
+        "status": "failed"
+      },
+      {
+        "test": "tests.unit.optimization.test_comparison_runner::test_global_deadline_terminates_workers_even_before_startup_deadline",
+        "status": "failed"
+      },
+      {
+        "test": "tests.unit.optimization.test_comparison_runner::test_aggregate_memory_budget_stops_all_workers_and_joins_them",
+        "status": "failed"
+      }
+    ]
+  },
+  "frontend": {
+    "components": {
+      "passed": 526
+    },
+    "unit": {
+      "passed": 175
+    },
+    "lint": "passed",
+    "build": "passed",
+    "latest_component_revalidation": {
+      "passed": 203,
+      "files": 20,
+      "max_workers": 2,
+      "seconds": 61.14
+    },
+    "component_timeout_attempt": {
+      "passed": 524,
+      "timed_out": 2,
+      "timeout_seconds": 5,
+      "files": [
+        "RegistrarRetazoGeometry.test.jsx",
+        "NuevoPedido.test.jsx"
+      ],
+      "resolved_by_focused_run": true
+    },
+    "e2e_timeout_attempt": {
+      "passed": 7,
+      "timed_out": 1,
+      "timeout_seconds": 30,
+      "resolved_by_8_case_standalone_run": true
+    },
+    "build_warning": "One minified JavaScript chunk exceeds 500 kB; no build error."
+  }
+}

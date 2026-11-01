@@ -1,0 +1,360 @@
+{
+  "schema_version": 1,
+  "author": "Fabricio Melendez Quezada",
+  "assigned_reviewer": "Andro Quispe",
+  "source_commit": "6493b155d481a09d02337a8e172502d5e05f649e",
+  "source_tree_dirty": false,
+  "python": "3.11.9",
+  "platform": "Linux",
+  "budget": {
+    "aggregate_rss_bytes": 1073741824,
+    "worker_address_bytes": 268435456,
+    "supervisor_rss_bytes": 251658240,
+    "helper_reserve_bytes": 16777216,
+    "packet_bytes": 12582912,
+    "visual_packet_bytes": 4194304,
+    "queued_packets_per_worker": 1,
+    "retained_visual_bytes": 33554432,
+    "retained_event_bytes": 8388608,
+    "startup_seconds": 30,
+    "calculation_seconds": 120,
+    "global_seconds": 180
+  },
+  "limitations": [
+    "No incluye servidor web ni retención visual de producto.",
+    "RSS muestreado con reserva auxiliar; puede omitir picos y duplicar páginas compartidas.",
+    "Límites ejercitados por separado; no se certifica el peor caso ni el despliegue.",
+    "La barrera de entrada común es operativa; la prueba de solapamiento interno tiene instrumentación adicional."
+  ],
+  "cases": [
+    {
+      "case_id": "EXP-SMALL-001",
+      "total_units": 3,
+      "input_sha256": "5ca34870ff34fcc6690bfc68614092a506ba12755c8b676813b36015a0236af0",
+      "all_methods_match_direct_execution": true,
+      "all_ordering_facts_match": true,
+      "runner_measurements": {
+        "metric": "sampled_supervisor_and_workers_rss_plus_helper_reserve",
+        "helper_reserve_bytes": 16777216,
+        "samples": 12,
+        "maximum_rss_sum_bytes": 98619392,
+        "supervisor_peak_rss_bytes": 20291584,
+        "worker_peak_rss_bytes": {
+          "FF": 20553728,
+          "BF": 20574208,
+          "WF": 20598784
+        },
+        "maximum_packet_bytes": 2894,
+        "maximum_queued_packets_per_worker": 1,
+        "maximum_sample_gap_ms": 44.00923899993359,
+        "all_workers_stopped": true,
+        "elapsed_ms_including_ipc_and_cleanup": 373.54788800075767
+      },
+      "packet_counts": {
+        "FF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 12,
+          "milestone": 8,
+          "result": 1
+        },
+        "BF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 12,
+          "milestone": 8,
+          "result": 1
+        },
+        "WF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 12,
+          "milestone": 8,
+          "result": 1
+        }
+      }
+    },
+    {
+      "case_id": "EXP-MEDIUM-001",
+      "total_units": 9,
+      "input_sha256": "5658263478c577c4389f278e67c06948e5d6a4d5041fc6589e56aa662f1c67b5",
+      "all_methods_match_direct_execution": true,
+      "all_ordering_facts_match": true,
+      "runner_measurements": {
+        "metric": "sampled_supervisor_and_workers_rss_plus_helper_reserve",
+        "helper_reserve_bytes": 16777216,
+        "samples": 17,
+        "maximum_rss_sum_bytes": 98430976,
+        "supervisor_peak_rss_bytes": 20758528,
+        "worker_peak_rss_bytes": {
+          "FF": 20287488,
+          "BF": 20832256,
+          "WF": 20574208
+        },
+        "maximum_packet_bytes": 7330,
+        "maximum_queued_packets_per_worker": 1,
+        "maximum_sample_gap_ms": 54.42503899939766,
+        "all_workers_stopped": true,
+        "elapsed_ms_including_ipc_and_cleanup": 537.1665500006202
+      },
+      "packet_counts": {
+        "FF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 28,
+          "milestone": 20,
+          "result": 1
+        },
+        "BF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 28,
+          "milestone": 20,
+          "result": 1
+        },
+        "WF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 28,
+          "milestone": 20,
+          "result": 1
+        }
+      }
+    },
+    {
+      "case_id": "EXP-COMPLEX-001",
+      "total_units": 24,
+      "input_sha256": "a9f64f47a05d4ebffcf61e5b9a109712bfeea71a49c1204f54be8925b54ca29d",
+      "all_methods_match_direct_execution": true,
+      "all_ordering_facts_match": true,
+      "runner_measurements": {
+        "metric": "sampled_supervisor_and_workers_rss_plus_helper_reserve",
+        "helper_reserve_bytes": 16777216,
+        "samples": 33,
+        "maximum_rss_sum_bytes": 103104512,
+        "supervisor_peak_rss_bytes": 21315584,
+        "worker_peak_rss_bytes": {
+          "FF": 21721088,
+          "BF": 21716992,
+          "WF": 21716992
+        },
+        "maximum_packet_bytes": 18187,
+        "maximum_queued_packets_per_worker": 1,
+        "maximum_sample_gap_ms": 49.38583800139895,
+        "all_workers_stopped": true,
+        "elapsed_ms_including_ipc_and_cleanup": 934.4664899999771
+      },
+      "packet_counts": {
+        "FF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 65,
+          "milestone": 52,
+          "result": 1
+        },
+        "BF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 65,
+          "milestone": 52,
+          "result": 1
+        },
+        "WF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 65,
+          "milestone": 52,
+          "result": 1
+        }
+      }
+    },
+    {
+      "case_id": "T00-UNITS-150",
+      "total_units": 150,
+      "input_sha256": "78b9aff9b3bc4976d5bb7c35e8047713cc58ec3249a3dd9d7a090372fad9c5bd",
+      "all_methods_match_direct_execution": true,
+      "all_ordering_facts_match": true,
+      "runner_measurements": {
+        "metric": "sampled_supervisor_and_workers_rss_plus_helper_reserve",
+        "helper_reserve_bytes": 16777216,
+        "samples": 148,
+        "maximum_rss_sum_bytes": 108855296,
+        "supervisor_peak_rss_bytes": 24698880,
+        "worker_peak_rss_bytes": {
+          "FF": 22708224,
+          "BF": 23089152,
+          "WF": 23171072
+        },
+        "maximum_packet_bytes": 109962,
+        "maximum_queued_packets_per_worker": 1,
+        "maximum_sample_gap_ms": 50.87839499901747,
+        "all_workers_stopped": true,
+        "elapsed_ms_including_ipc_and_cleanup": 3875.4706339987024
+      },
+      "packet_counts": {
+        "FF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 316,
+          "milestone": 302,
+          "result": 1
+        },
+        "BF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 332,
+          "milestone": 302,
+          "result": 1
+        },
+        "WF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 332,
+          "milestone": 302,
+          "result": 1
+        }
+      }
+    },
+    {
+      "case_id": "T00-STOCK-50",
+      "total_units": 12,
+      "input_sha256": "1d73ffad820d7b4024ee2dbaba601fb01ab167b358bce2650fc3b4b421bedac2",
+      "all_methods_match_direct_execution": true,
+      "all_ordering_facts_match": true,
+      "runner_measurements": {
+        "metric": "sampled_supervisor_and_workers_rss_plus_helper_reserve",
+        "helper_reserve_bytes": 16777216,
+        "samples": 20,
+        "maximum_rss_sum_bytes": 104017920,
+        "supervisor_peak_rss_bytes": 25595904,
+        "worker_peak_rss_bytes": {
+          "FF": 20533248,
+          "BF": 20836352,
+          "WF": 21274624
+        },
+        "maximum_packet_bytes": 18717,
+        "maximum_queued_packets_per_worker": 1,
+        "maximum_sample_gap_ms": 33.17539099953137,
+        "all_workers_stopped": true,
+        "elapsed_ms_including_ipc_and_cleanup": 565.1764449994516
+      },
+      "packet_counts": {
+        "FF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 29,
+          "milestone": 26,
+          "result": 1
+        },
+        "BF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 30,
+          "milestone": 26,
+          "result": 1
+        },
+        "WF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 30,
+          "milestone": 26,
+          "result": 1
+        }
+      }
+    },
+    {
+      "case_id": "T00-VERTICES-128",
+      "total_units": 8,
+      "input_sha256": "23eef9df8d1b5fcf71ad8aaf730bd1f47b393b03ece3bce31116be7df4416e84",
+      "all_methods_match_direct_execution": true,
+      "all_ordering_facts_match": true,
+      "runner_measurements": {
+        "metric": "sampled_supervisor_and_workers_rss_plus_helper_reserve",
+        "helper_reserve_bytes": 16777216,
+        "samples": 29,
+        "maximum_rss_sum_bytes": 112218112,
+        "supervisor_peak_rss_bytes": 25624576,
+        "worker_peak_rss_bytes": {
+          "FF": 24969216,
+          "BF": 24862720,
+          "WF": 22061056
+        },
+        "maximum_packet_bytes": 69056,
+        "maximum_queued_packets_per_worker": 1,
+        "maximum_sample_gap_ms": 74.66625800043403,
+        "all_workers_stopped": true,
+        "elapsed_ms_including_ipc_and_cleanup": 1000.9342960001959
+      },
+      "packet_counts": {
+        "FF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 24,
+          "milestone": 18,
+          "result": 1
+        },
+        "BF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 25,
+          "milestone": 18,
+          "result": 1
+        },
+        "WF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 24,
+          "milestone": 18,
+          "result": 1
+        }
+      }
+    },
+    {
+      "case_id": "T00-GRID-4M",
+      "total_units": 1,
+      "input_sha256": "0a387b14517f02ed2b9fa70a0314eec6b7c781f2d9a82821854288de9b5228bd",
+      "all_methods_match_direct_execution": true,
+      "all_ordering_facts_match": true,
+      "runner_measurements": {
+        "metric": "sampled_supervisor_and_workers_rss_plus_helper_reserve",
+        "helper_reserve_bytes": 16777216,
+        "samples": 13,
+        "maximum_rss_sum_bytes": 114683904,
+        "supervisor_peak_rss_bytes": 27697152,
+        "worker_peak_rss_bytes": {
+          "FF": 24637440,
+          "BF": 24674304,
+          "WF": 24674304
+        },
+        "maximum_packet_bytes": 44519,
+        "maximum_queued_packets_per_worker": 1,
+        "maximum_sample_gap_ms": 47.390506999363424,
+        "all_workers_stopped": true,
+        "elapsed_ms_including_ipc_and_cleanup": 455.92179499908525
+      },
+      "packet_counts": {
+        "FF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 7,
+          "milestone": 4,
+          "result": 1
+        },
+        "BF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 7,
+          "milestone": 4,
+          "result": 1
+        },
+        "WF": {
+          "ready": 1,
+          "started": 1,
+          "visual": 7,
+          "milestone": 4,
+          "result": 1
+        }
+      }
+    }
+  ]
+}

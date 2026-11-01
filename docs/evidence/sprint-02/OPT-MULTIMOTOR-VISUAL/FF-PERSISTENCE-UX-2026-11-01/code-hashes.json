@@ -1,0 +1,67 @@
+[
+  {
+    "path": ".github/workflows/ci.yml",
+    "sha256": "f03481192675206808413e212f5db01b4ef34d1a8561ab23c66f44f8c146f26b",
+    "tested_copy_matches": true
+  },
+  {
+    "path": "backend/app/modules/authentication/presentation/dependencies.py",
+    "sha256": "da76b3919df8284e058a930c44bcc73d71ff6c5441c4c013efc97c0c773f5ea8",
+    "tested_copy_matches": true
+  },
+  {
+    "path": "backend/app/modules/optimization/application/comparison_calculation.py",
+    "sha256": "ed55f69c6cc67794a7aed63ea7f29b54e198199f785f423067417bca925b437a",
+    "tested_copy_matches": true
+  },
+  {
+    "path": "backend/app/modules/optimization/presentation/run_auth.py",
+    "sha256": "a9956b058b3a13d9118fcd98ef6f02796ef33ce2eea9e4078813d2503bd38a0d",
+    "tested_copy_matches": true
+  },
+  {
+    "path": "backend/app/shared/config/__init__.py",
+    "sha256": "ce471ca0228b3f29d083d5faab8e8653e1e5d09099be30a574789143908a34ff",
+    "tested_copy_matches": true
+  },
+  {
+    "path": "backend/scripts/dev_server.py",
+    "sha256": "cbfec23b634c1b39d41f06cb33b75862607ca7c0a214c7d6973204093a8342ea",
+    "tested_copy_matches": true
+  },
+  {
+    "path": "backend/tests/api/optimization/test_comparison_connection_lifecycle.py",
+    "sha256": "22c74f3f57482ece910a41d9474951109cbd682e36dd2fbbebf296583d4ed9fe",
+    "tested_copy_matches": true
+  },
+  {
+    "path": "backend/tests/unit/test_ci_contract.py",
+    "sha256": "698a4ab2eff21ba2b9445e41d43127855b0314ada95c6fba8ee2b4c3448aa323",
+    "tested_copy_matches": true
+  },
+  {
+    "path": "frontend/src/features/optimization/comparisonController.js",
+    "sha256": "d0d6d55c7a11e860d93d6e5d13684cbf7a9d2aee23b3e7ce29452daa815c8e1e",
+    "tested_copy_matches": true
+  },
+  {
+    "path": "frontend/src/features/optimization/pendingOrdersSource.js",
+    "sha256": "c944a15fdfd58de1eee4ad588216f024f12513770374d6ea72d6419c001a519b",
+    "tested_copy_matches": true
+  },
+  {
+    "path": "frontend/src/features/optimization/ComparisonWorkspace.jsx",
+    "sha256": "818d90188ad7ee6a460bef349363c5edd1f8903173ce09a583851ddc28ee3601",
+    "tested_copy_matches": true
+  },
+  {
+    "path": "frontend/tests/e2e/optimization-comparison.spec.js",
+    "sha256": "5924ecf859ea402ebc22ed2e3262d54e38301841d4a2a1d8793616d1145a8522",
+    "tested_copy_matches": true
+  },
+  {
+    "path": "frontend/tests/e2e/ta-dashboard.spec.js",
+    "sha256": "b7ee24359af878e2ef477704dcddea898dfb527320d92eccc58f0de81262d71d",
+    "tested_copy_matches": true
+  }
+]

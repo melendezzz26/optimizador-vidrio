@@ -28,21 +28,35 @@ class InProcessRunAdmission:
         # Age is diagnostic only. Slow event delivery is excluded from L-12;
         # capacity stays reserved until the owner releases it after stopping.
         self._leases = {}  # token -> (user_id, acquired_at)
+        self._comparison_token = None
 
     def acquire(self, user_id):
+        return self._acquire(user_id, comparison=False)
+
+    def acquire_comparison(self, user_id):
+        """Una comparación reserva todo el proceso; nunca coexiste con legacy."""
+        return self._acquire(user_id, comparison=True)
+
+    def _acquire(self, user_id, *, comparison):
         with self._lock:
             mine = sum(1 for owner, _ in self._leases.values() if owner == user_id)
             if mine >= self.max_per_user:                                   # L-11
                 raise OptimizerBusy("active_runs_per_user", self.max_per_user, mine)
+            if self._comparison_token is not None or comparison and self._leases:
+                raise OptimizerBusy("active_runs", 1, len(self._leases))
             if len(self._leases) >= self.max_active:                        # L-10
                 raise OptimizerBusy("active_runs", self.max_active, len(self._leases))
             token = object()
             self._leases[token] = (user_id, self.clock())
+            if comparison:
+                self._comparison_token = token
             return _Lease(self, token)
 
     def _release(self, token):
         with self._lock:
             self._leases.pop(token, None)
+            if self._comparison_token is token:
+                self._comparison_token = None
 
     def active(self):
         with self._lock:

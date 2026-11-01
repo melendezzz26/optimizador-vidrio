@@ -4,6 +4,28 @@ API FastAPI organizada progresivamente como monolito modular.
 La versión de Python actualmente validada es **3.11.9**.
 Los comandos siguientes se ejecutan desde `backend/`.
 
+## Comparación concurrente de motores
+
+`/api/optimization/comparisons` ejecuta FF/BF/WF sobre una entrada congelada,
+con eventos independientes, resultados persistidos y selección humana. La
+confirmación aplica exclusivamente el elegido. El contrato anterior `/runs`
+mantiene FF V1 y `visual-v2`.
+
+Este nuevo recorrido requiere **Linux con procfs, un proceso web y capacidad
+agregada disponible**; rechaza entornos insuficientes sin degradar a secuencial.
+Incluye la migración aditiva `s2cmp01a1b2c`. Revisar rutas, límites, idempotencia,
+recuperación y compatibilidad en la
+[guía comparison-v1](../docs/contracts/optimization/comparison-v1.md) y sus
+[pruebas/evidencia](../docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/README.md)
+antes de habilitarlo en otro entorno. La implementación no acredita un despliegue.
+
+En Windows, ejecutar el backend en **WSL2**, conservando el frontend Vite en
+Windows si se desea. Python nativo de Windows devuelve 503 de forma intencional
+porque carece de los controles Linux del supervisor. Ver el
+[arranque y diagnóstico local con WSL2](../docs/development/optimization-wsl2.md).
+Desde `backend/`, `python -m scripts.check_comparison_environment` verifica la
+plataforma y admisión por memoria sin acceder a la base ni revelar credenciales.
+
 ## Entorno e instalación
 
 En Windows con PowerShell, utilizando una instalación de Python 3.11.9:
@@ -65,12 +87,28 @@ python -c "import secrets; print(secrets.token_urlsafe(32))"
 ## Ejecución
 
 ```bash
-python -m uvicorn main:app --reload
+python -m scripts.dev_server
 ```
 
 La API queda disponible en `http://127.0.0.1:8000` y su documentación interactiva
 en `http://127.0.0.1:8000/docs`. La autenticación valida contra las tablas
 `usuarios` y `roles` y exige `SECRET_KEY` en el entorno.
+
+El lanzador usa un proceso web y no recarga por defecto. Para editar código:
+`python -m scripts.dev_server --reload`. Excluye `.venv`, pruebas, scripts y
+migraciones de las recargas; una recarga legítima de la aplicación igualmente
+descarta eventos/máscaras en memoria. Para comparaciones y evidencia usar el
+modo estable. El supervisor multimétodo requiere Linux/WSL2; ver la
+[guía de WSL2](../docs/development/optimization-wsl2.md).
+
+El pool PostgreSQL usa por defecto `DB_POOL_SIZE=5`, `DB_MAX_OVERFLOW=0` y
+`DB_POOL_TIMEOUT=30`. Son límites por proceso; no aumentan la cuota del proveedor.
+Mantener una sola instancia contra la base de desarrollo y considerar también
+clientes externos. Las variables explícitas del entorno prevalecen. La lectura
+de autorización compartida devuelve su conexión antes de abrir la unidad
+de trabajo; cada unidad conserva commit/rollback/cierre propios. Una caída de
+DNS o del proveedor aún puede impedir guardar: el fallo se informa y no se
+reintenta automáticamente.
 
 Esta preparación no crea tablas ni requiere ejecutar seed, `/db-test` o comandos
 de migración Alembic. La divergencia de revisiones remotas sigue tratándose en
@@ -113,6 +151,20 @@ configuración debe publicar una nueva versión vigente de 5°, sin alterar las
 versiones históricas. Este cambio de código no migra ninguna base de datos.
 El motor permite pasos explícitos para experimentos y reproducción histórica.
 
+Para una base que ya conserva una versión vigente de 90° u otro paso válido,
+el PR #88 aporta una publicación administrativa versionada. Ejecutar solo tras
+autorizar el destino y con una cuenta activa existente, desde `backend/`:
+
+```bash
+python -m scripts.publish_configuration --responsable USUARIO_ACTIVO
+```
+
+El comando solicita escribir `PUBLICAR`. Copia los demás parámetros a una
+versión nueva de 5°, deja la anterior como histórica y conserva las referencias
+de las optimizaciones existentes. No requiere una migración Alembic. Repetirlo
+cuando la vigente ya es de 5° no crea otra versión; el seed demo conserva la
+vigente y por eso no sustituye esta operación.
+
 ## Primer Administrador
 
 La gestión de usuarios exige una sesión de Administrador, así que la primera
@@ -132,7 +184,8 @@ ya existe un Administrador activo. Requiere que los roles estén cargados
 Con el entorno activado y desde `backend/`:
 
 ```bash
-python -m pytest -q
+python -m pytest tests --ignore=tests/unit/optimization/test_comparison_runner.py -q -ra
+python -m pytest tests/unit/optimization/test_comparison_runner.py -q -ra
 ```
 
 La suite usa una base SQLite en memoria fijada en `tests/conftest.py` y una

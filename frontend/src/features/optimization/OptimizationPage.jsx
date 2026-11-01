@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ComparisonWorkspace } from './ComparisonWorkspace';
 import { ScanLine } from 'lucide-react';
 import { canExecuteOptimization, canViewResults, hasPermission } from '../authentication';
 import { AppShell } from '../../shared/components/AppShell';
@@ -178,13 +179,18 @@ function OptimizationContent({ user, result, initialRunId, token, source: provid
   </PageCard>;
 }
 export function OptimizationPage({ user, toolbar, initialMode = 'first-fit', ...props }) {
+  const [legacyOrigin, setLegacyOrigin] = useState(null);
+  const legacy = legacyOrigin || props.adapter || props.result || initialMode === 'legacy-first-fit';
+  const showLegacy = useCallback(id => setLegacyOrigin(id), []);
   return <AppShell activeItem="optimization" user={user}>{toolbar}
     {canViewResults(user) ? <>
       <div className="ng-ui optimization-workspace">
         <PageHeader title="Optimización de corte" context="Trabajo de vidriería" icon={ScanLine}
-          description="Selecciona pedidos → revisa vidrios y piezas → calcula la distribución → confirma el corte." />
+          description={legacy ? 'Selecciona pedidos → revisa vidrios y piezas → calcula la distribución → confirma el corte.' : 'Ejecuta tres motores → compara sus resultados → elige y confirma una distribución.'} />
       </div>
-      {initialMode !== 'hu015' ? <OptimizationContent {...props} user={user} />
+      {legacyOrigin && <div className="ng-ui"><button type="button" className="ng-button" onClick={() => setLegacyOrigin(false)}>Volver a comparación de motores</button></div>}
+      {initialMode !== 'hu015' ? legacy ? <OptimizationContent {...props} initialRunId={typeof legacyOrigin === 'number' ? legacyOrigin : props.initialRunId} user={user} />
+        : <ComparisonWorkspace {...props} initialRunId={legacyOrigin === false ? undefined : props.initialRunId} user={user} onLegacy={showLegacy} />
         : canExecuteOptimization(user) ? <Hu015Rasterization {...props} />
           : <FeedbackMessage variant="error">No tienes permiso para preparar la vista previa de piezas.</FeedbackMessage>}
     </> : <FeedbackMessage variant="error">No tienes permiso para consultar la optimización.</FeedbackMessage>}

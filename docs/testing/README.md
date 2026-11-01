@@ -21,8 +21,14 @@ Las pruebas nuevas no deben utilizar por defecto la base remota compartida.
 Desde `backend/`, con el entorno preparado según su [README](../../backend/README.md):
 
 ```bash
-python -m pytest -q
+python -m pytest tests --ignore=tests/unit/optimization/test_comparison_runner.py -q -ra
+python -m pytest tests/unit/optimization/test_comparison_runner.py -q -ra
 ```
+
+Ejecutar ambos grupos. El runner comparativo comprueba el RSS de su supervisor;
+por eso sus pruebas reales usan un proceso pytest limpio, separado del consumo
+acumulado de la suite. No se aumentan límites ni se sustituyen los workers por
+mocks. Esta misma separación se aplica en CI.
 
 ## Frontend
 

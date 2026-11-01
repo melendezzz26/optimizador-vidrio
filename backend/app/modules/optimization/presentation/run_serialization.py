@@ -39,6 +39,10 @@ def progress_response(placed_units: int, total_units: int) -> dict:
 
 
 def run_response(run: OptimizationRun) -> RunResponseV1:
+    return RunResponseV1(**run_response_values(run))
+
+
+def run_response_values(run: OptimizationRun) -> dict:
     result, problem = run.result, run.result.problem
     metrics = None
     if result.metrics is not None:
@@ -54,7 +58,7 @@ def run_response(run: OptimizationRun) -> RunResponseV1:
                             tiempo_computacional_ms=result.computation_time_ms)
     reason = {RunStatus.RUNNING: "PENDING", RunStatus.NO_SOLUTION: "NO_FIT",
               RunStatus.FAILED: "INTERRUPTED", RunStatus.COMPLETED: "NO_FIT"}[run.status]
-    return RunResponseV1(
+    return dict(
         schema_version=1, id_optimizacion=run.optimization_id, estado=run.status, metodo=result.method,
         order_ids=list(problem.order_ids), configuracion=config_response(problem.config),
         groups=[dict(id_tipo_vidrio=group.glass_type_id, espesor_mm=group.thickness_mm,

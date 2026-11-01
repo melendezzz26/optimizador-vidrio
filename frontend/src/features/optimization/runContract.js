@@ -120,8 +120,8 @@ export function parseEvent(raw) {
   return structuredClone(raw);
 }
 
-export function parseRun(raw) {
-  require(object(raw) && raw.schema_version === 1 && positiveId(raw.id_optimizacion) && raw.metodo === 'FF' && states.has(raw.estado));
+export function parseRun(raw, { methods = ['FF'] } = {}) {
+  require(object(raw) && raw.schema_version === 1 && positiveId(raw.id_optimizacion) && methods.includes(raw.metodo) && states.has(raw.estado));
   buildRunRequest(raw.order_ids); configuration(raw.configuracion); progress(raw); metrics(raw);
   require(raw.tiempo_computacional_ms == null || count(raw.tiempo_computacional_ms));
   if (raw.metrics_available) require(raw.metrics.tiempo_computacional_ms === raw.tiempo_computacional_ms);

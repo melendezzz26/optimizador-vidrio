@@ -35,7 +35,7 @@ export function parseMaskDescriptor(data, runId) {
   return structuredClone(data);
 }
 
-export function parseVisualEvent(raw) {
+export function parseVisualEvent(raw, { methods = ['FF'] } = {}) {
   check(object(raw) && raw.schema_version === 2 && id(raw.id_optimizacion) && id(raw.sequence)
     && typeof raw.occurred_at === 'string' && /(Z|\+00:00)$/.test(raw.occurred_at)
     && Number.isFinite(Date.parse(raw.occurred_at)) && object(raw.data));
@@ -55,7 +55,7 @@ export function parseVisualEvent(raw) {
     if (raw.event.startsWith('preparation_')) {
       check(id(d.unique_pieces) && count(d.material_bases) && id(d.total_units));
       if (raw.event === 'preparation_started') {
-        check(d.metodo === 'FF' && object(d.configuracion));
+        check(methods.includes(d.metodo) && object(d.configuracion));
         for (const key of ['resolucion_raster_mm', 'margen_mm', 'separacion_mm', 'paso_angular_grados']) {
           check(number(d.configuracion[key]) && Number(d.configuracion[key]) >= 0);
         }

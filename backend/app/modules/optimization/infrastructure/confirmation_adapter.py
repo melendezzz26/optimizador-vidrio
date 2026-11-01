@@ -25,6 +25,7 @@ class SqlConfirmationRepository:
     def __init__(self, session, runs):
         self.session, self.runs = session, runs
         self.locked, self.skipped = {}, []
+        self.method_name = "First Fit"
 
     def lock_run(self, optimization_id):
         row = self.session.scalar(select(Optimizacion).where(Optimizacion.id_optimizacion == optimization_id)
@@ -118,7 +119,7 @@ class SqlConfirmationRepository:
             sheet = c.stock.source is MaterialSource.SHEET
             self.session.add(MovimientoInventario(id_plancha=c.stock.material_id if sheet else None,
                 id_retazo=None if sheet else c.stock.material_id, tipo_evento="CONSUMO_OPTIMIZACION",
-                motivo=f"Confirmación First Fit de optimización {optimization_id}.",
+                motivo=f"Confirmación {self.method_name} de optimización {optimization_id}.",
                 observacion="stock_unit_index=" + ",".join(str(i) for i in c.unit_indices),
                 id_usuario=actor_id, id_optimizacion=optimization_id, cantidad_afectada=c.quantity,
                 fecha=datetime.now(timezone.utc)))
@@ -136,7 +137,7 @@ class SqlConfirmationRepository:
                 self.skipped.append({"source": json_value(r), "reason": "INVENTORY_GEOMETRY_NOT_PERSISTABLE"})
                 continue
             marker = 'P' if source.source is MaterialSource.SHEET else 'R'
-            code = f"FF-{context.run.optimization_id}-{marker}{source.material_id}-{source.physical_unit_index}"
+            code = f"{context.run.result.method}-{context.run.optimization_id}-{marker}{source.material_id}-{source.physical_unit_index}"
             if self.session.scalar(select(Retazo.id_retazo).where(Retazo.codigo == code)) is not None:
                 raise RunError("STATE_CONFLICT", "El código del retazo resultante ya existe; solicita revisión.")
             row = Retazo(codigo=code, id_tipo_vidrio=source.glass_type_id, espesor_mm=source.thickness_mm,

@@ -10,7 +10,8 @@ from .rotation import Orientation
 @dataclass(frozen=True, kw_only=True)
 class VisualEvent:
     kind: Literal['preparation_started', 'piece_rasterizing', 'piece_ready',
-        'preparation_completed', 'orientation_testing', 'source_selected', 'piece_unplaced']
+        'preparation_completed', 'ordering_ready', 'orientation_testing', 'source_selected', 'piece_unplaced']
+    ordered_units: tuple[PieceUnit, ...] = ()
     unit: PieceUnit | None = None
     stock: StockCandidate | None = None
     orientation: Orientation | None = None

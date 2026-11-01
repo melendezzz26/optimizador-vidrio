@@ -1,0 +1,34 @@
+[
+  {
+    "capacity": 1,
+    "peak_checked_out": 1,
+    "returned_to_pool": true,
+    "pieces": 16,
+    "worker_database_connections": [
+      0,
+      0,
+      0
+    ],
+    "sheets": {
+      "FF": 1,
+      "BF": 1,
+      "WF": 10
+    }
+  },
+  {
+    "capacity": 5,
+    "peak_checked_out": 5,
+    "returned_to_pool": true,
+    "pieces": 16,
+    "worker_database_connections": [
+      0,
+      0,
+      0
+    ],
+    "sheets": {
+      "FF": 1,
+      "BF": 1,
+      "WF": 10
+    }
+  }
+]

@@ -36,7 +36,7 @@ test('S1-01 vista previa real conserva pendiente, permite First Fit y confirma c
   await expect(page.getByRole('img', { name: `Detalle del corte de la pieza #${order.piezas[0].id_pieza}` })).toBeVisible();
   expect(await orderStates(page, data)).toEqual(['PENDIENTE']);
   expect(await stock(page, data)).toEqual(before);
-  await page.goto('/'); await open(page);
+  await page.goto('/first-fit-compatibility.html'); await open(page);
   const { result } = await run(page, data, info);
   expect(result.completo).toBe(true);
   expect(await orderStates(page, data)).toEqual(['OPTIMIZADO']);

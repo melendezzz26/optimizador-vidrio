@@ -37,3 +37,7 @@ class ExecutionInterrupted(Exception):
 
 class TimeBudgetExceeded(Exception):
     """TA-037 L-12: the calculation passed its time budget; stopped at a milestone."""
+
+
+class WorkersNotStopped(RuntimeError):
+    """No se puede liberar admisión/pedidos sin probar terminación de los hijos."""

@@ -33,7 +33,7 @@ class VisualSession:
             charged = 0 if id(mask) in self.mask_ids else (
                 mask.row_count * (40 + 4 * ((mask.columns + 29) // 30)) + 4096
                 + len(orientation.geometry.get('vertices_mm', ())) * 512)
-            if len(self.records) >= self.store.max_records or self.charged_bytes + charged > self.store.max_bytes:
+            if len(self.records) >= self.store.max_records or not self.store.can_retain(self, charged):
                 return None
             reference = uuid4().hex
             record = MaskRecord(reference, kind, owner, orientation)
@@ -90,6 +90,9 @@ class InMemoryVisualStore:
         self.clock, self.max_contexts, self.max_bytes = clock, max_contexts, max_bytes
         self.max_records, self.ttl, self.lock = max_records, ttl, RLock()
         self.contexts = []
+
+    def can_retain(self, session, charged):
+        return session.charged_bytes + charged <= self.max_bytes
 
     def _drop(self, session):
         if session in self.contexts:

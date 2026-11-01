@@ -33,8 +33,20 @@ def historical_metadata(revision):
         "1c8754481a08",
         "d6e7f8a9b0c1",
         "s1rbac01a2b3",
+        "s1opt02b4c6d",
     }:
         raise ValueError("No hay contrato histórico para esta revisión")
+
+    if revision == "s1opt02b4c6d":
+        metadata = _load(BACKEND / "tests/contracts/s1rbac_models.py")
+        sa.Table("optimizacion_pedidos", metadata,
+            sa.Column("id_optimizacion", sa.Integer(), sa.ForeignKey("optimizaciones.id_optimizacion",
+                name="fk_optimizacion_pedidos_optimizacion"), nullable=False),
+            sa.Column("id_pedido", sa.Integer(), sa.ForeignKey("pedidos.id_pedido",
+                name="fk_optimizacion_pedidos_pedido"), nullable=False),
+            sa.PrimaryKeyConstraint("id_optimizacion", "id_pedido", name="pk_optimizacion_pedidos"),
+            sa.Index("ix_optimizacion_pedidos_pedido", "id_pedido", "id_optimizacion"))
+        return metadata
 
     if revision == "s1rbac01a2b3":
         return _load(BACKEND / "tests/contracts/s1rbac_models.py")

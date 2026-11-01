@@ -1,0 +1,647 @@
+{
+  "files": [
+    {
+      "file": "tests/api/authorization/test_endpoint_permissions.py",
+      "rss_bytes": 118550528,
+      "available_bytes": 7124230144
+    },
+    {
+      "file": "tests/api/authorization/test_permissions_from_database.py",
+      "rss_bytes": 125988864,
+      "available_bytes": 7126446080
+    },
+    {
+      "file": "tests/api/authorization/test_roles_api.py",
+      "rss_bytes": 127537152,
+      "available_bytes": 7127433216
+    },
+    {
+      "file": "tests/api/clients/test_clients_api.py",
+      "rss_bytes": 132861952,
+      "available_bytes": 7133757440
+    },
+    {
+      "file": "tests/api/inventory/test_inventory_api.py",
+      "rss_bytes": 149737472,
+      "available_bytes": 7130120192
+    },
+    {
+      "file": "tests/api/inventory/test_lazy_db_import.py",
+      "rss_bytes": 150159360,
+      "available_bytes": 7129026560
+    },
+    {
+      "file": "tests/api/inventory/test_movement_history_api.py",
+      "rss_bytes": 150167552,
+      "available_bytes": 7112175616
+    },
+    {
+      "file": "tests/api/inventory/test_writeoff_api.py",
+      "rss_bytes": 150171648,
+      "available_bytes": 7115108352
+    },
+    {
+      "file": "tests/api/inventory/test_writeoff_schema.py",
+      "rss_bytes": 150188032,
+      "available_bytes": 7115100160
+    },
+    {
+      "file": "tests/api/optimization/test_commercial_cut.py",
+      "rss_bytes": 150200320,
+      "available_bytes": 7114838016
+    },
+    {
+      "file": "tests/api/optimization/test_comparison_connection_lifecycle.py",
+      "rss_bytes": 153296896,
+      "available_bytes": 6999175168
+    },
+    {
+      "file": "tests/api/optimization/test_comparisons_api.py",
+      "rss_bytes": 160206848,
+      "available_bytes": 6905872384
+    },
+    {
+      "file": "tests/api/optimization/test_confirmation_api.py",
+      "rss_bytes": 162287616,
+      "available_bytes": 6851596288
+    },
+    {
+      "file": "tests/api/optimization/test_optimization_api.py",
+      "rss_bytes": 165453824,
+      "available_bytes": 6866132992
+    },
+    {
+      "file": "tests/api/optimization/test_preview_first_fit.py",
+      "rss_bytes": 168345600,
+      "available_bytes": 6915796992
+    },
+    {
+      "file": "tests/api/optimization/test_run_concurrency.py",
+      "rss_bytes": 169275392,
+      "available_bytes": 6879571968
+    },
+    {
+      "file": "tests/api/optimization/test_run_contract.py",
+      "rss_bytes": 170127360,
+      "available_bytes": 6840688640
+    },
+    {
+      "file": "tests/api/optimization/test_run_geometry_api.py",
+      "rss_bytes": 170156032,
+      "available_bytes": 6843961344
+    },
+    {
+      "file": "tests/api/optimization/test_run_load_limits.py",
+      "rss_bytes": 171163648,
+      "available_bytes": 6824542208
+    },
+    {
+      "file": "tests/api/optimization/test_run_load_stress.py",
+      "rss_bytes": 172929024,
+      "available_bytes": 6797545472
+    },
+    {
+      "file": "tests/api/optimization/test_runs_api.py",
+      "rss_bytes": 173518848,
+      "available_bytes": 6754775040
+    },
+    {
+      "file": "tests/api/optimization/test_visual_runs_api.py",
+      "rss_bytes": 175546368,
+      "available_bytes": 6745346048
+    },
+    {
+      "file": "tests/api/orders/test_orders_api.py",
+      "rss_bytes": 177172480,
+      "available_bytes": 6722535424
+    },
+    {
+      "file": "tests/api/test_auth_api.py",
+      "rss_bytes": 180400128,
+      "available_bytes": 6644056064
+    },
+    {
+      "file": "tests/api/test_health_api.py",
+      "rss_bytes": 187957248,
+      "available_bytes": 6649389056
+    },
+    {
+      "file": "tests/api/test_require_permission.py",
+      "rss_bytes": 189145088,
+      "available_bytes": 6647349248
+    },
+    {
+      "file": "tests/api/test_users_api.py",
+      "rss_bytes": 189317120,
+      "available_bytes": 6646870016
+    },
+    {
+      "file": "tests/api/test_validation_errors_sanitized.py",
+      "rss_bytes": 203288576,
+      "available_bytes": 6628835328
+    },
+    {
+      "file": "tests/integration/clients/test_repository.py",
+      "rss_bytes": 204832768,
+      "available_bytes": 6629146624
+    },
+    {
+      "file": "tests/integration/inventory/test_catalog.py",
+      "rss_bytes": 205049856,
+      "available_bytes": 6508019712
+    },
+    {
+      "file": "tests/integration/inventory/test_repository.py",
+      "rss_bytes": 209051648,
+      "available_bytes": 6304673792
+    },
+    {
+      "file": "tests/integration/modules/orders/infrastructure/test_repositories.py",
+      "rss_bytes": 209977344,
+      "available_bytes": 6297403392
+    },
+    {
+      "file": "tests/integration/optimization/test_best_fit_slice.py",
+      "rss_bytes": 210829312,
+      "available_bytes": 6277869568
+    },
+    {
+      "file": "tests/integration/optimization/test_comparison_calculation.py",
+      "rss_bytes": 213975040,
+      "available_bytes": 6271873024
+    },
+    {
+      "file": "tests/integration/optimization/test_comparison_confirmation.py",
+      "rss_bytes": 214339584,
+      "available_bytes": 6180130816
+    },
+    {
+      "file": "tests/integration/optimization/test_comparison_migration.py",
+      "rss_bytes": 214552576,
+      "available_bytes": 6161264640
+    },
+    {
+      "file": "tests/integration/optimization/test_comparison_persistence.py",
+      "rss_bytes": 217559040,
+      "available_bytes": 6122618880
+    },
+    {
+      "file": "tests/integration/optimization/test_comparison_slice.py",
+      "rss_bytes": 218587136,
+      "available_bytes": 6137405440
+    },
+    {
+      "file": "tests/integration/optimization/test_configuration_publication.py",
+      "rss_bytes": 226926592,
+      "available_bytes": 6130765824
+    },
+    {
+      "file": "tests/integration/optimization/test_configuration_seed.py",
+      "rss_bytes": 227364864,
+      "available_bytes": 6112395264
+    },
+    {
+      "file": "tests/integration/optimization/test_confirmation.py",
+      "rss_bytes": 227827712,
+      "available_bytes": 6106259456
+    },
+    {
+      "file": "tests/integration/optimization/test_confirmation_concurrency.py",
+      "rss_bytes": 229769216,
+      "available_bytes": 6085230592
+    },
+    {
+      "file": "tests/integration/optimization/test_confirmation_rollback.py",
+      "rss_bytes": 229769216,
+      "available_bytes": 6059741184
+    },
+    {
+      "file": "tests/integration/optimization/test_first_fit_slice.py",
+      "rss_bytes": 229769216,
+      "available_bytes": 6056173568
+    },
+    {
+      "file": "tests/integration/optimization/test_multipedido_migration.py",
+      "rss_bytes": 229769216,
+      "available_bytes": 6050832384
+    },
+    {
+      "file": "tests/integration/optimization/test_run_load_limits_pg.py",
+      "rss_bytes": 229867520,
+      "available_bytes": 5983600640
+    },
+    {
+      "file": "tests/integration/optimization/test_run_states.py",
+      "rss_bytes": 229867520,
+      "available_bytes": 5985460224
+    },
+    {
+      "file": "tests/integration/optimization/test_runs.py",
+      "rss_bytes": 229871616,
+      "available_bytes": 5963005952
+    },
+    {
+      "file": "tests/integration/optimization/test_start_concurrency.py",
+      "rss_bytes": 229871616,
+      "available_bytes": 5953863680
+    },
+    {
+      "file": "tests/integration/optimization/test_stock_adapter.py",
+      "rss_bytes": 229888000,
+      "available_bytes": 5940498432
+    },
+    {
+      "file": "tests/integration/optimization/test_worst_fit_slice.py",
+      "rss_bytes": 229888000,
+      "available_bytes": 5927907328
+    },
+    {
+      "file": "tests/integration/test_clients_migration.py",
+      "rss_bytes": 231436288,
+      "available_bytes": 5925879808
+    },
+    {
+      "file": "tests/integration/test_create_first_admin.py",
+      "rss_bytes": 235884544,
+      "available_bytes": 5833515008
+    },
+    {
+      "file": "tests/integration/test_health_database.py",
+      "rss_bytes": 237309952,
+      "available_bytes": 5836087296
+    },
+    {
+      "file": "tests/integration/test_hu014_movement_migration.py",
+      "rss_bytes": 237309952,
+      "available_bytes": 5810401280
+    },
+    {
+      "file": "tests/integration/test_orders_multimaterial_migration.py",
+      "rss_bytes": 237359104,
+      "available_bytes": 5801066496
+    },
+    {
+      "file": "tests/integration/test_r1_migration.py",
+      "rss_bytes": 240410624,
+      "available_bytes": 5593239552
+    },
+    {
+      "file": "tests/integration/test_r2_migration.py",
+      "rss_bytes": 248594432,
+      "available_bytes": 5376360448
+    },
+    {
+      "file": "tests/integration/test_r3_migration.py",
+      "rss_bytes": 250830848,
+      "available_bytes": 5294026752
+    },
+    {
+      "file": "tests/integration/test_r4_migration.py",
+      "rss_bytes": 251006976,
+      "available_bytes": 5231329280
+    },
+    {
+      "file": "tests/integration/test_role_permission_repository.py",
+      "rss_bytes": 251142144,
+      "available_bytes": 5164331008
+    },
+    {
+      "file": "tests/integration/test_s1_rbac_migration.py",
+      "rss_bytes": 251260928,
+      "available_bytes": 5164576768
+    },
+    {
+      "file": "tests/integration/test_sqlalchemy_user_reader.py",
+      "rss_bytes": 253104128,
+      "available_bytes": 4946128896
+    },
+    {
+      "file": "tests/integration/test_sqlalchemy_user_repository.py",
+      "rss_bytes": 253612032,
+      "available_bytes": 4946706432
+    },
+    {
+      "file": "tests/integration/test_staging_bootstrap.py",
+      "rss_bytes": 255029248,
+      "available_bytes": 4949127168
+    },
+    {
+      "file": "tests/integration/test_ta036_migration.py",
+      "rss_bytes": 255037440,
+      "available_bytes": 4947968000
+    },
+    {
+      "file": "tests/optimization/test_placement.py",
+      "rss_bytes": 255049728,
+      "available_bytes": 4944052224
+    },
+    {
+      "file": "tests/optimization/test_raster_mask.py",
+      "rss_bytes": 255238144,
+      "available_bytes": 4944048128
+    },
+    {
+      "file": "tests/optimization/test_rasterize_material.py",
+      "rss_bytes": 255246336,
+      "available_bytes": 4944048128
+    },
+    {
+      "file": "tests/optimization/test_rasterize_polygon.py",
+      "rss_bytes": 255262720,
+      "available_bytes": 4945133568
+    },
+    {
+      "file": "tests/optimization/test_rasterize_standard.py",
+      "rss_bytes": 255315968,
+      "available_bytes": 4947939328
+    },
+    {
+      "file": "tests/unit/authentication/test_layer_dependencies.py",
+      "rss_bytes": 255463424,
+      "available_bytes": 4947939328
+    },
+    {
+      "file": "tests/unit/authentication/test_permission_catalog.py",
+      "rss_bytes": 255500288,
+      "available_bytes": 4947939328
+    },
+    {
+      "file": "tests/unit/authentication/test_permission_seed.py",
+      "rss_bytes": 255553536,
+      "available_bytes": 4950188032
+    },
+    {
+      "file": "tests/unit/authentication/test_use_cases.py",
+      "rss_bytes": 256462848,
+      "available_bytes": 4947755008
+    },
+    {
+      "file": "tests/unit/authentication/test_username.py",
+      "rss_bytes": 256479232,
+      "available_bytes": 4947755008
+    },
+    {
+      "file": "tests/unit/clients/test_layer_dependencies.py",
+      "rss_bytes": 256561152,
+      "available_bytes": 4947755008
+    },
+    {
+      "file": "tests/unit/clients/test_use_cases.py",
+      "rss_bytes": 256634880,
+      "available_bytes": 4947755008
+    },
+    {
+      "file": "tests/unit/inventory/test_catalog.py",
+      "rss_bytes": 256741376,
+      "available_bytes": 4945989632
+    },
+    {
+      "file": "tests/unit/inventory/test_geometry.py",
+      "rss_bytes": 256815104,
+      "available_bytes": 4945989632
+    },
+    {
+      "file": "tests/unit/inventory/test_movement_history.py",
+      "rss_bytes": 257302528,
+      "available_bytes": 4945510400
+    },
+    {
+      "file": "tests/unit/inventory/test_movement_model.py",
+      "rss_bytes": 257331200,
+      "available_bytes": 4945510400
+    },
+    {
+      "file": "tests/unit/inventory/test_service.py",
+      "rss_bytes": 257347584,
+      "available_bytes": 4945510400
+    },
+    {
+      "file": "tests/unit/inventory/test_writeoff.py",
+      "rss_bytes": 258199552,
+      "available_bytes": 4939370496
+    },
+    {
+      "file": "tests/unit/modules/orders/application/test_use_cases.py",
+      "rss_bytes": 258265088,
+      "available_bytes": 4939378688
+    },
+    {
+      "file": "tests/unit/modules/orders/domain/test_domain_geometry.py",
+      "rss_bytes": 258392064,
+      "available_bytes": 4939902976
+    },
+    {
+      "file": "tests/unit/modules/orders/test_layer_dependencies.py",
+      "rss_bytes": 258441216,
+      "available_bytes": 4939902976
+    },
+    {
+      "file": "tests/unit/optimization/test_accept_run_load_limits.py",
+      "rss_bytes": 259371008,
+      "available_bytes": 4937904128
+    },
+    {
+      "file": "tests/unit/optimization/test_best_fit.py",
+      "rss_bytes": 260186112,
+      "available_bytes": 4939567104
+    },
+    {
+      "file": "tests/unit/optimization/test_commercial_raster.py",
+      "rss_bytes": 260407296,
+      "available_bytes": 4939714560
+    },
+    {
+      "file": "tests/unit/optimization/test_common_rules.py",
+      "rss_bytes": 267628544,
+      "available_bytes": 4932182016
+    },
+    {
+      "file": "tests/unit/optimization/test_comparison.py",
+      "rss_bytes": 267644928,
+      "available_bytes": 4931936256
+    },
+    {
+      "file": "tests/unit/optimization/test_comparison_contract.py",
+      "rss_bytes": 261038080,
+      "available_bytes": 4945436672
+    },
+    {
+      "file": "tests/unit/optimization/test_comparison_snapshot.py",
+      "rss_bytes": 261193728,
+      "available_bytes": 4945403904
+    },
+    {
+      "file": "tests/unit/optimization/test_confirmation.py",
+      "rss_bytes": 261193728,
+      "available_bytes": 4945702912
+    },
+    {
+      "file": "tests/unit/optimization/test_experimental_cases.py",
+      "rss_bytes": 261193728,
+      "available_bytes": 4945702912
+    },
+    {
+      "file": "tests/unit/optimization/test_first_fit.py",
+      "rss_bytes": 262598656,
+      "available_bytes": 4941684736
+    },
+    {
+      "file": "tests/unit/optimization/test_load_budget.py",
+      "rss_bytes": 263077888,
+      "available_bytes": 4942024704
+    },
+    {
+      "file": "tests/unit/optimization/test_metrics.py",
+      "rss_bytes": 270721024,
+      "available_bytes": 4922089472
+    },
+    {
+      "file": "tests/unit/optimization/test_preparation.py",
+      "rss_bytes": 270721024,
+      "available_bytes": 4921573376
+    },
+    {
+      "file": "tests/unit/optimization/test_problem_contract.py",
+      "rss_bytes": 270721024,
+      "available_bytes": 4921573376
+    },
+    {
+      "file": "tests/unit/optimization/test_retazo_priority.py",
+      "rss_bytes": 270721024,
+      "available_bytes": 4921823232
+    },
+    {
+      "file": "tests/unit/optimization/test_rotation.py",
+      "rss_bytes": 270721024,
+      "available_bytes": 4922920960
+    },
+    {
+      "file": "tests/unit/optimization/test_run_admission.py",
+      "rss_bytes": 270721024,
+      "available_bytes": 4923154432
+    },
+    {
+      "file": "tests/unit/optimization/test_run_geometry.py",
+      "rss_bytes": 270680064,
+      "available_bytes": 4924100608
+    },
+    {
+      "file": "tests/unit/optimization/test_serialization.py",
+      "rss_bytes": 270680064,
+      "available_bytes": 4924338176
+    },
+    {
+      "file": "tests/unit/optimization/test_sprint2_angles.py",
+      "rss_bytes": 270680064,
+      "available_bytes": 4923584512
+    },
+    {
+      "file": "tests/unit/optimization/test_stock.py",
+      "rss_bytes": 270684160,
+      "available_bytes": 4923584512
+    },
+    {
+      "file": "tests/unit/optimization/test_use_cases.py",
+      "rss_bytes": 270684160,
+      "available_bytes": 4923584512
+    },
+    {
+      "file": "tests/unit/optimization/test_visual_facts.py",
+      "rss_bytes": 270684160,
+      "available_bytes": 4923584512
+    },
+    {
+      "file": "tests/unit/optimization/test_visual_store.py",
+      "rss_bytes": 270684160,
+      "available_bytes": 4924616704
+    },
+    {
+      "file": "tests/unit/optimization/test_worst_fit.py",
+      "rss_bytes": 270684160,
+      "available_bytes": 4924616704
+    },
+    {
+      "file": "tests/unit/shared/test_alembic_config.py",
+      "rss_bytes": 270684160,
+      "available_bytes": 4929880064
+    },
+    {
+      "file": "tests/unit/shared/test_config.py",
+      "rss_bytes": 270684160,
+      "available_bytes": 4930895872
+    },
+    {
+      "file": "tests/unit/shared/test_database_session.py",
+      "rss_bytes": 270696448,
+      "available_bytes": 4906274816
+    },
+    {
+      "file": "tests/unit/shared/test_dev_server.py",
+      "rss_bytes": 270696448,
+      "available_bytes": 4908826624
+    },
+    {
+      "file": "tests/unit/shared/test_passwords.py",
+      "rss_bytes": 270696448,
+      "available_bytes": 4908883968
+    },
+    {
+      "file": "tests/unit/shared/test_tokens.py",
+      "rss_bytes": 270696448,
+      "available_bytes": 4915884032
+    },
+    {
+      "file": "tests/unit/test_ci_contract.py",
+      "rss_bytes": 270696448,
+      "available_bytes": 4884504576
+    },
+    {
+      "file": "tests/unit/test_database_structure.py",
+      "rss_bytes": 270696448,
+      "available_bytes": 4890222592
+    },
+    {
+      "file": "tests/unit/test_r1_models.py",
+      "rss_bytes": 270696448,
+      "available_bytes": 4891955200
+    },
+    {
+      "file": "tests/unit/test_r2_models.py",
+      "rss_bytes": 270696448,
+      "available_bytes": 4891983872
+    },
+    {
+      "file": "tests/unit/test_r3_models.py",
+      "rss_bytes": 270696448,
+      "available_bytes": 4891983872
+    },
+    {
+      "file": "tests/unit/test_r4_models.py",
+      "rss_bytes": 270696448,
+      "available_bytes": 4891725824
+    },
+    {
+      "file": "tests/unit/users/test_layer_dependencies.py",
+      "rss_bytes": 270708736,
+      "available_bytes": 4891725824
+    },
+    {
+      "file": "tests/unit/users/test_role_use_cases.py",
+      "rss_bytes": 270708736,
+      "available_bytes": 4891725824
+    },
+    {
+      "file": "tests/unit/users/test_rules.py",
+      "rss_bytes": 270708736,
+      "available_bytes": 4891725824
+    },
+    {
+      "file": "tests/unit/users/test_use_cases.py",
+      "rss_bytes": 270708736,
+      "available_bytes": 4891725824
+    }
+  ],
+  "exit_status": 0,
+  "final_rss_bytes": 271560704,
+  "available_bytes": 5198041088
+}

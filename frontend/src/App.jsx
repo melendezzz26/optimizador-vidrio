@@ -28,6 +28,10 @@ function App({ optimizationMode = 'first-fit' }) {
     setView('dashboard');
     signOut(message);
   }, [signOut]);
+  const handleNavigate = useCallback(next => {
+    if (next === 'optimization') setOriginRunId(null);
+    setView(next);
+  }, []);
 
   async function handleSignIn(username, password) {
     await signIn(username, password);
@@ -75,7 +79,7 @@ function App({ optimizationMode = 'first-fit' }) {
     toolbar={toolbar}
   />;
 
-  return <NavigationContext.Provider value={{ onNavigate: setView, availableViews: allowedViews }}>{page}</NavigationContext.Provider>;
+  return <NavigationContext.Provider value={{ onNavigate: handleNavigate, availableViews: allowedViews }}>{page}</NavigationContext.Provider>;
 }
 
 export default App;

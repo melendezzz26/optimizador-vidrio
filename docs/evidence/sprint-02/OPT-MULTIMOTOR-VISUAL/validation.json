@@ -1,0 +1,123 @@
+{
+  "author": "Fabricio Melendez Quezada",
+  "assigned_reviewer": "Andro Quispe",
+  "cross_review": "pending",
+  "branch": "feature/optimization-multimotor-visual",
+  "code_commit": "0a2a5441d78f6e06e31383a2cfc7df95e45e6e4c",
+  "backend_tree": "962ca529a1d493f8242eb83f548519165cff1b90",
+  "backend_tree_at_full_test": "962ca529a1d493f8242eb83f548519165cff1b90",
+  "environment": {
+    "os": "Linux",
+    "python": "3.11.9",
+    "node": "24.19.0",
+    "chromium": "154.0.8037.57",
+    "postgresql_major": 17,
+    "memory_limit_bytes": 8589934592,
+    "cpu_quota_cores": 2
+  },
+  "verification": {
+    "backend": {
+      "passed": 2453,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 1,
+      "duration_seconds": 527.0,
+      "source": "0b30ef4",
+      "log": "logs/backend-full.txt"
+    },
+    "frontend_unit": {
+      "passed": 175,
+      "failed": 0,
+      "skipped": 0,
+      "log": "logs/unit.txt",
+      "note": "Unit test source unchanged after 0b30ef4."
+    },
+    "frontend_component": {
+      "passed": 514,
+      "failed": 0,
+      "files": 49,
+      "duration_seconds": 144.8,
+      "source": "59115f4",
+      "log": "logs/components.txt",
+      "note": "Later production change is CSS only; layout verified in real-browser E2E."
+    },
+    "lint": {
+      "exit_code": 0,
+      "log": "logs/lint.txt"
+    },
+    "build": {
+      "exit_code": 0,
+      "log": "logs/build.txt",
+      "warning": "Vite chunk exceeds 500 kB minified."
+    },
+    "e2e_focused": {
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "log": "logs/e2e-focused.txt"
+    },
+    "e2e_gate": {
+      "status": "passed",
+      "expected_tests": 120,
+      "critical_specs": 12,
+      "projects": [
+        "chromium-desktop",
+        "chromium-mobile"
+      ],
+      "passed": 120,
+      "failed": 0,
+      "skipped": 0,
+      "duration_reported": "7.6m",
+      "source_commit": "0a2a5441d78f6e06e31383a2cfc7df95e45e6e4c",
+      "log": "logs/e2e-full.txt"
+    },
+    "remote_ci": {
+      "status": "not_triggered",
+      "reason": "Workflow triggers on pull_request or push to main/integration/sprint-01. No PR/merge/deploy authorized."
+    },
+    "automatic_phases": {
+      "passed": 8,
+      "failed": 0,
+      "duration_seconds": 7.35,
+      "test_commit": "095ea67",
+      "log": "logs/components-auto-phase.txt",
+      "note": "Strengthens the existing test: automatic ordering, rotations and result before manual inspection. Production code unchanged."
+    }
+  },
+  "github_attribution": {
+    "verified_login": "melendezzz26",
+    "author_name": "Fabricio Melendez Quezada",
+    "email": "254952149+melendezzz26@users.noreply.github.com",
+    "verified_author_and_committer_on": [
+      "0a2a5441d78f6e06e31383a2cfc7df95e45e6e4c",
+      "095ea67eb8a881c5c0970a5865589515835a8798"
+    ]
+  },
+  "artifact_sha256": {
+    "comparison-events-desktop.json": "27c35938a29f408c629b85507287127e59737fe81bb1554d04529d4a94b1ab6f",
+    "logs/backend-full.txt": "ff1030dcba5584b09f67c31606eb36de40792b379c7fa689df3cd6e593be76cf",
+    "logs/build.txt": "928ea70ac779e4d9e78fc51646ea0014b2b9678848c044b4919892186e36c1cd",
+    "logs/components-auto-phase.txt": "848cd3667ecf715a84d7046d14e760df1cd8da3003deb4810782e80692bdd389",
+    "logs/components.txt": "ed403d4b5d8bc1547b8268a198a942c63c30e04fe5e46fd644250764c83eee74",
+    "logs/e2e-focused.txt": "45c92be3c93f9f74dc02c69306f003dbb4371e7649bd8d88266474c554baeebb",
+    "logs/e2e-full.txt": "8dee6614a3d8291fd2b69326b2b0a12fd022ab1ce13d90f43ba07648f92536dd",
+    "logs/lint.txt": "31298a090b4d326219614a2b109f11bc9be6ea420c4b2fa47c181368d3733a26",
+    "logs/unit.txt": "4d081e81b6dbbe961e77e6c5059aea2c873c6834f23b993c63fac3d7a513c57f",
+    "screenshots/desktop/comparacion-antes-de-confirmar.png": "b17505d648e94087b71f720ae3b6382d6bd1f5801c6ad9fc70694fe2498bf0b2",
+    "screenshots/desktop/giro-real-best-fit.png": "87de5834e769b13b28624ed68ee55f393e0df2dd7663326fae2d5ac4d9557a95",
+    "screenshots/desktop/giro-real-first-fit.png": "071b2c6b061d2c3e0d5ace3f69280d385a0c0e0a60b90ca1419954b9a4222fb2",
+    "screenshots/desktop/giro-real-worst-fit.png": "7aaaa51040f5b14d3a65c26bd5b4acdbdf919bd63443a09c8384d92e69bb3074",
+    "screenshots/desktop/mascaras-first-fit.png": "816e686b568aab5897ed6cb2df5551fd9b4e42424ed14639919a6f29ce3e6a64",
+    "screenshots/desktop/orden-first-fit.png": "d2e8fe4d9add70803d030c206b61ccf166345fc6e6bdfca28dc6d78bbc2cc35e",
+    "screenshots/desktop/solicitud-original.png": "2986cf7c37b4e8b9d7ec0b452ba40c86e8e1024789d521a779e209523af34d8c",
+    "screenshots/mobile/comparacion-antes-de-confirmar.png": "0fd034afbc8839dc72cbdb6802db504405881730a53b00613c75167bd47718ee",
+    "screenshots/mobile/giro-real-best-fit.png": "629dbd21e4bed302dd19d16a8fca64262403ff6576ce94b6bfa79f6ca2a1d9a0",
+    "screenshots/mobile/giro-real-first-fit.png": "ed9cbfa6b9c37fe7ba6bf088311bfa09d014af2b1b5643c42d68897113ef2ea8",
+    "screenshots/mobile/giro-real-worst-fit.png": "03d231d8a02b8dfefd6fe2d2ac4745e21f0d2611e3953659ca4c6b915175ea84",
+    "screenshots/mobile/mascaras-first-fit.png": "812b0e8a330116e00b1932fa4a3ba45801d73d066b40be01a954f14548d4ae1d",
+    "screenshots/mobile/orden-first-fit.png": "f4eea6e7974b98bdfaf39c31c2ec7264785cafdd0d8dbce560225c8bd0ae991e",
+    "screenshots/mobile/solicitud-original.png": "9f7ef5ecce51e275ea1a1b2b4e84e38c60f1278cb932f5e037d3fd1e999856ea",
+    "t04-http-resources.json": "8c9b48305babaa87f986d897db70571b268b893c042552cb23f2e6fe2879d79d"
+  },
+  "log_normalization": "Trailing spaces and final empty lines removed; test output content preserved."
+}

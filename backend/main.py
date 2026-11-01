@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+import asyncio
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,9 +15,17 @@ from app.modules.orders.presentation.router import router as orders_router
 from app.modules.clients.presentation.router import router as clients_router
 from app.modules.optimization.presentation.router import router as optimization_router
 
+@asynccontextmanager
+async def lifespan(app):
+    yield
+    from app.modules.optimization.presentation.comparison_routes import get_comparison_runtime
+    await asyncio.to_thread(get_comparison_runtime().shutdown)
+
+
 app = FastAPI(
     title="Optimizador de Corte de Vidrio",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan,
 )
 
 # TA-041: los errores 422 de validación nunca devuelven los datos enviados (p. ej., la contraseña).
@@ -26,7 +36,7 @@ app.add_middleware(
     allow_origins=cors_origins(),
     allow_credentials=False,
     allow_methods=["GET", "POST", "PATCH", "DELETE", "PUT"],
-    allow_headers=["Authorization", "Content-Type"],
+    allow_headers=["Authorization", "Content-Type", "Idempotency-Key"],
     expose_headers=["Location"],
 )
 

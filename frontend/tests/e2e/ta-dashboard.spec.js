@@ -4,7 +4,6 @@ import path from 'node:path';
 import { expect, test } from '@playwright/test';
 import { watchDashboardResponses } from './dashboardResponses.js';
 
-const appOrigin = 'http://127.0.0.1:5173';
 // These actors exist only in tests.e2e_server's owned loopback PostgreSQL.
 // Missing setup must fail the suite instead of silently skipping acceptance tests.
 const apiOrigin = 'http://127.0.0.1:8017';
@@ -39,6 +38,7 @@ const roles = {
 
 const noFunctions = { label: 'Sin funciones E2E', username: 'O70000004', password: 'Dashboard-test-2026!' };
 async function restrictOrigins(page) {
+  const appOrigin = new URL(test.info().project.use.baseURL).origin;
   await page.route('**/*', route => {
     const origin = new URL(route.request().url()).origin;
     return [appOrigin, apiOrigin].includes(origin) ? route.fallback() : route.abort();
@@ -158,7 +158,8 @@ for (const [key, role] of Object.entries(roles)) {
       await expect(page.getByRole('button', { name: 'Revisar vidrios y piezas', exact: true })).toHaveCount(0);
       await expect(page.getByRole('button', { name: 'Calcular distribución', exact: true })).toHaveCount(0);
       await expect(page.getByRole('button', { name: 'Confirmar corte', exact: true })).toHaveCount(0);
-      await expect(page.getByRole('button', { name: 'Consultar resultado', exact: true })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Consultar', exact: true })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Comparar con los tres motores', exact: true })).toHaveCount(0);
     }
     await capture(page, `dashboard-${screenshotName}-optimizacion.png`);
     beginCycle();

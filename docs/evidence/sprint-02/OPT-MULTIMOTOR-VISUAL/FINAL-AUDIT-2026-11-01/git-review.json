@@ -1,0 +1,2035 @@
+{
+  "head": "5e836cdd9cc61eb212402d90dbe94a6776afcc75",
+  "branch": "feature/optimization-multimotor-visual",
+  "tracking": "origin/feature/optimization-multimotor-visual",
+  "integration": "afd5f85f9dd1495e4237e1029555f7e56cd53f30",
+  "ahead_behind": "0\t23",
+  "initial_pending_preserved": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "unchanged": true
+    },
+    {
+      "path": "backend/README.md",
+      "unchanged": true
+    },
+    {
+      "path": "backend/app/modules/authentication/presentation/dependencies.py",
+      "unchanged": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/comparison_calculation.py",
+      "unchanged": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/comparison_runner.py",
+      "unchanged": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/run_auth.py",
+      "unchanged": true
+    },
+    {
+      "path": "backend/app/shared/config/__init__.py",
+      "unchanged": true
+    },
+    {
+      "path": "backend/scripts/check_comparison_environment.py",
+      "unchanged": true
+    },
+    {
+      "path": "backend/scripts/dev_server.py",
+      "unchanged": true
+    },
+    {
+      "path": "backend/tests/api/optimization/test_comparison_connection_lifecycle.py",
+      "unchanged": true
+    },
+    {
+      "path": "backend/tests/api/optimization/test_comparisons_api.py",
+      "unchanged": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_comparison_calculation.py",
+      "unchanged": true
+    },
+    {
+      "path": "backend/tests/optimization_e2e_data.py",
+      "unchanged": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_comparison_runner.py",
+      "unchanged": true
+    },
+    {
+      "path": "backend/tests/unit/shared/test_config.py",
+      "unchanged": true
+    },
+    {
+      "path": "backend/tests/unit/shared/test_dev_server.py",
+      "unchanged": true
+    },
+    {
+      "path": "backend/tests/unit/test_ci_contract.py",
+      "unchanged": true
+    },
+    {
+      "path": "docs/development/optimization-wsl2.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/ANGULAR-CONFIG-409-2026-11-01/README.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/ANGULAR-CONFIG-409-2026-11-01/test-results.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/README.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/UI-UX-AUDIT.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/browser-summary.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/code-hashes.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/connection-measurements.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/pytest-memory-profile.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/after-desktop-FF-confirmacion-parcial-limpia.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/after-desktop-FF-ff-fallido-bf-elegido.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/after-desktop-comparar-confirmacion-limpia-pedidos-pendientes.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/after-mobile-FF-confirmacion-parcial-limpia.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/after-mobile-FF-ff-fallido-bf-elegido.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/after-mobile-comparar-confirmacion-limpia-pedidos-pendientes.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/before-desktop-comparar-estado-residual-antes-del-arreglo.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/before-mobile-comparar-estado-residual-antes-del-arreglo.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-01-login.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-02-login-error.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-03-dashboard-admin.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-04-usuarios.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-05-usuario-formulario.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-05b-usuario-retorno.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-06-roles-permisos.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-07-inventario-planchas.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-08-plancha-formulario.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-09-inventario-retazos.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-10-retazo-formulario.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-10b-retazo-registrado.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-11-pedidos.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-12-pedido-formulario.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-13-pedido-editar.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-13b-pedido-reabrir-despues-escape.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-14-optimizacion-pendientes.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-14b-optimizacion-resultado.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-14c-optimizacion-tabla.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-15-reflow-320.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-16-dashboard-almacenero.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-16-dashboard-operario.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-16-dashboard-sin-funciones.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-01-login.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-02-login-error.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-03-dashboard-admin.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-04-usuarios.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-05-usuario-formulario.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-05b-usuario-retorno.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-06-roles-permisos.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-07-inventario-planchas.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-08-plancha-formulario.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-09-inventario-retazos.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-10-retazo-formulario.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-10b-retazo-registrado.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-11-pedidos.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-12-pedido-formulario.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-13-pedido-editar.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-13b-pedido-reabrir-despues-escape.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-14-optimizacion-pendientes.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-14b-optimizacion-resultado.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-14c-optimizacion-tabla.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-15-reflow-320.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-16-dashboard-almacenero.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-16-dashboard-operario.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-16-dashboard-sin-funciones.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/test-summary.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/ui-audit.spec.js",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/ui-observations-desktop.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/ui-observations-mobile.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/WINDOWS-WSL2-2026-11-01/README.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/WINDOWS-WSL2-2026-11-01/real-comparison.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/WINDOWS-WSL2-2026-11-01/validation-summary.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/README.md",
+      "unchanged": true
+    },
+    {
+      "path": "frontend/src/features/optimization/ComparisonWorkspace.jsx",
+      "unchanged": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/ComparisonLifecycle.test.jsx",
+      "unchanged": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/ComparisonWorkspace.test.jsx",
+      "unchanged": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/PendingOrdersSource.test.jsx",
+      "unchanged": true
+    },
+    {
+      "path": "frontend/src/features/optimization/comparisonController.js",
+      "unchanged": true
+    },
+    {
+      "path": "frontend/src/features/optimization/pendingOrdersSource.js",
+      "unchanged": true
+    },
+    {
+      "path": "frontend/tests/e2e/optimization-comparison.spec.js",
+      "unchanged": true
+    },
+    {
+      "path": "frontend/tests/e2e/ta-dashboard.spec.js",
+      "unchanged": true
+    }
+  ],
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "category": "tests-ci-evidence",
+      "bytes": 3484,
+      "sha256": "f03481192675206808413e212f5db01b4ef34d1a8561ab23c66f44f8c146f26b",
+      "already_committed": false
+    },
+    {
+      "path": "backend/README.md",
+      "category": "documentation-evidence",
+      "bytes": 8847,
+      "sha256": "ff3e471a02f98d57089c9f40158b126a35d260565f1305dbf2266cad8986ed41",
+      "already_committed": false
+    },
+    {
+      "path": "backend/alembic/versions/s2cmp01a1b2c_comparison_metadata.py",
+      "category": "production-required",
+      "bytes": 1814,
+      "sha256": "89a4346508376de430cac9f86d26951004bfc97c0c873bb6dee4557ff3aed7c7",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/models.py",
+      "category": "production-required",
+      "bytes": 22762,
+      "sha256": "4b20027eaba46baedd22461532ab903f693978751974ad00a6fb8970c039a370",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/authentication/presentation/dependencies.py",
+      "category": "production-required",
+      "bytes": 4608,
+      "sha256": "da76b3919df8284e058a930c44bcc73d71ff6c5441c4c013efc97c0c773f5ea8",
+      "already_committed": false
+    },
+    {
+      "path": "backend/app/modules/optimization/application/comparison_calculation.py",
+      "category": "production-required",
+      "bytes": 5570,
+      "sha256": "ed55f69c6cc67794a7aed63ea7f29b54e198199f785f423067417bca925b437a",
+      "already_committed": false
+    },
+    {
+      "path": "backend/app/modules/optimization/application/comparison_confirmation.py",
+      "category": "production-required",
+      "bytes": 2374,
+      "sha256": "c2db0498768701bb4575b0548d088a787e59adb75da80aa449895e5675018dbb",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/comparison_contracts.py",
+      "category": "production-required",
+      "bytes": 2632,
+      "sha256": "1be6372874be51beca1cd12cede4fddf333945aba2fdeb8647e3ca5e9001467a",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/comparison_limits.py",
+      "category": "production-required",
+      "bytes": 1309,
+      "sha256": "77e158cae8c852b6d2fa62a6e3ba0381c4e26cd5cf5367431b48ba9b89e1fa6d",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/comparisons.py",
+      "category": "production-required",
+      "bytes": 2551,
+      "sha256": "865335bc73d8fa44368fbda4ad166a2504308f5ac3c579e4a313bf9570968976",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/application/errors.py",
+      "category": "production-required",
+      "bytes": 1011,
+      "sha256": "91f8d425fac9734da4e148bc04e0da943434a50a868cd5ffe8959e2ccaaf97cf",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/domain/packing.py",
+      "category": "production-required",
+      "bytes": 9540,
+      "sha256": "3592eac181cb18ac4b3da937482b7cd5c6e86fedf2f12da40d5655b1fa774d91",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/domain/visual_events.py",
+      "category": "production-required",
+      "bytes": 1048,
+      "sha256": "b15ce685709101bc020d8090dc69e2341cf947c3d3c3954c36ef82327452b87d",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/comparison_confirmation.py",
+      "category": "production-required",
+      "bytes": 6320,
+      "sha256": "32b4c399f0769c10c9ec4e7b66725a56e7721b49861d98b40580c1f246cabc77",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/comparison_runner.py",
+      "category": "production-required",
+      "bytes": 17090,
+      "sha256": "a702b53f0e99fe3ba04bb2942ccd2187ae176daee8f5835cc1817ffa69585577",
+      "already_committed": false
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/comparison_snapshot.py",
+      "category": "production-required",
+      "bytes": 4821,
+      "sha256": "a23867fae76deffab03b428dbb490dfffd85496ff1d14fa6d5733e422959a416",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/comparison_stock.py",
+      "category": "production-required",
+      "bytes": 3028,
+      "sha256": "41adf7a1d3ac55ce96143d3b53e968a479be27b4615e9560f59da88aef0dd53b",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/comparison_transport.py",
+      "category": "production-required",
+      "bytes": 4058,
+      "sha256": "1d57a07c357f4aaeac5c72aa38f79370777f374f5c35cd9c2b618028aaf3d299",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/comparison_uow.py",
+      "category": "production-required",
+      "bytes": 19274,
+      "sha256": "43bd5d3c453aeaba225a68a36f2bfabbe7406cc4c2a438490a1cb73528fb2a7b",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/confirmation_adapter.py",
+      "category": "production-required",
+      "bytes": 10834,
+      "sha256": "f5932234b7618a9dd99560bf0f9943b25451f31225b0f06b60de2cf95a66895a",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/in_process_admission.py",
+      "category": "production-required",
+      "bytes": 2583,
+      "sha256": "c1b1ff9c1b1b9589bdec68b7829be7a5fbd2a5cad84f3bbed688e63829218c79",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/process_lifecycle.py",
+      "category": "production-required",
+      "bytes": 950,
+      "sha256": "68ed29b5a310e11257c71b1d0eaff1fa37f6508948c9b772f6e79b6d4595ca04",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/infrastructure/visual_store.py",
+      "category": "production-required",
+      "bytes": 5477,
+      "sha256": "f03b2273b91189396ff6ea9f8854808554846731044e693869e84bd8486b1888",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/comparison_routes.py",
+      "category": "production-required",
+      "bytes": 9103,
+      "sha256": "dc6c75cef6abf97835d791e041eb696c9baef69dc6d5c08f189037674e215718",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/comparison_runtime.py",
+      "category": "production-required",
+      "bytes": 15608,
+      "sha256": "dac6ea94375d992c076555f75b83aef607e5087783eda2b7ef745648c564f36e",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/comparison_schemas.py",
+      "category": "production-required",
+      "bytes": 7929,
+      "sha256": "7fe06ae93b9638a6e72d2bec0d9ee25c4984d32a0fc2c9a946424e0a85e89ae5",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/comparison_serialization.py",
+      "category": "production-required",
+      "bytes": 3623,
+      "sha256": "033ee9fe8e17f0ba8fa832773efdac69b96c7958dae3c033eefc4bb7ccb906df",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/router.py",
+      "category": "production-required",
+      "bytes": 3077,
+      "sha256": "1eb6137d94920bfa9790276ebf4340be120d3ff06b393304fb8b0c729474f7b9",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/run_auth.py",
+      "category": "production-required",
+      "bytes": 1291,
+      "sha256": "a9956b058b3a13d9118fcd98ef6f02796ef33ce2eea9e4078813d2503bd38a0d",
+      "already_committed": false
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/run_routes.py",
+      "category": "production-required",
+      "bytes": 10289,
+      "sha256": "f2b1032ce531b2d387a3542e8f3776240ead0bb3e615c41ff9a22a73ffe3b72c",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/run_serialization.py",
+      "category": "production-required",
+      "bytes": 4574,
+      "sha256": "c60c20d847674ba3d5965cf33d87f36d11d23fc244be495db5fa40eba3d22b91",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/modules/optimization/presentation/visual_serialization.py",
+      "category": "production-required",
+      "bytes": 4159,
+      "sha256": "d1052a0c0f8fe3ce98190f0f306633c013593f2b125d756d89b2c24d1eea61a3",
+      "already_committed": true
+    },
+    {
+      "path": "backend/app/shared/config/__init__.py",
+      "category": "production-required",
+      "bytes": 3716,
+      "sha256": "ce471ca0228b3f29d083d5faab8e8653e1e5d09099be30a574789143908a34ff",
+      "already_committed": false
+    },
+    {
+      "path": "backend/main.py",
+      "category": "documentation-evidence",
+      "bytes": 2370,
+      "sha256": "8c78dc77f607ab9d29077c7dd0117e6c5006664a8ab9b58971b6a573f73c5a73",
+      "already_committed": true
+    },
+    {
+      "path": "backend/scripts/check_comparison_environment.py",
+      "category": "production-required",
+      "bytes": 1063,
+      "sha256": "75d364029aad5f91d5d33267966e5d45af2314237c962a0f852e075c915e6057",
+      "already_committed": false
+    },
+    {
+      "path": "backend/scripts/dev_server.py",
+      "category": "production-required",
+      "bytes": 1139,
+      "sha256": "cbfec23b634c1b39d41f06cb33b75862607ca7c0a214c7d6973204093a8342ea",
+      "already_committed": false
+    },
+    {
+      "path": "backend/tests/api/optimization/test_comparison_connection_lifecycle.py",
+      "category": "tests-ci-evidence",
+      "bytes": 9471,
+      "sha256": "22c74f3f57482ece910a41d9474951109cbd682e36dd2fbbebf296583d4ed9fe",
+      "already_committed": false
+    },
+    {
+      "path": "backend/tests/api/optimization/test_comparisons_api.py",
+      "category": "tests-ci-evidence",
+      "bytes": 21437,
+      "sha256": "a77e6e0fe97eab34607c00306407cf5dc0637e10260fc13763691b900edffc7c",
+      "already_committed": false
+    },
+    {
+      "path": "backend/tests/api/optimization/test_final_capacity_diagnostic.py",
+      "category": "tests-ci-evidence",
+      "bytes": 3823,
+      "sha256": "42554c0a2e8bd5f177d75f9a6ecac9faa2736b01068088f989f4102a341c5368",
+      "already_committed": false
+    },
+    {
+      "path": "backend/tests/api/optimization/test_final_multimethod_audit.py",
+      "category": "tests-ci-evidence",
+      "bytes": 8867,
+      "sha256": "910a278b6df708e76ec4fd08e8dd5788b59080c9e94b0ba5e83c1a88d1d03d1f",
+      "already_committed": false
+    },
+    {
+      "path": "backend/tests/integration/inventory/test_repository.py",
+      "category": "tests-ci-evidence",
+      "bytes": 48927,
+      "sha256": "9cdba7582b76a32d24f370da9cff18c21d6dcfed2ab9941ec2dfc7bbf68fe10c",
+      "already_committed": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_comparison_calculation.py",
+      "category": "tests-ci-evidence",
+      "bytes": 11456,
+      "sha256": "35c7775e97694ca75b3643f33b3e6a10b59848f60bea0d290319a05d64bf62d5",
+      "already_committed": false
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_comparison_confirmation.py",
+      "category": "tests-ci-evidence",
+      "bytes": 10025,
+      "sha256": "917054c38df9a8203fa5673417e0c4121c979cb455b81dcfb5706c4e1bb689c9",
+      "already_committed": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_comparison_migration.py",
+      "category": "tests-ci-evidence",
+      "bytes": 2822,
+      "sha256": "b783d793e44a28f1681acabb6c2fda0bfa16c9147e4effd5a9cd31c3a94bd192",
+      "already_committed": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_comparison_persistence.py",
+      "category": "tests-ci-evidence",
+      "bytes": 15340,
+      "sha256": "7681d978e633842f1777f49d2f8d43a70747e6d113fd44bfe30b166945b48d7e",
+      "already_committed": true
+    },
+    {
+      "path": "backend/tests/integration/optimization/test_multipedido_migration.py",
+      "category": "tests-ci-evidence",
+      "bytes": 5585,
+      "sha256": "3de7868ecb3a0665a7598ba4dd1a8732691731689fbed90d4b79f58b1a057927",
+      "already_committed": true
+    },
+    {
+      "path": "backend/tests/integration/test_clients_migration.py",
+      "category": "tests-ci-evidence",
+      "bytes": 9495,
+      "sha256": "d96ceadf19967f63aa91cb7d82ca1041441b61a75b07fa326277921648b2449a",
+      "already_committed": true
+    },
+    {
+      "path": "backend/tests/integration/test_staging_bootstrap.py",
+      "category": "tests-ci-evidence",
+      "bytes": 2536,
+      "sha256": "fd0228ea15269ea05359c63412ffc7aa769080ad18b4ae9387e5835392fc2b56",
+      "already_committed": true
+    },
+    {
+      "path": "backend/tests/model_contracts.py",
+      "category": "tests-ci-evidence",
+      "bytes": 4342,
+      "sha256": "553d881c580e966d2c62793fe8f114e17e5fb7555647757739f44c4ec050d20c",
+      "already_committed": true
+    },
+    {
+      "path": "backend/tests/optimization/final_audit_support.py",
+      "category": "tests-ci-evidence",
+      "bytes": 11152,
+      "sha256": "813225199e7fc274e3d9144230b4e474d625a88cf70bad84082ddd8c315c2260",
+      "already_committed": false
+    },
+    {
+      "path": "backend/tests/optimization_e2e_data.py",
+      "category": "tests-ci-evidence",
+      "bytes": 6399,
+      "sha256": "328b0320b83ccb7f839305c45bb10ce05e7ca702223eeebd0a50dbe820bd0af7",
+      "already_committed": false
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_comparison_contract.py",
+      "category": "tests-ci-evidence",
+      "bytes": 1813,
+      "sha256": "26fe06b95d751b0eb8bf176832d1c2c4a5a1a4941b3792b1ae032ca23982b8f0",
+      "already_committed": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_comparison_runner.py",
+      "category": "tests-ci-evidence",
+      "bytes": 9294,
+      "sha256": "803145d4457420c5db5a73c60aa48906e105cb53040fd70cf0863db01dfd4067",
+      "already_committed": false
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_comparison_snapshot.py",
+      "category": "tests-ci-evidence",
+      "bytes": 6514,
+      "sha256": "d5849871b9af0ca31bb6d3e47f428944aa607181553deb5aa9d8f7c8e297b6a2",
+      "already_committed": true
+    },
+    {
+      "path": "backend/tests/unit/optimization/test_run_admission.py",
+      "category": "tests-ci-evidence",
+      "bytes": 4635,
+      "sha256": "593490292a2c9def532afc257b41814659c92ed2f7ed1416c4f3c3b6491d9359",
+      "already_committed": true
+    },
+    {
+      "path": "backend/tests/unit/shared/test_config.py",
+      "category": "tests-ci-evidence",
+      "bytes": 9581,
+      "sha256": "8161ee55e23b35b412bf1c9b34d9aa08ed80963ba6b7634bf2f3776b76583c62",
+      "already_committed": false
+    },
+    {
+      "path": "backend/tests/unit/shared/test_dev_server.py",
+      "category": "tests-ci-evidence",
+      "bytes": 1070,
+      "sha256": "6c5b31fc05b716f7463ae763d0c264410fb9f989b08bd6b95b10c7514fd237ee",
+      "already_committed": false
+    },
+    {
+      "path": "backend/tests/unit/test_ci_contract.py",
+      "category": "tests-ci-evidence",
+      "bytes": 3446,
+      "sha256": "698a4ab2eff21ba2b9445e41d43127855b0314ada95c6fba8ee2b4c3448aa323",
+      "already_committed": false
+    },
+    {
+      "path": "docs/README.md",
+      "category": "documentation-evidence",
+      "bytes": 2663,
+      "sha256": "da7db8ff6a3ab4df080982cc46c8e13147110989dea75c507fc603b8f165fe8a",
+      "already_committed": true
+    },
+    {
+      "path": "docs/contracts/optimization/comparison-v1.json",
+      "category": "documentation-evidence",
+      "bytes": 123882,
+      "sha256": "907f6b6b4ddc763ab60846998aae46cffbe8b50a9595841eae6887031d17d20a",
+      "already_committed": true
+    },
+    {
+      "path": "docs/contracts/optimization/comparison-v1.md",
+      "category": "documentation-evidence",
+      "bytes": 10313,
+      "sha256": "ae2a59fba92500dcd31a4d1e78b9785648ae6c305c87a21b1a47077f7b957f96",
+      "already_committed": true
+    },
+    {
+      "path": "docs/development/optimization-wsl2.md",
+      "category": "documentation-evidence",
+      "bytes": 9308,
+      "sha256": "7d7382217a076a530094eb560d26781b5b863e046f5c1d1083c9c12286b86c5d",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/ANGULAR-CONFIG-409-2026-11-01/README.md",
+      "category": "documentation-evidence",
+      "bytes": 5739,
+      "sha256": "52c1e82be490c6784cf3c1dbf5d9f40348bb4d2635edd589795580c27f8f7f2b",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/ANGULAR-CONFIG-409-2026-11-01/test-results.json",
+      "category": "documentation-evidence",
+      "bytes": 636,
+      "sha256": "d40a12efb90ae766006b41ca891ee519b1e6df4cd4d01ada84300db57c8a305f",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/README.md",
+      "category": "documentation-evidence",
+      "bytes": 19455,
+      "sha256": "38b529cd78559a16ae9b22c76ba93729bf81cbb04be6349108d70cb679b0f8f0",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/UI-UX-AUDIT.md",
+      "category": "documentation-evidence",
+      "bytes": 14965,
+      "sha256": "498ca156c995320bc738a8437abf108da168b62af59b40d1fe94b6d396752e87",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/browser-summary.json",
+      "category": "documentation-evidence",
+      "bytes": 677,
+      "sha256": "1bca4eb109cbfa7b191ff48dcdc3f9c59f80d1fc84797b6ddc711465d28e477a",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/code-hashes.json",
+      "category": "documentation-evidence",
+      "bytes": 2460,
+      "sha256": "69934e6f5f6523a25deaa8240c9e6eace9849ddde270a00ea702a4bdeb4dfbe4",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/connection-measurements.json",
+      "category": "documentation-evidence",
+      "bytes": 483,
+      "sha256": "c8fc843eb208ee4d807e43057750343baa8479eda2e2a4d26338a2482658878b",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/pytest-memory-profile.json",
+      "category": "documentation-evidence",
+      "bytes": 18243,
+      "sha256": "a13b7cb6a9fac17e28a293968b97afce14d6af01e0780672aa0ddeb8f50631c1",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/after-desktop-FF-confirmacion-parcial-limpia.png",
+      "category": "documentation-evidence",
+      "bytes": 508408,
+      "sha256": "8132bb45a45eed6fb6370ed57d9c250bf7cdeb235643591bff62007e27fe6912",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/after-desktop-FF-ff-fallido-bf-elegido.png",
+      "category": "documentation-evidence",
+      "bytes": 281771,
+      "sha256": "42b4bfa89805b64291484fef01836f925190296793d1dab5e24b070bc81f7d1c",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/after-desktop-comparar-confirmacion-limpia-pedidos-pendientes.png",
+      "category": "documentation-evidence",
+      "bytes": 508277,
+      "sha256": "7ca00d21361657b9f246bc01fad4fad547f2e553c200a6b95c7bf0e37f68347f",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/after-mobile-FF-confirmacion-parcial-limpia.png",
+      "category": "documentation-evidence",
+      "bytes": 86689,
+      "sha256": "a4f6a30d400fadfd6efd7347e5c4306c70f7cbadc71b4f2a8a3c2c03bee7aa00",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/after-mobile-FF-ff-fallido-bf-elegido.png",
+      "category": "documentation-evidence",
+      "bytes": 75388,
+      "sha256": "6a5ff89e7f3b42e640423eedc57f62facf7d565083fd35ad0e6a57c09babe7d8",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/after-mobile-comparar-confirmacion-limpia-pedidos-pendientes.png",
+      "category": "documentation-evidence",
+      "bytes": 86693,
+      "sha256": "1431c22ea3cc32caf5fcc403191588532fe57504d5685ee67f221483164d1d31",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/before-desktop-comparar-estado-residual-antes-del-arreglo.png",
+      "category": "documentation-evidence",
+      "bytes": 323227,
+      "sha256": "369701a9952cac5e733510c6fba76e0f8d8516c68562937c9ef2fb4de47d755a",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/before-mobile-comparar-estado-residual-antes-del-arreglo.png",
+      "category": "documentation-evidence",
+      "bytes": 83170,
+      "sha256": "5e1aaba5943617c2ea742637e282ccc5a7a02d06967c12b9d06361b08fb472b6",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-01-login.png",
+      "category": "documentation-evidence",
+      "bytes": 250258,
+      "sha256": "3c72407c35cea42b2b00cb0ad74108946b81e57dee7e80c0f0c0e2b41e162f66",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-02-login-error.png",
+      "category": "documentation-evidence",
+      "bytes": 256341,
+      "sha256": "7a218685c764a364b0b8c7d72f32c4c275143b26c40c73c8f128d3bb36cc7f61",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-03-dashboard-admin.png",
+      "category": "documentation-evidence",
+      "bytes": 376657,
+      "sha256": "a7578f422924e65153c20be8dff4997771f75c801a7917ea765643bcfc1bda84",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-04-usuarios.png",
+      "category": "documentation-evidence",
+      "bytes": 564941,
+      "sha256": "1e5417b7771032d9c04d3ce17a8aa672162df1de3f7b48cf3ab17e6f1ad0cdce",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-05-usuario-formulario.png",
+      "category": "documentation-evidence",
+      "bytes": 582655,
+      "sha256": "1dc291a7b083089fedaee9b53b9588224a35468f23035fbd44a0b75e656ef06e",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-05b-usuario-retorno.png",
+      "category": "documentation-evidence",
+      "bytes": 564941,
+      "sha256": "1e5417b7771032d9c04d3ce17a8aa672162df1de3f7b48cf3ab17e6f1ad0cdce",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-06-roles-permisos.png",
+      "category": "documentation-evidence",
+      "bytes": 464446,
+      "sha256": "b49daf348b96dfba9e5d637415294bf9e595030a117cc32dc1de646af51a911a",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-07-inventario-planchas.png",
+      "category": "documentation-evidence",
+      "bytes": 775213,
+      "sha256": "0ab45aa8e0ac2833834a662f773f7cf6b11c742d764eb47a6c9799268b11395f",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-08-plancha-formulario.png",
+      "category": "documentation-evidence",
+      "bytes": 586883,
+      "sha256": "23ad188cd20b4de8f50b74df941da497e95e2af9352e0f3aa49e8725335f7755",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-09-inventario-retazos.png",
+      "category": "documentation-evidence",
+      "bytes": 820990,
+      "sha256": "ca034005f5d4f388ab8f5aad321de39d0bb594a4b39b089724e5dcea076ad62e",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-10-retazo-formulario.png",
+      "category": "documentation-evidence",
+      "bytes": 627945,
+      "sha256": "803b32cad3c396c52093621e5c9034ff8cd69605a4de8bf0a497b919381ac9d9",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-10b-retazo-registrado.png",
+      "category": "documentation-evidence",
+      "bytes": 770668,
+      "sha256": "f851c74053343ef5f7519ed37fc3745f412dd1fc4f15c76af134742250b280a2",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-11-pedidos.png",
+      "category": "documentation-evidence",
+      "bytes": 752815,
+      "sha256": "779ecfefb7378f9a3570adb7ebbbc7f7e5b8fd8846adbfbfb00cb8a054f1e478",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-12-pedido-formulario.png",
+      "category": "documentation-evidence",
+      "bytes": 341186,
+      "sha256": "30a5f62ef7f82a9c80d1b0333f67aabe61f49729834ce1f6adee3f553c0cfe89",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-13-pedido-editar.png",
+      "category": "documentation-evidence",
+      "bytes": 498235,
+      "sha256": "243f16b04c0132f324ac09dcac5902aa41cf0b80ddc90cd26028d69467850fa8",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-13b-pedido-reabrir-despues-escape.png",
+      "category": "documentation-evidence",
+      "bytes": 499274,
+      "sha256": "df27f4eac27a3fd68d83a18d7a8b6b459d4ef990b2712265bd536ac34c4c08f0",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-14-optimizacion-pendientes.png",
+      "category": "documentation-evidence",
+      "bytes": 590671,
+      "sha256": "ba41170869fbc8f2afdb4d1f4ef62adcb077ccc6c81ae9378a1b2e1909090694",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-14b-optimizacion-resultado.png",
+      "category": "documentation-evidence",
+      "bytes": 379804,
+      "sha256": "1639b100e1cf1d335ceb0f2d8c4a9b661f49fb34aedd166b5e2b1e78774d3a70",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-14c-optimizacion-tabla.png",
+      "category": "documentation-evidence",
+      "bytes": 472216,
+      "sha256": "3c9e7c0439513aefbd4b4b301a04ad98b43a73010de988215a6e90569c038ddd",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-15-reflow-320.png",
+      "category": "documentation-evidence",
+      "bytes": 125365,
+      "sha256": "eff8973231b459bc1703e632c748a439efc0bc38af973e65fdb4f291bd2303fe",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-16-dashboard-almacenero.png",
+      "category": "documentation-evidence",
+      "bytes": 436848,
+      "sha256": "72c8d4c50a233cc1cf6fdba74067273f2aba480b17bb76d4bc6ddf7edafd2fa8",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-16-dashboard-operario.png",
+      "category": "documentation-evidence",
+      "bytes": 377300,
+      "sha256": "8d69985b1c98a9e08ca4da342f19ba3196dd10d94e83f59d491e9291c855c06d",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-desktop-auditora-16-dashboard-sin-funciones.png",
+      "category": "documentation-evidence",
+      "bytes": 902184,
+      "sha256": "9bf9f0598bfc294aaf78e73ec486f75fe2e2642aaf05049a688aa7fbd5399e2d",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-01-login.png",
+      "category": "documentation-evidence",
+      "bytes": 27155,
+      "sha256": "e148d0339ef1edc74b5874eede1ab53d75e6655b1293a15f49468604badc83bb",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-02-login-error.png",
+      "category": "documentation-evidence",
+      "bytes": 32665,
+      "sha256": "2853364e807cef9a90f98d09f5cae3f28a7814705b9945dfb5e7bc8fd105d031",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-03-dashboard-admin.png",
+      "category": "documentation-evidence",
+      "bytes": 78746,
+      "sha256": "f1a8bb604a45365165f4e493d62a799adc7034cef1029663a77c96e97e333b33",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-04-usuarios.png",
+      "category": "documentation-evidence",
+      "bytes": 127335,
+      "sha256": "372abe70d81c6927b6c06bb011ad2e314e3359ff035aadfd117552252e080f51",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-05-usuario-formulario.png",
+      "category": "documentation-evidence",
+      "bytes": 138898,
+      "sha256": "18417738dbbeb63b4c3e440615757947098c151423a7a3e557a1dd0869154e1e",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-05b-usuario-retorno.png",
+      "category": "documentation-evidence",
+      "bytes": 52699,
+      "sha256": "07e52e69a2d5272086ce03b2f1cde4619e5105670688dca3d33143b6990f1e96",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-06-roles-permisos.png",
+      "category": "documentation-evidence",
+      "bytes": 129220,
+      "sha256": "311e261bf7c2049b5c9312498f5eb44bdc75d200f496fc8158b162fd961ad556",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-07-inventario-planchas.png",
+      "category": "documentation-evidence",
+      "bytes": 136887,
+      "sha256": "81af8957332a73b1631cdfcfb3d62a7ac0c1fcb60c405f91be971896bcecdbfa",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-08-plancha-formulario.png",
+      "category": "documentation-evidence",
+      "bytes": 147924,
+      "sha256": "e06a00f7c3ecf782c830f42fca640f93209e915fd8520dcd4f45e0942131c0dc",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-09-inventario-retazos.png",
+      "category": "documentation-evidence",
+      "bytes": 139768,
+      "sha256": "43ac658218c0c82da8230a8428dffe214def4e84c99b5f1e728926d5ef34091a",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-10-retazo-formulario.png",
+      "category": "documentation-evidence",
+      "bytes": 141892,
+      "sha256": "81faad52c7aa8af338b7e0eec8bddb87148b7302fc4805fc2b8b05d47f4c8e5a",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-10b-retazo-registrado.png",
+      "category": "documentation-evidence",
+      "bytes": 108574,
+      "sha256": "934c3fdcb615e0d1bc3dcfeab46f7abb9fa279c80100f536f8c767fbd56884c5",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-11-pedidos.png",
+      "category": "documentation-evidence",
+      "bytes": 133997,
+      "sha256": "4a09478543d973be38dc8e084bfb2a6f0d08b858c9337fc90083c8ec42a4b893",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-12-pedido-formulario.png",
+      "category": "documentation-evidence",
+      "bytes": 59074,
+      "sha256": "0084712e908c715ebdf18cce53221f634fdaf51b44a59045c50ddd510ed6727c",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-13-pedido-editar.png",
+      "category": "documentation-evidence",
+      "bytes": 70027,
+      "sha256": "335f347b4752df71c4c8744f357308b7345c3ef65c32b67cf81ea2acca22cef8",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-13b-pedido-reabrir-despues-escape.png",
+      "category": "documentation-evidence",
+      "bytes": 66889,
+      "sha256": "e0d1b2b6c6be0c770b450a41b6b6422bf1303a7fada0e3df95f716267753e857",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-14-optimizacion-pendientes.png",
+      "category": "documentation-evidence",
+      "bytes": 136057,
+      "sha256": "26651e25780d1b9a416b2aa78efcd2067501d8862903aed0f7ed13b36234d050",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-14b-optimizacion-resultado.png",
+      "category": "documentation-evidence",
+      "bytes": 69542,
+      "sha256": "c28fec0ed29dca72e5070202c8ff2397cf3836af12c0126ff24db692b586e1d1",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-14c-optimizacion-tabla.png",
+      "category": "documentation-evidence",
+      "bytes": 73153,
+      "sha256": "edc2eba52823d36b2d0c92ad8a1deee46e43ed4329746d2a08cd9dea939e3ee1",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-15-reflow-320.png",
+      "category": "documentation-evidence",
+      "bytes": 88948,
+      "sha256": "3095afad0dcd76b3cb8398d5a54775127ab1ef7e3d0ebe3ecf15af8dea3232a9",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-16-dashboard-almacenero.png",
+      "category": "documentation-evidence",
+      "bytes": 80350,
+      "sha256": "16571334080bcf5f27de3ef3d4abf13ed2f24d019ddceebe345d36a17b113355",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-16-dashboard-operario.png",
+      "category": "documentation-evidence",
+      "bytes": 79038,
+      "sha256": "6d8da3ea246de6ba465a309b8ab3246813bac8a7035b4d6ee541a417ee4825a7",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/screenshots/ui-mobile-auditora-16-dashboard-sin-funciones.png",
+      "category": "documentation-evidence",
+      "bytes": 176697,
+      "sha256": "d30ea857dff605e5401640d79aa5897575c11654d477bb2ae89fd38b32c67201",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/test-summary.json",
+      "category": "documentation-evidence",
+      "bytes": 3089,
+      "sha256": "57b5d9a3bdabd7438d88f8d4cce8b25f000ac7f282f56f2821d70c91a5f4a772",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/ui-audit.spec.js",
+      "category": "documentation-evidence",
+      "bytes": 11619,
+      "sha256": "491a10f0e87920c93fd944f0d5199117adf94ae4f972e2563ab90f3defc10fa8",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/ui-observations-desktop.json",
+      "category": "documentation-evidence",
+      "bytes": 176500,
+      "sha256": "45063245f3802ca9c6a9fbfa0350becdee71b299d0f144dcf8f1d4c35ab5fd5d",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FF-PERSISTENCE-UX-2026-11-01/ui-observations-mobile.json",
+      "category": "documentation-evidence",
+      "bytes": 194411,
+      "sha256": "ba9282f26410f7e605c82fa85338cd810f61c369ff7bb2e47ada4a62339b4c9c",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/CASE-RESULTS.md",
+      "category": "documentation-evidence",
+      "bytes": 3783,
+      "sha256": "a890698ffb245170a1c14b34cf6464f096684b3e03a85fe9f6a6f223c9c3f552",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/README.md",
+      "category": "documentation-evidence",
+      "bytes": 38317,
+      "sha256": "a5a9dd699dffbd259e56725e45ea7249c207af0c3632811437fb38f0a175fb6c",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/backend-results.json",
+      "category": "documentation-evidence",
+      "bytes": 467713,
+      "sha256": "ea98d9bca5d2c460a954433742b5a638fd1cb6e278143fc4e4c4e012ced3384a",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/capacity-diagnostic.json",
+      "category": "documentation-evidence",
+      "bytes": 2079,
+      "sha256": "41de7ab7ad96965f389e966274dec03995f0aaf3567918e6f2842c29e410a24e",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/collection-comparison.json",
+      "category": "documentation-evidence",
+      "bytes": 74649,
+      "sha256": "7fc0727dc0c1cb4c2cb91758c01f8fc96609c8d105e2fe2b3dfd748c2360c19e",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/collection-current.json",
+      "category": "documentation-evidence",
+      "bytes": 282917,
+      "sha256": "4e82db4dd8763bcaa10aea5d0e02cd3ea9cd60573907a68da16c4201ac33ebe8",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/collection-head.json",
+      "category": "documentation-evidence",
+      "bytes": 278476,
+      "sha256": "e216f1128dfc11c30dfdd3312cbf61a90bcb86a25c2cba7501b8ec347eaeb8f0",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/collection-historical-2068.json",
+      "category": "documentation-evidence",
+      "bytes": 230387,
+      "sha256": "0670476999b8dadc7e3dfab73d6c22d3f47077885bb0e409ec72c583fabdec37",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/collection-integration.json",
+      "category": "documentation-evidence",
+      "bytes": 267474,
+      "sha256": "3087b5ce6b3a6d031b872c9610a5a5977376c9773bd596ffe51c032cc00943eb",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/differential-results.json",
+      "category": "documentation-evidence",
+      "bytes": 1064924,
+      "sha256": "1acfb466c9f287531d179b59bae60486818eaceb0fc81e671b4d6f55ba04ec80",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/e2e-results.json",
+      "category": "documentation-evidence",
+      "bytes": 40980,
+      "sha256": "14cdc5a6fbfa390305b6c7b8e2e35a3b62df8317f9b0cdfb95f7326bb8ece997",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/initial-state.json",
+      "category": "documentation-evidence",
+      "bytes": 39557,
+      "sha256": "b37c00b6b4cdc0c2681c15a6908acd5f12e04bb5b7e4d1b9cae62078132446f1",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/policy-browser-summary.json",
+      "category": "documentation-evidence",
+      "bytes": 136,
+      "sha256": "98fc06e37ca76951e0a8de089a2d43f7429355727d12fee1bb9178183e74880a",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/desktop-polticas-differential-BF-backend-3d.png",
+      "category": "documentation-evidence",
+      "bytes": 332423,
+      "sha256": "0146a488305c6e79b15a1e3795cdf8a37ae38be24a94a1ae4704fcfd321039a0",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/desktop-polticas-differential-FF-backend-3d.png",
+      "category": "documentation-evidence",
+      "bytes": 349186,
+      "sha256": "a46041780a77a119e6da53f56cc0bb7382dc2603c8aedf6dc1106496f90fe8b7",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/desktop-polticas-differential-WF-backend-3d.png",
+      "category": "documentation-evidence",
+      "bytes": 351330,
+      "sha256": "925e75d70ca590e88a9bc178fd878a25298ecddbb9682410e384a41c2a141000",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/desktop-polticas-mixed-BF-backend-3d.png",
+      "category": "documentation-evidence",
+      "bytes": 354793,
+      "sha256": "83b899cd6b69182e94f90fbd14ab1d5430923faf9ae41427ebc878ae2f307b9c",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/desktop-polticas-mixed-FF-backend-3d.png",
+      "category": "documentation-evidence",
+      "bytes": 353520,
+      "sha256": "823faf451891e2c1dd99a35a25b7071c98c44b91760885c55713b5b302d37911",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/desktop-polticas-mixed-WF-backend-3d.png",
+      "category": "documentation-evidence",
+      "bytes": 355521,
+      "sha256": "462158b5a4b7fdbff59a01b3e27589a54a05d1c4cdced796c3ce61ae366216af",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/mobile-polticas-differential-BF-backend-3d.png",
+      "category": "documentation-evidence",
+      "bytes": 194034,
+      "sha256": "76f1b532d2139352c51692edf77dc7543a192dadf95edf60e2e8e7915735dd0d",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/mobile-polticas-differential-FF-backend-3d.png",
+      "category": "documentation-evidence",
+      "bytes": 200688,
+      "sha256": "01b2390fcb3cc1e3c87919ae995832a09e045547439c7ddf5199e7e9ca791411",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/mobile-polticas-differential-WF-backend-3d.png",
+      "category": "documentation-evidence",
+      "bytes": 198198,
+      "sha256": "61d0198f1cf85f6502874eb82ed289fe2b7a8a541e0199216bd18d713f5dde2b",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/mobile-polticas-mixed-BF-backend-3d.png",
+      "category": "documentation-evidence",
+      "bytes": 203100,
+      "sha256": "6066b208d27d13c01da6edddd5ea2046ea40613903ec4442c63cc29f6c6bbaa8",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/mobile-polticas-mixed-FF-backend-3d.png",
+      "category": "documentation-evidence",
+      "bytes": 203382,
+      "sha256": "3738963460ab1c6d0315211ca5e3209cdec610529940bf98ead220a61c8bdff4",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/screenshots/mobile-polticas-mixed-WF-backend-3d.png",
+      "category": "documentation-evidence",
+      "bytes": 204121,
+      "sha256": "90b719d6f7c21a16c99618774ca02c73a4473709829734a7a8eb9a35c10f5ea8",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/tested-code-hashes.json",
+      "category": "documentation-evidence",
+      "bytes": 115472,
+      "sha256": "5629f1a6b7be53f2647523dd732a6849138efd18385b1aef19c8d43db3d0dd63",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/validation-summary.json",
+      "category": "documentation-evidence",
+      "bytes": 28707,
+      "sha256": "bbb251ab65e2207a933ca972b81baeafa43097a4eb340415ed24f53e1e62cd7f",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/README.md",
+      "category": "documentation-evidence",
+      "bytes": 13165,
+      "sha256": "cece20933925a55bbf616e38250ea663acdc7b16c94f4d58aff6b06af21d31ca",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/WINDOWS-WSL2-2026-11-01/README.md",
+      "category": "documentation-evidence",
+      "bytes": 10382,
+      "sha256": "d5c980d4d77e4929dc449e99b8066d48d6624d99bf06a128c136d152a7d98a09",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/WINDOWS-WSL2-2026-11-01/real-comparison.json",
+      "category": "documentation-evidence",
+      "bytes": 1145,
+      "sha256": "bed1726e7238e0e8c6bf3f507a403c6f2000d3681c4188e902cffbaff9459f26",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/WINDOWS-WSL2-2026-11-01/validation-summary.json",
+      "category": "documentation-evidence",
+      "bytes": 15899,
+      "sha256": "ad7aac935e6b94d82e8eb2a50e1b5a2c088d73d0e72024fddf4253f2ecbb3fca",
+      "already_committed": false
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/comparison-events-desktop.json",
+      "category": "documentation-evidence",
+      "bytes": 156869,
+      "sha256": "27c35938a29f408c629b85507287127e59737fe81bb1554d04529d4a94b1ab6f",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/logs/backend-full.txt",
+      "category": "documentation-evidence",
+      "bytes": 3381,
+      "sha256": "cf7846fca74bde218bc7bf156e8cff55f15a324d828f69a560f3fcc85ab31b11",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/logs/build.txt",
+      "category": "documentation-evidence",
+      "bytes": 848,
+      "sha256": "fb5048294527f245e74f2591601c440840ff0b9e445a0731697ef2d754881eb3",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/logs/components-auto-phase.txt",
+      "category": "documentation-evidence",
+      "bytes": 221,
+      "sha256": "082be6b547401cf7b91cb3cd6919c29ef6719bbc9ed829c441bf64323ec015d3",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/logs/components.txt",
+      "category": "documentation-evidence",
+      "bytes": 432,
+      "sha256": "d3221e3df3e06af6a2f491bb8187801496052dd04738c79bdc1680523b6ac031",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/logs/e2e-focused.txt",
+      "category": "documentation-evidence",
+      "bytes": 2240,
+      "sha256": "8ed209e9e6338bbea233183dd30f12f0bd8f82d8e458d1f9bea7ee0693b96532",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/logs/e2e-full.txt",
+      "category": "documentation-evidence",
+      "bytes": 20350,
+      "sha256": "755d1d043d6524958222612f4e733ac1073c8cd588ff654715190635bfc9b49a",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/logs/lint.txt",
+      "category": "documentation-evidence",
+      "bytes": 37,
+      "sha256": "f1089f05bc46f749344b3e942dcccfe3d1bf6c9fb0197c630033defbe65eadc0",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/logs/unit.txt",
+      "category": "documentation-evidence",
+      "bytes": 15309,
+      "sha256": "267721ccd3c2138e80906483c7bfe2326f20992bf7558344424df07197419f5d",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/screenshots/desktop/comparacion-antes-de-confirmar.png",
+      "category": "documentation-evidence",
+      "bytes": 328976,
+      "sha256": "b17505d648e94087b71f720ae3b6382d6bd1f5801c6ad9fc70694fe2498bf0b2",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/screenshots/desktop/giro-real-best-fit.png",
+      "category": "documentation-evidence",
+      "bytes": 300821,
+      "sha256": "87de5834e769b13b28624ed68ee55f393e0df2dd7663326fae2d5ac4d9557a95",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/screenshots/desktop/giro-real-first-fit.png",
+      "category": "documentation-evidence",
+      "bytes": 300279,
+      "sha256": "071b2c6b061d2c3e0d5ace3f69280d385a0c0e0a60b90ca1419954b9a4222fb2",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/screenshots/desktop/giro-real-worst-fit.png",
+      "category": "documentation-evidence",
+      "bytes": 301387,
+      "sha256": "7aaaa51040f5b14d3a65c26bd5b4acdbdf919bd63443a09c8384d92e69bb3074",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/screenshots/desktop/mascaras-first-fit.png",
+      "category": "documentation-evidence",
+      "bytes": 99912,
+      "sha256": "816e686b568aab5897ed6cb2df5551fd9b4e42424ed14639919a6f29ce3e6a64",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/screenshots/desktop/orden-first-fit.png",
+      "category": "documentation-evidence",
+      "bytes": 60629,
+      "sha256": "d2e8fe4d9add70803d030c206b61ccf166345fc6e6bdfca28dc6d78bbc2cc35e",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/screenshots/desktop/solicitud-original.png",
+      "category": "documentation-evidence",
+      "bytes": 141552,
+      "sha256": "2986cf7c37b4e8b9d7ec0b452ba40c86e8e1024789d521a779e209523af34d8c",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/screenshots/mobile/comparacion-antes-de-confirmar.png",
+      "category": "documentation-evidence",
+      "bytes": 79510,
+      "sha256": "0fd034afbc8839dc72cbdb6802db504405881730a53b00613c75167bd47718ee",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/screenshots/mobile/giro-real-best-fit.png",
+      "category": "documentation-evidence",
+      "bytes": 242169,
+      "sha256": "629dbd21e4bed302dd19d16a8fca64262403ff6576ce94b6bfa79f6ca2a1d9a0",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/screenshots/mobile/giro-real-first-fit.png",
+      "category": "documentation-evidence",
+      "bytes": 241526,
+      "sha256": "ed9cbfa6b9c37fe7ba6bf088311bfa09d014af2b1b5643c42d68897113ef2ea8",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/screenshots/mobile/giro-real-worst-fit.png",
+      "category": "documentation-evidence",
+      "bytes": 242737,
+      "sha256": "03d231d8a02b8dfefd6fe2d2ac4745e21f0d2611e3953659ca4c6b915175ea84",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/screenshots/mobile/mascaras-first-fit.png",
+      "category": "documentation-evidence",
+      "bytes": 97325,
+      "sha256": "812b0e8a330116e00b1932fa4a3ba45801d73d066b40be01a954f14548d4ae1d",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/screenshots/mobile/orden-first-fit.png",
+      "category": "documentation-evidence",
+      "bytes": 46226,
+      "sha256": "f4eea6e7974b98bdfaf39c31c2ec7264785cafdd0d8dbce560225c8bd0ae991e",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/screenshots/mobile/solicitud-original.png",
+      "category": "documentation-evidence",
+      "bytes": 188025,
+      "sha256": "9f7ef5ecce51e275ea1a1b2b4e84e38c60f1278cb932f5e037d3fd1e999856ea",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t00-concurrency.json",
+      "category": "documentation-evidence",
+      "bytes": 8708,
+      "sha256": "47f2117064956c3f6bc96c5b3f9722a771947399ba4cda913cf4603e974d9de6",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t00-inicio.md",
+      "category": "documentation-evidence",
+      "bytes": 3187,
+      "sha256": "721159b1bc3c0036ecc28103ecb4111d064339980a1be43a3e10a9de1e149f4b",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t00-recursos.md",
+      "category": "documentation-evidence",
+      "bytes": 3631,
+      "sha256": "bac35c45f4f84a4811adb2d11d2f2ea13027dc1a2fde907e095be39a3d0e1dd0",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t00-resources.json",
+      "category": "documentation-evidence",
+      "bytes": 22747,
+      "sha256": "daf5033b60fc660a7a7d250bd3c4d09f313852d98ec4dbd0720f8221497368b2",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t01-codec.md",
+      "category": "documentation-evidence",
+      "bytes": 2903,
+      "sha256": "b1374e989843106bbd44de728f4ff081ca3d377ac98098adccd66b54fd899ad5",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t01-persistencia.md",
+      "category": "documentation-evidence",
+      "bytes": 4733,
+      "sha256": "6ae48ec08b81d1cd342a5396967e5410117dd7df85d76977ddf9f4b20b855b0c",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t02-coordinador.md",
+      "category": "documentation-evidence",
+      "bytes": 7428,
+      "sha256": "576d5336848a33ebde725917c5d29427dcc95640f5033c5a47829d4df5d66136",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t02-runner.json",
+      "category": "documentation-evidence",
+      "bytes": 10602,
+      "sha256": "cadbe45125b4c6e76d03418fe4f7985055c98ad5a91def4cfe3731f775d1d686",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t03-confirmacion.md",
+      "category": "documentation-evidence",
+      "bytes": 3339,
+      "sha256": "388d2f1653d624c10964eaca5cf836ca91cb127a4e2d4b33ffe096b55ae3f5e2",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t04-api-ui.md",
+      "category": "documentation-evidence",
+      "bytes": 6726,
+      "sha256": "5580782797156e333df941e348c44012cf7dd56158489f40ba248b8c3e64a65b",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/t04-http-resources.json",
+      "category": "documentation-evidence",
+      "bytes": 911,
+      "sha256": "8c9b48305babaa87f986d897db70571b268b893c042552cb23f2e6fe2879d79d",
+      "already_committed": true
+    },
+    {
+      "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/validation.json",
+      "category": "documentation-evidence",
+      "bytes": 5563,
+      "sha256": "8c71218a9015475c349f3f7620abd9a86200a14ae2e2eb74138dee640baaeac8",
+      "already_committed": true
+    },
+    {
+      "path": "docs/specs/PLAN-OPT-MULTIMOTOR-VISUAL.md",
+      "category": "documentation-evidence",
+      "bytes": 25757,
+      "sha256": "b264149e4078cc73916d0c26de26989f605f07cf1206e6cb2e6bfa2a71faf52c",
+      "already_committed": true
+    },
+    {
+      "path": "docs/specs/SPEC-OPT-MULTIMOTOR-VISUAL.md",
+      "category": "documentation-evidence",
+      "bytes": 22084,
+      "sha256": "5f5b4933629dcdd2f21019315b6103722a5aa7bf36c8755ba0cf10bc40d34fb3",
+      "already_committed": true
+    },
+    {
+      "path": "docs/testing/README.md",
+      "category": "documentation-evidence",
+      "bytes": 4446,
+      "sha256": "0d6cf285e7cb0245f447a5ce64b55140dc3069537221bedf991ae0c741030cd2",
+      "already_committed": false
+    },
+    {
+      "path": "experiments/optimization/README.md",
+      "category": "tests-ci-evidence",
+      "bytes": 3868,
+      "sha256": "190a67468b98189bd296bcc777075a2d125b4588797a8265da7b308cd2a6b864",
+      "already_committed": true
+    },
+    {
+      "path": "experiments/optimization/export_comparison_contract.py",
+      "category": "tests-ci-evidence",
+      "bytes": 4268,
+      "sha256": "e9a0117bf6746b61daa639b1c363cb1e4d7c01b56f8bdd9b9330c8e9bf8ba5e7",
+      "already_committed": true
+    },
+    {
+      "path": "experiments/optimization/final_audit_cases.py",
+      "category": "tests-ci-evidence",
+      "bytes": 3401,
+      "sha256": "442dd4a0298bfb3e643ae19da23643b4f06324ccd26e039932c81beba933a998",
+      "already_committed": false
+    },
+    {
+      "path": "experiments/optimization/probe_concurrency.py",
+      "category": "tests-ci-evidence",
+      "bytes": 8718,
+      "sha256": "fde052b7b46cc44ebceca526dba573692d27af45f69f7efea8d913f8922bcb7c",
+      "already_committed": true
+    },
+    {
+      "path": "experiments/optimization/probe_runner.py",
+      "category": "tests-ci-evidence",
+      "bytes": 3924,
+      "sha256": "6075f8b0ab309ab9783144a4384d90fbbca2a2b682fb401f35c9fd807637fbfd",
+      "already_committed": true
+    },
+    {
+      "path": "experiments/optimization/resource_cases.py",
+      "category": "tests-ci-evidence",
+      "bytes": 1868,
+      "sha256": "39abbb0946019c4daaec184fb5b14f1f48bcfc128a06255bfccf8dedf97032e0",
+      "already_committed": true
+    },
+    {
+      "path": "experiments/optimization/resource_sampling.py",
+      "category": "tests-ci-evidence",
+      "bytes": 2728,
+      "sha256": "a557750b06610d38cdfbd7936b8f927cf170a9b7f758fac193df3dff21e16ce2",
+      "already_committed": true
+    },
+    {
+      "path": "frontend/README.md",
+      "category": "documentation-evidence",
+      "bytes": 6770,
+      "sha256": "59215746e049ea989d8077223cf999ffd95608186bca291e1d4b431d064f2ae9",
+      "already_committed": true
+    },
+    {
+      "path": "frontend/first-fit-compatibility.html",
+      "category": "documentation-evidence",
+      "bytes": 300,
+      "sha256": "2c3a50b9431d97e55d016d680af0de184c2d2f2bf77e0594bf60ea3595b55fb1",
+      "already_committed": true
+    },
+    {
+      "path": "frontend/playwright.config.js",
+      "category": "tests-ci-evidence",
+      "bytes": 1450,
+      "sha256": "83e75dfd8de65d71b7dc5334615502bc7fc9ae2f26aeac4617ae95d00d226aa4",
+      "already_committed": true
+    },
+    {
+      "path": "frontend/src/App.jsx",
+      "category": "production-required",
+      "bytes": 3405,
+      "sha256": "9ca325f96ba8cabff6e0b70621b22e6a05004c4e365f09b2b99bd109744fb7b5",
+      "already_committed": true
+    },
+    {
+      "path": "frontend/src/features/optimization/ComparisonWorkspace.css",
+      "category": "production-required",
+      "bytes": 7982,
+      "sha256": "6ed116b80d8a2add7f98c001b027e44a782b1e2ac4c459cd08f8b23f6b2330af",
+      "already_committed": true
+    },
+    {
+      "path": "frontend/src/features/optimization/ComparisonWorkspace.jsx",
+      "category": "production-required",
+      "bytes": 23167,
+      "sha256": "818d90188ad7ee6a460bef349363c5edd1f8903173ce09a583851ddc28ee3601",
+      "already_committed": false
+    },
+    {
+      "path": "frontend/src/features/optimization/OptimizationPage.jsx",
+      "category": "production-required",
+      "bytes": 17911,
+      "sha256": "5d1c849ba05ab64e4dad0db30edc8fbda4b19494e6b599b2fefac4b08845f2ee",
+      "already_committed": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/ComparisonContract.test.jsx",
+      "category": "tests-ci-evidence",
+      "bytes": 1266,
+      "sha256": "e4fc7cf25cf593af6f9c24d699ea541752435a0d739526b6a1291cae145d291b",
+      "already_committed": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/ComparisonLifecycle.test.jsx",
+      "category": "tests-ci-evidence",
+      "bytes": 6479,
+      "sha256": "3babc314aeb78711111940c9bb1a65d40406a92cf253ab3d289414064bc7f17f",
+      "already_committed": false
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/ComparisonWorkspace.test.jsx",
+      "category": "tests-ci-evidence",
+      "bytes": 10214,
+      "sha256": "e3cbd17842fad161b7841478f5d6c01eb1f31b062c1d35c5da129e87b1df3238",
+      "already_committed": false
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/CuttingWork.test.jsx",
+      "category": "tests-ci-evidence",
+      "bytes": 5558,
+      "sha256": "b3ecaa14f7e617b64f7a867e88cf9c094f760973f8d2df5501e60a0a70b2bf7a",
+      "already_committed": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/OptimizationPage.test.jsx",
+      "category": "tests-ci-evidence",
+      "bytes": 15544,
+      "sha256": "d591d98c255d66e139ee992b7b63d85ef4d678d0c1ba2ea361b62592c12cd448",
+      "already_committed": true
+    },
+    {
+      "path": "frontend/src/features/optimization/__tests__/PendingOrdersSource.test.jsx",
+      "category": "tests-ci-evidence",
+      "bytes": 1733,
+      "sha256": "75ddb02e18ef3286641434f658c25a793a92c0271959ca653d1057648bdec761",
+      "already_committed": false
+    },
+    {
+      "path": "frontend/src/features/optimization/comparisonApi.js",
+      "category": "production-required",
+      "bytes": 11181,
+      "sha256": "1749559ca3f2e7fd349a558a2a6b4ff7f39d4fa83452437199d05e49c031153b",
+      "already_committed": true
+    },
+    {
+      "path": "frontend/src/features/optimization/comparisonController.js",
+      "category": "production-required",
+      "bytes": 12326,
+      "sha256": "d0d6d55c7a11e860d93d6e5d13684cbf7a9d2aee23b3e7ce29452daa815c8e1e",
+      "already_committed": false
+    },
+    {
+      "path": "frontend/src/features/optimization/pendingOrdersSource.js",
+      "category": "production-required",
+      "bytes": 3171,
+      "sha256": "c944a15fdfd58de1eee4ad588216f024f12513770374d6ea72d6419c001a519b",
+      "already_committed": false
+    },
+    {
+      "path": "frontend/src/features/optimization/runContract.js",
+      "category": "production-required",
+      "bytes": 13311,
+      "sha256": "1e65aaca873b09b3b47fbba0fdcc98baa6a4ccc4793ae2920f4917d4ad5b80ea",
+      "already_committed": true
+    },
+    {
+      "path": "frontend/src/features/optimization/visualContract.js",
+      "category": "production-required",
+      "bytes": 9178,
+      "sha256": "aac4ffa0866091b0d7e552d14ad4b0f9a86540807b33cf96d27a48ff9e268f0e",
+      "already_committed": true
+    },
+    {
+      "path": "frontend/src/features/orders/CustomPieceEditor.css",
+      "category": "production-required",
+      "bytes": 12354,
+      "sha256": "953b001ef104b395fa04dce1b325d87af0023bd2b4b1e2227b2dbb3806daf0f8",
+      "already_committed": true
+    },
+    {
+      "path": "frontend/tests/e2e/criticalSpecs.js",
+      "category": "tests-ci-evidence",
+      "bytes": 637,
+      "sha256": "e4fe898804f5ddbf68cf4b00e5dc3130269e29514b9a2b873ec0b0ab5d3de113",
+      "already_committed": false
+    },
+    {
+      "path": "frontend/tests/e2e/optimization-comparison.spec.js",
+      "category": "tests-ci-evidence",
+      "bytes": 14711,
+      "sha256": "5924ecf859ea402ebc22ed2e3262d54e38301841d4a2a1d8793616d1145a8522",
+      "already_committed": false
+    },
+    {
+      "path": "frontend/tests/e2e/optimization-policy-audit.spec.js",
+      "category": "tests-ci-evidence",
+      "bytes": 6835,
+      "sha256": "fbec191616eaa6d00fda0862322044be5b32ad20a4f8bd4877f06a7b86258aed",
+      "already_committed": false
+    },
+    {
+      "path": "frontend/tests/e2e/optimizationRealSupport.js",
+      "category": "tests-ci-evidence",
+      "bytes": 9489,
+      "sha256": "456953dd898d498b3bc08fa4f1514ec2bb168304b2903b6b080a5b20bdcb4bf9",
+      "already_committed": true
+    },
+    {
+      "path": "frontend/tests/e2e/s1-optimization-ui.spec.js",
+      "category": "tests-ci-evidence",
+      "bytes": 22332,
+      "sha256": "124c713b83081b29a831ebbc979b2797dc8fb62757ac7f0591d37b46802f1431",
+      "already_committed": true
+    },
+    {
+      "path": "frontend/tests/e2e/s1-post-review.spec.js",
+      "category": "tests-ci-evidence",
+      "bytes": 8525,
+      "sha256": "c7590422afe19beee516f12f53f174130a184c004259630ca8931d9ff3f8db6d",
+      "already_committed": true
+    },
+    {
+      "path": "frontend/tests/e2e/ta-dashboard.spec.js",
+      "category": "tests-ci-evidence",
+      "bytes": 16930,
+      "sha256": "b7ee24359af878e2ef477704dcddea898dfb527320d92eccc58f0de81262d71d",
+      "already_committed": false
+    },
+    {
+      "path": "frontend/tests/e2e/ta036-retazo-personalizado.spec.js",
+      "category": "tests-ci-evidence",
+      "bytes": 3109,
+      "sha256": "2188dc3630c693e2f8a7f51164dcff273872ba32ee2a3bb945a1023b40d56546",
+      "already_committed": true
+    },
+    {
+      "path": "frontend/tests/manual/first-fit-compatibility/main.jsx",
+      "category": "tests-ci-evidence",
+      "bytes": 418,
+      "sha256": "686d35586ad2790b6ec3e27e97552ad89555e55888db73d056d2f739b3386c3f",
+      "already_committed": true
+    }
+  ],
+  "pattern_flags": [
+    {
+      "path": "backend/tests/unit/shared/test_config.py",
+      "pattern": "database-url-with-password"
+    }
+  ],
+  "authorized_privacy_revision": {
+    "date": "2026-11-01",
+    "scope": "Documentation only, before local commits; no publication authorized",
+    "path": "docs/evidence/sprint-02/OPT-MULTIMOTOR-VISUAL/FINAL-AUDIT-2026-11-01/README.md",
+    "before_sha256": "e96e3527f67b794c80d0ea8688e1481b1d2c69e12e2e14dcfa392543a3bd4c40",
+    "after_sha256": "a5a9dd699dffbd259e56725e45ea7249c207af0c3632811437fb38f0a175fb6c",
+    "private_original_excluded": true,
+    "synthetic_evidence_unchanged": true,
+    "tested_source_hashes_unchanged": 573
+  }
+}

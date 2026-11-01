@@ -41,7 +41,11 @@ jobs:
           test -x "$pg_bin/pg_ctl"
           echo "NEWGLASS_TEST_PG_BIN=$pg_bin" >> "$GITHUB_ENV"
       - name: Run tests
-        run: python -m pytest tests -q -ra
+        # A fresh pytest process keeps the supervisor's own RSS budget real.
+        # Run both groups; do not relax limits or skip the process tests.
+        run: |
+          python -m pytest tests --ignore=tests/unit/optimization/test_comparison_runner.py -q -ra
+          python -m pytest tests/unit/optimization/test_comparison_runner.py -q -ra
 
   frontend:
     runs-on: ubuntu-24.04

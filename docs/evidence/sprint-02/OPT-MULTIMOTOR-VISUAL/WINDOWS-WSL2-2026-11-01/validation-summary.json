@@ -1,0 +1,215 @@
+{
+    "date":  "2026-11-01",
+    "branch":  "feature/optimization-multimotor-visual",
+    "base_commit":  "5e836cdd9cc61eb212402d90dbe94a6776afcc75",
+    "initial_working_tree":  "clean",
+    "python_windows":  "3.11.9 win32",
+    "python_wsl2":  "3.11.9 linux",
+    "node":  "22.23.2",
+    "postgresql":  "18.6",
+    "backend":  {
+                    "tests":  845,
+                    "failures":  0,
+                    "errors":  0,
+                    "skipped":  0,
+                    "seconds":  761.672,
+                    "groups":  {
+                                   "unit":  503,
+                                   "integration":  151,
+                                   "api":  191
+                               }
+                },
+    "additional_overload":  {
+                                "tests":  1,
+                                "failures":  0,
+                                "errors":  0,
+                                "skipped":  0,
+                                "seconds":  25.531,
+                                "groups":  {
+                                               "api":  1
+                                           }
+                            },
+    "windows_platform_rejection_tests":  {
+                                             "passed":  2,
+                                             "deselected":  12
+                                         },
+    "frontend_unit":  {
+                          "passed":  175
+                      },
+    "frontend_optimization_components":  {
+                                             "files_passed":  17,
+                                             "passed":  173
+                                         },
+    "frontend_lint":  "passed",
+    "frontend_build":  "passed (existing chunk size warning)",
+    "wsl_database_select_1":  "reachable (no business data read or written)",
+    "e2e_initial_mounted_backend":  {
+                                        "stats":  {
+                                                      "startTime":  "2026-11-01T16:36:11.563Z",
+                                                      "duration":  168778.28300000002,
+                                                      "expected":  0,
+                                                      "skipped":  0,
+                                                      "unexpected":  6,
+                                                      "flaky":  0
+                                                  },
+                                        "tests":  [
+                                                      {
+                                                          "title":  "comparar tres motores, revisar fases y solicitud, elegir BF y confirmar una sola vez",
+                                                          "project":  "chromium-desktop",
+                                                          "outcome":  "unexpected",
+                                                          "results":  [
+                                                                          {
+                                                                              "status":  "failed",
+                                                                              "duration_ms":  17938
+                                                                          }
+                                                                      ]
+                                                      },
+                                                      {
+                                                          "title":  "rotación real de 90 grados y movimiento reducido sin ejecutar otro trabajo al cambiar pestañas",
+                                                          "project":  "chromium-desktop",
+                                                          "outcome":  "unexpected",
+                                                          "results":  [
+                                                                          {
+                                                                              "status":  "failed",
+                                                                              "duration_ms":  16517
+                                                                          }
+                                                                      ]
+                                                      },
+                                                      {
+                                                          "title":  "consulta sin permisos de ejecución recupera resultados sin permitir elección ni consumo",
+                                                          "project":  "chromium-desktop",
+                                                          "outcome":  "unexpected",
+                                                          "results":  [
+                                                                          {
+                                                                              "status":  "failed",
+                                                                              "duration_ms":  16901
+                                                                          }
+                                                                      ]
+                                                      },
+                                                      {
+                                                          "title":  "comparar tres motores, revisar fases y solicitud, elegir BF y confirmar una sola vez",
+                                                          "project":  "chromium-mobile",
+                                                          "outcome":  "unexpected",
+                                                          "results":  [
+                                                                          {
+                                                                              "status":  "failed",
+                                                                              "duration_ms":  17987
+                                                                          }
+                                                                      ]
+                                                      },
+                                                      {
+                                                          "title":  "rotación real de 90 grados y movimiento reducido sin ejecutar otro trabajo al cambiar pestañas",
+                                                          "project":  "chromium-mobile",
+                                                          "outcome":  "unexpected",
+                                                          "results":  [
+                                                                          {
+                                                                              "status":  "failed",
+                                                                              "duration_ms":  16471
+                                                                          }
+                                                                      ]
+                                                      },
+                                                      {
+                                                          "title":  "consulta sin permisos de ejecución recupera resultados sin permitir elección ni consumo",
+                                                          "project":  "chromium-mobile",
+                                                          "outcome":  "unexpected",
+                                                          "results":  [
+                                                                          {
+                                                                              "status":  "failed",
+                                                                              "duration_ms":  16268
+                                                                          }
+                                                                      ]
+                                                      }
+                                                  ]
+                                    },
+    "e2e_native_linux_filesystem":  {
+                                        "stats":  {
+                                                      "startTime":  "2026-11-01T16:49:02.901Z",
+                                                      "duration":  63429.084,
+                                                      "expected":  6,
+                                                      "skipped":  0,
+                                                      "unexpected":  0,
+                                                      "flaky":  0
+                                                  },
+                                        "tests":  [
+                                                      {
+                                                          "title":  "comparar tres motores, revisar fases y solicitud, elegir BF y confirmar una sola vez",
+                                                          "project":  "chromium-desktop",
+                                                          "outcome":  "expected",
+                                                          "results":  [
+                                                                          {
+                                                                              "status":  "passed",
+                                                                              "duration_ms":  11746
+                                                                          }
+                                                                      ]
+                                                      },
+                                                      {
+                                                          "title":  "rotación real de 90 grados y movimiento reducido sin ejecutar otro trabajo al cambiar pestañas",
+                                                          "project":  "chromium-desktop",
+                                                          "outcome":  "expected",
+                                                          "results":  [
+                                                                          {
+                                                                              "status":  "passed",
+                                                                              "duration_ms":  8385
+                                                                          }
+                                                                      ]
+                                                      },
+                                                      {
+                                                          "title":  "consulta sin permisos de ejecución recupera resultados sin permitir elección ni consumo",
+                                                          "project":  "chromium-desktop",
+                                                          "outcome":  "expected",
+                                                          "results":  [
+                                                                          {
+                                                                              "status":  "passed",
+                                                                              "duration_ms":  6155
+                                                                          }
+                                                                      ]
+                                                      },
+                                                      {
+                                                          "title":  "comparar tres motores, revisar fases y solicitud, elegir BF y confirmar una sola vez",
+                                                          "project":  "chromium-mobile",
+                                                          "outcome":  "expected",
+                                                          "results":  [
+                                                                          {
+                                                                              "status":  "passed",
+                                                                              "duration_ms":  10323
+                                                                          }
+                                                                      ]
+                                                      },
+                                                      {
+                                                          "title":  "rotación real de 90 grados y movimiento reducido sin ejecutar otro trabajo al cambiar pestañas",
+                                                          "project":  "chromium-mobile",
+                                                          "outcome":  "expected",
+                                                          "results":  [
+                                                                          {
+                                                                              "status":  "passed",
+                                                                              "duration_ms":  8102
+                                                                          }
+                                                                      ]
+                                                      },
+                                                      {
+                                                          "title":  "consulta sin permisos de ejecución recupera resultados sin permitir elección ni consumo",
+                                                          "project":  "chromium-mobile",
+                                                          "outcome":  "expected",
+                                                          "results":  [
+                                                                          {
+                                                                              "status":  "passed",
+                                                                              "duration_ms":  6057
+                                                                          }
+                                                                      ]
+                                                      }
+                                                  ]
+                                    },
+    "native_e2e_source_matches_checkout":  {
+                                               "backend/app/modules/optimization/infrastructure/comparison_runner.py":  true,
+                                               "backend/app/modules/optimization/domain/first_fit.py":  true,
+                                               "backend/app/modules/optimization/domain/best_fit.py":  true,
+                                               "backend/app/modules/optimization/domain/worst_fit.py":  true,
+                                               "frontend/tests/e2e/optimization-comparison.spec.js":  true,
+                                               "frontend/src/features/optimization/ComparisonWorkspace.jsx":  true
+                                           },
+    "windows_to_wsl_localhost":  {
+                                     "status":  200,
+                                     "platform":  "linux",
+                                     "comparison_preflight":  true
+                                 }
+}

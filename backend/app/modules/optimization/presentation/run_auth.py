@@ -26,7 +26,8 @@ def get_run_user(credentials: HTTPAuthorizationCredentials | None = Depends(bear
 
 def run_permission(code):
     guard = require_permission(code)
-    def check(user=Depends(get_run_user), reader=Depends(get_run_permission_reader)):
-        return guard(user=user, permission_reader=reader)
+    def check(user=Depends(get_run_user), reader=Depends(get_run_permission_reader),
+              db=Depends(get_database_session, scope="function")):
+        return guard(user=user, permission_reader=reader, db=db)
     check.permission = code
     return check

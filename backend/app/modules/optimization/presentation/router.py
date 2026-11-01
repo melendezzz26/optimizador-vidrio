@@ -67,3 +67,5 @@ def rasterize_order_piece(request: RasterizeRequest, user=Depends(execute_permis
 # New T1 transport is isolated from the historical HU-015 error contract.
 from .run_routes import router as run_router  # noqa: E402
 router.include_router(run_router)
+from .comparison_routes import router as comparison_router  # noqa: E402
+router.include_router(comparison_router)
