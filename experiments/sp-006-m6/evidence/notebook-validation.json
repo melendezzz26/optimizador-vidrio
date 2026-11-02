@@ -1,0 +1,21 @@
+{
+  "notebook_valid": true,
+  "cells": 31,
+  "code_cells": 13,
+  "sequential_execution": true,
+  "clean_input": "Solo se copió el notebook; bootstrap reconstruyó sus archivos.",
+  "execution_seconds": 39.57683519995771,
+  "records": 36,
+  "complete": 36,
+  "geometry_valid": 36,
+  "deterministic": 36,
+  "figures": 19,
+  "csv_json_zip": true,
+  "skipped_cells": 0,
+  "actual_colab_execution": false,
+  "python": "3.11.9",
+  "limitations": [
+    "Validación local Windows CPU, no sesión real de Google Colab.",
+    "No certifica escala industrial ni rendimiento del backend."
+  ]
+}
