@@ -1,0 +1,171 @@
+{
+  "schema_version": 1,
+  "case_id": "HF-REALISTIC-001",
+  "label": "PEDIDO REALISTA HOLE FILLING - NO PERTENECE A TA-027",
+  "config": {
+    "resolution_mm": 1,
+    "angular_step_deg": 5,
+    "margin_mm": 5,
+    "separation_mm": 3
+  },
+  "material": {
+    "glass_type_id": 1,
+    "thickness_mm": 6
+  },
+  "stocks": [
+    {
+      "source": "RETAZO",
+      "material_id": 8101,
+      "physical_unit_index": 1,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 300,
+        "height_mm": 220
+      }
+    },
+    {
+      "source": "PLANCHA",
+      "material_id": 9101,
+      "physical_unit_index": 1,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 420,
+        "height_mm": 320
+      }
+    }
+  ],
+  "pieces": [
+    {
+      "piece_id": 1,
+      "geometry": {
+        "type": "CIRCUNFERENCIA",
+        "radius_mm": 60
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 2,
+      "geometry": {
+        "type": "CIRCUNFERENCIA",
+        "radius_mm": 75
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 3,
+      "geometry": {
+        "type": "CIRCUNFERENCIA",
+        "radius_mm": 90
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 4,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 220,
+        "height_mm": 140
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 5,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 180,
+        "height_mm": 120
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 6,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 80,
+        "height_mm": 60
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 7,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 70,
+        "height_mm": 50
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 8,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 65,
+        "height_mm": 45
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 9,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 60,
+        "height_mm": 50
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 10,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 55,
+        "height_mm": 40
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 11,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 50,
+        "height_mm": 45
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 12,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 50,
+        "height_mm": 40
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 13,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 45,
+        "height_mm": 40
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 14,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 40,
+        "height_mm": 35
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 15,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 35,
+        "height_mm": 30
+      },
+      "role": "pending"
+    }
+  ]
+}
