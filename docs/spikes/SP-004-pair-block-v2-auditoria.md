@@ -53,6 +53,8 @@ La unión se calcula solo tras validar que las máscaras no se solapen y respete
 5. Mantener offsets relativos deterministas y acotados; contar por separado pares, producto de orientaciones teórico, duplicados/pruning, pares de orientaciones enviados a validación geométrica y posiciones relativas comprobadas.
 6. Eliminar el filtro de escala 4:1, ya que no se ha justificado y puede excluir piezas pequeñas que llenen recortes de una pieza mayor. No usar procesamiento paralelo.
 
+**Pruning por fase global:** tras equivalencia de máscaras, las combinaciones se agrupan por el giro relativo `angle_B - angle_A`. Para cada giro relativo se conserva una sola fase global: la que tiene mayor cota optimista de ahorro de bounding box, luego mayor densidad optimista y desempate por ángulos. Esto reduce el máximo geométrico a 72 pares de orientación por pareja antes de offsets. Es un pruning heurístico, no una cota sin pérdida: la rasterización puede hacer que otra fase del mismo giro relativo tenga un resultado distinto. V2 cuenta por separado combinaciones tras simetría, tras cotas, tras fase, composiciones geométricas y offsets probados para que esta pérdida potencial sea visible.
+
 ## Estado de la evaluación
 
 La especificación de v2 es una adaptación experimental. Una vez implementada se volverán a correr FF/BF/WF y Pair-Block en serie sobre SMALL/MEDIUM/COMPLEX inalterados, el discriminante y hasta tres instancias nuevas declaradas de antemano. Los resultados v1 permanecen como antecedente; el dictamen de Pair-Block queda pendiente hasta revisar la grilla de 5°, los nuevos contadores, los placements y el costo.
