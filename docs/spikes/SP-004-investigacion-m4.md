@@ -187,3 +187,24 @@ Se completó el gate solicitado con tres pedidos sintéticos congelados antes de
 Los contadores fueron 0/11/70 componentes de anclajes detectados y 0/1/6 pockets usados para 001/002/003. Las tres firmas funcionales se repitieron en los tres runs de cada caso. El costo dominante fue generar el mapa raster de anclajes (medianas 91.68 s, 226.46 s y 231.31 s); el etiquetado de componentes tomó 3.11 s, 5.53 s y 4.84 s. Las cifras completas, runtimes individuales, placements, fuentes, rotaciones y figuras están en [CSV](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_realistic_results.csv), [JSON](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_realistic_trace.json) y [notebook](../../experiments/optimization/colab/SP004-Hole-Filling.ipynb). Solo se generaron figuras para 002 y 003, que usaron pockets.
 
 **Decisión final para TA-042: NO-GO.** HF altera patrones en 002/003, pero en 002 solo empata métricas a 136×; en 003 pierde cobertura y empeora las métricas funcionales a 425×; en 001 equivale al baseline sin pocket a 271×. El resultado no cumple el criterio de utilidad funcional y costo aceptable. Determinismo: PASS ×3 por fixture. Pruebas actuales: 13 de laboratorio HF y 145 regresiones enfocadas, todas PASS. La evidencia detallada está en el [README de SP-004](../evidence/sprint-02/SP-004/README.md). No hubo cambios de producción ni TA-027, push, PR o merge.
+
+## Experimento demostrativo de capacidad
+
+> **CASO CONTROLADO DISEÑADO PARA MOSTRAR LA CLASE DE PEDIDO EN LA QUE HOLE FILLING PUEDE SER ÚTIL. NO REPRESENTA RENDIMIENTO GENERAL.**
+
+La **evaluación general** sigue compuesta por TA-027/EXP y los tres HF-REALISTIC, con recomendación **NO-GO para TA-042**. HF-CAPABILITY-001 es una **prueba dirigida de capacidad** que muestra un mecanismo posible, sin cambiar esas conclusiones.
+
+Se diseñó un trabajo ya iniciado en un retazo 274 × 280 mm con dieciséis piezas previas validadas, entre ellas un círculo y paneles. Quedaron pendientes el inserto P11 de 32 × 32 mm y el círculo P12 de Ø36 mm; una plancha de igual tamaño estaba disponible. Se mantuvieron raster 1 mm, giros cada 5°, margen 5 mm, separación 3 mm, material y espesor comunes y prioridad retazo → plancha. La [intención](../../experiments/optimization/hole_filling/cases/HF-CAPABILITY-INTENT.md) documenta la hipótesis, sus cambios durante el diseño y la búsqueda dirigida; el [registro](../../experiments/optimization/hole_filling/cases/HF-CAPABILITY-SEARCH.jsonl) contiene 20 candidatos. Se congeló el primero que cumplió los criterios, `f806a27`, antes de comparar definitivamente los cuatro métodos.
+
+| Método | P11 | P12 | Colocadas | Retazos / planchas | Uso | Merma mm² | Recuperable mm² | Tiempo ms |
+|---|---|---|---:|---:|---:|---:|---:|---:|
+| FF | Exterior, retazo (5, 5) | Plancha (5, 5) | 18/18 | 1 / 1 | 33.787% | 37,516.56 | 64,080 | 63.05 |
+| BF | Exterior, retazo (5, 5) | Plancha (5, 5) | 18/18 | 1 / 1 | 33.787% | 37,516.56 | 64,080 | 62.32 |
+| WF | Exterior, retazo (5, 5) | Plancha (5, 5) | 18/18 | 1 / 1 | 33.787% | 37,516.56 | 64,080 | 62.81 |
+| HF | Pocket, retazo (51, 191) | Retazo (5, 5) | 18/18 | 1 / 0 | 67.575% | 22,410.56 | 2,466 | 262.99 |
+
+HF detectó siete componentes de anclajes y usó uno para P11 a 0°; P12 entró después mediante fallback en la franja exterior preservada. El pocket utilizado apareció abajo a la izquierda del marco, no en la cavidad superior imaginada al inicio. La prueba alcanzó el nivel 1 declarado: una plancha menos. También aumentó la utilización y redujo la merma, mientras el área recuperable registrada fue menor y HF tardó 4.22× el baseline más rápido. Las tres repeticiones HF conservaron pocket, piezas, giros, posiciones y métricas: **PASS**.
+
+La [comparación visual](../../experiments/optimization/hole_filling/figures/HF-CAPABILITY-001-comparison.svg) y la [vista del pocket](../../experiments/optimization/hole_filling/figures/HF-CAPABILITY-001-pocket-stage.svg) se generaron con placements reales. [CSV](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_capability_results.csv), [traza](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_capability_trace.json) y [notebook ejecutable](../../experiments/optimization/colab/SP004-Hole-Filling.ipynb) permiten revisarlo.
+
+**Interpretación acotada:** Hole Filling puede reservar espacio útil cuando hay geometrías que producen pockets legales, mezcla de tamaños y piezas pequeñas pendientes. Para TA-042 solo se recomienda investigar un filtro barato de activación por presencia de círculos/convexos, densidad y pockets detectados; no se integra lógica productiva con esta prueba. El NO-GO de la evaluación general permanece.

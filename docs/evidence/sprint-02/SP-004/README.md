@@ -222,3 +222,38 @@ Las tres firmas funcionales HF fueron iguales entre sus respectivas tres repetic
 **Dictamen final: NO-GO para TA-042.** HF sí mostró decisiones propias en 002 y 003, pero en 002 solo cambió el patrón con un costo de 136×; en 003 colocó seis piezas en pockets pero perdió cobertura y empeoró merma, uso y recuperable a 425×; 001 no usó pockets y costó 271×. El efecto no justifica ese costo local y no conviene integrar esta implementación.
 
 Verificación final: 13 pruebas HF PASS y 145 regresiones focalizadas PASS. Los SVG se validaron como XML. No se modificaron producción, FF/BF/WF, fixtures TA-027 ni los resultados previos de SP-004. No hubo push, PR ni merge.
+
+## Experimento demostrativo de capacidad
+
+> **CASO CONTROLADO DISEÑADO PARA MOSTRAR LA CLASE DE PEDIDO EN LA QUE HOLE FILLING PUEDE SER ÚTIL. NO REPRESENTA RENDIMIENTO GENERAL.**
+
+**Evaluación general:** SMALL/MEDIUM/COMPLEX, diagnósticos y HF-REALISTIC-001/002/003 conservan sus resultados anteriores. La recomendación general para integrar esta implementación en TA-042 sigue siendo **NO-GO**. **Capacidad específica:** HF-CAPABILITY-001 es una configuración dirigida para mostrar cómo un pocket puede reservar espacio exterior; no estima la frecuencia de ese patrón.
+
+El fixture contiene un retazo de 274 × 280 mm, una plancha de igual tamaño, vidrio del mismo material de 6 mm, 16 piezas ya colocadas y verificadas con `SheetLayout` (un círculo y 15 paneles), un inserto pendiente de 32 × 32 mm (P11) y un círculo pendiente de Ø36 mm (P12). Usa raster 1 mm, giros cada 5°, margen 5 mm, separación 3 mm y prioridad retazo → plancha. La preparación ordena P11 antes de P12 por área: 1,024 frente a aproximadamente 1,017.88 mm².
+
+La [intención previa](../../../../experiments/optimization/hole_filling/cases/HF-CAPABILITY-INTENT.md) declara el diseño favorable y los criterios de selección. La [búsqueda separada](../../../../experiments/optimization/hole_filling/cases/HF-CAPABILITY-SEARCH.jsonl) registró 20 configuraciones; el candidato 20 fue el primero válido y la búsqueda se detuvo. El fixture se congeló antes del benchmark definitivo en `f806a27`, SHA-256 `565a7bcd47a8de773f9f7e0c5804a35b618db1e32c0074d8e45eaeacf5d565e5`. El pocket esperado inicialmente cerca de la parte superior del círculo no fue el seleccionado: el componente usado quedó **abajo a la izquierda del marco**, en (51, 191) mm.
+
+### Traza sencilla de la decisión
+
+1. Las 16 piezas previas dejan un marco parcialmente ocupado y una franja libre arriba a la izquierda del retazo.
+2. El motor procesa primero P11, el inserto. FF/BF/WF lo colocan fuera del pocket, en (5, 5) mm del retazo.
+3. HF detecta 7 componentes candidatos y coloca P11 en un pocket del retazo, a 0° y (51, 191) mm. Su área de anclajes legales tiene 60 celdas.
+4. Llega P12, el círculo posterior. En FF/BF/WF la franja exterior quedó ocupada y P12 pasa a la plancha, en (5, 5) mm.
+5. HF coloca P12 mediante fallback en (5, 5) mm del retazo: la franja permaneció disponible gracias al placement pocket de P11.
+
+### Métricas definitivas
+
+Los cuatro métodos colocaron 18/18 y no dejaron unidades pendientes. Cada uno usó un retazo; solo HF evitó la plancha. Los tiempos FF/BF/WF corresponden a una ejecución; HF es la mediana de tres ejecuciones.
+
+| Método | Retazos | Planchas | Utilización | Merma mm² | Recuperable mm² | Runtime ms |
+|---|---:|---:|---:|---:|---:|---:|
+| FF | 1 | 1 | 33.787% | 37,516.56 | 64,080 | 63.05 |
+| BF | 1 | 1 | 33.787% | 37,516.56 | 64,080 | 62.32 |
+| WF | 1 | 1 | 33.787% | 37,516.56 | 64,080 | 62.81 |
+| HF | 1 | 0 | 67.575% | 22,410.56 | 2,466 | 262.99 |
+
+HF usó **una plancha menos** (nivel 1 de demostración), elevó la utilización 33.788 puntos y redujo la merma 15,106 mm². Su área recuperable reportada fue 61,614 mm² menor; esta diferencia se conserva tal como la calculó la métrica oficial. HF tardó 4.22× el baseline más rápido. Detectó 7 componentes candidatos, usó 1 pocket para 1 pieza, revisó 7 opciones y efectuó 1 fallback. Los tres runtimes HF fueron 266.88, 262.99 y 258.75 ms; las firmas funcionales coincidieron: **determinismo PASS**.
+
+[Comparación de layouts finales](../../../../experiments/optimization/hole_filling/figures/HF-CAPABILITY-001-comparison.svg) y [etapa del pocket](../../../../experiments/optimization/hole_filling/figures/HF-CAPABILITY-001-pocket-stage.svg) muestran las mismas máscaras raster de las corridas. El panel HF marca el componente de anclajes y P11; FF/BF/WF muestran la plancha utilizada. Datos completos: [CSV](hole-filling/sp004_hf_capability_results.csv), [traza JSON](hole-filling/sp004_hf_capability_trace.json) y [sección ejecutable del mismo notebook](../../../../experiments/optimization/colab/SP004-Hole-Filling.ipynb).
+
+Para una posible investigación de activación en TA-042, buscar pedidos con círculos o convexos, mezcla de tamaños, ocupación suficiente, piezas pequeñas aún pendientes y un pocket legal detectado a bajo costo. Este caso no implementa esa activación ni demuestra superioridad general; las mediciones realistas y el NO-GO previo permanecen vigentes.

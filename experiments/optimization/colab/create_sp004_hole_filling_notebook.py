@@ -15,8 +15,8 @@ def markdown_cell(source):
     return {"cell_type": "markdown", "metadata": {}, "source": source.splitlines(keepends=True)}
 
 
-def code_cell(source, count):
-    namespace = {}
+def code_cell(source, count, namespace=None):
+    namespace = {} if namespace is None else namespace
     capture = io.StringIO()
     with contextlib.redirect_stdout(capture):
         exec(compile(source, f"notebook-cell-{count}", "exec"), namespace, namespace)
@@ -35,6 +35,7 @@ def build_notebook():
     detection = json.loads((EVIDENCE / "sp004_hole_filling_detection.json").read_text(encoding="utf-8"))
     official = json.loads((EVIDENCE / "sp004_hole_filling_official_trace.json").read_text(encoding="utf-8"))
     realistic = json.loads((EVIDENCE / "sp004_hf_realistic_trace.json").read_text(encoding="utf-8"))
+    capability = json.loads((EVIDENCE / "sp004_hf_capability_trace.json").read_text(encoding="utf-8"))
 
     cells = [markdown_cell(f"""# SP-004 — Raster Hole Filling / Pocket Filling
 
@@ -208,7 +209,7 @@ SMALL empata con FF y no encuentra pockets (A). MEDIUM reproduce el resultado FF
 - Burke, Hellier, Kendall y Whitwell (2006), [A New Bottom-Left-Fill Heuristic Algorithm for the Two-Dimensional Irregular Packing Problem](https://doi.org/10.1287/opre.1060.0293), [PDF](https://quaoar.su/files/papers/nesting/opre.1060.0293.pdf).
 - Guo et al. (2022), [Two-dimensional irregular packing problems: A review](https://doi.org/10.3389/fmech.2022.966691).
 
-Los outputs del notebook son resúmenes de los artefactos JSON/CSV guardados en `docs/evidence/sprint-02/SP-004/hole-filling/`; no se fabricaron ni se retocaron resultados.
+Los outputs de las secciones anteriores son resúmenes de los artefactos JSON/CSV guardados en `docs/evidence/sprint-02/SP-004/hole-filling/`; no se fabricaron ni se retocaron resultados. La sección demostrativa final ejecuta los cuatro métodos directamente.
 """))
 
     cells.append(markdown_cell(f"""# Validación final con pedidos realistas
@@ -297,6 +298,270 @@ for placement in hf["placements"]:
         cells.append(markdown_cell(f"""### Interpretación de la salida
 
 {interpretations[case_id]}
+"""))
+
+    capability_namespace = {}
+    next_count = 7
+
+    def append_capability_code(source):
+        nonlocal next_count
+        cells.append(code_cell(source, next_count, capability_namespace))
+        next_count += 1
+
+    cells.append(markdown_cell(f"""# Experimento demostrativo de capacidad de Hole Filling
+
+## Experimento demostrativo — pedido favorable a Hole Filling
+
+> **CASO CONTROLADO DISEÑADO PARA MOSTRAR LA CLASE DE PEDIDO EN LA QUE HOLE FILLING PUEDE SER ÚTIL. NO REPRESENTA RENDIMIENTO GENERAL.**
+
+## Por qué existe este experimento
+
+SMALL/MEDIUM/COMPLEX y HF-REALISTIC-001/002/003 constituyen la evaluación general de SP-004; su dictamen NO-GO para TA-042 permanece. Este caso dirigido muestra una capacidad concreta del mecanismo. La búsqueda FF/HF probó {capability['search_candidates_tried']} configuraciones y se detuvo en la primera que cumplió los criterios predeclarados. Fixture SHA-256: `{capability['fixture_freeze']['fixture_sha256']}`; commit de congelación: `{capability['fixture_freeze']['fixture_freeze_commit'][:8]}`.
+
+## Qué tipo de pedido favorece HF
+
+Un layout ya ocupado por círculos y paneles puede dejar pockets de anclajes para insertos pequeños. Si queda una región exterior ajustada, poner allí el inserto puede impedir colocar una pieza posterior. La composición controlada tiene dieciséis piezas previas, un inserto cuadrado y un círculo posterior; el stock incluye retazo y plancha compatibles.
+
+## Fixture controlado
+
+### Qué hace
+
+Lee el fixture congelado, verifica su hash y muestra configuración, stock y piezas antes de ejecutar heurísticas.
+
+### Por qué
+
+Permite revisar el diseño intencional y confirmar que el notebook usa exactamente el JSON congelado.
+
+### Qué esperamos observar
+
+Raster 1 mm, giros cada 5°, margen 5 mm, separación 3 mm y el inserto de 32 × 32 mm procesado antes del círculo de Ø36 mm.
+"""))
+
+    code_setup = f'''# Importamos hashlib para verificar los bytes del fixture congelado.
+import hashlib
+# Importamos statistics para resumir las tres duraciones HF.
+import statistics
+# Importamos sys para cargar los paquetes locales del repositorio.
+import sys
+# Importamos Path para ubicar casos, trazas y figuras.
+from pathlib import Path
+# Encontramos la raíz que contiene el fixture de capacidad.
+ROOT = next(path for path in (Path.cwd(), *Path.cwd().parents) if (path / "experiments/optimization/hole_filling/cases/HF-CAPABILITY-001.json").exists())
+# Exponemos el backend real al intérprete del notebook.
+sys.path.insert(0, str(ROOT / "backend"))
+# Exponemos los experimentos del repositorio al intérprete.
+sys.path.insert(0, str(ROOT))
+# Importamos el lector del fixture y su validación de semillas.
+from experiments.optimization.hole_filling.lab import read_case, prepare_case
+# Importamos las cuatro heurísticas experimentales y las métricas originales.
+from experiments.optimization.hole_filling.optimizer import run_baseline, run_hole_filling, metric_values
+# Importamos la firma funcional usada por el benchmark definitivo.
+from experiments.optimization.hole_filling.run_realistic_benchmark import _determinism_signature
+# Importamos los renderizadores grises que usan placements reales.
+from experiments.optimization.hole_filling.visualize import render_capability_comparison, render_pocket_placement
+# Formamos la ruta al JSON congelado.
+case_path = ROOT / "experiments/optimization/hole_filling/cases/HF-CAPABILITY-001.json"
+# Verificamos que ningún byte del fixture cambió después de la congelación.
+assert hashlib.sha256(case_path.read_bytes()).hexdigest() == "{capability['fixture_freeze']['fixture_sha256']}"
+# Leemos la misma configuración que usarán FF, BF, WF y HF.
+case = read_case("HF-CAPABILITY-001")
+# Validamos todas las piezas previas con SheetLayout.check/place antes de correr.
+setup = prepare_case("HF-CAPABILITY-001")
+# Mostramos la configuración compartida por todos los métodos.
+print("Configuración:", case["config"], "| material:", case["material"])
+# Recorremos retazo y plancha del fixture controlado.
+for stock in case["stocks"]:
+    # Mostramos fuente, identificador y dimensiones sin modificarlos.
+    print("Stock:", stock["source"], stock["material_id"], stock["geometry"])
+# Recorremos cada pieza para distinguir las previas de las pendientes.
+for piece in case["pieces"]:
+    # Mostramos identidad, geometría y estado inicial de cada pieza.
+    print("Pieza:", piece["piece_id"], piece["role"], piece["geometry"])
+'''
+    append_capability_code(code_setup)
+    cells.append(markdown_cell("""### Interpretación de la salida
+
+La traza del fixture muestra dieciséis placements previos comunes y dos piezas pendientes. El círculo inicial y los paneles conforman el layout de partida; las dos fuentes y los parámetros son idénticos para los cuatro métodos.
+
+## Comportamiento esperado
+
+La intención congelada esperaba un pocket apto para el inserto y una franja superior que pudiera reservarse para el círculo posterior. El pocket realmente seleccionado puede diferir del imaginado al diseñar; las celdas siguientes muestran lo que calculó el motor.
+"""))
+
+    method_names = {"FF": "First Fit", "BF": "Best Fit", "WF": "Worst Fit"}
+    method_vars = {"FF": "ff_run", "BF": "bf_run", "WF": "wf_run"}
+    for method in ("FF", "BF", "WF"):
+        variable = method_vars[method]
+        cells.append(markdown_cell(f"""## {method_names[method]}
+
+### Qué hace
+
+Ejecuta {method_names[method]} sobre el fixture congelado y muestra los placements pendientes, fuente, orientación, posición y métricas medidas.
+
+### Por qué
+
+Es la referencia real del motor para comparar la decisión pocket-first de HF.
+
+### Qué esperamos observar
+
+El método procesa primero el inserto por área; la posición y la fuente del círculo posterior salen de sus propias reglas.
+"""))
+        code_method = f'''# Ejecutamos el método {method} con las semillas validadas y el fixture congelado.
+{variable} = run_baseline("HF-CAPABILITY-001", "{method}")
+# Leemos las métricas calculadas por el motor para esta corrida.
+values = metric_values({variable})
+# Mostramos cobertura, planchas, utilización, merma, recuperable y runtime real.
+print("{method}:", values["placed"], "/", values["requested"], "| planchas", values["new_sheets_used"], "| uso", values["utilization_pct"], "| merma", values["waste_mm2"], "| recuperable", values["recoverable_remnant_mm2"], "| ms", round({variable}["total_ms"], 2))
+# Recorremos los placements producidos por el método.
+for placement in {variable}["result"].placements:
+    # Filtramos las piezas pendientes para distinguirlas del layout previo común.
+    if placement.piece.piece_id in (11, 12):
+        # Imprimimos pieza, fuente, giro y coordenadas efectivamente usadas.
+        print("Pieza", placement.piece.piece_id, placement.stock.source.value, str(placement.rotation_deg) + "°", "(", placement.x_mm, ",", placement.y_mm, ") mm")
+'''
+        append_capability_code(code_method)
+        if method == "FF":
+            interpretation = "FF colocó el inserto en la franja exterior de la esquina superior izquierda. El círculo posterior pasó a la plancha."
+        elif method == "BF":
+            interpretation = "BF eligió la misma franja para el inserto y necesitó la plancha para el círculo posterior."
+        else:
+            interpretation = "WF también ocupó la franja con el inserto; el círculo posterior quedó en la plancha."
+        cells.append(markdown_cell(f"""### Interpretación de la salida
+
+{interpretation}
+"""))
+
+    cells.append(markdown_cell("""## Hole Filling
+
+### Qué hace
+
+Ejecuta HF tres veces sobre el fixture congelado, imprime las decisiones de pocket/fallback y compara sus firmas funcionales.
+
+### Por qué
+
+Confirma con corridas reales que el inserto entra en un pocket y que la decisión se repite sin depender del runtime.
+
+### Qué esperamos observar
+
+Un pocket usado para la pieza 11 y la pieza 12 colocada después en el retazo.
+"""))
+    code_hf = '''# Creamos una lista para conservar las tres corridas independientes de HF.
+hf_runs = []
+# Ejecutamos HF tres veces de forma serial sobre el mismo JSON congelado.
+for repetition in range(1, 4):
+    # Guardamos cada corrida completa para comparar placements y métricas.
+    hf_runs.append(run_hole_filling("HF-CAPABILITY-001"))
+    # Mostramos el runtime individual sin usarlo como parte de la firma.
+    print("HF repetición", repetition, "| ms", round(hf_runs[-1]["total_ms"], 2))
+# Construimos las firmas funcionales que excluyen el tiempo.
+hf_signatures = [_determinism_signature(run) for run in hf_runs]
+# Comprobamos que las tres firmas se repitieron exactamente.
+hf_deterministic = len(set(hf_signatures)) == 1
+# Mostramos PASS o FAIL de determinismo.
+print("Determinismo:", "PASS" if hf_deterministic else "FAIL")
+# Conservamos la primera corrida para sus placements y figuras.
+hf_run = hf_runs[0]
+# Leemos las métricas originales de Hole Filling.
+hf_values = metric_values(hf_run)
+# Imprimimos cobertura, uso, merma y fuentes de la primera corrida.
+print("HF:", hf_values["placed"], "/", hf_values["requested"], "| planchas", hf_values["new_sheets_used"], "| uso", hf_values["utilization_pct"], "| merma", hf_values["waste_mm2"], "| recuperable", hf_values["recoverable_remnant_mm2"])
+# Mostramos componentes detectados, pockets usados y fallbacks.
+print("Pockets:", hf_run["diagnostics"]["pocket_components_detected"], "| usados:", hf_run["diagnostics"]["pockets_used"], "| fallback:", hf_run["diagnostics"]["fallback_placements"] + hf_run["diagnostics"]["fallback_unplaced"])
+# Recorremos las piezas pendientes colocadas por HF.
+for placement in hf_run["result"].placements:
+    # Separamos las dos piezas pendientes de las dieciséis semillas.
+    if placement.piece.piece_id in (11, 12):
+        # Etiquetamos el placement según el pocket seleccionado.
+        decision = "pocket" if any(item["piece_id"] == placement.piece.piece_id for item in hf_run["diagnostics"]["selected_pockets"]) else "fallback"
+        # Mostramos pieza, fuente, giro, posición y decisión.
+        print("Pieza", placement.piece.piece_id, placement.stock.source.value, str(placement.rotation_deg) + "°", "(", placement.x_mm, ",", placement.y_mm, ") mm", decision)
+'''
+    append_capability_code(code_hf)
+    cells.append(markdown_cell("""### Interpretación de la salida
+
+HF detectó siete componentes candidatos y usó uno para el inserto P11 en el retazo, a 0° y (51, 191) mm. P12 quedó en la franja superior del mismo retazo mediante fallback. Las tres firmas funcionales coincidieron; los tiempos individuales pueden variar.
+"""))
+
+    cells.append(markdown_cell("""## Comparación visual
+
+### Qué hace
+
+Dibuja los cuatro layouts finales usando las máscaras raster de los placements recién ejecutados. En el panel HF marca el componente de anclajes pocket y el inserto.
+
+### Por qué
+
+La imagen permite seguir el espacio exterior que ocupan los baselines y que HF conserva para el círculo posterior.
+
+### Qué esperamos observar
+
+FF/BF/WF usan retazo y plancha; HF termina en el retazo. La figura por etapas muestra el layout previo, pocket y pieza pendiente.
+"""))
+    code_figures = '''# Indicamos la carpeta de figuras dentro del experimento aislado.
+figure_dir = ROOT / "experiments/optimization/hole_filling/figures"
+# Dibujamos los cuatro layouts finales a partir de las corridas vivas.
+render_capability_comparison({"FF": ff_run, "BF": bf_run, "WF": wf_run, "HF": hf_run}, figure_dir / "HF-CAPABILITY-001-comparison.svg")
+# Extraemos el estado inmediatamente anterior al placement pocket de HF.
+layout, anchor_map, selected_anchor, pending_mask = hf_run["pocket_placement_contexts"][0]
+# Dibujamos layout previo, anclajes, pocket, inserto y posición elegida.
+render_pocket_placement(layout, anchor_map, selected_anchor, pending_mask, figure_dir / "HF-CAPABILITY-001-pocket-stage.svg", "HF-CAPABILITY-001 | antes y durante el pocket")
+# Confirmamos las rutas de las dos figuras generadas por el código.
+print("Figuras:", figure_dir / "HF-CAPABILITY-001-comparison.svg", "|", figure_dir / "HF-CAPABILITY-001-pocket-stage.svg")
+'''
+    append_capability_code(code_figures)
+    cells.append(markdown_cell("""### Interpretación de la salida
+
+El contorno y la etiqueta del pocket aparecen solo en HF. La plancha queda sin uso en su panel; los tres baselines la usan para P12. El mapa de la segunda figura separa anclajes legales exteriores y el componente pocket específico de P11.
+
+![FF, BF, WF y HF: layouts finales](../hole_filling/figures/HF-CAPABILITY-001-comparison.svg)
+
+![Layout previo, pocket y pieza pendiente](../hole_filling/figures/HF-CAPABILITY-001-pocket-stage.svg)
+"""))
+
+    cells.append(markdown_cell("""## Comparación de métricas
+
+### Qué hace
+
+Resume los cuatro métodos desde las corridas ejecutadas en este notebook; HF usa la mediana de sus tres tiempos.
+
+### Por qué
+
+La diferencia funcional debe salir de las métricas oficiales y de las fuentes usadas, no de la intención del diseñador.
+
+### Qué esperamos observar
+
+La misma cobertura, pero una plancha menos para HF si el pocket preservó la franja exterior.
+"""))
+    code_compare = '''# Mostramos las columnas oficiales para comparar los cuatro métodos.
+print("Método | colocadas | retazos | planchas | uso % | merma mm² | recuperable mm² | runtime ms")
+# Recorremos FF, BF, WF y HF en el mismo orden que el benchmark definitivo.
+for method, run in (("FF", ff_run), ("BF", bf_run), ("WF", wf_run), ("HF", hf_run)):
+    # Leemos las métricas calculadas por el mismo motor para cada corrida.
+    values = metric_values(run)
+    # Contamos las unidades físicas de retazo usadas por los placements.
+    remnants = len({(p.stock.material_id, p.stock.physical_unit_index) for p in run["result"].placements if p.stock.source.value == "RETAZO"})
+    # Resumimos el runtime HF con sus tres repeticiones; los demás tienen una.
+    duration = statistics.median(item["total_ms"] for item in hf_runs) if method == "HF" else run["total_ms"]
+    # Imprimimos la fila sin alterar las fórmulas oficiales.
+    print(method, "|", str(values["placed"]) + "/" + str(values["requested"]), "|", remnants, "|", values["new_sheets_used"], "|", values["utilization_pct"], "|", values["waste_mm2"], "|", values["recoverable_remnant_mm2"], "|", round(duration, 2))
+'''
+    append_capability_code(code_compare)
+
+    hf_metrics = capability["hole_filling"]["official_metrics"]
+    baseline_metrics = capability["baselines"][0]["official_metrics"]
+    cells.append(markdown_cell(f"""### Interpretación de la salida
+
+El benchmark definitivo colocó 18/18 en todos los métodos. FF/BF/WF usaron un retazo y una plancha; HF usó solo el retazo. El uso pasó de {baseline_metrics['utilization_pct']}% a {hf_metrics['utilization_pct']}% y la merma de {baseline_metrics['waste_mm2']} a {hf_metrics['waste_mm2']} mm². El área recuperable registrada bajó de {baseline_metrics['recoverable_area_mm2']} a {hf_metrics['recoverable_area_mm2']} mm²; se informa aunque el ahorro de una plancha sea la mejora principal. Runtime HF mediano: {hf_metrics['runtime_ms']:.2f} ms; FF/BF/WF: {', '.join(f"{item['method']} {item['official_metrics']['runtime_ms']:.2f} ms" for item in capability['baselines'])}.
+
+## Qué demuestra este caso
+
+1. Dieciséis piezas previas crean un componente pocket de anclajes para el inserto P11. El componente usado quedó en la parte inferior izquierda del marco, distinto de la cavidad superior inicialmente imaginada.
+2. FF/BF/WF colocan P11 en (5, 5) mm del retazo y P12 en (5, 5) mm de la plancha.
+3. HF coloca P11 dentro del pocket en (51, 191) mm; después P12 cabe en (5, 5) mm del retazo. La diferencia procede de la decisión pocket-first con las mismas reglas geométricas, de inventario y métricas.
+4. Las tres repeticiones HF dieron la misma firma funcional. El experimento alcanzó el nivel 1 predeclarado: una plancha menos.
+
+**Recomendación exploratoria para TA-042:** investigar activación solo si hay geometrías como círculos o convexos, mezcla de tamaños, ocupación alta, piezas menores pendientes y un pocket legal detectado con un filtro barato. Este caso no implementa esa activación.
+
+El resultado es una prueba de capacidad de un pedido deliberadamente diseñado. No estima frecuencia ni rendimiento promedio y no cambia el NO-GO basado en EXP y REALISTIC. Los [resultados definitivos](../../../docs/evidence/sprint-02/SP-004/hole-filling/sp004_hf_capability_results.csv), [traza completa](../../../docs/evidence/sprint-02/SP-004/hole-filling/sp004_hf_capability_trace.json) y [registro de búsqueda](../hole_filling/cases/HF-CAPABILITY-SEARCH.jsonl) conservan los números, placements y veinte intentos.
 """))
 
     return {
