@@ -182,3 +182,89 @@ def render_pocket_placement(layout, anchor_map: AnchorMap, selected_anchor,
     svg.append("</svg>")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(svg), encoding="utf-8")
+
+
+def render_capability_comparison(runs: dict, path: Path) -> None:
+    """Compara layouts finales con máscaras reales; solo HF marca su pocket."""
+    methods = ("FF", "BF", "WF", "HF")
+    first = runs["FF"]
+    stocks = sorted(first["setup"].stocks_by_id.values(),
+                    key=lambda item: item.source.value != "RETAZO")
+    cell, margin, gap = 1.4, 16, 22
+    stock_width = max(int(stock.geometry["width_mm"]) for stock in stocks) * cell
+    stock_height = max(int(stock.geometry["height_mm"]) for stock in stocks) * cell
+    panel_width = stock_width + 2 * margin
+    panel_height = 84 + 2 * stock_height + gap + 42
+    width = int(4 * panel_width + 5 * gap)
+    height = int(panel_height + 52)
+    svg = _svg_start(width, height, "HF-CAPABILITY-001 | caso controlado, no rendimiento general")
+    svg.append('<text x="16" y="39" font-family="sans-serif" font-size="12">Gris claro: piezas previas; gris oscuro: inserto P11; negro: círculo posterior P12. Solo HF señala pocket y pieza insertada.</text>')
+
+    def draw_mask(mask, column, row, origin_x, origin_y, color):
+        for offset, bits in enumerate(mask.rows):
+            remaining = bits
+            while remaining:
+                bit = remaining & -remaining
+                start = bit.bit_length() - 1
+                shifted = remaining >> start
+                length = (shifted ^ (shifted + 1)).bit_length() - 1
+                x = origin_x + (column + start) * cell
+                y = origin_y + (row + offset) * cell
+                svg.append(f'<rect x="{x:.2f}" y="{y:.2f}" width="{length * cell:.2f}" height="{cell:.2f}" fill="{color}"/>')
+                remaining &= ~(((1 << length) - 1) << start)
+
+    for method_index, method in enumerate(methods):
+        run = runs[method]
+        panel_x = gap + method_index * (panel_width + gap)
+        svg.append(f'<rect x="{panel_x:.2f}" y="50" width="{panel_width:.2f}" height="{panel_height:.2f}" fill="#eeeeee" stroke="#333333" stroke-width="1"/>')
+        svg.append(f'<text x="{panel_x + margin:.2f}" y="71" font-family="sans-serif" font-size="15">{escape(method)}</text>')
+        for stock_index, stock in enumerate(stocks):
+            source_x = panel_x + margin
+            source_y = 99 + stock_index * (stock_height + gap + 20)
+            source_name = "Retazo" if stock.source.value == "RETAZO" else "Plancha"
+            svg.append(f'<text x="{source_x:.2f}" y="{source_y - 7:.2f}" font-family="sans-serif" font-size="11">{source_name} {stock.geometry["width_mm"]} × {stock.geometry["height_mm"]} mm</text>')
+            svg.append(f'<rect x="{source_x:.2f}" y="{source_y:.2f}" width="{stock_width:.2f}" height="{stock_height:.2f}" fill="#ffffff" stroke="#222222" stroke-width="1"/>')
+            source_placements = [
+                placement for placement in run["result"].placements
+                if placement.stock.identity == stock.identity
+            ]
+            if not source_placements:
+                svg.append(f'<text x="{source_x + 9:.2f}" y="{source_y + 21:.2f}" font-family="sans-serif" font-size="11">Sin uso</text>')
+            for placement in source_placements:
+                oriented = next(
+                    item for item in run["setup"].prepared.orientations(placement.piece)
+                    if item.orientation.rotation_deg == placement.rotation_deg
+                )
+                mask = oriented.orientation.mask
+                column = int(placement.x_mm / run["setup"].problem.config.resolution_mm)
+                row = int(placement.y_mm / run["setup"].problem.config.resolution_mm)
+                color = "#bdbdbd" if placement.piece.piece_id not in (11, 12) else (
+                    "#686868" if placement.piece.piece_id == 11 else "#222222"
+                )
+                draw_mask(mask, column, row, source_x, source_y, color)
+                if method == "HF" and placement.piece.piece_id == 11:
+                    x = source_x + column * cell
+                    y = source_y + row * cell
+                    svg.append(
+                        f'<rect x="{x:.2f}" y="{y:.2f}" '
+                        f'width="{mask.columns * cell:.2f}" height="{mask.row_count * cell:.2f}" '
+                        f'fill="none" stroke="#000000" stroke-width="2"/>'
+                    )
+                    svg.append(
+                        f'<text x="{x + mask.columns * cell + 3:.2f}" y="{y + 12:.2f}" '
+                        'font-family="sans-serif" font-size="11">P11 en pocket</text>'
+                    )
+            if method == "HF" and stock.source.value == "RETAZO":
+                selected = run["diagnostics"]["selected_pockets"][0]
+                min_row, min_column, max_row, max_column = selected["bbox_row_column"]
+                x = source_x + min_column * cell
+                y = source_y + min_row * cell
+                svg.append(
+                    f'<rect x="{x:.2f}" y="{y:.2f}" '
+                    f'width="{(max_column - min_column + 1) * cell:.2f}" '
+                    f'height="{(max_row - min_row + 1) * cell:.2f}" '
+                    'fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="3,2"/>'
+                )
+    svg.append("</svg>")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(svg), encoding="utf-8")

@@ -1,0 +1,5 @@
+case_id,method,requested_units,placed_units,unplaced_units,remnants_used,sheets_used,utilization_pct,waste_mm2,recoverable_area_mm2,runtime_ms,pockets_detected,pockets_used,pocket_candidates_checked,pieces_placed_in_pockets,pocket_detection_ms,pocket_placement_ms,fallback_count,source_switches
+HF-CAPABILITY-001,FF,18,18,0,1,1,33.787,37516.56,64080,63.0476,0,0,0,0,0.0,0.0,0,1
+HF-CAPABILITY-001,BF,18,18,0,1,1,33.787,37516.56,64080,62.3197,0,0,0,0,0.0,0.0,0,1
+HF-CAPABILITY-001,WF,18,18,0,1,1,33.787,37516.56,64080,62.8066,0,0,0,0,0.0,0.0,0,1
+HF-CAPABILITY-001,HF,18,18,0,1,0,67.575,22410.56,2466,262.9907,7,1,7,1,171.1247,34.6733,1,0

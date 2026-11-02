@@ -1,0 +1,2977 @@
+{
+  "case_id": "HF-CAPABILITY-001",
+  "label": "CASO CONTROLADO HF - NO ES BENCHMARK GENERAL NI PERTENECE A TA-027",
+  "purpose": "controlled capacity demonstration; not a neutral or general benchmark",
+  "fixture_freeze": {
+    "fixture_sha256": "565a7bcd47a8de773f9f7e0c5804a35b618db1e32c0074d8e45eaeacf5d565e5",
+    "fixture_freeze_commit": "f806a270686d1174eeca0688a2c1b1413ac55019"
+  },
+  "search_candidates_tried": 20,
+  "config": {
+    "resolution_mm": 1,
+    "angular_step_deg": 5,
+    "margin_mm": 5,
+    "separation_mm": 3
+  },
+  "material": {
+    "glass_type_id": 1,
+    "thickness_mm": 6
+  },
+  "stocks": [
+    {
+      "source": "RETAZO",
+      "material_id": 8201,
+      "physical_unit_index": 1,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 274,
+        "height_mm": 280
+      }
+    },
+    {
+      "source": "PLANCHA",
+      "material_id": 9201,
+      "physical_unit_index": 1,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 274,
+        "height_mm": 280
+      }
+    }
+  ],
+  "pieces": [
+    {
+      "piece_id": 1,
+      "geometry": {
+        "type": "CIRCUNFERENCIA",
+        "radius_mm": 24
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 113,
+      "y_mm": 116,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 2,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 48,
+        "height_mm": 24
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 77,
+      "y_mm": 44,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 3,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 48,
+        "height_mm": 24
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 149,
+      "y_mm": 44,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 4,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 24,
+        "height_mm": 96
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 53,
+      "y_mm": 92,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 5,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 24,
+        "height_mm": 96
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 197,
+      "y_mm": 92,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 6,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 96,
+        "height_mm": 24
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 89,
+      "y_mm": 212,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 7,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 194,
+        "height_mm": 36
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 75,
+      "y_mm": 5,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 8,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 43,
+        "height_mm": 192
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 5,
+      "y_mm": 45,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 9,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 43,
+        "height_mm": 192
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 226,
+      "y_mm": 45,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 10,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 264,
+        "height_mm": 35
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 5,
+      "y_mm": 240,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 13,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 28,
+        "height_mm": 20
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 80,
+      "y_mm": 145,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 14,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 28,
+        "height_mm": 20
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 166,
+      "y_mm": 145,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 15,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 110,
+        "height_mm": 16
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 80,
+      "y_mm": 71,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 16,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 110,
+        "height_mm": 16
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 80,
+      "y_mm": 168,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 17,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 28,
+        "height_mm": 25
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 82,
+      "y_mm": 93,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 18,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 28,
+        "height_mm": 25
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 164,
+      "y_mm": 93,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 11,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 32,
+        "height_mm": 32
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 12,
+      "geometry": {
+        "type": "CIRCUNFERENCIA",
+        "radius_mm": 18
+      },
+      "role": "pending"
+    }
+  ],
+  "method_order": [
+    "FF",
+    "BF",
+    "WF",
+    "HF x3"
+  ],
+  "baselines": [
+    {
+      "method": "FF",
+      "official_metrics": {
+        "requested_units": 18,
+        "placed_units": 18,
+        "unplaced_units": 0,
+        "remnants_used": 1,
+        "sheets_used": 1,
+        "utilization_pct": "33.787",
+        "waste_mm2": "37516.56",
+        "recoverable_area_mm2": "64080",
+        "runtime_ms": 63.0476
+      },
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "113",
+          "y_mm": "116",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 24
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "77",
+          "y_mm": "44",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 48.0,
+            "height_mm": 24.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "149",
+          "y_mm": "44",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 48.0,
+            "height_mm": 24.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "53",
+          "y_mm": "92",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 24.0,
+            "height_mm": 96.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "197",
+          "y_mm": "92",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 24.0,
+            "height_mm": 96.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "89",
+          "y_mm": "212",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 96.0,
+            "height_mm": 24.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 7,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "75",
+          "y_mm": "5",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 194.0,
+            "height_mm": 36.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 8,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "45",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 43.0,
+            "height_mm": 192.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 9,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "226",
+          "y_mm": "45",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 43.0,
+            "height_mm": 192.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 10,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "240",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 264.0,
+            "height_mm": 35.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 13,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "80",
+          "y_mm": "145",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 20.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 14,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "166",
+          "y_mm": "145",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 20.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 15,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "80",
+          "y_mm": "71",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 110.0,
+            "height_mm": 16.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 16,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "80",
+          "y_mm": "168",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 110.0,
+            "height_mm": 16.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 17,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "82",
+          "y_mm": "93",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 25.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 18,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "164",
+          "y_mm": "93",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 25.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 11,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "5",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 32.0,
+            "height_mm": 32.0
+          },
+          "decision": "baseline",
+          "pocket": null
+        },
+        {
+          "piece_id": 12,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 9201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "5",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 18
+          },
+          "decision": "baseline",
+          "pocket": null
+        }
+      ],
+      "source_switches": 1,
+      "pockets_detected": 0,
+      "pockets_used": 0,
+      "pocket_candidates_checked": 0,
+      "pieces_placed_in_pockets": 0,
+      "pocket_detection_ms": 0.0,
+      "pocket_component_labeling_ms": 0.0,
+      "pocket_placement_ms": 0.0,
+      "anchor_map_generation_ms": 0.0,
+      "fallback_search_ms": 0.0,
+      "fallback_count": 0,
+      "fallback_placements": 0,
+      "fallback_unplaced": 0,
+      "candidate_orientations_scanned": 0,
+      "geometric_positions_evaluated": 0,
+      "exact_geometry_checks": 0,
+      "pocket_options_by_decision": [],
+      "selected_pockets": []
+    },
+    {
+      "method": "BF",
+      "official_metrics": {
+        "requested_units": 18,
+        "placed_units": 18,
+        "unplaced_units": 0,
+        "remnants_used": 1,
+        "sheets_used": 1,
+        "utilization_pct": "33.787",
+        "waste_mm2": "37516.56",
+        "recoverable_area_mm2": "64080",
+        "runtime_ms": 62.3197
+      },
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "113",
+          "y_mm": "116",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 24
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "77",
+          "y_mm": "44",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 48.0,
+            "height_mm": 24.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "149",
+          "y_mm": "44",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 48.0,
+            "height_mm": 24.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "53",
+          "y_mm": "92",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 24.0,
+            "height_mm": 96.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "197",
+          "y_mm": "92",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 24.0,
+            "height_mm": 96.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "89",
+          "y_mm": "212",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 96.0,
+            "height_mm": 24.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 7,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "75",
+          "y_mm": "5",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 194.0,
+            "height_mm": 36.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 8,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "45",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 43.0,
+            "height_mm": 192.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 9,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "226",
+          "y_mm": "45",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 43.0,
+            "height_mm": 192.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 10,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "240",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 264.0,
+            "height_mm": 35.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 13,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "80",
+          "y_mm": "145",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 20.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 14,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "166",
+          "y_mm": "145",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 20.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 15,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "80",
+          "y_mm": "71",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 110.0,
+            "height_mm": 16.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 16,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "80",
+          "y_mm": "168",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 110.0,
+            "height_mm": 16.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 17,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "82",
+          "y_mm": "93",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 25.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 18,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "164",
+          "y_mm": "93",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 25.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 11,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "5",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 32.0,
+            "height_mm": 32.0
+          },
+          "decision": "baseline",
+          "pocket": null
+        },
+        {
+          "piece_id": 12,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 9201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "5",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 18
+          },
+          "decision": "baseline",
+          "pocket": null
+        }
+      ],
+      "source_switches": 1,
+      "pockets_detected": 0,
+      "pockets_used": 0,
+      "pocket_candidates_checked": 0,
+      "pieces_placed_in_pockets": 0,
+      "pocket_detection_ms": 0.0,
+      "pocket_component_labeling_ms": 0.0,
+      "pocket_placement_ms": 0.0,
+      "anchor_map_generation_ms": 0.0,
+      "fallback_search_ms": 0.0,
+      "fallback_count": 0,
+      "fallback_placements": 0,
+      "fallback_unplaced": 0,
+      "candidate_orientations_scanned": 0,
+      "geometric_positions_evaluated": 0,
+      "exact_geometry_checks": 0,
+      "pocket_options_by_decision": [],
+      "selected_pockets": []
+    },
+    {
+      "method": "WF",
+      "official_metrics": {
+        "requested_units": 18,
+        "placed_units": 18,
+        "unplaced_units": 0,
+        "remnants_used": 1,
+        "sheets_used": 1,
+        "utilization_pct": "33.787",
+        "waste_mm2": "37516.56",
+        "recoverable_area_mm2": "64080",
+        "runtime_ms": 62.8066
+      },
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "113",
+          "y_mm": "116",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 24
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "77",
+          "y_mm": "44",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 48.0,
+            "height_mm": 24.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "149",
+          "y_mm": "44",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 48.0,
+            "height_mm": 24.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "53",
+          "y_mm": "92",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 24.0,
+            "height_mm": 96.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "197",
+          "y_mm": "92",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 24.0,
+            "height_mm": 96.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "89",
+          "y_mm": "212",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 96.0,
+            "height_mm": 24.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 7,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "75",
+          "y_mm": "5",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 194.0,
+            "height_mm": 36.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 8,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "45",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 43.0,
+            "height_mm": 192.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 9,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "226",
+          "y_mm": "45",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 43.0,
+            "height_mm": 192.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 10,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "240",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 264.0,
+            "height_mm": 35.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 13,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "80",
+          "y_mm": "145",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 20.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 14,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "166",
+          "y_mm": "145",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 20.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 15,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "80",
+          "y_mm": "71",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 110.0,
+            "height_mm": 16.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 16,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "80",
+          "y_mm": "168",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 110.0,
+            "height_mm": 16.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 17,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "82",
+          "y_mm": "93",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 25.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 18,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "164",
+          "y_mm": "93",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 25.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 11,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "5",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 32.0,
+            "height_mm": 32.0
+          },
+          "decision": "baseline",
+          "pocket": null
+        },
+        {
+          "piece_id": 12,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 9201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "5",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 18
+          },
+          "decision": "baseline",
+          "pocket": null
+        }
+      ],
+      "source_switches": 1,
+      "pockets_detected": 0,
+      "pockets_used": 0,
+      "pocket_candidates_checked": 0,
+      "pieces_placed_in_pockets": 0,
+      "pocket_detection_ms": 0.0,
+      "pocket_component_labeling_ms": 0.0,
+      "pocket_placement_ms": 0.0,
+      "anchor_map_generation_ms": 0.0,
+      "fallback_search_ms": 0.0,
+      "fallback_count": 0,
+      "fallback_placements": 0,
+      "fallback_unplaced": 0,
+      "candidate_orientations_scanned": 0,
+      "geometric_positions_evaluated": 0,
+      "exact_geometry_checks": 0,
+      "pocket_options_by_decision": [],
+      "selected_pockets": []
+    }
+  ],
+  "hf_repetitions": [
+    {
+      "method": "HF",
+      "official_metrics": {
+        "requested_units": 18,
+        "placed_units": 18,
+        "unplaced_units": 0,
+        "remnants_used": 1,
+        "sheets_used": 0,
+        "utilization_pct": "67.575",
+        "waste_mm2": "22410.56",
+        "recoverable_area_mm2": "2466",
+        "runtime_ms": 266.8765
+      },
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "113",
+          "y_mm": "116",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 24
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "77",
+          "y_mm": "44",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 48.0,
+            "height_mm": 24.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "149",
+          "y_mm": "44",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 48.0,
+            "height_mm": 24.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "53",
+          "y_mm": "92",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 24.0,
+            "height_mm": 96.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "197",
+          "y_mm": "92",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 24.0,
+            "height_mm": 96.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "89",
+          "y_mm": "212",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 96.0,
+            "height_mm": 24.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 7,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "75",
+          "y_mm": "5",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 194.0,
+            "height_mm": 36.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 8,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "45",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 43.0,
+            "height_mm": 192.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 9,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "226",
+          "y_mm": "45",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 43.0,
+            "height_mm": 192.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 10,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "240",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 264.0,
+            "height_mm": 35.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 13,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "80",
+          "y_mm": "145",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 20.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 14,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "166",
+          "y_mm": "145",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 20.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 15,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "80",
+          "y_mm": "71",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 110.0,
+            "height_mm": 16.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 16,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "80",
+          "y_mm": "168",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 110.0,
+            "height_mm": 16.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 17,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "82",
+          "y_mm": "93",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 25.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 18,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "164",
+          "y_mm": "93",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 25.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 11,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "51",
+          "y_mm": "191",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 32.0,
+            "height_mm": 32.0
+          },
+          "decision": "pocket",
+          "pocket": {
+            "piece_id": 11,
+            "unit_index": 1,
+            "source": "RETAZO",
+            "material_id": 8201,
+            "rotation_deg": "0",
+            "anchor_row": 191,
+            "anchor_column": 51,
+            "anchor_x_mm": "51",
+            "anchor_y_mm": "191",
+            "component_cells": 60,
+            "anchor_area_mm2": "60",
+            "bbox_row_column": [
+              191,
+              51,
+              205,
+              54
+            ],
+            "candidate_options_at_decision": 7,
+            "prior_layout_version": 0
+          }
+        },
+        {
+          "piece_id": 12,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "5",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 18
+          },
+          "decision": "fallback",
+          "pocket": null
+        }
+      ],
+      "source_switches": 0,
+      "pockets_detected": 7,
+      "pockets_used": 1,
+      "pocket_candidates_checked": 7,
+      "pieces_placed_in_pockets": 1,
+      "pocket_detection_ms": 177.2116,
+      "pocket_component_labeling_ms": 8.0231,
+      "pocket_placement_ms": 34.1811,
+      "anchor_map_generation_ms": 169.1885,
+      "fallback_search_ms": 0.2351,
+      "fallback_count": 1,
+      "fallback_placements": 1,
+      "fallback_unplaced": 0,
+      "candidate_orientations_scanned": 20,
+      "geometric_positions_evaluated": 1125454,
+      "exact_geometry_checks": 1,
+      "pocket_options_by_decision": [
+        7,
+        0
+      ],
+      "selected_pockets": [
+        {
+          "piece_id": 11,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "rotation_deg": "0",
+          "anchor_row": 191,
+          "anchor_column": 51,
+          "anchor_x_mm": "51",
+          "anchor_y_mm": "191",
+          "component_cells": 60,
+          "anchor_area_mm2": "60",
+          "bbox_row_column": [
+            191,
+            51,
+            205,
+            54
+          ],
+          "candidate_options_at_decision": 7,
+          "prior_layout_version": 0
+        }
+      ]
+    },
+    {
+      "method": "HF",
+      "official_metrics": {
+        "requested_units": 18,
+        "placed_units": 18,
+        "unplaced_units": 0,
+        "remnants_used": 1,
+        "sheets_used": 0,
+        "utilization_pct": "67.575",
+        "waste_mm2": "22410.56",
+        "recoverable_area_mm2": "2466",
+        "runtime_ms": 262.9907
+      },
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "113",
+          "y_mm": "116",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 24
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "77",
+          "y_mm": "44",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 48.0,
+            "height_mm": 24.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "149",
+          "y_mm": "44",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 48.0,
+            "height_mm": 24.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "53",
+          "y_mm": "92",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 24.0,
+            "height_mm": 96.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "197",
+          "y_mm": "92",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 24.0,
+            "height_mm": 96.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "89",
+          "y_mm": "212",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 96.0,
+            "height_mm": 24.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 7,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "75",
+          "y_mm": "5",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 194.0,
+            "height_mm": 36.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 8,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "45",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 43.0,
+            "height_mm": 192.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 9,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "226",
+          "y_mm": "45",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 43.0,
+            "height_mm": 192.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 10,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "240",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 264.0,
+            "height_mm": 35.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 13,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "80",
+          "y_mm": "145",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 20.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 14,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "166",
+          "y_mm": "145",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 20.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 15,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "80",
+          "y_mm": "71",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 110.0,
+            "height_mm": 16.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 16,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "80",
+          "y_mm": "168",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 110.0,
+            "height_mm": 16.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 17,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "82",
+          "y_mm": "93",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 25.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 18,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "164",
+          "y_mm": "93",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 25.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 11,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "51",
+          "y_mm": "191",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 32.0,
+            "height_mm": 32.0
+          },
+          "decision": "pocket",
+          "pocket": {
+            "piece_id": 11,
+            "unit_index": 1,
+            "source": "RETAZO",
+            "material_id": 8201,
+            "rotation_deg": "0",
+            "anchor_row": 191,
+            "anchor_column": 51,
+            "anchor_x_mm": "51",
+            "anchor_y_mm": "191",
+            "component_cells": 60,
+            "anchor_area_mm2": "60",
+            "bbox_row_column": [
+              191,
+              51,
+              205,
+              54
+            ],
+            "candidate_options_at_decision": 7,
+            "prior_layout_version": 0
+          }
+        },
+        {
+          "piece_id": 12,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "5",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 18
+          },
+          "decision": "fallback",
+          "pocket": null
+        }
+      ],
+      "source_switches": 0,
+      "pockets_detected": 7,
+      "pockets_used": 1,
+      "pocket_candidates_checked": 7,
+      "pieces_placed_in_pockets": 1,
+      "pocket_detection_ms": 171.1247,
+      "pocket_component_labeling_ms": 7.246,
+      "pocket_placement_ms": 35.568,
+      "anchor_map_generation_ms": 163.8787,
+      "fallback_search_ms": 0.2215,
+      "fallback_count": 1,
+      "fallback_placements": 1,
+      "fallback_unplaced": 0,
+      "candidate_orientations_scanned": 20,
+      "geometric_positions_evaluated": 1125454,
+      "exact_geometry_checks": 1,
+      "pocket_options_by_decision": [
+        7,
+        0
+      ],
+      "selected_pockets": [
+        {
+          "piece_id": 11,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "rotation_deg": "0",
+          "anchor_row": 191,
+          "anchor_column": 51,
+          "anchor_x_mm": "51",
+          "anchor_y_mm": "191",
+          "component_cells": 60,
+          "anchor_area_mm2": "60",
+          "bbox_row_column": [
+            191,
+            51,
+            205,
+            54
+          ],
+          "candidate_options_at_decision": 7,
+          "prior_layout_version": 0
+        }
+      ]
+    },
+    {
+      "method": "HF",
+      "official_metrics": {
+        "requested_units": 18,
+        "placed_units": 18,
+        "unplaced_units": 0,
+        "remnants_used": 1,
+        "sheets_used": 0,
+        "utilization_pct": "67.575",
+        "waste_mm2": "22410.56",
+        "recoverable_area_mm2": "2466",
+        "runtime_ms": 258.7483
+      },
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "113",
+          "y_mm": "116",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 24
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "77",
+          "y_mm": "44",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 48.0,
+            "height_mm": 24.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "149",
+          "y_mm": "44",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 48.0,
+            "height_mm": 24.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "53",
+          "y_mm": "92",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 24.0,
+            "height_mm": 96.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "197",
+          "y_mm": "92",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 24.0,
+            "height_mm": 96.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "89",
+          "y_mm": "212",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 96.0,
+            "height_mm": 24.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 7,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "75",
+          "y_mm": "5",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 194.0,
+            "height_mm": 36.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 8,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "45",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 43.0,
+            "height_mm": 192.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 9,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "226",
+          "y_mm": "45",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 43.0,
+            "height_mm": 192.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 10,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "240",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 264.0,
+            "height_mm": 35.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 13,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "80",
+          "y_mm": "145",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 20.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 14,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "166",
+          "y_mm": "145",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 20.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 15,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "80",
+          "y_mm": "71",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 110.0,
+            "height_mm": 16.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 16,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "80",
+          "y_mm": "168",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 110.0,
+            "height_mm": 16.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 17,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "82",
+          "y_mm": "93",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 25.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 18,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "164",
+          "y_mm": "93",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 28.0,
+            "height_mm": 25.0
+          },
+          "decision": "seed",
+          "pocket": null
+        },
+        {
+          "piece_id": 11,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "51",
+          "y_mm": "191",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 32.0,
+            "height_mm": 32.0
+          },
+          "decision": "pocket",
+          "pocket": {
+            "piece_id": 11,
+            "unit_index": 1,
+            "source": "RETAZO",
+            "material_id": 8201,
+            "rotation_deg": "0",
+            "anchor_row": 191,
+            "anchor_column": 51,
+            "anchor_x_mm": "51",
+            "anchor_y_mm": "191",
+            "component_cells": 60,
+            "anchor_area_mm2": "60",
+            "bbox_row_column": [
+              191,
+              51,
+              205,
+              54
+            ],
+            "candidate_options_at_decision": 7,
+            "prior_layout_version": 0
+          }
+        },
+        {
+          "piece_id": 12,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "physical_unit_index": 1,
+          "rotation_deg": "0",
+          "x_mm": "5",
+          "y_mm": "5",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 18
+          },
+          "decision": "fallback",
+          "pocket": null
+        }
+      ],
+      "source_switches": 0,
+      "pockets_detected": 7,
+      "pockets_used": 1,
+      "pocket_candidates_checked": 7,
+      "pieces_placed_in_pockets": 1,
+      "pocket_detection_ms": 168.8964,
+      "pocket_component_labeling_ms": 6.8874,
+      "pocket_placement_ms": 34.6733,
+      "anchor_map_generation_ms": 162.009,
+      "fallback_search_ms": 0.2414,
+      "fallback_count": 1,
+      "fallback_placements": 1,
+      "fallback_unplaced": 0,
+      "candidate_orientations_scanned": 20,
+      "geometric_positions_evaluated": 1125454,
+      "exact_geometry_checks": 1,
+      "pocket_options_by_decision": [
+        7,
+        0
+      ],
+      "selected_pockets": [
+        {
+          "piece_id": 11,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "rotation_deg": "0",
+          "anchor_row": 191,
+          "anchor_column": 51,
+          "anchor_x_mm": "51",
+          "anchor_y_mm": "191",
+          "component_cells": 60,
+          "anchor_area_mm2": "60",
+          "bbox_row_column": [
+            191,
+            51,
+            205,
+            54
+          ],
+          "candidate_options_at_decision": 7,
+          "prior_layout_version": 0
+        }
+      ]
+    }
+  ],
+  "hole_filling": {
+    "method": "HF",
+    "official_metrics": {
+      "requested_units": 18,
+      "placed_units": 18,
+      "unplaced_units": 0,
+      "remnants_used": 1,
+      "sheets_used": 0,
+      "utilization_pct": "67.575",
+      "waste_mm2": "22410.56",
+      "recoverable_area_mm2": "2466",
+      "runtime_ms": 262.9907
+    },
+    "placements": [
+      {
+        "piece_id": 1,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "113",
+        "y_mm": "116",
+        "geometry": {
+          "type": "CIRCUNFERENCIA",
+          "radius_mm": 24
+        },
+        "decision": "seed",
+        "pocket": null
+      },
+      {
+        "piece_id": 2,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "77",
+        "y_mm": "44",
+        "geometry": {
+          "type": "RECTANGULO",
+          "width_mm": 48.0,
+          "height_mm": 24.0
+        },
+        "decision": "seed",
+        "pocket": null
+      },
+      {
+        "piece_id": 3,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "149",
+        "y_mm": "44",
+        "geometry": {
+          "type": "RECTANGULO",
+          "width_mm": 48.0,
+          "height_mm": 24.0
+        },
+        "decision": "seed",
+        "pocket": null
+      },
+      {
+        "piece_id": 4,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "53",
+        "y_mm": "92",
+        "geometry": {
+          "type": "RECTANGULO",
+          "width_mm": 24.0,
+          "height_mm": 96.0
+        },
+        "decision": "seed",
+        "pocket": null
+      },
+      {
+        "piece_id": 5,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "197",
+        "y_mm": "92",
+        "geometry": {
+          "type": "RECTANGULO",
+          "width_mm": 24.0,
+          "height_mm": 96.0
+        },
+        "decision": "seed",
+        "pocket": null
+      },
+      {
+        "piece_id": 6,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "89",
+        "y_mm": "212",
+        "geometry": {
+          "type": "RECTANGULO",
+          "width_mm": 96.0,
+          "height_mm": 24.0
+        },
+        "decision": "seed",
+        "pocket": null
+      },
+      {
+        "piece_id": 7,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "75",
+        "y_mm": "5",
+        "geometry": {
+          "type": "RECTANGULO",
+          "width_mm": 194.0,
+          "height_mm": 36.0
+        },
+        "decision": "seed",
+        "pocket": null
+      },
+      {
+        "piece_id": 8,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "5",
+        "y_mm": "45",
+        "geometry": {
+          "type": "RECTANGULO",
+          "width_mm": 43.0,
+          "height_mm": 192.0
+        },
+        "decision": "seed",
+        "pocket": null
+      },
+      {
+        "piece_id": 9,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "226",
+        "y_mm": "45",
+        "geometry": {
+          "type": "RECTANGULO",
+          "width_mm": 43.0,
+          "height_mm": 192.0
+        },
+        "decision": "seed",
+        "pocket": null
+      },
+      {
+        "piece_id": 10,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "5",
+        "y_mm": "240",
+        "geometry": {
+          "type": "RECTANGULO",
+          "width_mm": 264.0,
+          "height_mm": 35.0
+        },
+        "decision": "seed",
+        "pocket": null
+      },
+      {
+        "piece_id": 13,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "80",
+        "y_mm": "145",
+        "geometry": {
+          "type": "RECTANGULO",
+          "width_mm": 28.0,
+          "height_mm": 20.0
+        },
+        "decision": "seed",
+        "pocket": null
+      },
+      {
+        "piece_id": 14,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "166",
+        "y_mm": "145",
+        "geometry": {
+          "type": "RECTANGULO",
+          "width_mm": 28.0,
+          "height_mm": 20.0
+        },
+        "decision": "seed",
+        "pocket": null
+      },
+      {
+        "piece_id": 15,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "80",
+        "y_mm": "71",
+        "geometry": {
+          "type": "RECTANGULO",
+          "width_mm": 110.0,
+          "height_mm": 16.0
+        },
+        "decision": "seed",
+        "pocket": null
+      },
+      {
+        "piece_id": 16,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "80",
+        "y_mm": "168",
+        "geometry": {
+          "type": "RECTANGULO",
+          "width_mm": 110.0,
+          "height_mm": 16.0
+        },
+        "decision": "seed",
+        "pocket": null
+      },
+      {
+        "piece_id": 17,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "82",
+        "y_mm": "93",
+        "geometry": {
+          "type": "RECTANGULO",
+          "width_mm": 28.0,
+          "height_mm": 25.0
+        },
+        "decision": "seed",
+        "pocket": null
+      },
+      {
+        "piece_id": 18,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "164",
+        "y_mm": "93",
+        "geometry": {
+          "type": "RECTANGULO",
+          "width_mm": 28.0,
+          "height_mm": 25.0
+        },
+        "decision": "seed",
+        "pocket": null
+      },
+      {
+        "piece_id": 11,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "51",
+        "y_mm": "191",
+        "geometry": {
+          "type": "RECTANGULO",
+          "width_mm": 32.0,
+          "height_mm": 32.0
+        },
+        "decision": "pocket",
+        "pocket": {
+          "piece_id": 11,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 8201,
+          "rotation_deg": "0",
+          "anchor_row": 191,
+          "anchor_column": 51,
+          "anchor_x_mm": "51",
+          "anchor_y_mm": "191",
+          "component_cells": 60,
+          "anchor_area_mm2": "60",
+          "bbox_row_column": [
+            191,
+            51,
+            205,
+            54
+          ],
+          "candidate_options_at_decision": 7,
+          "prior_layout_version": 0
+        }
+      },
+      {
+        "piece_id": 12,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "5",
+        "y_mm": "5",
+        "geometry": {
+          "type": "CIRCUNFERENCIA",
+          "radius_mm": 18
+        },
+        "decision": "fallback",
+        "pocket": null
+      }
+    ],
+    "source_switches": 0,
+    "pockets_detected": 7,
+    "pockets_used": 1,
+    "pocket_candidates_checked": 7,
+    "pieces_placed_in_pockets": 1,
+    "pocket_detection_ms": 171.1247,
+    "pocket_component_labeling_ms": 7.246,
+    "pocket_placement_ms": 34.6733,
+    "anchor_map_generation_ms": 163.8787,
+    "fallback_search_ms": 0.2351,
+    "fallback_count": 1,
+    "fallback_placements": 1,
+    "fallback_unplaced": 0,
+    "candidate_orientations_scanned": 20,
+    "geometric_positions_evaluated": 1125454,
+    "exact_geometry_checks": 1,
+    "pocket_options_by_decision": [
+      7,
+      0
+    ],
+    "selected_pockets": [
+      {
+        "piece_id": 11,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "rotation_deg": "0",
+        "anchor_row": 191,
+        "anchor_column": 51,
+        "anchor_x_mm": "51",
+        "anchor_y_mm": "191",
+        "component_cells": 60,
+        "anchor_area_mm2": "60",
+        "bbox_row_column": [
+          191,
+          51,
+          205,
+          54
+        ],
+        "candidate_options_at_decision": 7,
+        "prior_layout_version": 0
+      }
+    ]
+  },
+  "deterministic": true,
+  "demonstration_level": 1,
+  "causal_trace": {
+    "initial_seed_pieces": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18
+    ],
+    "processing_order": [
+      11,
+      12
+    ],
+    "ff_small_piece": {
+      "piece_id": 11,
+      "unit_index": 1,
+      "source": "RETAZO",
+      "material_id": 8201,
+      "physical_unit_index": 1,
+      "rotation_deg": "0",
+      "x_mm": "5",
+      "y_mm": "5",
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 32.0,
+        "height_mm": 32.0
+      },
+      "decision": "baseline",
+      "pocket": null
+    },
+    "hf_small_piece": {
+      "piece_id": 11,
+      "unit_index": 1,
+      "source": "RETAZO",
+      "material_id": 8201,
+      "physical_unit_index": 1,
+      "rotation_deg": "0",
+      "x_mm": "51",
+      "y_mm": "191",
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 32.0,
+        "height_mm": 32.0
+      },
+      "decision": "pocket",
+      "pocket": {
+        "piece_id": 11,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "rotation_deg": "0",
+        "anchor_row": 191,
+        "anchor_column": 51,
+        "anchor_x_mm": "51",
+        "anchor_y_mm": "191",
+        "component_cells": 60,
+        "anchor_area_mm2": "60",
+        "bbox_row_column": [
+          191,
+          51,
+          205,
+          54
+        ],
+        "candidate_options_at_decision": 7,
+        "prior_layout_version": 0
+      }
+    },
+    "later_piece_by_method": {
+      "FF": {
+        "piece_id": 12,
+        "unit_index": 1,
+        "source": "PLANCHA",
+        "material_id": 9201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "5",
+        "y_mm": "5",
+        "geometry": {
+          "type": "CIRCUNFERENCIA",
+          "radius_mm": 18
+        },
+        "decision": "baseline",
+        "pocket": null
+      },
+      "BF": {
+        "piece_id": 12,
+        "unit_index": 1,
+        "source": "PLANCHA",
+        "material_id": 9201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "5",
+        "y_mm": "5",
+        "geometry": {
+          "type": "CIRCUNFERENCIA",
+          "radius_mm": 18
+        },
+        "decision": "baseline",
+        "pocket": null
+      },
+      "WF": {
+        "piece_id": 12,
+        "unit_index": 1,
+        "source": "PLANCHA",
+        "material_id": 9201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "5",
+        "y_mm": "5",
+        "geometry": {
+          "type": "CIRCUNFERENCIA",
+          "radius_mm": 18
+        },
+        "decision": "baseline",
+        "pocket": null
+      },
+      "HF": {
+        "piece_id": 12,
+        "unit_index": 1,
+        "source": "RETAZO",
+        "material_id": 8201,
+        "physical_unit_index": 1,
+        "rotation_deg": "0",
+        "x_mm": "5",
+        "y_mm": "5",
+        "geometry": {
+          "type": "CIRCUNFERENCIA",
+          "radius_mm": 18
+        },
+        "decision": "fallback",
+        "pocket": null
+      }
+    },
+    "hf_pocket_first": true,
+    "ff_hf_pattern_different": true
+  },
+  "figures": [
+    "experiments/optimization/hole_filling/figures/HF-CAPABILITY-001-comparison.svg",
+    "experiments/optimization/hole_filling/figures/HF-CAPABILITY-001-pocket-stage.svg"
+  ],
+  "timing_definition": "Pocket detection includes anchor-map generation plus component labeling; pocket placement is separate; runtime HF is median of three repetitions."
+}
