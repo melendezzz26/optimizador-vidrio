@@ -1,0 +1,3969 @@
+{
+  "spike": "SP-004",
+  "generated_at_utc": "2026-11-01T23:58:41.502987+00:00",
+  "runtime": {
+    "python": "3.11.15 (main, Jun 23 2026, 15:20:37) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "win32"
+  },
+  "configuration": {
+    "EXP-SMALL-001": {
+      "resolution_mm": 1,
+      "angular_step_deg": 5,
+      "margin_mm": 0,
+      "separation_mm": 0
+    },
+    "EXP-MEDIUM-001": {
+      "resolution_mm": 1,
+      "angular_step_deg": 5,
+      "margin_mm": 1,
+      "separation_mm": 1
+    },
+    "EXP-COMPLEX-001": {
+      "resolution_mm": 1,
+      "angular_step_deg": 5,
+      "margin_mm": 1,
+      "separation_mm": 1
+    }
+  },
+  "fixtures": [
+    "EXP-SMALL-001",
+    "EXP-MEDIUM-001",
+    "EXP-COMPLEX-001"
+  ],
+  "results": [
+    {
+      "case": "EXP-SMALL-001",
+      "method": "FF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "4.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "4.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "2",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "4.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": []
+    },
+    {
+      "case": "EXP-SMALL-001",
+      "method": "BF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "4.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "4.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "2",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "4.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": []
+    },
+    {
+      "case": "EXP-SMALL-001",
+      "method": "WF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "4.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "4.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "2",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "4.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": []
+    },
+    {
+      "case": "EXP-SMALL-001",
+      "method": "Filler",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "4.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "4.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "2",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "4.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": [],
+      "filler_trace": {
+        "attempts": [
+          {
+            "piece_id": 1,
+            "unit_index": 1,
+            "area_mm2": "4.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "0",
+            "y_mm": "0",
+            "decision": "place"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 2,
+            "area_mm2": "4.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 3,
+            "area_mm2": "4.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 2,
+            "area_mm2": "4.00",
+            "source": "PLANCHA",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "0",
+            "y_mm": "0",
+            "decision": "place"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 3,
+            "area_mm2": "4.00",
+            "source": "PLANCHA",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "2",
+            "y_mm": "0",
+            "decision": "place"
+          }
+        ],
+        "placements": [
+          {
+            "piece_id": 1,
+            "unit_index": 1,
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "x_mm": "0",
+            "y_mm": "0",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 2,
+            "source": "PLANCHA",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "x_mm": "0",
+            "y_mm": "0",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 3,
+            "source": "PLANCHA",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "x_mm": "2",
+            "y_mm": "0",
+            "rotation_deg": "0"
+          }
+        ],
+        "source_switches": 1,
+        "skipped_piece_attempts": 2,
+        "successful_fill_after_skip": 0,
+        "processing_order": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "pieces_per_source": {
+          "RETAZO:1:1": 1,
+          "PLANCHA:2:1": 2
+        }
+      }
+    },
+    {
+      "case": "EXP-MEDIUM-001",
+      "method": "FF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 3,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "1",
+          "rotation_deg": "90",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "6",
+          "y_mm": "1",
+          "rotation_deg": "90",
+          "area_mm2": "6.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "6",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "6.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "10",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "6.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "6",
+          "y_mm": "4",
+          "rotation_deg": "0",
+          "area_mm2": "6.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": []
+    },
+    {
+      "case": "EXP-MEDIUM-001",
+      "method": "BF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 3,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "6",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "6.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "4",
+          "rotation_deg": "0",
+          "area_mm2": "6.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "11",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "6.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "11",
+          "y_mm": "4",
+          "rotation_deg": "0",
+          "area_mm2": "6.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": []
+    },
+    {
+      "case": "EXP-MEDIUM-001",
+      "method": "WF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 3,
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "6.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "4",
+          "rotation_deg": "0",
+          "area_mm2": "6.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "6",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "6.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "6",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "6.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": []
+    },
+    {
+      "case": "EXP-MEDIUM-001",
+      "method": "Filler",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 3,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "1",
+          "rotation_deg": "90",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "6",
+          "y_mm": "1",
+          "rotation_deg": "90",
+          "area_mm2": "6.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "6",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "6.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "10",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "6.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "6",
+          "y_mm": "4",
+          "rotation_deg": "0",
+          "area_mm2": "6.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": [],
+      "filler_trace": {
+        "attempts": [
+          {
+            "piece_id": 1,
+            "unit_index": 1,
+            "area_mm2": "18.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "1",
+            "y_mm": "1",
+            "decision": "place"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 2,
+            "area_mm2": "18.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "1",
+            "y_mm": "5",
+            "decision": "place"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 3,
+            "area_mm2": "18.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "90",
+            "x_mm": "8",
+            "y_mm": "1",
+            "decision": "place"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 1,
+            "area_mm2": "12.57",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 2,
+            "area_mm2": "12.57",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 1,
+            "area_mm2": "6.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 2,
+            "area_mm2": "6.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 3,
+            "area_mm2": "6.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 4,
+            "area_mm2": "6.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 1,
+            "area_mm2": "12.57",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "1",
+            "y_mm": "1",
+            "decision": "place"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 2,
+            "area_mm2": "12.57",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 1,
+            "area_mm2": "6.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "90",
+            "x_mm": "6",
+            "y_mm": "1",
+            "decision": "place"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 2,
+            "area_mm2": "12.57",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 2,
+            "area_mm2": "6.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 3,
+            "area_mm2": "6.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 4,
+            "area_mm2": "6.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 2,
+            "area_mm2": "12.57",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "1",
+            "y_mm": "1",
+            "decision": "place"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 2,
+            "area_mm2": "6.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "6",
+            "y_mm": "1",
+            "decision": "place"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 3,
+            "area_mm2": "6.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "10",
+            "y_mm": "1",
+            "decision": "place"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 4,
+            "area_mm2": "6.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "6",
+            "y_mm": "4",
+            "decision": "place"
+          }
+        ],
+        "placements": [
+          {
+            "piece_id": 1,
+            "unit_index": 1,
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "x_mm": "1",
+            "y_mm": "1",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 2,
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "x_mm": "1",
+            "y_mm": "5",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 3,
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "x_mm": "8",
+            "y_mm": "1",
+            "rotation_deg": "90"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 1,
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "x_mm": "1",
+            "y_mm": "1",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 1,
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "x_mm": "6",
+            "y_mm": "1",
+            "rotation_deg": "90"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 2,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "x_mm": "1",
+            "y_mm": "1",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 2,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "x_mm": "6",
+            "y_mm": "1",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 3,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "x_mm": "10",
+            "y_mm": "1",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 4,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "x_mm": "6",
+            "y_mm": "4",
+            "rotation_deg": "0"
+          }
+        ],
+        "source_switches": 2,
+        "skipped_piece_attempts": 11,
+        "successful_fill_after_skip": 1,
+        "processing_order": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            3,
+            2
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ]
+        ],
+        "pieces_per_source": {
+          "RETAZO:1:1": 3,
+          "RETAZO:2:1": 2,
+          "PLANCHA:3:1": 4
+        }
+      }
+    },
+    {
+      "case": "EXP-COMPLEX-001",
+      "method": "FF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 3,
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "55",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 5,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "11",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "15",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "11",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "13",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "18",
+          "y_mm": "10",
+          "rotation_deg": "90",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "6",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "11",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "16",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 5,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "6",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 6,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "11",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 4,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "65",
+          "area_mm2": "14.00"
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "14.00"
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "4",
+          "rotation_deg": "0",
+          "area_mm2": "14.00"
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 1,
+          "x_mm": "9",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "10.00"
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 1,
+          "x_mm": "9",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "area_mm2": "10.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "RETAZO",
+          "material_id": 4,
+          "physical_unit_index": 1,
+          "material_key": [
+            2,
+            "8"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 1,
+          "material_key": [
+            2,
+            "8"
+          ]
+        }
+      ],
+      "unplaced": []
+    },
+    {
+      "case": "EXP-COMPLEX-001",
+      "method": "BF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "55",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 3,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 5,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "11",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "15",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "11",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "13",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "18",
+          "y_mm": "10",
+          "rotation_deg": "90",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "6",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "11",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "16",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 5,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "6",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 6,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "11",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 4,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "65",
+          "area_mm2": "14.00"
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "14.00"
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "4",
+          "rotation_deg": "0",
+          "area_mm2": "14.00"
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 1,
+          "x_mm": "9",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "10.00"
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 1,
+          "x_mm": "9",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "area_mm2": "10.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "RETAZO",
+          "material_id": 4,
+          "physical_unit_index": 1,
+          "material_key": [
+            2,
+            "8"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 1,
+          "material_key": [
+            2,
+            "8"
+          ]
+        }
+      ],
+      "unplaced": []
+    },
+    {
+      "case": "EXP-COMPLEX-001",
+      "method": "WF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "55",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 3,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 5,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "11",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "11",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "11",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "17",
+          "y_mm": "4",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "17",
+          "y_mm": "4",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "8",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "13",
+          "y_mm": "9",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "13",
+          "y_mm": "9",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "1",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 5,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 6,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "6",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 4,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "65",
+          "area_mm2": "14.00"
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "14.00"
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 2,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "14.00"
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 1,
+          "x_mm": "9",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "10.00"
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 2,
+          "x_mm": "9",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "10.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "RETAZO",
+          "material_id": 4,
+          "physical_unit_index": 1,
+          "material_key": [
+            2,
+            "8"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 1,
+          "material_key": [
+            2,
+            "8"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 2,
+          "material_key": [
+            2,
+            "8"
+          ]
+        }
+      ],
+      "unplaced": []
+    },
+    {
+      "case": "EXP-COMPLEX-001",
+      "method": "Filler",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 3,
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "55",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "11",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 5,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "11",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "27.00"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "15",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "area_mm2": "18.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "13",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "x_mm": "18",
+          "y_mm": "10",
+          "rotation_deg": "90",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "6",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "11",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 4,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "16",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 5,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "6",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 6,
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "x_mm": "11",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 4,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "65",
+          "area_mm2": "14.00"
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "14.00"
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "4",
+          "rotation_deg": "0",
+          "area_mm2": "14.00"
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 1,
+          "x_mm": "9",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "area_mm2": "10.00"
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 1,
+          "x_mm": "9",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "area_mm2": "10.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "RETAZO",
+          "material_id": 1,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "RETAZO",
+          "material_id": 2,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 3,
+          "physical_unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "RETAZO",
+          "material_id": 4,
+          "physical_unit_index": 1,
+          "material_key": [
+            2,
+            "8"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 5,
+          "physical_unit_index": 1,
+          "material_key": [
+            2,
+            "8"
+          ]
+        }
+      ],
+      "unplaced": [],
+      "filler_trace": {
+        "attempts": [
+          {
+            "piece_id": 1,
+            "unit_index": 1,
+            "area_mm2": "27.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "1",
+            "y_mm": "1",
+            "decision": "place"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 2,
+            "area_mm2": "27.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "1",
+            "y_mm": "5",
+            "decision": "place"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 3,
+            "area_mm2": "27.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 4,
+            "area_mm2": "27.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 5,
+            "area_mm2": "27.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 1,
+            "area_mm2": "18.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 2,
+            "area_mm2": "18.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 3,
+            "area_mm2": "18.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 4,
+            "area_mm2": "18.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 1,
+            "area_mm2": "12.57",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 2,
+            "area_mm2": "12.57",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 3,
+            "area_mm2": "12.57",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 4,
+            "area_mm2": "12.57",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 1,
+            "area_mm2": "12.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 2,
+            "area_mm2": "12.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 3,
+            "area_mm2": "12.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 4,
+            "area_mm2": "12.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 5,
+            "area_mm2": "12.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 6,
+            "area_mm2": "12.00",
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 3,
+            "area_mm2": "27.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "55",
+            "x_mm": "1",
+            "y_mm": "1",
+            "decision": "place"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 4,
+            "area_mm2": "27.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 5,
+            "area_mm2": "27.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 1,
+            "area_mm2": "18.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 2,
+            "area_mm2": "18.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 3,
+            "area_mm2": "18.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 4,
+            "area_mm2": "18.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 1,
+            "area_mm2": "12.57",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "1",
+            "y_mm": "11",
+            "decision": "place"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 4,
+            "area_mm2": "27.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 5,
+            "area_mm2": "27.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 1,
+            "area_mm2": "18.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 2,
+            "area_mm2": "18.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 3,
+            "area_mm2": "18.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 4,
+            "area_mm2": "18.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 2,
+            "area_mm2": "12.57",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 3,
+            "area_mm2": "12.57",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 4,
+            "area_mm2": "12.57",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 1,
+            "area_mm2": "12.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 2,
+            "area_mm2": "12.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 3,
+            "area_mm2": "12.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 4,
+            "area_mm2": "12.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 5,
+            "area_mm2": "12.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 6,
+            "area_mm2": "12.00",
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 4,
+            "area_mm2": "27.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "1",
+            "y_mm": "1",
+            "decision": "place"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 5,
+            "area_mm2": "27.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "11",
+            "y_mm": "1",
+            "decision": "place"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 1,
+            "area_mm2": "18.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "1",
+            "y_mm": "5",
+            "decision": "place"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 2,
+            "area_mm2": "18.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "8",
+            "y_mm": "5",
+            "decision": "place"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 3,
+            "area_mm2": "18.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "15",
+            "y_mm": "5",
+            "decision": "place"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 4,
+            "area_mm2": "18.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "1",
+            "y_mm": "10",
+            "decision": "place"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 2,
+            "area_mm2": "12.57",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "8",
+            "y_mm": "10",
+            "decision": "place"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 3,
+            "area_mm2": "12.57",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "13",
+            "y_mm": "10",
+            "decision": "place"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 4,
+            "area_mm2": "12.57",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 1,
+            "area_mm2": "12.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "90",
+            "x_mm": "18",
+            "y_mm": "10",
+            "decision": "place"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 4,
+            "area_mm2": "12.57",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 2,
+            "area_mm2": "12.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 3,
+            "area_mm2": "12.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 4,
+            "area_mm2": "12.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 5,
+            "area_mm2": "12.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 6,
+            "area_mm2": "12.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 4,
+            "area_mm2": "12.57",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 2,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "1",
+            "y_mm": "1",
+            "decision": "place"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 2,
+            "area_mm2": "12.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 2,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "6",
+            "y_mm": "1",
+            "decision": "place"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 3,
+            "area_mm2": "12.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 2,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "11",
+            "y_mm": "1",
+            "decision": "place"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 4,
+            "area_mm2": "12.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 2,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "16",
+            "y_mm": "1",
+            "decision": "place"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 5,
+            "area_mm2": "12.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 2,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "6",
+            "y_mm": "5",
+            "decision": "place"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 6,
+            "area_mm2": "12.00",
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 2,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "11",
+            "y_mm": "5",
+            "decision": "place"
+          },
+          {
+            "piece_id": 5,
+            "unit_index": 1,
+            "area_mm2": "14.00",
+            "source": "RETAZO",
+            "material_id": 4,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "65",
+            "x_mm": "1",
+            "y_mm": "1",
+            "decision": "place"
+          },
+          {
+            "piece_id": 5,
+            "unit_index": 2,
+            "area_mm2": "14.00",
+            "source": "RETAZO",
+            "material_id": 4,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 5,
+            "unit_index": 3,
+            "area_mm2": "14.00",
+            "source": "RETAZO",
+            "material_id": 4,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 6,
+            "unit_index": 1,
+            "area_mm2": "10.00",
+            "source": "RETAZO",
+            "material_id": 4,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 6,
+            "unit_index": 2,
+            "area_mm2": "10.00",
+            "source": "RETAZO",
+            "material_id": 4,
+            "physical_unit_index": 1,
+            "fits": false,
+            "rotation_deg": null,
+            "x_mm": null,
+            "y_mm": null,
+            "decision": "skip_temporarily"
+          },
+          {
+            "piece_id": 5,
+            "unit_index": 2,
+            "area_mm2": "14.00",
+            "source": "PLANCHA",
+            "material_id": 5,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "1",
+            "y_mm": "1",
+            "decision": "place"
+          },
+          {
+            "piece_id": 5,
+            "unit_index": 3,
+            "area_mm2": "14.00",
+            "source": "PLANCHA",
+            "material_id": 5,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "1",
+            "y_mm": "4",
+            "decision": "place"
+          },
+          {
+            "piece_id": 6,
+            "unit_index": 1,
+            "area_mm2": "10.00",
+            "source": "PLANCHA",
+            "material_id": 5,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "9",
+            "y_mm": "1",
+            "decision": "place"
+          },
+          {
+            "piece_id": 6,
+            "unit_index": 2,
+            "area_mm2": "10.00",
+            "source": "PLANCHA",
+            "material_id": 5,
+            "physical_unit_index": 1,
+            "fits": true,
+            "rotation_deg": "0",
+            "x_mm": "9",
+            "y_mm": "6",
+            "decision": "place"
+          }
+        ],
+        "placements": [
+          {
+            "piece_id": 1,
+            "unit_index": 1,
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "x_mm": "1",
+            "y_mm": "1",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 2,
+            "source": "RETAZO",
+            "material_id": 1,
+            "physical_unit_index": 1,
+            "x_mm": "1",
+            "y_mm": "5",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 3,
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "x_mm": "1",
+            "y_mm": "1",
+            "rotation_deg": "55"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 1,
+            "source": "RETAZO",
+            "material_id": 2,
+            "physical_unit_index": 1,
+            "x_mm": "1",
+            "y_mm": "11",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 4,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "x_mm": "1",
+            "y_mm": "1",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 1,
+            "unit_index": 5,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "x_mm": "11",
+            "y_mm": "1",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 1,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "x_mm": "1",
+            "y_mm": "5",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 2,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "x_mm": "8",
+            "y_mm": "5",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 3,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "x_mm": "15",
+            "y_mm": "5",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 4,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "x_mm": "1",
+            "y_mm": "10",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 2,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "x_mm": "8",
+            "y_mm": "10",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 3,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "x_mm": "13",
+            "y_mm": "10",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 1,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 1,
+            "x_mm": "18",
+            "y_mm": "10",
+            "rotation_deg": "90"
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 4,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 2,
+            "x_mm": "1",
+            "y_mm": "1",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 2,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 2,
+            "x_mm": "6",
+            "y_mm": "1",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 3,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 2,
+            "x_mm": "11",
+            "y_mm": "1",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 4,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 2,
+            "x_mm": "16",
+            "y_mm": "1",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 5,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 2,
+            "x_mm": "6",
+            "y_mm": "5",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 6,
+            "source": "PLANCHA",
+            "material_id": 3,
+            "physical_unit_index": 2,
+            "x_mm": "11",
+            "y_mm": "5",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 5,
+            "unit_index": 1,
+            "source": "RETAZO",
+            "material_id": 4,
+            "physical_unit_index": 1,
+            "x_mm": "1",
+            "y_mm": "1",
+            "rotation_deg": "65"
+          },
+          {
+            "piece_id": 5,
+            "unit_index": 2,
+            "source": "PLANCHA",
+            "material_id": 5,
+            "physical_unit_index": 1,
+            "x_mm": "1",
+            "y_mm": "1",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 5,
+            "unit_index": 3,
+            "source": "PLANCHA",
+            "material_id": 5,
+            "physical_unit_index": 1,
+            "x_mm": "1",
+            "y_mm": "4",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 6,
+            "unit_index": 1,
+            "source": "PLANCHA",
+            "material_id": 5,
+            "physical_unit_index": 1,
+            "x_mm": "9",
+            "y_mm": "1",
+            "rotation_deg": "0"
+          },
+          {
+            "piece_id": 6,
+            "unit_index": 2,
+            "source": "PLANCHA",
+            "material_id": 5,
+            "physical_unit_index": 1,
+            "x_mm": "9",
+            "y_mm": "6",
+            "rotation_deg": "0"
+          }
+        ],
+        "source_switches": 4,
+        "skipped_piece_attempts": 49,
+        "successful_fill_after_skip": 2,
+        "processing_order": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            4,
+            1
+          ],
+          [
+            4,
+            2
+          ],
+          [
+            4,
+            3
+          ],
+          [
+            4,
+            4
+          ],
+          [
+            3,
+            2
+          ],
+          [
+            3,
+            3
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            2
+          ],
+          [
+            5,
+            3
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            6,
+            2
+          ]
+        ],
+        "pieces_per_source": {
+          "RETAZO:1:1": 2,
+          "RETAZO:2:1": 2,
+          "PLANCHA:3:1": 9,
+          "PLANCHA:3:2": 6,
+          "RETAZO:4:1": 1,
+          "PLANCHA:5:1": 4
+        }
+      }
+    }
+  ]
+}
