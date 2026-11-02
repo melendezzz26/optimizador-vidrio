@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "case_id": "HF-DIAGNOSTIC-002",
+  "label": "DIAGNÓSTICO HOLE FILLING — NO PERTENECE A TA-027",
+  "config": {
+    "resolution_mm": 1,
+    "angular_step_deg": 5,
+    "margin_mm": 0,
+    "separation_mm": 1
+  },
+  "material": {"glass_type_id": 1, "thickness_mm": 6},
+  "stocks": [
+    {"source": "PLANCHA", "material_id": 902, "physical_unit_index": 1, "geometry": {"type": "RECTANGULO", "width_mm": 28, "height_mm": 28}}
+  ],
+  "pieces": [
+    {"piece_id": 1, "geometry": {"type": "POLIGONO_CONVEXO", "vertices_mm": [[0, 0], [10, 0], [0, 10]]}, "role": "seed", "stock_material_id": 902, "x_mm": 3, "y_mm": 3, "rotation_deg": 0},
+    {"piece_id": 2, "geometry": {"type": "POLIGONO_CONVEXO", "vertices_mm": [[0, 0], [10, 0], [10, 10]]}, "role": "seed", "stock_material_id": 902, "x_mm": 15, "y_mm": 3, "rotation_deg": 0},
+    {"piece_id": 3, "geometry": {"type": "POLIGONO_CONVEXO", "vertices_mm": [[0, 0], [0, 10], [10, 10]]}, "role": "seed", "stock_material_id": 902, "x_mm": 3, "y_mm": 15, "rotation_deg": 0},
+    {"piece_id": 4, "geometry": {"type": "POLIGONO_CONVEXO", "vertices_mm": [[10, 0], [10, 10], [0, 10]]}, "role": "seed", "stock_material_id": 902, "x_mm": 15, "y_mm": 15, "rotation_deg": 0},
+    {"piece_id": 5, "geometry": {"type": "POLIGONO_CONVEXO", "vertices_mm": [[0, 0], [2, 0], [0, 2]]}, "role": "pending"}
+  ]
+}

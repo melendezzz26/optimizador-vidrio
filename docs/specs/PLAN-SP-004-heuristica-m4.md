@@ -2,7 +2,7 @@
 
 ## Estado
 
-Pair-Block v1 y el diagnóstico DJD están documentados. La revisión v2 de Pair-Block está en curso; el NO-GO de Pair-Block v1 queda suspendido hasta ejecutar con la grilla de 5 grados. No se hace push, PR ni integración en TA-042.
+Filler, DJD-1/3 y Pair-Block v1/v2 están cerrados como NO-GO para TA-042. El candidato actual es el mini-spike local Raster Hole Filling / Pocket Filling. No se hace push, PR ni integración en TA-042.
 
 ## Secuencia de trabajo
 
@@ -48,3 +48,17 @@ La tabla se completará con referencia a prueba y archivo de evidencia al cerrar
 | Casos predeclarados | Mantener fixtures y discriminante; declarar hasta tres casos razonables antes de benchmarks. | Manifiesto de intencion y JSON congelados. | Pendiente. |
 | Benchmark v2 | Comparar FF/BF/WF/Pair-Block en serie; registrar clasificacion A-E, placements y tres tiempos. | CSV/JSON v2. | Pendiente. |
 | Notebook/decision | Actualizar celdas, outputs reales y GO/NO-GO TA-042. | Notebook ejecutado y decision final. | Pendiente. |
+
+## Estado vigente — mini-spike Hole Filling
+
+La tabla de Pair-Block v2 anterior es histórica y queda cerrada por la decisión NO-GO documentada en `docs/evidence/sprint-02/SP-004/README.md`. El trabajo vigente se limita al mini-spike HF:
+
+| Fase | Trabajo | Evidencia | Estado |
+|---|---|---|---|
+| Literatura y auditoría | Contrastar hole filling/IFP publicado con la adaptación raster y documentar el motor actual. | SPEC y `SP-004-investigacion-m4.md`. | Completa antes de implementación. |
+| Definición raster | Separar hueco interno físico de pocket candidato por pieza/orientación. | Componentes 4-conexas del espacio físico y de anclajes válidos; definición congelada en SPEC. | Completa antes de implementación. |
+| Diagnósticos | Fijar hasta cuatro layouts, dimensiones y geometrías fuera de TA-027. | Manifiesto HF y casos JSON. | Pendiente de commit previo a ejecución. |
+| Detector y colocación | Usar máscaras y `SheetLayout.check`; pocket-first y fallback FF, en paquete experimental aislado. | Pruebas, mapas y contadores temporales. | Pendiente. |
+| Comparación | Ejecutar FF/BF/WF/HF en los diagnósticos; clasificar A-E y decidir viabilidad. | CSV/JSON y trazas de placement. | Pendiente. |
+| Puerta oficial | SMALL/MEDIUM/COMPLEX solo después de superar el mini-spike. | Comparativa oficial solo si es VIABLE. | Condicional; no iniciar todavía. |
+| Cierre | Actualizar evidencia y cerrar commits locales con árbol limpio. | SPEC/PLAN/TASKS/SP-004 y commits locales. | Pendiente; sin push/PR/merge. |

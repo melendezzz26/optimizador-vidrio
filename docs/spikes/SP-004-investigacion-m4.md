@@ -1,8 +1,23 @@
 # SP-004 — Investigación y experimentación de heurística adicional M4
 
-## Estado de Pair-Block v2
+## Estado vigente — Raster Hole Filling / Pocket Filling
 
-Pair-Block v1 queda como antecedente experimental. Su NO-GO no es el dictamen final del candidato: la restricción cardinal y la deduplicación por bounding box redujeron indebidamente la búsqueda. La auditoría v2 está registrada en [SP-004-pair-block-v2-auditoria.md](SP-004-pair-block-v2-auditoria.md); la implementación, los benchmarks y la decisión final están pendientes. Filler y DJD conservan sus dictámenes previos.
+Filler, DJD-1/3 y Pair-Block v1/v2 son antecedentes **NO-GO para TA-042**; no se borran sus resultados, notebooks, pruebas ni commits. Hole Filling es el candidato actual de SP-004 y comienza como mini-spike local. No hay cambios de producción, fixtures TA-027, API, frontend ni BD; no se hace push, PR o merge.
+
+La investigación publicada verifica hole filling con huecos cerrados representados como polígonos e IFP para decidir encaje. Abeysooriya et al. (2018) ordenan los huecos por x mínima y prueban hole filling antes del placement normal; Błażewicz et al. (1993) son antecedente de backfilling con búsqueda tabu, y Burke et al. (2006) documentan la dificultad de validar movimientos de backfilling. Esto no define un detector raster llamado “Raster Hole Filling”: la adaptación local queda separada y etiquetada como experimental. Fuentes y atribución completas están en [SPEC-SP-004](../specs/SPEC-SP-004-heuristica-m4.md).
+
+### Definición de regiones en la adaptación local
+
+- **Hueco interno físico:** componente 4-conexo de celdas libres de la máscara del material que no toca el exterior de esa máscara.
+- **Pocket utilizable por una pieza/orientación:** componente 4-conexa de anclajes aceptados por `SheetLayout.check()` que no conecta con el borde del dominio de anclajes. Una abertura que no admite la huella bajo margen/separación no conecta con el pocket. Se registra cantidad y área de anclajes por separado del área física.
+- La inspección reutilizará `RasterMask`, `SheetLayout.check/place`, `RasterCache`, el paso angular de 5° y la distinción `REMANENT`/`SHEET`. El estado se copia mediante layouts inmutables; no hay rasterizador o validador geométrico nuevo.
+- La política será pocket-first: ordenar las regiones por posición, intentar una pieza pendiente con orientación permitida y anclaje legal, y usar FF como fallback. Es una regla local determinista inspirada en la secuencia publicada de probar huecos antes del placement normal; no copia IFP ni introduce un score BRF.
+
+La auditoría, definición y fuentes verificables están en la SPEC. El siguiente hito es fijar y commitear hasta cuatro diagnósticos antes de ejecutar comparaciones. EXP-SMALL/MEDIUM/COMPLEX solo se ejecutan si el mini-spike supera su puerta de viabilidad.
+
+## Antecedente histórico — Pair-Block v2
+
+Pair-Block v1/v2 y DJD se conservan en las secciones históricas siguientes. Pair-Block v2 terminó con NO-GO; su evidencia está en `docs/evidence/sprint-02/SP-004/README.md`. Esta investigación anterior no representa el candidato vigente.
 
 ## 1. Contexto
 
