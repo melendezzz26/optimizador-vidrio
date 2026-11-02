@@ -43,11 +43,11 @@ La tabla se completará con referencia a prueba y archivo de evidencia al cerrar
 | Fase | Trabajo | Evidencia | Estado |
 |---|---|---|---|
 | Auditoria rotacional | Explicar la simplificacion v1, el efecto por geometria, las oportunidades omitidas y el alcance de la literatura. | [Auditoria v2](../spikes/SP-004-pair-block-v2-auditoria.md). | Completa antes de tocar codigo; commit `3e46c45`. |
-| Criterio de bloque | Retirar el umbral v1 no respaldado y fijar una ganancia local explicita antes de correr. | Formula local y limites de atribucion en auditoria v2. | Definido para implementar. |
-| Implementacion/pruning | Usar angulos del motor cada 5 grados, equivalencia raster exacta y cotas seguras. | Nuevos contadores y tests aislados. | Pendiente. |
-| Casos predeclarados | Mantener fixtures y discriminante; declarar hasta tres casos razonables antes de benchmarks. | Manifiesto de intencion y JSON congelados. | Pendiente. |
-| Benchmark v2 | Comparar FF/BF/WF/Pair-Block en serie; registrar clasificacion A-E, placements y tres tiempos. | CSV/JSON v2. | Pendiente. |
-| Notebook/decision | Actualizar celdas, outputs reales y GO/NO-GO TA-042. | Notebook ejecutado y decision final. | Pendiente. |
+| Criterio de bloque | Retirar el umbral v1 no respaldado y fijar una ganancia local explicita antes de correr. | Formula local y limites de atribucion en auditoria v2. | Completo antes de ejecucion; criterio documentado. |
+| Implementacion/pruning | Usar angulos del motor cada 5 grados, equivalencia raster exacta y cotas seguras. | Nuevos contadores y tests aislados. | Completa; resultados v2 preservados. |
+| Casos predeclarados | Mantener fixtures y discriminante; declarar hasta tres casos razonables antes de benchmarks. | Manifiesto de intencion y JSON congelados. | Completos antes de benchmark; sin cambios posteriores. |
+| Benchmark v2 | Comparar FF/BF/WF/Pair-Block en serie; registrar clasificacion A-E, placements y tres tiempos. | CSV/JSON v2. | Completo; NO-GO por baja aplicabilidad y costo. |
+| Notebook/decision | Actualizar celdas, outputs reales y GO/NO-GO TA-042. | Notebook ejecutado y decision final. | Completo; NO-GO para TA-042. |
 
 ## Estado vigente — mini-spike Hole Filling
 
@@ -57,8 +57,22 @@ La tabla de Pair-Block v2 anterior es histórica y queda cerrada por la decisió
 |---|---|---|---|
 | Literatura y auditoría | Contrastar hole filling/IFP publicado con la adaptación raster y documentar el motor actual. | SPEC y `SP-004-investigacion-m4.md`. | Completa antes de implementación. |
 | Definición raster | Separar hueco interno físico de pocket candidato por pieza/orientación. | Componentes 4-conexas del espacio físico y de anclajes válidos; definición congelada en SPEC. | Completa antes de implementación. |
-| Diagnósticos | Fijar hasta cuatro layouts, dimensiones y geometrías fuera de TA-027. | Manifiesto HF y casos JSON. | Pendiente de commit previo a ejecución. |
-| Detector y colocación | Usar máscaras y `SheetLayout.check`; pocket-first y fallback FF, en paquete experimental aislado. | Pruebas, mapas y contadores temporales. | Pendiente. |
-| Comparación | Ejecutar FF/BF/WF/HF en los diagnósticos; clasificar A-E y decidir viabilidad. | CSV/JSON y trazas de placement. | Pendiente. |
-| Puerta oficial | SMALL/MEDIUM/COMPLEX solo después de superar el mini-spike. | Comparativa oficial solo si es VIABLE. | Condicional; no iniciar todavía. |
-| Cierre | Actualizar evidencia y cerrar commits locales con árbol limpio. | SPEC/PLAN/TASKS/SP-004 y commits locales. | Pendiente; sin push/PR/merge. |
+| Diagnosticos | Fijar hasta cuatro layouts, dimensiones y geometrias fuera de TA-027. | Manifiesto HF y casos JSON. | Completa antes de ejecucion; congelados en commits e624e60 y 3ac7b97. |
+| Detector | Reutilizar mascaras existentes y el mapa de anclajes; no crear rasterizador. | Codigo aislado, SVG, JSON y pruebas. | Completa; tres positivos y control negativo. |
+| Comparacion | Ejecutar FF/BF/WF/HF en los diagnosticos; clasificar A-E y decidir viabilidad. | CSV/JSON y trazas de placement. | Completa; VIABLE, B/B/B/A; maximo 5.85x. |
+| Puerta oficial | Comparar EXP solo despues de VIABLE. | CSV/JSON oficial y dictamen. | Completa; A/D/E, cero pockets usados; NO-GO TA-042. |
+| Notebook y cierre | Crear notebook con outputs reales y cerrar documentacion/commits locales. | SPEC/PLAN/TASKS/SP-004; sin push/PR/merge. | Completa al crear commits locales; sin push/PR/merge. |
+
+### Matriz de verificacion del mini-spike HF
+
+La matriz CA anterior pertenece al cierre historico de Pair-Block. La verificacion vigente de HF queda registrada aqui.
+
+| Area | Evidencia | Estado |
+|---|---|---|
+| Detector y clasificacion | Hueco fisico y exterior separados; componentes de anclajes por pieza/orientacion; casos de circulo, triangulos, convexo y control negativo. | PASS; 7 pruebas de detector. |
+| Reglas de placement | Material/espesor, margen, separacion, no solape, rotacion de 5 grados, layout inmutable, determinismo y fallback FF. | PASS; 4 pruebas de optimizer, con tres repeticiones funcionales. |
+| Diagnosticos predeclarados | Cuatro JSON congelados antes de ejecutar; clases B/B/B/A. | PASS; HF-DIAGNOSTIC-001 a 004. |
+| Gate de viabilidad | Pocket utilizado en tres casos, patron distinto, reglas validas y maximo 5.85x frente al baseline mas rapido, menor al umbral congelado de 10x. | VIABLE para habilitar comparacion EXP. |
+| Benchmark oficial | Tres EXP inalterados; HF no utilizo pockets, clases A/D/E; COMPLEX supero 10x. | NO-GO para TA-042. |
+| Regresiones | Tests HF y suites enfocadas FF/BF/WF, placement y angulos. | 11 + 145 PASS. |
+| Notebook y evidencia | Notebook con outputs derivados de trazas guardadas, SVGs, CSV y JSON. | Completo; commits locales al cierre, sin push/PR/merge. |

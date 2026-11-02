@@ -159,3 +159,26 @@ En los seis casos hubo 320 pares iniciales, 225 compatibles y 95 filtrados por m
 - [Revisión técnica local](../../../reviews/SP-004-pair-block-v2-review.md)
 
 El trabajo queda local: sin push, PR, merge ni integración de TA-042.
+
+
+## Mini-spike Raster Hole Filling / Pocket Filling
+
+Candidato vigente de SP-004: adaptacion raster aislada, sin cambio productivo. Filler, DJD y Pair-Block permanecen archivados y conservados. Los cuatro diagnosticos se congelaron antes de ejecutar los metodos y no pertenecen a TA-027.
+
+**Gate:** mini-spike **VIABLE**. HF uso pockets en 001 (circulo), 002 (triangulos) y 003 (poligono convexo); las tres clases son B y cambian el patron. El control 004 es A y usa fallback FF sin forzar un pocket. Ninguno genero hueco fisico completamente cerrado; los pockets se detectan en el mapa de origenes legales para una pieza/orientacion. Las cuatro corridas HF fueron deterministas en tres repeticiones, con maximo 5.85x sobre el baseline mas rapido.
+
+| Caso EXP | Clase | Pockets usados | Resultado HF | Costo relativo |
+|---|:---:|---:|---|---:|
+| SMALL | A | 0 | 3/3; empata FF; 60.000%, merma 0, recuperable 8. | 1.15x |
+| MEDIUM | D | 0 | 9/9; reproduce FF; BF ahorra 8 mm2 y recupera 8 mm2 mas. | 4.92x |
+| COMPLEX | E | 0 | 24/24; reproduce FF, sin cambio funcional. | 14.83x |
+
+Decision de integracion: **NO-GO para TA-042**. El mecanismo funciona en diagnosticos dirigidos, pero no encontro pockets usados en los fixtures EXP y el costo de COMPLEX excedio 10x.
+
+- Diagnosticos: [CSV](hole-filling/sp004_hole_filling_results.csv), [traza](hole-filling/sp004_hole_filling_trace.json), [mapas y tiempos de deteccion](hole-filling/sp004_hole_filling_detection.json).
+- Benchmark EXP condicionado por gate: [CSV](hole-filling/sp004_hole_filling_official_results.csv) y [traza](hole-filling/sp004_hole_filling_official_trace.json).
+- Algoritmo, fixtures, pruebas y SVG: [`experiments/optimization/hole_filling`](../../../../experiments/optimization/hole_filling/).
+- Notebook con outputs reales: [`SP004-Hole-Filling.ipynb`](../../../../experiments/optimization/colab/SP004-Hole-Filling.ipynb).
+- Especificacion y plan: [SPEC](../../../specs/SPEC-SP-004-heuristica-m4.md), [PLAN](../../../specs/PLAN-SP-004-heuristica-m4.md), [TASKS](../../../specs/TASKS-SP-004-heuristica-m4.md); [investigacion M4 actualizada](../../../spikes/SP-004-investigacion-m4.md).
+
+Pruebas: 11 PASS de Hole Filling; 145 PASS de regresiones FF/BF/WF, placement y rotaciones. No se modificaron produccion ni fixtures oficiales. Los cambios quedan en commits locales; sin push, PR ni merge.

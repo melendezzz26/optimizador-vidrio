@@ -55,8 +55,6 @@ Se conservan las métricas oficiales de `calculate_metrics`: requested/placed/un
 
 Una reconsideración futura de Pair-Block debe reducir el costo de generación y obtener bloques colocados con mejoras funcionales repetibles en instancias operativas. La diferencia de patrón en un caso discriminante confirma el mecanismo, no justifica su integración.
 
-Pair-Block v1 fue un ensayo de rotaciones cardinales con una m?trica raster local; sus resultados se conservan como antecedente, no como evaluaci?n final del candidato.
-
 Pair-Block v1 fue un ensayo de rotaciones cardinales con una métrica raster local; sus resultados se conservan como antecedente, no como evaluación final del candidato.
 
 ## Fuera de alcance
@@ -101,3 +99,40 @@ La versión inicial corre solo sobre los cuatro diagnósticos predeclarados. Sol
 ### Diferencia frente a BRF
 
 BRF puntúa el sobrante hipotético de una colocación candidata. Hole Filling parte de una región ya creada y pregunta si alguna pieza pendiente cabe en ella. El spike no optimiza `largest_rectangle`, no reutiliza el score BF/WF para detectar pockets y no formula un score de merma.
+
+### Resultados del mini-spike y benchmark condicionado
+
+Los cuatro layouts congelados se ejecutaron con FF/BF/WF y luego HF; HF se repitió tres veces por caso. Todas las semillas y placements finales se volvieron a validar al reproducir cada layout con `SheetLayout.check/place`.
+
+| Caso | Clasificación | Componentes pocket | Usados | HF ms | HF/rápido baseline | Resultado |
+|---|---:|---:|---:|---:|---:|---|
+| HF-DIAGNOSTIC-001 círculo/marco | B | 3 | 1 | 14.09 | 4.60× | Rectángulo 1×1 en (7,5), retazo, 0°; mismo resultado funcional que el mejor baseline. |
+| HF-DIAGNOSTIC-002 triángulos | B | 12 | 1 | 21.68 | 5.85× | Triángulo 2×2 en (5,13), plancha, 0°; mismo resultado funcional. |
+| HF-DIAGNOSTIC-003 polígono convexo | B | 3 | 1 | 13.46 | 3.85× | Rectángulo 1×1 en (7,5), plancha, 0°; mismo resultado funcional. |
+| HF-DIAGNOSTIC-004 control | A | 0 | 0 | 13.13 | 1.08× | Sin pocket; fallback FF coloca 6×6 en plancha porque no cabe en retazo. |
+
+Ninguno de los cuatro layouts formó un hueco físico completamente cerrado; las separaciones dejan el espacio de celdas conectado. Los casos 001–003 sí formaron componentes interiores en el mapa específico de anclajes válidos. En tres repeticiones por caso se repitieron firma de placements y decisiones de pocket. El máximo costo relativo fue 5.85×, inferior al umbral local congelado de 10×. **Dictamen del mini-spike: VIABLE.**
+
+El tiempo se desgloso para separar deteccion y busqueda geometrica; los anclajes legales se generan con operaciones raster por bits y sus componentes se etiquetan de forma determinista.
+
+| Caso | Orientaciones | Anclajes evaluados | Opciones por decision | Pockets | Usados | Checks geometricos exactos | Deteccion ms | Placement ms | Total HF ms |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| HF-DIAGNOSTIC-001 | 2 | 839 | 3 | 3 | 1 | 1 | 0.89 | 9.43 | 14.09 |
+| HF-DIAGNOSTIC-002 | 12 | 8,532 | 12 | 12 | 1 | 1 | 7.22 | 11.07 | 21.68 |
+| HF-DIAGNOSTIC-003 | 2 | 839 | 3 | 3 | 1 | 1 | 0.59 | 9.31 | 13.46 |
+| HF-DIAGNOSTIC-004 | 15 | 19 | 0 | 0 | 0 | 0 | 0.02 | 11.25 | 13.13 |
+
+En total, el detector inspecciono 10,229 origenes de anclaje en los cuatro casos. Las opciones por decision y los checks exactos son contadores del trace. La verificacion final de cada placement seleccionado se hizo con `SheetLayout.place/check`; la generacion del mapa no sustituye la comprobacion geometrica del motor. Las corridas fueron seriales, sin multiprocessing; el pico de RAM no se midio.
+
+
+La puerta VIABLE autorizó la comparación posterior sobre los tres fixtures EXP existentes, leídos sin edición:
+
+| Caso | Clase | Colocadas | Planchas | Uso | Merma mm² | Recuperable mm² | HF ms | HF/rápido baseline | Pockets usados |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| EXP-SMALL-001 | A | 3/3 | 1 | 60.000% | 0.00 | 8 | 12.57 | 1.15× | 0 |
+| EXP-MEDIUM-001 | D | 9/9 | 1 | 28.413% | 201.86 | 58 | 87.53 | 4.92× | 0 |
+| EXP-COMPLEX-001 | E | 24/24 | 3 | 29.598% | 746.72 | 184 | 1,325.45 | 14.83× | 0 |
+
+HF no usó ningún pocket en EXP. SMALL empató con FF; MEDIUM reprodujo FF y quedó detrás de BF en merma (8 mm²) y área recuperable (8 mm²); COMPLEX también reprodujo FF y la búsqueda superó 10× el baseline más rápido. El dictamen para integración en TA-042 es **NO-GO** aunque el detector/placement funcionen en los diagnósticos deliberadamente apropiados. Esto demuestra que la señal es poco frecuente en esta matriz y que el costo puede crecer sin producir una decisión nueva.
+
+La evidencia está en [traza mini-spike](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_trace.json), [CSV mini-spike](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_results.csv), [detección](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_detection.json), [traza EXP](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_official_trace.json), [CSV EXP](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_official_results.csv) y [notebook con outputs locales](../../experiments/optimization/colab/SP004-Hole-Filling.ipynb). Las pruebas experimentales HF fueron 11 PASS; las regresiones enfocadas FF/BF/WF, placement y ángulos fueron 145 PASS.

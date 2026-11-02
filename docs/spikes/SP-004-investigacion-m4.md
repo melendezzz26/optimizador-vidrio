@@ -120,3 +120,56 @@ El costo de generación dominó la ejecución: Pair-Block registró 260 ms de ge
 | Pair-Block | Cambia el patrón en la demo; conserva las piezas. Ningún bloque llegó a colocarse en TA-027. | 9.1×–17.7× FF en MEDIUM/COMPLEX; métricas oficiales iguales a FF, con una propuesta de bloque que falló al colocar. | **Pendiente de dictamen v2**; los resultados v1 no bastan para decidir con la grilla completa. |
 
 El dictamen de TA-042 para Filler y DJD permanece NO-GO. Para Pair-Block queda pendiente completar v2 con la grilla real de 5 grados, pruning medible y nuevos resultados. No se modifica producción ni TA-027.
+
+
+## Resultado mini-spike Raster Hole Filling / Pocket Filling
+
+El candidato vigente se investigo como experimento aislado. Se conservaron Filler (NO-GO), DJD-1/3 (NO-GO provisional/descartado) y Pair-Block v1/v2 (NO-GO) como evidencia previa. El detector local es una adaptacion raster de NewGlass; no se atribuye a la literatura como algoritmo publicado. La investigacion verificable, la auditoria de `RasterMask`/`SheetLayout` y la definicion de hueco fisico frente a pocket de placement estan en la [SPEC vigente](../specs/SPEC-SP-004-heuristica-m4.md).
+
+### Diagnosticos predeclarados
+
+Los cuatro casos se congelaron en JSON antes de comparar FF/BF/WF/Hole Filling. Todos estan rotulados `DIAGNOSTICO HOLE FILLING - NO PERTENECE A TA-027`. Ninguno formo un hueco fisico cerrado: el espacio libre seguia conectado al exterior. Los casos 001-003 si crearon componentes interiores en el mapa de anclajes legales de la pieza/orientacion, que es la definicion computable de pocket usada aqui.
+
+| Caso | Clasificacion | Pocket y decision HF | Comparacion funcional | HF ms / baseline mas rapido |
+|---|:---:|---|---|---:|
+| HF-DIAGNOSTIC-001, circulo y marco abierto | B | 3 componentes; coloco rectangulo 1x1 en (7,5), retazo 901, 0 grados. | Cambio patron; 7/7, merma/uso/recuperable iguales al mejor baseline. | 14.09 / 4.60x |
+| HF-DIAGNOSTIC-002, triangulos | B | 12 componentes; coloco triangulo 2x2 en (5,13), plancha 902, 0 grados. | Cambio patron; 5/5, metricas funcionales iguales al mejor baseline. | 21.68 / 5.85x |
+| HF-DIAGNOSTIC-003, poligono convexo | B | 3 componentes; coloco rectangulo 1x1 en (7,5), plancha 903, 0 grados. | Cambio patron; 7/7, metricas funcionales iguales al mejor baseline. | 13.46 / 3.85x |
+| HF-DIAGNOSTIC-004, control negativo | A | 0 componentes; no forzo pocket y uso fallback FF hacia plancha para la pieza 6x6 que no cabia en retazo. | Mismo placement y metricas que FF. | 13.13 / 1.08x |
+
+**Que ocurrio con el circulo:** si produjo un pocket aprovechable para la pieza pendiente, aunque no creo un agujero fisico cerrado. El bolsillo existe para el rectangulo 1x1 porque en el mapa de origenes legales su componente no conecta con el borde. La misma distincion aplica a triangulos y al poligono convexo; el control no fue clasificado como pocket.
+
+### Rendimiento y determinismo
+
+La busqueda inspecciono 839, 8,532, 839 y 19 origenes de anclaje respectivamente. Las corridas fueron seriales, sin multiprocessing; el pico de RAM no se instrumento. La deteccion pocket costo 0.89, 7.22, 0.59 y 0.02 ms; la busqueda de placement, 9.43, 11.07, 9.31 y 11.25 ms. En cada caso las tres repeticiones HF conservaron los mismos placements y decisiones. El maximo ratio de tiempo fue 5.85x, por debajo del umbral predeclarado de 10x. El mini-spike queda **VIABLE** para habilitar el benchmark formal.
+
+### Benchmark EXP condicionado por VIABLE
+
+Los tres fixtures existentes se leyeron sin modificaciones. HF se comparo con FF/BF/WF y se repitio tres veces por fixture. No se uso ningun pocket en estos casos.
+
+| Fixture | Clase HF | Colocadas | Planchas | Uso | Merma mm2 | Recuperable mm2 | HF ms | Ratio |
+|---|:---:|---:|---:|---:|---:|---:|---:|---:|
+| EXP-SMALL-001 | A | 3/3 | 1 | 60.000% | 0.00 | 8 | 12.57 | 1.15x |
+| EXP-MEDIUM-001 | D | 9/9 | 1 | 28.413% | 201.86 | 58 | 87.53 | 4.92x |
+| EXP-COMPLEX-001 | E | 24/24 | 3 | 29.598% | 746.72 | 184 | 1,325.45 | 14.83x |
+
+SMALL empata con FF. MEDIUM reproduce FF y BF es mejor por 8 mm2 de merma y 8 mm2 de area recuperable. COMPLEX reproduce FF, no aprovecha pocket y tarda 14.83x el baseline mas rapido. La recomendacion para integrar HF en TA-042 es **NO-GO**. El resultado distingue mecanismo viable en diagnosticos de aplicabilidad insuficiente y costo alto en estos fixtures oficiales.
+
+### Diferencias de decision
+
+- **FF/BF/WF:** eligen como continuar colocando la pieza actual segun orden, menor sobrante o mayor sobrante de la fuente examinada. Hole Filling busca primero una pieza pendiente para una region que ya existe; si no encuentra una, vuelve a FF.
+- **BRF:** califica el sobrante hipotetico de un placement candidato. HF no optimiza `largest_rectangle`, no reutiliza un score BRF y no busca minimizar merma.
+- **Metodos publicados:** la literatura revisada conserva huecos geometricos como poligonos y usa IFP/backfilling para comprobar encajes. El mapa raster de anclajes 4-conexo y su politica pocket-first son una adaptacion experimental local.
+
+### Pruebas y evidencia
+
+Las 11 pruebas HF cubren componentes y exterior, circulo, triangulos, convexo, control, material/espesor, margen, separacion, no solapamiento, rotacion del motor a 5 grados, determinismo, no mutacion y fallback. Las regresiones enfocadas de FF/BF/WF, placement y angulos tuvieron 145 pruebas PASS. No se cambio produccion, TA-027, API, frontend, BD, ni FF/BF/WF.
+
+- [Manifiesto y casos congelados](../../experiments/optimization/hole_filling/)
+- [CSV y traza diagnosticos](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_results.csv) / [JSON completo](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_trace.json)
+- [Deteccion y tiempos](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_detection.json)
+- [CSV y traza EXP oficial](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_official_results.csv) / [JSON completo](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_official_trace.json)
+- [Notebook ejecutado con outputs locales](../../experiments/optimization/colab/SP004-Hole-Filling.ipynb)
+- [Evidencia acumulada de SP-004](../evidence/sprint-02/SP-004/README.md)
+
+Trabajo local en `spike/S2-SP004-djd`: sin push, PR ni merge.

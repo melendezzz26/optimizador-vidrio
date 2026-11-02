@@ -27,9 +27,9 @@
 | SP004-HF-01 | Investigar hole filling/IFP/backfilling y distinguir método publicado de adaptación raster local. | Hecha; referencias y límites en SPEC/SP-004. |
 | SP004-HF-02 | Auditar RasterMask, SheetLayout, colisión, separación, margen, orientación, layouts temporales y stock. | Hecha antes de implementación. |
 | SP004-HF-03 | Definir hueco físico y pocket de placement con una regla determinista computable. | Hecha; conectividad 4-conexa. |
-| SP004-HF-04 | Congelar hasta cuatro diagnósticos externos a TA-027 antes de comparar métodos. | Pendiente. |
-| SP004-HF-05 | Implementar detección, mapas en escala de grises y placement experimental aislado. | Pendiente. |
-| SP004-HF-06 | Probar reglas geométricas, compatibilidad, rotación, determinismo y no mutación. | Pendiente. |
-| SP004-HF-07 | Comparar FF/BF/WF/HF solo en los diagnósticos; medir detección y placement por separado. | Pendiente. |
-| SP004-HF-08 | Resolver VIABLE/NO VIABLE; correr benchmarks oficiales solo tras pasar el criterio. | Pendiente. |
-| SP004-HF-09 | Actualizar documentación/evidencia y crear commits locales; no publicar la rama. | Pendiente. |
+| SP004-HF-04 | Congelar hasta cuatro diagnosticos externos a TA-027 antes de comparar metodos. | Hecha; manifiesto y cuatro JSON congelados en e624e60 y 3ac7b97. |
+| SP004-HF-05 | Implementar deteccion, mapas en escala de grises y placement experimental aislado. | Hecha; detector raster, mapas SVG y fallback pocket-first. |
+| SP004-HF-06 | Probar reglas geometricas, compatibilidad, rotacion, determinismo y no mutacion. | Hecha; 11 pruebas HF PASS, incluyendo material/espesor, margen, separacion, no solape, giro 5 grados y fallback. |
+| SP004-HF-07 | Comparar FF/BF/WF/HF solo en los diagnosticos; medir deteccion y placement por separado. | Hecha; cuatro casos, tres repeticiones HF y contadores/tiempos en CSV/JSON. |
+| SP004-HF-08 | Resolver VIABLE/NO VIABLE; correr benchmarks oficiales solo tras pasar el criterio. | Hecha; mini-spike VIABLE; benchmarks EXP autorizados por gate y NO-GO TA-042. |
+| SP004-HF-09 | Actualizar documentacion/evidencia y crear commits locales; no publicar la rama. | Hecha; cierre local en commits, sin push/PR/merge. |
