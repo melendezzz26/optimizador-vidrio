@@ -35,4 +35,4 @@ La tabla se completará con referencia a prueba y archivo de evidencia al cerrar
 | CA-07 | Corridas oficiales y caso Pair-Block | PASS (3 fixtures y discriminante) |
 | CA-08 | Matriz DJD con manifiestos previos y categorías A/B/C/D | PASS (4 diagnósticos clasificados A) |
 | CA-09 | Repeticiones ×3 y pruebas/regresiones | PASS (3 repeticiones/caso; 104 pruebas) |
-| CA-10 | Notebook, decisión, commits y estado limpio local | PASS (3 commits locales; árbol limpio) |
+| CA-10 | Notebook, decisión, commits y estado limpio local | PASS (5 commits locales; árbol limpio) |
