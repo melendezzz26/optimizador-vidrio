@@ -1,0 +1,118 @@
+{
+  "source_commit": "f9cfd4f2644455d616699518948c6660006bdae8",
+  "integration_branch": "integration/sprint-01",
+  "verified_remote_date": "2026-11-02",
+  "files": [
+    {
+      "source": "backend/app/modules/optimization/domain/problem.py",
+      "target": "vendor/app/modules/optimization/domain/problem.py",
+      "sha256": "62246caee359a3db7f57f35ca1b49a7c8a24755ac388f0096b0db26a3259c136"
+    },
+    {
+      "source": "backend/app/modules/optimization/domain/preparation.py",
+      "target": "vendor/app/modules/optimization/domain/preparation.py",
+      "sha256": "6b8cf5430da9a4421f116654d0b96ae4c584c809c576f1ee7dc30a01b1b2594b"
+    },
+    {
+      "source": "backend/app/modules/optimization/domain/raster_mask.py",
+      "target": "vendor/app/modules/optimization/domain/raster_mask.py",
+      "sha256": "3838e10bd8f0c3fee8393ce0ce3f7e2baf726019d1e5374757a0096e417a8213"
+    },
+    {
+      "source": "backend/app/modules/optimization/domain/rasterizer.py",
+      "target": "vendor/app/modules/optimization/domain/rasterizer.py",
+      "sha256": "c8be33b04d5687013d9d30b66e5185bd43fa409e9bfc854a6df507f764b30556"
+    },
+    {
+      "source": "backend/app/modules/optimization/domain/placement.py",
+      "target": "vendor/app/modules/optimization/domain/placement.py",
+      "sha256": "4a8960567ff4f8f99e55c6447daa918bfbbab5752748a47fc41d1a024e11666f"
+    },
+    {
+      "source": "backend/app/modules/optimization/domain/rotation.py",
+      "target": "vendor/app/modules/optimization/domain/rotation.py",
+      "sha256": "29882a5eb4a8477505442656a056ab3568ddcab34bcc16a0166ab398fa4ef751"
+    },
+    {
+      "source": "backend/app/modules/optimization/domain/visual_events.py",
+      "target": "vendor/app/modules/optimization/domain/visual_events.py",
+      "sha256": "b15ce685709101bc020d8090dc69e2341cf947c3d3c3954c36ef82327452b87d"
+    },
+    {
+      "source": "backend/app/modules/optimization/domain/run_geometry.py",
+      "target": "vendor/app/modules/optimization/domain/run_geometry.py",
+      "sha256": "28eaf5ee6ac27a2e041affe17a9e2ab8ffdd0682e17ca7ea50e4297665c9aa56"
+    },
+    {
+      "source": "backend/app/modules/optimization/domain/packing.py",
+      "target": "vendor/app/modules/optimization/domain/packing.py",
+      "sha256": "3592eac181cb18ac4b3da937482b7cd5c6e86fedf2f12da40d5655b1fa774d91"
+    },
+    {
+      "source": "backend/app/modules/optimization/domain/first_fit.py",
+      "target": "vendor/app/modules/optimization/domain/first_fit.py",
+      "sha256": "34bb02122398d1cd7355d4261af8152bb9de67800121ae6f023cf8ce4a579d19"
+    },
+    {
+      "source": "backend/app/modules/optimization/domain/best_fit.py",
+      "target": "vendor/app/modules/optimization/domain/best_fit.py",
+      "sha256": "0f54370e6713364dd4af91f5c559e6667443bc678d39dd30367bfaf506e5e1d8"
+    },
+    {
+      "source": "backend/app/modules/optimization/domain/worst_fit.py",
+      "target": "vendor/app/modules/optimization/domain/worst_fit.py",
+      "sha256": "45dac09ba4edddc879196d2b3f1b656ff35cdce8df87dd351bd59c513cec55e1"
+    },
+    {
+      "source": "backend/app/modules/optimization/domain/metrics.py",
+      "target": "vendor/app/modules/optimization/domain/metrics.py",
+      "sha256": "e1f2dc5addc7ff7ad44c6bbbbcadd272ce2cf6e84fd87ab7bb54561147208de1"
+    },
+    {
+      "source": "backend/app/modules/optimization/application/ports.py",
+      "target": "vendor/app/modules/optimization/application/ports.py",
+      "sha256": "f6295a1f0bb0281bfef4557d7137b194db6a5c12e8502807b54af41deddeb08f"
+    },
+    {
+      "source": "backend/app/modules/optimization/application/preparation.py",
+      "target": "vendor/app/modules/optimization/application/preparation.py",
+      "sha256": "c6f1e792f6c0bec03b4bd529d32573cac41f52b6a5783d7647876c6fa16c59d9"
+    },
+    {
+      "source": "backend/app/modules/optimization/application/stock.py",
+      "target": "vendor/app/modules/optimization/application/stock.py",
+      "sha256": "dc9fdf7df55594c8c5832fed63d0042f0cfe47caea16e581d3c0152fad005361"
+    },
+    {
+      "source": "backend/app/modules/orders/domain/geometry.py",
+      "target": "vendor/app/modules/orders/domain/geometry.py",
+      "sha256": "850c184b07655f371a9c0d93345a6fe26974d4069cfe9d2295e1d710d6ac4088"
+    },
+    {
+      "source": "backend/app/modules/orders/application/persisted_pieces.py",
+      "target": "vendor/app/modules/orders/application/persisted_pieces.py",
+      "sha256": "511f9070ad3a45a547695affd4dbd7648548117bcf9eeaee327442f4d2ac8b38"
+    },
+    {
+      "source": "experiments/optimization/loader.py",
+      "target": "vendor/experiments/optimization/loader.py",
+      "sha256": "d355a23f4106ff9d71c21b05655d7f47b6b7cf0bd9f244957e71f747452dc844"
+    },
+    {
+      "source": "experiments/optimization/cases/EXP-SMALL-001.json",
+      "target": "vendor/experiments/optimization/cases/EXP-SMALL-001.json",
+      "sha256": "8983a8291a272938650bbc0a5c0fb0a5affc33bef5a61ee9afc73a75caa583f5"
+    },
+    {
+      "source": "experiments/optimization/cases/EXP-MEDIUM-001.json",
+      "target": "vendor/experiments/optimization/cases/EXP-MEDIUM-001.json",
+      "sha256": "eb50a3beaa2312fc94e4cd879b8961401b119f6370c08a5357680bb2b76535d9"
+    },
+    {
+      "source": "experiments/optimization/cases/EXP-COMPLEX-001.json",
+      "target": "vendor/experiments/optimization/cases/EXP-COMPLEX-001.json",
+      "sha256": "c844a23d849a8f0f1903a827bb7d2f1b6782a386610dda14c2789520a5670478"
+    }
+  ],
+  "package_init": "Archivos __init__.py vacíos creados para aislar dependencias."
+}
