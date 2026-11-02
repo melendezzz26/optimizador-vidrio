@@ -1,0 +1,25 @@
+case,method,requested_units,placed_units,unplaced_units,remnants_used,sheets_used,utilization_pct,waste,recoverable_area,runtime_ms,classification,classification_reason,best_baseline,runtime_ratio_fastest_baseline,candidate_pairs,compatible_pairs,filtered_pairs,geometrically_checked_pairs,orientation_combinations_theoretical,orientation_combinations_after_symmetry,orientation_combinations_after_bounds,orientation_combinations_after_phase,orientation_combinations_pruned,orientation_combinations_pruned_by_compatibility,orientation_combinations_pruned_by_symmetry,orientation_combinations_pruned_by_bounds,orientation_combinations_pruned_by_phase,orientation_combinations_pruned_by_best_bound,orientation_combinations_evaluated,relative_positions_theoretical,relative_positions_pruned,relative_positions_checked,accepted_blocks,placed_blocks,pieces_in_blocks,standalone_pieces,block_compaction,block_generation_ms,packing_ms
+EXP-SMALL-001,FF,3,3,0,1,1,60.000,0.00,8,12.015,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+EXP-SMALL-001,BF,3,3,0,1,1,60.000,0.00,8,11.415,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+EXP-SMALL-001,WF,3,3,0,1,1,60.000,0.00,8,10.733,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+EXP-SMALL-001,Pair-Block-v2,3,3,0,1,1,60.000,0.00,8,12.457,D,no se colocó ningún bloque y no aplica E,FF,1.161,3,3,0,3,15552,12,12,9,15543,0,15540,0,3,0,9,291,210,81,0,0,0,3,0.000000,10.686,0.911
+EXP-MEDIUM-001,FF,9,9,0,2,1,28.413,201.86,58,18.419,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+EXP-MEDIUM-001,BF,9,9,0,2,1,28.413,193.86,66,27.147,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+EXP-MEDIUM-001,WF,9,9,0,2,2,18.584,301.86,150,18.915,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+EXP-MEDIUM-001,Pair-Block-v2,9,9,0,2,1,28.413,201.86,58,231.137,E,empeora al menos una métrica funcional,BF,12.549,36,36,0,36,186624,7513,7507,1576,185048,0,179111,6,5931,0,1576,98494,81915,16579,0,0,0,9,0.000000,224.766,3.999
+EXP-COMPLEX-001,FF,24,24,0,3,3,29.598,746.72,184,97.940,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+EXP-COMPLEX-001,BF,24,24,0,3,3,29.598,746.72,184,99.755,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+EXP-COMPLEX-001,WF,24,24,0,3,4,25.309,886.72,268,93.891,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+EXP-COMPLEX-001,Pair-Block-v2,24,24,0,3,3,29.598,746.72,184,1957.860,E,runtime total supera 10× al baseline más rápido,FF,20.852,276,181,95,181,1430784,156856,155092,10152,1420632,492480,781448,1764,144940,0,10152,648736,544518,104218,0,0,0,24,0.000000,1918.168,34.022
+BLOCK-DISCRIMINANT-001,FF,3,3,0,0,1,94.444,10.00,0,7.350,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+BLOCK-DISCRIMINANT-001,BF,3,3,0,0,1,94.444,10.00,0,7.636,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+BLOCK-DISCRIMINANT-001,WF,3,3,0,0,1,94.444,10.00,0,7.769,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+BLOCK-DISCRIMINANT-001,Pair-Block-v2,3,3,0,0,1,94.444,10.00,0,77.925,E,runtime total supera 10× al baseline más rápido,FF,10.602,3,3,0,3,15552,10080,2128,216,15336,0,5472,7952,1912,0,216,13728,10668,3060,1,1,2,1,1.000000,76.093,0.320
+BLOCK-V2-OBLIQUE-TRIANGLES-001,FF,2,2,0,0,1,15.000,180.00,160,1.769,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+BLOCK-V2-OBLIQUE-TRIANGLES-001,BF,2,2,0,0,1,15.000,180.00,160,1.712,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+BLOCK-V2-OBLIQUE-TRIANGLES-001,WF,2,2,0,0,1,15.000,180.00,160,1.687,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+BLOCK-V2-OBLIQUE-TRIANGLES-001,Pair-Block-v2,2,2,0,0,1,15.000,140.00,200,62.464,E,runtime total supera 10× al baseline más rápido,FF,37.027,1,1,0,1,5184,5184,4984,72,5112,0,0,200,4912,0,72,4608,3546,1062,1,1,2,0,0.822222,60.668,0.273
+BLOCK-V2-MIXED-TRIANGLE-CIRCLE-001,FF,2,2,0,0,1,35.793,87.37,77,1.361,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+BLOCK-V2-MIXED-TRIANGLE-CIRCLE-001,BF,2,2,0,0,1,35.793,87.37,77,1.324,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+BLOCK-V2-MIXED-TRIANGLE-CIRCLE-001,WF,2,2,0,0,1,35.793,87.37,77,1.319,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+BLOCK-V2-MIXED-TRIANGLE-CIRCLE-001,Pair-Block-v2,2,2,0,0,1,35.793,116.37,48,24.927,E,empeora al menos una métrica funcional,FF,18.898,1,1,0,1,5184,72,44,44,5164,0,5112,28,0,24,20,2816,2361,455,1,1,2,0,0.715278,22.624,0.241

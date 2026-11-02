@@ -2,7 +2,7 @@
 
 $figureDirectory = Join-Path $PSScriptRoot 'figures'
 New-Item -ItemType Directory -Force -Path $figureDirectory | Out-Null
-$resultPath = Join-Path $PSScriptRoot '..\..\..\docs\evidence\sprint-02\SP-004\benchmark-results\sp004_block_results.csv'
+$resultPath = Join-Path $PSScriptRoot '..\..\..\docs\evidence\sprint-02\SP-004\benchmark-results\sp004_block_v2_results.csv'
 $resultRows = Import-Csv -LiteralPath $resultPath
 $fontTitle = [System.Drawing.Font]::new('Arial', 20, [System.Drawing.FontStyle]::Bold)
 $fontLabel = [System.Drawing.Font]::new('Arial', 14, [System.Drawing.FontStyle]::Bold)
@@ -67,11 +67,11 @@ function Draw-Chart($fileName, $title, $valueSelector, $maxValue, $logScale = $f
     $g.DrawString($title, $fontTitle, $textBrush, 45, 26)
     $plotLeft, $plotTop, $plotWidth, $plotHeight = 120, 110, 1510, 630
     $g.DrawLine($black, $plotLeft, $plotTop + $plotHeight, $plotLeft + $plotWidth, $plotTop + $plotHeight)
-    $caseNames = @('EXP-SMALL-001', 'EXP-MEDIUM-001', 'EXP-COMPLEX-001', 'BLOCK-DISCRIMINANT-001')
-    $methodNames = @('FF', 'BF', 'WF', 'Pair-Block')
+    $caseNames = @('EXP-SMALL-001', 'EXP-MEDIUM-001', 'EXP-COMPLEX-001', 'BLOCK-DISCRIMINANT-001', 'BLOCK-V2-OBLIQUE-TRIANGLES-001', 'BLOCK-V2-MIXED-TRIANGLE-CIRCLE-001')
+    $methodNames = @('FF', 'BF', 'WF', 'Pair-Block-v2')
     $caseWidth = [int]($plotWidth / $caseNames.Count)
-    $barWidth = 56
-    $gap = 16
+    $barWidth = 36
+    $gap = 8
     for ($tick = 0; $tick -le 4; $tick++) {
         $fraction = $tick / 4
         $y = $plotTop + $plotHeight - [int]($plotHeight * $fraction)
@@ -97,7 +97,7 @@ function Draw-Chart($fileName, $title, $valueSelector, $maxValue, $logScale = $f
             $g.DrawRectangle($brushes[$methodIndex], $rectangle)
             $g.DrawString([string]::Format('{0:0.##}', $raw), $fontBody, $textBrush, $x - 2, $y - 25)
         }
-        $caption = $caseName.Replace('EXP-', '').Replace('BLOCK-DISCRIMINANT-', 'DISC-')
+        $caption = $caseName.Replace('EXP-', '').Replace('BLOCK-DISCRIMINANT-', 'DISC-').Replace('BLOCK-V2-OBLIQUE-TRIANGLES-001', 'OBL-TRI').Replace('BLOCK-V2-MIXED-TRIANGLE-CIRCLE-001', 'MIXED')
         $g.DrawString($caption, $fontBody, $textBrush, $plotLeft + $caseIndex * $caseWidth + 20, $plotTop + $plotHeight + 20)
     }
     for ($methodIndex = 0; $methodIndex -lt $methodNames.Count; $methodIndex++) {
@@ -111,7 +111,7 @@ function Draw-Chart($fileName, $title, $valueSelector, $maxValue, $logScale = $f
     $bitmap.Dispose()
 }
 
-Draw-Chart 'utilization-by-method.png' 'Aprovechamiento oficial por caso y método' { param($row) [double]$row.utilization_pct } 100 $false $true
+Draw-Chart 'utilization-by-method.png' 'Aprovechamiento por caso y método' { param($row) [double]$row.utilization_pct } 100 $false $true
 Draw-Chart 'sources-by-method.png' 'Fuentes utilizadas por caso y método' { param($row) ([int]$row.remnants_used + [int]$row.sheets_used) } 8
 Draw-Chart 'runtime-by-method.png' 'Tiempo total por caso y método (escala logarítmica)' { param($row) [double]$row.runtime_ms } 10000 $true
 
