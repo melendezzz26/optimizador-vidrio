@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "case_id": "HF-CAPABILITY-001",
+  "label": "CASO CONTROLADO HF - NO ES BENCHMARK GENERAL NI PERTENECE A TA-027",
+  "config": {
+    "resolution_mm": 1,
+    "angular_step_deg": 5,
+    "margin_mm": 5,
+    "separation_mm": 3
+  },
+  "material": {
+    "glass_type_id": 1,
+    "thickness_mm": 6
+  },
+  "stocks": [
+    {
+      "source": "RETAZO",
+      "material_id": 8201,
+      "physical_unit_index": 1,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 274,
+        "height_mm": 280
+      }
+    },
+    {
+      "source": "PLANCHA",
+      "material_id": 9201,
+      "physical_unit_index": 1,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 274,
+        "height_mm": 280
+      }
+    }
+  ],
+  "pieces": [
+    {
+      "piece_id": 1,
+      "geometry": {
+        "type": "CIRCUNFERENCIA",
+        "radius_mm": 24
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 113,
+      "y_mm": 116,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 2,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 48,
+        "height_mm": 24
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 77,
+      "y_mm": 44,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 3,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 48,
+        "height_mm": 24
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 149,
+      "y_mm": 44,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 4,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 24,
+        "height_mm": 96
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 53,
+      "y_mm": 92,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 5,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 24,
+        "height_mm": 96
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 197,
+      "y_mm": 92,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 6,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 96,
+        "height_mm": 24
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 89,
+      "y_mm": 212,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 7,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 194,
+        "height_mm": 36
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 75,
+      "y_mm": 5,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 8,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 43,
+        "height_mm": 192
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 5,
+      "y_mm": 45,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 9,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 43,
+        "height_mm": 192
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 226,
+      "y_mm": 45,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 10,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 264,
+        "height_mm": 35
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 5,
+      "y_mm": 240,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 13,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 28,
+        "height_mm": 20
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 80,
+      "y_mm": 145,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 14,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 28,
+        "height_mm": 20
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 166,
+      "y_mm": 145,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 15,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 110,
+        "height_mm": 16
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 80,
+      "y_mm": 71,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 16,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 110,
+        "height_mm": 16
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 80,
+      "y_mm": 168,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 17,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 28,
+        "height_mm": 25
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 82,
+      "y_mm": 93,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 18,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 28,
+        "height_mm": 25
+      },
+      "role": "seed",
+      "stock_material_id": 8201,
+      "x_mm": 164,
+      "y_mm": 93,
+      "rotation_deg": 0
+    },
+    {
+      "piece_id": 11,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 32,
+        "height_mm": 32
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 12,
+      "geometry": {
+        "type": "CIRCUNFERENCIA",
+        "radius_mm": 18
+      },
+      "role": "pending"
+    }
+  ]
+}

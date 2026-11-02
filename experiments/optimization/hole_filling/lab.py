@@ -26,6 +26,7 @@ from app.modules.optimization.domain.run_geometry import prepare_run_geometry
 
 DIAGNOSTIC_LABEL = "DIAGNÓSTICO HOLE FILLING — NO PERTENECE A TA-027"
 REALISTIC_LABEL = "PEDIDO REALISTA HOLE FILLING - NO PERTENECE A TA-027"
+CAPABILITY_LABEL = "CASO CONTROLADO HF - NO ES BENCHMARK GENERAL NI PERTENECE A TA-027"
 CASE_DIR = Path(__file__).resolve().parent / "cases"
 
 
@@ -47,6 +48,8 @@ def read_case(case_id: str) -> dict:
         expected_label = DIAGNOSTIC_LABEL
     elif case_id.startswith("HF-REALISTIC-"):
         expected_label = REALISTIC_LABEL
+    elif case_id.startswith("HF-CAPABILITY-"):
+        expected_label = CAPABILITY_LABEL
     else:
         raise ValueError("El laboratorio solo acepta diagnósticos o pedidos realistas HF congelados.")
     data = json.loads((CASE_DIR / f"{case_id}.json").read_text(encoding="utf-8"))
