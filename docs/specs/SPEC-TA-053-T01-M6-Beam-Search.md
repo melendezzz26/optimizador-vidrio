@@ -8,7 +8,7 @@
 | Responsable | Fabricio Melendez |
 | Dependencia | SP-006 |
 | Heuristica | M6 - Beam Search acotada (BS-k) |
-| Estado | Reviewed - preparada para implementacion |
+| Estado | Implementada y validada; TA-053 T02 pendiente |
 | Rama | `feature/TA-053-m6-beam-search-integrated` |
 | Base | `origin/integration/sprint-01` |
 
@@ -149,6 +149,18 @@ API publica nueva.
 9. FF/BF/WF y el coordinador publico no cambian.
 10. Los limites de tiempo, expansiones, sondeos y memoria son reproducibles.
 
+## Estado de cumplimiento T01
+
+Los criterios de T01 se verificaron con los fixtures oficiales y regresiones
+del backend. La suite no supervisada de Windows paso 495 pruebas; en WSL2 con
+PostgreSQL aislado pasaron 861 pruebas de optimizacion/API/integracion y 14
+pruebas del supervisor. La suite portable de SP-006 paso 47 pruebas. No se
+ejecuto una sesion real de Google Colab en esta tarea, por lo que la evidencia
+local de SP-006 no se presenta como medicion de Colab.
+
+La integracion publica de M6, las pruebas exhaustivas de TA-053 T02 y TA-043
+siguen fuera de alcance.
+
 ## Riesgos y mitigaciones
 
 | Riesgo | Mitigacion |
@@ -159,4 +171,3 @@ API publica nueva.
 | Desviacion del experimento | pruebas de paridad con los tres fixtures y traza determinista |
 | Mutacion accidental de stock | contrato read-only y prueba de snapshots antes/despues |
 | Afectar otros motores | modulo independiente y regresion enfocada de FF/BF/WF |
-

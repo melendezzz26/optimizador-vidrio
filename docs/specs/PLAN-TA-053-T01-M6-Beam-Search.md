@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Ready for implementation |
+| Estado | Completed for T01 |
 | SPEC | [SPEC-TA-053-T01-M6-Beam-Search.md](SPEC-TA-053-T01-M6-Beam-Search.md) |
 | Base | `origin/integration/sprint-01` |
 | Rama | `feature/TA-053-m6-beam-search-integrated` |
@@ -105,3 +105,18 @@ publico ni los motores existentes.
 | Limites y memoria | T01.2, T01.4, T01.5, T01.6 |
 | No regresion FF/BF/WF | T01.6, T01.7 |
 
+## Resultado de ejecucion
+
+T01.1 a T01.7 estan implementadas para el alcance de esta rama. La validacion
+real incluyo:
+
+- 495 pruebas de `unit/optimization` sin el runner supervisado en Windows.
+- 861 pruebas de unidades, integracion y API en WSL2 con PostgreSQL aislado.
+- 14 pruebas de `test_comparison_runner.py` en WSL2.
+- 47 pruebas del experimento SP-006.
+- `compileall` y `git diff --check`.
+
+Las ocho pruebas del runner no se consideran validas en Windows porque el
+repositorio exige Linux/procfs/RLIMIT_AS/prctl; se ejecutaron y pasaron en
+WSL2. No se altero el coordinador publico, FF/BF/WF, M4, M5, frontend,
+persistencia ni inventario.
