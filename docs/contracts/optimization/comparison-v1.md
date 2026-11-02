@@ -70,6 +70,12 @@ motor fallido son `null`; mostrarlas como cero haría una comparación engañosa
 El tiempo de cálculo excluye esperas de entrega de telemetría y no constituye
 una recomendación de ganador.
 
+En el resultado de una ejecución comparativa, cada grupo puede incluir
+`stock_compatible`. `false` significa que la captura común no encontró
+planchas ni retazos compatibles para ese material y espesor; la interfaz debe
+identificar el grupo y no presentar una distribución vacía como solución.
+Este diagnóstico no altera el contrato histórico de `/runs`.
+
 `terminal`, `incomplete`, `released`, `confirmed`, `selection_allowed` y
 `confirmable` gobiernan las acciones del agregado. Una ejecución completa y
 guardada solo se vuelve elegible al terminar los tres trabajadores. Un fallo

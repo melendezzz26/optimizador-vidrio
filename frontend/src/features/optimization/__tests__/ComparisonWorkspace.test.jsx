@@ -11,8 +11,14 @@ beforeEach(() => {
   localStorage.clear();
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({ fillRect: vi.fn(), setTransform: vi.fn() });
 });
-function setup({ failStart = false, partial = false, partialFF = false, ambiguous = false } = {}) {
+function setup({ failStart = false, partial = false, partialFF = false, ambiguous = false, noStock = false, multiGroup = false } = {}) {
   let current = structuredClone(fixture.completed);
+  if (noStock) {
+    current.status = 'SIN_SOLUCION';
+    current.executions = current.executions.map(execution => ({
+      ...execution, complete: false, eligible: false, placed_units: 0, metrics: null, computation_time_ms: null,
+    }));
+  }
   if (partial || partialFF) {
     current.incomplete = true;
     const failed = partialFF ? 0 : 1;
@@ -24,7 +30,34 @@ function setup({ failStart = false, partial = false, partialFF = false, ambiguou
       if (failStart) throw Object.assign(new Error('Revisa la configuración.'), { status: 409, code: 'CONFIG_CONFLICT' }); return structuredClone(fixture.accepted); }),
     lookup: vi.fn(async () => structuredClone(current)),
     load: vi.fn(async () => structuredClone(current)),
-    result: vi.fn(async (_, e) => structuredClone(fixture.results[e.execution_id])),
+    result: vi.fn(async (_, e) => {
+      const result = structuredClone(fixture.results[e.execution_id]);
+      if (noStock) {
+        result.result.estado = 'SIN_SOLUCION';
+        result.result.placements = [];
+        result.result.materials_used = [];
+        result.result.residual_regions = [];
+        if (multiGroup) {
+          const secondUnit = { ...result.result.groups[0].units[0], id_pieza: 99,
+            id_tipo_vidrio: 2, espesor_mm: '8' };
+          result.result.groups = [...result.result.groups, {
+            ...result.result.groups[0], id_tipo_vidrio: 2, espesor_mm: '8', units: [secondUnit],
+          }];
+          result.result.total_units = 4;
+        }
+        result.result.unplaced_units = result.result.groups.flatMap(group => group.units.map(unit => ({
+          id_pedido: unit.id_pedido, id_pieza: unit.id_pieza, unit_index: unit.unit_index, reason: 'NO_FIT',
+        })));
+        result.result.placed_units = 0;
+        result.result.progress_pct = '0';
+        result.result.completo = false;
+        result.result.metrics_available = false;
+        result.result.metrics = null;
+        result.result.confirmable = false;
+        result.result.groups = result.result.groups.map(group => ({ ...group, stock_compatible: false }));
+      }
+      return result;
+    }),
     manifest: vi.fn(async (_, e) => structuredClone(fixture.manifests[e.execution_id])),
     observe: vi.fn(async (_, cursor, callback) => { if (!partial && !partialFF) for (const e of fixture.events) if (e.sequence > cursor) callback(structuredClone(e)); }),
     forExecution: vi.fn(() => ({ loadVisualMask: vi.fn(async (_, descriptor) => structuredClone(fixture.masks[descriptor.mask_ref])) })),
@@ -124,6 +157,14 @@ test('failed engine has no fake zero metrics and successful results stay eligibl
   expect(within(row).getAllByText('—')).toHaveLength(6);
   expect(screen.getByLabelText('Elegir Worst Fit')).toBeEnabled();
   expect(screen.getByText(/La comparación está incompleta/)).toBeVisible();
+});
+
+test('no compatible stock identifies every affected material group and never offers confirmation', async () => {
+  setup({ noStock: true, multiGroup: true }); await execute();
+  const first = screen.getByRole('tabpanel', { name: /First Fit/ });
+  fireEvent.click(within(first).getByRole('button', { name: /Resultado/ }));
+  await within(first).findByText(/material #1, espesor 6 mm; material #2, espesor 8 mm/);
+  expect(screen.queryByRole('button', { name: 'Confirmar distribución elegida' })).not.toBeInTheDocument();
 });
 
 test('FF failure does not prevent confirming BF and returning to a clean pending selector', async () => {

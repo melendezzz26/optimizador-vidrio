@@ -134,6 +134,7 @@ class MetricsV1(ContractV1):
 
 class GroupV1(MaterialKeyV1):
     units: Annotated[list[PieceUnitV1], Field(min_length=1)]
+    stock_compatible: bool | None = Field(default=None, exclude_if=lambda value: value is None)
 
     @model_validator(mode="after")
     def compatible_units(self):

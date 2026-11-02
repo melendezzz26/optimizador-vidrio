@@ -100,6 +100,7 @@ function EnginePanel({ comparison, execution, visual: supplied, live, result, ap
   snapshot.groups = snapshot.groups.map(g => ({ ...g, name: comparison.requested_pieces.find(p => p.id_tipo_vidrio === g.materialId)?.material_nombre ?? g.name }));
   const viewSnapshot = paused?.snapshot ?? snapshot, viewPlacements = paused?.placements ?? placements;
   const currentPlacement = viewPlacements.find(p => p.id_pieza === current?.id_pieza && p.unit_index === current?.unit_index);
+  const unavailableGroups = result?.groups?.filter(group => group.stock_compatible === false) ?? [];
   const placed = result?.placed_units ?? (execution.status === 'COMPLETADA' ? execution.placed_units
     : visual.current?.placed_units ?? visual.lastOrientation?.placed_units ?? live?.placements.length ?? 0);
   const processed = execution.status === 'COMPLETADA' ? execution.total_units : visual.processed ?? 0;
@@ -128,6 +129,10 @@ function EnginePanel({ comparison, execution, visual: supplied, live, result, ap
         <RunMaskInspection runId={comparison.comparison_id} adapter={adapter} visual={{ ...shownVisual, current }} onSessionExpired={onSessionExpired} />
         {!!viewPlacements.length && <PlacementCanvas snapshot={viewSnapshot} placements={viewPlacements} />}</>}
       {phase === 3 && result && <><h3>Resultado de {METHOD_NAMES[execution.method]}</h3><p>{result.placed_units} / {result.total_units} piezas colocadas</p>
+        {!!unavailableGroups.length && <FeedbackMessage variant="warning">
+          No hay planchas ni retazos compatibles para {unavailableGroups.map(group =>
+            `material #${group.id_tipo_vidrio}, espesor ${group.espesor_mm} mm`).join('; ')}.
+        </FeedbackMessage>}
         <Metrics metrics={execution.metrics} />{!result.completo && <p role="status">Hay piezas sin colocar; este resultado no puede confirmarse.</p>}
         {!!result.unplaced_units.length && <ul aria-label="Piezas sin colocar">{result.unplaced_units.map(p => <li key={`${p.id_pieza}:${p.unit_index}`}>Pedido #{p.id_pedido} · Pieza #{p.id_pieza} · unidad {p.unit_index}</li>)}</ul>}
         <PlacementCanvas snapshot={viewSnapshot} placements={viewPlacements} visualContext={{ visual, runId: comparison.comparison_id, adapter }} /></>}
