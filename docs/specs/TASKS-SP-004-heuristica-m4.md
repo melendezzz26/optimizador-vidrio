@@ -16,3 +16,10 @@
 | SP004-M4-12 | Actualizar evidencia y evaluación comparativa Filler/DJD/Block; recomendar TA-042. | Hecha |
 | SP004-M4-13 | Ejecutar pruebas DJD/Block y regresiones FF/BF/WF; verificar CA. | Hecha |
 | SP004-M4-14 | Crear commits locales coherentes; detenerse antes de push/PR/merge. | Hecha |
+
+| SP004-M4-15 | Auditar rotaciones v1, oportunidades de 5 grados, literatura de bloques y criterio v2 antes de cambiar codigo. | Hecha |
+| SP004-M4-16 | Implementar orientaciones validas cada 5 grados, equivalencias raster exactas, pruning determinista y contadores. | Pendiente |
+| SP004-M4-17 | Declarar hasta tres casos complementarios v2 sin cambiar dimensiones tras benchmark. | Pendiente |
+| SP004-M4-18 | Ejecutar FF/BF/WF/Pair-Block v2 en serie sobre oficiales y diagnosticos; clasificar A-E. | Pendiente |
+| SP004-M4-19 | Probar separacion, rotacion, identidad, pruning, rendimiento y determinismo v2. | Pendiente |
+| SP004-M4-20 | Actualizar notebook, evidencia y decision GO/NO-GO de Pair-Block/TA-042; cerrar localmente. | Pendiente |

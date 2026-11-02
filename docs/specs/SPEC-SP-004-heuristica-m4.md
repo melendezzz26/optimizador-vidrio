@@ -2,7 +2,7 @@
 
 ## Estado
 
-Evaluación experimental completada en la rama local `spike/S2-SP004-djd`. **Pair-Block** fue el candidato de este hito. El resultado es NO-GO para llevarlo a TA-042 con la evidencia actual; tampoco se aprueban Filler ni DJD. No se integra ninguna heurística en producción.
+El hito Pair-Block v1 está registrado, pero su dictamen queda abierto hasta evaluar Pair-Block v2 con la grilla completa de 5 grados y pruning medible. El NO-GO de Filler y DJD se conserva; no se integra ninguna heurística en producción. La auditoría previa a v2 está en [SP-004-pair-block-v2-auditoria.md](../spikes/SP-004-pair-block-v2-auditoria.md).
 
 ## Contexto y objetivo
 
@@ -51,9 +51,13 @@ Se conservan las métricas oficiales de `calculate_metrics`: requested/placed/un
 - Pair-Block creó un bloque triangular y produjo un patrón distinto en el discriminante, pero sus métricas empataron con FF/BF/WF. En los tres casos oficiales no colocó ningún bloque. En COMPLEX aceptó una composición geométrica, no cupo, aplicó fallback individual y conservó métricas FF con runtime 17.7 veces mayor.
 - Los cuatro diagnósticos DJD se clasificaron A. DJD-1/3 eligió una terna en DJD-DIAGNOSTIC-003, con métricas iguales a los baselines; ningún caso mejoró al mejor baseline.
 - El notebook tiene 34 secciones y outputs locales de ejecuciones reales; las firmas Pair-Block se mantuvieron iguales en tres repeticiones por caso.
-- La decisión M4 para TA-042 es **NO-GO para Filler, DJD-1/3 y Pair-Block**. No hay evidencia suficiente para escoger una heurística productiva; no se modifica motor, API, frontend, BD ni fixtures TA-027.
+- La decisión M4 para TA-042 es **NO-GO para Filler y DJD-1/3**; Pair-Block queda **pendiente de dictamen v2**. No hay evidencia suficiente para escoger una heurística productiva; no se modifica motor, API, frontend, BD ni fixtures TA-027.
 
 Una reconsideración futura de Pair-Block debe reducir el costo de generación y obtener bloques colocados con mejoras funcionales repetibles en instancias operativas. La diferencia de patrón en un caso discriminante confirma el mecanismo, no justifica su integración.
+
+Pair-Block v1 fue un ensayo de rotaciones cardinales con una m?trica raster local; sus resultados se conservan como antecedente, no como evaluaci?n final del candidato.
+
+Pair-Block v1 fue un ensayo de rotaciones cardinales con una métrica raster local; sus resultados se conservan como antecedente, no como evaluación final del candidato.
 
 ## Fuera de alcance
 

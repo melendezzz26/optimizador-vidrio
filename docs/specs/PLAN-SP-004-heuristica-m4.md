@@ -2,7 +2,7 @@
 
 ## Estado
 
-Implementación, evidencia y suite final completadas en `spike/S2-SP004-djd`; quedan los commits locales y la verificación final del árbol. Se conserva el historial de Filler y DJD. El hito se detiene antes de push, PR y merge.
+Pair-Block v1 y el diagnóstico DJD están documentados. La revisión v2 de Pair-Block está en curso; el NO-GO de Pair-Block v1 queda suspendido hasta ejecutar con la grilla de 5 grados. No se hace push, PR ni integración en TA-042.
 
 ## Secuencia de trabajo
 
@@ -36,3 +36,15 @@ La tabla se completará con referencia a prueba y archivo de evidencia al cerrar
 | CA-08 | Matriz DJD con manifiestos previos y categorías A/B/C/D | PASS (4 diagnósticos clasificados A) |
 | CA-09 | Repeticiones ×3 y pruebas/regresiones | PASS (3 repeticiones/caso; 104 pruebas) |
 | CA-10 | Notebook, decisión, commits y estado limpio local | PASS (5 commits locales; árbol limpio) |
+
+
+## Reapertura Pair-Block v2
+
+| Fase | Trabajo | Evidencia | Estado |
+|---|---|---|---|
+| Auditoria rotacional | Explicar la simplificacion v1, el efecto por geometria, las oportunidades omitidas y el alcance de la literatura. | [Auditoria v2](../spikes/SP-004-pair-block-v2-auditoria.md). | Completa antes de tocar codigo; commit `3e46c45`. |
+| Criterio de bloque | Retirar el umbral v1 no respaldado y fijar una ganancia local explicita antes de correr. | Formula local y limites de atribucion en auditoria v2. | Definido para implementar. |
+| Implementacion/pruning | Usar angulos del motor cada 5 grados, equivalencia raster exacta y cotas seguras. | Nuevos contadores y tests aislados. | Pendiente. |
+| Casos predeclarados | Mantener fixtures y discriminante; declarar hasta tres casos razonables antes de benchmarks. | Manifiesto de intencion y JSON congelados. | Pendiente. |
+| Benchmark v2 | Comparar FF/BF/WF/Pair-Block en serie; registrar clasificacion A-E, placements y tres tiempos. | CSV/JSON v2. | Pendiente. |
+| Notebook/decision | Actualizar celdas, outputs reales y GO/NO-GO TA-042. | Notebook ejecutado y decision final. | Pendiente. |

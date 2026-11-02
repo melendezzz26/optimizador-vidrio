@@ -1,5 +1,7 @@
 # Revisión de diseño y evidencia — SP-004 M4
 
+Este dictamen corresponde a Pair-Block v1 y queda supersedido para la decisión del candidato hasta completar v2. La auditoría previa al cambio está en [SP-004-pair-block-v2-auditoria.md](../spikes/SP-004-pair-block-v2-auditoria.md).
+
 ## Alcance revisado
 
 Pair-Block experimental y diagnóstico adicional DJD. Se comprobaron la diferencia entre la referencia publicada y la adaptación local, el uso del motor geométrico inmutable, la descomposición a placements originales, la prioridad retazo→plancha, la separación, determinismo, métricas y regresiones. No se proponen cambios productivos.

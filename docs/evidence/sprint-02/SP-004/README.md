@@ -127,3 +127,9 @@ Commits locales del hito Pair-Block/DJD:
 - `379ad4e` ? `experiment(SP-004): agregar notebook Pair-Block ejecutado`
 - `de60560` ? `docs(SP-004): registrar evaluaci?n comparativa y resultados`
 - Cierre del hito: `docs(SP-004): cerrar hito y registrar commits locales`
+
+
+
+## Reapertura Pair-Block v2
+
+Los resultados anteriores corresponden a Pair-Block v1 y no cierran el dictamen del candidato. Antes de modificar codigo se documento por que v1 exploro solo giros cardinales, su deduplicacion por dimensiones, la expansion potencial de la grilla y el criterio experimental v2. Vease [auditoria previa](../../../spikes/SP-004-pair-block-v2-auditoria.md). Los benchmarks v2 quedan pendientes; Filler y DJD permanecen intactos.

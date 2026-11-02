@@ -1,5 +1,9 @@
 # SP-004 — Investigación y experimentación de heurística adicional M4
 
+## Estado de Pair-Block v2
+
+Pair-Block v1 queda como antecedente experimental. Su NO-GO no es el dictamen final del candidato: la restricción cardinal y la deduplicación por bounding box redujeron indebidamente la búsqueda. La auditoría v2 está registrada en [SP-004-pair-block-v2-auditoria.md](SP-004-pair-block-v2-auditoria.md); la implementación, los benchmarks y la decisión final están pendientes. Filler y DJD conservan sus dictámenes previos.
+
 ## 1. Contexto
 
 SP-004 conserva dos evaluaciones previas: Filler se descartó por similitud práctica con FF real; DJD-1/3 mostró elecciones de grupos distintas pero obtuvo NO-GO provisional por costo y no cambiar las métricas de TA-027. La nueva evaluación principal es **Adaptación experimental Pair-Block de la heurística basada en bloques**. También se hará un diagnóstico pequeño de DJD, sin rediseñar el algoritmo ni tocar los fixtures oficiales.
@@ -92,12 +96,12 @@ El costo de generación dominó la ejecución: Pair-Block registró 260 ms de ge
 - Resultados DJD adicional: [CSV](../evidence/sprint-02/SP-004/benchmark-results/sp004_djd_diagnostic_results.csv), [traza y categorías](../evidence/sprint-02/SP-004/benchmark-results/sp004_djd_diagnostic_trace.json).
 - Notebook ejecutado: [SP004-Block-Packing.ipynb](../../experiments/optimization/colab/SP004-Block-Packing.ipynb).
 
-## Evaluación comparativa y selección de candidato M4
+## Evaluación comparativa y selección de candidato M4 - pendiente de v2
 
 | Candidato | Diferencia demostrada | Costo y resultado | Decisión para TA-042 |
 |---|---|---|---|
 | Filler | Progresión por fuente activa, pero FF real ya ordena por área; resultados oficiales prácticamente iguales a FF. | Runtime cercano a FF; no aporta cambio estable de métricas. | **NO-GO**, descartado como principal. |
 | DJD-1/3 | Selecciona grupos de 1/2/3; la terna se observó en COMPLEX previo y en el diagnóstico 003. | En TA-027 no cambió métricas y llegó a 7.69 s en COMPLEX; los cuatro diagnósticos nuevos no superaron al mejor baseline. | **NO-GO**, diferencia conceptual real sin beneficio medido. |
-| Pair-Block | Cambia el patrón en la demo; conserva las piezas. Ningún bloque llegó a colocarse en TA-027. | 9.1×–17.7× FF en MEDIUM/COMPLEX; métricas oficiales iguales a FF, con una propuesta de bloque que falló al colocar. | **NO-GO por ahora**; mecanismo válido, rendimiento/beneficio insuficientes. |
+| Pair-Block | Cambia el patrón en la demo; conserva las piezas. Ningún bloque llegó a colocarse en TA-027. | 9.1×–17.7× FF en MEDIUM/COMPLEX; métricas oficiales iguales a FF, con una propuesta de bloque que falló al colocar. | **Pendiente de dictamen v2**; los resultados v1 no bastan para decidir con la grilla completa. |
 
-La recomendación es **no integrar una heurística M4 en TA-042 con la evidencia actual**. Pair-Block es el mecanismo más alineado con las formas complementarias y queda como posible siguiente investigación, pero antes requiere reducir el costo de generación y lograr bloques colocados en instancias operativas con mejoras o beneficios claros en fuentes/merma/recuperable. Filler y DJD quedan archivados como candidatos revisados. No se modificó producción ni TA-027.
+El dictamen de TA-042 para Filler y DJD permanece NO-GO. Para Pair-Block queda pendiente completar v2 con la grilla real de 5 grados, pruning medible y nuevos resultados. No se modifica producción ni TA-027.
