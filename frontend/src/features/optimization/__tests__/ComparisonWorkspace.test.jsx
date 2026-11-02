@@ -11,7 +11,7 @@ beforeEach(() => {
   localStorage.clear();
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({ fillRect: vi.fn(), setTransform: vi.fn() });
 });
-function setup({ failStart = false, partial = false, partialFF = false, ambiguous = false, noStock = false } = {}) {
+function setup({ failStart = false, partial = false, partialFF = false, ambiguous = false, noStock = false, multiGroup = false } = {}) {
   let current = structuredClone(fixture.completed);
   if (noStock) {
     current.status = 'SIN_SOLUCION';
@@ -37,6 +37,14 @@ function setup({ failStart = false, partial = false, partialFF = false, ambiguou
         result.result.placements = [];
         result.result.materials_used = [];
         result.result.residual_regions = [];
+        if (multiGroup) {
+          const secondUnit = { ...result.result.groups[0].units[0], id_pieza: 99,
+            id_tipo_vidrio: 2, espesor_mm: '8' };
+          result.result.groups = [...result.result.groups, {
+            ...result.result.groups[0], id_tipo_vidrio: 2, espesor_mm: '8', units: [secondUnit],
+          }];
+          result.result.total_units = 4;
+        }
         result.result.unplaced_units = result.result.groups.flatMap(group => group.units.map(unit => ({
           id_pedido: unit.id_pedido, id_pieza: unit.id_pieza, unit_index: unit.unit_index, reason: 'NO_FIT',
         })));
@@ -151,11 +159,11 @@ test('failed engine has no fake zero metrics and successful results stay eligibl
   expect(screen.getByText(/La comparación está incompleta/)).toBeVisible();
 });
 
-test('no compatible stock identifies the affected material and never offers confirmation', async () => {
-  setup({ noStock: true }); await execute();
+test('no compatible stock identifies every affected material group and never offers confirmation', async () => {
+  setup({ noStock: true, multiGroup: true }); await execute();
   const first = screen.getByRole('tabpanel', { name: /First Fit/ });
   fireEvent.click(within(first).getByRole('button', { name: /Resultado/ }));
-  await within(first).findByText('No hay planchas ni retazos compatibles para material #1, espesor 6 mm.');
+  await within(first).findByText(/material #1, espesor 6 mm; material #2, espesor 8 mm/);
   expect(screen.queryByRole('button', { name: 'Confirmar distribución elegida' })).not.toBeInTheDocument();
 });
 
