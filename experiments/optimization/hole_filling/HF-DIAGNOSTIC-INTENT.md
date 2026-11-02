@@ -15,10 +15,12 @@ En los casos 001–003, la intención es observar si hay al menos un anclaje vá
 
 ## Clasificación y puerta fijadas antes de medir
 
-- **A:** placements y métricas iguales a FF/BF/WF; no se usó un pocket.
+- **A:** firma de placements y métricas igual a por lo menos un baseline; no hay diferencia funcional atribuible al pocket.
 - **B:** patrón distinto, pocket utilizado y métricas funcionales empatadas.
-- **C:** pocket utilizado y mejora alguna métrica funcional sin empeorar cobertura.
-- **D:** cambia el patrón y empeora alguna métrica funcional.
+- **C:** pocket utilizado; mantiene cobertura y no empeora ningún campo funcional, y mejora al menos uno.
+- **D:** cambia el patrón y empeora cobertura, fuentes nuevas, aprovechamiento, merma o área recuperable frente al mejor baseline.
 - **E:** pocket detectado, pero no se logra placement válido o el runtime total supera 10× el baseline más rápido del mismo caso.
 
 El mini-spike será **VIABLE** solo si al menos un diagnóstico obtiene B o C, todas las colocaciones pasan las reglas reales, las firmas funcionales son deterministas en tres repeticiones y el runtime queda por debajo del umbral E. En otro caso será NO VIABLE. El benchmark SMALL/MEDIUM/COMPLEX es condicional y no comienza antes de ese dictamen.
+
+El baseline de referencia funcional es el mejor caso entre FF/BF/WF según cobertura (mayor), planchas nuevas (menor), aprovechamiento (mayor), merma (menor) y área recuperable (mayor), en ese orden. C requiere que HF no empeore ninguno de esos campos y mejore al menos uno; D se aplica si empeora al menos uno y no obtiene una mejora funcional neta antes de esa pérdida. Las cinco métricas se reportan completas y no se agrega un score nuevo.
