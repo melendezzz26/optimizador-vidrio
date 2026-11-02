@@ -148,7 +148,14 @@ class BeamSearchOptimizer:
             return BeamSearchOutcome(result, 0, "STATE_MEMORY_LIMIT",
                                      dict(stats, state_bytes_bound=estimated), ())
 
-        prepared = prepare_run_geometry(problem, checkpoint=check)
+        try:
+            prepared = prepare_run_geometry(problem, checkpoint=check)
+        except BeamSearchStopped as error:
+            result = BeamSearchResult(problem=problem, placements=())
+            return BeamSearchOutcome(
+                result, 0, str(error),
+                dict(stats, state_bytes_bound=estimated), (),
+            )
         initial = tuple(_empty_layout(prepared.material(stock), problem.config)
                         for stock in stocks)
         beam = [BeamNode(initial)]
