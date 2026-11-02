@@ -42,7 +42,7 @@ def run_response(run: OptimizationRun) -> RunResponseV1:
     return RunResponseV1(**run_response_values(run))
 
 
-def run_response_values(run: OptimizationRun) -> dict:
+def run_response_values(run: OptimizationRun, *, include_stock_compatibility: bool = False) -> dict:
     result, problem = run.result, run.result.problem
     metrics = None
     if result.metrics is not None:
@@ -58,11 +58,15 @@ def run_response_values(run: OptimizationRun) -> dict:
                             tiempo_computacional_ms=result.computation_time_ms)
     reason = {RunStatus.RUNNING: "PENDING", RunStatus.NO_SOLUTION: "NO_FIT",
               RunStatus.FAILED: "INTERRUPTED", RunStatus.COMPLETED: "NO_FIT"}[run.status]
+    groups = [dict(id_tipo_vidrio=group.glass_type_id, espesor_mm=group.thickness_mm,
+                   units=[unit_response(unit) for unit in group.units]) for group in problem.groups]
+    if include_stock_compatibility:
+        for wire_group, group in zip(groups, problem.groups):
+            wire_group["stock_compatible"] = bool(group.stock_candidates)
     return dict(
         schema_version=1, id_optimizacion=run.optimization_id, estado=run.status, metodo=result.method,
         order_ids=list(problem.order_ids), configuracion=config_response(problem.config),
-        groups=[dict(id_tipo_vidrio=group.glass_type_id, espesor_mm=group.thickness_mm,
-                     units=[unit_response(unit) for unit in group.units]) for group in problem.groups],
+        groups=groups,
         placements=[placement_response(placement, problem.config) for placement in result.placements],
         materials_used=[stock_response(stock) for stock in result.materials_used],
         residual_regions=[dict(material_source=r.material_source, material_id=r.material_id,

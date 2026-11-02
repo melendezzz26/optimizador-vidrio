@@ -60,5 +60,5 @@ def execution_response(current, execution):
         run = OptimizationRun(optimization_id=current.comparison_id,
             status=RunStatus.COMPLETED if execution.result.complete else RunStatus.NO_SOLUTION,
             result=execution.result, residuals=execution.residuals)
-        result = ComparisonResult(**run_response_values(run))
+        result = ComparisonResult(**run_response_values(run, include_stock_compatibility=True))
     return ExecutionResponse(comparison_id=current.comparison_id, execution=execution_summary(current, execution), result=result)

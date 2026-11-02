@@ -181,6 +181,7 @@ export function resultSnapshot(dto) {
   }));
   return { orders, total: dto.total_units, groups: dto.groups.map(g => ({
     id: groupKey(g), materialId: g.id_tipo_vidrio, name: `Material #${g.id_tipo_vidrio}`, thickness: g.espesor_mm,
+    stockCompatible: g.stock_compatible !== false,
     units: g.units, orders: [...new Set(g.units.map(u => u.id_pedido))],
     containers: dto.materials_used.filter(s => groupKey(s) === groupKey(g)).map(visualStock),
   })), rasters: {}, residuals: dto.residual_regions ?? [] };
