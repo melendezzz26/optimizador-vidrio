@@ -12,4 +12,4 @@
 | SP004-DJD-08 | Ejecutar SMALL, MEDIUM, COMPLEX y caso didáctico; generar CSV/JSON. | Hecha |
 | SP004-DJD-09 | Crear y ejecutar notebook `SP004-DJD.ipynb` con 36 secciones explicadas. | Hecha; 31 celdas Python ejecutadas localmente |
 | SP004-DJD-10 | Actualizar evidencia, ejecutar regresiones FF/BF/WF y decidir viabilidad GO/NO-GO. | Hecha; NO-GO para TA-042 por costo de COMPLEX |
-| SP004-DJD-11 | Crear commits coherentes; detenerse antes de push, PR y merge. | En curso; commits locales aún por crear |
+| SP004-DJD-11 | Crear commits coherentes; detenerse antes de push, PR y merge. | Hecha; commits locales creados y rama no publicada |

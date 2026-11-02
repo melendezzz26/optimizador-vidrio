@@ -17,7 +17,7 @@ Trabajo local completado sobre `spike/S2-SP004-djd`; se detiene antes de push, P
 | Pruebas | Cubrir umbral, combinaciones, pruning, tolerancia, geometría, reglas y determinismo. | Pruebas aisladas DJD y suites unitarias FF/BF/WF verdes. | Completa; suite combinada 93/93. |
 | Benchmark | Correr métodos en serie en los tres fixtures oficiales. | CSV/JSON con métricas oficiales, costo y diagnósticos. | Completa; CSV/JSON regenerados tras fijar el denominador publicado. |
 | Notebook | Crear y ejecutar notebook Colab explicativo con outputs reales. | 36 secciones principales, comentarios de código y salidas interpretadas. | Completa; ejecución local de 31 celdas Python sin errores. |
-| Evidencia y decisión | Actualizar informe, revisar GO/NO-GO según evidencia y commits. | README, revisión CA y estado limpio de rama. | Evidencia/decisión completas; commits locales pendientes; sin push/PR/merge. |
+| Evidencia, decisión y commits | Actualizar informe, verificar CA, registrar GO/NO-GO y conservar el trabajo en commits locales. | README, revisión CA, commits locales y estado limpio de rama. | Completa; cinco commits locales; sin push/PR/merge. |
 
 ## Matriz de verificación de CA
 

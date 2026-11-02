@@ -24,4 +24,4 @@ Registrar número de combinaciones/subsecuencias podadas y checks geométricos p
 - El notebook contiene 36 secciones y 31 celdas de código ejecutadas localmente, todas con outputs y sin errores.
 - El benchmark conserva datos oficiales y diagnósticos de búsqueda. En COMPLEX DJD tomó 7,693.620 ms frente a 154.009 ms de FF (aprox. 50×) con igual cobertura, fuentes usadas, aprovechamiento y merma.
 - La decisión es **NO-GO para TA-042 con esta implementación** por costo. La selección de combinaciones y la validación geométrica sí son distinguibles y deterministas, pero no compensan el costo en estos fixtures.
-- Commits locales solicitados pendientes al redactar esta revisión. No se publicó la rama ni se creó PR.
+- Los commits locales de documentación/evidencia, implementación, pruebas y notebook están creados. No se publicó la rama ni se creó PR.

@@ -78,3 +78,12 @@ CA-01–CA-10 están registrados y verificados en [PLAN-SP-004-djd.md](../../../
 ## Decisión
 
 **NO-GO para llevar esta implementación a TA-042.** DJD tiene una diferencia operacional real, pasa las reglas geométricas y de inventario, es determinista y reutiliza el motor. El costo medido —7.7 s para 24 unidades frente a 154 ms de FF— no es razonable para esta comparación dado que no mejora cobertura, fuentes, aprovechamiento ni merma en COMPLEX. Para una futura reevaluación se necesitaría una poda más eficiente y evidencia adicional; la decisión no cambia fixtures ni producción.
+
+## Commits locales
+
+- `877d17b` — `docs(SP-004): seleccionar DJD y archivar Filler`
+- `5843f6f` — `experiment(SP-004): implementar laboratorio DJD`
+- `afe8637` — `test(SP-004): validar DJD y determinismo`
+- `69bcae4` — `experiment(SP-004): agregar notebook DJD ejecutado`
+
+Estos commits y el commit de cierre de evidencia permanecen solo en la rama local `spike/S2-SP004-djd`.
