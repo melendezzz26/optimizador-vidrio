@@ -1,6 +1,8 @@
 """Pruebas del detector aislado; no tocan optimizadores ni datos productivos."""
 from decimal import Decimal
+import hashlib
 from pathlib import Path
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -11,9 +13,13 @@ from app.modules.optimization.domain.placement import PlacementIssue, SheetLayou
 from app.modules.optimization.domain.raster_mask import RasterMask
 from app.modules.optimization.domain.rotation import discrete_angles
 from experiments.optimization.hole_filling.lab import (
+    CASE_DIR,
+    _components,
+    _domain_boundary_rows,
     feasible_anchor_map,
     physical_free_regions,
     prepare_case,
+    read_case,
 )
 
 
@@ -139,3 +145,51 @@ def test_bit_parallel_anchor_map_matches_sheetlayout_check_at_every_origin():
                         expected = layout.check(oriented.orientation.mask, row, column).is_valid
                         actual = bool(anchor.valid_rows[row] & (1 << column))
                         assert actual is expected, (case_id, row, column, oriented.orientation.rotation_deg)
+
+
+def test_realistic_orders_are_frozen_compatible_and_have_no_seed_placements():
+    intent = (CASE_DIR / "HF-REALISTIC-INTENT.md").read_text(encoding="utf-8")
+    counts = {"HF-REALISTIC-001": 15, "HF-REALISTIC-002": 18, "HF-REALISTIC-003": 20}
+    for case_id, expected_count in counts.items():
+        case_path = CASE_DIR / f"{case_id}.json"
+        case = read_case(case_id)
+        assert len(case["pieces"]) == expected_count
+        assert all(piece["role"] == "pending" for piece in case["pieces"])
+        assert len(case["stocks"]) == 2
+        assert {stock["source"] for stock in case["stocks"]} == {"RETAZO", "PLANCHA"}
+        assert case["config"] == {
+            "resolution_mm": 1, "angular_step_deg": 5,
+            "margin_mm": 5, "separation_mm": 3,
+        }
+        assert all(stock["geometry"]["type"] == "RECTANGULO" for stock in case["stocks"])
+        expected_hash = re.search(rf"{case_id}.*?([0-9a-f]{{64}})", intent).group(1)
+        assert hashlib.sha256(case_path.read_bytes()).hexdigest() == expected_hash
+
+
+def test_bit_row_exterior_flood_matches_reference_component_labels():
+    for case_id in (
+        "HF-DIAGNOSTIC-001", "HF-DIAGNOSTIC-002",
+        "HF-DIAGNOSTIC-003", "HF-DIAGNOSTIC-004",
+    ):
+        setup = prepare_case(case_id)
+        unit = setup.pending[0]
+        stock = setup.problem.groups[0].stock_candidates[0]
+        layout = setup.layouts.get(stock.identity)
+        if layout is None:
+            layout = SheetLayout.empty(
+                setup.prepared.material(stock),
+                margin_mm=float(setup.problem.config.margin_mm),
+                separation_mm=float(setup.problem.config.separation_mm),
+            )
+        oriented = next(iter(setup.prepared.orientations(unit)))
+        anchor = feasible_anchor_map(layout, unit, stock, oriented)
+        boundary = _domain_boundary_rows(anchor.domain_rows, anchor.columns)
+        expected_exterior = [0] * anchor.rows
+        expected_pockets = [0] * anchor.rows
+        for region in _components(anchor.valid_rows, anchor.columns):
+            touches_edge = any(boundary[row] & (1 << column) for row, column in region.cells)
+            target = expected_exterior if touches_edge else expected_pockets
+            for row, column in region.cells:
+                target[row] |= 1 << column
+        assert tuple(expected_exterior) == anchor.exterior_rows
+        assert tuple(expected_pockets) == anchor.pocket_rows

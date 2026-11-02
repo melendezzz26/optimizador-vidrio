@@ -25,6 +25,7 @@ from app.modules.optimization.domain.run_geometry import prepare_run_geometry
 
 
 DIAGNOSTIC_LABEL = "DIAGNÓSTICO HOLE FILLING — NO PERTENECE A TA-027"
+REALISTIC_LABEL = "PEDIDO REALISTA HOLE FILLING - NO PERTENECE A TA-027"
 CASE_DIR = Path(__file__).resolve().parent / "cases"
 
 
@@ -42,11 +43,15 @@ def _area(geometry) -> Decimal:
 
 
 def read_case(case_id: str) -> dict:
-    if not case_id.startswith("HF-DIAGNOSTIC-"):
-        raise ValueError("El laboratorio solo acepta los diagnósticos HF congelados.")
+    if case_id.startswith("HF-DIAGNOSTIC-"):
+        expected_label = DIAGNOSTIC_LABEL
+    elif case_id.startswith("HF-REALISTIC-"):
+        expected_label = REALISTIC_LABEL
+    else:
+        raise ValueError("El laboratorio solo acepta diagnósticos o pedidos realistas HF congelados.")
     data = json.loads((CASE_DIR / f"{case_id}.json").read_text(encoding="utf-8"))
-    if data.get("case_id") != case_id or data.get("label") != DIAGNOSTIC_LABEL:
-        raise ValueError("El ID o la etiqueta del diagnóstico no coincide.")
+    if data.get("case_id") != case_id or data.get("label") != expected_label:
+        raise ValueError("El ID o la etiqueta del caso HF no coincide.")
     return data
 
 
@@ -294,24 +299,56 @@ def physical_free_regions(layout: SheetLayout) -> tuple[RasterRegion, ...]:
 def _domain_boundary_rows(domain_rows: tuple[int, ...], columns: int) -> tuple[int, ...]:
     boundary = [0] * len(domain_rows)
     for row, bits in enumerate(domain_rows):
-        remaining = bits
-        while remaining:
-            bit = remaining & -remaining
-            remaining ^= bit
-            column = bit.bit_length() - 1
-            if (
-                row == 0 or row == len(domain_rows) - 1 or column == 0 or column == columns - 1
-                or not (domain_rows[row - 1] & bit)
-                or not (domain_rows[row + 1] & bit)
-                or (column > 0 and not (domain_rows[row] & (bit >> 1)))
-                or (column + 1 < columns and not (domain_rows[row] & (bit << 1)))
-            ):
-                boundary[row] |= bit
+        if not bits:
+            continue
+        above = domain_rows[row - 1] if row > 0 else 0
+        below = domain_rows[row + 1] if row + 1 < len(domain_rows) else 0
+        left = bits << 1
+        right = bits >> 1
+        has_all_four_neighbors = bits & left & right & above & below
+        boundary[row] = bits & ~has_all_four_neighbors
     return tuple(boundary)
 
 
-def _origin_columns(available: int, shape: int, all_origins: int) -> int:
+def _exterior_reachable_rows(valid_rows: tuple[int, ...], boundary_rows: tuple[int, ...],
+                             columns: int) -> tuple[int, ...]:
+    """Flood-fill legal anchors from the domain edge with 4-connectivity and row bits."""
+    from collections import deque
+
+    reachable = [valid & boundary for valid, boundary in zip(valid_rows, boundary_rows)]
+    queue = deque(row for row, bits in enumerate(reachable) if bits)
+    queued = set(queue)
+    while queue:
+        row = queue.popleft()
+        queued.discard(row)
+        row_valid = valid_rows[row]
+        expanded = reachable[row]
+        while True:
+            next_expanded = (expanded | (expanded << 1) | (expanded >> 1)) & row_valid
+            if next_expanded == expanded:
+                break
+            expanded = next_expanded
+        if expanded != reachable[row]:
+            reachable[row] = expanded
+        for neighbor in (row - 1, row + 1):
+            if not 0 <= neighbor < len(valid_rows):
+                continue
+            added = expanded & valid_rows[neighbor] & ~reachable[neighbor]
+            if added:
+                reachable[neighbor] |= added
+                if neighbor not in queued:
+                    queued.add(neighbor)
+                    queue.append(neighbor)
+    width_mask = (1 << columns) - 1
+    return tuple(bits & valid & width_mask for bits, valid in zip(reachable, valid_rows))
+
+
+def _origin_columns(available: int, shape: int, all_origins: int,
+                    row_cache: dict[tuple[int, int, int], int] | None = None) -> int:
     """Bit-parallel exact placement origins, following SheetLayout.first_position."""
+    cache_key = (available, shape, all_origins)
+    if row_cache is not None and cache_key in row_cache:
+        return row_cache[cache_key]
     candidates = all_origins
     remaining = shape
     offset = 0
@@ -328,28 +365,34 @@ def _origin_columns(available: int, shape: int, all_origins: int) -> int:
             windows &= windows >> (length - covered)
         candidates &= windows >> offset
         if not candidates:
+            if row_cache is not None:
+                row_cache[cache_key] = 0
             return 0
         remaining >>= length
         offset += length
+    if row_cache is not None:
+        row_cache[cache_key] = candidates
     return candidates
 
 
 def _valid_origin_rows(free_rows: tuple[int, ...], mask: RasterMask,
-                       origin_rows: int, origin_columns: int) -> tuple[int, ...]:
+                       origin_rows: int, origin_columns: int,
+                       row_cache: dict[tuple[int, int, int], int] | None = None) -> tuple[int, ...]:
     all_origins = (1 << origin_columns) - 1
     occupied_rows = tuple((offset, bits) for offset, bits in enumerate(mask.rows) if bits)
     result = []
     for row in range(origin_rows):
         candidates = all_origins
         for offset, shape in occupied_rows:
-            candidates &= _origin_columns(free_rows[row + offset], shape, all_origins)
+            candidates &= _origin_columns(free_rows[row + offset], shape, all_origins, row_cache)
             if not candidates:
                 break
         result.append(candidates)
     return tuple(result)
 
 
-def feasible_anchor_map(layout: SheetLayout, unit: PieceUnit, stock: StockCandidate, oriented) -> AnchorMap:
+def feasible_anchor_map(layout: SheetLayout, unit: PieceUnit, stock: StockCandidate, oriented,
+                        row_cache: dict[tuple[int, int, int], int] | None = None) -> AnchorMap:
     """Genera el mapa con las filas bit del layout; el placement elegido usa check/place."""
     mask: RasterMask = oriented.orientation.mask
     rows = layout.material.row_count - mask.row_count + 1
@@ -361,33 +404,29 @@ def feasible_anchor_map(layout: SheetLayout, unit: PieceUnit, stock: StockCandid
     check_started = perf_counter_ns()
     usable_rows = tuple(layout.usable)
     free_rows = tuple(usable & ~blocked for usable, blocked in zip(layout.usable, layout.blocked))
-    domain_rows = _valid_origin_rows(usable_rows, mask, rows, columns)
-    valid_rows = _valid_origin_rows(free_rows, mask, rows, columns)
+    domain_rows = _valid_origin_rows(usable_rows, mask, rows, columns, row_cache)
+    valid_rows = _valid_origin_rows(free_rows, mask, rows, columns, row_cache)
     origin_generation_ns = perf_counter_ns() - check_started
     detection_started = perf_counter_ns()
     edge_rows = _domain_boundary_rows(domain_rows, columns)
-    valid_regions = _components(valid_rows, columns)
-    exterior_rows, pocket_rows = [0] * rows, [0] * rows
-    pockets = []
-    for component in valid_regions:
-        is_exterior = any(edge_rows[row] & (1 << column) for row, column in component.cells)
-        target = exterior_rows if is_exterior else pocket_rows
-        for row, column in component.cells:
-            target[row] |= 1 << column
-        if not is_exterior:
-            pockets.append(RasterRegion(
-                region_type="pocket",
-                cells=component.cells,
-                min_row=component.min_row,
-                min_column=component.min_column,
-                max_row=component.max_row,
-                max_column=component.max_column,
-            ))
+    exterior_rows = _exterior_reachable_rows(valid_rows, edge_rows, columns)
+    pocket_rows = tuple(valid & ~exterior for valid, exterior in zip(valid_rows, exterior_rows))
+    pockets = [
+        RasterRegion(
+            region_type="pocket",
+            cells=component.cells,
+            min_row=component.min_row,
+            min_column=component.min_column,
+            max_row=component.max_row,
+            max_column=component.max_column,
+        )
+        for component in _components(pocket_rows, columns)
+    ]
     component_detection_ns = perf_counter_ns() - detection_started
     return AnchorMap(
         unit=unit, stock=stock, rotation_deg=oriented.orientation.rotation_deg,
         rows=rows, columns=columns, domain_rows=domain_rows, valid_rows=valid_rows,
-        exterior_rows=tuple(exterior_rows), pocket_rows=tuple(pocket_rows),
+        exterior_rows=exterior_rows, pocket_rows=pocket_rows,
         pockets=tuple(pockets), positions_examined=rows * columns,
         origin_generation_ns=origin_generation_ns,
         component_detection_ns=component_detection_ns,

@@ -117,6 +117,7 @@ def run_baseline(case_id: str, method: str) -> dict:
 
 def _find_pockets(setup: DiagnosticSetup, group, remaining, layouts, layout_versions, diagnostics):
     options = []
+    origin_row_cache = {}
     unit_rank_by_identity = {unit.identity: rank for rank, unit in enumerate(remaining)}
     stock_rank_by_identity = {stock.identity: rank for rank, stock in enumerate(group.stock_candidates)}
     for unit in remaining:
@@ -127,7 +128,9 @@ def _find_pockets(setup: DiagnosticSetup, group, remaining, layouts, layout_vers
                 continue
             for orientation_rank, oriented in enumerate(setup.prepared.orientations(unit)):
                 diagnostics["candidate_orientations_scanned"] += 1
-                anchor_map = feasible_anchor_map(layout, unit, stock, oriented)
+                anchor_map = feasible_anchor_map(
+                    layout, unit, stock, oriented, row_cache=origin_row_cache,
+                )
                 diagnostics["origin_generation_ns"] += anchor_map.origin_generation_ns
                 diagnostics["pocket_detection_ns"] += anchor_map.component_detection_ns
                 diagnostics["geometric_positions_evaluated"] += anchor_map.positions_examined
@@ -173,6 +176,7 @@ def _run_hole_filling_setup(case_id: str, setup: DiagnosticSetup, started: int, 
         "selected_pockets": [],
     }
     selected_anchor_maps = []
+    pocket_placement_contexts = []
     for group in sorted(setup.problem.groups, key=lambda item: item.key):
         remaining = list(prepare_group_units(
             unit for unit in group.units if setup.roles_by_id[unit.piece_id] == "pending"
@@ -203,6 +207,9 @@ def _run_hole_filling_setup(case_id: str, setup: DiagnosticSetup, started: int, 
                 if not option.anchor_map.valid_rows[row] & (1 << column):
                     raise AssertionError("El anclaje pocket-first dejó de ser factible antes de colocarse.")
                 layout = layouts[option.stock.identity]
+                pocket_placement_contexts.append((
+                    layout, option.anchor_map, (row, column), oriented.orientation.mask,
+                ))
                 layouts[option.stock.identity] = layout.place(oriented.orientation.mask, row, column)
                 diagnostics["exact_geometry_checks"] += 1
                 layout_versions[option.stock.identity] += 1
@@ -249,9 +256,15 @@ def _run_hole_filling_setup(case_id: str, setup: DiagnosticSetup, started: int, 
     result, residuals = _result(setup, placements)
     metrics_ms = (perf_counter_ns() - metrics_started) / 1_000_000
     total_ms = (perf_counter_ns() - started) / 1_000_000
+    origin_generation_ns = diagnostics.pop("origin_generation_ns")
+    placement_policy_ns = diagnostics.pop("placement_policy_ns")
+    fallback_search_ns = diagnostics.pop("fallback_search_ns")
+    placement_commit_ns = diagnostics.pop("placement_commit_ns")
+    diagnostics["anchor_map_generation_ms"] = origin_generation_ns / 1_000_000
+    diagnostics["pocket_placement_ms"] = (placement_policy_ns + placement_commit_ns) / 1_000_000
+    diagnostics["fallback_search_ms"] = fallback_search_ns / 1_000_000
     diagnostics["placement_search_ms"] = (
-        diagnostics.pop("origin_generation_ns") + diagnostics.pop("placement_policy_ns")
-        + diagnostics.pop("fallback_search_ns") + diagnostics.pop("placement_commit_ns")
+        origin_generation_ns + placement_policy_ns + fallback_search_ns + placement_commit_ns
     ) / 1_000_000
     diagnostics["pocket_detection_ms"] = diagnostics.pop("pocket_detection_ns") / 1_000_000
     diagnostics["total_ms"] = total_ms
@@ -266,6 +279,7 @@ def _run_hole_filling_setup(case_id: str, setup: DiagnosticSetup, started: int, 
         "total_ms": total_ms,
         "diagnostics": diagnostics,
         "anchor_maps_used": tuple(selected_anchor_maps),
+        "pocket_placement_contexts": tuple(pocket_placement_contexts),
     }
 
 
