@@ -15,4 +15,4 @@
 | SP004-M4-11 | Crear notebook `SP004-Block-Packing.ipynb` con outputs locales y figuras. | Hecha |
 | SP004-M4-12 | Actualizar evidencia y evaluación comparativa Filler/DJD/Block; recomendar TA-042. | Hecha |
 | SP004-M4-13 | Ejecutar pruebas DJD/Block y regresiones FF/BF/WF; verificar CA. | Hecha |
-| SP004-M4-14 | Crear commits locales coherentes; detenerse antes de push/PR/merge. | En curso |
+| SP004-M4-14 | Crear commits locales coherentes; detenerse antes de push/PR/merge. | Hecha |

@@ -119,3 +119,11 @@ Archivos de resultados:
 Suite ejecutada: `104 passed in 16.58s`, incluyendo 11 pruebas específicas Pair-Block, DJD, Filler y regresiones FF/BF/WF. El notebook se regeneró y ejecutó localmente: 34 secciones, 28 celdas de código con outputs, comentarios en cada línea no vacía y cero errores. Los nueve JSON del laboratorio parsean correctamente; `git diff --check` no reportó errores.
 
 Revisión final: [SP-004 M4](../../../reviews/SP-004-heuristica-m4-review.md); matriz CA: [PLAN](../../../specs/PLAN-SP-004-heuristica-m4.md). No se modificaron módulos productivos ni fixtures oficiales.
+
+
+Commits locales del hito Pair-Block/DJD:
+
+- `166551c` ? `experiment(SP-004): implementar Pair-Block y diagn?stico DJD`
+- `379ad4e` ? `experiment(SP-004): agregar notebook Pair-Block ejecutado`
+- `de60560` ? `docs(SP-004): registrar evaluaci?n comparativa y resultados`
+- Cierre del hito: `docs(SP-004): cerrar hito y registrar commits locales`

@@ -18,7 +18,7 @@ Implementación, evidencia y suite final completadas en `spike/S2-SP004-djd`; qu
 | Determinismo/regresión | Ejecutar tres veces SMALL/MEDIUM/COMPLEX/discriminante; suite block + DJD + regresiones. | Firmas iguales y pruebas verdes. | Pair-Block PASS ×3 en cuatro casos; suite final: 104 pruebas PASS. |
 | Notebook/evidencia | Construir notebook con explicaciones, figuras y outputs locales. | 24+ secciones con outputs; evidencia reproducible. | Completa; 34 secciones y 28 celdas de código ejecutadas. |
 | Comparación final | Recomendar GO/NO-GO individual y candidato TA-042. | Documento SP-004 M4 actualizado con resultados. | Completa; NO-GO para integración en TA-042. |
-| Git local | Crear commits coherentes y revisar árbol limpio. | Historial local preservado. | Pendiente; no push/PR/merge. |
+| Git local | Crear commits coherentes y revisar árbol limpio. | Historial local preservado. | Completa; commits locales creados y árbol limpio; no push/PR/merge. |
 
 ## Matriz de verificación CA
 
@@ -35,4 +35,4 @@ La tabla se completará con referencia a prueba y archivo de evidencia al cerrar
 | CA-07 | Corridas oficiales y caso Pair-Block | PASS (3 fixtures y discriminante) |
 | CA-08 | Matriz DJD con manifiestos previos y categorías A/B/C/D | PASS (4 diagnósticos clasificados A) |
 | CA-09 | Repeticiones ×3 y pruebas/regresiones | PASS (3 repeticiones/caso; 104 pruebas) |
-| CA-10 | Notebook, decisión, commits y estado limpio local | Pendiente de commits locales y árbol limpio |
+| CA-10 | Notebook, decisión, commits y estado limpio local | PASS (3 commits locales; árbol limpio) |
