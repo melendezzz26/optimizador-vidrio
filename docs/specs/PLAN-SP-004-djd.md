@@ -44,7 +44,7 @@ Esta reevaluación posterior mantiene intactos los hitos Filler y DJD descritos 
 |---|---|---|
 | Auditoría v1 | Causa cardinal, efectos por geometría, criterio de aceptación y universo de orientaciones cuantificados. | Completa; ver `docs/spikes/SP-004-pair-block-v2-auditoria.md`. |
 | Contrato angular | Solo ángulos del motor común `0, 5, ..., 355°`; equivalencia solo para máscaras raster idénticas. | Implementado; pendiente benchmark. |
-| Pruning y trazas | Contar pares, producto teórico, simetría, cotas de caja, fase heurística, combinaciones geométricas y offsets. | Implementado; el recorte por fase puede perder soluciones dependientes de raster y se reporta por separado. |
+| Pruning y trazas | Contar pares, producto teórico, simetría, cotas de caja, fase heurística, combinaciones geométricas y offsets. | Implementado; el recorte por fase conserva el menor bounding box mínimo por giro relativo y puede perder soluciones dependientes de raster; se reporta por separado. |
 | Calidad del bloque | Aceptar solo ahorro positivo del bounding box conjunto contra las dos cajas separadas; densidad descriptiva. | Implementado como adaptación experimental; pendiente benchmark. |
 | Casos congelados | Discriminante existente y dos diagnósticos con intención previa, sin retoque postresultado. | Completo. |
 | Pruebas, matriz y notebook | Regresión FF/BF/WF, métricas oficiales, determinismo ×3, resultados y explicación v1/v2. | Pendiente de ejecución y actualización. |
