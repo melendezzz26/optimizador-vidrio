@@ -49,9 +49,9 @@ La tabla se completará con referencia a prueba y archivo de evidencia al cerrar
 | Benchmark v2 | Comparar FF/BF/WF/Pair-Block en serie; registrar clasificacion A-E, placements y tres tiempos. | CSV/JSON v2. | Completo; NO-GO por baja aplicabilidad y costo. |
 | Notebook/decision | Actualizar celdas, outputs reales y GO/NO-GO TA-042. | Notebook ejecutado y decision final. | Completo; NO-GO para TA-042. |
 
-## Estado vigente — mini-spike Hole Filling
+## Estado histórico — mini-spike y benchmark EXP Hole Filling
 
-La tabla de Pair-Block v2 anterior es histórica y queda cerrada por la decisión NO-GO documentada en `docs/evidence/sprint-02/SP-004/README.md`. El trabajo vigente se limita al mini-spike HF:
+La tabla de Pair-Block v2 anterior es histórica y queda cerrada por la decisión NO-GO documentada en `docs/evidence/sprint-02/SP-004/README.md`. El trabajo de la etapa histórica siguiente fue el mini-spike HF:
 
 | Fase | Trabajo | Evidencia | Estado |
 |---|---|---|---|
@@ -76,3 +76,20 @@ La matriz CA anterior pertenece al cierre historico de Pair-Block. La verificaci
 | Benchmark oficial | Tres EXP inalterados; HF no utilizo pockets, clases A/D/E; COMPLEX supero 10x. | NO-GO para TA-042. |
 | Regresiones | Tests HF y suites enfocadas FF/BF/WF, placement y angulos. | 11 + 145 PASS. |
 | Notebook y evidencia | Notebook con outputs derivados de trazas guardadas, SVGs, CSV y JSON. | Completo; commits locales al cierre, sin push/PR/merge. |
+
+## Cierre final — pedidos realistas
+
+El mini-spike y el benchmark EXP anteriores se conservan como evidencia histórica. La última fase comparó pedidos sintéticos realistas congelados en `fda6d12`, sin cambiar TA-027 ni los fixtures previos.
+
+| Fase | Trabajo | Evidencia | Estado |
+|---|---|---|---|
+| Intención y congelación | Definir y guardar tres pedidos con círculos, triángulos/convexos y mezcla antes de ejecutar métodos. | Tres SHA-256 y manifiesto con stock, dimensiones y regla de clasificación. | PASS; commit `fda6d12`. |
+| Benchmark serial | FF/BF/WF y tres repeticiones HF por fixture, configuración compartida y métricas oficiales intactas. | CSV/JSON con tiempos, placements y contadores. | PASS; ejecuciones secuenciales. |
+| Determinismo | Comparar firmas funcionales HF entre tres repeticiones. | Firmas sin tiempo y resultados por repetición en JSON. | PASS ×3 fixtures. |
+| Visualización | Crear figuras de layout previo, pocket, pieza pendiente y placement solo si HF utilizó pocket. | Una figura para 002 y seis para 003; ninguna para 001. | PASS; escala de grises y SVG parseable. |
+| Dictamen y notebook | Publicar resultados reales y aplicar la regla E > 10× predeclarada. | Notebook con outputs locales, CSV/JSON y reporte. | NO-GO para TA-042; A/E, B/E y D/E. |
+| Pruebas | Ejecutar suite HF y regresiones focalizadas solicitadas. | `test_detector.py`, `test_optimizer.py` y suites FF/BF/WF/placement/ángulos. | 13 + 145 PASS. |
+
+HF-REALISTIC-001 no utilizó pockets y empató el baseline (A funcional), pero el runtime fue 270.88×. HF-REALISTIC-002 cambió el patrón con un pocket y métricas empatadas (B funcional), a 136.02×. HF-REALISTIC-003 usó seis pockets, pero colocó 19/20 y empeoró utilización, merma y recuperable (D funcional), a 424.65×. E prevalece como categoría registrada por el costo; la lectura funcional se informa aparte. La recomendación final es **NO-GO**.
+
+Evidencia final: [intención y fixtures](../../experiments/optimization/hole_filling/cases/), [CSV](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_realistic_results.csv), [traza](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_realistic_trace.json), [notebook](../../experiments/optimization/colab/SP004-Hole-Filling.ipynb) y [reporte acumulado](../evidence/sprint-02/SP-004/README.md). Sin push, PR, merge ni integración TA-042.

@@ -173,3 +173,17 @@ Las 11 pruebas HF cubren componentes y exterior, circulo, triangulos, convexo, c
 - [Evidencia acumulada de SP-004](../evidence/sprint-02/SP-004/README.md)
 
 Trabajo local en `spike/S2-SP004-djd`: sin push, PR ni merge.
+
+## Validación final de Hole Filling con pedidos realistas
+
+Se completó el gate solicitado con tres pedidos sintéticos congelados antes del benchmark en `fda6d12`, cada fixture registrado por SHA-256 en [la intención predeclarada](../../experiments/optimization/hole_filling/cases/HF-REALISTIC-INTENT.md). Se ejecutaron FF, BF, WF y HF en serie con raster 1 mm, giros de 5°, margen 5 mm, separación 3 mm, material/espesor comunes y retazo antes de plancha. HF tuvo tres repeticiones por pedido.
+
+| Caso | FF/BF/WF | Hole Filling | Lectura funcional / costo |
+|---|---|---|---|
+| 001, círculos y piezas pequeñas (15) | 15/15; 1 retazo + 1 plancha; 65.745%; merma 49,908.91 mm²; recuperable 18,738 mm² | Mismas métricas; 0 pockets usados; 96,383 ms (270.88×) | A funcional / E por costo |
+| 002, triángulos y convexos (18) | 18/18; 1 + 1; 43.490%; merma 57,164 mm²; recuperable 66,536 mm² | Pieza 5 en pocket a 255°, (283, 41); métricas iguales; 236,795 ms (136.02×) | B funcional / E por costo |
+| 003, mezcla heterogénea (20) | 20/20; 1 + 1; 74.329%; merma 60,627.26 mm²; recuperable 14,948 mm² | Seis placements pocket, 19/20; 71.101%; merma 77,120.58 mm²; recuperable 7,958 mm²; 238,463 ms (424.65×) | D funcional / E por costo |
+
+Los contadores fueron 0/11/70 componentes de anclajes detectados y 0/1/6 pockets usados para 001/002/003. Las tres firmas funcionales se repitieron en los tres runs de cada caso. El costo dominante fue generar el mapa raster de anclajes (medianas 91.68 s, 226.46 s y 231.31 s); el etiquetado de componentes tomó 3.11 s, 5.53 s y 4.84 s. Las cifras completas, runtimes individuales, placements, fuentes, rotaciones y figuras están en [CSV](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_realistic_results.csv), [JSON](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_realistic_trace.json) y [notebook](../../experiments/optimization/colab/SP004-Hole-Filling.ipynb). Solo se generaron figuras para 002 y 003, que usaron pockets.
+
+**Decisión final para TA-042: NO-GO.** HF altera patrones en 002/003, pero en 002 solo empata métricas a 136×; en 003 pierde cobertura y empeora las métricas funcionales a 425×; en 001 equivale al baseline sin pocket a 271×. El resultado no cumple el criterio de utilidad funcional y costo aceptable. Determinismo: PASS ×3 por fixture. Pruebas actuales: 13 de laboratorio HF y 145 regresiones enfocadas, todas PASS. La evidencia detallada está en el [README de SP-004](../evidence/sprint-02/SP-004/README.md). No hubo cambios de producción ni TA-027, push, PR o merge.

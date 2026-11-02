@@ -181,4 +181,44 @@ Decision de integracion: **NO-GO para TA-042**. El mecanismo funciona en diagnos
 - Notebook con outputs reales: [`SP004-Hole-Filling.ipynb`](../../../../experiments/optimization/colab/SP004-Hole-Filling.ipynb).
 - Especificacion y plan: [SPEC](../../../specs/SPEC-SP-004-heuristica-m4.md), [PLAN](../../../specs/PLAN-SP-004-heuristica-m4.md), [TASKS](../../../specs/TASKS-SP-004-heuristica-m4.md); [investigacion M4 actualizada](../../../spikes/SP-004-investigacion-m4.md).
 
-Pruebas: 11 PASS de Hole Filling; 145 PASS de regresiones FF/BF/WF, placement y rotaciones. No se modificaron produccion ni fixtures oficiales. Los cambios quedan en commits locales; sin push, PR ni merge.
+En el cierre inicial se registraron 11 PASS de Hole Filling y 145 regresiones. La validación realista actual amplió la suite HF a 13 PASS; no se modificaron producción ni fixtures oficiales. El cierre de esta etapa se conserva en commits locales, sin push, PR ni merge.
+
+## Validación final con pedidos realistas — Hole Filling
+
+Se congelaron tres pedidos sintéticos antes de ejecutar las heurísticas. Los bytes de cada JSON están identificados por SHA-256 y por el commit local `fda6d12`; el detalle de la intención, dimensiones y configuración está en [HF-REALISTIC-INTENT.md](../../../../experiments/optimization/hole_filling/cases/HF-REALISTIC-INTENT.md). Son perfiles plausibles de taller, no datos de clientes. Se mantuvieron material 1, vidrio de 6 mm, raster de 1 mm, orientaciones cada 5°, margen 5 mm, separación 3 mm y política retazo → plancha. Cada caso tiene un retazo y una plancha.
+
+### Comparación de métricas oficiales
+
+Cada celda indica colocadas/solicitadas, sin colocar, retazos/planchas usados, utilización, merma en mm², área recuperable en mm² y runtime en ms. Las cifras funcionales son las métricas originales del motor; runtime es una ejecución para FF/BF/WF y la mediana de tres para HF.
+
+| Caso | FF | BF | WF | HF |
+|---|---|---|---|---|
+| HF-REALISTIC-001 · 15 unidades | 15/15; 0; 1/1; 65.745%; 49,908.91; 18,738; 369 | 15/15; 0; 1/1; 65.745%; 49,908.91; 18,738; 385 | 15/15; 0; 1/1; 65.745%; 49,908.91; 18,738; 356 | 15/15; 0; 1/1; 65.745%; 49,908.91; 18,738; 96,383 |
+| HF-REALISTIC-002 · 18 unidades | 18/18; 0; 1/1; 43.490%; 57,164.00; 66,536; 1,741 | 18/18; 0; 1/1; 43.490%; 57,164.00; 66,536; 1,795 | 18/18; 0; 1/1; 43.490%; 57,164.00; 66,536; 1,792 | 18/18; 0; 1/1; 43.490%; 57,164.00; 66,536; 236,795 |
+| HF-REALISTIC-003 · 20 unidades | 20/20; 0; 1/1; 74.329%; 60,627.26; 14,948; 574 | 20/20; 0; 1/1; 74.329%; 60,627.26; 14,948; 566 | 20/20; 0; 1/1; 74.329%; 60,627.26; 14,948; 562 | 19/20; 1; 1/1; 71.101%; 77,120.58; 7,958; 238,463 |
+
+Columnas funcionales: colocadas/solicitadas; no colocadas; retazos/planchas; porcentaje de uso; merma; recuperable; runtime. Todos los métodos conservaron el mismo inventario inicial por caso.
+
+### Actividad de pockets y clasificación
+
+Los pockets detectados son componentes interiores del mapa de anclajes legales para una pieza/orientación. Son candidatos de placement, no un conteo de cavidades físicas únicas. El runtime relativo usa la mediana HF frente al baseline más rápido. La categoría E tiene precedencia por el umbral congelado de más de 10×; entre paréntesis se indica la lectura funcional sin esa penalización.
+
+| Caso | Pockets detectados | Pockets usados | Piezas en pocket | Resultado |
+|---|---:|---:|---:|---|
+| HF-REALISTIC-001 | 0 | 0 | 0 | E (A funcional); patrón y métricas iguales al baseline; 270.88× |
+| HF-REALISTIC-002 | 11 | 1 | 1 | E (B funcional); patrón distinto, métricas iguales; 136.02× |
+| HF-REALISTIC-003 | 70 | 6 | 6 | E (D funcional); una unidad sin colocar y peores uso, merma y recuperable; 424.65× |
+
+HF-REALISTIC-001 contiene tres círculos de 120–180 mm de diámetro, dos paneles y diez piezas pequeñas. Los círculos no produjeron pockets utilizables; HF recurrió al fallback en sus 15 piezas y reprodujo el baseline. No se generó una figura de pocket.
+
+HF-REALISTIC-002 contiene ocho triángulos, cinco polígonos convexos y cinco piezas pequeñas. HF colocó la pieza 5 en la plancha a 255° y en (283, 41) mm. La firma de placement cambió respecto de FF/BF/WF, aunque las métricas empataron. [La figura](../../../../experiments/optimization/hole_filling/figures/HF-REALISTIC-002-pocket-01.svg) muestra el layout previo, el pocket, la pieza y su placement.
+
+HF-REALISTIC-003 mezcla cuatro rectángulos grandes, cuatro círculos, seis polígonos convexos y seis rectángulos pequeños. HF usó seis pockets: pieza 13 en PLANCHA a 70° (155, 132); pieza 14 en PLANCHA a 170° (242, 153); pieza 10 en PLANCHA a 110° (187, 240); pieza 12 en PLANCHA a 350° (68, 240); pieza 19 en PLANCHA a 15° (123, 332); pieza 15 en RETAZO a 10° (135, 148). Vistas: [01](../../../../experiments/optimization/hole_filling/figures/HF-REALISTIC-003-pocket-01.svg), [02](../../../../experiments/optimization/hole_filling/figures/HF-REALISTIC-003-pocket-02.svg), [03](../../../../experiments/optimization/hole_filling/figures/HF-REALISTIC-003-pocket-03.svg), [04](../../../../experiments/optimization/hole_filling/figures/HF-REALISTIC-003-pocket-04.svg), [05](../../../../experiments/optimization/hole_filling/figures/HF-REALISTIC-003-pocket-05.svg), [06](../../../../experiments/optimization/hole_filling/figures/HF-REALISTIC-003-pocket-06.svg). A pesar de esas decisiones, HF dejó una pieza sin colocar y empeoró las métricas respecto de los tres baselines.
+
+La detección incluye generación del mapa de anclajes y etiquetado de componentes; la traza separa ambas etapas, el placement pocket y la búsqueda fallback. Los tiempos medianos de detección fueron 94,789.53 / 231,987.67 / 236,147.70 ms; la generación de mapa consumió 91,675.95 / 226,456.56 / 231,309.62 ms. El etiquetado tomó 3,113.58 / 5,531.11 / 4,838.08 ms y los placements pocket 1,515.89 / 3,073.25 / 2,131.74 ms. Se revisaron 0/11/70 opciones pocket, se contaron 15/17/14 fallbacks y 3/5/6 cambios de fuente; la traza conserva además 427,386,185 / 588,696,124 / 1,087,324,886 posiciones geométricas evaluadas. El Working Set de Windows observado durante la ejecución se mantuvo alrededor de 460 MB; no se usó un profiler de memoria.
+
+Las tres firmas funcionales HF fueron iguales entre sus respectivas tres repeticiones: **determinismo PASS** para los tres casos. Tiempos individuales, placements, hashes, configuración y contadores están en [traza JSON](hole-filling/sp004_hf_realistic_trace.json); el [CSV](hole-filling/sp004_hf_realistic_results.csv) contiene la comparación y las métricas agregadas. El [notebook](../../../../experiments/optimization/colab/SP004-Hole-Filling.ipynb) incluye los outputs derivados de esa traza y las figuras solo para casos con pockets usados.
+
+**Dictamen final: NO-GO para TA-042.** HF sí mostró decisiones propias en 002 y 003, pero en 002 solo cambió el patrón con un costo de 136×; en 003 colocó seis piezas en pockets pero perdió cobertura y empeoró merma, uso y recuperable a 425×; 001 no usó pockets y costó 271×. El efecto no justifica ese costo local y no conviene integrar esta implementación.
+
+Verificación final: 13 pruebas HF PASS y 145 regresiones focalizadas PASS. Los SVG se validaron como XML. No se modificaron producción, FF/BF/WF, fixtures TA-027 ni los resultados previos de SP-004. No hubo push, PR ni merge.

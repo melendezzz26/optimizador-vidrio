@@ -34,6 +34,7 @@ def build_notebook():
     diagnostic = json.loads((EVIDENCE / "sp004_hole_filling_trace.json").read_text(encoding="utf-8"))
     detection = json.loads((EVIDENCE / "sp004_hole_filling_detection.json").read_text(encoding="utf-8"))
     official = json.loads((EVIDENCE / "sp004_hole_filling_official_trace.json").read_text(encoding="utf-8"))
+    realistic = json.loads((EVIDENCE / "sp004_hf_realistic_trace.json").read_text(encoding="utf-8"))
 
     cells = [markdown_cell(f"""# SP-004 — Raster Hole Filling / Pocket Filling
 
@@ -195,7 +196,7 @@ SMALL empata con FF y no encuentra pockets (A). MEDIUM reproduce el resultado FF
 - Mini-spike: cuatro casos, 3/3 deterministas; clasificaciones B, B, B, A. HF usó 1 pocket en cada positivo y 0 en el control.
 - Runtime relativo a baseline más rápido: {', '.join(f"{case['case_id']} {case['classification']['runtime_ratio_vs_fastest_baseline']:.2f}×" for case in diagnostic['cases'])}.
 - Benchmark: {', '.join(f"{case['case_id']} {case['classification']['category']} / {case['classification']['runtime_ratio_vs_fastest_baseline']:.2f}×" for case in official['cases'])}.
-- Verificación de placement: `{ROOT / 'experiments/optimization/hole_filling/test_detector.py'}` y `test_optimizer.py`, 11 pruebas PASS. Regresiones FF/BF/WF, placement y ángulos del motor: 145 pruebas PASS.
+- Verificación de placement: `{ROOT / 'experiments/optimization/hole_filling/test_detector.py'}` y `test_optimizer.py`, 13 pruebas PASS. Regresiones FF/BF/WF, placement y ángulos del motor: 145 pruebas PASS.
 - La detección acelerada generó el mapa por filas de bits según el patrón existente de `first_position`; el anclaje final usa `SheetLayout.place()` y se revalida reproduciendo todo el layout.
 - Las corridas fueron seriales, sin multiprocessing; el pico de RAM no se instrumento.
 - No se modificaron TA-042, producción, API, frontend, BD, FF/BF/WF ni fixtures TA-027. No hubo push, PR ni merge.
@@ -208,6 +209,94 @@ SMALL empata con FF y no encuentra pockets (A). MEDIUM reproduce el resultado FF
 - Guo et al. (2022), [Two-dimensional irregular packing problems: A review](https://doi.org/10.3389/fmech.2022.966691).
 
 Los outputs del notebook son resúmenes de los artefactos JSON/CSV guardados en `docs/evidence/sprint-02/SP-004/hole-filling/`; no se fabricaron ni se retocaron resultados.
+"""))
+
+    cells.append(markdown_cell(f"""# Validación final con pedidos realistas
+
+Se fijaron tres pedidos sintéticos plausibles antes de comparar. Los SHA-256 y el commit de congelación se leen desde la traza. Cada método usa el mismo stock, material, espesor y configuración; los tres HF se ejecutaron en serie.
+
+Clasificaciones registradas: {', '.join(f"{case['case_id']} {case['classification']['category']}" for case in realistic['cases'])}. E prevalece cuando HF supera 10× el baseline más rápido, criterio declarado en el manifiesto previo.
+"""))
+
+    for index, case in enumerate(realistic["cases"], start=1):
+        case_id = case["case_id"]
+        shape_counts = {}
+        for item in case["pieces"]:
+            shape = item["geometry"]["type"]
+            shape_counts[shape] = shape_counts.get(shape, 0) + 1
+        figure_lines = []
+        if case["figures"]:
+            primary = (ROOT / case["figures"][0]).relative_to(ROOT / "experiments/optimization")
+            figure_lines.append(f"![Placement pocket-first {case_id}](../{primary.as_posix()})")
+            if len(case["figures"]) > 1:
+                extras = ", ".join(
+                    f"[`pocket {number:02d}`](../{(ROOT / name).relative_to(ROOT / 'experiments/optimization').as_posix()})"
+                    for number, name in enumerate(case["figures"][1:], start=2)
+                )
+                figure_lines.append(f"Figuras adicionales: {extras}.")
+        else:
+            figure_lines.append("No se genera figura de pocket: HF no utilizó ninguno en este pedido.")
+
+        cells.append(markdown_cell(f"""## {case_id} — {['círculos', 'triángulos y convexos', 'pedido mixto'][index-1]}
+
+Unidades: {case['requested_units']}; geometrías: {shape_counts}; material {case['material']['glass_type_id']}, espesor {case['material']['thickness_mm']} mm. Fixture SHA-256: `{case['fixture_freeze']['fixture_sha256']}`; commit de congelación `{case['fixture_freeze']['fixture_freeze_commit'][:8]}`.
+
+{' '.join(figure_lines)}
+
+### Qué hace
+
+Lee la comparación guardada de FF/BF/WF y las tres repeticiones HF, incluidos placements y decisiones pocket/fallback.
+
+### Por qué
+
+El pedido quedó congelado antes del benchmark; esta celda expone sus resultados sin volver a correr el optimizador.
+
+### Qué esperamos observar
+
+Métricas iguales o distintas, cantidad de pockets usados y costo por método para este perfil de pedido.
+"""))
+
+        code = f'''# Importamos json para leer la traza real del benchmark realista.
+import json
+# Importamos Path para localizar el repositorio desde la carpeta de trabajo.
+from pathlib import Path
+# Buscamos la raiz que contiene los resultados congelados de SP-004.
+ROOT = next(path for path in (Path.cwd(), *Path.cwd().parents) if (path / "docs/evidence/sprint-02/SP-004/hole-filling/sp004_hf_realistic_trace.json").exists())
+# Leemos la traza completa que incluye baselines y tres repeticiones HF.
+trace = json.loads((ROOT / "docs/evidence/sprint-02/SP-004/hole-filling/sp004_hf_realistic_trace.json").read_text(encoding="utf-8"))
+# Seleccionamos solo el caso explicado en esta sección.
+case = next(item for item in trace["cases"] if item["case_id"] == "{case_id}")
+# Mostramos la tabla funcional medida para cada método.
+print("Método | colocadas | retazos | planchas | uso % | merma mm² | recuperable mm² | runtime ms")
+# Recorremos FF, BF, WF y el resumen HF del mismo pedido.
+for run in case["baselines"] + [case["hole_filling"]]:
+    # Leemos las métricas oficiales ya calculadas por el motor.
+    metrics = run["official_metrics"]
+    # Imprimimos cada método sin recalcular métricas.
+    print(f"{{run['method']}} | {{metrics['placed_units']}}/{{metrics['requested_units']}} | {{metrics['remnants_used']}} | {{metrics['sheets_used']}} | {{metrics['utilization_pct']}} | {{metrics['waste_mm2']}} | {{metrics['recoverable_area_mm2']}} | {{metrics['runtime_ms']:.2f}}")
+# Leemos los contadores específicos de Hole Filling.
+hf = case["hole_filling"]
+# Imprimimos la decisión, el costo y el determinismo medidos.
+print(f"Clase {{case['classification']['category']}} | pockets {{hf['pockets_detected']}}/{{hf['pockets_used']}} | piezas en pocket {{hf['pieces_placed_in_pockets']}} | opciones {{hf['pocket_candidates_checked']}} | detección ms {{hf['pocket_detection_ms']:.2f}} | placement ms {{hf['pocket_placement_ms']:.2f}} | fallback {{hf['fallback_count']}} | cambios de fuente {{hf['source_switches']}} | determinista {{case['deterministic']}}")
+# Leemos las tres repeticiones HF guardadas para este mismo fixture.
+repetitions = case["hf_repetitions"]
+# Imprimimos cada runtime individual sin incluirlo en la firma funcional.
+print("HF repeticiones runtime ms | " + " | ".join(f"{{run['official_metrics']['runtime_ms']:.2f}}" for run in repetitions))
+# Recorremos cada placement HF con su decisión de pocket o fallback.
+for placement in hf["placements"]:
+    # Imprimimos identidad, fuente, giro, coordenadas y decisión.
+    print(f"pieza {{placement['piece_id']}} | {{placement['source']}} | {{placement['rotation_deg']}} grados | ({{placement['x_mm']}}, {{placement['y_mm']}}) mm | {{placement['decision']}}")
+'''
+        cells.append(code_cell(code, 3 + index))
+
+        interpretations = {
+            "HF-REALISTIC-001": "Los círculos no generaron componentes pocket utilizables. HF reprodujo el baseline en placements y métricas, pero su barrido fue de clase E por costo.",
+            "HF-REALISTIC-002": "HF colocó la pieza 5 en un pocket y cambió el patrón. Las métricas empataron con FF/BF/WF; el runtime mantuvo la clase E.",
+            "HF-REALISTIC-003": "HF colocó seis piezas en pockets, pero dejó una sin colocar y empeoró uso, merma y recuperable. El costo también superó ampliamente el umbral E.",
+        }
+        cells.append(markdown_cell(f"""### Interpretación de la salida
+
+{interpretations[case_id]}
 """))
 
     return {

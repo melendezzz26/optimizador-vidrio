@@ -2,7 +2,7 @@
 
 ## Estado
 
-Filler, DJD-1/3 y Pair-Block v1/v2 quedan como candidatos **NO-GO para TA-042**, con evidencia histórica preservada. El candidato actual de SP-004 es un mini-spike local de Raster Hole Filling / Pocket Filling. No se integra ninguna heurística en producción; no se cambian FF/BF/WF, TA-027, API, frontend ni BD.
+Filler, DJD-1/3 y Pair-Block v1/v2 quedan como candidatos **NO-GO para TA-042**, con evidencia histórica preservada. El candidato actual de SP-004, Raster Hole Filling / Pocket Filling, completó la validación final con pedidos sintéticos realistas y queda **NO-GO para TA-042** por costo excesivo y regresión funcional en el caso mixto. No se integra ninguna heurística en producción; no se cambian FF/BF/WF, TA-027, API, frontend ni BD.
 
 ## Contexto y objetivo
 
@@ -135,4 +135,20 @@ La puerta VIABLE autorizó la comparación posterior sobre los tres fixtures EXP
 
 HF no usó ningún pocket en EXP. SMALL empató con FF; MEDIUM reprodujo FF y quedó detrás de BF en merma (8 mm²) y área recuperable (8 mm²); COMPLEX también reprodujo FF y la búsqueda superó 10× el baseline más rápido. El dictamen para integración en TA-042 es **NO-GO** aunque el detector/placement funcionen en los diagnósticos deliberadamente apropiados. Esto demuestra que la señal es poco frecuente en esta matriz y que el costo puede crecer sin producir una decisión nueva.
 
-La evidencia está en [traza mini-spike](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_trace.json), [CSV mini-spike](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_results.csv), [detección](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_detection.json), [traza EXP](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_official_trace.json), [CSV EXP](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_official_results.csv) y [notebook con outputs locales](../../experiments/optimization/colab/SP004-Hole-Filling.ipynb). Las pruebas experimentales HF fueron 11 PASS; las regresiones enfocadas FF/BF/WF, placement y ángulos fueron 145 PASS.
+La evidencia está en [traza mini-spike](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_trace.json), [CSV mini-spike](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_results.csv), [detección](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_detection.json), [traza EXP](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_official_trace.json), [CSV EXP](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_official_results.csv) y [notebook con outputs locales](../../experiments/optimization/colab/SP004-Hole-Filling.ipynb). En el cierre inicial HF hubo 11 PASS; la suite actual ampliada tiene 13 PASS. Las regresiones enfocadas FF/BF/WF, placement y ángulos fueron 145 PASS.
+
+## Validación final con pedidos realistas
+
+Los pedidos `HF-REALISTIC-001/002/003` quedaron congelados antes de correr los métodos en el commit local `fda6d12`; [HF-REALISTIC-INTENT.md](../../experiments/optimization/hole_filling/cases/HF-REALISTIC-INTENT.md) contiene la composición, rationale y SHA-256. Se compararon FF/BF/WF con HF serialmente, y HF se repitió tres veces por caso, con configuración idéntica: raster 1 mm, ángulos cada 5°, margen 5 mm, separación 3 mm, material 1, espesor 6 mm y stock retazo → plancha.
+
+| Fixture | Resultado observado | Clasificación con regla congelada |
+|---|---|---|
+| HF-REALISTIC-001, círculos y piezas pequeñas | 0 pockets usados; 15/15, mismas métricas/patrón; HF 96.38 s contra mejor baseline 0.356 s (270.88×). | E por costo; funcionalmente A |
+| HF-REALISTIC-002, triángulos y convexos | 11 componentes candidatos; 1 pocket usado para pieza 5 a 255°, (283, 41); métricas empatadas; HF 236.79 s contra 1.741 s (136.02×). | E por costo; funcionalmente B |
+| HF-REALISTIC-003, mezcla heterogénea | 70 componentes candidatos; 6 placements pocket; 19/20, menor uso, mayor merma y menos recuperable; HF 238.46 s contra 0.562 s (424.65×). | E por costo; funcionalmente D |
+
+La traza usa "pockets detectados" para componentes interiores del mapa de anclajes por pieza/orientación; no representa cavidades físicas únicas. Para el caso 003 los seis placements fueron reproducibles, pero no evitaron una pieza sin colocar. Las firmas funcionales de HF coinciden entre las tres repeticiones de cada caso. La generación del mapa de anclajes domina el costo y se informa separada del etiquetado y placement.
+
+**Decisión final: NO-GO para TA-042.** 001 no usa pockets y solo replica el baseline; 002 cambia el patrón pero empata métricas a 136×; 003 usa pockets pero empeora cobertura, aprovechamiento, merma y recuperable a 425×. El efecto práctico no compensa el costo de esta implementación. No se ajustó la regla de clasificación después de ver los resultados.
+
+Artefactos: [CSV realista](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_realistic_results.csv), [traza y firmas](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_realistic_trace.json), [fixtures congelados](../../experiments/optimization/hole_filling/cases/) y [notebook final](../../experiments/optimization/colab/SP004-Hole-Filling.ipynb). Las pruebas actuales de laboratorio HF: 13 PASS; regresiones FF/BF/WF, placement y ángulos: 145 PASS.
