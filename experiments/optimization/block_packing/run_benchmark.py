@@ -24,16 +24,22 @@ from experiments.optimization.loader import CASES, build_problem, load_problem, 
 BLOCK_CASE = "BLOCK-DISCRIMINANT-001"
 BLOCK_CASE_PATH = Path(__file__).resolve().parent / "cases" / f"{BLOCK_CASE}.json"
 METHODS = (("FF", FirstFitOptimizer), ("BF", BestFitOptimizer),
-           ("WF", WorstFitOptimizer), ("Pair-Block", BlockPackingExperimental))
+           ("WF", WorstFitOptimizer), ("Pair-Block-v2", BlockPackingExperimental))
 OUTPUT = ROOT / "docs/evidence/sprint-02/SP-004/benchmark-results"
+DIAGNOSTIC_CASES = (
+    "BLOCK-V2-OBLIQUE-TRIANGLES-001",
+    "BLOCK-V2-MIXED-TRIANGLE-CIRCLE-001",
+)
 
 
 def load_case(case_id):
     """Carga un fixture oficial congelado o el JSON no oficial indicado."""
     if case_id in CASES:
         return read_case(case_id), load_problem(case_id)
-    if case_id == BLOCK_CASE:
-        data = json.loads(BLOCK_CASE_PATH.read_text(encoding="utf-8"))
+    if case_id.startswith("BLOCK-"):
+        path = (BLOCK_CASE_PATH if case_id == BLOCK_CASE else
+                Path(__file__).resolve().parent / "cases" / f"{case_id}.json")
+        data = json.loads(path.read_text(encoding="utf-8"))
         return data, build_problem(data)
     if case_id.startswith("DJD-DIAGNOSTIC-"):
         path = ROOT / "experiments/optimization/djd/cases" / f"{case_id}.json"
@@ -56,12 +62,84 @@ def _placement_rows(result):
     } for placement in result.placements]
 
 
+def _pattern_signature(detail):
+    """Identidad, fuente, coordenadas y orientación, en orden estable."""
+    return tuple(sorted((
+        item["piece_id"], item["unit_index"], item["source"], item["material_id"],
+        item["physical_unit_index"], item["x_mm"], item["y_mm"], item["rotation_deg"],
+    ) for item in detail["placements"]))
+
+
+def _functional_score(row):
+    sources = int(row["remnants_used"]) + int(row["sheets_used"])
+    return (int(row["placed_units"]), -sources, -int(row["sheets_used"]),
+            Decimal(row["utilization_pct"]),
+            -Decimal(row["waste"]), Decimal(row["recoverable_area"]))
+
+
+def _classify_case(case_rows, case_details):
+    """Apply the predeclared exclusive A-E precedence to one benchmark case."""
+    by_method = {row["method"]: row for row in case_rows}
+    baselines = [by_method[name] for name in ("FF", "BF", "WF")]
+    best = max(baselines, key=_functional_score)
+    pair = by_method["Pair-Block-v2"]
+    fastest = min(float(row["runtime_ms"]) for row in baselines)
+    ratio = float(pair["runtime_ms"]) / fastest if fastest else float("inf")
+    pair_sources = int(pair["remnants_used"]) + int(pair["sheets_used"])
+    best_sources = int(best["remnants_used"]) + int(best["sheets_used"])
+    worse = (
+        int(pair["placed_units"]) < int(best["placed_units"])
+        or pair_sources > best_sources
+        or (pair_sources == best_sources
+            and int(pair["sheets_used"]) > int(best["sheets_used"]))
+        or Decimal(pair["utilization_pct"]) < Decimal(best["utilization_pct"])
+        or Decimal(pair["waste"]) > Decimal(best["waste"])
+        or Decimal(pair["recoverable_area"]) < Decimal(best["recoverable_area"])
+    )
+    improved = (
+        pair_sources < best_sources
+        or (pair_sources == best_sources
+            and int(pair["sheets_used"]) < int(best["sheets_used"]))
+        or
+        Decimal(pair["utilization_pct"]) > Decimal(best["utilization_pct"])
+        or Decimal(pair["waste"]) < Decimal(best["waste"])
+        or Decimal(pair["recoverable_area"]) > Decimal(best["recoverable_area"])
+    )
+    if worse or ratio > 10:
+        code = "E"
+        reason = ("empeora al menos una métrica funcional" if worse else
+                  "runtime total supera 10× al baseline más rápido")
+    elif improved and int(pair["placed_units"]) >= int(best["placed_units"]) and pair_sources <= best_sources:
+        code, reason = "C", "mejora una métrica funcional sin perder cobertura ni abrir más fuentes"
+    else:
+        metrics_tie = tuple(pair[key] for key in (
+            "placed_units", "remnants_used", "sheets_used", "utilization_pct",
+            "waste", "recoverable_area")) == tuple(best[key] for key in (
+            "placed_units", "remnants_used", "sheets_used", "utilization_pct",
+            "waste", "recoverable_area"))
+        detail_by_method = {item["method"]: item for item in case_details}
+        baseline_pattern = _pattern_signature(detail_by_method[best["method"]])
+        changed = _pattern_signature(detail_by_method["Pair-Block-v2"]) != baseline_pattern
+        block_trace = detail_by_method["Pair-Block-v2"].get("block_trace", {})
+        if not metrics_tie:
+            code, reason = "E", "métricas funcionales cambiaron sin mejora neta"
+        elif not block_trace.get("placed_blocks"):
+            code, reason = "D", "no se colocó ningún bloque y no aplica E"
+        elif changed:
+            code, reason = "B", "bloque colocado; cambió el patrón y las métricas funcionales empataron"
+        else:
+            code, reason = "A", "bloque colocado; patrón y métricas funcionales empataron"
+    return {"classification": code, "reason": reason,
+            "best_baseline": best["method"], "fastest_baseline_ms": fastest,
+            "runtime_ratio_fastest_baseline": ratio}
+
+
 def run_one(case_id, method_name, optimizer_class):
     """Ejecuta un caso de forma aislada y devuelve fila y traza serializables."""
     data, problem = load_case(case_id)
     start = time.perf_counter_ns()
     trace = None
-    if method_name == "Pair-Block":
+    if method_name.startswith("Pair-Block"):
         result, trace = optimizer_class().optimize(problem)
     else:
         result = optimizer_class().optimize(problem)
@@ -80,9 +158,26 @@ def run_one(case_id, method_name, optimizer_class):
         "waste": str(metrics.waste_mm2) if metrics else "",
         "recoverable_area": str(metrics.recoverable_remnant_mm2) if metrics else "",
         "runtime_ms": f"{runtime_ms:.3f}",
+        "classification": "", "classification_reason": "", "best_baseline": "",
+        "runtime_ratio_fastest_baseline": "",
         "candidate_pairs": trace.candidate_pairs if trace else "",
+        "compatible_pairs": trace.compatible_pairs if trace else "",
         "filtered_pairs": trace.filtered_pairs if trace else "",
         "geometrically_checked_pairs": trace.geometrically_checked_pairs if trace else "",
+        "orientation_combinations_theoretical": trace.orientation_combinations_theoretical if trace else "",
+        "orientation_combinations_after_symmetry": trace.orientation_combinations_after_symmetry if trace else "",
+        "orientation_combinations_after_bounds": trace.orientation_combinations_after_bounds if trace else "",
+        "orientation_combinations_after_phase": trace.orientation_combinations_after_phase if trace else "",
+        "orientation_combinations_pruned": trace.orientation_combinations_pruned if trace else "",
+        "orientation_combinations_pruned_by_compatibility": trace.orientation_combinations_pruned_by_compatibility if trace else "",
+        "orientation_combinations_pruned_by_symmetry": trace.orientation_combinations_pruned_by_symmetry if trace else "",
+        "orientation_combinations_pruned_by_bounds": trace.orientation_combinations_pruned_by_bounds if trace else "",
+        "orientation_combinations_pruned_by_phase": trace.orientation_combinations_pruned_by_phase if trace else "",
+        "orientation_combinations_pruned_by_best_bound": trace.orientation_combinations_pruned_by_best_bound if trace else "",
+        "orientation_combinations_evaluated": trace.orientation_combinations_evaluated if trace else "",
+        "relative_positions_theoretical": trace.relative_positions_theoretical if trace else "",
+        "relative_positions_pruned": trace.relative_positions_pruned if trace else "",
+        "relative_positions_checked": trace.relative_positions_checked if trace else "",
         "accepted_blocks": trace.accepted_blocks if trace else "",
         "placed_blocks": trace.placed_blocks if trace else "",
         "pieces_in_blocks": trace.pieces_in_blocks if trace else "",
@@ -105,7 +200,22 @@ def run_one(case_id, method_name, optimizer_class):
     if trace:
         detail["block_trace"] = {
             "candidate_pairs": trace.candidate_pairs, "filtered_pairs": trace.filtered_pairs,
+            "compatible_pairs": trace.compatible_pairs,
             "geometrically_checked_pairs": trace.geometrically_checked_pairs,
+            "orientation_combinations_theoretical": trace.orientation_combinations_theoretical,
+            "orientation_combinations_after_symmetry": trace.orientation_combinations_after_symmetry,
+            "orientation_combinations_after_bounds": trace.orientation_combinations_after_bounds,
+            "orientation_combinations_after_phase": trace.orientation_combinations_after_phase,
+            "orientation_combinations_pruned": trace.orientation_combinations_pruned,
+            "orientation_combinations_pruned_by_compatibility": trace.orientation_combinations_pruned_by_compatibility,
+            "orientation_combinations_pruned_by_symmetry": trace.orientation_combinations_pruned_by_symmetry,
+            "orientation_combinations_pruned_by_bounds": trace.orientation_combinations_pruned_by_bounds,
+            "orientation_combinations_pruned_by_phase": trace.orientation_combinations_pruned_by_phase,
+            "orientation_combinations_pruned_by_best_bound": trace.orientation_combinations_pruned_by_best_bound,
+            "orientation_combinations_evaluated": trace.orientation_combinations_evaluated,
+            "relative_positions_theoretical": trace.relative_positions_theoretical,
+            "relative_positions_pruned": trace.relative_positions_pruned,
+            "relative_positions_checked": trace.relative_positions_checked,
             "accepted_blocks": trace.accepted_blocks, "placed_blocks": trace.placed_blocks,
             "pieces_in_blocks": trace.pieces_in_blocks, "standalone_pieces": trace.standalone_pieces,
             "block_compaction": trace.block_compaction,
@@ -120,7 +230,7 @@ def run_one(case_id, method_name, optimizer_class):
 def main():
     """Corre benchmarks y determinismo en serie, liberando resultados entre corridas."""
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    case_ids = (*CASES, BLOCK_CASE)
+    case_ids = (*CASES, BLOCK_CASE, *DIAGNOSTIC_CASES)
     rows, details = [], []
     for case_id in case_ids:
         for method_name, optimizer_class in METHODS:
@@ -133,11 +243,27 @@ def main():
                   f"bloques={row['placed_blocks']}")
             del row, detail
             gc.collect()
+    classifications = {}
+    for case_id in case_ids:
+        case_rows = [row for row in rows if row["case"] == case_id]
+        case_details = [item for item in details if item["case"] == case_id]
+        classification = _classify_case(case_rows, case_details)
+        classifications[case_id] = classification
+        for row in case_rows:
+            if row["method"] == "Pair-Block-v2":
+                row.update(classification=classification["classification"],
+                           classification_reason=classification["reason"],
+                           best_baseline=classification["best_baseline"],
+                           runtime_ratio_fastest_baseline=round(
+                               classification["runtime_ratio_fastest_baseline"], 3))
+        for item in case_details:
+            if item["method"] == "Pair-Block-v2":
+                item["classification"] = classification
     determinism = {}
     for case_id in case_ids:
         signatures, runtimes = [], []
         for _ in range(3):
-            row, detail = run_one(case_id, "Pair-Block", BlockPackingExperimental)
+            row, detail = run_one(case_id, "Pair-Block-v2", BlockPackingExperimental)
             functional = tuple(row[key] for key in (
                 "placed_units", "unplaced_units", "remnants_used", "sheets_used",
                 "utilization_pct", "waste", "recoverable_area"))
@@ -150,20 +276,20 @@ def main():
         determinism[case_id] = {"runs": 3, "pass": signatures[0] == signatures[1] == signatures[2],
             "runtime_ms": runtimes}
         print(f"Determinismo {case_id} ×3: {'PASS' if determinism[case_id]['pass'] else 'FAIL'}")
-    csv_path = OUTPUT / "sp004_block_results.csv"
+    csv_path = OUTPUT / "sp004_block_v2_results.csv"
     with csv_path.open("w", newline="", encoding="utf-8") as stream:
         writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
         writer.writeheader()
         writer.writerows(rows)
     payload = {
-        "spike": "SP-004", "candidate": "Pair-Block experimental adaptation",
+        "spike": "SP-004", "candidate": "Pair-Block v2 experimental adaptation",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "runtime": {"python": sys.version, "platform": sys.platform},
-        "official_fixtures": list(CASES), "non_official_case": BLOCK_CASE,
+        "official_fixtures": list(CASES), "non_official_cases": [BLOCK_CASE, *DIAGNOSTIC_CASES],
         "method_order": [name for name, _ in METHODS], "results": details,
-        "determinism": determinism,
+        "classifications": classifications, "determinism": determinism,
     }
-    json_path = OUTPUT / "sp004_block_trace.json"
+    json_path = OUTPUT / "sp004_block_v2_trace.json"
     json_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
     print(csv_path)
     print(json_path)
