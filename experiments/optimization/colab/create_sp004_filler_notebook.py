@@ -8,7 +8,7 @@ import traceback
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
-TARGET = Path(__file__).resolve().parent / "SP004-Filler.ipynb"
+TARGET = Path(__file__).resolve().parent / "SP004-Filler-descartado.ipynb"
 cells = []
 
 
@@ -202,7 +202,7 @@ section(30,"Determinismo COMPLEX ×3", "Repite la misma verificación para COMPL
 print("PASS" if complex_signatures[0] == complex_signatures[1] == complex_signatures[2] else "FAIL")  # Comprobamos orden, fuente y coordenadas idénticas.""", "Las firmas COMPLEX son iguales; el resultado determinista es PASS.")
 
 section(31,"Tabla consolidada", "Lee el CSV crudo y presenta todas las comparaciones.", "El archivo CSV es la fuente verificable de los números del reporte.", "Cada fixture tiene cuatro filas; runtime varía con el equipo.", """import csv  # Importamos el lector estándar para consumir el archivo crudo generado.
-csv_path = repo_root / "docs/evidence/sprint-02/SP-004/benchmark-results/sp004_filler_results.csv"  # Construimos la ubicación de evidencia.
+csv_path = repo_root / "docs/evidence/sprint-02/SP-004/benchmark-results/sp004_filler_descartado_results.csv"  # Construimos la ubicación de evidencia preservada.
 with csv_path.open(encoding="utf-8", newline="") as stream:  # Abrimos el CSV con el encoding definido.
     consolidated = list(csv.DictReader(stream))  # Leemos todas las filas con sus nombres de columna.
 for row in consolidated:  # Recorremos los doce resultados medidos.
@@ -278,7 +278,7 @@ def main():
         print(f"ejecutada celda de código {count}")
     notebook = {"cells": cells, "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
                  "language_info": {"name": "python", "version": sys.version.split()[0]},
-                 "colab": {"name": "SP004-Filler.ipynb", "provenance": []}}, "nbformat": 4, "nbformat_minor": 5}
+                 "colab": {"name": "SP004-Filler-descartado.ipynb", "provenance": []}}, "nbformat": 4, "nbformat_minor": 5}
     TARGET.write_text(json.dumps(notebook, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"notebook creado y ejecutado: {TARGET}; secciones=36; celdas_python={count}")
 
