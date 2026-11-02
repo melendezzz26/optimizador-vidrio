@@ -101,7 +101,7 @@ def main():
                   f"tiempo={row['runtime_ms']} ms")
             del row, detail
             gc.collect()
-    csv_path = OUTPUT / "sp004_filler_results.csv"
+    csv_path = OUTPUT / "sp004_filler_descartado_results.csv"
     with csv_path.open("w", newline="", encoding="utf-8") as stream:
         writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
         writer.writeheader()
@@ -112,7 +112,7 @@ def main():
         "configuration": {case: read_case(case)["config"] for case in CASES},
         "fixtures": list(CASES), "results": details,
     }
-    json_path = OUTPUT / "sp004_filler_trace.json"
+    json_path = OUTPUT / "sp004_filler_descartado_trace.json"
     json_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     print(csv_path)
     print(json_path)
