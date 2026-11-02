@@ -1,5 +1,7 @@
 # TASKS-SP-004 — Heurística M4
 
+**Decisión final:** Raster Hole Filling / Pocket Filling queda seleccionado como M4 con GO condicionado para estudiar una versión optimizada en TA-042. Las tareas siguientes registran la investigación ya realizada; sus NO-GO corresponden a implementaciones experimentales concretas y no se borran. TA-042 deberá evaluar filtros de activación, límite de costo y retorno a FF.
+
 | ID | Trabajo | Estado |
 |---|---|---|
 | SP004-M4-01 | Preservar Filler/DJD y leer evidencia anterior. | Hecha |
@@ -37,3 +39,12 @@
 | SP004-HF-11 | Comparar FF/BF/WF/HF serialmente con configuración idéntica y registrar métricas oficiales, contadores, placements y tiempos. | Hecha; CSV y JSON realistas incluyen resultados y detalle de tres repeticiones HF por fixture. |
 | SP004-HF-12 | Verificar determinismo y generar figuras solo donde se usaron pockets; actualizar notebook y documentación SP-004. | Hecha; firmas PASS ×3, una figura para 002 y seis para 003; notebook con outputs medidos y reporte NO-GO. |
 | SP004-HF-13 | Reejecutar pruebas HF/regresiones, comprobar artefactos y cerrar el hito con commits locales sin publicar. | Hecha; 13 pruebas HF y 145 regresiones PASS; artefactos validados en commits locales. |
+
+## Cierre de SP-004
+
+| ID | Trabajo | Estado |
+|---|---|---|
+| SP004-CIERRE-01 | Conservar y explicar los resultados de Filler, DJD, Pair-Block y Hole Filling, incluidos los desfavorables. | Hecha; SPEC, Spike, evidencia y cuatro notebooks. |
+| SP004-CIERRE-02 | Revisar HF-CAPABILITY-001 como demostración controlada, con merma, área recuperable y tiempo completos. | Hecha; CSV, traza y figuras congeladas. |
+| SP004-CIERRE-03 | Revisar CA y pruebas focalizadas; fijar GO condicionado para una versión optimizada de M4. | Hecha; matriz final en PLAN y revisión académica. |
+| SP004-CIERRE-04 | Publicar la rama y abrir PR hacia `integration/sprint-01`; revisar CI sin integrar. | Pendiente hasta verificar PR y checks. |

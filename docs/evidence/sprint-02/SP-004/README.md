@@ -1,8 +1,10 @@
-# SP-004 — Evidencia experimental de Djang and Finch
+# SP-004 — Evidencia comparativa de la heurística M4
 
-## Responsable y estado
+**Selección final:** Raster Hole Filling / Pocket Filling, con **GO condicionado** para estudiar una implementación optimizada en TA-042. La evidencia muestra una capacidad útil en un pedido controlado, junto con resultados generales desfavorables y costo alto. La implementación exhaustiva del Spike conserva su NO-GO para integración directa. Filler, DJD y Pair-Block permanecen documentados abajo como alternativas descartadas.
 
-Responsable: Andro Joseph Quispe Cesias. Trabajo local en `spike/S2-SP004-djd`, derivado del historial de Filler con base `f7b8861`. DJD-1/3 fue evaluado en un laboratorio aislado y recibe recomendación **NO-GO para TA-042 con esta implementación** por costo computacional. La rama no se publicó y no hay PR ni merge.
+## Antecedente histórico: DJD
+
+Responsable: Andro Joseph Quispe Cesias. El trabajo histórico de DJD se hizo en `spike/S2-SP004-djd`, derivado del historial de Filler con base `f7b8861`; la rama se renombró al cierre a `spike/S2-SP004-heuristica-m4` sin reescribir commits. DJD-1/3 fue evaluado en un laboratorio aislado y recibe recomendación **NO-GO para TA-042 con esta implementación** por costo computacional.
 
 Filler queda descartado como candidato M4 principal porque FF en NewGlass ya ordena por área descendente y Filler coincidió con FF en unidades, fuentes y aprovechamiento en SMALL, MEDIUM y COMPLEX. Se preservaron su Spike, notebook ejecutado, resultados, trazas y commits bajo nombres que indican candidato descartado. Ver [evidencia histórica de Filler](README-Filler-descartado.md).
 
@@ -123,9 +125,9 @@ Revisión final: [SP-004 M4](../../../reviews/SP-004-heuristica-m4-review.md); m
 
 Commits locales del hito Pair-Block/DJD:
 
-- `166551c` ? `experiment(SP-004): implementar Pair-Block y diagn?stico DJD`
-- `379ad4e` ? `experiment(SP-004): agregar notebook Pair-Block ejecutado`
-- `de60560` ? `docs(SP-004): registrar evaluaci?n comparativa y resultados`
+- `166551c` — `experiment(SP-004): implementar Pair-Block y diagnóstico DJD`
+- `379ad4e` — `experiment(SP-004): agregar notebook Pair-Block ejecutado`
+- `de60560` — `docs(SP-004): registrar evaluación comparativa y resultados`
 - Cierre del hito: `docs(SP-004): cerrar hito y registrar commits locales`
 
 
@@ -158,7 +160,7 @@ En los seis casos hubo 320 pares iniciales, 225 compatibles y 95 filtrados por m
 - [Notebook v2 ejecutado](../../../../experiments/optimization/colab/SP004-Block-Packing.ipynb)
 - [Revisión técnica local](../../../reviews/SP-004-pair-block-v2-review.md)
 
-El trabajo queda local: sin push, PR, merge ni integración de TA-042.
+En este hito histórico el trabajo quedó local, sin push, PR, merge ni integración de TA-042.
 
 
 ## Mini-spike Raster Hole Filling / Pocket Filling
@@ -173,7 +175,7 @@ Candidato vigente de SP-004: adaptacion raster aislada, sin cambio productivo. F
 | MEDIUM | D | 0 | 9/9; reproduce FF; BF ahorra 8 mm2 y recupera 8 mm2 mas. | 4.92x |
 | COMPLEX | E | 0 | 24/24; reproduce FF, sin cambio funcional. | 14.83x |
 
-Decision de integracion: **NO-GO para TA-042**. El mecanismo funciona en diagnosticos dirigidos, pero no encontro pockets usados en los fixtures EXP y el costo de COMPLEX excedio 10x.
+Decisión de esta etapa experimental: **NO-GO para integración directa en TA-042**. El mecanismo funciona en diagnósticos dirigidos, pero no encontró pockets usados en los fixtures EXP y el costo de COMPLEX excedió 10×.
 
 - Diagnosticos: [CSV](hole-filling/sp004_hole_filling_results.csv), [traza](hole-filling/sp004_hole_filling_trace.json), [mapas y tiempos de deteccion](hole-filling/sp004_hole_filling_detection.json).
 - Benchmark EXP condicionado por gate: [CSV](hole-filling/sp004_hole_filling_official_results.csv) y [traza](hole-filling/sp004_hole_filling_official_trace.json).
@@ -219,9 +221,9 @@ La detección incluye generación del mapa de anclajes y etiquetado de component
 
 Las tres firmas funcionales HF fueron iguales entre sus respectivas tres repeticiones: **determinismo PASS** para los tres casos. Tiempos individuales, placements, hashes, configuración y contadores están en [traza JSON](hole-filling/sp004_hf_realistic_trace.json); el [CSV](hole-filling/sp004_hf_realistic_results.csv) contiene la comparación y las métricas agregadas. El [notebook](../../../../experiments/optimization/colab/SP004-Hole-Filling.ipynb) incluye los outputs derivados de esa traza y las figuras solo para casos con pockets usados.
 
-**Dictamen final: NO-GO para TA-042.** HF sí mostró decisiones propias en 002 y 003, pero en 002 solo cambió el patrón con un costo de 136×; en 003 colocó seis piezas en pockets pero perdió cobertura y empeoró merma, uso y recuperable a 425×; 001 no usó pockets y costó 271×. El efecto no justifica ese costo local y no conviene integrar esta implementación.
+**Dictamen de la implementación experimental: NO-GO para integración directa en TA-042.** HF sí mostró decisiones propias en 002 y 003, pero en 002 solo cambió el patrón con un costo de 136×; en 003 colocó seis piezas en pockets pero perdió cobertura y empeoró merma, uso y recuperable a 425×; 001 no usó pockets y costó 271×. El efecto no justifica ese costo local y no conviene integrar esta implementación.
 
-Verificación final: 13 pruebas HF PASS y 145 regresiones focalizadas PASS. Los SVG se validaron como XML. No se modificaron producción, FF/BF/WF, fixtures TA-027 ni los resultados previos de SP-004. No hubo push, PR ni merge.
+Verificación de esa fase: 13 pruebas HF PASS y 145 regresiones focalizadas PASS. Los SVG se validaron como XML. No se modificaron producción, FF/BF/WF, fixtures TA-027 ni los resultados previos de SP-004. El cierre de esa fase ocurrió antes de publicar la rama.
 
 ## Experimento demostrativo de capacidad
 
@@ -260,4 +262,4 @@ Para una posible investigación de activación en TA-042, buscar pedidos con cí
 
 ## Estado de continuidad M4
 
-**M4 seleccionado para continuar: Raster Hole Filling / Pocket Filling, con GO condicionado para estudiar una implementación optimizada en TA-042.** Es una heurística especializada para pedidos con pockets legales; HF-CAPABILITY-001 demuestra capacidad en un caso controlado, sin establecer superioridad general. Los NO-GO y resultados negativos anteriores corresponden a la implementación experimental exhaustiva evaluada y permanecen vigentes. TA-042 deberá estudiar filtros baratos de activación, límites de costo y fallback a FF; no debe copiar directamente esta implementación experimental.
+**M4 seleccionado para continuar: Raster Hole Filling / Pocket Filling, con GO condicionado para estudiar una implementación optimizada en TA-042.** En HF-CAPABILITY-001, FF/BF/WF pusieron P11 en la parte exterior del retazo y necesitaron una plancha para P12. HF aprovechó un espacio interior para P11, dejó libre la zona exterior y colocó también P12 en el retazo. El pedido fue diseñado para mostrar esta capacidad: no representa rendimiento general. La tabla anterior conserva los resultados reales, incluida la menor área recuperable y el mayor tiempo de HF. Los NO-GO y resultados negativos de la implementación exhaustiva siguen vigentes. TA-042 deberá estudiar filtros baratos de activación, límites de costo y retorno a FF; no debe copiar directamente esta implementación experimental.

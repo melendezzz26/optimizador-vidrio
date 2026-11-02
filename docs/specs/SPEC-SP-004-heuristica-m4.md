@@ -1,16 +1,20 @@
 # SPEC-SP-004 — Investigación comparativa de heurística M4
 
+**Autor:** Andro Joseph Quispe Cesias
+
+**Revisor:** Andro Joseph Quispe Cesias
+
 ## Estado
 
-Filler, DJD-1/3 y Pair-Block v1/v2 quedan como candidatos **NO-GO para TA-042**, con evidencia histórica preservada. El candidato actual de SP-004, Raster Hole Filling / Pocket Filling, completó la validación final con pedidos sintéticos realistas y queda **NO-GO para TA-042** por costo excesivo y regresión funcional en el caso mixto. No se integra ninguna heurística en producción; no se cambian FF/BF/WF, TA-027, API, frontend ni BD.
+**M4 seleccionado: Raster Hole Filling / Pocket Filling, con GO condicionado para estudiar una versión optimizada en TA-042.** Busca aprovechar espacios entre piezas ya colocadas. En un caso controlado evitó abrir una plancha, pero no mejoró todos los pedidos: la búsqueda exhaustiva experimental fue lenta y empeoró un pedido mixto. Por ello, esa implementación conserva su **NO-GO para integración directa**. Filler, DJD y Pair-Block también conservan sus resultados y dictámenes históricos. No se cambia producción, FF/BF/WF, TA-027, API, frontend ni BD.
 
 ## Contexto y objetivo
 
 SP-004 estudia una cuarta política M4 para NewGlass. Las evaluaciones de Filler, DJD-1/3 y Pair-Block se conservan como antecedentes descartados. Este mini-spike evalúa si una política que busca primero encajes en huecos/pockets existentes puede cambiar placements sin cambiar el motor productivo ni fixtures oficiales.
 
-El objetivo vigente es determinar si una política de pocket-first puede aprovechar espacios ya formados y producir placements diferentes usando la geometría y validación raster existentes. Los resultados Pair-Block que preceden a esta actualización se conservan como historia experimental, no como candidato actual.
+La investigación comprobó si Hole Filling puede poner una pieza pendiente en un espacio útil que dejaron otras piezas. La validación geométrica sigue a cargo del motor raster de NewGlass. Los resultados de Pair-Block se conservan como historia experimental.
 
-## Alcance experimental
+## Alcance experimental histórico: Pair-Block
 
 - Módulo nuevo: `experiments/optimization/block_packing/`.
 - Unidad de bloque: exactamente dos piezas compatibles por material y espesor.
@@ -27,7 +31,7 @@ La adaptación forma solo pares. Utiliza orientaciones seleccionadas de las que 
 
 La densidad raster local se calcula como celdas ocupadas por la unión entre el área en celdas de su caja envolvente. Se acepta solo si supera estrictamente la mayor densidad individual de sus dos miembros. Es una medida de adaptación inspirada en el objetivo publicado de mejorar utilización local mediante formas complementarias; no se atribuye esta fórmula a Cai et al. El filtro 4:1 de área de cajas, los ocho anclajes relativos máximos por eje y las orientaciones cardinales permitidas son límites del laboratorio para contener costo, no partes afirmadas del método publicado. La selección de pares es determinista y registra filtros, pruebas geométricas, bloques aceptados y recursos usados.
 
-## Criterios de aceptación
+## Criterios de aceptación históricos de Pair-Block
 
 | ID | Criterio |
 |---|---|
@@ -40,7 +44,7 @@ La densidad raster local se calcula como celdas ocupadas por la unión entre el 
 | CA-07 | FF/BF/WF/Pair-Block se comparan en los tres fixtures oficiales inalterados y en un discriminante rotulado no oficial. |
 | CA-08 | El diagnóstico DJD contiene entre 3 y 5 instancias externas a TA-027 con intención documentada antes de correr los métodos y clasificación A/B/C/D después. |
 | CA-09 | Bloques, placements y métricas funcionales son deterministas en tres ejecuciones por caso; las pruebas cubren geometría, compatibilidad y no mutación. |
-| CA-10 | Notebook Colab, evidencia, decisión comparativa y commits locales quedan registrados; la rama se detiene antes de push/PR/merge. |
+| CA-10 | Notebook Colab, evidencia y decisión comparativa quedan registrados; la publicación y PR se verifican en el cierre de SP-004. |
 
 ## Métricas
 
@@ -59,9 +63,9 @@ Pair-Block v1 fue un ensayo de rotaciones cardinales con una métrica raster loc
 
 ## Fuera de alcance
 
-Integración en TA-042, cambios productivos, alteración de fixtures, publicación de rama, PR, merge y smoke post-merge.
+Implementación de TA-042, cambios productivos, alteración de fixtures, merge y smoke post-merge. La publicación y revisión del PR pertenecen al cierre documental de SP-004.
 
-## Mini-spike HF — especificación experimental vigente
+## Mini-spike HF — especificación experimental conservada
 
 ### Literatura y atribución
 
@@ -149,6 +153,19 @@ Los pedidos `HF-REALISTIC-001/002/003` quedaron congelados antes de correr los m
 
 La traza usa "pockets detectados" para componentes interiores del mapa de anclajes por pieza/orientación; no representa cavidades físicas únicas. Para el caso 003 los seis placements fueron reproducibles, pero no evitaron una pieza sin colocar. Las firmas funcionales de HF coinciden entre las tres repeticiones de cada caso. La generación del mapa de anclajes domina el costo y se informa separada del etiquetado y placement.
 
-**Decisión final: NO-GO para TA-042.** 001 no usa pockets y solo replica el baseline; 002 cambia el patrón pero empata métricas a 136×; 003 usa pockets pero empeora cobertura, aprovechamiento, merma y recuperable a 425×. El efecto práctico no compensa el costo de esta implementación. No se ajustó la regla de clasificación después de ver los resultados.
+**Dictamen de la implementación experimental: NO-GO para integración directa en TA-042.** 001 no usa pockets y solo replica el baseline; 002 cambia el patrón pero empata métricas a 136×; 003 usa pockets pero empeora cobertura, aprovechamiento, merma y recuperable a 425×. El efecto práctico no compensa el costo de esta implementación. No se ajustó la regla de clasificación después de ver los resultados.
 
 Artefactos: [CSV realista](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_realistic_results.csv), [traza y firmas](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_realistic_trace.json), [fixtures congelados](../../experiments/optimization/hole_filling/cases/) y [notebook final](../../experiments/optimization/colab/SP004-Hole-Filling.ipynb). Las pruebas actuales de laboratorio HF: 13 PASS; regresiones FF/BF/WF, placement y ángulos: 145 PASS.
+
+## Selección final y condición para TA-042
+
+HF-CAPABILITY-001 se diseñó para mostrar una situación favorable. FF, BF y WF pusieron primero la pieza pequeña P11 en la parte exterior del retazo; cuando llegó el círculo P12, necesitaron una plancha. Hole Filling colocó P11 en un espacio interior aprovechable y conservó libre la zona exterior para P12. Todos colocaron 18/18 piezas.
+
+| Método | Retazos | Planchas nuevas | Utilización | Merma | Área recuperable | Tiempo |
+|---|---:|---:|---:|---:|---:|---:|
+| FF/BF/WF | 1 | 1 | 33.787% | 37,516.56 mm² | 64,080 mm² | 62–63 ms |
+| Hole Filling | 1 | 0 | 67.575% | 22,410.56 mm² | 2,466 mm² | 262.99 ms |
+
+El área recuperable registrada fue menor y Hole Filling tardó más. Este caso controlado demuestra una capacidad específica; no estima el rendimiento general. La [traza](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_capability_trace.json) y el [notebook](../../experiments/optimization/colab/SP004-Hole-Filling.ipynb) conservan las colocaciones y las mediciones.
+
+**Decisión de SP-004: GO condicionado para continuar con Hole Filling como M4 en TA-042.** TA-042 deberá estudiar filtros previos baratos para activar la búsqueda solo en pedidos prometedores, limitar su costo y volver a FF cuando no encuentre un espacio útil. La implementación exhaustiva de este Spike no debe copiarse directamente a producción.

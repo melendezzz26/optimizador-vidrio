@@ -2,7 +2,7 @@
 
 ## Estado
 
-Filler, DJD-1/3 y Pair-Block v1/v2 están cerrados como NO-GO para TA-042. El candidato actual es el mini-spike local Raster Hole Filling / Pocket Filling. No se hace push, PR ni integración en TA-042.
+SP-004 selecciona Raster Hole Filling / Pocket Filling como M4 con **GO condicionado para estudiar una versión optimizada en TA-042**. Su búsqueda experimental fue demasiado costosa y conserva el NO-GO para integración directa. Filler, DJD y Pair-Block quedan como antecedentes descartados. Este plan conserva las fases y resultados originales; el cierre documental y la publicación del PR se registran al final.
 
 ## Secuencia de trabajo
 
@@ -22,7 +22,7 @@ Filler, DJD-1/3 y Pair-Block v1/v2 están cerrados como NO-GO para TA-042. El ca
 
 ## Matriz de verificación CA
 
-La tabla se completará con referencia a prueba y archivo de evidencia al cerrar el hito. Ningún criterio se marca PASS a partir del diseño solamente.
+Esta matriz corresponde a los criterios históricos de Pair-Block. La matriz final de SP-004, con enlaces a evidencia, aparece al cierre del documento.
 
 | CA | Evidencia esperada | Estado |
 |---|---|---|
@@ -35,7 +35,7 @@ La tabla se completará con referencia a prueba y archivo de evidencia al cerrar
 | CA-07 | Corridas oficiales y caso Pair-Block | PASS (3 fixtures y discriminante) |
 | CA-08 | Matriz DJD con manifiestos previos y categorías A/B/C/D | PASS (4 diagnósticos clasificados A) |
 | CA-09 | Repeticiones ×3 y pruebas/regresiones | PASS (3 repeticiones/caso; 104 pruebas) |
-| CA-10 | Notebook, decisión, commits y estado limpio local | PASS (5 commits locales; árbol limpio) |
+| CA-10 | Notebook, decisión y commits del hito Pair-Block | PASS para el hito histórico; publicación y PR se verifican aparte. |
 
 
 ## Reapertura Pair-Block v2
@@ -65,7 +65,7 @@ La tabla de Pair-Block v2 anterior es histórica y queda cerrada por la decisió
 
 ### Matriz de verificacion del mini-spike HF
 
-La matriz CA anterior pertenece al cierre historico de Pair-Block. La verificacion vigente de HF queda registrada aqui.
+La matriz CA anterior pertenece al cierre histórico de Pair-Block. La verificación de HF se registra aquí y se resume con evidencia en la matriz final.
 
 | Area | Evidencia | Estado |
 |---|---|---|
@@ -74,7 +74,7 @@ La matriz CA anterior pertenece al cierre historico de Pair-Block. La verificaci
 | Diagnosticos predeclarados | Cuatro JSON congelados antes de ejecutar; clases B/B/B/A. | PASS; HF-DIAGNOSTIC-001 a 004. |
 | Gate de viabilidad | Pocket utilizado en tres casos, patron distinto, reglas validas y maximo 5.85x frente al baseline mas rapido, menor al umbral congelado de 10x. | VIABLE para habilitar comparacion EXP. |
 | Benchmark oficial | Tres EXP inalterados; HF no utilizo pockets, clases A/D/E; COMPLEX supero 10x. | NO-GO para TA-042. |
-| Regresiones | Tests HF y suites enfocadas FF/BF/WF, placement y angulos. | 11 + 145 PASS. |
+| Regresiones | Tests HF y suites enfocadas FF/BF/WF, placement y ángulos. | PASS; recuento actualizado en la matriz final. |
 | Notebook y evidencia | Notebook con outputs derivados de trazas guardadas, SVGs, CSV y JSON. | Completo; commits locales al cierre, sin push/PR/merge. |
 
 ## Cierre final — pedidos realistas
@@ -93,3 +93,29 @@ El mini-spike y el benchmark EXP anteriores se conservan como evidencia históri
 HF-REALISTIC-001 no utilizó pockets y empató el baseline (A funcional), pero el runtime fue 270.88×. HF-REALISTIC-002 cambió el patrón con un pocket y métricas empatadas (B funcional), a 136.02×. HF-REALISTIC-003 usó seis pockets, pero colocó 19/20 y empeoró utilización, merma y recuperable (D funcional), a 424.65×. E prevalece como categoría registrada por el costo; la lectura funcional se informa aparte. La recomendación final es **NO-GO**.
 
 Evidencia final: [intención y fixtures](../../experiments/optimization/hole_filling/cases/), [CSV](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_realistic_results.csv), [traza](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_realistic_trace.json), [notebook](../../experiments/optimization/colab/SP004-Hole-Filling.ipynb) y [reporte acumulado](../evidence/sprint-02/SP-004/README.md). Sin push, PR, merge ni integración TA-042.
+
+## Matriz final de aceptación y decisión
+
+Los CA-01–CA-10 pertenecen a la fase Pair-Block de esta SPEC. Se conservan como verificación histórica; la selección final de M4 se apoya además en la evidencia HF indicada debajo. PASS significa que el artefacto o la prueba citada existe; no significa que la heurística haya mejorado los benchmarks.
+
+| CA | Evidencia comprobable | Estado |
+|---|---|---|
+| CA-01 | [Investigación y fuentes](../spikes/SP-004-investigacion-m4.md) distinguen el artículo de la adaptación. | PASS |
+| CA-02 | [Pruebas Pair-Block](../../experiments/optimization/block_packing/test_block_experimental.py) cubren material, espesor y orientaciones. | PASS |
+| CA-03 | [Pruebas Pair-Block](../../experiments/optimization/block_packing/test_block_experimental.py) cubren colisión, separación y layout. | PASS |
+| CA-04 | [Pruebas Pair-Block](../../experiments/optimization/block_packing/test_block_experimental.py) y [traza](../evidence/sprint-02/SP-004/benchmark-results/sp004_block_v2_trace.json) conservan placements originales. | PASS |
+| CA-05 | [Pruebas Pair-Block](../../experiments/optimization/block_packing/test_block_experimental.py) cubren fallback individual. | PASS |
+| CA-06 | [CSV v2](../evidence/sprint-02/SP-004/benchmark-results/sp004_block_v2_results.csv) y [traza v2](../evidence/sprint-02/SP-004/benchmark-results/sp004_block_v2_trace.json) contienen métricas y diagnósticos. | PASS |
+| CA-07 | [CSV v2](../evidence/sprint-02/SP-004/benchmark-results/sp004_block_v2_results.csv) identifica EXP-SMALL/MEDIUM/COMPLEX y el discriminante. | PASS |
+| CA-08 | [Intención DJD](../../experiments/optimization/djd/DJD-DIAGNOSTIC-INTENT.md) y [traza diagnóstica](../evidence/sprint-02/SP-004/benchmark-results/sp004_djd_diagnostic_trace.json) documentan cuatro casos y su clasificación. | PASS |
+| CA-09 | [Traza v2](../evidence/sprint-02/SP-004/benchmark-results/sp004_block_v2_trace.json) registra repeticiones; la suite experimental focalizada terminó con 65 passed, 0 failed, 0 skipped. | PASS |
+| CA-10 | [Cuatro notebooks](../../experiments/optimization/colab/) con outputs preservados, [evidencia](../evidence/sprint-02/SP-004/README.md), [SPEC](SPEC-SP-004-heuristica-m4.md) y revisión académica. | PASS para el cierre documental; publicación y CI se verifican en el PR. |
+
+| Verificación final HF | Evidencia comprobable | Estado |
+|---|---|---|
+| Detector y reglas | [Pruebas HF](../../experiments/optimization/hole_filling/test_detector.py) y [optimizer](../../experiments/optimization/hole_filling/test_optimizer.py): 13 passed dentro de la suite focalizada. | PASS |
+| EXP y realistas | [Resultados oficiales](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_official_results.csv) y [realistas](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_realistic_results.csv) conservan los resultados adversos. | PASS como evidencia; NO-GO para integrar esta implementación. |
+| Capacidad específica | [CSV](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_capability_results.csv), [traza](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_capability_trace.json) y [figura](../../experiments/optimization/hole_filling/figures/HF-CAPABILITY-001-comparison.svg) muestran una plancha evitada en el caso controlado. | PASS como prueba de capacidad, sin extrapolación. |
+| Selección M4 | La [SPEC](SPEC-SP-004-heuristica-m4.md) y la [investigación](../spikes/SP-004-investigacion-m4.md) exigen filtros previos, límite de costo y fallback a FF. | **GO condicionado para estudiar implementación optimizada en TA-042.** |
+
+La suite focalizada del motor (FF/BF/WF, casos experimentales, reglas, métricas y ángulos) terminó con **138 passed, 0 failed, 0 skipped**. TA-042 no se implementa en esta rama.

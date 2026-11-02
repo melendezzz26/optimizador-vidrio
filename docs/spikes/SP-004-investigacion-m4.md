@@ -2,7 +2,7 @@
 
 ## Estado vigente — Raster Hole Filling / Pocket Filling
 
-Filler, DJD-1/3 y Pair-Block v1/v2 son antecedentes **NO-GO para TA-042**; no se borran sus resultados, notebooks, pruebas ni commits. Hole Filling es el candidato actual de SP-004 y comienza como mini-spike local. No hay cambios de producción, fixtures TA-027, API, frontend ni BD; no se hace push, PR o merge.
+**Selección final: Raster Hole Filling / Pocket Filling, con GO condicionado para una implementación optimizada en TA-042.** Filler, DJD-1/3 y Pair-Block v1/v2 se descartan con su evidencia intacta. Hole Filling puede aprovechar un espacio entre piezas ya colocadas cuando una pieza pendiente cabe allí. La versión experimental evaluada fue costosa y no mostró mejora general; su NO-GO para integración directa permanece. SP-004 no cambia producción, fixtures TA-027, API, frontend ni BD.
 
 La investigación publicada verifica hole filling con huecos cerrados representados como polígonos e IFP para decidir encaje. Abeysooriya et al. (2018) ordenan los huecos por x mínima y prueban hole filling antes del placement normal; Błażewicz et al. (1993) son antecedente de backfilling con búsqueda tabu, y Burke et al. (2006) documentan la dificultad de validar movimientos de backfilling. Esto no define un detector raster llamado “Raster Hole Filling”: la adaptación local queda separada y etiquetada como experimental. Fuentes y atribución completas están en [SPEC-SP-004](../specs/SPEC-SP-004-heuristica-m4.md).
 
@@ -111,7 +111,7 @@ El costo de generación dominó la ejecución: Pair-Block registró 260 ms de ge
 - Resultados DJD adicional: [CSV](../evidence/sprint-02/SP-004/benchmark-results/sp004_djd_diagnostic_results.csv), [traza y categorías](../evidence/sprint-02/SP-004/benchmark-results/sp004_djd_diagnostic_trace.json).
 - Notebook ejecutado: [SP004-Block-Packing.ipynb](../../experiments/optimization/colab/SP004-Block-Packing.ipynb).
 
-## Evaluación comparativa y selección de candidato M4 - pendiente de v2
+## Evaluación comparativa histórica — pendiente de v2 en esa fase
 
 | Candidato | Diferencia demostrada | Costo y resultado | Decisión para TA-042 |
 |---|---|---|---|
@@ -186,13 +186,13 @@ Se completó el gate solicitado con tres pedidos sintéticos congelados antes de
 
 Los contadores fueron 0/11/70 componentes de anclajes detectados y 0/1/6 pockets usados para 001/002/003. Las tres firmas funcionales se repitieron en los tres runs de cada caso. El costo dominante fue generar el mapa raster de anclajes (medianas 91.68 s, 226.46 s y 231.31 s); el etiquetado de componentes tomó 3.11 s, 5.53 s y 4.84 s. Las cifras completas, runtimes individuales, placements, fuentes, rotaciones y figuras están en [CSV](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_realistic_results.csv), [JSON](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_realistic_trace.json) y [notebook](../../experiments/optimization/colab/SP004-Hole-Filling.ipynb). Solo se generaron figuras para 002 y 003, que usaron pockets.
 
-**Decisión final para TA-042: NO-GO.** HF altera patrones en 002/003, pero en 002 solo empata métricas a 136×; en 003 pierde cobertura y empeora las métricas funcionales a 425×; en 001 equivale al baseline sin pocket a 271×. El resultado no cumple el criterio de utilidad funcional y costo aceptable. Determinismo: PASS ×3 por fixture. Pruebas actuales: 13 de laboratorio HF y 145 regresiones enfocadas, todas PASS. La evidencia detallada está en el [README de SP-004](../evidence/sprint-02/SP-004/README.md). No hubo cambios de producción ni TA-027, push, PR o merge.
+**Dictamen de la versión experimental tras los pedidos realistas: NO-GO para integración directa.** HF altera patrones en 002/003, pero en 002 solo empata métricas a 136×; en 003 pierde cobertura y empeora las métricas funcionales a 425×; en 001 equivale al baseline sin pocket a 271×. El resultado no cumple el criterio de utilidad funcional y costo aceptable para esta implementación. Determinismo: PASS ×3 por fixture. La evidencia detallada está en el [README de SP-004](../evidence/sprint-02/SP-004/README.md). No se modificaron producción ni TA-027.
 
 ## Experimento demostrativo de capacidad
 
 > **CASO CONTROLADO DISEÑADO PARA MOSTRAR LA CLASE DE PEDIDO EN LA QUE HOLE FILLING PUEDE SER ÚTIL. NO REPRESENTA RENDIMIENTO GENERAL.**
 
-La **evaluación general** sigue compuesta por TA-027/EXP y los tres HF-REALISTIC, con recomendación **NO-GO para TA-042**. HF-CAPABILITY-001 es una **prueba dirigida de capacidad** que muestra un mecanismo posible, sin cambiar esas conclusiones.
+La **evaluación general** sigue compuesta por TA-027/EXP y los tres HF-REALISTIC, con **NO-GO para integrar directamente la implementación experimental en TA-042**. HF-CAPABILITY-001 es una **prueba dirigida de capacidad** que muestra un mecanismo posible, sin cambiar esas mediciones.
 
 Se diseñó un trabajo ya iniciado en un retazo 274 × 280 mm con dieciséis piezas previas validadas, entre ellas un círculo y paneles. Quedaron pendientes el inserto P11 de 32 × 32 mm y el círculo P12 de Ø36 mm; una plancha de igual tamaño estaba disponible. Se mantuvieron raster 1 mm, giros cada 5°, margen 5 mm, separación 3 mm, material y espesor comunes y prioridad retazo → plancha. La [intención](../../experiments/optimization/hole_filling/cases/HF-CAPABILITY-INTENT.md) documenta la hipótesis, sus cambios durante el diseño y la búsqueda dirigida; el [registro](../../experiments/optimization/hole_filling/cases/HF-CAPABILITY-SEARCH.jsonl) contiene 20 candidatos. Se congeló el primero que cumplió los criterios, `f806a27`, antes de comparar definitivamente los cuatro métodos.
 
@@ -211,4 +211,4 @@ La [comparación visual](../../experiments/optimization/hole_filling/figures/HF-
 
 ## Estado de continuidad M4
 
-**M4 seleccionado para continuar: Raster Hole Filling / Pocket Filling, con GO condicionado para estudiar una implementación optimizada en TA-042.** Su oportunidad es especializada: pedidos donde se detecta un pocket legal antes de colocar una pieza pequeña. El caso HF-CAPABILITY-001 demuestra esa posibilidad en condiciones controladas, sin probar mejora general. Se mantienen los NO-GO y las mediciones negativas de la implementación experimental exhaustiva; TA-042 deberá evaluar activación con filtros baratos, límite de costo y fallback a FF antes de cualquier integración, sin copiarla directamente a producción.
+**M4 seleccionado para continuar: Raster Hole Filling / Pocket Filling, con GO condicionado para estudiar una implementación optimizada en TA-042.** En HF-CAPABILITY-001, FF/BF/WF colocaron primero la pieza pequeña P11 en la zona exterior del retazo. Para colocar después el círculo P12 necesitaron una plancha nueva. HF colocó P11 en un espacio interior aprovechable; así dejó libre la zona exterior y P12 entró en el mismo retazo. Los tres Fits usaron un retazo y una plancha, con 33.787% de utilización y 37,516.56 mm² de merma; HF usó solo el retazo, con 67.575% y 22,410.56 mm². El área recuperable fue menor con HF (2,466 frente a 64,080 mm²) y su tiempo fue mayor (262.99 frente a 62–63 ms). Este caso fue diseñado para demostrar la capacidad, no representa el rendimiento general. TA-042 deberá evaluar filtros baratos, límite de costo y retorno a FF cuando no haya un espacio útil; la búsqueda exhaustiva del Spike no debe copiarse a producción.
