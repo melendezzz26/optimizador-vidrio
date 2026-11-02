@@ -43,12 +43,14 @@ Esta reevaluación posterior mantiene intactos los hitos Filler y DJD descritos 
 | Paso v2 | Evidencia esperada | Estado |
 |---|---|---|
 | Auditoría v1 | Causa cardinal, efectos por geometría, criterio de aceptación y universo de orientaciones cuantificados. | Completa; ver `docs/spikes/SP-004-pair-block-v2-auditoria.md`. |
-| Contrato angular | Solo ángulos del motor común `0, 5, ..., 355°`; equivalencia solo para máscaras raster idénticas. | Implementado; pendiente benchmark. |
+| Contrato angular | Solo ángulos del motor común `0, 5, ..., 355°`; equivalencia solo para máscaras raster idénticas. | Completo; opciones provienen de la caché común y las seis corridas deterministas pasaron. |
 | Pruning y trazas | Contar pares, producto teórico, simetría, cotas de caja, fase heurística, combinaciones geométricas y offsets. | Implementado; la fase conserva la caja mínima por giro relativo y los offsets usan grilla corta con expansión ante composición candidata; ambos recortes heurísticos se cuentan por separado. |
-| Calidad del bloque | Aceptar solo ahorro positivo del bounding box conjunto contra las dos cajas separadas; densidad descriptiva. | Implementado como adaptación experimental; pendiente benchmark. |
+| Calidad del bloque | Aceptar solo ahorro positivo del bounding box conjunto contra las dos cajas separadas; densidad descriptiva. | Completo como adaptación experimental; discriminante y dos diagnósticos colocaron bloques, ningún oficial lo hizo. |
 | Casos congelados | Discriminante existente y dos diagnósticos con intención previa, sin retoque postresultado. | Completo. |
-| Pruebas, matriz y notebook | Regresión FF/BF/WF, métricas oficiales, determinismo ×3, resultados y explicación v1/v2. | Pendiente de ejecución y actualización. |
-| Decisión | Reevaluar GO/NO-GO con funcionalidad, bloques colocados y costo total medido. | Pendiente. |
+| Pruebas, matriz y notebook | Regresión FF/BF/WF, métricas oficiales, determinismo ×3, resultados y explicación v1/v2. | Completo; 12/12 pruebas Pair-Block y 37 celdas notebook ejecutadas sin error. |
+| Decisión | Reevaluar GO/NO-GO con funcionalidad, bloques colocados y costo total medido. | NO-GO para TA-042; COMPLEX tarda 20.852× el baseline más rápido, sin bloque oficial ni cambio funcional. |
+
+El CSV/JSON v2 y el notebook ejecutado conservan todas las filas, incluidos los casos con clasificación E. El discriminante y los diagnósticos no sustituyen los tres fixtures oficiales.
 
 ## Política de recursos
 

@@ -132,4 +132,30 @@ Commits locales del hito Pair-Block/DJD:
 
 ## Reapertura Pair-Block v2
 
-Los resultados anteriores corresponden a Pair-Block v1 y no cierran el dictamen del candidato. Antes de modificar codigo se documento por que v1 exploro solo giros cardinales, su deduplicacion por dimensiones, la expansion potencial de la grilla y el criterio experimental v2. Vease [auditoria previa](../../../spikes/SP-004-pair-block-v2-auditoria.md). Los benchmarks v2 quedan pendientes; Filler y DJD permanecen intactos.
+Los resultados anteriores corresponden a Pair-Block v1 y no cierran el dictamen del candidato. Antes de modificar codigo se documento por que v1 exploro solo giros cardinales, su deduplicacion por dimensiones, la expansion potencial de la grilla y el criterio experimental v2. Vease [auditoria previa](../../../spikes/SP-004-pair-block-v2-auditoria.md). Los benchmarks v2 se completaron en la reevaluacion siguiente; Filler y DJD permanecen intactos.
+
+## Resultado de la reevaluación Pair-Block v2
+
+La evaluación terminó en `spike/S2-SP004-djd`. Se conservaron intactos los resultados v1, Filler, DJD y los tres fixtures oficiales. V2 usa solo los 72 ángulos comunes de NewGlass, con equivalencia únicamente para máscaras idénticas; acepta una pareja si su ahorro de bounding box es positivo. La densidad queda descriptiva y no se atribuye a la literatura como criterio formal.
+
+| Caso | Resultado y uso | Merma / recuperable | Generación / packing / total ms | Ratio vs baseline más rápido | Clase |
+|---|---|---|---:|---:|:---:|
+| SMALL | 3/3; 1 retazo + 1 plancha; no bloque | 0 / 8 | 10.686 / 0.911 / 12.457 | 1.161× | D |
+| MEDIUM | 9/9; 2 retazos + 1 plancha; no bloque | 201.86 / 58; BF logra 193.86 / 66 | 224.766 / 3.999 / 231.137 | 12.549× | E |
+| COMPLEX | 24/24; 3 retazos + 3 planchas; no bloque | 746.72 / 184, igual a FF/BF | 1,918.168 / 34.022 / 1,957.860 | 20.852× | E |
+| Discriminante | Triángulos 0°/180°; bloque colocado; patrón distinto, métricas empatadas | 10 / 0 | 76.093 / 0.320 / 77.925 | 10.602× | E |
+| Triángulos oblicuos | Triángulos 60°/60°; bloque colocado; baja merma 180→140 | 140 / 200; baseline 180 / 160 | 60.668 / 0.273 / 62.464 | 37.027× | E |
+| Triángulo + círculo | Bloque colocado; no mejora el patrón funcional | 116.37 / 48; baseline 87.37 / 77 | 22.624 / 0.241 / 24.927 | 18.898× | E |
+
+La clasificación siguió la precedencia congelada antes de ejecutar: E por deterioro funcional o runtime mayor de 10×; C por mejora sin pérdida de cobertura/fuentes; D sin bloque; B/A con bloque y empate funcional según cambie o no el patrón. Por ello el caso oblicuo queda E aunque mejore merma y recuperable. Las seis corridas de determinismo ×3 pasaron.
+
+En los seis casos hubo 320 pares iniciales, 225 compatibles y 95 filtrados por material/espesor. De 1,658,880 combinaciones angulares teóricas se podaron 1,646,835 y se evaluaron 12,045. Se probaron 125,455 de 768,673 offsets teóricos. La poda por fase y por offsets es heurística y puede omitir opciones que dependen de la rasterización; se contó por separado.
+
+**Decisión: NO-GO para TA-042 con Pair-Block v2.** No colocó bloques en los fixtures oficiales; COMPLEX tarda 20.852× el baseline más rápido sin cambiar métricas y MEDIUM empeora merma/recuperable. El oblicuo prueba complementariedad bajo 5°, pero tarda 37.027×; el mixto empeora métricas.
+
+- [Auditoría y resultados detallados](../../../spikes/SP-004-pair-block-v2-auditoria.md)
+- [CSV v2](benchmark-results/sp004_block_v2_results.csv) · [traza JSON y determinismo](benchmark-results/sp004_block_v2_trace.json)
+- [Notebook v2 ejecutado](../../../../experiments/optimization/colab/SP004-Block-Packing.ipynb)
+- [Revisión técnica local](../../../reviews/SP-004-pair-block-v2-review.md)
+
+El trabajo queda local: sin push, PR, merge ni integración de TA-042.

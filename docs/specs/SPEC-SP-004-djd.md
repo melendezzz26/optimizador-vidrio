@@ -57,6 +57,14 @@ Se reutilizan requested/placed/unplaced, retazos y planchas usados, aprovechamie
 
 El resultado es GO para un diseño productivo posterior solo si la política produce una decisión operacional distinguible, respeta geometría e inventario, es determinista, puede implementarse sin duplicar el motor y su costo medido permanece razonable para la carga de evaluación. No necesita ganar todos los fixtures. Se registra NO-GO si equivale en la práctica, el costo es desproporcionado, necesita alterar reglas centrales o no conserva determinismo. La evidencia satisface los requisitos de distinción, geometría, reglas compartidas y determinismo, pero el factor de costo cercano a 50× FF en COMPLEX decide NO-GO para TA-042 con esta implementación.
 
+## Reevaluación posterior de Pair-Block v2
+
+La evaluación de DJD y el NO-GO previo permanecen como antecedente. Pair-Block v1 se reabrió porque solo exploraba los cuatro giros cardinales y sus resultados no cubrían el contrato completo de rotación de NewGlass. V2 usa la grilla común de 5° y no modifica código productivo ni fixtures TA-027.
+
+El criterio experimental de bloque es ahorro positivo del bounding box conjunto frente a las dos cajas separadas; la densidad raster no constituye una regla publicada. Los resultados se registran en [auditoría v2](../spikes/SP-004-pair-block-v2-auditoria.md) y en `sp004_block_v2_results.csv`/`sp004_block_v2_trace.json`.
+
+La decisión de evidencia es **NO-GO para TA-042** con v2: ningún fixture oficial colocó un bloque, MEDIUM empeoró merma/recuperable y COMPLEX costó 20.852× el baseline más rápido sin cambiar métricas. El discriminante y el diagnóstico oblicuo sí colocaron bloques bajo la grilla de 5°, pero superaron 10× el baseline más rápido; el diagnóstico mixto empeoró métricas. El notebook v2 contiene los outputs de la corrida.
+
 ## Fuera de alcance
 
 Integración productiva, cambios en API, interfaz, base de datos, inventario, fixtures TA-027, TA-042, publicación de la rama, PR y merge.
