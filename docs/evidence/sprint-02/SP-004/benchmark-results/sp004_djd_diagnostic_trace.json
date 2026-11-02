@@ -1,0 +1,1589 @@
+{
+  "cases": [
+    "DJD-DIAGNOSTIC-001",
+    "DJD-DIAGNOSTIC-002",
+    "DJD-DIAGNOSTIC-003",
+    "DJD-DIAGNOSTIC-004"
+  ],
+  "results": [
+    {
+      "case": "DJD-DIAGNOSTIC-001",
+      "label": "DIAGNÓSTICO DJD — NO PERTENECE A TA-027",
+      "method": "FF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 991,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "48.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 992,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 992,
+          "physical_unit_index": 1,
+          "x_mm": "4",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 992,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "RETAZO",
+          "material_id": 991,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 992,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": []
+    },
+    {
+      "case": "DJD-DIAGNOSTIC-001",
+      "label": "DIAGNÓSTICO DJD — NO PERTENECE A TA-027",
+      "method": "BF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 991,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "48.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 992,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 992,
+          "physical_unit_index": 1,
+          "x_mm": "4",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 992,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "RETAZO",
+          "material_id": 991,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 992,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": []
+    },
+    {
+      "case": "DJD-DIAGNOSTIC-001",
+      "label": "DIAGNÓSTICO DJD — NO PERTENECE A TA-027",
+      "method": "WF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 991,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "48.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 992,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 992,
+          "physical_unit_index": 1,
+          "x_mm": "4",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 992,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "RETAZO",
+          "material_id": 991,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 992,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": []
+    },
+    {
+      "case": "DJD-DIAGNOSTIC-001",
+      "label": "DIAGNÓSTICO DJD — NO PERTENECE A TA-027",
+      "method": "DJD-1/3",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 991,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "48.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 992,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 992,
+          "physical_unit_index": 1,
+          "x_mm": "4",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 992,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "12.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "RETAZO",
+          "material_id": 991,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 992,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": [],
+      "djd_trace": {
+        "initial_fill_ratio": [
+          {
+            "source": "RETAZO",
+            "material_id": 991,
+            "physical_unit_index": 1,
+            "ratio": "1",
+            "initial_capacity_mm2": "48.00"
+          },
+          {
+            "source": "PLANCHA",
+            "material_id": 992,
+            "physical_unit_index": 1,
+            "ratio": "0.3809375",
+            "initial_capacity_mm2": "96.00"
+          }
+        ],
+        "combinations_size_1": 4,
+        "combinations_size_2": 0,
+        "combinations_size_3": 0,
+        "combinations_pruned": 0,
+        "pruned_by_size": {
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "geometric_sequence_checks": 0,
+        "cached_sequences_skipped": 0,
+        "geometric_checks": 4,
+        "feasible_combinations": 0,
+        "waste_tolerance_steps": 0,
+        "selected_combination_sizes": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "selected_groups": [
+          {
+            "source": "RETAZO",
+            "material_id": 991,
+            "size": 1,
+            "phase": "initial_fill",
+            "piece_ids": [
+              1
+            ],
+            "waste_tolerance_mm2": "0"
+          },
+          {
+            "source": "PLANCHA",
+            "material_id": 992,
+            "size": 1,
+            "phase": "initial_fill",
+            "piece_ids": [
+              3
+            ],
+            "waste_tolerance_mm2": "0"
+          },
+          {
+            "source": "PLANCHA",
+            "material_id": 992,
+            "size": 1,
+            "phase": "initial_fill",
+            "piece_ids": [
+              2
+            ],
+            "waste_tolerance_mm2": "0"
+          },
+          {
+            "source": "PLANCHA",
+            "material_id": 992,
+            "size": 1,
+            "phase": "initial_fill",
+            "piece_ids": [
+              2
+            ],
+            "waste_tolerance_mm2": "0"
+          }
+        ],
+        "source_switches": 1,
+        "processing_order": [
+          [
+            1,
+            1
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "source_decisions": []
+      }
+    },
+    {
+      "case": "DJD-DIAGNOSTIC-002",
+      "label": "DIAGNÓSTICO DJD — NO PERTENECE A TA-027",
+      "method": "FF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 993,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "32.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 993,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "32.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "PLANCHA",
+          "material_id": 993,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": [
+        {
+          "piece_id": 2,
+          "unit_index": 1
+        }
+      ]
+    },
+    {
+      "case": "DJD-DIAGNOSTIC-002",
+      "label": "DIAGNÓSTICO DJD — NO PERTENECE A TA-027",
+      "method": "BF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 993,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "32.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 993,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "32.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "PLANCHA",
+          "material_id": 993,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": [
+        {
+          "piece_id": 2,
+          "unit_index": 1
+        }
+      ]
+    },
+    {
+      "case": "DJD-DIAGNOSTIC-002",
+      "label": "DIAGNÓSTICO DJD — NO PERTENECE A TA-027",
+      "method": "WF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 993,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "32.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 993,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "32.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "PLANCHA",
+          "material_id": 993,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": [
+        {
+          "piece_id": 2,
+          "unit_index": 1
+        }
+      ]
+    },
+    {
+      "case": "DJD-DIAGNOSTIC-002",
+      "label": "DIAGNÓSTICO DJD — NO PERTENECE A TA-027",
+      "method": "DJD-1/3",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 993,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "32.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 993,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "32.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "PLANCHA",
+          "material_id": 993,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": [
+        {
+          "piece_id": 2,
+          "unit_index": 1
+        }
+      ],
+      "djd_trace": {
+        "initial_fill_ratio": [
+          {
+            "source": "PLANCHA",
+            "material_id": 993,
+            "physical_unit_index": 1,
+            "ratio": "0.5",
+            "initial_capacity_mm2": "128.00"
+          }
+        ],
+        "combinations_size_1": 13,
+        "combinations_size_2": 0,
+        "combinations_size_3": 0,
+        "combinations_pruned": 5,
+        "pruned_by_size": {
+          "1": 5,
+          "2": 0,
+          "3": 0
+        },
+        "geometric_sequence_checks": 1,
+        "cached_sequences_skipped": 5,
+        "geometric_checks": 3,
+        "feasible_combinations": 0,
+        "waste_tolerance_steps": 10,
+        "selected_combination_sizes": [
+          1,
+          1
+        ],
+        "selected_groups": [
+          {
+            "source": "PLANCHA",
+            "material_id": 993,
+            "size": 1,
+            "phase": "initial_fill",
+            "piece_ids": [
+              1
+            ],
+            "waste_tolerance_mm2": "0"
+          },
+          {
+            "source": "PLANCHA",
+            "material_id": 993,
+            "size": 1,
+            "phase": "initial_fill",
+            "piece_ids": [
+              1
+            ],
+            "waste_tolerance_mm2": "0"
+          }
+        ],
+        "source_switches": 0,
+        "processing_order": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "source_decisions": [
+          {
+            "source": "PLANCHA",
+            "material_id": 993,
+            "decision": "advance_no_acceptable_group",
+            "remaining_free_area_mm2": "64.00"
+          }
+        ]
+      }
+    },
+    {
+      "case": "DJD-DIAGNOSTIC-003",
+      "label": "DIAGNÓSTICO DJD — NO PERTENECE A TA-027",
+      "method": "FF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "72.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "area_mm2": "16.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "x_mm": "4",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "area_mm2": "16.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "area_mm2": "16.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": []
+    },
+    {
+      "case": "DJD-DIAGNOSTIC-003",
+      "label": "DIAGNÓSTICO DJD — NO PERTENECE A TA-027",
+      "method": "BF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "72.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "area_mm2": "16.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "x_mm": "4",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "area_mm2": "16.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "area_mm2": "16.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": []
+    },
+    {
+      "case": "DJD-DIAGNOSTIC-003",
+      "label": "DIAGNÓSTICO DJD — NO PERTENECE A TA-027",
+      "method": "WF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "72.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "area_mm2": "16.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "x_mm": "4",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "area_mm2": "16.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "area_mm2": "16.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": []
+    },
+    {
+      "case": "DJD-DIAGNOSTIC-003",
+      "label": "DIAGNÓSTICO DJD — NO PERTENECE A TA-027",
+      "method": "DJD-1/3",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "72.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "area_mm2": "16.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "x_mm": "4",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "area_mm2": "16.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 3,
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "area_mm2": "16.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "PLANCHA",
+          "material_id": 994,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": [],
+      "djd_trace": {
+        "initial_fill_ratio": [
+          {
+            "source": "PLANCHA",
+            "material_id": 994,
+            "physical_unit_index": 1,
+            "ratio": "0.6",
+            "initial_capacity_mm2": "120.00"
+          }
+        ],
+        "combinations_size_1": 4,
+        "combinations_size_2": 3,
+        "combinations_size_3": 1,
+        "combinations_pruned": 6,
+        "pruned_by_size": {
+          "1": 3,
+          "2": 3,
+          "3": 0
+        },
+        "geometric_sequence_checks": 1,
+        "cached_sequences_skipped": 0,
+        "geometric_checks": 4,
+        "feasible_combinations": 1,
+        "waste_tolerance_steps": 0,
+        "selected_combination_sizes": [
+          1,
+          3
+        ],
+        "selected_groups": [
+          {
+            "source": "PLANCHA",
+            "material_id": 994,
+            "size": 1,
+            "phase": "initial_fill",
+            "piece_ids": [
+              1
+            ],
+            "waste_tolerance_mm2": "0"
+          },
+          {
+            "source": "PLANCHA",
+            "material_id": 994,
+            "size": 3,
+            "piece_ids": [
+              2,
+              2,
+              2
+            ],
+            "unit_ids": [
+              [
+                2,
+                1
+              ],
+              [
+                2,
+                2
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "waste_tolerance_mm2": "0",
+            "estimated_residual_mm2": "0.00"
+          }
+        ],
+        "source_switches": 0,
+        "processing_order": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "source_decisions": [
+          {
+            "source": "PLANCHA",
+            "material_id": 994,
+            "decision": "source_complete",
+            "placed_units": 3
+          }
+        ]
+      }
+    },
+    {
+      "case": "DJD-DIAGNOSTIC-004",
+      "label": "DIAGNÓSTICO DJD — NO PERTENECE A TA-027",
+      "method": "FF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 996,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "24.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 995,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "20.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 996,
+          "physical_unit_index": 1,
+          "x_mm": "6",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 996,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "4",
+          "rotation_deg": "0",
+          "area_mm2": "9.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "PLANCHA",
+          "material_id": 996,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "RETAZO",
+          "material_id": 995,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": []
+    },
+    {
+      "case": "DJD-DIAGNOSTIC-004",
+      "label": "DIAGNÓSTICO DJD — NO PERTENECE A TA-027",
+      "method": "BF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 996,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "24.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 995,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "20.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 996,
+          "physical_unit_index": 1,
+          "x_mm": "6",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 996,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "4",
+          "rotation_deg": "0",
+          "area_mm2": "9.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "PLANCHA",
+          "material_id": 996,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "RETAZO",
+          "material_id": 995,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": []
+    },
+    {
+      "case": "DJD-DIAGNOSTIC-004",
+      "label": "DIAGNÓSTICO DJD — NO PERTENECE A TA-027",
+      "method": "WF",
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 996,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "24.00"
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 995,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "20.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 996,
+          "physical_unit_index": 2,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 996,
+          "physical_unit_index": 2,
+          "x_mm": "4",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "9.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "PLANCHA",
+          "material_id": 996,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "RETAZO",
+          "material_id": 995,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 996,
+          "physical_unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": []
+    },
+    {
+      "case": "DJD-DIAGNOSTIC-004",
+      "label": "DIAGNÓSTICO DJD — NO PERTENECE A TA-027",
+      "method": "DJD-1/3",
+      "placements": [
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "source": "RETAZO",
+          "material_id": 995,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "20.00"
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 996,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "24.00"
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 996,
+          "physical_unit_index": 1,
+          "x_mm": "6",
+          "y_mm": "0",
+          "rotation_deg": "0",
+          "area_mm2": "12.57"
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 1,
+          "source": "PLANCHA",
+          "material_id": 996,
+          "physical_unit_index": 1,
+          "x_mm": "0",
+          "y_mm": "4",
+          "rotation_deg": "0",
+          "area_mm2": "9.00"
+        }
+      ],
+      "materials_used": [
+        {
+          "source": "RETAZO",
+          "material_id": 995,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 996,
+          "physical_unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ]
+        }
+      ],
+      "unplaced": [],
+      "djd_trace": {
+        "initial_fill_ratio": [
+          {
+            "source": "RETAZO",
+            "material_id": 995,
+            "physical_unit_index": 1,
+            "ratio": "1",
+            "initial_capacity_mm2": "20.00"
+          },
+          {
+            "source": "PLANCHA",
+            "material_id": 996,
+            "physical_unit_index": 1,
+            "ratio": "0.457125",
+            "initial_capacity_mm2": "80.00"
+          }
+        ],
+        "combinations_size_1": 14,
+        "combinations_size_2": 0,
+        "combinations_size_3": 0,
+        "combinations_pruned": 10,
+        "pruned_by_size": {
+          "1": 10,
+          "2": 0,
+          "3": 0
+        },
+        "geometric_sequence_checks": 1,
+        "cached_sequences_skipped": 0,
+        "geometric_checks": 4,
+        "feasible_combinations": 1,
+        "waste_tolerance_steps": 9,
+        "selected_combination_sizes": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "selected_groups": [
+          {
+            "source": "RETAZO",
+            "material_id": 995,
+            "size": 1,
+            "phase": "initial_fill",
+            "piece_ids": [
+              2
+            ],
+            "waste_tolerance_mm2": "0"
+          },
+          {
+            "source": "PLANCHA",
+            "material_id": 996,
+            "size": 1,
+            "phase": "initial_fill",
+            "piece_ids": [
+              1
+            ],
+            "waste_tolerance_mm2": "0"
+          },
+          {
+            "source": "PLANCHA",
+            "material_id": 996,
+            "size": 1,
+            "phase": "initial_fill",
+            "piece_ids": [
+              3
+            ],
+            "waste_tolerance_mm2": "0"
+          },
+          {
+            "source": "PLANCHA",
+            "material_id": 996,
+            "size": 1,
+            "piece_ids": [
+              4
+            ],
+            "unit_ids": [
+              [
+                4,
+                1
+              ]
+            ],
+            "waste_tolerance_mm2": "36.00",
+            "estimated_residual_mm2": "34.43"
+          }
+        ],
+        "source_switches": 1,
+        "processing_order": [
+          [
+            2,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            4,
+            1
+          ]
+        ],
+        "source_decisions": [
+          {
+            "source": "PLANCHA",
+            "material_id": 996,
+            "decision": "source_complete",
+            "placed_units": 1
+          }
+        ]
+      }
+    }
+  ],
+  "classification_rule": "A: decisiones distintas y métricas iguales al mejor baseline (o iguales a todos); B: cambian sin mejora frente al mejor baseline; C: mejora frente al mejor baseline; D: pérdida de cobertura/plancha, caída de 5 puntos de utilización o aumento de merma superior a 5% (piso 1 mm²).",
+  "classifications": {
+    "DJD-DIAGNOSTIC-001": {
+      "category": "A",
+      "decision_differs": false,
+      "reason": "Métricas funcionales iguales a FF/BF/WF; DJD no mostró una decisión de grupo distinta.",
+      "djd_runtime_ms": "3.266",
+      "selected_group_sizes": "1;1;1;1",
+      "selected_groups": [
+        {
+          "source": "RETAZO",
+          "material_id": 991,
+          "size": 1,
+          "phase": "initial_fill",
+          "piece_ids": [
+            1
+          ],
+          "waste_tolerance_mm2": "0"
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 992,
+          "size": 1,
+          "phase": "initial_fill",
+          "piece_ids": [
+            3
+          ],
+          "waste_tolerance_mm2": "0"
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 992,
+          "size": 1,
+          "phase": "initial_fill",
+          "piece_ids": [
+            2
+          ],
+          "waste_tolerance_mm2": "0"
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 992,
+          "size": 1,
+          "phase": "initial_fill",
+          "piece_ids": [
+            2
+          ],
+          "waste_tolerance_mm2": "0"
+        }
+      ]
+    },
+    "DJD-DIAGNOSTIC-002": {
+      "category": "A",
+      "decision_differs": false,
+      "reason": "Métricas funcionales iguales a FF/BF/WF; DJD no mostró una decisión de grupo distinta.",
+      "djd_runtime_ms": "23.969",
+      "selected_group_sizes": "1;1",
+      "selected_groups": [
+        {
+          "source": "PLANCHA",
+          "material_id": 993,
+          "size": 1,
+          "phase": "initial_fill",
+          "piece_ids": [
+            1
+          ],
+          "waste_tolerance_mm2": "0"
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 993,
+          "size": 1,
+          "phase": "initial_fill",
+          "piece_ids": [
+            1
+          ],
+          "waste_tolerance_mm2": "0"
+        }
+      ]
+    },
+    "DJD-DIAGNOSTIC-003": {
+      "category": "A",
+      "decision_differs": true,
+      "reason": "Métricas funcionales iguales a FF/BF/WF; DJD sí cambió grupo/placement frente a algún método.",
+      "djd_runtime_ms": "2.275",
+      "selected_group_sizes": "1;3",
+      "selected_groups": [
+        {
+          "source": "PLANCHA",
+          "material_id": 994,
+          "size": 1,
+          "phase": "initial_fill",
+          "piece_ids": [
+            1
+          ],
+          "waste_tolerance_mm2": "0"
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 994,
+          "size": 3,
+          "piece_ids": [
+            2,
+            2,
+            2
+          ],
+          "unit_ids": [
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              2,
+              3
+            ]
+          ],
+          "waste_tolerance_mm2": "0",
+          "estimated_residual_mm2": "0.00"
+        }
+      ]
+    },
+    "DJD-DIAGNOSTIC-004": {
+      "category": "A",
+      "decision_differs": true,
+      "reason": "Métricas funcionales iguales al mejor baseline; DJD sí cambió grupo/placement frente a algún método.",
+      "djd_runtime_ms": "5.578",
+      "selected_group_sizes": "1;1;1;1",
+      "selected_groups": [
+        {
+          "source": "RETAZO",
+          "material_id": 995,
+          "size": 1,
+          "phase": "initial_fill",
+          "piece_ids": [
+            2
+          ],
+          "waste_tolerance_mm2": "0"
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 996,
+          "size": 1,
+          "phase": "initial_fill",
+          "piece_ids": [
+            1
+          ],
+          "waste_tolerance_mm2": "0"
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 996,
+          "size": 1,
+          "phase": "initial_fill",
+          "piece_ids": [
+            3
+          ],
+          "waste_tolerance_mm2": "0"
+        },
+        {
+          "source": "PLANCHA",
+          "material_id": 996,
+          "size": 1,
+          "piece_ids": [
+            4
+          ],
+          "unit_ids": [
+            [
+              4,
+              1
+            ]
+          ],
+          "waste_tolerance_mm2": "36.00",
+          "estimated_residual_mm2": "34.43"
+        }
+      ]
+    }
+  }
+}

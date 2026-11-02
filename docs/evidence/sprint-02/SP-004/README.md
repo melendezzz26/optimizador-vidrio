@@ -87,3 +87,35 @@ CA-01–CA-10 están registrados y verificados en [PLAN-SP-004-djd.md](../../../
 - `69bcae4` — `experiment(SP-004): agregar notebook DJD ejecutado`
 
 Estos commits y el commit de cierre de evidencia permanecen solo en la rama local `spike/S2-SP004-djd`.
+
+## Hito Pair-Block y diagnóstico adicional DJD
+
+Responsable: Andro Joseph Quispe Cesias. La rama sigue local; no se hizo push, PR ni merge. Este hito mantiene todos los artefactos de Filler y DJD anteriores y agrega una adaptación experimental Pair-Block sin cambios productivos.
+
+La referencia académica revisada fue Cai et al. (2023), *Heuristics for the two-dimensional irregular bin packing problem with limited rotations*, DOI [10.1016/j.cor.2023.106398](https://doi.org/10.1016/j.cor.2023.106398). La publicación combina bloques complementarios con espacios residuales, operadores de búsqueda y repacking. Pair-Block limita el concepto a dos piezas compatibles, orientaciones cardinales ya permitidas y una máscara raster temporal. La métrica de densidad de caja es una adaptación explícita, no una fórmula atribuida al artículo.
+
+Pair-Block comparó los tres fixtures TA-027 inalterados y `BLOCK-DISCRIMINANT-001`. Ningún bloque llegó a colocarse en TA-027. En COMPLEX se aceptó geométricamente un par pero no cupo como máscara compuesta; el fallback individual mantuvo las mismas métricas de FF. Su runtime fue 2,998.492 ms frente a 169.095 ms de FF. En el discriminante la pareja triangular sí se colocó como bloque y cambió el patrón frente a FF; los cuatro métodos empataron con 3/3 piezas, una plancha, 94.444% de aprovechamiento y 10 mm² de merma.
+
+El diagnóstico DJD usa cuatro casos nuevos con intenciones registradas antes de correr métodos. La selección de terna en `DJD-DIAGNOSTIC-003` produjo métricas iguales a FF/BF/WF. `DJD-DIAGNOSTIC-004` empató al mejor baseline y superó a WF; los otros casos empataron con todos. No hubo mejora frente al mejor baseline. Las cuatro clases son A, con un indicador adicional de si las decisiones variaron.
+
+| Caso oficial | FF uso / merma / planchas | Pair-Block uso / merma / planchas | Bloques colocados | Pair-Block ms |
+|---|---|---|---:|---:|
+| SMALL | 60.000% / 0 / 1 | 60.000% / 0 / 1 | 0 | 23.220 |
+| MEDIUM | 28.413% / 201.86 / 1 | 28.413% / 201.86 / 1 | 0 | 291.847 |
+| COMPLEX | 29.598% / 746.72 / 3 | 29.598% / 746.72 / 3 | 0 | 2,998.492 |
+
+Archivos de resultados:
+
+- Pair-Block: [CSV](benchmark-results/sp004_block_results.csv), [traza JSON y determinismo](benchmark-results/sp004_block_trace.json).
+- DJD diagnóstico: [CSV](benchmark-results/sp004_djd_diagnostic_results.csv), [traza JSON y categorías](benchmark-results/sp004_djd_diagnostic_trace.json).
+- Manifiesto previo y casos: [`DJD-DIAGNOSTIC-INTENT.md`](../../../../experiments/optimization/djd/DJD-DIAGNOSTIC-INTENT.md), cuatro JSON `DJD-DIAGNOSTIC-001` a `004`.
+- Caso didáctico y figuras de comparación: [`block_packing/`](../../../../experiments/optimization/block_packing/).
+- Notebook ejecutado: [`SP004-Block-Packing.ipynb`](../../../../experiments/optimization/colab/SP004-Block-Packing.ipynb), 34 secciones de contenido y 28 celdas de código ejecutadas localmente.
+- Decisión, criterio de compactación y resultados: [SP-004-investigacion-m4.md](../../../spikes/SP-004-investigacion-m4.md).
+- SPEC/PLAN/TASKS nuevos: [SPEC](../../../specs/SPEC-SP-004-heuristica-m4.md), [PLAN](../../../specs/PLAN-SP-004-heuristica-m4.md), [TASKS](../../../specs/TASKS-SP-004-heuristica-m4.md).
+
+## Validación de cierre del hito Pair-Block
+
+Suite ejecutada: `104 passed in 16.58s`, incluyendo 11 pruebas específicas Pair-Block, DJD, Filler y regresiones FF/BF/WF. El notebook se regeneró y ejecutó localmente: 34 secciones, 28 celdas de código con outputs, comentarios en cada línea no vacía y cero errores. Los nueve JSON del laboratorio parsean correctamente; `git diff --check` no reportó errores.
+
+Revisión final: [SP-004 M4](../../../reviews/SP-004-heuristica-m4-review.md); matriz CA: [PLAN](../../../specs/PLAN-SP-004-heuristica-m4.md). No se modificaron módulos productivos ni fixtures oficiales.
