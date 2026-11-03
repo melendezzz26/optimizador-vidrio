@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Draft — revisión y autorización de implementación pendientes** |
+| Estado | **Draft — B01 autorizado; resultado pendiente de revisión** |
 | PBI / módulo | TA-043 / Sprint 2 / Optimization |
 | Responsable | Fabricio Meléndez |
 | Reviewer | Por designar; no se atribuye aprobación humana |
@@ -13,7 +13,13 @@
 | Commit base verificado | `d85a8d3c4fa2ba1b3f70c401ed947adcfbe2470b` |
 | Única rama de trabajo TA-043 | `feature/TA-043-integracion-seis-motores` |
 | PLAN | [PLAN-TA-043-integracion-seis-motores.md](PLAN-TA-043-integracion-seis-motores.md) |
-| Autorización actual | Crear y validar SPEC/PLAN y commits locales; no implementar ni ejecutar smoke |
+| Autorización actual | Fabricio autoriza exclusivamente B01, sus pruebas contractuales, ST-INC-01 y commits locales; detenerse antes de B02/B03 |
+
+La autorización documental inicial fue ampliada expresamente para **B01**. Su
+alcance y verificación se registran en [evidencia B01](../evidence/sprint-02/TA-043/B01/README.md).
+No autoriza endpoints/coordinación v2, persistencia de producción ni consumidores
+de bloques posteriores. El estado general sigue Draft y la puerta B01 requiere
+revisión de Fabricio antes de avanzar.
 
 ## 1. Objetivo, fuentes y base verificada
 
@@ -115,7 +121,8 @@ humanas pendientes en evidencias previas tampoco se presumen concedidas.
 
 ### Fuera de alcance
 
-- Implementación, scripts, pruebas nuevas o ejecución de smoke en esta sesión.
+- Implementación y pruebas de B02–B11 en esta entrega B01; no se habilita el
+  coordinador público de seis motores ni se ejecuta el smoke integral.
 - Cambiar heurísticas, geometría, scores, desempates, prioridades o fórmulas para
   igualar resultados; reintroducir DJD-1/3, Filler o Pair-Block como M4.
 - Ganador automático, nuevas ponderaciones de métricas, soporte Windows nativo
@@ -137,8 +144,9 @@ para confirmar, `optimization.confirm`, según cada operación.
   FF legacy y v1. No se asume que seis workers caben en un dyno Heroku.
 - Para pruebas mutantes: PostgreSQL propio y aislado, servicios loopback, usuarios
   y datos sintéticos controlados. Sin uso implícito de la BD de `.env`.
-- La implementación futura requiere revisión y autorización expresa del responsable
-  sobre esta SPEC y su PLAN. Estado Draft no equivale a aprobación.
+- La autorización vigente cubre exclusivamente B01. Sus consumidores requieren
+  superar la puerta de revisión y autorización expresa del responsable. Estado
+  Draft no equivale a aprobación de TA-043 completa.
 
 ## 4. Entradas y datos
 
@@ -252,7 +260,9 @@ compartidos. El hash del problema no sustituye la captura de mínimos métricos.
 ## 8. Criterios de aceptación verificables
 
 Cada fila es una obligación independiente; el PLAN enlaza todas con actividad y
-prueba. Los criterios están **pendientes de ejecución**, no aprobados por redactar.
+prueba. El cumplimiento integral de los criterios permanece pendiente; las
+verificaciones parciales de B01 se delimitan en su evidencia, sin aprobar TA-043
+por redactar o probar solo contratos.
 
 | CA | Requisito | Comprobación de aceptación |
 |---|---|---|
@@ -423,7 +433,8 @@ PostgreSQL aislado con motores productivos y procesos `spawn`. Mocks, inspecció
 estática, lint/build o unitarias solas no satisfacen SM-01–SM-10. Habrá smoke
 incremental después de cada bloque funcional ejecutable y smoke integral
 obligatorio de seis motores antes de cierre. El PLAN especifica entorno, datos,
-pasos, PASS/FAIL, evidencia y limpieza. Aquí solo se documentan.
+pasos, PASS/FAIL, evidencia y limpieza. ST-INC-01 se registra por separado en la
+evidencia B01; el smoke integral y las capacidades futuras siguen pendientes.
 
 ## 11. Riesgos, dependencias, mediciones y evidencias
 
@@ -446,7 +457,7 @@ unidades expandidas**, 128 vértices y 50 unidades físicas de stock por materia
 según TA-037; son límites de admisión, no garantía de tiempo/memoria. Ninguna
 medición pendiente recibe un PASS ni un nuevo número sin evidencia/revisión.
 
-Evidencia futura en `docs/evidence/sprint-02/TA-043/`: commit probado, entorno,
+Evidencia por bloque en `docs/evidence/sprint-02/TA-043/`: commit probado, entorno,
 comandos exactos/directorio, fixtures/hashes, configuración 5°, HTTP/NDJSON,
 capturas accesibles, snapshots/deltas PostgreSQL, recibos, reporte PID/joins,
 recursos y limpieza. Separar resultados históricos, condicionados y actuales;
@@ -461,3 +472,6 @@ e integral reales, regresión y revisión humana; documentar una prueba no la ej
 - 03/11/2026 — **Draft**: revisión final; se precisa la reutilización de la vista
   FF/BF/WF y de sus datos por ejecución en §9.5, sin cambiar requisitos, CA ni
   decisiones arquitectónicas. Implementación no autorizada.
+- 03/11/2026 — **Draft**: autorización posterior expresa de Fabricio limitada a
+  B01; catálogo/contratos, pruebas y ST-INC-01 registrados en evidencia B01.
+  Revisión de su resultado pendiente; B02/B03 y demás consumidores no autorizados.

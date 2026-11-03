@@ -4,14 +4,14 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Draft — solo planificación; ejecución no autorizada** |
+| Estado | **Draft — B01 autorizado; puerta de revisión pendiente** |
 | SPEC | [SPEC-TA-043-integracion-seis-motores.md](SPEC-TA-043-integracion-seis-motores.md) |
 | Responsable | Fabricio Meléndez |
 | Reviewer | Por designar; revisión humana pendiente |
 | Fecha | 03/11/2026, America/Lima |
 | Base oficial | `origin/integration-02`, `d85a8d3c4fa2ba1b3f70c401ed947adcfbe2470b` |
 | Única rama de trabajo | `feature/TA-043-integracion-seis-motores` |
-| Alcance de esta sesión | SPEC, PLAN, revisión documental y commits locales; detenerse después |
+| Autorización actual | Exclusivamente B01, T-01/T-07 pertinentes, ST-INC-01 y commits locales; detenerse al presentar su resultado |
 
 ## 1. Resultado esperado y reglas de ejecución futura
 
@@ -33,8 +33,10 @@ SPEC/PLAN, implementación futura, pruebas, smoke y evidencias. Separar activida
 con commits locales Conventional Commits por bloques validados, nunca mediante
 ramas docs/test u otras ramas de fases. Las referencias previas se conservan sin
 usarlas para desarrollar. No publicar la feature, fusionar, migrar entornos
-compartidos ni desplegar sin autorización. Esta entrega termina en documentos
-Draft; no abre implementación, no crea pruebas/scripts y no ejecuta smoke.
+compartidos ni desplegar sin autorización. La entrega documental inicial terminó
+en Draft; Fabricio autorizó posteriormente solo B01 y su validación. El resultado
+se registra en [evidencia B01](../evidence/sprint-02/TA-043/B01/README.md).
+Los demás bloques continúan pendientes y no se avanza sin superar la puerta B01.
 
 ### 1.1 Agrupaciones de gestión T01, T02 y T03
 
@@ -73,7 +75,7 @@ nuevas. Los archivos marcados «nuevo» son propuestas para la implementación f
 | T-10 | Regresión FF/BF/WF/HF/BRF/BS-2, reglas SP-002, geometría/rotación/métricas y suites backend/frontend | Directorios actuales de pruebas y gate E2E TA-040 |
 | T-11 | Perfil de recursos/latencia/serialización/callbacks y preparación operativa | Harness futuro junto a herramientas de validación; salidas seleccionadas en evidencia TA-043 |
 | T-12 | HU-018 condicionado: CSV/XLSX → pedido mixto persistido → seis motores a 5° | Pruebas API/integración orders y E2E tras integración independiente de HU-018 |
-| T-13 | Smoke incremental ST-INC sobre servicios reales tras cada bloque funcional ejecutable | Actividad §4; harness/spec futuro, sin implementación en esta sesión |
+| T-13 | Smoke incremental ST-INC sobre servicios reales tras cada bloque funcional ejecutable | Actividad §4; ST-INC-01 implementado y ejecutado; demás entregas pendientes |
 | T-14 | Smoke integral ST-INT obligatorio con PostgreSQL aislado y navegador real | Actividad §4; gate de cierre, sin ejecución en esta sesión |
 
 No duplicar casos geométricos entre niveles ni confundir pruebas de fixture con
@@ -84,6 +86,8 @@ no crear una suite paralela que solo replique aserciones internas.
 
 ### B01 — Catálogo y contratos de seis motores
 
+- **Estado del bloque:** alcance técnico y validación en [evidencia B01](../evidence/sprint-02/TA-043/B01/README.md);
+  resultado pendiente de revisión de Fabricio. No se habilitan consumidores B02/B03.
 - **Objetivo:** fijar identidad y fronteras de v2 sin alterar v1/legacy.
 - **Requisitos / CA:** RF-02, RF-11, RF-12, RF-14; CA-02, CA-11, CA-12, CA-14.
 - **Archivos/módulos previstos:** `O/application/comparison_contracts.py`, catálogo
@@ -421,14 +425,15 @@ no crear una suite paralela que solo replique aserciones internas.
 - **Evidencias:** índice final con comandos, resultados y enlaces; historial de
   revisión y decisión de cierre, sin secretos ni datos compartidos mutados.
 - **Orden / coordinación:** último; Fabricio y reviewer humano por designar.
-  Esta sesión solo entrega Draft y commit documental; no ejecuta este bloque.
+  B11 no forma parte de la autorización actual limitada a B01.
 
 ## 4. Actividad identificable: TA-043 — Smoke Tests
 
 **ID de actividad:** ST; niveles **ST-INC** (T-13) y **ST-INT** (T-14).
-**Estado actual de todos los smoke: PLANIFICADO / NO EJECUTADO.** Los comandos o
-harness específicos que falten se implementarán tras autorización, en la misma
-rama feature. No se crean scripts ni se levantan servicios en esta sesión.
+**Estado actual:** ST-INC-01 ejecutado con alcance v1/legacy; resultado y limpieza
+en [evidencia B01](../evidence/sprint-02/TA-043/B01/README.md). Los demás smoke,
+incluido ST-INT, siguen **PLANIFICADOS / NO EJECUTADOS**. Sus harness y servicios
+se prepararán solo cuando se autorice el bloque correspondiente, en esta rama.
 
 ### 4.1 Contrato común obligatorio E0 / D0 / P0 / L0
 
@@ -660,27 +665,29 @@ igualar resultados o presentar un fallo de recursos como ausencia geométrica.
 
 ## 7. Validación documental actual y puertas de aprobación
 
-Esta sesión revisa organización de plantilla/PLAN, enlaces locales, cobertura
+La revisión documental inicial comprobó organización de plantilla/PLAN, enlaces locales, cobertura
 de los 20 RF, 6 RNF y 10 SM mediante sus 36 CA, correspondencia de cada fila con
 actividad/prueba prevista, compatibilidad histórica, límites con fuente, aislamiento
 HU-018, rama única y `git diff --check`. Estas comprobaciones documentales no son
 ejecución de T-01–T-14 ni smoke y no habilitan implementación.
 
-Resultado de la revisión documental del 03/11/2026: 36 requisitos y 36 CA con
+Resultado de la revisión documental inicial del 03/11/2026: 36 requisitos y 36 CA con
 36 filas de trazabilidad concordantes, once bloques con los diez campos pedidos,
 once entradas smoke incrementales, enlaces locales válidos y UTF-8 sin BOM.
 `git diff --cached --check` y `git diff --check` sin incidencias; el diff contiene
 exclusivamente esta SPEC y este PLAN. Esta constatación no acredita servicios,
 pruebas de producto ni aprobación humana.
 
-Al validar ambos documentos, crear commit local Conventional Commits de SPEC/PLAN
-en `feature/TA-043-integracion-seis-motores`, verificar árbol limpio y detenerse
-para revisión del responsable. Las fases futuras tendrán commits separados en
-esta misma rama. No publicar la feature ni cambiar estados a Implemented/Verified.
+La fase documental produjo los commits locales `9ef0001` y `1d20a70` en esta
+misma rama y se detuvo para revisión. La autorización posterior permite B01,
+sus pruebas/smoke y commits separados por cambios lógicos; su resultado exige
+otra parada para revisión antes de consumidores dependientes. No publicar la
+feature ni cambiar el estado general a Implemented/Verified.
 
-Antes de implementar: aprobación expresa de SPEC/PLAN y alcance; asignar reviewer
-y coordinar interfaces; refrescar base/diferencias sin merge automático; preparar
-entorno aislado. Antes de cerrar: matriz completa con evidencia real, regresión,
+Antes de implementar otro bloque: superar la puerta B01 y obtener autorización
+expresa de su alcance; asignar reviewer y coordinar interfaces; refrescar
+base/diferencias sin merge automático; preparar entorno aislado. Antes de cerrar:
+matriz completa con evidencia real, regresión,
 ST-INC de entregas ejecutables y **ST-INT PASS obligatorio**, medición operativa y
 revisión humana. D6 pendiente por HU-018 se registra por separado y no se presenta
 como prueba aprobada; cualquier exclusión futura requiere decisión visible.
@@ -693,3 +700,6 @@ como prueba aprobada; cualquier exclusión futura requiere decisión visible.
 - 03/11/2026 — **Draft**: revisión final; agrupaciones de gestión T01–T03, puerta
   contractual de B01, viabilidad temprana de B04 y precisión de reutilización en
   B07. Se conservan requisitos, CA, matriz, dependencias y smoke; no se inicia B01.
+- 03/11/2026 — **Draft**: autorización posterior limitada a B01. Se registran sus
+  contratos, validación y ST-INC-01; puerta de revisión de Fabricio pendiente.
+  No se ejecutan B02/B03 ni se aprueba el cierre integral de TA-043.

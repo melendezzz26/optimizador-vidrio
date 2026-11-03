@@ -1,0 +1,27 @@
+{
+    "date":  "2026-11-03",
+    "branch":  "feature/TA-043-integracion-seis-motores",
+    "code_commit":  "8ab8eaa2859f9382f87b5a2bd9972d39faef3215",
+    "base":  "d85a8d3c4fa2ba1b3f70c401ed947adcfbe2470b",
+    "backend_final":  266,
+    "backend_b01_included":  49,
+    "frontend_final":  44,
+    "smoke":  "2 passed, desktop/mobile, real v1 and legacy",
+    "documentary":  "36 requirements/criteria/trace rows unchanged; 11 blocks preserved; links and diff checked",
+    "source_sha256":  {
+                          "backend/app/modules/optimization/application/comparison_catalog.py":  "0884686271dc36d2e9e879ecbb42c3a503981718708d6825a0cb6533f81b39d3",
+                          "backend/app/modules/optimization/application/comparison_v2_contracts.py":  "776cbc54993595143af37d28a8e7a01747883cf086f79dc08f4aa6ed8e8352e8",
+                          "backend/app/modules/optimization/infrastructure/comparison_v2_snapshot.py":  "d8e83203095534a52e40119fecfbf35588061447029e2a0724d2d0dde76e5b55",
+                          "backend/app/modules/optimization/presentation/comparison_v2_schemas.py":  "c044e0f98c793fa6d63637fb473a298c6c012845ecd43cd75debcf9847f427ab",
+                          "backend/app/modules/optimization/presentation/comparison_v2_serialization.py":  "bfb258467a8cf3ac43f24b0257677f825fa16523e9bb7d1f7622723410c331a6",
+                          "backend/tests/unit/optimization/comparison_v2_support.py":  "056a58f7cff4b6bea936802d7e08a418362fdc225cdf2950429e844d0cbcd459",
+                          "backend/tests/unit/optimization/test_comparison_v2_contract.py":  "bbe240e6909b715d459f7376e63c7bfc7aa1701c82e403a632846b6dfeaf6b4b",
+                          "docs/contracts/optimization/comparison-v2.json":  "92824f07d4b376b7fcaf7c0b71c35d9e1d965eeca72d7e894818a883047dac01",
+                          "docs/contracts/optimization/comparison-v2.md":  "ff6e2908fdcf6278edd79348ceb9702d33b8db6386237a176d7f83376b429024",
+                          "frontend/src/features/optimization/__tests__/ComparisonV2Contract.test.jsx":  "51ef12c150dac83a2579a5b176b9cd89b5817f93aec7ceee11f9443211090eb8",
+                          "frontend/src/features/optimization/comparisonV2Contract.js":  "a9926a7b16980d1ed82ca13c58c797364e8af250b17fd3ebb82f64708bff4e61",
+                          "backend/tests/optimization_b01_smoke.py":  "59de96cddd79de089cb9d134101d4ce62e51ec9cb67bbc8ee8c39935c1588037",
+                          "frontend/tests/e2e/optimization-comparison.spec.js":  "896c65d8acc6d105769a25e8e9622ef0f597f8b5c9f991cae92e104da44540ae"
+                      },
+    "backend_ownership_final":  49
+}

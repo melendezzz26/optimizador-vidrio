@@ -2,6 +2,65 @@
 import { test, expect } from '@playwright/test';
 import { api, setup, login, loginApi, open, stock, capture, save } from './optimizationRealSupport.js';
 
+test('TA-043 B01 smoke: arranque real, comparison-v1 y runs legacy sin consumir stock', async ({ page }, info) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  const openapi = await page.request.get(`${api}/openapi.json`);
+  expect(openapi.status()).toBe(200);
+  const paths = (await openapi.json()).paths;
+  expect(paths['/api/optimization/comparisons']).toBeTruthy();
+  expect(paths['/api/optimization/runs']).toBeTruthy();
+  expect(paths['/api/optimization/comparisons-v2']).toBeUndefined();
+  const data = await setup(page, 'single');
+  const before = await stock(page, data);
+  await login(page, data.actors.all, { comparative: true }); await open(page);
+  await page.getByRole('checkbox', { name: new RegExp(`Pedido #${data.orders[0]}\\b`) }).check();
+  const accepted = page.waitForResponse(r => new URL(r.url()).pathname === '/api/optimization/comparisons'
+    && r.request().method() === 'POST');
+  await page.getByRole('button', { name: 'Comparar con los tres motores', exact: true }).click();
+  const response = await accepted;
+  expect(response.status()).toBe(201);
+  const comparison = await response.json();
+  expect(comparison.profile).toBe('comparison-v1');
+  expect(comparison.executions.map(e => e.method)).toEqual(['FF', 'BF', 'WF']);
+  await expect(page.getByText('Comparación finalizada', { exact: true })).toBeVisible();
+  await expect(page.getByRole('tab')).toHaveCount(4);
+  const current = await (await page.request.get(`${api}/api/optimization/comparisons/${comparison.comparison_id}`,
+    { headers: data.headers })).json();
+  expect(current.terminal).toBe(true);
+  for (const execution of current.executions) {
+    const own = await page.request.get(`${api}/api/optimization/comparisons/${current.comparison_id}/executions/${execution.execution_id}`,
+      { headers: data.headers });
+    expect(own.status()).toBe(200);
+    expect((await own.json()).result.metodo).toBe(execution.method);
+    expect(execution.complete).toBe(true);
+  }
+  expect(await stock(page, data)).toEqual(before);
+  save(info, 'b01-comparison-v1.json', current);
+  await capture(page, info, 'b01-comparison-v1');
+  await page.getByRole('button', { name: 'Liberar pedidos sin confirmar', exact: true }).click();
+  await expect(page.getByText(new RegExp(`Trabajo #${current.comparison_id} liberado sin confirmar`))).toBeVisible();
+  await page.goto('/first-fit-compatibility.html'); await open(page);
+  await page.getByRole('checkbox', { name: new RegExp(`^#${data.orders[0]} ·`) }).check();
+  await page.getByRole('button', { name: 'Revisar vidrios y piezas', exact: true }).click();
+  const post = page.waitForResponse(r => new URL(r.url()).pathname === '/api/optimization/runs' && r.request().method() === 'POST');
+  await page.getByRole('button', { name: 'Calcular distribución', exact: true }).click();
+  const legacy = await post;
+  expect(legacy.status()).toBe(201);
+  const lines = (await legacy.text()).trim().split('\n').map(line => JSON.parse(line));
+  expect(lines.at(-1).event).toBe('optimization_completed');
+  const runId = lines[0].id_optimizacion;
+  const result = await page.request.get(`${api}/api/optimization/runs/${runId}`, { headers: data.headers });
+  expect(result.status()).toBe(200);
+  const ff = await result.json();
+  expect(ff.metodo).toBe('FF'); expect(ff.completo).toBe(true);
+  await expect(page.getByRole('heading', { name: 'Resultado del corte' })).toBeVisible();
+  expect(await stock(page, data)).toEqual(before);
+  save(info, 'b01-runs-legacy.json', ff);
+  await capture(page, info, 'b01-runs-legacy');
+  expect(errors).toEqual([]);
+});
+
 test('comparar tres motores, revisar fases y solicitud, elegir BF y confirmar una sola vez', async ({ page }, info) => {
   const errors = []; page.on('pageerror', e => errors.push(e.message));
   const data = await setup(page, 'combined', { createOrders: false });
