@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useEffectEvent, useId, useRef, useState } from 'react';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
-import { ChevronDown, Loader2, PackagePlus, Plus, Save, Trash2, X } from 'lucide-react';
+import { ChevronDown, FileUp, Loader2, PackagePlus, Plus, Save, Trash2, X } from 'lucide-react';
 import { AppShell } from '../../shared/components/AppShell';
 import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
 import { ConfirmDialog, EmptyState, FeedbackMessage, FieldError, LoadingState } from '../../shared/components/feedback';
+import BulkImportPanel from './BulkImportPanel';
+import { addImportedPieces } from './bulkImportModel';
 import CustomPieceEditor from './CustomPieceEditor';
 import OrderClientSelector from './OrderClientSelector';
 import { validateConvexPolygon } from './convexityValidation';
@@ -107,6 +109,10 @@ export default function FormularioPedido({
   const [touched, setTouched] = useState({});
   const [piezaEnEdicion, setPiezaEnEdicion] = useState(null);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
+  const [importPreview, setImportPreview] = useState(null);
+  const bulkImportHasBlockingObservations = isImportOpen && (importPreview?.filas.some(row => row.estado !== 'VALIDO') ?? false);
+  const importButtonRef = useRef(null);
   const [listaAnimada] = useAutoAnimate();
   const nextGroupIdRef = useRef(0);
   const nextPieceIdRef = useRef(0);
@@ -263,6 +269,25 @@ export default function FormularioPedido({
     }));
   }, []);
 
+  // HU-018 T04: las piezas importadas entran al formulario y se registran con el flujo normal.
+  function addImportedToOrder(pieces, material) {
+    const imported = pieces.map(piece => ({
+      ...piece,
+      id: nextPieceIdRef.current++,
+      nombre: '',
+      dimensiones: piece.tipo_forma === 'POLIGONO_CONVEXO'
+        ? { ...piece.dimensiones, rawState: restoredPolygonState(piece.dimensiones.vertices) }
+        : piece.dimensiones,
+    }));
+    const newGroupId = `group-${nextGroupIdRef.current++}`;
+    setMaterialGroups(current => recalculatePieceNames(addImportedPieces(current, material, imported, newGroupId)));
+    setIsImportOpen(false);
+    setImportPreview(null);
+    setErrorGlobal('');
+    setSuccessMessage(`Se ${imported.length === 1 ? 'agregó 1 pieza' : `agregaron ${imported.length} piezas`} del archivo al pedido.`);
+    importButtonRef.current?.focus();
+  }
+
   function openEditor(groupId, pieceId) {
     editorTriggerRef.current = document.activeElement;
     setPiezaEnEdicion({ groupId, pieceId });
@@ -332,7 +357,7 @@ export default function FormularioPedido({
   }
 
   async function saveOrder() {
-    if (submittingRef.current || !isValid() || readOnly) return;
+    if (submittingRef.current || !isValid() || readOnly || bulkImportHasBlockingObservations) return;
     submittingRef.current = true;
     setIsSubmitting(true);
     onSubmittingChange?.(true);
@@ -381,7 +406,19 @@ export default function FormularioPedido({
                   {readOnly ? 'Detalle de las piezas solicitadas.' : 'Agrupa las piezas por tipo de vidrio y espesor.'}
                 </p>
               </div>
+              {creating && (
+                <button ref={importButtonRef} type="button" className="ng-button" aria-expanded={isImportOpen}
+                  onClick={() => setIsImportOpen(true)} disabled={isSubmitting}>
+                  <FileUp size={18} aria-hidden="true" /> Importar CSV/XLSX
+                </button>
+              )}
             </div>
+
+            {creating && isImportOpen && (
+              <BulkImportPanel token={token} materials={tiposDisponibles} onAdd={addImportedToOrder}
+                preview={importPreview} setPreview={setImportPreview}
+                onClose={() => { setIsImportOpen(false); setImportPreview(null); importButtonRef.current?.focus(); }} />
+            )}
 
             <div ref={listaAnimada} className="orders-materials">
               {creating && !selectedClient ? (
@@ -578,10 +615,11 @@ export default function FormularioPedido({
           </section>
 
           {creating && !selectedClient && <p id={`${formId}-client-help`}>Selecciona un cliente para guardar el pedido.</p>}
+          {bulkImportHasBlockingObservations && <p id={`${formId}-import-help`}>Corrige las filas observadas antes de confirmar el pedido.</p>}
           <footer className="orders-form-footer"><ActionBar>
             {onCerrar && <button type="button" className="ng-button" onClick={() => setIsCancelDialogOpen(true)} disabled={isSubmitting}><X size={18} /> Cancelar</button>}
             {standalone && creating && <button type="button" className="ng-button" onClick={() => setIsCancelDialogOpen(true)} disabled={isSubmitting}><X size={18} /> Cancelar</button>}
-            {!readOnly && <button type="button" className="ng-button ng-button--primary" onClick={saveOrder} aria-describedby={creating && !selectedClient ? `${formId}-client-help` : undefined} disabled={!isValid() || isSubmitting}>
+            {!readOnly && <button type="button" className="ng-button ng-button--primary" onClick={saveOrder} aria-describedby={[creating && !selectedClient && `${formId}-client-help`, bulkImportHasBlockingObservations && `${formId}-import-help`].filter(Boolean).join(' ') || undefined} disabled={!isValid() || isSubmitting || bulkImportHasBlockingObservations}>
               {isSubmitting ? <Loader2 size={18} className="ng-loading-icon" /> : <Save size={18} />}
               {isSubmitting ? 'Guardando…' : editing ? 'Guardar cambios' : 'Guardar pedido'}
             </button>}

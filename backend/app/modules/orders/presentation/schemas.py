@@ -75,3 +75,36 @@ class OrderResponse(BaseModel):
     estado: Literal["PENDIENTE", "EN_OPTIMIZACION", "OPTIMIZADO", "CONFIRMADO", "CANCELADO"]
     id_usuario_registro: int
     piezas: list[PieceResponse]
+
+
+# HU-018: importación masiva (SPEC-HU-018 §7).
+class ImportRowRequest(InputSchema):
+    fila: PositiveId
+    texto: str = Field(max_length=4000)
+
+
+class ImportValidateRequest(InputSchema):
+    archivo: str = Field(default="", max_length=255)
+    filas: list[ImportRowRequest] = Field(min_length=1, max_length=500)
+
+
+class ImportSummary(BaseModel):
+    total: int
+    validas: int
+    observadas: int
+
+
+class ImportRowResponse(BaseModel):
+    fila: int
+    texto: str
+    estado: Literal["VALIDO", "OBSERVADO"]
+    tipo_forma: Literal["RECTANGULO", "CIRCUNFERENCIA", "POLIGONO_CONVEXO"] | None
+    cantidad: int | None
+    medidas: dict | None
+    causas: list[str]
+
+
+class ImportPreviewResponse(BaseModel):
+    archivo: str
+    resumen: ImportSummary
+    filas: list[ImportRowResponse]
