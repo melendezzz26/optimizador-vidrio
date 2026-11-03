@@ -39,7 +39,7 @@ python experimento_m5.py
 
 ### Opción B — Ejecución en Google Colab:
 1. Abrir el archivo `docs/spikes/sp-005-heuristica-m5/SP_005_Heuristica_M5_Colab.ipynb` en Google Colab o mediante el enlace:
-   [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/melendezzz26/optimizador-vidrio/blob/main/docs/spikes/sp-005-heuristica-m5/SP_005_Heuristica_M5_Colab.ipynb)
+   [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/melendezzz26/optimizador-vidrio/blob/spike/SP-005-heuristica-m5/docs/spikes/sp-005-heuristica-m5/SP_005_Heuristica_M5_Colab.ipynb)
 2. Seleccionar `Entorno de ejecución` -> `Ejecutar todas`.
 3. El cuaderno ejecuta las 4 heurísticas sobre los 3 casos, renderiza los gráficos comparativos de barras y layouts de corte, y descarga automáticamente los archivos `resultados_baseline_vs_m5.csv` y `resumen_comparativo.json`.
 

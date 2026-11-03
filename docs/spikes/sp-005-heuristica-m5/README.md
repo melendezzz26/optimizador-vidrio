@@ -42,5 +42,5 @@ docs/spikes/sp-005-heuristica-m5/
 
 ### 1. Ejecución en Google Colab:
 Abrir el cuaderno directamente haciendo clic en la insignia:
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/melendezzz26/optimizador-vidrio/blob/main/docs/spikes/sp-005-heuristica-m5/SP_005_Heuristica_M5_Colab.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/melendezzz26/optimizador-vidrio/blob/spike/SP-005-heuristica-m5/docs/spikes/sp-005-heuristica-m5/SP_005_Heuristica_M5_Colab.ipynb)
 Seleccionar `Entorno de ejecución` -> `Ejecutar todas`.
