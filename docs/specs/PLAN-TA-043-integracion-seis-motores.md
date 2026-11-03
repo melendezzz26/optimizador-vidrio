@@ -36,6 +36,23 @@ usarlas para desarrollar. No publicar la feature, fusionar, migrar entornos
 compartidos ni desplegar sin autorización. Esta entrega termina en documentos
 Draft; no abre implementación, no crea pruebas/scripts y no ejecuta smoke.
 
+### 1.1 Agrupaciones de gestión T01, T02 y T03
+
+| Agrupación | Bloques técnicos relacionados |
+|---|---|
+| T01 — Backend y persistencia multimétodo | B01, B02, B03, B04, B05, B06 y parte backend de B08 |
+| T02 — Interfaz de seis motores | B07 y parte frontend de B08 |
+| T03 — Regresión y validación conjunta | B09, B10 y B11: validación cruzada de los seis motores sobre las mismas condiciones de entrada, regresión, E2E y smoke integral |
+
+T01–T03 son agrupaciones de gestión; no sustituyen los bloques **B01–B11 como
+unidades reales de desarrollo** ni crean tareas de implementación masivas. Se
+trabaja bloque por bloque, con implementación, pruebas, smoke cuando corresponda,
+evidencias y commits locales. El orden técnico y las dependencias de §3 y §6
+tienen prioridad: no es necesario terminar una agrupación completa para iniciar
+un bloque cuyas dependencias estén satisfechas. B08 sigue siendo un solo bloque
+coordinado, aunque sus partes se relacionen con T01 y T02. Estos identificadores
+de gestión no se confunden con las pruebas previstas `T-01`, `T-02` y `T-03` de §2.
+
 ## 2. Inventario de módulos y pruebas previstas
 
 En los bloques, **O/** significa `backend/app/modules/optimization/`, **F/**
@@ -85,13 +102,22 @@ no crear una suite paralela que solo replique aserciones internas.
   duplicado o identidad contradictoria falla. ST-INC-01 si hay entrega ejecutable.
 - **Aceptación:** CA-02/11/12/14 cubiertos en contrato; fixture v2 no se presenta
   como prueba de concurrencia y ningún cliente v1 recibe seis por defecto.
+- **Puerta de revisión contractual:** al finalizar B01, detenerse para revisión
+  de Fabricio antes de implementar consumidores dependientes. Revisar los seis
+  nombres oficiales y su correspondencia con códigos de §1.3 de la SPEC,
+  comparison-v2, preservación de comparison-v1 y `/runs`, schemas/codecs, estados
+  y diagnósticos, semántica de eventos/resultados M6 y compatibilidad prevista
+  backend/frontend. Presentar las pruebas contractuales T-01 y las pertinentes
+  de T-07, sus resultados/evidencias y cualquier pendiente; registrar la decisión
+  del responsable. Sin su aprobación no se avanza a consumidores dependientes.
 - **Riesgos:** confundir versiones de perfil/snapshot/configuración/optimismo;
   renombrar BRF/M6 al serializar o codificar seis en todos los consumidores.
 - **Evidencias:** catálogo, diff contractual, fixtures con procedencia y resultados
   reales de pruebas futuras, almacenados bajo TA-043.
 - **Orden / coordinación:** primero; backend, frontend y responsable de datos
-  acuerdan el contrato. Tras estabilizarlo, B02, B03 y prototipos de B07 pueden
-  desarrollarse independientemente en la misma rama, mediante commits coordinados.
+  acuerdan el contrato. Tras aprobar la puerta de revisión, B02, B03 y prototipos
+  de B07 pueden desarrollarse independientemente en la misma rama, mediante commits
+  coordinados.
 
 ### B02 — Compatibilidad histórica y evolución del esquema de datos
 
@@ -166,6 +192,14 @@ no crear una suite paralela que solo replique aserciones internas.
   5) sumar supervisor/hijos/reserva/IPC/retención, sin multiplicar presupuestos;
   6) al vencer global terminar activas y marcar pendientes nunca iniciadas;
   7) rechazar plataforma/capacidad insuficiente y registrar recursos realmente medidos.
+- **Viabilidad temprana:** cuando se autorice B04, medir en entorno aislado los
+  seis motores productivos, sus tiempos y recursos por motor y del conjunto,
+  incluido el costo de callbacks. Un worker activo y 180 s globales son una
+  política conservadora pendiente de validación, no garantía de completar los
+  seis motores. Presentar esta medición antes de cerrar B04; si resulta inviable,
+  documentar alternativas y solicitar la decisión de Fabricio antes de continuar.
+  No aumentar presupuestos o concurrencia automáticamente ni modificar heurísticas
+  para superar las pruebas. B10 conserva la medición final del producto integrado.
 - **Pruebas:** T-04/T-05 reales en Linux/WSL2; cola máxima, deadline antes del sexto,
   RSS, espacio virtual, paquetes sobredimensionados, consumidores lentos, retención
   de seis sesiones y exclusión FF/v1/v2; ST-INC-04.
@@ -252,10 +286,13 @@ no crear una suite paralela que solo replique aserciones internas.
   `PlacementScene3D.jsx`; pruebas de componentes y E2E.
 - **Dependencias:** B01 para estructura; B03 para semántica BS/HF; B06 para conexión
   real. Coordinar interfaces antes de alterar parsers compartidos con legacy.
-- **Pasos concretos:** 1) parsers v1/v2 y acceso histórico; 2) pestañas/tabla desde
-  catálogo del recurso, sin `METHODS` global único ni conteos de tres;
+- **Pasos concretos:** 1) generalizar la vista FF/BF/WF existente con parsers v1/v2
+  y acceso histórico, sin ventanas nuevas por motor ni componentes duplicados;
+  2) pestañas/tabla desde catálogo del recurso, sin `METHODS` global único ni
+  conteos de tres;
   3) espera/arranque/cálculo/terminal y errores independientes; 4) métricas comunes,
-  null y cobertura, sin ranking automático; 5) reutilizar visores y resolver
+  null, cobertura, piezas no colocadas, tiempos de cálculo, planchas y retazos,
+  sin ranking automático; 5) reutilizar visores y resolver
   máscaras por dueño; 6) provisional BS reemplazable o solo progreso de búsqueda,
   final desde snapshot; 7) teclado/ARIA/foco/Home/End/reducir movimiento;
   8) conservar selección y recuperación al recargar. Confirmación depende de B08.
@@ -653,3 +690,6 @@ como prueba aprobada; cualquier exclusión futura requiere decisión visible.
 - 03/11/2026 — **Draft**: PLAN redactado después de la SPEC, con once bloques y
   actividad obligatoria TA-043 — Smoke Tests; documentación para revisión.
   Implementación, migraciones, scripts, pruebas y smoke no ejecutados en esta sesión.
+- 03/11/2026 — **Draft**: revisión final; agrupaciones de gestión T01–T03, puerta
+  contractual de B01, viabilidad temprana de B04 y precisión de reutilización en
+  B07. Se conservan requisitos, CA, matriz, dependencias y smoke; no se inicia B01.

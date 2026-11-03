@@ -400,9 +400,12 @@ incluye `comparison_contracts`, `comparisons`, `comparison_calculation`,
 `comparison_runtime`, schemas/serialización/rutas y confirmación. Dominio solo
 recibe adaptación de contratos/observación si es necesaria, sin cambios de política.
 
-Frontend adapta `comparisonApi`, `comparisonController`, `ComparisonWorkspace`,
+Frontend generaliza la estructura visual FF/BF/WF existente mediante
+`comparisonApi`, `comparisonController`, `ComparisonWorkspace`,
 `visualContract`, `visualState` y `runContract`; reutiliza `RunVisualization`,
-`PlacementCanvas` y `PlacementScene3D`. Pestañas y tabla usan ejecuciones del
+`PlacementCanvas` y `PlacementScene3D`, sin ventanas nuevas por motor ni componentes
+duplicados. Conserva métricas, cobertura, piezas no colocadas, tiempos de cálculo,
+planchas y retazos por ejecución. Pestañas y tabla usan ejecuciones del
 perfil, con una columna/fila por motor y metadatos de nombre/capacidad. Mantener
 roles ARIA, flechas/Home/End, foco, teclado en diálogos, móvil y movimiento reducido.
 Fallos muestran diagnóstico y métricas ausentes; parciales muestran cobertura y
@@ -455,3 +458,6 @@ e integral reales, regresión y revisión humana; documentar una prueba no la ej
 - 03/11/2026 — **Draft**: verificación de base y revisión documental; SPEC y PLAN
   preparados para revisión de Fabricio. Implementación, pruebas y smoke pendientes
   de autorización. No marcar Reviewed, Implemented, Verified ni TA-043 Closed.
+- 03/11/2026 — **Draft**: revisión final; se precisa la reutilización de la vista
+  FF/BF/WF y de sus datos por ejecución en §9.5, sin cambiar requisitos, CA ni
+  decisiones arquitectónicas. Implementación no autorizada.
