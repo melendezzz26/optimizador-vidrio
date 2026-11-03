@@ -1,22 +1,19 @@
-# SP-005 — Investigación y Experimentación de Heurística Adicional M5 (Best Residual Fit)
+# SP-005 — Investigación M5 Best Residual Fit
 
-**PBI / Tarea:** SP-005 — T01
-**Responsable:** Equipo NewGlass (Aguilar, Ibañez, Melendez, Quispe)
-**Estado:** Verificado técnicamente / Listo para integración
+**Autor:** Luis Anthony Ibáñez Herrera · **Estado:** GO CONDICIONADO experimental
+**Revisor asignado:** Andro Joseph Quispe Cesias · **revisión formal pendiente**
 
-El informe completo de la investigación con todos sus resultados tabulados, análisis matemático, trade-offs y cuaderno interactivo de Google Colab se encuentra en:
+M5 es una adaptación experimental de NewGlass que prioriza el mayor residual rectangular recuperable. Se comparó con FF/BF/WF mediante el mismo backend y fixtures TA-027, con tres ejecuciones por método/caso. Los resultados funcionales fueron deterministas.
 
-* [Carpeta de Investigación: docs/spikes/sp-005-heuristica-m5/](sp-005-heuristica-m5/README.md)
-* [Informe Técnico: SP-005-informe-investigacion-m5.md](sp-005-heuristica-m5/SP-005-informe-investigacion-m5.md)
-* [Cuaderno Google Colab: SP_005_Heuristica_M5_Colab.ipynb](sp-005-heuristica-m5/SP_005_Heuristica_M5_Colab.ipynb)
-* [Evidencia Formal: docs/evidence/sprint-02/SP-005/README.md](../evidence/sprint-02/SP-005/README.md)
+| Caso | FF (uso/merma/recuperable) | BF (uso/merma/recuperable) | WF (uso/merma/recuperable) | M5 (uso/merma/recuperable) |
+|---|---|---|---|---|
+| SMALL | 60.000% / 0.00 / 8 | 60.000% / 0.00 / 8 | 60.000% / 0.00 / 8 | 60.000% / 0.00 / 8 |
+| MEDIUM | 28.413% / 201.86 / 58 | 28.413% / 193.86 / 66 | 18.584% / 301.86 / 150 | 18.584% / 281.86 / 170 |
+| COMPLEX | 29.598% / 746.72 / 184 | 29.598% / 746.72 / 184 | 25.309% / 886.72 / 268 | 25.309% / 836.72 / 318 |
 
----
+Áreas en mm². M5 mejora sobre WF en área recuperable, pero usa más planchas y produce más merma que FF/BF en MEDIUM y COMPLEX; por eso no se recomienda superioridad general.
 
-### Resumen de Resultados (Baseline vs M5)
-
-| Caso | FF (Uso / Merma / Retazo) | BF (Uso / Merma / Retazo) | WF (Uso / Merma / Retazo) | M5 (Uso / Merma / Retazo) | Ganancia M5 vs WF |
-|---|---|---|---|---|---|
-| **EXP-SMALL-001** | 60.0% / 0 mm² / 8 mm² | 60.0% / 0 mm² / 8 mm² | 60.0% / 0 mm² / 8 mm² | 60.0% / 0 mm² / 8 mm² | Paridad base (100% colocación) |
-| **EXP-MEDIUM-001** | 28.4% / 201.86 mm² / 58 mm² | 28.4% / 193.86 mm² / 66 mm² | 18.6% / 301.86 mm² / 150 mm² | **18.6% / 281.86 mm² / 170 mm²** | **+20 mm² retazo / -20 mm² merma** |
-| **EXP-COMPLEX-001** | 29.6% / 746.72 mm² / 184 mm² | 29.6% / 746.72 mm² / 184 mm² | 25.3% / 886.72 mm² / 268 mm² | **25.3% / 836.72 mm² / 318 mm²** | **+50 mm² retazo / -50 mm² merma** |
+- [Carpeta del spike, runner y resultados](sp-005-heuristica-m5/README.md)
+- [SPEC](sp-005-heuristica-m5/SPEC-SP-005-heuristica-m5.md) · [PLAN](sp-005-heuristica-m5/PLAN-SP-005-heuristica-m5.md) · [TASKS](sp-005-heuristica-m5/TASKS-SP-005-heuristica-m5.md)
+- [Informe](sp-005-heuristica-m5/SP-005-informe-investigacion-m5.md) · [Auditoría técnica](sp-005-heuristica-m5/REVIEW-SP-005-heuristica-m5.md)
+- [Notebook](sp-005-heuristica-m5/SP_005_Heuristica_M5_Colab.ipynb) · [Evidencia formal](../evidence/sprint-02/SP-005/README.md)

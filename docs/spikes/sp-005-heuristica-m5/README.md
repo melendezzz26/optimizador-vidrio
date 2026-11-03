@@ -1,46 +1,49 @@
-# Spike SP-005: Heurística adicional M5 (Best Residual Fit)
+# SP-005 — M5 Best Residual Fit
 
-Este directorio contiene la investigación técnica, experimentación y validación formal de la heurística adicional **M5: Best Residual Fit (BRF)** para el motor de corte y empaquetado 2D de NewGlass.
+**Estado:** GO CONDICIONADO experimental.
+**Autor:** Luis Anthony Ibáñez Herrera.
+**Revisor asignado:** Andro Joseph Quispe Cesias; revisión formal pendiente.
+**PR:** #93 · `spike/SP-005-heuristica-m5`.
 
----
+Este spike compara FF, BF, WF y **M5 Best Residual Fit (adaptación experimental de NewGlass)**. M5 reutiliza `packing.pack()` y prioriza el área del mayor residual rectangular libre posterior a cada colocación. Su score es `(-área_recuperable, celdas_fragmentadas, stock_rank, orientation_rank, fila, columna)`. BF minimiza celdas libres totales; WF las maximiza.
 
-## Estructura de archivos de la investigación
+## Resultados reproducibles
 
-Siguiendo los **Estándares de Ingeniería de NewGlass** (Secciones 14, 15 y Anexos A y B):
+El runner usa el loader, fixtures, rasterizador, colocación y métricas oficiales TA-027/backend. Se registraron tres repeticiones por método y caso (36 ejecuciones). Las métricas funcionales coincidieron en todas las repeticiones; el tiempo informado es la mediana local.
 
-```text
-docs/spikes/sp-005-heuristica-m5/
-├── README.md                           # Índice y guía rápida de la investigación
-├── SPEC-SP-005-heuristica-m5.md        # Especificación formal (Plantilla Anexo A)
-├── SP-005-informe-investigacion-m5.md  # Informe técnico científico con fundamentación, análisis y trade-offs
-├── SP_005_Heuristica_M5_Colab.ipynb    # Cuaderno Jupyter interactivo para Google Colab (autocontenido)
-├── experimento_m5.py                   # Script ejecutable en Python puro para reproducir el benchmark
-└── resultados/                         # Datos experimentales crudos y reproducibles
-    ├── resultados_baseline_vs_m5.csv   # Tabla comparativa completa en CSV
-    ├── resumen_comparativo.json        # Consolidado estructurado en JSON
-    ├── exp_small_001_detalles.json     # Métricas detalladas caso pequeño
-    ├── exp_medium_001_detalles.json    # Métricas detalladas caso mediano
-    ├── exp_complex_001_detalles.json   # Métricas detalladas caso complejo
-    └── figuras/                        # Gráficos y diagramas de corte
+| Caso | Método | Colocadas | Retazos usados | Planchas | Uso % | Merma mm² | Recuperable mm² | Mediana ms |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| SMALL | FF | 3/3 | 1 | 1 | 60.000 | 0.00 | 8 | 95.03 |
+| SMALL | BF | 3/3 | 1 | 1 | 60.000 | 0.00 | 8 | 96.76 |
+| SMALL | WF | 3/3 | 1 | 1 | 60.000 | 0.00 | 8 | 97.37 |
+| SMALL | M5 | 3/3 | 1 | 1 | 60.000 | 0.00 | 8 | 96.94 |
+| MEDIUM | FF | 9/9 | 2 | 1 | 28.413 | 201.86 | 58 | 181.06 |
+| MEDIUM | BF | 9/9 | 2 | 1 | 28.413 | 193.86 | 66 | 243.34 |
+| MEDIUM | WF | 9/9 | 2 | 2 | 18.584 | 301.86 | 150 | 173.58 |
+| MEDIUM | M5 | 9/9 | 2 | 2 | 18.584 | 281.86 | 170 | 187.57 |
+| COMPLEX | FF | 24/24 | 3 | 3 | 29.598 | 746.72 | 184 | 889.95 |
+| COMPLEX | BF | 24/24 | 3 | 3 | 29.598 | 746.72 | 184 | 566.66 |
+| COMPLEX | WF | 24/24 | 3 | 4 | 25.309 | 886.72 | 268 | 537.43 |
+| COMPLEX | M5 | 24/24 | 3 | 4 | 25.309 | 836.72 | 318 | 535.23 |
+
+M5 supera a WF en área recuperable en Medium (+20 mm²) y Complex (+50 mm²), con menor merma por la misma cantidad. Frente a FF/BF, sin embargo, M5 usa una plancha nueva adicional y registra mayor merma en ambos casos. Por ello la decisión es condicional y no demuestra superioridad general.
+
+## Reproducir
+
+Desde la raíz del repositorio, con Python 3.11 o compatible:
+
+```powershell
+python docs/spikes/sp-005-heuristica-m5/experimento_m5.py --repetitions 3
+Set-Location backend
+python -m pytest tests/unit/optimization/test_sp005_m5.py -q -ra
 ```
 
----
+La corrida documentada se ejecutó localmente con Python 3.11.15 en Windows, no en Google Colab. El CSV guarda las 36 muestras; el JSON registra runtime, commit del runner, firmas funcionales, colocaciones y medianas.
 
-## Resumen de la Heurística M5 (Best Residual Fit)
+## Archivos
 
-- **Principio operativo:** A diferencia de FF (primer candidato), BF (mínimas celdas libres) y WF (máximas celdas libres), **M5 evalúa la geometría del espacio residual libre post-colocación** y selecciona el candidato que maximiza el área del mayor rectángulo inscribible (`largest_rectangle`). En empates, minimiza la merma fragmentada no aprovechable.
-- **Ventaja en la industria del vidrio:** Incrementa sustancialmente el **retazo recuperable** (material rectangular que puede volver a guardarse en inventario) y reduce la **merma neta fragmentada** (tiras inservibles que van a la basura).
-- **Resultados empíricos sobre casos congelados TA-027:**
-  - `EXP-SMALL-001`: $100\%$ de colocación, paridad exacta con el baseline ($60.000\%$ de uso, $0\text{ mm}^2$ de merma).
-  - `EXP-MEDIUM-001`: **$170\text{ mm}^2$ de retazo útil** ($+13.3\%$ frente a WF y $+157.6\%$ frente a BF), reduciendo la merma en $20\text{ mm}^2$.
-  - `EXP-COMPLEX-001`: **$318\text{ mm}^2$ de retazo útil** ($+18.66\%$ frente a WF y $+72.83\%$ frente a FF/BF), reduciendo la merma en $50\text{ mm}^2$.
-  - **Tiempo y memoria:** $458.25\text{ ms}$ en caso complejo ($\approx$ a BF y FF), con solo $900.7\text{ KB}$ de memoria pico.
-
----
-
-## Instrucciones de ejecución y reproducción
-
-### 1. Ejecución en Google Colab:
-Abrir el cuaderno directamente haciendo clic en la insignia:
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/melendezzz26/optimizador-vidrio/blob/spike/SP-005-heuristica-m5/docs/spikes/sp-005-heuristica-m5/SP_005_Heuristica_M5_Colab.ipynb)
-Seleccionar `Entorno de ejecución` -> `Ejecutar todas`.
+- [SPEC](SPEC-SP-005-heuristica-m5.md) · [PLAN](PLAN-SP-005-heuristica-m5.md) · [TASKS](TASKS-SP-005-heuristica-m5.md)
+- [Informe de investigación](SP-005-informe-investigacion-m5.md) · [Auditoría/revisión técnica](REVIEW-SP-005-heuristica-m5.md)
+- [Notebook](SP_005_Heuristica_M5_Colab.ipynb)
+- [CSV de 36 ejecuciones](resultados/resultados_baseline_vs_m5.csv) · [JSON](resultados/resumen_comparativo.json)
+- [Evidencia formal](../../evidence/sprint-02/SP-005/README.md)
