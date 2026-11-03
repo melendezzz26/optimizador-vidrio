@@ -1,0 +1,17 @@
+case,method,requested_units,placed_units,unplaced_units,remnants_used,sheets_used,utilization_pct,waste,recoverable_area,runtime_ms,candidate_pairs,filtered_pairs,geometrically_checked_pairs,accepted_blocks,placed_blocks,pieces_in_blocks,standalone_pieces,block_compaction,block_generation_ms,packing_ms
+EXP-SMALL-001,FF,3,3,0,1,1,60.000,0.00,8,20.095,,,,,,,,,,
+EXP-SMALL-001,BF,3,3,0,1,1,60.000,0.00,8,20.207,,,,,,,,,,
+EXP-SMALL-001,WF,3,3,0,1,1,60.000,0.00,8,19.458,,,,,,,,,,
+EXP-SMALL-001,Pair-Block,3,3,0,1,1,60.000,0.00,8,23.220,3,0,3,0,0,0,3,0.000000,3.006,18.642
+EXP-MEDIUM-001,FF,9,9,0,2,1,28.413,201.86,58,31.954,,,,,,,,,,
+EXP-MEDIUM-001,BF,9,9,0,2,1,28.413,193.86,66,47.703,,,,,,,,,,
+EXP-MEDIUM-001,WF,9,9,0,2,2,18.584,301.86,150,30.278,,,,,,,,,,
+EXP-MEDIUM-001,Pair-Block,9,9,0,2,1,28.413,201.86,58,291.847,36,0,36,0,0,0,9,0.000000,260.216,28.144
+EXP-COMPLEX-001,FF,24,24,0,3,3,29.598,746.72,184,169.095,,,,,,,,,,
+EXP-COMPLEX-001,BF,24,24,0,3,3,29.598,746.72,184,166.715,,,,,,,,,,
+EXP-COMPLEX-001,WF,24,24,0,3,4,25.309,886.72,268,161.658,,,,,,,,,,
+EXP-COMPLEX-001,Pair-Block,24,24,0,3,3,29.598,746.72,184,2998.492,181,0,181,1,0,0,24,0.000000,2822.923,165.006
+BLOCK-DISCRIMINANT-001,FF,3,3,0,0,1,94.444,10.00,0,14.831,,,,,,,,,,
+BLOCK-DISCRIMINANT-001,BF,3,3,0,0,1,94.444,10.00,0,14.175,,,,,,,,,,
+BLOCK-DISCRIMINANT-001,WF,3,3,0,0,1,94.444,10.00,0,15.341,,,,,,,,,,
+BLOCK-DISCRIMINANT-001,Pair-Block,3,3,0,0,1,94.444,10.00,0,109.618,3,0,3,1,1,2,1,1.000000,106.964,0.519

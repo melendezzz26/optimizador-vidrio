@@ -1,0 +1,4900 @@
+{
+  "label": "DIAGNÓSTICO HOLE FILLING — NO PERTENECE A TA-027",
+  "methods": [
+    "FF",
+    "BF",
+    "WF",
+    "Hole-Filling"
+  ],
+  "hf_repetitions_per_case": 3,
+  "classification_rules": "HF-DIAGNOSTIC-INTENT.md",
+  "mini_spike_decision": "VIABLE",
+  "official_benchmark_authorized_by_gate": true,
+  "cases": [
+    {
+      "case_id": "HF-DIAGNOSTIC-001",
+      "label": "DIAGNÓSTICO HOLE FILLING — NO PERTENECE A TA-027",
+      "classification": {
+        "category": "B",
+        "best_baseline": "FF",
+        "improved_fields": [],
+        "worsened_fields": [],
+        "pattern_changed_from_all_baselines": true,
+        "pocket_used": true,
+        "runtime_ratio_vs_fastest_baseline": 4.59819884491141
+      },
+      "deterministic": true,
+      "hf_repetitions": [
+        {
+          "method": "Hole-Filling",
+          "total_ms": 14.0921,
+          "metrics": {
+            "requested": 7,
+            "placed": 7,
+            "unplaced": 0,
+            "new_sheets_used": 0,
+            "utilization_pct": "17.630",
+            "waste_mm2": "302.43",
+            "recoverable_remnant_mm2": "60",
+            "materials_used": [
+              {
+                "source": "RETAZO",
+                "material_id": 901,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "RETAZO",
+                "material_id": 901,
+                "x_mm": "0",
+                "y_mm": "0",
+                "width_mm": "3",
+                "height_mm": "20",
+                "area_mm2": "60"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "9",
+              "y_mm": "8",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "CIRCUNFERENCIA",
+                "radius_mm": 2
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "6",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 3,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "12",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 4,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "4",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "16",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 6,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "7",
+              "y_mm": "16",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 8.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 7,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "7",
+              "y_mm": "5",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 1.0,
+                "height_mm": 1.0
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              7,
+              "RETAZO",
+              901,
+              1,
+              "7",
+              "5",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "candidate_orientations_scanned": 2,
+            "geometric_positions_evaluated": 839,
+            "pocket_components_detected": 3,
+            "pockets_used": 1,
+            "fallback_placements": 0,
+            "fallback_unplaced": 0,
+            "exact_geometry_checks": 1,
+            "pocket_search_decisions": 1,
+            "pocket_options_by_decision": [
+              3
+            ],
+            "selected_pockets": [
+              {
+                "piece_id": 7,
+                "unit_index": 1,
+                "source": "RETAZO",
+                "material_id": 901,
+                "rotation_deg": "0",
+                "anchor_row": 5,
+                "anchor_column": 7,
+                "anchor_x_mm": "7",
+                "anchor_y_mm": "5",
+                "component_cells": 44,
+                "anchor_area_mm2": "44",
+                "bbox_row_column": [
+                  5,
+                  7,
+                  14,
+                  14
+                ],
+                "candidate_options_at_decision": 3,
+                "prior_layout_version": 0
+              }
+            ],
+            "placement_search_ms": 9.4332,
+            "pocket_detection_ms": 0.8855,
+            "total_ms": 14.0921,
+            "setup_ms": 1.9261,
+            "metrics_ms": 1.0953
+          }
+        },
+        {
+          "method": "Hole-Filling",
+          "total_ms": 14.0921,
+          "metrics": {
+            "requested": 7,
+            "placed": 7,
+            "unplaced": 0,
+            "new_sheets_used": 0,
+            "utilization_pct": "17.630",
+            "waste_mm2": "302.43",
+            "recoverable_remnant_mm2": "60",
+            "materials_used": [
+              {
+                "source": "RETAZO",
+                "material_id": 901,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "RETAZO",
+                "material_id": 901,
+                "x_mm": "0",
+                "y_mm": "0",
+                "width_mm": "3",
+                "height_mm": "20",
+                "area_mm2": "60"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "9",
+              "y_mm": "8",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "CIRCUNFERENCIA",
+                "radius_mm": 2
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "6",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 3,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "12",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 4,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "4",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "16",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 6,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "7",
+              "y_mm": "16",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 8.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 7,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "7",
+              "y_mm": "5",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 1.0,
+                "height_mm": 1.0
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              7,
+              "RETAZO",
+              901,
+              1,
+              "7",
+              "5",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "candidate_orientations_scanned": 2,
+            "geometric_positions_evaluated": 839,
+            "pocket_components_detected": 3,
+            "pockets_used": 1,
+            "fallback_placements": 0,
+            "fallback_unplaced": 0,
+            "exact_geometry_checks": 1,
+            "pocket_search_decisions": 1,
+            "pocket_options_by_decision": [
+              3
+            ],
+            "selected_pockets": [
+              {
+                "piece_id": 7,
+                "unit_index": 1,
+                "source": "RETAZO",
+                "material_id": 901,
+                "rotation_deg": "0",
+                "anchor_row": 5,
+                "anchor_column": 7,
+                "anchor_x_mm": "7",
+                "anchor_y_mm": "5",
+                "component_cells": 44,
+                "anchor_area_mm2": "44",
+                "bbox_row_column": [
+                  5,
+                  7,
+                  14,
+                  14
+                ],
+                "candidate_options_at_decision": 3,
+                "prior_layout_version": 0
+              }
+            ],
+            "placement_search_ms": 10.2424,
+            "pocket_detection_ms": 0.8383,
+            "total_ms": 14.0921,
+            "setup_ms": 1.8992,
+            "metrics_ms": 1.0806
+          }
+        },
+        {
+          "method": "Hole-Filling",
+          "total_ms": 14.2353,
+          "metrics": {
+            "requested": 7,
+            "placed": 7,
+            "unplaced": 0,
+            "new_sheets_used": 0,
+            "utilization_pct": "17.630",
+            "waste_mm2": "302.43",
+            "recoverable_remnant_mm2": "60",
+            "materials_used": [
+              {
+                "source": "RETAZO",
+                "material_id": 901,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "RETAZO",
+                "material_id": 901,
+                "x_mm": "0",
+                "y_mm": "0",
+                "width_mm": "3",
+                "height_mm": "20",
+                "area_mm2": "60"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "9",
+              "y_mm": "8",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "CIRCUNFERENCIA",
+                "radius_mm": 2
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "6",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 3,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "12",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 4,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "4",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "16",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 6,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "7",
+              "y_mm": "16",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 8.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 7,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "7",
+              "y_mm": "5",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 1.0,
+                "height_mm": 1.0
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              7,
+              "RETAZO",
+              901,
+              1,
+              "7",
+              "5",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "candidate_orientations_scanned": 2,
+            "geometric_positions_evaluated": 839,
+            "pocket_components_detected": 3,
+            "pockets_used": 1,
+            "fallback_placements": 0,
+            "fallback_unplaced": 0,
+            "exact_geometry_checks": 1,
+            "pocket_search_decisions": 1,
+            "pocket_options_by_decision": [
+              3
+            ],
+            "selected_pockets": [
+              {
+                "piece_id": 7,
+                "unit_index": 1,
+                "source": "RETAZO",
+                "material_id": 901,
+                "rotation_deg": "0",
+                "anchor_row": 5,
+                "anchor_column": 7,
+                "anchor_x_mm": "7",
+                "anchor_y_mm": "5",
+                "component_cells": 44,
+                "anchor_area_mm2": "44",
+                "bbox_row_column": [
+                  5,
+                  7,
+                  14,
+                  14
+                ],
+                "candidate_options_at_decision": 3,
+                "prior_layout_version": 0
+              }
+            ],
+            "placement_search_ms": 10.3859,
+            "pocket_detection_ms": 0.833,
+            "total_ms": 14.2353,
+            "setup_ms": 1.9,
+            "metrics_ms": 1.0832
+          }
+        }
+      ],
+      "baselines": [
+        {
+          "method": "FF",
+          "total_ms": 3.4528,
+          "metrics": {
+            "requested": 7,
+            "placed": 7,
+            "unplaced": 0,
+            "new_sheets_used": 0,
+            "utilization_pct": "17.630",
+            "waste_mm2": "302.43",
+            "recoverable_remnant_mm2": "60",
+            "materials_used": [
+              {
+                "source": "RETAZO",
+                "material_id": 901,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "RETAZO",
+                "material_id": 901,
+                "x_mm": "19",
+                "y_mm": "0",
+                "width_mm": "3",
+                "height_mm": "20",
+                "area_mm2": "60"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "9",
+              "y_mm": "8",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "CIRCUNFERENCIA",
+                "radius_mm": 2
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "6",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 3,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "12",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 4,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "4",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "16",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 6,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "7",
+              "y_mm": "16",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 8.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 7,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "0",
+              "y_mm": "0",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 1.0,
+                "height_mm": 1.0
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              7,
+              "RETAZO",
+              901,
+              1,
+              "0",
+              "0",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "setup_ms": 2.1741,
+            "metrics_ms": 1.1527
+          }
+        },
+        {
+          "method": "BF",
+          "total_ms": 3.1669,
+          "metrics": {
+            "requested": 7,
+            "placed": 7,
+            "unplaced": 0,
+            "new_sheets_used": 0,
+            "utilization_pct": "17.630",
+            "waste_mm2": "302.43",
+            "recoverable_remnant_mm2": "60",
+            "materials_used": [
+              {
+                "source": "RETAZO",
+                "material_id": 901,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "RETAZO",
+                "material_id": 901,
+                "x_mm": "19",
+                "y_mm": "0",
+                "width_mm": "3",
+                "height_mm": "20",
+                "area_mm2": "60"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "9",
+              "y_mm": "8",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "CIRCUNFERENCIA",
+                "radius_mm": 2
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "6",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 3,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "12",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 4,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "4",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "16",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 6,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "7",
+              "y_mm": "16",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 8.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 7,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "0",
+              "y_mm": "0",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 1.0,
+                "height_mm": 1.0
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              7,
+              "RETAZO",
+              901,
+              1,
+              "0",
+              "0",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "setup_ms": 1.9623,
+            "metrics_ms": 1.0757
+          }
+        },
+        {
+          "method": "WF",
+          "total_ms": 3.0647,
+          "metrics": {
+            "requested": 7,
+            "placed": 7,
+            "unplaced": 0,
+            "new_sheets_used": 0,
+            "utilization_pct": "17.630",
+            "waste_mm2": "302.43",
+            "recoverable_remnant_mm2": "60",
+            "materials_used": [
+              {
+                "source": "RETAZO",
+                "material_id": 901,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "RETAZO",
+                "material_id": 901,
+                "x_mm": "19",
+                "y_mm": "0",
+                "width_mm": "3",
+                "height_mm": "20",
+                "area_mm2": "60"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "9",
+              "y_mm": "8",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "CIRCUNFERENCIA",
+                "radius_mm": 2
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "6",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 3,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "12",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 4,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "4",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "16",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 6,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "7",
+              "y_mm": "16",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 8.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 7,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1,
+              "x_mm": "0",
+              "y_mm": "0",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 1.0,
+                "height_mm": 1.0
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              7,
+              "RETAZO",
+              901,
+              1,
+              "0",
+              "0",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "setup_ms": 1.8542,
+            "metrics_ms": 1.0748
+          }
+        }
+      ],
+      "hole_filling": {
+        "method": "Hole-Filling",
+        "total_ms": 14.0921,
+        "metrics": {
+          "requested": 7,
+          "placed": 7,
+          "unplaced": 0,
+          "new_sheets_used": 0,
+          "utilization_pct": "17.630",
+          "waste_mm2": "302.43",
+          "recoverable_remnant_mm2": "60",
+          "materials_used": [
+            {
+              "source": "RETAZO",
+              "material_id": 901,
+              "physical_unit_index": 1
+            }
+          ],
+          "residuals": [
+            {
+              "source": "RETAZO",
+              "material_id": 901,
+              "x_mm": "0",
+              "y_mm": "0",
+              "width_mm": "3",
+              "height_mm": "20",
+              "area_mm2": "60"
+            }
+          ]
+        },
+        "placements": [
+          {
+            "piece_id": 1,
+            "unit_index": 1,
+            "role": "seed",
+            "source": "RETAZO",
+            "material_id": 901,
+            "physical_unit_index": 1,
+            "x_mm": "9",
+            "y_mm": "8",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "CIRCUNFERENCIA",
+              "radius_mm": 2
+            }
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 1,
+            "role": "seed",
+            "source": "RETAZO",
+            "material_id": 901,
+            "physical_unit_index": 1,
+            "x_mm": "6",
+            "y_mm": "2",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "RECTANGULO",
+              "width_mm": 4.0,
+              "height_mm": 2.0
+            }
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 1,
+            "role": "seed",
+            "source": "RETAZO",
+            "material_id": 901,
+            "physical_unit_index": 1,
+            "x_mm": "12",
+            "y_mm": "2",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "RECTANGULO",
+              "width_mm": 4.0,
+              "height_mm": 2.0
+            }
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 1,
+            "role": "seed",
+            "source": "RETAZO",
+            "material_id": 901,
+            "physical_unit_index": 1,
+            "x_mm": "4",
+            "y_mm": "6",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "RECTANGULO",
+              "width_mm": 2.0,
+              "height_mm": 8.0
+            }
+          },
+          {
+            "piece_id": 5,
+            "unit_index": 1,
+            "role": "seed",
+            "source": "RETAZO",
+            "material_id": 901,
+            "physical_unit_index": 1,
+            "x_mm": "16",
+            "y_mm": "6",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "RECTANGULO",
+              "width_mm": 2.0,
+              "height_mm": 8.0
+            }
+          },
+          {
+            "piece_id": 6,
+            "unit_index": 1,
+            "role": "seed",
+            "source": "RETAZO",
+            "material_id": 901,
+            "physical_unit_index": 1,
+            "x_mm": "7",
+            "y_mm": "16",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "RECTANGULO",
+              "width_mm": 8.0,
+              "height_mm": 2.0
+            }
+          },
+          {
+            "piece_id": 7,
+            "unit_index": 1,
+            "role": "pending",
+            "source": "RETAZO",
+            "material_id": 901,
+            "physical_unit_index": 1,
+            "x_mm": "7",
+            "y_mm": "5",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "RECTANGULO",
+              "width_mm": 1.0,
+              "height_mm": 1.0
+            }
+          }
+        ],
+        "pending_signature": [
+          [
+            7,
+            "RETAZO",
+            901,
+            1,
+            "7",
+            "5",
+            "0"
+          ]
+        ],
+        "diagnostics": {
+          "candidate_orientations_scanned": 2,
+          "geometric_positions_evaluated": 839,
+          "pocket_components_detected": 3,
+          "pockets_used": 1,
+          "fallback_placements": 0,
+          "fallback_unplaced": 0,
+          "exact_geometry_checks": 1,
+          "pocket_search_decisions": 1,
+          "pocket_options_by_decision": [
+            3
+          ],
+          "selected_pockets": [
+            {
+              "piece_id": 7,
+              "unit_index": 1,
+              "source": "RETAZO",
+              "material_id": 901,
+              "rotation_deg": "0",
+              "anchor_row": 5,
+              "anchor_column": 7,
+              "anchor_x_mm": "7",
+              "anchor_y_mm": "5",
+              "component_cells": 44,
+              "anchor_area_mm2": "44",
+              "bbox_row_column": [
+                5,
+                7,
+                14,
+                14
+              ],
+              "candidate_options_at_decision": 3,
+              "prior_layout_version": 0
+            }
+          ],
+          "placement_search_ms": 9.4332,
+          "pocket_detection_ms": 0.8855,
+          "total_ms": 14.0921,
+          "setup_ms": 1.9261,
+          "metrics_ms": 1.0953
+        }
+      },
+      "placement_rule_checks": 42
+    },
+    {
+      "case_id": "HF-DIAGNOSTIC-002",
+      "label": "DIAGNÓSTICO HOLE FILLING — NO PERTENECE A TA-027",
+      "classification": {
+        "category": "B",
+        "best_baseline": "FF",
+        "improved_fields": [],
+        "worsened_fields": [],
+        "pattern_changed_from_all_baselines": true,
+        "pocket_used": true,
+        "runtime_ratio_vs_fastest_baseline": 5.854110402938317
+      },
+      "deterministic": true,
+      "hf_repetitions": [
+        {
+          "method": "Hole-Filling",
+          "total_ms": 21.6766,
+          "metrics": {
+            "requested": 5,
+            "placed": 5,
+            "unplaced": 0,
+            "new_sheets_used": 1,
+            "utilization_pct": "25.765",
+            "waste_mm2": "482.00",
+            "recoverable_remnant_mm2": "100",
+            "materials_used": [
+              {
+                "source": "PLANCHA",
+                "material_id": 902,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "PLANCHA",
+                "material_id": 902,
+                "x_mm": "9",
+                "y_mm": "9",
+                "width_mm": "10",
+                "height_mm": "10",
+                "area_mm2": "100"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "3",
+              "y_mm": "3",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "15",
+              "y_mm": "3",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 3,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "3",
+              "y_mm": "15",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    10.0
+                  ],
+                  [
+                    10.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 4,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "15",
+              "y_mm": "15",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    10.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    10.0
+                  ],
+                  [
+                    0.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "5",
+              "y_mm": "13",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    2.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    2.0
+                  ]
+                ]
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              5,
+              "PLANCHA",
+              902,
+              1,
+              "5",
+              "13",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "candidate_orientations_scanned": 12,
+            "geometric_positions_evaluated": 8532,
+            "pocket_components_detected": 12,
+            "pockets_used": 1,
+            "fallback_placements": 0,
+            "fallback_unplaced": 0,
+            "exact_geometry_checks": 1,
+            "pocket_search_decisions": 1,
+            "pocket_options_by_decision": [
+              12
+            ],
+            "selected_pockets": [
+              {
+                "piece_id": 5,
+                "unit_index": 1,
+                "source": "PLANCHA",
+                "material_id": 902,
+                "rotation_deg": "0",
+                "anchor_row": 13,
+                "anchor_column": 5,
+                "anchor_x_mm": "5",
+                "anchor_y_mm": "13",
+                "component_cells": 153,
+                "anchor_area_mm2": "153",
+                "bbox_row_column": [
+                  5,
+                  5,
+                  21,
+                  21
+                ],
+                "candidate_options_at_decision": 12,
+                "prior_layout_version": 0
+              }
+            ],
+            "placement_search_ms": 11.0661,
+            "pocket_detection_ms": 7.2161,
+            "total_ms": 21.6766,
+            "setup_ms": 2.0287,
+            "metrics_ms": 1.4063
+          }
+        },
+        {
+          "method": "Hole-Filling",
+          "total_ms": 21.6766,
+          "metrics": {
+            "requested": 5,
+            "placed": 5,
+            "unplaced": 0,
+            "new_sheets_used": 1,
+            "utilization_pct": "25.765",
+            "waste_mm2": "482.00",
+            "recoverable_remnant_mm2": "100",
+            "materials_used": [
+              {
+                "source": "PLANCHA",
+                "material_id": 902,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "PLANCHA",
+                "material_id": 902,
+                "x_mm": "9",
+                "y_mm": "9",
+                "width_mm": "10",
+                "height_mm": "10",
+                "area_mm2": "100"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "3",
+              "y_mm": "3",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "15",
+              "y_mm": "3",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 3,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "3",
+              "y_mm": "15",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    10.0
+                  ],
+                  [
+                    10.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 4,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "15",
+              "y_mm": "15",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    10.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    10.0
+                  ],
+                  [
+                    0.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "5",
+              "y_mm": "13",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    2.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    2.0
+                  ]
+                ]
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              5,
+              "PLANCHA",
+              902,
+              1,
+              "5",
+              "13",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "candidate_orientations_scanned": 12,
+            "geometric_positions_evaluated": 8532,
+            "pocket_components_detected": 12,
+            "pockets_used": 1,
+            "fallback_placements": 0,
+            "fallback_unplaced": 0,
+            "exact_geometry_checks": 1,
+            "pocket_search_decisions": 1,
+            "pocket_options_by_decision": [
+              12
+            ],
+            "selected_pockets": [
+              {
+                "piece_id": 5,
+                "unit_index": 1,
+                "source": "PLANCHA",
+                "material_id": 902,
+                "rotation_deg": "0",
+                "anchor_row": 13,
+                "anchor_column": 5,
+                "anchor_x_mm": "5",
+                "anchor_y_mm": "13",
+                "component_cells": 153,
+                "anchor_area_mm2": "153",
+                "bbox_row_column": [
+                  5,
+                  5,
+                  21,
+                  21
+                ],
+                "candidate_options_at_decision": 12,
+                "prior_layout_version": 0
+              }
+            ],
+            "placement_search_ms": 10.522,
+            "pocket_detection_ms": 7.0725,
+            "total_ms": 21.6766,
+            "setup_ms": 2.5695,
+            "metrics_ms": 1.4626
+          }
+        },
+        {
+          "method": "Hole-Filling",
+          "total_ms": 21.665,
+          "metrics": {
+            "requested": 5,
+            "placed": 5,
+            "unplaced": 0,
+            "new_sheets_used": 1,
+            "utilization_pct": "25.765",
+            "waste_mm2": "482.00",
+            "recoverable_remnant_mm2": "100",
+            "materials_used": [
+              {
+                "source": "PLANCHA",
+                "material_id": 902,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "PLANCHA",
+                "material_id": 902,
+                "x_mm": "9",
+                "y_mm": "9",
+                "width_mm": "10",
+                "height_mm": "10",
+                "area_mm2": "100"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "3",
+              "y_mm": "3",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "15",
+              "y_mm": "3",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 3,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "3",
+              "y_mm": "15",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    10.0
+                  ],
+                  [
+                    10.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 4,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "15",
+              "y_mm": "15",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    10.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    10.0
+                  ],
+                  [
+                    0.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "5",
+              "y_mm": "13",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    2.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    2.0
+                  ]
+                ]
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              5,
+              "PLANCHA",
+              902,
+              1,
+              "5",
+              "13",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "candidate_orientations_scanned": 12,
+            "geometric_positions_evaluated": 8532,
+            "pocket_components_detected": 12,
+            "pockets_used": 1,
+            "fallback_placements": 0,
+            "fallback_unplaced": 0,
+            "exact_geometry_checks": 1,
+            "pocket_search_decisions": 1,
+            "pocket_options_by_decision": [
+              12
+            ],
+            "selected_pockets": [
+              {
+                "piece_id": 5,
+                "unit_index": 1,
+                "source": "PLANCHA",
+                "material_id": 902,
+                "rotation_deg": "0",
+                "anchor_row": 13,
+                "anchor_column": 5,
+                "anchor_x_mm": "5",
+                "anchor_y_mm": "13",
+                "component_cells": 153,
+                "anchor_area_mm2": "153",
+                "bbox_row_column": [
+                  5,
+                  5,
+                  21,
+                  21
+                ],
+                "candidate_options_at_decision": 12,
+                "prior_layout_version": 0
+              }
+            ],
+            "placement_search_ms": 10.5588,
+            "pocket_detection_ms": 7.1744,
+            "total_ms": 21.665,
+            "setup_ms": 2.1498,
+            "metrics_ms": 1.7543
+          }
+        }
+      ],
+      "baselines": [
+        {
+          "method": "FF",
+          "total_ms": 3.7958,
+          "metrics": {
+            "requested": 5,
+            "placed": 5,
+            "unplaced": 0,
+            "new_sheets_used": 1,
+            "utilization_pct": "25.765",
+            "waste_mm2": "482.00",
+            "recoverable_remnant_mm2": "100",
+            "materials_used": [
+              {
+                "source": "PLANCHA",
+                "material_id": 902,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "PLANCHA",
+                "material_id": 902,
+                "x_mm": "9",
+                "y_mm": "9",
+                "width_mm": "10",
+                "height_mm": "10",
+                "area_mm2": "100"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "3",
+              "y_mm": "3",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "15",
+              "y_mm": "3",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 3,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "3",
+              "y_mm": "15",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    10.0
+                  ],
+                  [
+                    10.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 4,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "15",
+              "y_mm": "15",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    10.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    10.0
+                  ],
+                  [
+                    0.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "0",
+              "y_mm": "0",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    2.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    2.0
+                  ]
+                ]
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              5,
+              "PLANCHA",
+              902,
+              1,
+              "0",
+              "0",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "setup_ms": 2.1985,
+            "metrics_ms": 1.432
+          }
+        },
+        {
+          "method": "BF",
+          "total_ms": 4.3681,
+          "metrics": {
+            "requested": 5,
+            "placed": 5,
+            "unplaced": 0,
+            "new_sheets_used": 1,
+            "utilization_pct": "25.765",
+            "waste_mm2": "482.00",
+            "recoverable_remnant_mm2": "100",
+            "materials_used": [
+              {
+                "source": "PLANCHA",
+                "material_id": 902,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "PLANCHA",
+                "material_id": 902,
+                "x_mm": "9",
+                "y_mm": "9",
+                "width_mm": "10",
+                "height_mm": "10",
+                "area_mm2": "100"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "3",
+              "y_mm": "3",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "15",
+              "y_mm": "3",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 3,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "3",
+              "y_mm": "15",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    10.0
+                  ],
+                  [
+                    10.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 4,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "15",
+              "y_mm": "15",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    10.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    10.0
+                  ],
+                  [
+                    0.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "0",
+              "y_mm": "0",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    2.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    2.0
+                  ]
+                ]
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              5,
+              "PLANCHA",
+              902,
+              1,
+              "0",
+              "0",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "setup_ms": 2.3297,
+            "metrics_ms": 1.7164
+          }
+        },
+        {
+          "method": "WF",
+          "total_ms": 3.7028,
+          "metrics": {
+            "requested": 5,
+            "placed": 5,
+            "unplaced": 0,
+            "new_sheets_used": 1,
+            "utilization_pct": "25.765",
+            "waste_mm2": "482.00",
+            "recoverable_remnant_mm2": "100",
+            "materials_used": [
+              {
+                "source": "PLANCHA",
+                "material_id": 902,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "PLANCHA",
+                "material_id": 902,
+                "x_mm": "9",
+                "y_mm": "9",
+                "width_mm": "10",
+                "height_mm": "10",
+                "area_mm2": "100"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "3",
+              "y_mm": "3",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "15",
+              "y_mm": "3",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 3,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "3",
+              "y_mm": "15",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    10.0
+                  ],
+                  [
+                    10.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 4,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "15",
+              "y_mm": "15",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    10.0,
+                    0.0
+                  ],
+                  [
+                    10.0,
+                    10.0
+                  ],
+                  [
+                    0.0,
+                    10.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1,
+              "x_mm": "0",
+              "y_mm": "0",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    2.0,
+                    0.0
+                  ],
+                  [
+                    0.0,
+                    2.0
+                  ]
+                ]
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              5,
+              "PLANCHA",
+              902,
+              1,
+              "0",
+              "0",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "setup_ms": 2.1101,
+            "metrics_ms": 1.3746
+          }
+        }
+      ],
+      "hole_filling": {
+        "method": "Hole-Filling",
+        "total_ms": 21.6766,
+        "metrics": {
+          "requested": 5,
+          "placed": 5,
+          "unplaced": 0,
+          "new_sheets_used": 1,
+          "utilization_pct": "25.765",
+          "waste_mm2": "482.00",
+          "recoverable_remnant_mm2": "100",
+          "materials_used": [
+            {
+              "source": "PLANCHA",
+              "material_id": 902,
+              "physical_unit_index": 1
+            }
+          ],
+          "residuals": [
+            {
+              "source": "PLANCHA",
+              "material_id": 902,
+              "x_mm": "9",
+              "y_mm": "9",
+              "width_mm": "10",
+              "height_mm": "10",
+              "area_mm2": "100"
+            }
+          ]
+        },
+        "placements": [
+          {
+            "piece_id": 1,
+            "unit_index": 1,
+            "role": "seed",
+            "source": "PLANCHA",
+            "material_id": 902,
+            "physical_unit_index": 1,
+            "x_mm": "3",
+            "y_mm": "3",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "POLIGONO_CONVEXO",
+              "vertices_mm": [
+                [
+                  0.0,
+                  0.0
+                ],
+                [
+                  10.0,
+                  0.0
+                ],
+                [
+                  0.0,
+                  10.0
+                ]
+              ]
+            }
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 1,
+            "role": "seed",
+            "source": "PLANCHA",
+            "material_id": 902,
+            "physical_unit_index": 1,
+            "x_mm": "15",
+            "y_mm": "3",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "POLIGONO_CONVEXO",
+              "vertices_mm": [
+                [
+                  0.0,
+                  0.0
+                ],
+                [
+                  10.0,
+                  0.0
+                ],
+                [
+                  10.0,
+                  10.0
+                ]
+              ]
+            }
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 1,
+            "role": "seed",
+            "source": "PLANCHA",
+            "material_id": 902,
+            "physical_unit_index": 1,
+            "x_mm": "3",
+            "y_mm": "15",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "POLIGONO_CONVEXO",
+              "vertices_mm": [
+                [
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.0,
+                  10.0
+                ],
+                [
+                  10.0,
+                  10.0
+                ]
+              ]
+            }
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 1,
+            "role": "seed",
+            "source": "PLANCHA",
+            "material_id": 902,
+            "physical_unit_index": 1,
+            "x_mm": "15",
+            "y_mm": "15",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "POLIGONO_CONVEXO",
+              "vertices_mm": [
+                [
+                  10.0,
+                  0.0
+                ],
+                [
+                  10.0,
+                  10.0
+                ],
+                [
+                  0.0,
+                  10.0
+                ]
+              ]
+            }
+          },
+          {
+            "piece_id": 5,
+            "unit_index": 1,
+            "role": "pending",
+            "source": "PLANCHA",
+            "material_id": 902,
+            "physical_unit_index": 1,
+            "x_mm": "5",
+            "y_mm": "13",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "POLIGONO_CONVEXO",
+              "vertices_mm": [
+                [
+                  0.0,
+                  0.0
+                ],
+                [
+                  2.0,
+                  0.0
+                ],
+                [
+                  0.0,
+                  2.0
+                ]
+              ]
+            }
+          }
+        ],
+        "pending_signature": [
+          [
+            5,
+            "PLANCHA",
+            902,
+            1,
+            "5",
+            "13",
+            "0"
+          ]
+        ],
+        "diagnostics": {
+          "candidate_orientations_scanned": 12,
+          "geometric_positions_evaluated": 8532,
+          "pocket_components_detected": 12,
+          "pockets_used": 1,
+          "fallback_placements": 0,
+          "fallback_unplaced": 0,
+          "exact_geometry_checks": 1,
+          "pocket_search_decisions": 1,
+          "pocket_options_by_decision": [
+            12
+          ],
+          "selected_pockets": [
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "source": "PLANCHA",
+              "material_id": 902,
+              "rotation_deg": "0",
+              "anchor_row": 13,
+              "anchor_column": 5,
+              "anchor_x_mm": "5",
+              "anchor_y_mm": "13",
+              "component_cells": 153,
+              "anchor_area_mm2": "153",
+              "bbox_row_column": [
+                5,
+                5,
+                21,
+                21
+              ],
+              "candidate_options_at_decision": 12,
+              "prior_layout_version": 0
+            }
+          ],
+          "placement_search_ms": 11.0661,
+          "pocket_detection_ms": 7.2161,
+          "total_ms": 21.6766,
+          "setup_ms": 2.0287,
+          "metrics_ms": 1.4063
+        }
+      },
+      "placement_rule_checks": 30
+    },
+    {
+      "case_id": "HF-DIAGNOSTIC-003",
+      "label": "DIAGNÓSTICO HOLE FILLING — NO PERTENECE A TA-027",
+      "classification": {
+        "category": "B",
+        "best_baseline": "FF",
+        "improved_fields": [],
+        "worsened_fields": [],
+        "pattern_changed_from_all_baselines": true,
+        "pocket_used": true,
+        "runtime_ratio_vs_fastest_baseline": 3.848784672576494
+      },
+      "deterministic": true,
+      "hf_repetitions": [
+        {
+          "method": "Hole-Filling",
+          "total_ms": 13.4592,
+          "metrics": {
+            "requested": 7,
+            "placed": 7,
+            "unplaced": 0,
+            "new_sheets_used": 1,
+            "utilization_pct": "22.045",
+            "waste_mm2": "307.00",
+            "recoverable_remnant_mm2": "36",
+            "materials_used": [
+              {
+                "source": "PLANCHA",
+                "material_id": 903,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "PLANCHA",
+                "material_id": 903,
+                "x_mm": "1",
+                "y_mm": "1",
+                "width_mm": "2",
+                "height_mm": "18",
+                "area_mm2": "36"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "8",
+              "y_mm": "8",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    4.0,
+                    0.0
+                  ],
+                  [
+                    6.0,
+                    2.0
+                  ],
+                  [
+                    6.0,
+                    4.0
+                  ],
+                  [
+                    4.0,
+                    6.0
+                  ],
+                  [
+                    0.0,
+                    6.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "6",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 3,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "12",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 4,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "4",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "16",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 6,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "7",
+              "y_mm": "16",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 8.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 7,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "7",
+              "y_mm": "5",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 1.0,
+                "height_mm": 1.0
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              7,
+              "PLANCHA",
+              903,
+              1,
+              "7",
+              "5",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "candidate_orientations_scanned": 2,
+            "geometric_positions_evaluated": 839,
+            "pocket_components_detected": 3,
+            "pockets_used": 1,
+            "fallback_placements": 0,
+            "fallback_unplaced": 0,
+            "exact_geometry_checks": 1,
+            "pocket_search_decisions": 1,
+            "pocket_options_by_decision": [
+              3
+            ],
+            "selected_pockets": [
+              {
+                "piece_id": 7,
+                "unit_index": 1,
+                "source": "PLANCHA",
+                "material_id": 903,
+                "rotation_deg": "0",
+                "anchor_row": 5,
+                "anchor_column": 7,
+                "anchor_x_mm": "7",
+                "anchor_y_mm": "5",
+                "component_cells": 17,
+                "anchor_area_mm2": "17",
+                "bbox_row_column": [
+                  5,
+                  7,
+                  7,
+                  14
+                ],
+                "candidate_options_at_decision": 3,
+                "prior_layout_version": 0
+              }
+            ],
+            "placement_search_ms": 9.3081,
+            "pocket_detection_ms": 0.5874,
+            "total_ms": 13.4592,
+            "setup_ms": 2.2603,
+            "metrics_ms": 1.2786
+          }
+        },
+        {
+          "method": "Hole-Filling",
+          "total_ms": 13.5421,
+          "metrics": {
+            "requested": 7,
+            "placed": 7,
+            "unplaced": 0,
+            "new_sheets_used": 1,
+            "utilization_pct": "22.045",
+            "waste_mm2": "307.00",
+            "recoverable_remnant_mm2": "36",
+            "materials_used": [
+              {
+                "source": "PLANCHA",
+                "material_id": 903,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "PLANCHA",
+                "material_id": 903,
+                "x_mm": "1",
+                "y_mm": "1",
+                "width_mm": "2",
+                "height_mm": "18",
+                "area_mm2": "36"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "8",
+              "y_mm": "8",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    4.0,
+                    0.0
+                  ],
+                  [
+                    6.0,
+                    2.0
+                  ],
+                  [
+                    6.0,
+                    4.0
+                  ],
+                  [
+                    4.0,
+                    6.0
+                  ],
+                  [
+                    0.0,
+                    6.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "6",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 3,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "12",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 4,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "4",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "16",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 6,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "7",
+              "y_mm": "16",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 8.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 7,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "7",
+              "y_mm": "5",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 1.0,
+                "height_mm": 1.0
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              7,
+              "PLANCHA",
+              903,
+              1,
+              "7",
+              "5",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "candidate_orientations_scanned": 2,
+            "geometric_positions_evaluated": 839,
+            "pocket_components_detected": 3,
+            "pockets_used": 1,
+            "fallback_placements": 0,
+            "fallback_unplaced": 0,
+            "exact_geometry_checks": 1,
+            "pocket_search_decisions": 1,
+            "pocket_options_by_decision": [
+              3
+            ],
+            "selected_pockets": [
+              {
+                "piece_id": 7,
+                "unit_index": 1,
+                "source": "PLANCHA",
+                "material_id": 903,
+                "rotation_deg": "0",
+                "anchor_row": 5,
+                "anchor_column": 7,
+                "anchor_x_mm": "7",
+                "anchor_y_mm": "5",
+                "component_cells": 17,
+                "anchor_area_mm2": "17",
+                "bbox_row_column": [
+                  5,
+                  7,
+                  7,
+                  14
+                ],
+                "candidate_options_at_decision": 3,
+                "prior_layout_version": 0
+              }
+            ],
+            "placement_search_ms": 9.3521,
+            "pocket_detection_ms": 0.5886,
+            "total_ms": 13.5421,
+            "setup_ms": 2.304,
+            "metrics_ms": 1.271
+          }
+        },
+        {
+          "method": "Hole-Filling",
+          "total_ms": 13.4167,
+          "metrics": {
+            "requested": 7,
+            "placed": 7,
+            "unplaced": 0,
+            "new_sheets_used": 1,
+            "utilization_pct": "22.045",
+            "waste_mm2": "307.00",
+            "recoverable_remnant_mm2": "36",
+            "materials_used": [
+              {
+                "source": "PLANCHA",
+                "material_id": 903,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "PLANCHA",
+                "material_id": 903,
+                "x_mm": "1",
+                "y_mm": "1",
+                "width_mm": "2",
+                "height_mm": "18",
+                "area_mm2": "36"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "8",
+              "y_mm": "8",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    4.0,
+                    0.0
+                  ],
+                  [
+                    6.0,
+                    2.0
+                  ],
+                  [
+                    6.0,
+                    4.0
+                  ],
+                  [
+                    4.0,
+                    6.0
+                  ],
+                  [
+                    0.0,
+                    6.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "6",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 3,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "12",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 4,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "4",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "16",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 6,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "7",
+              "y_mm": "16",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 8.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 7,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "7",
+              "y_mm": "5",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 1.0,
+                "height_mm": 1.0
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              7,
+              "PLANCHA",
+              903,
+              1,
+              "7",
+              "5",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "candidate_orientations_scanned": 2,
+            "geometric_positions_evaluated": 839,
+            "pocket_components_detected": 3,
+            "pockets_used": 1,
+            "fallback_placements": 0,
+            "fallback_unplaced": 0,
+            "exact_geometry_checks": 1,
+            "pocket_search_decisions": 1,
+            "pocket_options_by_decision": [
+              3
+            ],
+            "selected_pockets": [
+              {
+                "piece_id": 7,
+                "unit_index": 1,
+                "source": "PLANCHA",
+                "material_id": 903,
+                "rotation_deg": "0",
+                "anchor_row": 5,
+                "anchor_column": 7,
+                "anchor_x_mm": "7",
+                "anchor_y_mm": "5",
+                "component_cells": 17,
+                "anchor_area_mm2": "17",
+                "bbox_row_column": [
+                  5,
+                  7,
+                  7,
+                  14
+                ],
+                "candidate_options_at_decision": 3,
+                "prior_layout_version": 0
+              }
+            ],
+            "placement_search_ms": 9.2981,
+            "pocket_detection_ms": 0.5964,
+            "total_ms": 13.4167,
+            "setup_ms": 2.1771,
+            "metrics_ms": 1.3217
+          }
+        }
+      ],
+      "baselines": [
+        {
+          "method": "FF",
+          "total_ms": 4.0826,
+          "metrics": {
+            "requested": 7,
+            "placed": 7,
+            "unplaced": 0,
+            "new_sheets_used": 1,
+            "utilization_pct": "22.045",
+            "waste_mm2": "307.00",
+            "recoverable_remnant_mm2": "36",
+            "materials_used": [
+              {
+                "source": "PLANCHA",
+                "material_id": 903,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "PLANCHA",
+                "material_id": 903,
+                "x_mm": "19",
+                "y_mm": "1",
+                "width_mm": "2",
+                "height_mm": "18",
+                "area_mm2": "36"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "8",
+              "y_mm": "8",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    4.0,
+                    0.0
+                  ],
+                  [
+                    6.0,
+                    2.0
+                  ],
+                  [
+                    6.0,
+                    4.0
+                  ],
+                  [
+                    4.0,
+                    6.0
+                  ],
+                  [
+                    0.0,
+                    6.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "6",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 3,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "12",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 4,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "4",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "16",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 6,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "7",
+              "y_mm": "16",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 8.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 7,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "1",
+              "y_mm": "1",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 1.0,
+                "height_mm": 1.0
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              7,
+              "PLANCHA",
+              903,
+              1,
+              "1",
+              "1",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "setup_ms": 2.729,
+            "metrics_ms": 1.2369
+          }
+        },
+        {
+          "method": "BF",
+          "total_ms": 3.497,
+          "metrics": {
+            "requested": 7,
+            "placed": 7,
+            "unplaced": 0,
+            "new_sheets_used": 1,
+            "utilization_pct": "22.045",
+            "waste_mm2": "307.00",
+            "recoverable_remnant_mm2": "36",
+            "materials_used": [
+              {
+                "source": "PLANCHA",
+                "material_id": 903,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "PLANCHA",
+                "material_id": 903,
+                "x_mm": "19",
+                "y_mm": "1",
+                "width_mm": "2",
+                "height_mm": "18",
+                "area_mm2": "36"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "8",
+              "y_mm": "8",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    4.0,
+                    0.0
+                  ],
+                  [
+                    6.0,
+                    2.0
+                  ],
+                  [
+                    6.0,
+                    4.0
+                  ],
+                  [
+                    4.0,
+                    6.0
+                  ],
+                  [
+                    0.0,
+                    6.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "6",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 3,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "12",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 4,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "4",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "16",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 6,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "7",
+              "y_mm": "16",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 8.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 7,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "1",
+              "y_mm": "1",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 1.0,
+                "height_mm": 1.0
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              7,
+              "PLANCHA",
+              903,
+              1,
+              "1",
+              "1",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "setup_ms": 2.1522,
+            "metrics_ms": 1.2206
+          }
+        },
+        {
+          "method": "WF",
+          "total_ms": 3.4992,
+          "metrics": {
+            "requested": 7,
+            "placed": 7,
+            "unplaced": 0,
+            "new_sheets_used": 1,
+            "utilization_pct": "22.045",
+            "waste_mm2": "307.00",
+            "recoverable_remnant_mm2": "36",
+            "materials_used": [
+              {
+                "source": "PLANCHA",
+                "material_id": 903,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "PLANCHA",
+                "material_id": 903,
+                "x_mm": "19",
+                "y_mm": "1",
+                "width_mm": "2",
+                "height_mm": "18",
+                "area_mm2": "36"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "8",
+              "y_mm": "8",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0.0,
+                    0.0
+                  ],
+                  [
+                    4.0,
+                    0.0
+                  ],
+                  [
+                    6.0,
+                    2.0
+                  ],
+                  [
+                    6.0,
+                    4.0
+                  ],
+                  [
+                    4.0,
+                    6.0
+                  ],
+                  [
+                    0.0,
+                    6.0
+                  ]
+                ]
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "6",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 3,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "12",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 4.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 4,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "4",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 5,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "16",
+              "y_mm": "6",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 2.0,
+                "height_mm": 8.0
+              }
+            },
+            {
+              "piece_id": 6,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "7",
+              "y_mm": "16",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 8.0,
+                "height_mm": 2.0
+              }
+            },
+            {
+              "piece_id": 7,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1,
+              "x_mm": "1",
+              "y_mm": "1",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 1.0,
+                "height_mm": 1.0
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              7,
+              "PLANCHA",
+              903,
+              1,
+              "1",
+              "1",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "setup_ms": 2.0836,
+            "metrics_ms": 1.301
+          }
+        }
+      ],
+      "hole_filling": {
+        "method": "Hole-Filling",
+        "total_ms": 13.4592,
+        "metrics": {
+          "requested": 7,
+          "placed": 7,
+          "unplaced": 0,
+          "new_sheets_used": 1,
+          "utilization_pct": "22.045",
+          "waste_mm2": "307.00",
+          "recoverable_remnant_mm2": "36",
+          "materials_used": [
+            {
+              "source": "PLANCHA",
+              "material_id": 903,
+              "physical_unit_index": 1
+            }
+          ],
+          "residuals": [
+            {
+              "source": "PLANCHA",
+              "material_id": 903,
+              "x_mm": "1",
+              "y_mm": "1",
+              "width_mm": "2",
+              "height_mm": "18",
+              "area_mm2": "36"
+            }
+          ]
+        },
+        "placements": [
+          {
+            "piece_id": 1,
+            "unit_index": 1,
+            "role": "seed",
+            "source": "PLANCHA",
+            "material_id": 903,
+            "physical_unit_index": 1,
+            "x_mm": "8",
+            "y_mm": "8",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "POLIGONO_CONVEXO",
+              "vertices_mm": [
+                [
+                  0.0,
+                  0.0
+                ],
+                [
+                  4.0,
+                  0.0
+                ],
+                [
+                  6.0,
+                  2.0
+                ],
+                [
+                  6.0,
+                  4.0
+                ],
+                [
+                  4.0,
+                  6.0
+                ],
+                [
+                  0.0,
+                  6.0
+                ]
+              ]
+            }
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 1,
+            "role": "seed",
+            "source": "PLANCHA",
+            "material_id": 903,
+            "physical_unit_index": 1,
+            "x_mm": "6",
+            "y_mm": "2",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "RECTANGULO",
+              "width_mm": 4.0,
+              "height_mm": 2.0
+            }
+          },
+          {
+            "piece_id": 3,
+            "unit_index": 1,
+            "role": "seed",
+            "source": "PLANCHA",
+            "material_id": 903,
+            "physical_unit_index": 1,
+            "x_mm": "12",
+            "y_mm": "2",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "RECTANGULO",
+              "width_mm": 4.0,
+              "height_mm": 2.0
+            }
+          },
+          {
+            "piece_id": 4,
+            "unit_index": 1,
+            "role": "seed",
+            "source": "PLANCHA",
+            "material_id": 903,
+            "physical_unit_index": 1,
+            "x_mm": "4",
+            "y_mm": "6",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "RECTANGULO",
+              "width_mm": 2.0,
+              "height_mm": 8.0
+            }
+          },
+          {
+            "piece_id": 5,
+            "unit_index": 1,
+            "role": "seed",
+            "source": "PLANCHA",
+            "material_id": 903,
+            "physical_unit_index": 1,
+            "x_mm": "16",
+            "y_mm": "6",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "RECTANGULO",
+              "width_mm": 2.0,
+              "height_mm": 8.0
+            }
+          },
+          {
+            "piece_id": 6,
+            "unit_index": 1,
+            "role": "seed",
+            "source": "PLANCHA",
+            "material_id": 903,
+            "physical_unit_index": 1,
+            "x_mm": "7",
+            "y_mm": "16",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "RECTANGULO",
+              "width_mm": 8.0,
+              "height_mm": 2.0
+            }
+          },
+          {
+            "piece_id": 7,
+            "unit_index": 1,
+            "role": "pending",
+            "source": "PLANCHA",
+            "material_id": 903,
+            "physical_unit_index": 1,
+            "x_mm": "7",
+            "y_mm": "5",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "RECTANGULO",
+              "width_mm": 1.0,
+              "height_mm": 1.0
+            }
+          }
+        ],
+        "pending_signature": [
+          [
+            7,
+            "PLANCHA",
+            903,
+            1,
+            "7",
+            "5",
+            "0"
+          ]
+        ],
+        "diagnostics": {
+          "candidate_orientations_scanned": 2,
+          "geometric_positions_evaluated": 839,
+          "pocket_components_detected": 3,
+          "pockets_used": 1,
+          "fallback_placements": 0,
+          "fallback_unplaced": 0,
+          "exact_geometry_checks": 1,
+          "pocket_search_decisions": 1,
+          "pocket_options_by_decision": [
+            3
+          ],
+          "selected_pockets": [
+            {
+              "piece_id": 7,
+              "unit_index": 1,
+              "source": "PLANCHA",
+              "material_id": 903,
+              "rotation_deg": "0",
+              "anchor_row": 5,
+              "anchor_column": 7,
+              "anchor_x_mm": "7",
+              "anchor_y_mm": "5",
+              "component_cells": 17,
+              "anchor_area_mm2": "17",
+              "bbox_row_column": [
+                5,
+                7,
+                7,
+                14
+              ],
+              "candidate_options_at_decision": 3,
+              "prior_layout_version": 0
+            }
+          ],
+          "placement_search_ms": 9.3081,
+          "pocket_detection_ms": 0.5874,
+          "total_ms": 13.4592,
+          "setup_ms": 2.2603,
+          "metrics_ms": 1.2786
+        }
+      },
+      "placement_rule_checks": 42
+    },
+    {
+      "case_id": "HF-DIAGNOSTIC-004",
+      "label": "DIAGNÓSTICO HOLE FILLING — NO PERTENECE A TA-027",
+      "classification": {
+        "category": "A",
+        "best_baseline": "FF",
+        "improved_fields": [],
+        "worsened_fields": [],
+        "pattern_changed_from_all_baselines": false,
+        "pocket_used": false,
+        "runtime_ratio_vs_fastest_baseline": 1.0783838815087274
+      },
+      "deterministic": true,
+      "hf_repetitions": [
+        {
+          "method": "Hole-Filling",
+          "total_ms": 13.1345,
+          "metrics": {
+            "requested": 2,
+            "placed": 2,
+            "unplaced": 0,
+            "new_sheets_used": 1,
+            "utilization_pct": "15.178",
+            "waste_mm2": "173.43",
+            "recoverable_remnant_mm2": "98",
+            "materials_used": [
+              {
+                "source": "RETAZO",
+                "material_id": 904,
+                "physical_unit_index": 1
+              },
+              {
+                "source": "PLANCHA",
+                "material_id": 905,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "PLANCHA",
+                "material_id": 905,
+                "x_mm": "8",
+                "y_mm": "1",
+                "width_mm": "7",
+                "height_mm": "14",
+                "area_mm2": "98"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 904,
+              "physical_unit_index": 1,
+              "x_mm": "2",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "CIRCUNFERENCIA",
+                "radius_mm": 2
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "PLANCHA",
+              "material_id": 905,
+              "physical_unit_index": 1,
+              "x_mm": "1",
+              "y_mm": "1",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 6.0,
+                "height_mm": 6.0
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              2,
+              "PLANCHA",
+              905,
+              1,
+              "1",
+              "1",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "candidate_orientations_scanned": 15,
+            "geometric_positions_evaluated": 19,
+            "pocket_components_detected": 0,
+            "pockets_used": 0,
+            "fallback_placements": 1,
+            "fallback_unplaced": 0,
+            "exact_geometry_checks": 0,
+            "pocket_search_decisions": 1,
+            "pocket_options_by_decision": [
+              0
+            ],
+            "selected_pockets": [],
+            "placement_search_ms": 11.2535,
+            "pocket_detection_ms": 0.0166,
+            "total_ms": 13.1345,
+            "setup_ms": 1.3759,
+            "metrics_ms": 0.5647
+          }
+        },
+        {
+          "method": "Hole-Filling",
+          "total_ms": 13.1345,
+          "metrics": {
+            "requested": 2,
+            "placed": 2,
+            "unplaced": 0,
+            "new_sheets_used": 1,
+            "utilization_pct": "15.178",
+            "waste_mm2": "173.43",
+            "recoverable_remnant_mm2": "98",
+            "materials_used": [
+              {
+                "source": "RETAZO",
+                "material_id": 904,
+                "physical_unit_index": 1
+              },
+              {
+                "source": "PLANCHA",
+                "material_id": 905,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "PLANCHA",
+                "material_id": 905,
+                "x_mm": "8",
+                "y_mm": "1",
+                "width_mm": "7",
+                "height_mm": "14",
+                "area_mm2": "98"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 904,
+              "physical_unit_index": 1,
+              "x_mm": "2",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "CIRCUNFERENCIA",
+                "radius_mm": 2
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "PLANCHA",
+              "material_id": 905,
+              "physical_unit_index": 1,
+              "x_mm": "1",
+              "y_mm": "1",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 6.0,
+                "height_mm": 6.0
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              2,
+              "PLANCHA",
+              905,
+              1,
+              "1",
+              "1",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "candidate_orientations_scanned": 15,
+            "geometric_positions_evaluated": 19,
+            "pocket_components_detected": 0,
+            "pockets_used": 0,
+            "fallback_placements": 1,
+            "fallback_unplaced": 0,
+            "exact_geometry_checks": 0,
+            "pocket_search_decisions": 1,
+            "pocket_options_by_decision": [
+              0
+            ],
+            "selected_pockets": [],
+            "placement_search_ms": 11.3882,
+            "pocket_detection_ms": 0.0172,
+            "total_ms": 13.1345,
+            "setup_ms": 1.0868,
+            "metrics_ms": 0.5631
+          }
+        },
+        {
+          "method": "Hole-Filling",
+          "total_ms": 12.8289,
+          "metrics": {
+            "requested": 2,
+            "placed": 2,
+            "unplaced": 0,
+            "new_sheets_used": 1,
+            "utilization_pct": "15.178",
+            "waste_mm2": "173.43",
+            "recoverable_remnant_mm2": "98",
+            "materials_used": [
+              {
+                "source": "RETAZO",
+                "material_id": 904,
+                "physical_unit_index": 1
+              },
+              {
+                "source": "PLANCHA",
+                "material_id": 905,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "PLANCHA",
+                "material_id": 905,
+                "x_mm": "8",
+                "y_mm": "1",
+                "width_mm": "7",
+                "height_mm": "14",
+                "area_mm2": "98"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 904,
+              "physical_unit_index": 1,
+              "x_mm": "2",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "CIRCUNFERENCIA",
+                "radius_mm": 2
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "PLANCHA",
+              "material_id": 905,
+              "physical_unit_index": 1,
+              "x_mm": "1",
+              "y_mm": "1",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 6.0,
+                "height_mm": 6.0
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              2,
+              "PLANCHA",
+              905,
+              1,
+              "1",
+              "1",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "candidate_orientations_scanned": 15,
+            "geometric_positions_evaluated": 19,
+            "pocket_components_detected": 0,
+            "pockets_used": 0,
+            "fallback_placements": 1,
+            "fallback_unplaced": 0,
+            "exact_geometry_checks": 0,
+            "pocket_search_decisions": 1,
+            "pocket_options_by_decision": [
+              0
+            ],
+            "selected_pockets": [],
+            "placement_search_ms": 10.9818,
+            "pocket_detection_ms": 0.0169,
+            "total_ms": 12.8289,
+            "setup_ms": 1.1854,
+            "metrics_ms": 0.5668
+          }
+        }
+      ],
+      "baselines": [
+        {
+          "method": "FF",
+          "total_ms": 12.1955,
+          "metrics": {
+            "requested": 2,
+            "placed": 2,
+            "unplaced": 0,
+            "new_sheets_used": 1,
+            "utilization_pct": "15.178",
+            "waste_mm2": "173.43",
+            "recoverable_remnant_mm2": "98",
+            "materials_used": [
+              {
+                "source": "RETAZO",
+                "material_id": 904,
+                "physical_unit_index": 1
+              },
+              {
+                "source": "PLANCHA",
+                "material_id": 905,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "PLANCHA",
+                "material_id": 905,
+                "x_mm": "8",
+                "y_mm": "1",
+                "width_mm": "7",
+                "height_mm": "14",
+                "area_mm2": "98"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 904,
+              "physical_unit_index": 1,
+              "x_mm": "2",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "CIRCUNFERENCIA",
+                "radius_mm": 2
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "PLANCHA",
+              "material_id": 905,
+              "physical_unit_index": 1,
+              "x_mm": "1",
+              "y_mm": "1",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 6.0,
+                "height_mm": 6.0
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              2,
+              "PLANCHA",
+              905,
+              1,
+              "1",
+              "1",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "setup_ms": 1.0858,
+            "metrics_ms": 0.5752
+          }
+        },
+        {
+          "method": "BF",
+          "total_ms": 12.3427,
+          "metrics": {
+            "requested": 2,
+            "placed": 2,
+            "unplaced": 0,
+            "new_sheets_used": 1,
+            "utilization_pct": "15.178",
+            "waste_mm2": "173.43",
+            "recoverable_remnant_mm2": "98",
+            "materials_used": [
+              {
+                "source": "RETAZO",
+                "material_id": 904,
+                "physical_unit_index": 1
+              },
+              {
+                "source": "PLANCHA",
+                "material_id": 905,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "PLANCHA",
+                "material_id": 905,
+                "x_mm": "8",
+                "y_mm": "1",
+                "width_mm": "7",
+                "height_mm": "14",
+                "area_mm2": "98"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 904,
+              "physical_unit_index": 1,
+              "x_mm": "2",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "CIRCUNFERENCIA",
+                "radius_mm": 2
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "PLANCHA",
+              "material_id": 905,
+              "physical_unit_index": 1,
+              "x_mm": "1",
+              "y_mm": "1",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 6.0,
+                "height_mm": 6.0
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              2,
+              "PLANCHA",
+              905,
+              1,
+              "1",
+              "1",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "setup_ms": 1.1567,
+            "metrics_ms": 0.5756
+          }
+        },
+        {
+          "method": "WF",
+          "total_ms": 12.1798,
+          "metrics": {
+            "requested": 2,
+            "placed": 2,
+            "unplaced": 0,
+            "new_sheets_used": 1,
+            "utilization_pct": "15.178",
+            "waste_mm2": "173.43",
+            "recoverable_remnant_mm2": "98",
+            "materials_used": [
+              {
+                "source": "RETAZO",
+                "material_id": 904,
+                "physical_unit_index": 1
+              },
+              {
+                "source": "PLANCHA",
+                "material_id": 905,
+                "physical_unit_index": 1
+              }
+            ],
+            "residuals": [
+              {
+                "source": "PLANCHA",
+                "material_id": 905,
+                "x_mm": "8",
+                "y_mm": "1",
+                "width_mm": "7",
+                "height_mm": "14",
+                "area_mm2": "98"
+              }
+            ]
+          },
+          "placements": [
+            {
+              "piece_id": 1,
+              "unit_index": 1,
+              "role": "seed",
+              "source": "RETAZO",
+              "material_id": 904,
+              "physical_unit_index": 1,
+              "x_mm": "2",
+              "y_mm": "2",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "CIRCUNFERENCIA",
+                "radius_mm": 2
+              }
+            },
+            {
+              "piece_id": 2,
+              "unit_index": 1,
+              "role": "pending",
+              "source": "PLANCHA",
+              "material_id": 905,
+              "physical_unit_index": 1,
+              "x_mm": "1",
+              "y_mm": "1",
+              "rotation_deg": "0",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 6.0,
+                "height_mm": 6.0
+              }
+            }
+          ],
+          "pending_signature": [
+            [
+              2,
+              "PLANCHA",
+              905,
+              1,
+              "1",
+              "1",
+              "0"
+            ]
+          ],
+          "diagnostics": {
+            "setup_ms": 1.0475,
+            "metrics_ms": 0.5778
+          }
+        }
+      ],
+      "hole_filling": {
+        "method": "Hole-Filling",
+        "total_ms": 13.1345,
+        "metrics": {
+          "requested": 2,
+          "placed": 2,
+          "unplaced": 0,
+          "new_sheets_used": 1,
+          "utilization_pct": "15.178",
+          "waste_mm2": "173.43",
+          "recoverable_remnant_mm2": "98",
+          "materials_used": [
+            {
+              "source": "RETAZO",
+              "material_id": 904,
+              "physical_unit_index": 1
+            },
+            {
+              "source": "PLANCHA",
+              "material_id": 905,
+              "physical_unit_index": 1
+            }
+          ],
+          "residuals": [
+            {
+              "source": "PLANCHA",
+              "material_id": 905,
+              "x_mm": "8",
+              "y_mm": "1",
+              "width_mm": "7",
+              "height_mm": "14",
+              "area_mm2": "98"
+            }
+          ]
+        },
+        "placements": [
+          {
+            "piece_id": 1,
+            "unit_index": 1,
+            "role": "seed",
+            "source": "RETAZO",
+            "material_id": 904,
+            "physical_unit_index": 1,
+            "x_mm": "2",
+            "y_mm": "2",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "CIRCUNFERENCIA",
+              "radius_mm": 2
+            }
+          },
+          {
+            "piece_id": 2,
+            "unit_index": 1,
+            "role": "pending",
+            "source": "PLANCHA",
+            "material_id": 905,
+            "physical_unit_index": 1,
+            "x_mm": "1",
+            "y_mm": "1",
+            "rotation_deg": "0",
+            "geometry": {
+              "type": "RECTANGULO",
+              "width_mm": 6.0,
+              "height_mm": 6.0
+            }
+          }
+        ],
+        "pending_signature": [
+          [
+            2,
+            "PLANCHA",
+            905,
+            1,
+            "1",
+            "1",
+            "0"
+          ]
+        ],
+        "diagnostics": {
+          "candidate_orientations_scanned": 15,
+          "geometric_positions_evaluated": 19,
+          "pocket_components_detected": 0,
+          "pockets_used": 0,
+          "fallback_placements": 1,
+          "fallback_unplaced": 0,
+          "exact_geometry_checks": 0,
+          "pocket_search_decisions": 1,
+          "pocket_options_by_decision": [
+            0
+          ],
+          "selected_pockets": [],
+          "placement_search_ms": 11.2535,
+          "pocket_detection_ms": 0.0166,
+          "total_ms": 13.1345,
+          "setup_ms": 1.3759,
+          "metrics_ms": 0.5647
+        }
+      },
+      "placement_rule_checks": 12
+    }
+  ]
+}

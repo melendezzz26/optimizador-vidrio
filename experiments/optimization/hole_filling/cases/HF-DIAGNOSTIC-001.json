@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "case_id": "HF-DIAGNOSTIC-001",
+  "label": "DIAGNÓSTICO HOLE FILLING — NO PERTENECE A TA-027",
+  "config": {
+    "resolution_mm": 1,
+    "angular_step_deg": 5,
+    "margin_mm": 0,
+    "separation_mm": 1
+  },
+  "material": {"glass_type_id": 1, "thickness_mm": 6},
+  "stocks": [
+    {"source": "RETAZO", "material_id": 901, "physical_unit_index": 1, "geometry": {"type": "RECTANGULO", "width_mm": 22, "height_mm": 20}}
+  ],
+  "pieces": [
+    {"piece_id": 1, "geometry": {"type": "CIRCUNFERENCIA", "radius_mm": 2}, "role": "seed", "stock_material_id": 901, "x_mm": 9, "y_mm": 8, "rotation_deg": 0},
+    {"piece_id": 2, "geometry": {"type": "RECTANGULO", "width_mm": 4, "height_mm": 2}, "role": "seed", "stock_material_id": 901, "x_mm": 6, "y_mm": 2, "rotation_deg": 0},
+    {"piece_id": 3, "geometry": {"type": "RECTANGULO", "width_mm": 4, "height_mm": 2}, "role": "seed", "stock_material_id": 901, "x_mm": 12, "y_mm": 2, "rotation_deg": 0},
+    {"piece_id": 4, "geometry": {"type": "RECTANGULO", "width_mm": 2, "height_mm": 8}, "role": "seed", "stock_material_id": 901, "x_mm": 4, "y_mm": 6, "rotation_deg": 0},
+    {"piece_id": 5, "geometry": {"type": "RECTANGULO", "width_mm": 2, "height_mm": 8}, "role": "seed", "stock_material_id": 901, "x_mm": 16, "y_mm": 6, "rotation_deg": 0},
+    {"piece_id": 6, "geometry": {"type": "RECTANGULO", "width_mm": 8, "height_mm": 2}, "role": "seed", "stock_material_id": 901, "x_mm": 7, "y_mm": 16, "rotation_deg": 0},
+    {"piece_id": 7, "geometry": {"type": "RECTANGULO", "width_mm": 1, "height_mm": 1}, "role": "pending"}
+  ]
+}

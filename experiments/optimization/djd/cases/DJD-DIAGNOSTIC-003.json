@@ -1,0 +1,17 @@
+{
+  "case_id": "DJD-DIAGNOSTIC-003",
+  "label": "DIAGNÓSTICO DJD — NO PERTENECE A TA-027",
+  "diagnostic_intent": "Una pieza 12×6 más una terna de piezas 4×4 cuya suma de áreas coincide con una plancha 12×10; observar si una combinación de tres completa una fuente.",
+  "schema_version": 1,
+  "rotation_allowed": true,
+  "order_ids": [1],
+  "config": {"resolution_mm": 1, "angular_step_deg": 5, "margin_mm": 0, "separation_mm": 0},
+  "residual_limits": {"minimum_width_mm": 1, "minimum_height_mm": 1},
+  "pieces": [
+    {"id_pedido": 1, "id_pieza": 1, "cantidad": 1, "id_tipo_vidrio": 1, "espesor_mm": 6, "tipo_forma": "RECTANGULO", "geometria": {"type": "RECTANGULO", "width_mm": 12, "height_mm": 6}},
+    {"id_pedido": 1, "id_pieza": 2, "cantidad": 3, "id_tipo_vidrio": 1, "espesor_mm": 6, "tipo_forma": "RECTANGULO", "geometria": {"type": "RECTANGULO", "width_mm": 4, "height_mm": 4}}
+  ],
+  "stock": [
+    {"material_id": 994, "quantity": 1, "source": "PLANCHA", "glass_type_id": 1, "thickness_mm": 6, "geometry": {"type": "RECTANGULO", "width_mm": 12, "height_mm": 10}}
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "case_id": "DJD-DISCRIMINANT-001",
+  "label": "CASO DE DISCRIMINACIÓN HEURÍSTICA — NO FORMA PARTE DE TA-027",
+  "schema_version": 1,
+  "rotation_allowed": true,
+  "order_ids": [1],
+  "config": {
+    "resolution_mm": 1,
+    "angular_step_deg": 5,
+    "margin_mm": 0,
+    "separation_mm": 0
+  },
+  "residual_limits": {
+    "minimum_width_mm": 1,
+    "minimum_height_mm": 1
+  },
+  "pieces": [
+    {
+      "id_pedido": 1,
+      "id_pieza": 1,
+      "cantidad": 1,
+      "id_tipo_vidrio": 1,
+      "espesor_mm": 6,
+      "tipo_forma": "RECTANGULO",
+      "geometria": {"type": "RECTANGULO", "width_mm": 10, "height_mm": 4}
+    },
+    {
+      "id_pedido": 1,
+      "id_pieza": 2,
+      "cantidad": 1,
+      "id_tipo_vidrio": 1,
+      "espesor_mm": 6,
+      "tipo_forma": "RECTANGULO",
+      "geometria": {"type": "RECTANGULO", "width_mm": 5, "height_mm": 6}
+    },
+    {
+      "id_pedido": 1,
+      "id_pieza": 3,
+      "cantidad": 1,
+      "id_tipo_vidrio": 1,
+      "espesor_mm": 6,
+      "tipo_forma": "RECTANGULO",
+      "geometria": {"type": "RECTANGULO", "width_mm": 5, "height_mm": 5}
+    }
+  ],
+  "stock": [
+    {
+      "material_id": 901,
+      "quantity": 1,
+      "source": "PLANCHA",
+      "glass_type_id": 1,
+      "thickness_mm": 6,
+      "geometry": {"type": "RECTANGULO", "width_mm": 10, "height_mm": 10}
+    }
+  ]
+}

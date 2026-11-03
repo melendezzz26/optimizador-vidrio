@@ -1,0 +1,17 @@
+{
+  "case_id": "BLOCK-V2-OBLIQUE-TRIANGLES-001",
+  "label": "DIAGNÓSTICO Pair-Block v2 — NO PERTENECE A TA-027",
+  "diagnostic_intent": "Dos triángulos convexos son las mitades de un rectángulo 10x6 rotado 30 grados. Se observa si la grilla de 5 grados puede recuperar la composición oblicua; no se presupone mejora de métricas.",
+  "schema_version": 1,
+  "rotation_allowed": true,
+  "order_ids": [7201],
+  "config": {"resolution_mm": 1, "angular_step_deg": 5, "margin_mm": 0, "separation_mm": 1},
+  "residual_limits": {"minimum_width_mm": 1, "minimum_height_mm": 1},
+  "pieces": [
+    {"id_pedido": 7201, "id_pieza": 1, "cantidad": 1, "id_tipo_vidrio": 7, "espesor_mm": 6, "tipo_forma": "POLIGONO_CONVEXO", "geometria": {"type": "POLIGONO_CONVEXO", "vertices_mm": [[3, 0], [11.660254, 5], [8.660254, 10.196152]]}},
+    {"id_pedido": 7201, "id_pieza": 2, "cantidad": 1, "id_tipo_vidrio": 7, "espesor_mm": 6, "tipo_forma": "POLIGONO_CONVEXO", "geometria": {"type": "POLIGONO_CONVEXO", "vertices_mm": [[0, 5.196152], [3, 0], [8.660254, 10.196152]]}}
+  ],
+  "stock": [
+    {"material_id": 7201, "quantity": 1, "source": "PLANCHA", "glass_type_id": 7, "thickness_mm": 6, "geometry": {"type": "RECTANGULO", "width_mm": 20, "height_mm": 20}}
+  ]
+}

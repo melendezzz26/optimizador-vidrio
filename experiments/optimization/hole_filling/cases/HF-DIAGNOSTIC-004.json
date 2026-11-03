@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "case_id": "HF-DIAGNOSTIC-004",
+  "label": "DIAGNÓSTICO HOLE FILLING — NO PERTENECE A TA-027",
+  "config": {
+    "resolution_mm": 1,
+    "angular_step_deg": 5,
+    "margin_mm": 1,
+    "separation_mm": 1
+  },
+  "material": {"glass_type_id": 1, "thickness_mm": 6},
+  "stocks": [
+    {"source": "RETAZO", "material_id": 904, "physical_unit_index": 1, "geometry": {"type": "RECTANGULO", "width_mm": 8, "height_mm": 8}},
+    {"source": "PLANCHA", "material_id": 905, "physical_unit_index": 1, "geometry": {"type": "RECTANGULO", "width_mm": 16, "height_mm": 16}}
+  ],
+  "pieces": [
+    {"piece_id": 1, "geometry": {"type": "CIRCUNFERENCIA", "radius_mm": 2}, "role": "seed", "stock_material_id": 904, "x_mm": 2, "y_mm": 2, "rotation_deg": 0},
+    {"piece_id": 2, "geometry": {"type": "RECTANGULO", "width_mm": 6, "height_mm": 6}, "role": "pending"}
+  ]
+}

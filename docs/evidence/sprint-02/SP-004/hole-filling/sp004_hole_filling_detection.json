@@ -1,0 +1,168 @@
+[
+  {
+    "case_id": "HF-DIAGNOSTIC-001",
+    "label": "DIAGNÓSTICO HOLE FILLING — NO PERTENECE A TA-027",
+    "stocks": [],
+    "candidate_orientations": 2,
+    "anchor_positions_examined": 839,
+    "pocket_components": 3,
+    "internal_holes": 0,
+    "physical_detection_ms": 0.4944,
+    "anchor_component_detection_ms": 0.9374,
+    "anchor_generation_ms": 0.11829999999999999,
+    "anchor_map_piece_id": 7,
+    "anchor_map_rotation_deg": "0",
+    "anchor_pocket_cells": [
+      44
+    ],
+    "anchor_pocket_bbox": [
+      [
+        5,
+        7,
+        14,
+        14
+      ]
+    ],
+    "seed_count": 6,
+    "pending_count": 1,
+    "used_seed_sources": [
+      "RETAZO"
+    ],
+    "physical_regions": [
+      {
+        "type": "exterior",
+        "cells": 360,
+        "bbox": [
+          0,
+          0,
+          19,
+          21
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "HF-DIAGNOSTIC-002",
+    "label": "DIAGNÓSTICO HOLE FILLING — NO PERTENECE A TA-027",
+    "stocks": [],
+    "candidate_orientations": 12,
+    "anchor_positions_examined": 8532,
+    "pocket_components": 12,
+    "internal_holes": 0,
+    "physical_detection_ms": 0.6993,
+    "anchor_component_detection_ms": 7.0199,
+    "anchor_generation_ms": 1.1184,
+    "anchor_map_piece_id": 5,
+    "anchor_map_rotation_deg": "0",
+    "anchor_pocket_cells": [
+      153
+    ],
+    "anchor_pocket_bbox": [
+      [
+        5,
+        5,
+        21,
+        21
+      ]
+    ],
+    "seed_count": 4,
+    "pending_count": 1,
+    "used_seed_sources": [
+      "PLANCHA"
+    ],
+    "physical_regions": [
+      {
+        "type": "exterior",
+        "cells": 564,
+        "bbox": [
+          0,
+          0,
+          27,
+          27
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "HF-DIAGNOSTIC-003",
+    "label": "DIAGNÓSTICO HOLE FILLING — NO PERTENECE A TA-027",
+    "stocks": [],
+    "candidate_orientations": 2,
+    "anchor_positions_examined": 839,
+    "pocket_components": 3,
+    "internal_holes": 0,
+    "physical_detection_ms": 0.451,
+    "anchor_component_detection_ms": 0.5978,
+    "anchor_generation_ms": 0.092,
+    "anchor_map_piece_id": 7,
+    "anchor_map_rotation_deg": "0",
+    "anchor_pocket_cells": [
+      17,
+      1
+    ],
+    "anchor_pocket_bbox": [
+      [
+        5,
+        7,
+        7,
+        14
+      ],
+      [
+        14,
+        14,
+        14,
+        14
+      ]
+    ],
+    "seed_count": 6,
+    "pending_count": 1,
+    "used_seed_sources": [
+      "PLANCHA"
+    ],
+    "physical_regions": [
+      {
+        "type": "exterior",
+        "cells": 342,
+        "bbox": [
+          0,
+          0,
+          19,
+          21
+        ]
+      }
+    ]
+  },
+  {
+    "case_id": "HF-DIAGNOSTIC-004",
+    "label": "DIAGNÓSTICO HOLE FILLING — NO PERTENECE A TA-027",
+    "stocks": [],
+    "candidate_orientations": 15,
+    "anchor_positions_examined": 19,
+    "pocket_components": 0,
+    "internal_holes": 0,
+    "physical_detection_ms": 0.0755,
+    "anchor_component_detection_ms": 0.018000000000000002,
+    "anchor_generation_ms": 0.0801,
+    "anchor_map_piece_id": 2,
+    "anchor_map_rotation_deg": "0",
+    "anchor_pocket_cells": [],
+    "anchor_pocket_bbox": [],
+    "seed_count": 1,
+    "pending_count": 1,
+    "used_seed_sources": [
+      "RETAZO"
+    ],
+    "physical_regions": [
+      {
+        "type": "exterior",
+        "cells": 48,
+        "bbox": [
+          0,
+          0,
+          7,
+          7
+        ]
+      }
+    ]
+  }
+]

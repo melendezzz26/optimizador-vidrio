@@ -1,0 +1,19 @@
+{
+  "case_id": "DJD-DIAGNOSTIC-001",
+  "label": "DIAGNÓSTICO DJD — NO PERTENECE A TA-027",
+  "diagnostic_intent": "Mezcla de una pieza rectangular grande, piezas menores y un círculo; observar si DJD agrupa unidades pequeñas después del llenado inicial.",
+  "schema_version": 1,
+  "rotation_allowed": true,
+  "order_ids": [1],
+  "config": {"resolution_mm": 1, "angular_step_deg": 5, "margin_mm": 0, "separation_mm": 0},
+  "residual_limits": {"minimum_width_mm": 1, "minimum_height_mm": 1},
+  "pieces": [
+    {"id_pedido": 1, "id_pieza": 1, "cantidad": 1, "id_tipo_vidrio": 1, "espesor_mm": 6, "tipo_forma": "RECTANGULO", "geometria": {"type": "RECTANGULO", "width_mm": 8, "height_mm": 6}},
+    {"id_pedido": 1, "id_pieza": 2, "cantidad": 2, "id_tipo_vidrio": 1, "espesor_mm": 6, "tipo_forma": "RECTANGULO", "geometria": {"type": "RECTANGULO", "width_mm": 4, "height_mm": 3}},
+    {"id_pedido": 1, "id_pieza": 3, "cantidad": 1, "id_tipo_vidrio": 1, "espesor_mm": 6, "tipo_forma": "CIRCUNFERENCIA", "geometria": {"type": "CIRCUNFERENCIA", "radius_mm": 2}}
+  ],
+  "stock": [
+    {"material_id": 991, "quantity": 1, "source": "RETAZO", "glass_type_id": 1, "thickness_mm": 6, "geometry": {"type": "RECTANGULO", "width_mm": 8, "height_mm": 6}},
+    {"material_id": 992, "quantity": 1, "source": "PLANCHA", "glass_type_id": 1, "thickness_mm": 6, "geometry": {"type": "RECTANGULO", "width_mm": 12, "height_mm": 8}}
+  ]
+}

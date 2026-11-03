@@ -1,0 +1,377 @@
+{
+  "schema_version": 1,
+  "case_id": "HF-REALISTIC-002",
+  "label": "PEDIDO REALISTA HOLE FILLING - NO PERTENECE A TA-027",
+  "config": {
+    "resolution_mm": 1,
+    "angular_step_deg": 5,
+    "margin_mm": 5,
+    "separation_mm": 3
+  },
+  "material": {
+    "glass_type_id": 1,
+    "thickness_mm": 6
+  },
+  "stocks": [
+    {
+      "source": "RETAZO",
+      "material_id": 8102,
+      "physical_unit_index": 1,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 320,
+        "height_mm": 220
+      }
+    },
+    {
+      "source": "PLANCHA",
+      "material_id": 9102,
+      "physical_unit_index": 1,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 450,
+        "height_mm": 330
+      }
+    }
+  ],
+  "pieces": [
+    {
+      "piece_id": 1,
+      "geometry": {
+        "type": "POLIGONO_CONVEXO",
+        "vertices_mm": [
+          [
+            0,
+            0
+          ],
+          [
+            150,
+            0
+          ],
+          [
+            0,
+            100
+          ]
+        ]
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 2,
+      "geometry": {
+        "type": "POLIGONO_CONVEXO",
+        "vertices_mm": [
+          [
+            0,
+            0
+          ],
+          [
+            150,
+            0
+          ],
+          [
+            150,
+            100
+          ]
+        ]
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 3,
+      "geometry": {
+        "type": "POLIGONO_CONVEXO",
+        "vertices_mm": [
+          [
+            0,
+            0
+          ],
+          [
+            130,
+            0
+          ],
+          [
+            0,
+            90
+          ]
+        ]
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 4,
+      "geometry": {
+        "type": "POLIGONO_CONVEXO",
+        "vertices_mm": [
+          [
+            0,
+            0
+          ],
+          [
+            130,
+            0
+          ],
+          [
+            130,
+            90
+          ]
+        ]
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 5,
+      "geometry": {
+        "type": "POLIGONO_CONVEXO",
+        "vertices_mm": [
+          [
+            0,
+            0
+          ],
+          [
+            110,
+            0
+          ],
+          [
+            0,
+            80
+          ]
+        ]
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 6,
+      "geometry": {
+        "type": "POLIGONO_CONVEXO",
+        "vertices_mm": [
+          [
+            0,
+            0
+          ],
+          [
+            110,
+            0
+          ],
+          [
+            110,
+            80
+          ]
+        ]
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 7,
+      "geometry": {
+        "type": "POLIGONO_CONVEXO",
+        "vertices_mm": [
+          [
+            0,
+            0
+          ],
+          [
+            100,
+            0
+          ],
+          [
+            0,
+            70
+          ]
+        ]
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 8,
+      "geometry": {
+        "type": "POLIGONO_CONVEXO",
+        "vertices_mm": [
+          [
+            0,
+            0
+          ],
+          [
+            100,
+            0
+          ],
+          [
+            100,
+            70
+          ]
+        ]
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 9,
+      "geometry": {
+        "type": "POLIGONO_CONVEXO",
+        "vertices_mm": [
+          [
+            0,
+            0
+          ],
+          [
+            115,
+            0
+          ],
+          [
+            130,
+            90
+          ],
+          [
+            10,
+            90
+          ]
+        ]
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 10,
+      "geometry": {
+        "type": "POLIGONO_CONVEXO",
+        "vertices_mm": [
+          [
+            0,
+            0
+          ],
+          [
+            100,
+            0
+          ],
+          [
+            120,
+            80
+          ],
+          [
+            10,
+            80
+          ]
+        ]
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 11,
+      "geometry": {
+        "type": "POLIGONO_CONVEXO",
+        "vertices_mm": [
+          [
+            0,
+            0
+          ],
+          [
+            88,
+            0
+          ],
+          [
+            100,
+            80
+          ],
+          [
+            10,
+            80
+          ]
+        ]
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 12,
+      "geometry": {
+        "type": "POLIGONO_CONVEXO",
+        "vertices_mm": [
+          [
+            0,
+            0
+          ],
+          [
+            92,
+            0
+          ],
+          [
+            110,
+            75
+          ],
+          [
+            10,
+            75
+          ]
+        ]
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 13,
+      "geometry": {
+        "type": "POLIGONO_CONVEXO",
+        "vertices_mm": [
+          [
+            0,
+            0
+          ],
+          [
+            78,
+            0
+          ],
+          [
+            90,
+            70
+          ],
+          [
+            10,
+            70
+          ]
+        ]
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 14,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 70,
+        "height_mm": 50
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 15,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 65,
+        "height_mm": 45
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 16,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 60,
+        "height_mm": 50
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 17,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 55,
+        "height_mm": 40
+      },
+      "role": "pending"
+    },
+    {
+      "piece_id": 18,
+      "geometry": {
+        "type": "RECTANGULO",
+        "width_mm": 50,
+        "height_mm": 45
+      },
+      "role": "pending"
+    }
+  ]
+}
