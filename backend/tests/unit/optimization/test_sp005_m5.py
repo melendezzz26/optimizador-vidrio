@@ -226,4 +226,3 @@ def test_ta027_orientation_cache_enumerates_five_degree_candidates():
     }
     assert Decimal("5") in angles
     assert Decimal("355") in angles
-
