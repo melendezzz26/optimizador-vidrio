@@ -1,7 +1,6 @@
 """TA-052 T02: canonical per-source placement and maximum recoverable residual (M5)."""
 from dataclasses import replace
 from decimal import Decimal as D
-from types import SimpleNamespace
 from unittest.mock import patch
 
 import pytest
@@ -40,23 +39,6 @@ def candidate(source=None, cfg=None, row=0, column=0, **ranks):
         column=column,
         stock_rank=ranks.get("stock_rank", 0),
         orientation_rank=ranks.get("orientation_rank", 0),
-    )
-
-
-def synthetic_candidate(rows, stock_rank=0, orientation_rank=0, row=0, column=0):
-    width = max((bits.bit_length() for bits in rows), default=0)
-    layout_after = SimpleNamespace(
-        usable=tuple(rows),
-        blocked=(0,) * len(rows),
-        material=SimpleNamespace(columns=width),
-    )
-    return SimpleNamespace(
-        layout_after=layout_after,
-        remaining_free_cells_after_placement=sum(bits.bit_count() for bits in rows),
-        stock_rank=stock_rank,
-        orientation_rank=orientation_rank,
-        row=row,
-        column=column,
     )
 
 
@@ -106,9 +88,16 @@ def test_full_stable_tuple(field):
 
 
 def test_tie_break_minimizes_fragmentation_when_remnant_areas_are_equal():
-    fragmented = synthetic_candidate((0b111, 0b011), stock_rank=0)
-    clean = synthetic_candidate((0b11, 0b11), stock_rank=1)
-    assert BestResidualFitSelector().select((fragmented, clean)) is clean
+    # Real geometry: piece 2x2.
+    # Candidate 1 (4x3): largest remnant is 2x3 = 6, but leaves 2 fragmented cells.
+    # Candidate 2 (2x5): largest remnant is 2x3 = 6, and leaves 0 fragmented cells.
+    # M5 selects Candidate 2 because fragmented_cells (0) < fragmented_cells (2),
+    # despite Candidate 1 having a lower stock_rank.
+    result = optimize(
+        [piece(width=2, height=2)],
+        [stock(1, width=4, height=3), stock(2, width=2, height=5)],
+    )
+    assert result.complete and result.placements[0].stock.material_id == 2
 
 
 def test_first_position_is_preserved_and_only_winning_layout_is_committed():
@@ -158,3 +147,30 @@ def test_application_simulation_does_not_mutate_inventory():
 
 def test_empty_selector():
     assert BestResidualFitSelector().select(iter(())) is None
+
+
+def test_m5_places_real_circle_and_convex_polygon():
+    circle = piece(1) | dict(
+        tipo_forma="CIRCUNFERENCIA",
+        geometria=dict(type="CIRCUNFERENCIA", radius_mm=2),
+        area_mm2=D("12.57"),
+    )
+    poly = piece(2) | dict(
+        tipo_forma="POLIGONO_CONVEXO",
+        geometria=dict(type="POLIGONO_CONVEXO", vertices_mm=[[0, 0], [4, 0], [4, 3], [0, 3]]),
+        area_mm2=D("12"),
+    )
+    result = optimize([circle, poly], [stock(1, width=15, height=15)])
+    assert result.complete and len(result.placements) == 2
+    assert {p.piece.shape_type for p in result.placements} == {"CIRCUNFERENCIA", "POLIGONO_CONVEXO"}
+
+
+def test_m5_never_mixes_incompatible_materials():
+    p1 = piece(1, glass=1, thickness=6, width=2, height=2)
+    p2 = piece(2, glass=2, thickness=8, width=2, height=2)
+    s1 = stock(1, glass=1, thickness=6, width=10, height=10)
+    s2 = stock(2, glass=2, thickness=8, width=10, height=10)
+    result = optimize([p1, p2], [s1, s2])
+    assert result.complete and len(result.placements) == 2
+    assert {p.stock.glass_type_id for p in result.placements} == {1, 2}
+    assert all(p.piece.material_key == p.stock.material_key for p in result.placements)

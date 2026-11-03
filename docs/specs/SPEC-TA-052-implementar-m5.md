@@ -78,7 +78,8 @@ El método M5 opera sobre la misma entidad inmutable `OptimizationProblem`:
 - **CA-03:** Ante igual área de retazo, el selector elige la que minimiza la merma fragmentada.
 - **CA-04:** Comparte el componente de rotación a 5° (`RasterCache.iter_orientations`) sin lógica angular ad-hoc.
 - **CA-05:** Respeta la prioridad `RETAZO` antes que `PLANCHA` (las planchas no se evalúan si hay retazos factibles).
-- **CA-06:** La suite de pruebas `test_best_residual_fit.py` pasa 100% en verde con 0 fallos.
+- **CA-06:** La suite de pruebas `test_best_residual_fit.py` y `test_sp005_m5.py` pasa 100% en verde con 0 fallos.
+- **CA-07:** Las pruebas unitarias no usan simulaciones sintéticas ni mocks para la geometría (`SimpleNamespace`); operan 100% sobre entidades de dominio reales (`PieceUnit`, `StockCandidate`, `SheetLayout`, `FeasibleCandidate`) cubriendo rectángulos, círculos y polígonos convexos.
 
 ---
 
