@@ -2,6 +2,8 @@
 from .errors import RunError
 from .load_budget import DEFAULT_RUN_LOAD_BUDGET, check_pieces, check_selection, check_stock
 from .preparation import prepare_persisted_problem
+from .stock import with_compatible_stock
+from ..domain.preflight import preflight
 from ..domain.problem import SPRINT_2_ANGULAR_STEP_DEG
 from ..domain.rotation import discrete_angles
 
@@ -26,6 +28,9 @@ class AcceptRun:
                     "Publica una nueva versión de configuración sin alterar el historial.",
                 )
             pieces = uow.orders.lock_pending(ids)
+            if not pieces:
+                raise RunError("INVALID_INPUT", "El pedido no contiene piezas.",
+                               {"preflight_errors": [{"code": "EMPTY_ORDER"}]})
             try:
                 discrete_angles(config.angular_step_deg)
             except ValueError as exc:
@@ -41,6 +46,18 @@ class AcceptRun:
                 problem = prepare_persisted_problem(ids, pieces, config)
             except ValueError as exc:
                 raise RunError("INVALID_INPUT", "Las piezas o parámetros exceden las condiciones válidas de cálculo.") from exc
+            # The HTTP stock adapter supports both counting and read-only snapshots.
+            # Direct legacy callers without a provider keep their existing contract.
+            if self.stock_counter is not None and hasattr(self.stock_counter, "list_compatible"):
+                try:
+                    checked_problem = with_compatible_stock(problem, self.stock_counter)
+                    result = preflight(checked_problem.groups, config)
+                except ValueError as exc:
+                    raise RunError("INVALID_INPUT", "No se pudo validar la geometría o el stock.") from exc
+                if not result.can_optimize:
+                    raise RunError("INVALID_INPUT", "El pedido no puede optimizarse con el stock disponible.",
+                                   {"preflight_errors": [{"code": issue.code, "piece_id": issue.piece_id}
+                                                         for issue in result.errors]})
             run = uow.runs.create(problem, configuration_id, actor_id)
             uow.orders.transition(ids, "PENDIENTE", "EN_OPTIMIZACION")
         return run
