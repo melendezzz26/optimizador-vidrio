@@ -2,7 +2,8 @@
 
 Estado: Implemented
 PBI relacionado: TA-052 (T01 y T02)
-Responsable: Equipo NewGlass (Taller Integrador II)
+Autor: Luis Anthony Ibáñez Herrera
+Revisor esperado: Andro Joseph Quispe Cesias (aprobación formal pendiente)
 Fecha: 03/11/2026
 Versión: 1.0
 
@@ -21,10 +22,10 @@ Llevar al sistema de producción de NewGlass de forma canónica y reproducible l
   - `domain/best_residual_fit.py`: `BestResidualFitSelector`, `BestResidualFitResult` (con `method="M5"`), `BestResidualFitOptimizer`.
   - `application/best_residual_fit.py`: Función `calculate_best_residual_fit(...)` para simulación de solo lectura sobre inventario.
   - `domain/problem.py`: Extensión del tipo `OptimizationResult.method` para admitir `"M5"`.
-  - `application/comparison.py`: Exportación e integración de `BestResidualFitOptimizer` y `EXTENDED_METHODS`.
+  - `application/comparison.py`: Lista opcional `EXTENDED_METHODS` con M5. `DEFAULT_METHODS` permanece en FF/BF/WF; el registro público de M5 corresponde a TA-043.
 - **T02 — Crear pruebas de M5:**
   - `tests/unit/optimization/test_best_residual_fit.py`: Cobertura exhaustiva de selección normal, desempate lexicográfico completo, rotación canónica a 5°, no colocables, prioridad de retazos, inmutabilidad y pruebas de aplicación.
-  - Validación de compatibilidad con las pruebas existentes en `tests/unit/optimization/test_sp005_m5.py`.
+  - 18 pruebas nuevas en `test_best_residual_fit.py` ejercitan directamente el motor productivo; 11 pruebas heredadas en `test_sp005_m5.py` aún ejercitan el optimizador experimental de SP-005. La selección conjunta contiene 29 pruebas, sin convertir las 11 heredadas en pruebas productivas directas.
   - Registro de evidencia formal en `docs/evidence/sprint-02/TA-052/README.md`.
 
 ### Fuera de alcance:
