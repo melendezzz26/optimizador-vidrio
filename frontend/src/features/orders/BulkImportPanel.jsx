@@ -9,8 +9,7 @@ import './BulkImportPanel.css';
 
 // HU-018: primero se carga el archivo y después se elige el material (SPEC-HU-018 §6.1).
 // Las filas observadas se corrigen aquí y se revalidan en el backend (§6.2).
-export default function BulkImportPanel({ token, materials = [], onClose, onAdd }) {
-  const [preview, setPreview] = useState(null);
+export default function BulkImportPanel({ token, materials = [], onClose, onAdd, preview, setPreview }) {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [material, setMaterial] = useState({ tipo_vidrio_id: '', espesor: '' });
@@ -26,13 +25,12 @@ export default function BulkImportPanel({ token, materials = [], onClose, onAdd 
   useEffect(() => () => controllerRef.current?.abort(), []);
 
   // Una sola petición a la vez: si llega otra, la anterior se cancela y no pisa el resultado.
-  async function load(send, { keepPreview = false } = {}) {
+  async function load(send) {
     controllerRef.current?.abort();
     const controller = new AbortController();
     controllerRef.current = controller;
     setIsLoading(true);
     setError('');
-    if (!keepPreview) setPreview(null);
     try {
       const result = await send(controller.signal);
       if (controller.signal.aborted) return;
@@ -48,12 +46,16 @@ export default function BulkImportPanel({ token, materials = [], onClose, onAdd 
   function handleFile(event) {
     const file = event.target.files?.[0];
     event.target.value = ''; // permite volver a cargar el mismo archivo corregido
-    if (file) load(signal => previewImport(file, { signal, token }));
+    if (file) {
+      // No desbloquear un borrador observado al intentar cargar otro archivo.
+      if (!preview?.filas.some(row => row.estado !== 'VALIDO')) setPreview(null);
+      load(signal => previewImport(file, { signal, token }));
+    }
   }
 
   function revalidate() {
     const body = revalidationBody(preview, drafts);
-    load(signal => validateImport(body, { signal, token }), { keepPreview: true });
+    load(signal => validateImport(body, { signal, token }));
   }
 
   const thicknesses = materials.find(type => String(type.id_tipo_vidrio) === String(material.tipo_vidrio_id))?.espesores_mm ?? [];

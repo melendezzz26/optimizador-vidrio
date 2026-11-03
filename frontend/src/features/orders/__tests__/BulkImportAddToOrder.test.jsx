@@ -128,3 +128,54 @@ test('el polígono importado se abre en el editor de figuras', async () => {
   await user.click(screen.getByRole('button', { name: 'Editar figura' }));
   expect(screen.getByRole('dialog', { name: 'Dibujar Polígono Convexo' })).toBeInTheDocument();
 });
+
+async function setupValidOrderWithImport() {
+  const user = userEvent.setup();
+  render(<FormularioPedido token="import-token" standalone />);
+  await user.type(await screen.findByLabelText('Nombre del cliente'), 'importación');
+  await user.click(screen.getByRole('button', { name: 'Buscar', exact: true }));
+  await user.click(await screen.findByRole('button', { name: 'Seleccionar Cliente importación' }));
+  const row = screen.getByText('Pieza 1', { selector: 'strong' }).closest('.orders-piece');
+  const group = row.closest('.orders-material-group');
+  await user.selectOptions(within(group).getByLabelText('Tipo de vidrio'), '7');
+  await user.selectOptions(within(group).getByLabelText('Espesor del vidrio (mm)'), '6');
+  await user.type(within(row).getByLabelText('Ancho (mm)'), '800');
+  await user.type(within(row).getByLabelText('Alto (mm)'), '600');
+  expect(screen.getByRole('button', { name: 'Guardar pedido' })).toBeEnabled();
+  await user.click(screen.getByRole('button', { name: 'Importar CSV/XLSX' }));
+  return user;
+}
+
+test('una importación observada bloquea guardar un pedido válido hasta revalidar', async () => {
+  const user = await setupValidOrderWithImport();
+  previewData = preview([observed]);
+  await user.upload(screen.getByLabelText('Archivo CSV o XLSX'), csv());
+  await screen.findByLabelText('Fila 4');
+  const save = screen.getByRole('button', { name: 'Guardar pedido' });
+  expect(save).toBeDisabled();
+  expect(save).toHaveAccessibleDescription('Corrige las filas observadas antes de confirmar el pedido.');
+  fireEvent.click(save);
+  expect(orderPosts()).toHaveLength(0);
+  await user.clear(screen.getByLabelText('Fila 4'));
+  await user.type(screen.getByLabelText('Fila 4'), 'C,2,150');
+  await user.click(screen.getByRole('button', { name: 'Revalidar' }));
+  await waitFor(() => expect(save).toBeEnabled());
+});
+
+test('cerrar una importación observada descarta el bloqueo del pedido', async () => {
+  const user = await setupValidOrderWithImport();
+  previewData = preview([observed]);
+  await user.upload(screen.getByLabelText('Archivo CSV o XLSX'), csv());
+  await screen.findByLabelText('Fila 4');
+  expect(screen.getByRole('button', { name: 'Guardar pedido' })).toBeDisabled();
+  await user.click(screen.getByRole('button', { name: 'Cerrar importación' }));
+  expect(screen.getByRole('button', { name: 'Guardar pedido' })).toBeEnabled();
+});
+
+test('una importación válida abierta no bloquea guardar un pedido válido', async () => {
+  const user = await setupValidOrderWithImport();
+  previewData = preview([rectangle]);
+  await user.upload(screen.getByLabelText('Archivo CSV o XLSX'), csv());
+  await screen.findByRole('table', { name: 'Vista previa del archivo' });
+  expect(screen.getByRole('button', { name: 'Guardar pedido' })).toBeEnabled();
+});

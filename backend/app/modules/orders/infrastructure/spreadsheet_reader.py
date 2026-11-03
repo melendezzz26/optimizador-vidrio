@@ -1,6 +1,6 @@
 """HU-018: lee un archivo CSV o XLSX y entrega sus filas como texto (SPEC-HU-018 §4.6).
 
-Cada fila sale como (número de fila, texto). En XLSX se unen las celdas no vacías con
+Cada fila sale como (número de fila, texto). En XLSX se unen las celdas con
 comas, así una fila de Excel se interpreta exactamente igual que una línea del CSV,
 aunque Excel haya partido un polígono en varias celdas.
 """
@@ -63,8 +63,10 @@ def _xlsx_rows(content):
                 raise ImportFileError(TOO_MANY_ROWS)
             if len(cells) > MAX_COLUMNS and cells[MAX_COLUMNS] is not None:
                 raise ImportFileError(TOO_MANY_COLUMNS)
-            values = [_cell_text(cell) for cell in cells if cell is not None]
-            text = ",".join(value for value in values if value)
+            values = [_cell_text(cell) if cell is not None else "" for cell in cells]
+            while values and not values[-1]:
+                values.pop()  # solo se descartan celdas vacías al final de la fila
+            text = ",".join(values)
             rows.append((number, text))
             with_content += bool(text)
             if with_content > MAX_ROWS:  # deja de leer: el caso de uso rechazará el archivo

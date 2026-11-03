@@ -165,9 +165,9 @@ En todos los casos, el polígono resultante se valida con `GeometryValidator`
 
 ### 4.5 Fila de títulos y filas vacías
 
-- Si la **primera** fila con contenido no empieza con `R`, `C` o `P` **y no contiene
-  números**, se considera **fila de títulos** y se ignora (por ejemplo
-  `tipo,cantidad,medidas`). Una fila como `X,1,100` no es un título: queda OBSERVADO.
+- Solo se ignora como encabezado la primera fila con contenido que coincide con
+  `tipo,cantidad,medidas`, sin distinguir mayúsculas ni espacios. Cualquier otra
+  fila se interpreta como dato; `DESCONOCIDO` queda OBSERVADO.
 - Cualquier otra fila que no empiece con `R`, `C` o `P` queda **OBSERVADO**.
 - Las filas completamente vacías se ignoran y no se cuentan como piezas.
 - Al **revalidar** (§7.2) no se busca fila de títulos: todas las filas vienen de una vista
@@ -180,7 +180,7 @@ En todos los casos, el polígono resultante se valida con `GeometryValidator`
 | Formato | Regla |
 |---|---|
 | `.csv` | Texto UTF-8 (con o sin BOM), una pieza por línea. |
-| `.xlsx` | Primera hoja. En cada fila se unen las celdas no vacías con comas y se lee igual que una línea CSV. Lo natural es usar 3 columnas: tipo, cantidad y medidas. |
+| `.xlsx` | Primera hoja. Se unen las celdas con comas conservando los huecos intermedios; solo se eliminan celdas vacías finales. Se interpreta igual que una línea CSV. Lo natural es usar 3 columnas: tipo, cantidad y medidas. |
 
 | A | B | C |
 |---|---|---|
@@ -258,6 +258,13 @@ elige el material.
    bloqueado mientras se guarda, así que un doble clic no crea dos pedidos.
 
 ### 6.2 Con filas observadas
+
+Mientras exista una importación abierta con filas OBSERVADO, se bloquean tanto
+«Agregar al pedido» como «Guardar pedido», incluso si hay piezas manuales válidas.
+Al corregir y revalidar la última observación se elimina el bloqueo; cerrar la
+importación descarta el preview y también lo elimina. Preview y revalidación no
+persisten datos. El endpoint normal recibe solo las piezas finales y valida sus
+datos, pero no conoce el estado temporal del preview del navegador.
 
 - La tabla muestra las filas `OBSERVADO` resaltadas, con sus causas.
 - **"Agregar al pedido" queda deshabilitado** e indica cuántas filas hay que corregir.
@@ -515,3 +522,4 @@ resultados de las pruebas y enlace al PR.
 | 02/11/2026 | 0.2 | Reviewed | SPEC revisada por Andro Joseph Quispe Cesias (Scrum Master). |
 | 03/11/2026 | 0.3 | Implemented | T01–T05 implementadas. Límite de 4000 caracteres por fila; revalidación sin fila de títulos; reemplazo del borrador vacío del formulario; archivos del frontend y pruebas implementadas (§11.1). |
 | 03/11/2026 | 0.4 | Implemented | Correcciones de la revisión del PR #96: límite de 2000 filas leídas y 300 columnas; una fila vaciada al revalidar queda OBSERVADO. |
+| 03/11/2026 | 0.5 | Implemented | Se conservan huecos XLSX, se reconoce solo el encabezado documentado y las observaciones bloquean guardar hasta corregir o cancelar la importación. |

@@ -110,6 +110,8 @@ export default function FormularioPedido({
   const [piezaEnEdicion, setPiezaEnEdicion] = useState(null);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
   const [isImportOpen, setIsImportOpen] = useState(false);
+  const [importPreview, setImportPreview] = useState(null);
+  const bulkImportHasBlockingObservations = isImportOpen && (importPreview?.filas.some(row => row.estado !== 'VALIDO') ?? false);
   const importButtonRef = useRef(null);
   const [listaAnimada] = useAutoAnimate();
   const nextGroupIdRef = useRef(0);
@@ -280,6 +282,7 @@ export default function FormularioPedido({
     const newGroupId = `group-${nextGroupIdRef.current++}`;
     setMaterialGroups(current => recalculatePieceNames(addImportedPieces(current, material, imported, newGroupId)));
     setIsImportOpen(false);
+    setImportPreview(null);
     setErrorGlobal('');
     setSuccessMessage(`Se ${imported.length === 1 ? 'agregó 1 pieza' : `agregaron ${imported.length} piezas`} del archivo al pedido.`);
     importButtonRef.current?.focus();
@@ -354,7 +357,7 @@ export default function FormularioPedido({
   }
 
   async function saveOrder() {
-    if (submittingRef.current || !isValid() || readOnly) return;
+    if (submittingRef.current || !isValid() || readOnly || bulkImportHasBlockingObservations) return;
     submittingRef.current = true;
     setIsSubmitting(true);
     onSubmittingChange?.(true);
@@ -413,7 +416,8 @@ export default function FormularioPedido({
 
             {creating && isImportOpen && (
               <BulkImportPanel token={token} materials={tiposDisponibles} onAdd={addImportedToOrder}
-                onClose={() => { setIsImportOpen(false); importButtonRef.current?.focus(); }} />
+                preview={importPreview} setPreview={setImportPreview}
+                onClose={() => { setIsImportOpen(false); setImportPreview(null); importButtonRef.current?.focus(); }} />
             )}
 
             <div ref={listaAnimada} className="orders-materials">
@@ -611,10 +615,11 @@ export default function FormularioPedido({
           </section>
 
           {creating && !selectedClient && <p id={`${formId}-client-help`}>Selecciona un cliente para guardar el pedido.</p>}
+          {bulkImportHasBlockingObservations && <p id={`${formId}-import-help`}>Corrige las filas observadas antes de confirmar el pedido.</p>}
           <footer className="orders-form-footer"><ActionBar>
             {onCerrar && <button type="button" className="ng-button" onClick={() => setIsCancelDialogOpen(true)} disabled={isSubmitting}><X size={18} /> Cancelar</button>}
             {standalone && creating && <button type="button" className="ng-button" onClick={() => setIsCancelDialogOpen(true)} disabled={isSubmitting}><X size={18} /> Cancelar</button>}
-            {!readOnly && <button type="button" className="ng-button ng-button--primary" onClick={saveOrder} aria-describedby={creating && !selectedClient ? `${formId}-client-help` : undefined} disabled={!isValid() || isSubmitting}>
+            {!readOnly && <button type="button" className="ng-button ng-button--primary" onClick={saveOrder} aria-describedby={[creating && !selectedClient && `${formId}-client-help`, bulkImportHasBlockingObservations && `${formId}-import-help`].filter(Boolean).join(' ') || undefined} disabled={!isValid() || isSubmitting || bulkImportHasBlockingObservations}>
               {isSubmitting ? <Loader2 size={18} className="ng-loading-icon" /> : <Save size={18} />}
               {isSubmitting ? 'Guardando…' : editing ? 'Guardar cambios' : 'Guardar pedido'}
             </button>}

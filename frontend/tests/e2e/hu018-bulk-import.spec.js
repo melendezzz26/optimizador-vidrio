@@ -88,3 +88,26 @@ test('un archivo no admitido muestra el error sin registrar nada', async ({ page
   await expect(panel.getByRole('alert')).toContainText('Selecciona un archivo .csv o .xlsx.');
   await expect(panel.getByRole('table')).toHaveCount(0);
 });
+
+test('una observación bloquea guardar piezas manuales hasta corregirla', async ({ page }) => {
+  await page.getByLabel('Nombre del cliente').fill('Vidrios Norte');
+  await page.getByRole('button', { name: 'Buscar', exact: true }).click();
+  await page.getByRole('button', { name: 'Seleccionar Vidrios Norte' }).click();
+  const group = page.locator('.orders-material-group').first();
+  await group.getByLabel('Tipo de vidrio', { exact: true }).selectOption('7');
+  await group.getByLabel('Espesor del vidrio (mm)').selectOption('6');
+  await group.getByLabel('Ancho (mm)').fill('800');
+  await group.getByLabel('Alto (mm)').fill('600');
+  const save = page.getByRole('button', { name: 'Guardar pedido' });
+  await expect(save).toBeEnabled();
+  await page.getByRole('button', { name: 'Importar CSV/XLSX' }).click();
+  const panel = page.getByRole('region', { name: 'Importar piezas desde archivo' });
+  await panel.getByLabel('Archivo CSV o XLSX').setInputFiles({ name: 'piezas.csv', mimeType: 'text/csv', buffer: Buffer.from('DESCONOCIDO\nR,1,100,200') });
+  await expect(panel.getByLabel('Fila 1')).toBeVisible();
+  await expect(save).toBeDisabled();
+  await expect(page.getByText('Corrige las filas observadas antes de confirmar el pedido.')).toBeVisible();
+  await panel.getByLabel('Fila 1').fill('C,1,150');
+  await panel.getByRole('button', { name: 'Revalidar' }).click();
+  await expect(panel.getByText('2 filas · 2 válidas · 0 observadas')).toBeVisible();
+  await expect(save).toBeEnabled();
+});

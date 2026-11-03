@@ -217,9 +217,9 @@ def interpret_row(fila, texto):
 
 
 def is_header(texto):
-    """La primera fila con contenido es de títulos si no es una pieza y no tiene números."""
-    first = (split_values(texto) or [texto])[0].strip().upper()
-    return first not in SHAPES and not re.search(r"\d", texto)
+    """Solo se reconoce el encabezado documentado, sin depender de heurísticas."""
+    values = split_values(texto)
+    return values is not None and [value.casefold() for value in values] == ["tipo", "cantidad", "medidas"]
 
 
 def _has_content(texto):
