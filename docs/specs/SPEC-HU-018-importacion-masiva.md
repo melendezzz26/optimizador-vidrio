@@ -8,7 +8,7 @@
 | Nombre | Importación masiva de piezas |
 | Tareas | T01 — Definir contrato CSV/XLSX · T02 — Parsear y previsualizar archivo · T03 — Validar filas y estado OBSERVADO · T04 — Corregir/confirmar importación · T05 — Pruebas unitarias/integración/E2E |
 | Sprint | Sprint 2 |
-| Estado | **Reviewed** |
+| Estado | **Implemented** |
 | Responsable | Fabricio Aguilar |
 | Reviewer | Andro Joseph Quispe Cesias (Scrum Master) |
 | Rama | `feature/S2-HU018-importacion-masiva` |
@@ -170,6 +170,9 @@ En todos los casos, el polígono resultante se valida con `GeometryValidator`
   `tipo,cantidad,medidas`). Una fila como `X,1,100` no es un título: queda OBSERVADO.
 - Cualquier otra fila que no empiece con `R`, `C` o `P` queda **OBSERVADO**.
 - Las filas completamente vacías se ignoran y no se cuentan como piezas.
+- Al **revalidar** (§7.2) no se busca fila de títulos: todas las filas vienen de una vista
+  previa, así que una fila corregida sin números (por ejemplo `circulo`) queda
+  `OBSERVADO` y nunca desaparece.
 
 ### 4.6 Archivos admitidos
 
@@ -185,7 +188,8 @@ En todos los casos, el polígono resultante se valida con `GeometryValidator`
 | P | 1 | {{120,60},{160,120},{120,60},{160,120}} |
 
 **Límites de protección**, para que un archivo grande no sature el servidor:
-**1 MB** por archivo y **500 filas** con contenido. Por encima, la previsualización se
+**1 MB** por archivo, **500 filas** con contenido y **4000 caracteres** por fila (un
+polígono de 128 lados con decimales cabe con margen). Por encima, la previsualización se
 rechaza completa con un mensaje claro. Otras extensiones (`.xls`, `.txt`, etc.) se
 rechazan.
 
@@ -241,6 +245,8 @@ elige el material.
    pedido"**. Al presionarlo, las piezas se agregan al formulario dentro de un grupo con
    ese material; si ya existe un grupo con el mismo material, se agregan a ese grupo.
    La vista previa se cierra, para que las mismas filas no se agreguen dos veces.
+   Si el formulario solo tiene la pieza vacía con la que empieza, el grupo importado la
+   reemplaza; un grupo en el que el usuario ya escribió datos nunca se descarta.
 6. El operario elige el cliente (si aún no lo hizo), revisa el formulario y presiona el
    botón existente **"Registrar pedido"**.
 7. **Creación del pedido (T04):** el endpoint actual `POST /api/orders` vuelve a validar
@@ -342,7 +348,7 @@ Ninguno de los dos endpoints escribe en la base de datos. Ambos requieren el per
 - Responde con el mismo formato de §7.1, aplicando las mismas reglas de §4 y §5.
 - Se envían **todas** las filas del borrador, no solo las corregidas, para que el
   resumen siempre corresponda al archivo completo.
-- Límites: 500 filas y 2000 caracteres por fila.
+- Límites: 500 filas y 4000 caracteres por fila.
 
 ## 8. Diseño técnico
 
@@ -357,7 +363,9 @@ Presentation → Application → Domain; Infrastructure implementa la lectura de
 | Infrastructure | `orders/infrastructure/spreadsheet_reader.py` | Lee CSV (UTF-8) o XLSX (primera hoja) y entrega filas de texto con su número. Aplica los límites de §4.6. |
 | Presentation | `orders/presentation/router.py`, `schemas.py` | Endpoints de §7.1 y §7.2, permiso `orders.create`, esquemas de respuesta. |
 | Frontend | `features/orders/bulkImportModel.js` | Lógica pura: resumen, ¿se puede confirmar?, filas → piezas del formulario. |
-| Frontend | `features/orders/BulkImportPanel.jsx` | Archivo, tabla, corrección de filas observadas, material y botón "Agregar al pedido". Usa los componentes compartidos de feedback. |
+| Frontend | `features/orders/BulkImportPanel.jsx` y `.css` | Archivo, tabla, corrección de filas observadas, material y botón "Agregar al pedido". Usa los componentes compartidos de feedback y los tokens de UI. |
+| Frontend | `features/orders/ordersApi.js` | `previewImport` (envía el archivo como `FormData`) y `validateImport`. |
+| Frontend | `shared/apiRequest.js` | Envía un `FormData` sin forzar `Content-Type: application/json`. Cambio compatible: las demás llamadas no cambian. |
 | Frontend | `features/orders/FormularioPedido.jsx` | Botón "Importar CSV/XLSX" y recepción de las piezas importadas. |
 
 ### 8.1 Construcción del polígono (§4.4)
@@ -453,6 +461,21 @@ el docente: sirve para mostrar el formato, pero esa figura no existe.
   registrar; se verifica que el pedido tenga exactamente las piezas del archivo, sin
   duplicados. En escritorio y móvil. El spec nuevo se agrega a `criticalSpecs.js` (TA-040).
 
+## 11.1 Pruebas implementadas
+
+| Nivel | Archivo | Cubre |
+|---|---|---|
+| Dominio | `backend/tests/unit/modules/orders/domain/test_polygon_construction.py` | Polígono con 0 a 3 ángulos vacíos, tolerancias, determinismo (CA-08) |
+| Dominio | `backend/tests/unit/modules/orders/domain/test_bulk_import.py` | Cada regla y causa de §5.1 (CA-06) |
+| Aplicación | `backend/tests/unit/modules/orders/application/test_preview_import.py` | Resumen, límites de 500 filas y 4000 caracteres, revalidación sin fila de títulos |
+| Infraestructura | `backend/tests/unit/modules/orders/infrastructure/test_spreadsheet_reader.py` | CSV con y sin BOM, XLSX en columnas, en una celda y con el polígono partido; archivos ilegibles |
+| API | `backend/tests/api/orders/test_import_preview_api.py` | CSV y XLSX iguales, sin escritura en BD, errores de §6.3 sin eco, 401/403, revalidación (CA-02 a CA-04, CA-10) |
+| Integración | `backend/tests/integration/optimization/test_hu018_imported_order.py` | Archivo → vista previa → registro → First Fit, Best Fit y Worst Fit completos y determinísticos, sin escrituras (CA-09) |
+| Frontend (lógica) | `frontend/tests/unit/bulkImportModel.test.js` | Bloqueo, filas a piezas, revalidación, unión con el grupo del mismo material |
+| Frontend (componentes) | `frontend/src/features/orders/__tests__/BulkImportPanel.test.jsx` | Carga, tabla, material después del archivo, errores, foco (CA-05) |
+| Frontend (componentes) | `frontend/src/features/orders/__tests__/BulkImportAddToOrder.test.jsx` | Bloqueo con observadas, corrección y revalidación, piezas al grupo, un solo registro con doble clic (CA-07, CA-11, CA-12) |
+| E2E | `frontend/tests/e2e/hu018-bulk-import.spec.js` | Archivo con observada → corrección → revalidación → agregar → registrar una vez; archivo no admitido. Escritorio y móvil; registrado en `criticalSpecs.js` (CA-13) |
+
 ## 12. Evidencia requerida
 
 `docs/evidence/sprint-02/HU-018/`: archivos de ejemplo usados, capturas de la carga
@@ -487,3 +510,4 @@ resultados de las pruebas y enlace al PR.
 | 01/11/2026 | 0.1 | Draft | Borrador: contrato acordado (D-01 a D-04), reglas, causas, API, diseño y pruebas. |
 | 02/11/2026 | 0.2 | Draft | Alcance final con T04 y T05 del backlog: corrección y revalidación en el sistema, creación del pedido con el registro existente, fuente de archivo, endpoint de revalidación; fila de títulos sin números; causa `Formato de fila inválido`; CA-11 a CA-13; P-01 y P-02 decididas. |
 | 02/11/2026 | 0.2 | Reviewed | SPEC revisada por Andro Joseph Quispe Cesias (Scrum Master). |
+| 03/11/2026 | 0.3 | Implemented | T01–T05 implementadas. Límite de 4000 caracteres por fila; revalidación sin fila de títulos; reemplazo del borrador vacío del formulario; archivos del frontend y pruebas implementadas (§11.1). |
