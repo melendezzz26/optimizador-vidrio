@@ -1,11 +1,16 @@
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException, Path, status, Query
+from fastapi import APIRouter, Depends, File, HTTPException, Path, status, Query, UploadFile
 from datetime import date
 from typing import Optional
 from fastapi.exceptions import RequestValidationError
 from fastapi.routing import APIRoute
-from .schemas import CreateOrderRequest, CreateOrderResponse, OrderResponse, UpdateOrderRequest
+from .schemas import (
+    CreateOrderRequest, CreateOrderResponse, ImportPreviewResponse, ImportValidateRequest,
+    OrderResponse, UpdateOrderRequest,
+)
+from ..application.bulk_import import ImportFileError, PreviewImportUseCase
+from ..infrastructure.spreadsheet_reader import file_name, read_rows
 from ..application.use_cases import CreateOrderUseCase, GetOrderUseCase, ListOrdersUseCase, UpdateOrderUseCase, CancelOrderUseCase
 from ..domain.exceptions import (
     InvalidOrderException,
@@ -65,6 +70,40 @@ def create_order(
     except Exception as e:
         logger.exception("Order creation failed")
         raise HTTPException(status_code=500, detail="No se pudo guardar el pedido. Inténtalo otra vez.") from e
+
+# HU-018: importación masiva. Ningún endpoint de importación escribe en la base de datos.
+MAX_IMPORT_FILE_BYTES = 1024 * 1024
+
+
+def _preview(archivo, rows):
+    try:
+        return PreviewImportUseCase().execute(archivo, rows)
+    except ImportFileError as error:
+        raise HTTPException(status_code=error.status_code, detail=str(error)) from error
+
+
+@router.post("/import/preview", response_model=ImportPreviewResponse)
+def preview_import(
+    archivo: UploadFile = File(...),
+    _user: AuthenticatedUser = Depends(permiso_crear_pedidos),
+):
+    content = archivo.file.read(MAX_IMPORT_FILE_BYTES + 1)
+    if len(content) > MAX_IMPORT_FILE_BYTES:
+        raise HTTPException(status_code=status.HTTP_413_CONTENT_TOO_LARGE,
+                            detail="El archivo supera el tamaño máximo de 1 MB.")
+    try:
+        rows = read_rows(archivo.filename, content)
+    except ImportFileError as error:
+        raise HTTPException(status_code=error.status_code, detail=str(error)) from error
+    return _preview(file_name(archivo.filename), rows)
+
+
+@router.post("/import/validate", response_model=ImportPreviewResponse)
+def validate_import(
+    request: ImportValidateRequest,
+    _user: AuthenticatedUser = Depends(permiso_crear_pedidos),
+):
+    return _preview(file_name(request.archivo), [(row.fila, row.texto) for row in request.filas])
 
 @router.get("")
 def list_orders(

@@ -78,7 +78,7 @@ def test_xlsx_gives_the_same_result_as_csv(client, headers):
     ("piezas.xlsx", b"R,1,10,10 secreto", 422, "No se pudo leer el archivo. Verifica el formato."),
     ("piezas.csv", b"C,1,10\n" * 501, 422, "El archivo supera el máximo de 500 filas."),
     ("piezas.csv", b"C,1,10\n" + b" " * (1024 * 1024), 413, "El archivo supera el tamaño máximo de 1 MB."),
-])
+], ids=["txt", "empty", "headers-only", "utf16", "fake-xlsx", "501-rows", "over-1mb"])
 def test_file_errors_are_clear_and_do_not_echo_content(client, headers, name, content, status, message):
     response = upload(client, headers, content, name)
     assert response.status_code == status
@@ -108,7 +108,7 @@ def test_validate_reinterprets_corrected_rows(client, headers, session_factory):
     {"filas": [{"fila": 1, "texto": "C,1," + "1" * 4000}]},
     {"filas": [{"fila": n, "texto": "C,1,10"} for n in range(1, 502)]},
     {"filas": [{"fila": 1, "texto": "C,1,10"}], "extra": True},
-])
+], ids=["no-rows", "row-zero", "long-text", "501-rows", "extra-field"])
 def test_validate_rejects_invalid_requests(client, headers, payload):
     response = client.post(VALIDATE, json=payload, headers=headers)
     assert response.status_code == 422
