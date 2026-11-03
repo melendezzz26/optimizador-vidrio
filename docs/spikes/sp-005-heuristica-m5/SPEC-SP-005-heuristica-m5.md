@@ -65,7 +65,7 @@ El runner registra las colocaciones y su SHA-256 funcional. Tres ejecuciones de 
 2. Los cuatro métodos mantienen las condiciones de TA-027 y el orden de fuentes. **PASS.**
 3. Los resultados funcionales coinciden en las tres repeticiones de las 12 combinaciones método/caso. **PASS.**
 4. M5 produce una selección distinta de BF y WF en Complex. **PASS.**
-5. M5 en Complex permanece por debajo de 2 000 ms de mediana y 5 MB de memoria pico. **PASS:** 535.23 ms y 850.99 KB.
+5. M5 en Complex permanece por debajo de 2 000 ms de mediana y 5 MB de memoria pico. **PASS:** mediana de tiempo 535.23 ms; mediana de memoria pico 850.99 KB y máximo observado 876.28 KB.
 6. La documentación y los datos provienen de un runner común. **PASS.**
 
 Resultados agregados (tiempo mediano local; los artefactos contienen cada muestra):

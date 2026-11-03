@@ -71,7 +71,7 @@ Se verificó que colocaciones, orientaciones, fuentes, conteos y métricas funci
 - **SMALL:** paridad funcional entre todos los métodos.
 - **MEDIUM:** M5 preserva 20 mm² más que WF y reduce 20 mm² de merma frente a WF. Usa dos planchas nuevas, una más que FF/BF. Su merma (281.86 mm²) supera a FF (201.86) y BF (193.86).
 - **COMPLEX:** M5 preserva 50 mm² más que WF y reduce 50 mm² de merma frente a WF. Usa cuatro planchas nuevas, una más que FF/BF. Su merma (836.72 mm²) supera a FF/BF (746.72).
-- **Recursos:** M5 tarda una mediana de 535.23 ms y consume 850.99 KB de memoria pico en Complex en este entorno. Los tiempos no deben generalizarse a otros equipos o runtimes.
+- **Recursos:** M5 registra una mediana de 535.23 ms en Complex; la mediana de memoria pico es 850.99 KB y el máximo de sus tres muestras es 876.28 KB. Los tiempos no deben generalizarse a otros equipos o runtimes.
 
 La mejora M5 es clara frente a WF en área recuperable, pero no domina a FF/BF en planchas ni merma. El valor del método depende de que el inventario recuperable pese más que el material comercial y la merma adicionales.
 
