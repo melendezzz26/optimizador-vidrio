@@ -1,0 +1,6 @@
+*.ipynb text eol=lf
+*.txt text eol=lf
+*.csv text eol=lf
+# La copia exacta original contiene espacios al final en una línea vacía (98).
+# Conservar sus bytes; el manifiesto y la prueba contra Git verifican fidelidad.
+vendor/app/modules/optimization/domain/raster_mask.py whitespace=-blank-at-eol
