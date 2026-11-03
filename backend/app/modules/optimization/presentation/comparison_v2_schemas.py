@@ -206,6 +206,12 @@ class ComparisonMaskV2(v1.ComparisonMask):
     schema_version: Literal[2] = 2
     method: MethodV2
 
+    @model_validator(mode="after")
+    def identity(self):
+        if self.id_optimizacion != self.comparison_id:
+            raise ValueError("Mask descriptor belongs to another comparison")
+        return self
+
 
 class ComparisonMaskPayloadV2(v1.ComparisonMaskPayload):
     profile: Literal["comparison-v2"] = "comparison-v2"

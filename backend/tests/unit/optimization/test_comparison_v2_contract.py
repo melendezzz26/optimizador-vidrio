@@ -22,6 +22,7 @@ from app.modules.optimization.presentation.comparison_schemas import ComparisonS
 from app.modules.optimization.presentation.comparison_v2_schemas import (
     ComparisonSummaryV2, ExecutionResponseV2, ComparisonEventV2,
     ComparisonSelectionV2, ComparisonReleaseV2, ComparisonConfirmationV2, ComparisonMaskPayloadV2,
+    ComparisonMaskV2,
 )
 from app.modules.optimization.presentation.run_schemas import RunResponseV1
 from tests.unit.optimization.comparison_v2_support import FIXTURE, example, calculated
@@ -238,6 +239,10 @@ def test_masks_and_event_payload_cannot_cross_execution_boundaries(wire):
     event["data"]["mask"].update(profile="comparison-v2", schema_version=2, comparison_id=43,
         id_optimizacion=43, execution_id=4305, method="M5")
     ComparisonEventV2.model_validate(event)
+    standalone = deepcopy(event["data"]["mask"])
+    standalone["id_optimizacion"] = 99
+    with pytest.raises(ValidationError):
+        ComparisonMaskV2.model_validate(standalone)
     event["data"]["mask"]["execution_id"] = 4306
     with pytest.raises(ValidationError):
         ComparisonEventV2.model_validate(event)
