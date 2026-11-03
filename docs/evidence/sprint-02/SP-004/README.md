@@ -183,7 +183,7 @@ Decisión de esta etapa experimental: **NO-GO para integración directa en TA-04
 - Notebook con outputs reales: [`SP004-Hole-Filling.ipynb`](../../../../experiments/optimization/colab/SP004-Hole-Filling.ipynb).
 - Especificacion y plan: [SPEC](../../../specs/SPEC-SP-004-heuristica-m4.md), [PLAN](../../../specs/PLAN-SP-004-heuristica-m4.md), [TASKS](../../../specs/TASKS-SP-004-heuristica-m4.md); [investigacion M4 actualizada](../../../spikes/SP-004-investigacion-m4.md).
 
-En el cierre inicial se registraron 11 PASS de Hole Filling y 145 regresiones. La validación realista actual amplió la suite HF a 13 PASS; no se modificaron producción ni fixtures oficiales. El cierre de esta etapa se conserva en commits locales, sin push, PR ni merge.
+En el cierre inicial se registraron 11 PASS de Hole Filling y 145 PASS en la regresión FF/BF/WF, placement y ángulos. La validación realista posterior amplió la suite específica HF a 13 PASS; no se modificaron producción ni fixtures oficiales. El cierre de esa etapa ocurrió antes de publicar la rama.
 
 ## Validación final con pedidos realistas — Hole Filling
 
@@ -223,7 +223,48 @@ Las tres firmas funcionales HF fueron iguales entre sus respectivas tres repetic
 
 **Dictamen de la implementación experimental: NO-GO para integración directa en TA-042.** HF sí mostró decisiones propias en 002 y 003, pero en 002 solo cambió el patrón con un costo de 136×; en 003 colocó seis piezas en pockets pero perdió cobertura y empeoró merma, uso y recuperable a 425×; 001 no usó pockets y costó 271×. El efecto no justifica ese costo local y no conviene integrar esta implementación.
 
-Verificación de esa fase: 13 pruebas HF PASS y 145 regresiones focalizadas PASS. Los SVG se validaron como XML. No se modificaron producción, FF/BF/WF, fixtures TA-027 ni los resultados previos de SP-004. El cierre de esa fase ocurrió antes de publicar la rama.
+Verificación de esa fase: 13 pruebas específicas HF PASS y 145 regresiones FF/BF/WF, placement y ángulos PASS. Los SVG se validaron como XML. No se modificaron producción, FF/BF/WF, fixtures TA-027 ni los resultados previos de SP-004. El cierre de esa fase ocurrió antes de publicar la rama.
+
+## Reconciliación y repetición final de pruebas SP-004
+
+Los documentos anteriores conservaban conteos de selecciones diferentes sin nombrar sus alcances. No se encontró un registro histórico de las líneas de comando literales para ninguno de los cuatro conteos. Para el cierre se reconstruyeron las selecciones a partir de las categorías documentadas, se confirmó cada cantidad con `--collect-only` y se ejecutaron nuevamente. Los comandos siguientes reproducen esas selecciones y producen los conteos informados; no se atribuyen como transcripción literal de las ejecuciones históricas. Las selecciones se solapan; sus resultados no deben sumarse.
+
+| Nombre acordado | Archivos incluidos | Conteo final |
+|---|---|---:|
+| Pruebas específicas Hole Filling | `hole_filling/test_detector.py`, `hole_filling/test_optimizer.py` | 13 passed |
+| Suite experimental completa SP-004 | Pruebas de Filler, DJD, Pair-Block y Hole Filling, más el loader `test_experimental_cases.py` | 65 passed |
+| Suite combinada focalizada HF/motor | HF, FF/BF/WF, casos experimentales, reglas comunes, métricas y ángulos | 138 passed |
+| Regresión FF/BF/WF y geometría | FF/BF/WF, placement y ángulos | 145 passed |
+
+Las 13 pruebas HF están incluidas en las selecciones de 65 y 138. La suite de 145 es un grupo distinto: comparte las pruebas unitarias FF/BF/WF y de ángulos con la selección de 138, pero añade placement y no incluye los tests específicos HF. Por eso 138 y 145 no son contradictorios ni intercambiables.
+
+Comandos ejecutados desde la raíz en PowerShell:
+
+**Pruebas específicas Hole Filling (13):**
+
+```powershell
+.venv/Scripts/python.exe -m pytest experiments/optimization/hole_filling/test_detector.py experiments/optimization/hole_filling/test_optimizer.py -q -ra
+```
+
+**Suite experimental completa SP-004 (65):**
+
+```powershell
+.venv/Scripts/python.exe -c "import sys, pytest; sys.path.insert(0, 'backend'); raise SystemExit(pytest.main(['experiments/optimization/djd/test_djd.py', 'experiments/optimization/filler/test_filler.py', 'experiments/optimization/block_packing/test_block_experimental.py', 'experiments/optimization/hole_filling/test_detector.py', 'experiments/optimization/hole_filling/test_optimizer.py', 'backend/tests/unit/optimization/test_experimental_cases.py', '-q', '-ra']))"
+```
+
+**Suite combinada focalizada HF/motor (138):**
+
+```powershell
+.venv/Scripts/python.exe -c "import sys, pytest; sys.path.insert(0, 'backend'); raise SystemExit(pytest.main(['experiments/optimization/hole_filling/test_detector.py', 'experiments/optimization/hole_filling/test_optimizer.py', 'backend/tests/unit/optimization/test_first_fit.py', 'backend/tests/unit/optimization/test_best_fit.py', 'backend/tests/unit/optimization/test_worst_fit.py', 'backend/tests/unit/optimization/test_experimental_cases.py', 'backend/tests/unit/optimization/test_common_rules.py', 'backend/tests/unit/optimization/test_metrics.py', 'backend/tests/unit/optimization/test_sprint2_angles.py', '-q', '-ra']))"
+```
+
+**Regresión FF/BF/WF y geometría (145):**
+
+```powershell
+.venv/Scripts/python.exe -c "import sys, pytest; sys.path.insert(0, 'backend'); raise SystemExit(pytest.main(['backend/tests/unit/optimization/test_first_fit.py', 'backend/tests/unit/optimization/test_best_fit.py', 'backend/tests/unit/optimization/test_worst_fit.py', 'backend/tests/optimization/test_placement.py', 'backend/tests/unit/optimization/test_sprint2_angles.py', '-q', '-ra']))"
+```
+
+**Resultados exactos:** 13 passed (0.54 s), 65 passed (13.27 s), 138 passed (3.49 s) y 145 passed (1.00 s). Cada ejecución terminó con 0 fallos y 0 omitidas, y emitió una advertencia no bloqueante: Windows denegó escribir en `.pytest_cache`. No se ejecutaron benchmarks ni notebooks durante esta repetición.
 
 ## Experimento demostrativo de capacidad
 

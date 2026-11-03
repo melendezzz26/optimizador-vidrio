@@ -88,7 +88,7 @@ El mini-spike y el benchmark EXP anteriores se conservan como evidencia históri
 | Determinismo | Comparar firmas funcionales HF entre tres repeticiones. | Firmas sin tiempo y resultados por repetición en JSON. | PASS ×3 fixtures. |
 | Visualización | Crear figuras de layout previo, pocket, pieza pendiente y placement solo si HF utilizó pocket. | Una figura para 002 y seis para 003; ninguna para 001. | PASS; escala de grises y SVG parseable. |
 | Dictamen y notebook | Publicar resultados reales y aplicar la regla E > 10× predeclarada. | Notebook con outputs locales, CSV/JSON y reporte. | NO-GO para TA-042; A/E, B/E y D/E. |
-| Pruebas | Ejecutar suite HF y regresiones focalizadas solicitadas. | `test_detector.py`, `test_optimizer.py` y suites FF/BF/WF/placement/ángulos. | 13 + 145 PASS. |
+| Pruebas | Ejecutar las pruebas específicas HF y regresiones FF/BF/WF/placement/ángulos. | Comandos y selección exacta de archivos en el [README de evidencia](../evidence/sprint-02/SP-004/README.md). | 13 HF específicas PASS; 145 regresiones PASS. Son grupos separados. |
 
 HF-REALISTIC-001 no utilizó pockets y empató el baseline (A funcional), pero el runtime fue 270.88×. HF-REALISTIC-002 cambió el patrón con un pocket y métricas empatadas (B funcional), a 136.02×. HF-REALISTIC-003 usó seis pockets, pero colocó 19/20 y empeoró utilización, merma y recuperable (D funcional), a 424.65×. E prevalece como categoría registrada por el costo; la lectura funcional se informa aparte. La recomendación final es **NO-GO**.
 
@@ -108,14 +108,14 @@ Los CA-01–CA-10 pertenecen a la fase Pair-Block de esta SPEC. Se conservan com
 | CA-06 | [CSV v2](../evidence/sprint-02/SP-004/benchmark-results/sp004_block_v2_results.csv) y [traza v2](../evidence/sprint-02/SP-004/benchmark-results/sp004_block_v2_trace.json) contienen métricas y diagnósticos. | PASS |
 | CA-07 | [CSV v2](../evidence/sprint-02/SP-004/benchmark-results/sp004_block_v2_results.csv) identifica EXP-SMALL/MEDIUM/COMPLEX y el discriminante. | PASS |
 | CA-08 | [Intención DJD](../../experiments/optimization/djd/DJD-DIAGNOSTIC-INTENT.md) y [traza diagnóstica](../evidence/sprint-02/SP-004/benchmark-results/sp004_djd_diagnostic_trace.json) documentan cuatro casos y su clasificación. | PASS |
-| CA-09 | [Traza v2](../evidence/sprint-02/SP-004/benchmark-results/sp004_block_v2_trace.json) registra repeticiones; la suite experimental focalizada terminó con 65 passed, 0 failed, 0 skipped. | PASS |
+| CA-09 | [Traza v2](../evidence/sprint-02/SP-004/benchmark-results/sp004_block_v2_trace.json) registra repeticiones; la suite experimental completa SP-004 (pruebas Filler, DJD, Pair-Block, HF y loader de casos) terminó con 65 passed, 0 failed, 0 skipped. | PASS |
 | CA-10 | [Cuatro notebooks](../../experiments/optimization/colab/) con outputs preservados, [evidencia](../evidence/sprint-02/SP-004/README.md), [SPEC](SPEC-SP-004-heuristica-m4.md) y revisión académica. | PASS para el cierre documental; publicación y CI se verifican en el PR. |
 
 | Verificación final HF | Evidencia comprobable | Estado |
 |---|---|---|
-| Detector y reglas | [Pruebas HF](../../experiments/optimization/hole_filling/test_detector.py) y [optimizer](../../experiments/optimization/hole_filling/test_optimizer.py): 13 passed dentro de la suite focalizada. | PASS |
+| Detector y reglas | [Pruebas HF](../../experiments/optimization/hole_filling/test_detector.py) y [optimizer](../../experiments/optimization/hole_filling/test_optimizer.py): suite específica HF, 13 passed. Este grupo está incluido en las suites de 65 y 138; no se suma otra vez. | PASS |
 | EXP y realistas | [Resultados oficiales](../evidence/sprint-02/SP-004/hole-filling/sp004_hole_filling_official_results.csv) y [realistas](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_realistic_results.csv) conservan los resultados adversos. | PASS como evidencia; NO-GO para integrar esta implementación. |
 | Capacidad específica | [CSV](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_capability_results.csv), [traza](../evidence/sprint-02/SP-004/hole-filling/sp004_hf_capability_trace.json) y [figura](../../experiments/optimization/hole_filling/figures/HF-CAPABILITY-001-comparison.svg) muestran una plancha evitada en el caso controlado. | PASS como prueba de capacidad, sin extrapolación. |
 | Selección M4 | La [SPEC](SPEC-SP-004-heuristica-m4.md) y la [investigación](../spikes/SP-004-investigacion-m4.md) exigen filtros previos, límite de costo y fallback a FF. | **GO condicionado para estudiar implementación optimizada en TA-042.** |
 
-La suite focalizada del motor (FF/BF/WF, casos experimentales, reglas, métricas y ángulos) terminó con **138 passed, 0 failed, 0 skipped**. TA-042 no se implementa en esta rama.
+La suite combinada focalizada (HF, FF/BF/WF, loader de casos, reglas, métricas y ángulos) terminó con **138 passed, 0 failed, 0 skipped**. Es distinta de las 145 regresiones que incluyen placement y no incluyen los tests HF; ambas se repitieron. La suite experimental completa SP-004 terminó con **65 passed, 0 failed, 0 skipped**. Los cuatro grupos se solapan y no son aditivos; los comandos exactos están en el [README de evidencia](../evidence/sprint-02/SP-004/README.md). TA-042 no se implementa en esta rama.
