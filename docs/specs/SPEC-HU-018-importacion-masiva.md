@@ -173,6 +173,7 @@ En todos los casos, el polígono resultante se valida con `GeometryValidator`
 - Al **revalidar** (§7.2) no se busca fila de títulos: todas las filas vienen de una vista
   previa, así que una fila corregida sin números (por ejemplo `circulo`) queda
   `OBSERVADO` y nunca desaparece.
+- Al revalidar, una fila que el usuario dejó vacía tampoco se descarta: queda `OBSERVADO` con la causa `Fila vacía: escribe la pieza o vuelve a cargar el archivo sin esta fila`.
 
 ### 4.6 Archivos admitidos
 
@@ -189,7 +190,9 @@ En todos los casos, el polígono resultante se valida con `GeometryValidator`
 
 **Límites de protección**, para que un archivo grande no sature el servidor:
 **1 MB** por archivo, **500 filas** con contenido y **4000 caracteres** por fila (un
-polígono de 128 lados con decimales cabe con margen). Por encima, la previsualización se
+polígono de 128 lados con decimales cabe con margen). Además, se leen como máximo **2000
+filas contando las vacías** y **300 columnas por fila**, porque un XLSX comprimido de 1 MB
+puede contener cientos de miles de filas vacías. Por encima, la previsualización se
 rechaza completa con un mensaje claro. Otras extensiones (`.xls`, `.txt`, etc.) se
 rechazan.
 
@@ -511,3 +514,4 @@ resultados de las pruebas y enlace al PR.
 | 02/11/2026 | 0.2 | Draft | Alcance final con T04 y T05 del backlog: corrección y revalidación en el sistema, creación del pedido con el registro existente, fuente de archivo, endpoint de revalidación; fila de títulos sin números; causa `Formato de fila inválido`; CA-11 a CA-13; P-01 y P-02 decididas. |
 | 02/11/2026 | 0.2 | Reviewed | SPEC revisada por Andro Joseph Quispe Cesias (Scrum Master). |
 | 03/11/2026 | 0.3 | Implemented | T01–T05 implementadas. Límite de 4000 caracteres por fila; revalidación sin fila de títulos; reemplazo del borrador vacío del formulario; archivos del frontend y pruebas implementadas (§11.1). |
+| 03/11/2026 | 0.4 | Implemented | Correcciones de la revisión del PR #96: límite de 2000 filas leídas y 300 columnas; una fila vaciada al revalidar queda OBSERVADO. |
