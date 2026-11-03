@@ -10,6 +10,7 @@ from time import perf_counter_ns
 from typing import Any
 
 from ..domain.best_fit import BestFitOptimizer
+from ..domain.best_residual_fit import BestResidualFitOptimizer
 from ..domain.first_fit import FirstFitOptimizer
 from ..domain.metrics import ResidualRectangle, calculate_metrics
 from ..domain.problem import OptimizationProblem, OptimizationResult, decimal_value
@@ -17,6 +18,7 @@ from ..domain.worst_fit import WorstFitOptimizer
 
 
 DEFAULT_METHODS = (("FF", FirstFitOptimizer), ("BF", BestFitOptimizer), ("WF", WorstFitOptimizer))
+EXTENDED_METHODS = (("FF", FirstFitOptimizer), ("BF", BestFitOptimizer), ("WF", WorstFitOptimizer), ("M5", BestResidualFitOptimizer))
 
 
 @dataclass(frozen=True, kw_only=True)
