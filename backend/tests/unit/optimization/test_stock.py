@@ -39,13 +39,13 @@ class Inventory:
         self.reads += 1
         yield
 
-    def list_retazos(self):
+    def list_retazos_compatibles(self, glass, thickness):
         self.calls += 1
-        return self.remnants
+        return [r for r in self.remnants if r.estado and (r.id_tipo_vidrio, r.espesor_mm) == (glass, thickness)]
 
-    def list_planchas(self):
+    def list_planchas_compatibles(self, glass, thickness):
         self.calls += 1
-        return self.sheets
+        return [s for s in self.sheets if s.estado and s.cantidad > 0 and (s.id_tipo_vidrio, s.espesor_mm) == (glass, thickness)]
 
 
 @pytest.mark.parametrize("changes", [{"id_tipo_vidrio": 2}, {"espesor_mm": D("5.5")}, {"estado": False}])

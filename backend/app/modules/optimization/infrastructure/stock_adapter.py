@@ -1,8 +1,7 @@
 """Inventory's public read-only DTO boundary, without importing its Infrastructure.
 
-One logical lookup uses two catalogue reads in one read_transaction. Inventory
-does not yet expose filtered batch reads; filtering here avoids inventing a new
-cross-module SQL API. Application caches this result per material key per run.
+One logical lookup uses two filtered inventory reads in one read_transaction.
+Application caches the result per material key per run.
 """
 from decimal import Decimal
 
@@ -34,10 +33,8 @@ class InventoryStockAdapter:
     def _compatible(self, group_key):
         glass, thickness = group_key
         with self.inventory.read_transaction():
-            remnants = [r for r in self.inventory.list_retazos()
-                        if r.estado and (r.id_tipo_vidrio, r.espesor_mm) == (glass, thickness)]
-            sheets = [s for s in self.inventory.list_planchas()
-                      if s.estado and s.cantidad > 0 and (s.id_tipo_vidrio, s.espesor_mm) == (glass, thickness)]
+            remnants = self.inventory.list_retazos_compatibles(glass, thickness)
+            sheets = self.inventory.list_planchas_compatibles(glass, thickness)
         return remnants, sheets
 
     def count_compatible(self, group_key):
