@@ -51,3 +51,26 @@ Desde la raíz: `python docs/evidence/sprint-02/TA-042/measure_hole_filling.py`.
 | EXP-COMPLEX-001 | 96,866 | 86,792 | 1,12× | No | 24 | 8 | 1.665 | 2.898 |
 
 El caso mixto colocó 9/9 en ambos métodos; SMALL 3/3, MEDIUM 9/9 y COMPLEX 24/24. En COMPLEX se agotó el máximo de ocho mapas y se continuó con FF. `placement_checks` cuenta llamadas a `SheetLayout.check`, no placements aceptados. El presupuesto limita operaciones de detección, pero no garantiza un ratio temporal máximo para toda entrada; FF adicional de cobertura y reproducción con callbacks tienen costo propio.
+
+## Auditoría final: REQUIERE AJUSTE
+
+La revisión posterior encontró dos bloqueos conceptuales: el diseño de filtros y mapa global excluye el caso de capacidad de SP-004 a escala, y la protección por identidad permite usar más planchas con igual cobertura. No se cambió el motor ni se repitieron benchmarks. La revisión formal de Andro permanece pendiente.
+
+Desde `backend`:
+
+```text
+python -m pytest ../docs/evidence/sprint-02/TA-042/test_final_audit.py -q -ra
+14 passed, 0 failed, 0 skipped
+```
+
+Son **pruebas de caracterización de la implementación actual**, no una aprobación de sus limitaciones; las que describen la exclusión o degradación deberán cambiarse con el ajuste. Cubren el límite exacto de 1.024 anclajes/mapa, 8 mapas y 8.192 anclajes; presupuesto agotado; fronteras de fuente circular y poligonal; 0° frente a pocket a 5°; cambio de resolución; eventos y no mutación; determinismo en tres caminos; y el contraejemplo de planchas.
+
+| Evidencia | Resultado actual |
+| --- | --- |
+| HF-CAPABILITY-001 P11, 32 × 32 mm, 1 mm/celda | 1.024 celdas y 32 filas: excluido por límites 64 y 16. Subirlos no basta: el mapa tiene 60.507 anclajes y supera 1.024. |
+| Misma pieza 8 × 8 mm y fuente 24 × 24 mm | A 0,5 mm no activa; a 1 y 2 mm sí activa. |
+| SP-004 HF-REALISTIC-001 / 002 / 003 | Áreas mínimas de pieza de 1.050 / 2.200 / 2.000 mm²; tamaños de fixtures, no requisitos comerciales. |
+| Subconjunto de HF-DIAGNOSTIC-001, semillas 1, 4, 5 y 6 | A 0° FF permanece en fila 0, columna 0; el pocket legal de 5° está en fila 13, columna 7 y no se explora por la política actual. |
+| Caso sintético, retazo 14 × 14 mm, planchas 18 × 18 mm, 13 piezas | HF y FF 13/13; HF 1 plancha y FF 0. Merma 61,74 vs 27,74 mm²; recuperable 294 vs 4 mm². |
+
+Para igual conjunto de identidades, se recomienda estudiar un guard que rechace más planchas nuevas sin elegir automáticamente por merma. Cuando HF añade piezas respecto de FF, la prioridad de cobertura y el costo de planchas adicionales deben evaluarse explícitamente. La solución del problema de escala requiere una búsqueda acotada que no dependa de construir el mapa global; cambiar solo 64 a un porcentaje no resuelve el límite de mapa. Ver SPEC y review.
