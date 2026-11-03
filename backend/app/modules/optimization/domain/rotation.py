@@ -148,6 +148,18 @@ class _OrientationView:
                 masks_seen.add(signature)
                 yield OrientedUnit(self.unit, prepared)
 
+    def next_angles(self, angle: Decimal, count: int) -> Iterator[OrientedUnit]:
+        """Inspect at most count raw following angles; callers deduplicate masks."""
+        start = self.angles.index(angle) + 1
+        for next_angle in self.angles[start:start + count]:
+            self.checkpoint()
+            try:
+                prepared = self.cache._orientation(self.unit, self.resolution, next_angle)
+            except RasterExtentExceeded:
+                continue
+            self.checkpoint()
+            yield OrientedUnit(self.unit, prepared)
+
 
 class RasterCache:
     """One instance per calculation. Immutable masks may be shared across units."""

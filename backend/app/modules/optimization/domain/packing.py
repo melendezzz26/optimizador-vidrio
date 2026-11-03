@@ -1,6 +1,6 @@
 """Shared, lazy raster packing traversal; selectors only choose feasible sources."""
 from collections.abc import Callable, Iterable
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from decimal import Decimal, localcontext
 from functools import cached_property
 from typing import Literal
@@ -67,6 +67,7 @@ class FeasibleCandidate:
     orientation_rank: int
     row: int
     column: int
+    orientations: object | None = field(default=None, repr=False, compare=False)
 
     @cached_property
     def free_cells_before(self) -> int:
@@ -106,8 +107,8 @@ def _feasible_candidates(group, source, orientations, prepared, layouts, config,
                 row, column = position
                 yield FeasibleCandidate(stock=stock, stock_rank=stock_rank, layout=layout,
                                         orientation=orientation, orientation_rank=orientation_rank,
-                                        row=row, column=column)
-                # A selector compares sources, never alternate positions/angles.
+                                        row=row, column=column, orientations=orientations)
+                # One canonical FF candidate per source; the orientation view is optional.
                 break
 
 
