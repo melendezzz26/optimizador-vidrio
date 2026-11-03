@@ -122,10 +122,13 @@ def test_validate_keeps_a_row_without_numbers_as_observed(client, headers):
     assert response.json()["filas"][0]["fila"] == 4
 
 
-def test_validate_with_only_empty_rows_has_no_pieces(client, headers):
-    response = client.post(VALIDATE, json={"filas": [{"fila": 1, "texto": " "}]}, headers=headers)
-    assert response.status_code == 422
-    assert response.json() == {"detail": "El archivo no contiene piezas."}
+def test_validate_keeps_an_emptied_row_as_observed(client, headers):
+    response = client.post(VALIDATE, json={"filas": [{"fila": 1, "texto": " "}, {"fila": 2, "texto": "C,1,10"}]},
+                           headers=headers)
+    assert response.status_code == 200, response.text
+    assert response.json()["resumen"] == {"total": 2, "validas": 1, "observadas": 1}
+    assert response.json()["filas"][0]["causas"] == [
+        "Fila vacía: escribe la pieza o vuelve a cargar el archivo sin esta fila"]
 
 
 def test_both_endpoints_require_authentication(client):

@@ -47,3 +47,9 @@ def test_revalidation_never_drops_a_corrected_row_as_header():
     result = PreviewImportUseCase().execute("piezas.csv", [(4, "circulo"), (5, "C,1,10")], skip_header=False)
     assert [(row["fila"], row["estado"]) for row in result["filas"]] == [(4, "OBSERVADO"), (5, "VALIDO")]
     assert "Tipo de pieza desconocido" in result["filas"][0]["causas"]
+    
+    
+def test_revalidation_never_drops_an_emptied_row():
+    result = PreviewImportUseCase().execute("piezas.csv", [(4, ""), (5, "C,1,10")], skip_header=False)
+    assert result["resumen"] == {"total": 2, "validas": 1, "observadas": 1}
+    assert result["filas"][0]["fila"] == 4

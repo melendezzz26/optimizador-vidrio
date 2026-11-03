@@ -62,3 +62,21 @@ def test_file_name_never_keeps_paths():
     assert file_name("C:\\Users\\Ana\\piezas.csv") == "piezas.csv"
     assert file_name("../../piezas.xlsx") == "piezas.xlsx"
     assert file_name(None) == ""
+    
+    
+def test_csv_with_too_many_lines_is_rejected_even_if_they_are_empty():
+    assert len(read_rows("piezas.csv", b"\n" * 1999 + b"C,1,10")) == 2000
+    with pytest.raises(ImportFileError, match="2000 filas, contando las vacías"):
+        read_rows("piezas.csv", b"\n" * 2000 + b"C,1,10")
+
+
+def test_xlsx_stops_reading_after_2000_rows_even_if_they_are_empty():
+    assert len(read_rows("piezas.xlsx", xlsx(*[("",)] * 1999, ("C", 1, 10)))) == 2000
+    with pytest.raises(ImportFileError, match="2000 filas, contando las vacías"):
+        read_rows("piezas.xlsx", xlsx(*[("",)] * 2000, ("C", 1, 10)))
+
+
+def test_xlsx_row_with_too_many_columns_is_rejected():
+    assert read_rows("piezas.xlsx", xlsx(("C", 1, 10) + ("",) * 297)) == [(1, "C,1,10")]
+    with pytest.raises(ImportFileError, match="300 columnas"):
+        read_rows("piezas.xlsx", xlsx(("C", 1, 10) + ("",) * 297 + ("x",)))

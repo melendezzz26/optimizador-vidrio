@@ -119,3 +119,9 @@ def test_mixed_file_keeps_every_row_in_order():
 def test_commas_inside_braces_do_not_split_values():
     assert split_values("P,1,{{120,60},{160,120}}") == ["P", "1", "{{120,60},{160,120}}"]
     assert split_values("P,1,{{120,60}") is None
+     
+
+def test_revalidation_keeps_an_emptied_row_as_observed():
+    result = interpret_rows([(4, ""), (5, " , "), (6, "C,1,10")], skip_header=False)
+    assert [(row.fila, row.estado) for row in result] == [(4, OBSERVADO), (5, OBSERVADO), (6, VALIDO)]
+    assert result[0].causas == ["Fila vacía: escribe la pieza o vuelve a cargar el archivo sin esta fila"]
