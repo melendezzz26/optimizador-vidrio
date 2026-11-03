@@ -108,7 +108,7 @@ publico ni los motores existentes.
 ## Resultado de ejecucion
 
 T01.1 a T01.7 estan implementadas para el alcance de esta rama. La validacion
-real incluyo:
+real del cierre de T01 incluyo:
 
 - 495 pruebas de `unit/optimization` sin el runner supervisado en Windows.
 - 861 pruebas de unidades, integracion y API en WSL2 con PostgreSQL aislado.
@@ -116,7 +116,14 @@ real incluyo:
 - 47 pruebas del experimento SP-006.
 - `compileall` y `git diff --check`.
 
-Las ocho pruebas del runner no se consideran validas en Windows porque el
+Las pruebas del runner no se consideran validas en Windows porque el
 repositorio exige Linux/procfs/RLIMIT_AS/prctl; se ejecutaron y pasaron en
 WSL2. No se altero el coordinador publico, FF/BF/WF, M4, M5, frontend,
 persistencia ni inventario.
+
+Estos conteos son historicos del cierre de T01, antes de ampliar la bateria en
+T02. Los conteos vigentes de T02 son 19 pruebas focalizadas M6, 508 de
+unit/optimization en Windows, 874 de unit/integration/API en WSL2, 14 del
+runner y 47 de SP-006; el detalle se conserva en la
+[evidencia TA-053 T02](../evidence/sprint-02/TA-053-T02/README.md). Son suites
+solapadas y no se suman.

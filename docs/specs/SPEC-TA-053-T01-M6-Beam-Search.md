@@ -8,7 +8,7 @@
 | Responsable | Fabricio Melendez |
 | Dependencia | SP-006 |
 | Heuristica | M6 - Beam Search acotada (BS-k) |
-| Estado | Implementada y validada; TA-053 T02 pendiente |
+| Estado | Implementada y validada; TA-053 T02 completada en `test/TA-053-m6-beam-search` |
 | Rama | `feature/TA-053-m6-beam-search-integrated` |
 | Base | `origin/integration/sprint-01` |
 
@@ -152,14 +152,18 @@ API publica nueva.
 ## Estado de cumplimiento T01
 
 Los criterios de T01 se verificaron con los fixtures oficiales y regresiones
-del backend. La suite no supervisada de Windows paso 495 pruebas; en WSL2 con
-PostgreSQL aislado pasaron 861 pruebas de optimizacion/API/integracion y 14
-pruebas del supervisor. La suite portable de SP-006 paso 47 pruebas. No se
-ejecuto una sesion real de Google Colab en esta tarea, por lo que la evidencia
-local de SP-006 no se presenta como medicion de Colab.
+del backend. Al cierre de T01, antes de completar T02, la suite no supervisada
+de Windows paso 495 pruebas; en WSL2 con PostgreSQL aislado pasaron 861 pruebas
+de optimizacion/API/integracion y 14 pruebas del supervisor. La suite portable
+de SP-006 paso 47 pruebas. T02 amplio luego las suites relacionadas; sus conteos
+actualizados y el detalle de cada ejecucion estan en la
+[evidencia TA-053 T02](../evidence/sprint-02/TA-053-T02/README.md). Estos conteos
+pertenecen a suites solapadas y no deben sumarse. No se ejecuto una sesion real
+de Google Colab en esta tarea, por lo que la evidencia local de SP-006 no se
+presenta como medicion de Colab.
 
-La integracion publica de M6, las pruebas exhaustivas de TA-053 T02 y TA-043
-siguen fuera de alcance.
+Las pruebas exhaustivas de TA-053 T02 se completaron en su rama dedicada. La
+integracion publica de M6 y TA-043 siguen fuera de alcance.
 
 ## Riesgos y mitigaciones
 
