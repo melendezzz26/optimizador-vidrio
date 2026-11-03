@@ -23,7 +23,8 @@ class ImportFileError(Exception):
 
 class PreviewImportUseCase:
     def execute(self, archivo, rows, skip_header=True):
-        content = [(fila, texto) for fila, texto in rows if texto.strip().strip(",").strip()]
+        # Al revalidar se conservan todas las filas, también las que el usuario vació.
+        content = [(fila, texto) for fila, texto in rows if not skip_header or texto.strip().strip(",").strip()]
         if not content:
             raise ImportFileError(NO_PIECES)
         if len(content) > MAX_ROWS:

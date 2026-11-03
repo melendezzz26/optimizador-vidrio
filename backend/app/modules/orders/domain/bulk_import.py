@@ -18,6 +18,7 @@ MAX_QUANTITY = 2147483647
 MAX_POLYGON_SIDES = 128  # TA-037 L-04
 
 SHAPES = {"R": "RECTANGULO", "C": "CIRCUNFERENCIA", "P": "POLIGONO_CONVEXO"}
+EMPTY_ROW = "Fila vacía: escribe la pieza o vuelve a cargar el archivo sin esta fila"
 _NUMBER = re.compile(r"[+-]?(\d+(\.\d*)?|\.\d+)")
 _INTEGER = re.compile(r"\d+")
 _GROUPS = re.compile(r"\{[^{}]*\}(,\{[^{}]*\})*")
@@ -185,8 +186,12 @@ def _polygon(values, causes):
 def interpret_row(fila, texto):
     """Interpreta una fila con contenido. Nunca lanza: los errores quedan como causas."""
     row = RowResult(fila=fila, texto=texto.strip())
-    values = split_values(row.texto)
     causes = row.causas
+    if not _has_content(row.texto):  # solo llega aquí al revalidar: nunca se descarta en silencio
+        causes.append(EMPTY_ROW)
+        row.estado = OBSERVADO
+        return row
+    values = split_values(row.texto)
     letter = (values or row.texto.split(","))[0].strip().upper()
     row.tipo_forma = SHAPES.get(letter)
     if row.tipo_forma is None:
@@ -217,9 +222,20 @@ def is_header(texto):
     return first not in SHAPES and not re.search(r"\d", texto)
 
 
+def _has_content(texto):
+    return bool(texto.strip().strip(",").strip())
+
+
 def interpret_rows(rows, skip_header=True):
-    """``rows``: lista de (número de fila, texto). Ignora vacías y, si se pide, la fila de títulos."""
-    content = [(fila, texto) for fila, texto in rows if texto.strip().strip(",").strip()]
-    if skip_header and content and is_header(content[0][1]):
+    """``rows``: lista de (número de fila, texto).
+
+    Desde un archivo (``skip_header=True``) se ignoran las filas vacías y la de títulos.
+    Al revalidar (``skip_header=False``) no se descarta ninguna: una fila que el usuario
+    vació queda OBSERVADO, porque quitar piezas debe ser una decisión explícita.
+    """
+    if not skip_header:
+        return [interpret_row(fila, texto) for fila, texto in rows]
+    content = [(fila, texto) for fila, texto in rows if _has_content(texto)]
+    if content and is_header(content[0][1]):
         content = content[1:]
     return [interpret_row(fila, texto) for fila, texto in content]
