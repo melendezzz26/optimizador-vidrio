@@ -1,0 +1,2422 @@
+{
+  "FF": {
+    "metodo_nombre": "First Fit",
+    "repeticiones": 3,
+    "determinista": true,
+    "firma_funcional_sha256": "feef9272aaaeae49e317ed0fce72170fbd91a4a317c194b552432f690afaa8a9",
+    "resultados_funcionales": {
+      "placed_units": 24,
+      "total_units": 24,
+      "complete": true,
+      "metrics": {
+        "utilization_pct": "29.598",
+        "waste_mm2": "746.72",
+        "new_sheets_used": 3,
+        "recoverable_remnant_mm2": "184",
+        "material_area_mm2": "1322.00",
+        "placed_piece_area_mm2": "391.28"
+      },
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 1,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 9.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 1,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 9.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 3,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 2,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "55",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                2.457456,
+                0.0
+              ],
+              [
+                7.619644,
+                7.372368
+              ],
+              [
+                5.162188,
+                9.093098
+              ],
+              [
+                0.0,
+                1.720729
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 4,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 9.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 5,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "11",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 9.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                6.0,
+                0.0
+              ],
+              [
+                4.0,
+                4.0
+              ],
+              [
+                0.0,
+                3.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                6.0,
+                0.0
+              ],
+              [
+                4.0,
+                4.0
+              ],
+              [
+                0.0,
+                3.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 3,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "15",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                6.0,
+                0.0
+              ],
+              [
+                4.0,
+                4.0
+              ],
+              [
+                0.0,
+                3.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 4,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                6.0,
+                0.0
+              ],
+              [
+                4.0,
+                4.0
+              ],
+              [
+                0.0,
+                3.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 2,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "11",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 2
+          }
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 2
+          }
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 3,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "13",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 2
+          }
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 4,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 2
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "18",
+          "y_mm": "10",
+          "rotation_deg": "90",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 3.0,
+            "height_mm": 4.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "6",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 3,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "11",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 4,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "16",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 5,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "6",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 6,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "11",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 1,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 4,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "65",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                1.812616,
+                0.0
+              ],
+              [
+                4.770943,
+                6.344155
+              ],
+              [
+                2.958328,
+                7.189391
+              ],
+              [
+                0.0,
+                0.845237
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 2,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 5,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 7.0,
+            "height_mm": 2.0
+          }
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 3,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 5,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "4",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 7.0,
+            "height_mm": 2.0
+          }
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 1,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 5,
+          "stock_unit_index": 1,
+          "x_mm": "9",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                5.0,
+                0.0
+              ],
+              [
+                0.0,
+                4.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 2,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 5,
+          "stock_unit_index": 1,
+          "x_mm": "9",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                5.0,
+                0.0
+              ],
+              [
+                0.0,
+                4.0
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    "tiempo_ms_muestras": [
+      944.28,
+      889.95,
+      727.85
+    ],
+    "tiempo_ms_mediana": 889.95,
+    "memoria_pico_kb_muestras": [
+      1033.86,
+      1035.59,
+      1012.06
+    ],
+    "memoria_pico_kb_mediana": 1033.86
+  },
+  "BF": {
+    "metodo_nombre": "Best Fit",
+    "repeticiones": 3,
+    "determinista": true,
+    "firma_funcional_sha256": "87aacb57c131ba8ec34a8502a702030a57d46d54152ad04f9f302cdc1a38cd4c",
+    "resultados_funcionales": {
+      "placed_units": 24,
+      "total_units": 24,
+      "complete": true,
+      "metrics": {
+        "utilization_pct": "29.598",
+        "waste_mm2": "746.72",
+        "new_sheets_used": 3,
+        "recoverable_remnant_mm2": "184",
+        "material_area_mm2": "1322.00",
+        "placed_piece_area_mm2": "391.28"
+      },
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 2,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "55",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                2.457456,
+                0.0
+              ],
+              [
+                7.619644,
+                7.372368
+              ],
+              [
+                5.162188,
+                9.093098
+              ],
+              [
+                0.0,
+                1.720729
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 1,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 9.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 3,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 1,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 9.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 4,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 9.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 5,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "11",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 9.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                6.0,
+                0.0
+              ],
+              [
+                4.0,
+                4.0
+              ],
+              [
+                0.0,
+                3.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                6.0,
+                0.0
+              ],
+              [
+                4.0,
+                4.0
+              ],
+              [
+                0.0,
+                3.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 3,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "15",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                6.0,
+                0.0
+              ],
+              [
+                4.0,
+                4.0
+              ],
+              [
+                0.0,
+                3.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 4,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                6.0,
+                0.0
+              ],
+              [
+                4.0,
+                4.0
+              ],
+              [
+                0.0,
+                3.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 2,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "11",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 2
+          }
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 2
+          }
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 3,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "13",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 2
+          }
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 4,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 2
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "18",
+          "y_mm": "10",
+          "rotation_deg": "90",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 3.0,
+            "height_mm": 4.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "6",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 3,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "11",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 4,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "16",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 5,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "6",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 6,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "11",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 1,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 4,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "65",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                1.812616,
+                0.0
+              ],
+              [
+                4.770943,
+                6.344155
+              ],
+              [
+                2.958328,
+                7.189391
+              ],
+              [
+                0.0,
+                0.845237
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 2,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 5,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 7.0,
+            "height_mm": 2.0
+          }
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 3,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 5,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "4",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 7.0,
+            "height_mm": 2.0
+          }
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 1,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 5,
+          "stock_unit_index": 1,
+          "x_mm": "9",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                5.0,
+                0.0
+              ],
+              [
+                0.0,
+                4.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 2,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 5,
+          "stock_unit_index": 1,
+          "x_mm": "9",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                5.0,
+                0.0
+              ],
+              [
+                0.0,
+                4.0
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    "tiempo_ms_muestras": [
+      637.0,
+      548.46,
+      566.66
+    ],
+    "tiempo_ms_mediana": 566.66,
+    "memoria_pico_kb_muestras": [
+      901.94,
+      856.41,
+      1004.49
+    ],
+    "memoria_pico_kb_mediana": 901.94
+  },
+  "WF": {
+    "metodo_nombre": "Worst Fit",
+    "repeticiones": 3,
+    "determinista": true,
+    "firma_funcional_sha256": "20c6220f595a57426c0d5aee860d3d8c04606704577881e2cf86b16fbd3f860a",
+    "resultados_funcionales": {
+      "placed_units": 24,
+      "total_units": 24,
+      "complete": true,
+      "metrics": {
+        "utilization_pct": "25.309",
+        "waste_mm2": "886.72",
+        "new_sheets_used": 4,
+        "recoverable_remnant_mm2": "268",
+        "material_area_mm2": "1546.00",
+        "placed_piece_area_mm2": "391.28"
+      },
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 1,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 9.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 2,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "55",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                2.457456,
+                0.0
+              ],
+              [
+                7.619644,
+                7.372368
+              ],
+              [
+                5.162188,
+                9.093098
+              ],
+              [
+                0.0,
+                1.720729
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 3,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 1,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 9.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 4,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 9.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 5,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 9.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "11",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                6.0,
+                0.0
+              ],
+              [
+                4.0,
+                4.0
+              ],
+              [
+                0.0,
+                3.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "11",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                6.0,
+                0.0
+              ],
+              [
+                4.0,
+                4.0
+              ],
+              [
+                0.0,
+                3.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 3,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                6.0,
+                0.0
+              ],
+              [
+                4.0,
+                4.0
+              ],
+              [
+                0.0,
+                3.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 4,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                6.0,
+                0.0
+              ],
+              [
+                4.0,
+                4.0
+              ],
+              [
+                0.0,
+                3.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 2,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "11",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 2
+          }
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "17",
+          "y_mm": "4",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 2
+          }
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 3,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "17",
+          "y_mm": "4",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 2
+          }
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 4,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 2
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "8",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "13",
+          "y_mm": "9",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 3,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "13",
+          "y_mm": "9",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 4,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "1",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 5,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 6,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "6",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 1,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 4,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "65",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                1.812616,
+                0.0
+              ],
+              [
+                4.770943,
+                6.344155
+              ],
+              [
+                2.958328,
+                7.189391
+              ],
+              [
+                0.0,
+                0.845237
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 2,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 5,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 7.0,
+            "height_mm": 2.0
+          }
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 3,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 5,
+          "stock_unit_index": 2,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 7.0,
+            "height_mm": 2.0
+          }
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 1,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 5,
+          "stock_unit_index": 1,
+          "x_mm": "9",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                5.0,
+                0.0
+              ],
+              [
+                0.0,
+                4.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 2,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 5,
+          "stock_unit_index": 2,
+          "x_mm": "9",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                5.0,
+                0.0
+              ],
+              [
+                0.0,
+                4.0
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    "tiempo_ms_muestras": [
+      536.86,
+      537.43,
+      574.26
+    ],
+    "tiempo_ms_mediana": 537.43,
+    "memoria_pico_kb_muestras": [
+      1029.77,
+      1028.95,
+      1000.28
+    ],
+    "memoria_pico_kb_mediana": 1028.95
+  },
+  "M5": {
+    "metodo_nombre": "Best Residual Fit (adaptación experimental NewGlass)",
+    "repeticiones": 3,
+    "determinista": true,
+    "firma_funcional_sha256": "7cd6d2684e0adb2c8b956f7c3e1622cee53e29ecd625b51477e842d3932712a2",
+    "resultados_funcionales": {
+      "placed_units": 24,
+      "total_units": 24,
+      "complete": true,
+      "metrics": {
+        "utilization_pct": "25.309",
+        "waste_mm2": "836.72",
+        "new_sheets_used": 4,
+        "recoverable_remnant_mm2": "318",
+        "material_area_mm2": "1546.00",
+        "placed_piece_area_mm2": "391.28"
+      },
+      "placements": [
+        {
+          "piece_id": 1,
+          "unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 1,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 9.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 2,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "55",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                2.457456,
+                0.0
+              ],
+              [
+                7.619644,
+                7.372368
+              ],
+              [
+                5.162188,
+                9.093098
+              ],
+              [
+                0.0,
+                1.720729
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 3,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 1,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 9.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 4,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 9.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 1,
+          "unit_index": 5,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "11",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 9.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                6.0,
+                0.0
+              ],
+              [
+                4.0,
+                4.0
+              ],
+              [
+                0.0,
+                3.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "8",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                6.0,
+                0.0
+              ],
+              [
+                4.0,
+                4.0
+              ],
+              [
+                0.0,
+                3.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 3,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "15",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                6.0,
+                0.0
+              ],
+              [
+                4.0,
+                4.0
+              ],
+              [
+                0.0,
+                3.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 4,
+          "unit_index": 4,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                6.0,
+                0.0
+              ],
+              [
+                4.0,
+                4.0
+              ],
+              [
+                0.0,
+                3.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 2,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "11",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 2
+          }
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "1",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 2
+          }
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 3,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "8",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 2
+          }
+        },
+        {
+          "piece_id": 3,
+          "unit_index": 4,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "13",
+          "y_mm": "5",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "CIRCUNFERENCIA",
+            "radius_mm": 2
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 1,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "6",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 2,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "11",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 3,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "16",
+          "y_mm": "6",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 4,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 5,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 2,
+          "x_mm": "6",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 2,
+          "unit_index": 6,
+          "material_key": [
+            1,
+            "6"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 3,
+          "stock_unit_index": 1,
+          "x_mm": "6",
+          "y_mm": "10",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 4.0,
+            "height_mm": 3.0
+          }
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 1,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "RETAZO",
+          "material_id": 4,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "65",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                1.812616,
+                0.0
+              ],
+              [
+                4.770943,
+                6.344155
+              ],
+              [
+                2.958328,
+                7.189391
+              ],
+              [
+                0.0,
+                0.845237
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 2,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 5,
+          "stock_unit_index": 1,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 7.0,
+            "height_mm": 2.0
+          }
+        },
+        {
+          "piece_id": 5,
+          "unit_index": 3,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 5,
+          "stock_unit_index": 2,
+          "x_mm": "1",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "RECTANGULO",
+            "width_mm": 7.0,
+            "height_mm": 2.0
+          }
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 1,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 5,
+          "stock_unit_index": 1,
+          "x_mm": "9",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                5.0,
+                0.0
+              ],
+              [
+                0.0,
+                4.0
+              ]
+            ]
+          }
+        },
+        {
+          "piece_id": 6,
+          "unit_index": 2,
+          "material_key": [
+            2,
+            "8"
+          ],
+          "stock_source": "PLANCHA",
+          "material_id": 5,
+          "stock_unit_index": 2,
+          "x_mm": "9",
+          "y_mm": "1",
+          "rotation_deg": "0",
+          "geometry": {
+            "type": "POLIGONO_CONVEXO",
+            "vertices_mm": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                5.0,
+                0.0
+              ],
+              [
+                0.0,
+                4.0
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    "tiempo_ms_muestras": [
+      545.03,
+      535.23,
+      531.05
+    ],
+    "tiempo_ms_mediana": 535.23,
+    "memoria_pico_kb_muestras": [
+      876.28,
+      850.99,
+      844.86
+    ],
+    "memoria_pico_kb_mediana": 850.99
+  }
+}
