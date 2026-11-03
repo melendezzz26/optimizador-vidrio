@@ -47,4 +47,4 @@
 | SP004-CIERRE-01 | Conservar y explicar los resultados de Filler, DJD, Pair-Block y Hole Filling, incluidos los desfavorables. | Hecha; SPEC, Spike, evidencia y cuatro notebooks. |
 | SP004-CIERRE-02 | Revisar HF-CAPABILITY-001 como demostración controlada, con merma, área recuperable y tiempo completos. | Hecha; CSV, traza y figuras congeladas. |
 | SP004-CIERRE-03 | Revisar CA y pruebas focalizadas; fijar GO condicionado para una versión optimizada de M4. | Hecha; matriz final en PLAN y revisión académica. |
-| SP004-CIERRE-04 | Publicar la rama y abrir PR hacia `integration/sprint-01`; revisar CI sin integrar. | Pendiente hasta verificar PR y checks. |
+| SP004-CIERRE-04 | Publicar la rama y abrir PR hacia `integration/sprint-01`; revisar CI sin integrar. | Hecha; PR #92 abierto, revisión previa completada y backend/frontend/e2e PASS. Sin merge. |
