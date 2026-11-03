@@ -22,7 +22,7 @@ class ImportFileError(Exception):
 
 
 class PreviewImportUseCase:
-    def execute(self, archivo, rows):
+    def execute(self, archivo, rows, skip_header=True):
         content = [(fila, texto) for fila, texto in rows if texto.strip().strip(",").strip()]
         if not content:
             raise ImportFileError(NO_PIECES)
@@ -30,7 +30,7 @@ class PreviewImportUseCase:
             raise ImportFileError(f"El archivo supera el máximo de {MAX_ROWS} filas.")
         if any(len(texto) > MAX_ROW_LENGTH for _, texto in content):
             raise ImportFileError(f"Una fila supera el máximo de {MAX_ROW_LENGTH} caracteres.")
-        results = interpret_rows(content)
+        results = interpret_rows(content, skip_header)
         if not results:  # solo había una fila de títulos
             raise ImportFileError(NO_PIECES)
         observed = sum(row.estado == OBSERVADO for row in results)

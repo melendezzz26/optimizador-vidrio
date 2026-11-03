@@ -75,9 +75,9 @@ def create_order(
 MAX_IMPORT_FILE_BYTES = 1024 * 1024
 
 
-def _preview(archivo, rows):
+def _preview(archivo, rows, skip_header=True):
     try:
-        return PreviewImportUseCase().execute(archivo, rows)
+        return PreviewImportUseCase().execute(archivo, rows, skip_header)
     except ImportFileError as error:
         raise HTTPException(status_code=error.status_code, detail=str(error)) from error
 
@@ -103,7 +103,8 @@ def validate_import(
     request: ImportValidateRequest,
     _user: AuthenticatedUser = Depends(permiso_crear_pedidos),
 ):
-    return _preview(file_name(request.archivo), [(row.fila, row.texto) for row in request.filas])
+    # Las filas ya vienen de una vista previa: ninguna es de títulos, aunque no tenga números.
+    return _preview(file_name(request.archivo), [(row.fila, row.texto) for row in request.filas], skip_header=False)
 
 @router.get("")
 def list_orders(

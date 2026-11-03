@@ -217,9 +217,9 @@ def is_header(texto):
     return first not in SHAPES and not re.search(r"\d", texto)
 
 
-def interpret_rows(rows):
-    """``rows``: lista de (número de fila, texto). Ignora vacías y la fila de títulos."""
+def interpret_rows(rows, skip_header=True):
+    """``rows``: lista de (número de fila, texto). Ignora vacías y, si se pide, la fila de títulos."""
     content = [(fila, texto) for fila, texto in rows if texto.strip().strip(",").strip()]
-    if content and is_header(content[0][1]):
+    if skip_header and content and is_header(content[0][1]):
         content = content[1:]
     return [interpret_row(fila, texto) for fila, texto in content]

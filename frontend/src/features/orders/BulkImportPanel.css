@@ -39,6 +39,19 @@
 .orders-import__material { display: flex; flex-wrap: wrap; gap: var(--ng-space-4); }
 .orders-import__material .orders-field { min-width: 180px; }
 
+.orders-import__fixes {
+  display: flex; flex-direction: column; gap: var(--ng-space-3);
+  margin: 0; padding: var(--ng-space-4);
+  border: 1px solid var(--ng-border-subtle); border-radius: var(--ng-radius-control);
+}
+.orders-import__fixes legend { padding: 0 var(--ng-space-2); font-weight: 600; }
+.orders-import__fixes input { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+.orders-import__causes { color: var(--ng-error); font-size: 13px; }
+
+.orders-import__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--ng-space-3); }
+.orders-import__reason { margin: 0; color: var(--ng-text-600); }
+
 @media (max-width: 680px) {
   .orders-import__material .orders-field { flex: 1 1 100%; }
+  .orders-import__actions > .ng-button { width: 100%; }
 }

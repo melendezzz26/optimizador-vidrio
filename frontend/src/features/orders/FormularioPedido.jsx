@@ -5,6 +5,7 @@ import { AppShell } from '../../shared/components/AppShell';
 import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
 import { ConfirmDialog, EmptyState, FeedbackMessage, FieldError, LoadingState } from '../../shared/components/feedback';
 import BulkImportPanel from './BulkImportPanel';
+import { addImportedPieces } from './bulkImportModel';
 import CustomPieceEditor from './CustomPieceEditor';
 import OrderClientSelector from './OrderClientSelector';
 import { validateConvexPolygon } from './convexityValidation';
@@ -266,6 +267,24 @@ export default function FormularioPedido({
     }));
   }, []);
 
+  // HU-018 T04: las piezas importadas entran al formulario y se registran con el flujo normal.
+  function addImportedToOrder(pieces, material) {
+    const imported = pieces.map(piece => ({
+      ...piece,
+      id: nextPieceIdRef.current++,
+      nombre: '',
+      dimensiones: piece.tipo_forma === 'POLIGONO_CONVEXO'
+        ? { ...piece.dimensiones, rawState: restoredPolygonState(piece.dimensiones.vertices) }
+        : piece.dimensiones,
+    }));
+    const newGroupId = `group-${nextGroupIdRef.current++}`;
+    setMaterialGroups(current => recalculatePieceNames(addImportedPieces(current, material, imported, newGroupId)));
+    setIsImportOpen(false);
+    setErrorGlobal('');
+    setSuccessMessage(`Se ${imported.length === 1 ? 'agregó 1 pieza' : `agregaron ${imported.length} piezas`} del archivo al pedido.`);
+    importButtonRef.current?.focus();
+  }
+
   function openEditor(groupId, pieceId) {
     editorTriggerRef.current = document.activeElement;
     setPiezaEnEdicion({ groupId, pieceId });
@@ -393,7 +412,7 @@ export default function FormularioPedido({
             </div>
 
             {creating && isImportOpen && (
-              <BulkImportPanel token={token} materials={tiposDisponibles}
+              <BulkImportPanel token={token} materials={tiposDisponibles} onAdd={addImportedToOrder}
                 onClose={() => { setIsImportOpen(false); importButtonRef.current?.focus(); }} />
             )}
 
