@@ -6,6 +6,7 @@
 |---|---|
 | Codigo | TA-053 T01 |
 | Responsable | Fabricio Melendez |
+| Revisor humano esperado | Andro Joseph Quispe Cesias; el PR #91 no registra una review aprobatoria al 2026-11-02 |
 | Dependencia | SP-006 |
 | Heuristica | M6 - Beam Search acotada (BS-k) |
 | Estado | Implementada y validada; TA-053 T02 completada en `test/TA-053-m6-beam-search` |

@@ -6,6 +6,7 @@
 |---|---|
 | Codigo | TA-053 T02 |
 | Responsable | Fabricio Melendez |
+| Revisor humano esperado | Andro Joseph Quispe Cesias; el PR #91 no registra una review aprobatoria al 2026-11-02 |
 | Dependencia | TA-053 T01 |
 | Rama | `test/TA-053-m6-beam-search` |
 | Estado | Implementada y validada |

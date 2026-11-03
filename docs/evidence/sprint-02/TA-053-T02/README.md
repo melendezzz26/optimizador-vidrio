@@ -46,3 +46,10 @@ funcion de puntuacion ni la generacion de candidatos.
 `measured_local_notebook_cpu` en Windows. No existe una exportacion verificable
 de una sesion real de Google Colab en el repositorio; por tanto esta evidencia
 no afirma resultados de Colab.
+
+## Autoria y revision previa al merge
+
+Responsable tecnico: Fabricio Melendez Quezada. Revisor humano esperado:
+Andro Joseph Quispe Cesias. Al revisar el PR #91 el 2026-11-02 no habia reviews
+ni solicitudes de reviewer registradas en GitHub. La revision tecnica de Codex
+se realizo por encargo del usuario y no se atribuye como aprobacion de Andro.
