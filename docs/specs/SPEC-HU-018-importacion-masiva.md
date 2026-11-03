@@ -6,17 +6,18 @@
 |---|---|
 | ID | HU-018 |
 | Nombre | Importación masiva de piezas |
-| Tareas | T01 — Definir contrato CSV/XLSX · T02 — Parsear y previsualizar archivo · T03 — Validar filas y estado OBSERVADO |
+| Tareas | T01 — Definir contrato CSV/XLSX · T02 — Parsear y previsualizar archivo · T03 — Validar filas y estado OBSERVADO · T04 — Corregir/confirmar importación · T05 — Pruebas unitarias/integración/E2E |
 | Sprint | Sprint 2 |
-| Estado | **Draft** |
+| Estado | **Reviewed** |
 | Responsable | Fabricio Aguilar |
-| Reviewer | Por asignar (distinto del autor) |
+| Reviewer | Andro Joseph Quispe Cesias (Scrum Master) |
 | Rama | `feature/S2-HU018-importacion-masiva` |
-| Base | `origin/integration/sprint-01` en `f9cfd4f` |
+| Base | `origin/integration/sprint-01` en `f9cfd4f` (SPEC v0.1) |
 | Fecha | 01/11/2026 |
-| Origen | Indicación del docente (sesión Taller 09, 28/10/2026) y asignación del Scrum Master |
+| Origen | Indicación del docente (sesión Taller 09, 28/10/2026), asignación del Scrum Master y backlog de Notion (T01–T05) |
 | Dependencias | Registro manual de pedidos (HU-006, HU-007, S1-orders-material-flow); validación geométrica existente (`GeometryValidator`) |
 | Fuera de este bloque | Pruebas de estrés con 100/150/200 piezas; M4, M5 y M6; TA-044, TA-045, TA-047, TA-049 y TA-050 |
+| Tareas por sección | T01: §4, §5, §10 · T02: §4.6, §7, §8 · T03: §5, §6.2 · T04: §6.1 pasos 5–7 · T05: §11 |
 
 ## 1. Objetivo
 
@@ -40,14 +41,21 @@ El docente lo planteó para alimentar el optimizador de forma masiva (por ejempl
 - En el registro de pedido, la opción **"Importar CSV/XLSX"**: seleccionar el archivo,
   ver la tabla de filas, elegir el material y agregarlas al pedido.
 - El estado **OBSERVADO** por fila, con su causa, y el bloqueo de la confirmación
-  mientras exista alguna fila observada.
-- Pruebas de backend, frontend y un E2E del flujo.
+  mientras exista alguna fila observada (T03).
+- **Corrección dentro del sistema** (T03 y T04): la fila observada se edita en la tabla
+  y se revalida, sin volver a subir el archivo.
+- **Creación del pedido** (T04) solo cuando todas las filas son válidas, una sola vez y
+  en una transacción, con el registro de pedido existente (§6.1).
+- Pruebas unitarias, de API, de integración con First Fit, Best Fit y Worst Fit, y un
+  E2E del flujo completo (T05).
 
 ### Fuera de alcance
 
-- Crear el pedido directamente desde el archivo: el pedido se sigue registrando con
-  el botón existente del formulario, que conserva todas sus validaciones.
-- Editar una fila observada dentro de la tabla de previsualización (ver P-02).
+- Un segundo camino para registrar pedidos: la importación termina en el registro de
+  pedido existente, que conserva todas sus validaciones.
+- Evitar duplicados por **reintento** cuando se pierde la conexión justo después de
+  guardar (hallazgo S1-09 de la auditoría): afecta también al registro manual y
+  requiere un cambio de esquema; se trata aparte.
 - Pruebas de estrés de 100/150/200 piezas (siguiente bloque).
 - Integración con M4, M5 y M6: solo se usan First Fit, Best Fit y Worst Fit.
 - Cambios de esquema o migraciones.
@@ -157,8 +165,9 @@ En todos los casos, el polígono resultante se valida con `GeometryValidator`
 
 ### 4.5 Fila de títulos y filas vacías
 
-- Si la **primera** fila con contenido no empieza con `R`, `C` o `P`, se considera
-  **fila de títulos** y se ignora (por ejemplo `tipo,cantidad,medidas`).
+- Si la **primera** fila con contenido no empieza con `R`, `C` o `P` **y no contiene
+  números**, se considera **fila de títulos** y se ignora (por ejemplo
+  `tipo,cantidad,medidas`). Una fila como `X,1,100` no es un título: queda OBSERVADO.
 - Cualquier otra fila que no empiece con `R`, `C` o `P` queda **OBSERVADO**.
 - Las filas completamente vacías se ignoran y no se cuentan como piezas.
 
@@ -204,7 +213,8 @@ rechazan.
 | Rectángulo con menos de 2 medidas | `Faltan dimensiones` |
 | Rectángulo con más de 2 medidas | `Sobran valores en la fila` |
 | Largo o ancho 0, negativo o no numérico | `Largo inválido` / `Ancho inválido` |
-| Llaves mal cerradas, pares incompletos o valores no numéricos | `Formato de polígono inválido` |
+| Llaves mal cerradas o pares incompletos en un polígono | `Formato de polígono inválido` |
+| Llaves mal cerradas en una fila que no es polígono | `Formato de fila inválido` |
 | Menos de 3 lados | `Un polígono necesita al menos 3 lados` |
 | Más de 128 lados | `El polígono supera el máximo de 128 lados` |
 | Lado 0, negativo o no numérico | `Lado N inválido` |
@@ -230,14 +240,25 @@ elige el material.
 5. Si **todas** las filas son `VALIDO` y hay material elegido, se habilita **"Agregar al
    pedido"**. Al presionarlo, las piezas se agregan al formulario dentro de un grupo con
    ese material; si ya existe un grupo con el mismo material, se agregan a ese grupo.
-6. El operario revisa el formulario y registra el pedido con el botón existente, que
-   aplica todas las validaciones de siempre, incluida la del catálogo de vidrio.
+   La vista previa se cierra, para que las mismas filas no se agreguen dos veces.
+6. El operario elige el cliente (si aún no lo hizo), revisa el formulario y presiona el
+   botón existente **"Registrar pedido"**.
+7. **Creación del pedido (T04):** el endpoint actual `POST /api/orders` vuelve a validar
+   en el backend la geometría, la cantidad y el catálogo de vidrio, y crea el pedido con
+   todas sus piezas **en una sola transacción** (todas o ninguna). El botón queda
+   bloqueado mientras se guarda, así que un doble clic no crea dos pedidos.
 
 ### 6.2 Con filas observadas
 
 - La tabla muestra las filas `OBSERVADO` resaltadas, con sus causas.
 - **"Agregar al pedido" queda deshabilitado** e indica cuántas filas hay que corregir.
-- El operario corrige el archivo y lo vuelve a cargar.
+- **Corrección dentro del sistema (borrador importado):** cada fila observada muestra
+  su texto en un campo editable (por ejemplo `C,0,150` → `C,2,150`). Al presionar
+  **"Revalidar"**, el frontend envía el texto de las filas al endpoint de validación
+  (§7.2), que aplica exactamente las mismas reglas que la carga del archivo.
+- Las filas válidas no se pueden perder al corregir: la revalidación devuelve otra vez
+  todas las filas, con su número de fila original.
+- También se puede corregir el archivo y volver a cargarlo.
 
 ### 6.3 Errores del archivo completo
 
@@ -253,11 +274,16 @@ Los mensajes no incluyen el contenido del archivo ni detalles internos (TA-041).
 
 ## 7. Contrato de la API
 
+Ninguno de los dos endpoints escribe en la base de datos. Ambos requieren el permiso
+`orders.create` y responden con el mismo formato.
+
+### 7.1 Previsualizar un archivo (T02)
+
 `POST /api/orders/import/preview`, `multipart/form-data` con el campo `archivo`.
-Requiere el permiso `orders.create`. **No escribe en la base de datos.**
 
 ```json
 {
+  "archivo": "pedido_vidrios.csv",
   "resumen": { "total": 3, "validas": 2, "observadas": 1 },
   "filas": [
     {
@@ -291,11 +317,32 @@ Requiere el permiso `orders.create`. **No escribe en la base de datos.**
 }
 ```
 
+- `archivo` y `fila` indican la **fuente** de cada pieza: el nombre del archivo y el
+  número de fila dentro de él.
 - Para las filas `VALIDO`, `medidas` usa **los mismos campos** que el registro manual
   (`width_mm`/`height_mm`, `radius_mm` o `vertices_mm`). Así el frontend agrega las
   piezas al formulario sin conversiones propias.
 - El material no viaja en la previsualización: no cambia la geometría. Se valida al
   registrar el pedido, como hoy.
+
+### 7.2 Revalidar filas corregidas (T03)
+
+`POST /api/orders/import/validate`, JSON:
+
+```json
+{
+  "archivo": "pedido_vidrios.csv",
+  "filas": [
+    { "fila": 2, "texto": "R,3,800,600" },
+    { "fila": 4, "texto": "C,2,150" }
+  ]
+}
+```
+
+- Responde con el mismo formato de §7.1, aplicando las mismas reglas de §4 y §5.
+- Se envían **todas** las filas del borrador, no solo las corregidas, para que el
+  resumen siempre corresponda al archivo completo.
+- Límites: 500 filas y 2000 caracteres por fila.
 
 ## 8. Diseño técnico
 
@@ -308,9 +355,9 @@ Presentation → Application → Domain; Infrastructure implementa la lectura de
 | Domain | `orders/domain/polygon_construction.py` | Lados + ángulos interiores → vértices (§4.4). Después se valida con `GeometryValidator`. |
 | Application | `orders/application/bulk_import.py` | Caso de uso `PreviewImport`: recibe las filas de texto y devuelve la previsualización. No usa el repositorio. |
 | Infrastructure | `orders/infrastructure/spreadsheet_reader.py` | Lee CSV (UTF-8) o XLSX (primera hoja) y entrega filas de texto con su número. Aplica los límites de §4.6. |
-| Presentation | `orders/presentation/router.py`, `schemas.py` | Endpoint de §7, permiso `orders.create`, esquemas de respuesta. |
+| Presentation | `orders/presentation/router.py`, `schemas.py` | Endpoints de §7.1 y §7.2, permiso `orders.create`, esquemas de respuesta. |
 | Frontend | `features/orders/bulkImportModel.js` | Lógica pura: resumen, ¿se puede confirmar?, filas → piezas del formulario. |
-| Frontend | `features/orders/BulkImportPanel.jsx` | Archivo, tabla, material y botón "Agregar al pedido", en ese orden. Usa los componentes compartidos de feedback. |
+| Frontend | `features/orders/BulkImportPanel.jsx` | Archivo, tabla, corrección de filas observadas, material y botón "Agregar al pedido". Usa los componentes compartidos de feedback. |
 | Frontend | `features/orders/FormularioPedido.jsx` | Botón "Importar CSV/XLSX" y recepción de las piezas importadas. |
 
 ### 8.1 Construcción del polígono (§4.4)
@@ -346,6 +393,9 @@ ADR; ver P-03.
 | CA-08 | T02/T03 | Un polígono con ángulos vacíos (hasta 3) se construye igual en cada carga (determinismo); con más de 3 vacíos queda `OBSERVADO`. |
 | CA-09 | T02 | Un pedido registrado con piezas importadas se procesa con First Fit, Best Fit y Worst Fit sin errores. |
 | CA-10 | T02 | Los errores del archivo completo (§6.3) responden con mensajes claros y sin eco del contenido. |
+| CA-11 | T03 | Una fila observada se corrige en la tabla y, al revalidar, pasa a `VALIDO` sin volver a subir el archivo ni perder las demás filas. |
+| CA-12 | T04 | Con todas las filas válidas, el pedido se registra una sola vez y en una transacción, con las piezas y cantidades del archivo; un doble clic no crea dos pedidos. |
+| CA-13 | T05 | Las pruebas cubren CSV/XLSX válidos, errores parciales, geometrías inválidas, cantidades y dimensiones incorrectas, la corrección y el flujo E2E sin piezas duplicadas. |
 
 ## 10. Ejemplos
 
@@ -396,10 +446,12 @@ el docente: sirve para mostrar el formato, pero esa figura no existe.
   sin escritura en la base de datos y con permiso `orders.create`.
 - **Integración con optimización:** pedido registrado con piezas importadas,
   procesado con First Fit, Best Fit y Worst Fit.
-- **Frontend (componentes):** botón deshabilitado con observaciones; piezas agregadas
-  al grupo correcto; polígono importado abre en el editor.
-- **E2E:** archivo válido y archivo con filas observadas, en escritorio y móvil. El
-  spec nuevo se agrega a `criticalSpecs.js` (TA-040).
+- **Frontend (componentes):** botón deshabilitado con observaciones; corrección y
+  revalidación de una fila; piezas agregadas al grupo correcto una sola vez; polígono
+  importado abre en el editor.
+- **E2E:** archivo con filas observadas → corrección → revalidación → agregar al pedido →
+  registrar; se verifica que el pedido tenga exactamente las piezas del archivo, sin
+  duplicados. En escritorio y móvil. El spec nuevo se agrega a `criticalSpecs.js` (TA-040).
 
 ## 12. Evidencia requerida
 
@@ -417,12 +469,13 @@ resultados de las pruebas y enlace al PR.
   con al menos *n − 3* indicados.
 - **D-04 (decidida):** fila de títulos opcional; XLSX en columnas (tipo, cantidad,
   medidas), leído igual que el CSV.
-- **P-01:** ¿confirmar la importación debe agregar las piezas al formulario (propuesta,
-  §6.1) o crear el pedido directamente? La propuesta conserva todas las validaciones
-  del registro actual.
-- **P-02:** el docente sugirió poder corregir una fila observada dentro del sistema.
-  En este bloque se corrige el archivo y se vuelve a cargar; la edición en la tabla
-  podría ser una mejora posterior.
+- **D-05 (decidida, antes P-01):** confirmar la importación agrega las piezas al
+  formulario y el pedido se crea con el registro existente, transaccional y validado en
+  el backend (T04).
+- **D-06 (decidida, antes P-02):** las filas observadas se corrigen dentro del sistema y
+  se revalidan sin volver a subir el archivo (T03), como sugirió el docente.
+- **D-07 (decidida):** alcance = mensaje del Scrum Master + backlog de Notion (T01–T05).
+  La duplicación por reintento (S1-09) queda fuera.
 - **P-03:** ¿las dos librerías nuevas (§8.2) requieren ADR o basta con esta SPEC?
 - **P-04:** límites de 1 MB y 500 filas (§4.6). Cubren las pruebas de estrés previstas
   (hasta 200 piezas) con margen.
@@ -432,3 +485,5 @@ resultados de las pruebas y enlace al PR.
 | Fecha | Versión | Estado | Cambio |
 |---|---|---|---|
 | 01/11/2026 | 0.1 | Draft | Borrador: contrato acordado (D-01 a D-04), reglas, causas, API, diseño y pruebas. |
+| 02/11/2026 | 0.2 | Draft | Alcance final con T04 y T05 del backlog: corrección y revalidación en el sistema, creación del pedido con el registro existente, fuente de archivo, endpoint de revalidación; fila de títulos sin números; causa `Formato de fila inválido`; CA-11 a CA-13; P-01 y P-02 decididas. |
+| 02/11/2026 | 0.2 | Reviewed | SPEC revisada por Andro Joseph Quispe Cesias (Scrum Master). |
