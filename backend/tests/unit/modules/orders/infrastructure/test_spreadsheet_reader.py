@@ -102,3 +102,5 @@ def test_xlsx_row_with_too_many_columns_is_rejected():
     assert read_rows("piezas.xlsx", xlsx(("C", 1, 10) + ("",) * 297)) == [(1, "C,1,10")]
     with pytest.raises(ImportFileError, match="300 columnas"):
         read_rows("piezas.xlsx", xlsx(("C", 1, 10) + ("",) * 297 + ("x",)))
+    with pytest.raises(ImportFileError, match="300 columnas"):
+        read_rows("piezas.xlsx", xlsx(("C", 1, 10) + ("",) * 298 + ("x",)))

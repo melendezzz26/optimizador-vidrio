@@ -57,12 +57,14 @@ def _xlsx_rows(content):
         raise ImportFileError(UNREADABLE) from error
     try:
         rows, with_content = [], 0
-        sheet_rows = workbook.worksheets[0].iter_rows(max_col=MAX_COLUMNS + 1, values_only=True)
+        sheet = workbook.worksheets[0]
+        # No se pueden descartar columnas fuera del rango solo porque la 301 esté vacía.
+        if sheet.max_column is None or sheet.max_column > MAX_COLUMNS:
+            raise ImportFileError(TOO_MANY_COLUMNS)
+        sheet_rows = sheet.iter_rows(max_col=MAX_COLUMNS, values_only=True)
         for number, cells in enumerate(sheet_rows, start=1):
             if number > MAX_SCANNED_ROWS:
                 raise ImportFileError(TOO_MANY_ROWS)
-            if len(cells) > MAX_COLUMNS and cells[MAX_COLUMNS] is not None:
-                raise ImportFileError(TOO_MANY_COLUMNS)
             values = [_cell_text(cell) if cell is not None else "" for cell in cells]
             while values and not values[-1]:
                 values.pop()  # solo se descartan celdas vacías al final de la fila
