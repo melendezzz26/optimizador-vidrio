@@ -4,7 +4,6 @@ import importlib.util
 import sys
 from decimal import Decimal
 from pathlib import Path
-from types import SimpleNamespace
 
 import pytest
 
@@ -34,23 +33,6 @@ from app.modules.optimization.domain.worst_fit import WorstFitOptimizer  # noqa:
 
 BestResidualFitOptimizer = M5_MODULE.BestResidualFitOptimizer
 BestResidualFitSelector = M5_MODULE.BestResidualFitSelector
-
-
-def _candidate(rows, stock_rank=0, orientation_rank=0, row=0, column=0):
-    width = max((bits.bit_length() for bits in rows), default=0)
-    layout_after = SimpleNamespace(
-        usable=tuple(rows),
-        blocked=(0,) * len(rows),
-        material=SimpleNamespace(columns=width),
-    )
-    return SimpleNamespace(
-        layout_after=layout_after,
-        remaining_free_cells_after_placement=sum(bits.bit_count() for bits in rows),
-        stock_rank=stock_rank,
-        orientation_rank=orientation_rank,
-        row=row,
-        column=column,
-    )
 
 
 def _problem(*, piece_geometry=None, stocks=(), glass_type_id=7, thickness_mm=6):
@@ -136,31 +118,55 @@ def _assert_valid_placements(result):
 
 
 def test_m5_prefers_larger_recoverable_rectangle_over_lower_total_free_area():
-    broad_residual = _candidate((0b111, 0b111, 0b111))
-    small_total_but_fragmented = _candidate((0b111, 0b001))
+    # BF selects source with fewer total free cells; M5 selects the larger
+    # continuous residual rectangle even though that source has more total free area.
+    # Stock A (5x5, area 25): placing 2x2 leaves 21 free cells, largest rectangle is 3x5 = 15.
+    # Stock B (3x4, area 12): placing 2x2 leaves 8 free cells, largest rectangle is 3x2 = 6.
+    broad_stock = _stock(MaterialSource.SHEET, 1, 5, 5)
+    tight_stock = _stock(MaterialSource.SHEET, 2, 3, 4)
+    prob = _problem(stocks=(broad_stock, tight_stock))
 
-    # BF selects the source with fewer total free cells; M5 selects the larger
-    # continuous residual rectangle even though that source has more free area.
-    assert BestResidualFitSelector().select((broad_residual, small_total_but_fragmented)) is broad_residual
-    assert small_total_but_fragmented.remaining_free_cells_after_placement < broad_residual.remaining_free_cells_after_placement
+    bf_result = BestFitOptimizer().optimize(prob)
+    m5_result = BestResidualFitOptimizer().optimize(prob)
+
+    assert bf_result.placements[0].stock.material_id == 2
+    assert m5_result.placements[0].stock.material_id == 1
 
 
 def test_m5_breaks_equal_residual_ties_by_less_fragmentation_then_canonical_rank():
-    fragmented = _candidate((0b111, 0b011), stock_rank=0)
-    clean = _candidate((0b11, 0b11), stock_rank=1)
-    assert BestResidualFitSelector().select((fragmented, clean)) is clean
+    # Real geometry: piece 2x2.
+    # Candidate 1 (4x3): largest remnant is 2x3 = 6, but leaves 2 fragmented cells (8 - 6 = 2).
+    # Candidate 2 (2x5): largest remnant is 2x3 = 6, and leaves 0 fragmented cells (6 - 6 = 0).
+    fragmented_stock = _stock(MaterialSource.SHEET, 1, 4, 3)
+    clean_stock = _stock(MaterialSource.SHEET, 2, 2, 5)
 
-    later = _candidate((0b11, 0b11), stock_rank=1, orientation_rank=0)
-    first = _candidate((0b11, 0b11), stock_rank=0, orientation_rank=1)
-    assert BestResidualFitSelector().select((later, first)) is first
+    prob = _problem(stocks=(fragmented_stock, clean_stock))
+    result = BestResidualFitOptimizer().optimize(prob)
+    assert result.placements[0].stock.material_id == 2
+
+    # When largest remnant and fragmentation are identical, upstream stock rank breaks the tie.
+    identical_a = _stock(MaterialSource.SHEET, 10, 2, 5)
+    identical_b = _stock(MaterialSource.SHEET, 20, 2, 5)
+    prob_rank = _problem(stocks=(identical_a, identical_b))
+    result_rank = BestResidualFitOptimizer().optimize(prob_rank)
+    assert result_rank.placements[0].stock.material_id == 10
     assert BestResidualFitSelector().select(()) is None
 
 
 def test_m5_falls_back_to_fragmented_free_area_when_residual_is_below_minimum():
-    smaller = _candidate((0b11,), stock_rank=1)
-    larger = _candidate((0b111,), stock_rank=0)
-    selector = BestResidualFitSelector(min_width_cells=4, min_height_cells=1)
-    assert selector.select((larger, smaller)) is smaller
+    # Real geometry: piece 1x1.
+    # Stock 1 (3x1): 2 free cells remaining.
+    # Stock 2 (2x1): 1 free cell remaining.
+    # With min_width_cells=4, neither remnant qualifies (both get 0 remnant cells).
+    # M5 falls back to minimizing fragmented cells, selecting Stock 2 (1 < 2).
+    piece_1x1 = {"type": "RECTANGULO", "width_mm": 1, "height_mm": 1}
+    larger_stock = _stock(MaterialSource.SHEET, 1, 3, 1)
+    smaller_stock = _stock(MaterialSource.SHEET, 2, 2, 1)
+    prob = _problem(piece_geometry=piece_1x1, stocks=(larger_stock, smaller_stock))
+
+    selector_fallback = BestResidualFitOptimizer(min_width_cells=4, min_height_cells=1)
+    result = selector_fallback.optimize(prob)
+    assert result.placements[0].stock.material_id == 2
 
 
 @pytest.mark.parametrize("case_id", CASES)

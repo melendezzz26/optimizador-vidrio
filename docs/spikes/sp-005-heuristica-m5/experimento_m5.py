@@ -92,6 +92,9 @@ class M5Result(OptimizationResult):
 class BestResidualFitOptimizer:
     """M5 selector on the shared backend packing traversal."""
 
+    def __init__(self, min_width_cells: int = 1, min_height_cells: int = 1):
+        self.selector = BestResidualFitSelector(min_width_cells, min_height_cells)
+
     def optimize(
         self,
         problem: OptimizationProblem,
@@ -103,7 +106,7 @@ class BestResidualFitOptimizer:
         result = pack(
             problem,
             on_event,
-            select=BestResidualFitSelector().select,
+            select=self.selector.select,
             checkpoint=checkpoint,
             on_visual=on_visual,
         )
