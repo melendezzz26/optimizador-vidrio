@@ -1,5 +1,7 @@
 # Review preliminar TA-042 — Hole Filling
 
+> Las observaciones iniciales y la auditoría previa describen la versión anterior al ajuste. El estado vigente se registra al final.
+
 **Autor:** Andro Joseph Quispe Cesias. **Revisor académico designado:** Andro Joseph Quispe Cesias. **Estado:** revisión técnica preliminar documentada; revisión académica formal pendiente.
 
 El selector conserva la primera fuente y orientación viable de FF y propone una posición interior solo si el mapa de anclajes completo cabe en los límites. Las validaciones geométricas, orden de piezas, material/espesor y prioridad de stock siguen en el motor común. En el caso mixto integrado, HF y FF colocan 9/9 y el placement difiere. La regresión de cobertura incluye una prueba en que la exploración HF coloca 10/18 frente a 11/18 con FF; el guard devuelve exactamente la solución FF de 11/18. Un segundo caso protege además las identidades aunque las cantidades coincidan.
@@ -10,9 +12,9 @@ Limitaciones para revisión: se examina solo la orientación y la primera fuente
 
 Revisión formal de Andro y apertura del PR: pendientes.
 
-## Auditoría técnica final previa al PR
+## Auditoría previa al ajuste (histórica, commit 1cff0aa2)
 
-**Dictamen: TA-042 REQUIERE AJUSTE.** No es una aprobación académica; Andro continúa como revisor académico designado.
+**Dictamen anterior: TA-042 REQUIERE AJUSTE.** No es una aprobación académica; Andro continúa como revisor académico designado.
 
 - **Capacidad:** el único caso integrado que diferencia M4 y FF usa un inserto rectangular de 2 × 1 mm en una fuente de 18 × 18 mm. El 32 × 32 mm de HF-CAPABILITY-001 supera 64 celdas y 16 filas; con ambos límites elevados su mapa de 60.507 anclajes sigue superando 1.024. Los casos realistas SP-004 tienen áreas mínimas de pieza 1.050, 2.200 y 2.000 mm² respectivamente. No hay evidencia de capacidad útil M4 a esas escalas. Esto describe fixtures, no una distribución comercial.
 - **Resolución:** la pieza física 8 × 8 mm activa inspección a 1 y 2 mm/celda y no a 0,5 mm/celda. Ajustar solamente 64 a otro número no corrige el límite del mapa ni la dependencia de resolución.
@@ -22,3 +24,16 @@ Revisión formal de Andro y apertura del PR: pendientes.
 - **Eventos:** callbacks de eventos y visuales describen únicamente el resultado finalmente seleccionado en los casos auditados. `checkpoint` sí se invoca durante las pasadas exploratoria, FF y reproducción; no se garantiza ausencia de efectos si el cliente lo hace impuro. Las estadísticas corresponden a la primera pasada.
 
 Se agregaron pruebas de caracterización en evidencia; sus aserciones sobre los comportamientos actuales se deberán actualizar al corregirlos. Los benchmarks existentes se conservan sin repetir porque la implementación no cambió.
+
+
+## Revisión técnica después del ajuste
+
+**Estado técnico: T01/T02 listas para revisión.** La aprobación académica de Andro continúa pendiente.
+
+La búsqueda ya no usa 64 celdas ni 16 filas como activación: aplica un filtro relativo de caja 1/8 y busca semillas en transiciones raster. Solo acepta una componente local cuya desconexión del exterior pudo completarse; un prefijo incompleto vuelve a FF. Inspecciona hasta tres ángulos brutos por decisión con deduplicación y mantiene límites por región, anclajes, filas de trabajo y pasada.
+
+HF-CAPABILITY-001 se adaptó usando las 16 semillas originales ya validadas y las dos piezas pendientes; no se alteraron geometrías ni dimensiones. En esa etapa M4 y FF completan 18/18; M4 coloca la pieza 32 × 32 mm en el pocket (51, 191) y usa 0 planchas, frente a 1 de FF. La medición excluye la preparación de semillas. En otro caso integrado de siete piezas y grilla de 5°, ambos métodos completan 7/7 con una plancha; M4 coloca el círculo de 10 mm de diámetro en el pocket y difiere de FF.
+
+El caso 13/13 con una plancha extra se reproduce con un límite técnico de 24 regiones y el guard devuelve exactamente FF. Si M4 incorpora identidades adicionales se conserva aunque use más planchas. Se encontró además un caso sintético con igual cobertura y dos planchas donde M4 tiene 62 mm² más de merma y 62 mm² menos recuperables. No se agregó una regla rígida de merma: esa diferencia existe y debe considerarse en evaluación posterior sin convertir M4 en selector automático.
+
+Las 43 pruebas específicas, 7 complementarias y regresiones focalizadas pasan. La mediana del caso integrado con pocket fue 24,76× FF; se informa como costo relevante, no como límite universal. SMALL/MEDIUM/COMPLEX no usaron pocket en esta medición. Se conservan los resultados anteriores sin sobrescribirlos. Muestreo de bordes, presupuestos, primera fuente FF y selección de dos ángulos siguientes pueden omitir pockets; eventos visibles se reproducen solo para la solución elegida, pero no detallan todas las orientaciones internas inspeccionadas por HF; `checkpoint` puede ejecutarse varias veces.

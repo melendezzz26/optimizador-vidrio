@@ -1,40 +1,53 @@
 # SPEC TA-042 — Hole Filling M4
 
-**Autor:** Andro Joseph Quispe Cesias. **Revisor académico designado:** Andro Joseph Quispe Cesias; revisión formal pendiente. **Alcance:** T01/T02, motor aislado. **Estado tras auditoría:** REQUIERE AJUSTE antes de PR. SP-004 seleccionó Raster Hole Filling con GO condicionado; su detector exhaustivo no se incorpora.
+**Autor:** Andro Joseph Quispe Cesias. **Revisor académico designado:** Andro Joseph Quispe Cesias; revisión formal pendiente. **Estado técnico:** T01/T02 ajustadas y listas para revisión previa al PR. SP-004 mantiene su GO condicionado y sus resultados históricos.
 
-## Contrato y política
+## Motor y activación
 
-`HoleFillingOptimizer` reutiliza `pack`, su preparación y orden RN-06, `SheetLayout`, orientaciones, inventario inmutable y grupos material/espesor. La entrada se mantiene sin mutar. No registra M4 en coordinadores, API ni interfaz. El paso angular lo proporciona la configuración del motor: la configuración estándar es 5°; también se respetan otras configuraciones admitidas por el contrato existente.
+`HoleFillingOptimizer` usa `pack`, `SheetLayout`, el raster oficial, las orientaciones y los grupos de material/espesor existentes. Se mantiene aislado del coordinador público, la API y la UI. Conserva orden de piezas y prioridad retazo → plancha de FF.
 
-Para la pieza actual, se toma solo el primer candidato factible de FF: el mismo material, fuente y primera orientación válida. Se intenta un anclaje pocket para dicha pieza; no se cambian el orden de piezas, la prioridad retazo → plancha ni el stock escogido por FF. La primera posición interior por fila y columna gana. Si no hay candidato útil se conserva FF exactamente. No hay búsqueda de todas las piezas pendientes ni de todas las orientaciones para detectar pockets; esto limita oportunidades respecto al spike.
+Antes había límites absolutos de 64 celdas y 16 filas y se rechazaba un mapa global con más de 1.024 anclajes. Ahora se considera la primera fuente factible de FF cuando ya está ocupada y la caja raster de la orientación cumple `filas_pieza × columnas_pieza × 8 <= filas_fuente × columnas_fuente`. No hay un máximo absoluto de celdas de pieza como condición de activación. El factor 8 es un parámetro técnico, no una regla comercial ni un óptimo demostrado. La rasterización y el redondeo pueden cambiar decisiones entre resoluciones.
 
-Un mapa define anclajes válidos usando el verificador raster oficial. Se identifica la frontera de la región usable con el mismo material y margen, pero sin ocupación; se expande desde ella por anclajes válidos 4-conexos. Los componentes legales que no llegan a esa frontera son pockets para la pieza y orientación, no necesariamente huecos físicos cerrados. Cada placement vuelve a pasar por `SheetLayout.place`.
+La sensibilidad probó denominadores 4, 8, 16, 32, 64 y 128 en el capability y el caso integrado: 4–64 encontraron ambos pockets; 128 no encontró ninguno. Los valores 16–64 redujeron el trabajo de ese caso integrado, pero excluirían la pieza 8 × 8 mm en la fuente 24 × 24 mm (relación 1/9). Se conserva 8 para no excluirla en las resoluciones 0,5, 1 y 2 mm ensayadas. La selección no garantiza beneficios generales.
 
-## Activación y presupuesto
+## Búsqueda y orientaciones
 
-Solo se inspecciona un layout ocupado, con pieza de hasta 64 celdas raster, hasta 16 filas y área de su caja delimitadora no mayor a 1/8 de la caja de la fuente. Son límites técnicos configurables, no reglas comerciales: favorecen insertos pequeños y acotan el trabajo; pueden excluir pockets reales. Por pasada: máximo 8 mapas, 1.024 anclajes por mapa y 8.192 anclajes en total; cada anclaje invoca como máximo dos comprobaciones de placement. Si no cabe el mapa completo en el presupuesto, no se usa un mapa parcial y se aplica FF. El algoritmo de conectividad también está acotado por esos mapas. Se utiliza número de operaciones, no un reloj.
+Se muestrean transiciones de filas ocupadas/bloqueadas y bordes de esas filas para proponer esquinas locales, en orden determinista: filas descendentes y columnas ascendentes. La búsqueda comprueba las semillas con `SheetLayout`; no construye el mapa global de anclajes. Desde una semilla legal con obstrucciones en ambos ejes se recorre su componente de anclajes válidos en cuatro direcciones. Solo se acepta un pocket si se termina de recorrer la componente y ninguna posición conecta con la frontera del material usable. Una componente interrumpida por presupuesto nunca se certifica como pocket. `SheetLayout.place` vuelve a validar la posición ganadora.
 
-Si se propone al menos un pocket, se ejecuta FF completo como referencia y se conserva M4 solo cuando contiene todas las identidades colocadas por FF. De lo contrario se devuelve FF íntegro. La protección es por identidad, más estricta que comparar solo cantidades; no promete una solución global óptima. Con callbacks se repite la pasada seleccionada para emitir únicamente eventos reales del resultado final: esa repetición añade hasta otra pasada de presupuesto y retrasa los eventos hasta que se decide la cobertura. Las estadísticas corresponden a la pasada exploratoria inicial; no incluyen la reproducción de eventos ni el cálculo FF de cobertura. Se debe usar una instancia por ejecución simultánea.
+Se examinan como máximo tres ángulos brutos por decisión: el candidato FF y hasta los dos ángulos siguientes de la grilla configurada. Solo se exploran máscaras distintas. Con la configuración estándar estos siguientes pasos son de 5°; no se enumeran 72 ángulos para Hole Filling. La preparación FF previa sigue usando su política normal. El helper de orientaciones sigue siendo perezoso y el selector conserva la primera fuente FF.
+
+## Presupuestos por pasada exploratoria
+
+| Recurso | Máximo predeterminado |
+| --- | ---: |
+| Regiones conectadas investigadas | 8 |
+| Anclajes legales almacenados por región | 512 |
+| Comprobaciones nuevas durante una región | 512 |
+| Anclajes consultados con `SheetLayout.check` en total | 8.192 |
+| Suma de filas de máscara procesadas por dichas comprobaciones | 262.144 |
+| Semillas probadas | 2.048 en total; 256 por orientación |
+| Filas de frontera muestreadas | 512 por orientación |
+| Bordes por fila física muestreada | 64 |
+| Orientaciones | 3 ángulos brutos por decisión; 24 máscaras distintas inspeccionadas por pasada |
+
+Las comprobaciones de semillas también consumen el límite global. Si una región es demasiado grande se procesa un prefijo local hasta el presupuesto y solo se acepta si queda certificada; no se descarta por el tamaño del dominio global. Los límites de detección no incluyen las validaciones finales de `pack`, la pasada FF de protección ni la reproducción de callbacks. `budget_exhausted` señala una poda o un límite alcanzado durante la búsqueda; alcanzar exactamente una cota al terminar no obliga por sí solo a activar el indicador.
+
+## Fallback y protección
+
+Sin pocket certificado se conserva el candidato FF. Si se propuso un pocket, se calcula FF completo: si faltan identidades colocadas por FF se devuelve FF. Si ambos colocan exactamente las mismas identidades, se devuelve FF cuando M4 use más planchas nuevas. Si M4 contiene un superconjunto estricto de identidades se mantiene M4 aunque use más planchas: se prioriza esa cobertura adicional. No se aplica una comparación rígida de merma o recuperable.
+
+La prueba de cobertura inspirada en HF-REALISTIC-003 continúa devolviendo FF cuando la exploración pierde piezas. El contraejemplo 13/13 se reproduce con `max_regions=24`: la exploración M4 usa una plancha y FF cero; el guard devuelve FF. Con el límite predeterminado de 8 regiones, ese mismo caso no encuentra el pocket y también devuelve FF.
+
+Con callbacks se reproduce únicamente la solución elegida. Los eventos y placements emitidos corresponden a esa solución; los hechos de prueba de orientación del recorrido común no enumeran la exploración interna adicional de HF. `checkpoint` puede ejecutarse en las pasadas de prueba, FF y reproducción. Las estadísticas pertenecen a la primera pasada y una instancia del optimizador se usa para una sola ejecución simultánea.
 
 ## Criterios de aceptación
 
-| CA | Resultado | Evidencia |
+| CA | Estado | Evidencia |
 | --- | --- | --- |
-| 01 | PASS: motor aislado sobre raster compartido | `domain/hole_filling.py`; suite HF |
-| 02–03 | PASS: rectángulo, círculo, polígono y configuración de 5° | HF-02–07 y regresión geometría/rotación |
-| 04 | PASS: margen y separación | HF-08/09 y comprobación de layouts |
-| 05–06 | PARCIAL: compatibilidad y prioridad local PASS; la cobertura no impide abrir más planchas que FF | HF-10/12 y contraejemplo de auditoría |
-| 07–08 | PASS: fallback determinista y límites por operaciones | HF-01, HF-13/14 |
-| 09–10 | PARCIAL: pocket y diferenciación con inserto de 2 × 1 mm; falta capacidad demostrada en dimensiones del caso SP-004 | HF-02/03 y auditoría final |
-| 11–13 | PASS: suites HF y regresiones relevantes | evidencia TA-042 |
-| 14 | REQUIERE AJUSTE: evidencia disponible, pero la auditoría encontró limitaciones conceptuales | PLAN, TASKS, review y evidencia; revisión académica pendiente |
+| 01–04 | PASS | Motor compartido; geometrías, 5°, margen y separación en suite HF y regresiones |
+| 05–08 | PASS | Compatibilidad, stock, fallback y límites exactos en suite HF |
+| 09–10 | PASS | Capability presembrado 32 × 32 mm y caso integrado 7/7 con pieza circular de 10 mm de diámetro |
+| 11–13 | PASS | 43 pruebas HF y suites focalizadas registradas en evidencia |
+| 14 | PASS para T01/T02 | PLAN, TASKS, review preliminar y evidencia actualizados; revisión académica pendiente |
 
-Fuera de alcance: TA-043, registro de métodos, comparación pública, UI, selección automática, migraciones y cambio de experimentos. Mediciones y limitaciones en `docs/evidence/sprint-02/TA-042/README.md`.
-
-## Hallazgos de auditoría previos al PR
-
-A 1 mm/celda, un rectángulo de 8 × 8 mm tiene 64 celdas; el inserto de 32 × 32 mm de HF-CAPABILITY-001 tiene 1.024 celdas y 32 filas, y queda excluido. Incluso elevando solo ambos límites de pieza, su mapa tiene 60.507 anclajes frente al máximo de 1.024. La misma pieza de 8 × 8 mm sobre fuente de 24 × 24 mm activó el detector a resolución 1 mm y 2 mm, pero no a 0,5 mm. Los límites relativos podrían ser una señal de activación más estable, pero no eliminan por sí mismos el costo del mapa completo; hace falta rediseñar la búsqueda acotada y medirla sin adoptar un porcentaje como regla comercial.
-
-En un caso sintético de 13 piezas con retazo y planchas, HF y FF completan 13/13, pero HF usa una plancha nueva y FF ninguna; la salvaguarda actual compara identidades, no planchas ni merma. Como política a evaluar en el ajuste: preservar las identidades colocadas por FF; si ambos colocan exactamente las mismas piezas, rechazar un resultado HF que use más planchas nuevas; si HF coloca un superconjunto estricto, considerar la cobertura adicional antes de descartar por planchas. No se aplica esa propuesta en el código actual ni se selecciona FF solo por merma.
-
-El primer ángulo FF también limita oportunidades: en un subconjunto validado de HF-DIAGNOSTIC-001, 0° no encuentra pocket y vuelve a FF, mientras la misma pieza tiene pocket legal a 5°. Ver auditoría reproducible en la evidencia. Estas observaciones no modifican los resultados experimentales de SP-004.
+La búsqueda local no garantiza encontrar todos los pockets; puede perder oportunidades por muestreo, presupuesto, primera fuente FF o límite angular. El caso productivo medido costó 24,76× FF; no se garantiza un ratio máximo universal. La merma puede empeorar aun con las mismas planchas y cobertura. El registro multimétodo y la interfaz corresponden a TA-043.
