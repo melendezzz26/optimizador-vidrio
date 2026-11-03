@@ -1,0 +1,44 @@
+/* HU-018: panel de importación masiva. Usa los tokens del sistema de diseño. */
+.orders-import {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ng-space-4);
+  margin-bottom: var(--ng-space-6);
+  padding: var(--ng-space-4);
+  border: 1px solid var(--ng-border-subtle);
+  border-radius: var(--ng-radius-card);
+  background: var(--ng-surface);
+}
+
+.orders-import__header { display: flex; align-items: center; justify-content: space-between; gap: var(--ng-space-3); }
+.orders-import__header h3 { margin: 0; font-size: 18px; font-weight: 600; }
+
+.orders-import__close {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 44px; min-height: 44px;
+  border: 0; border-radius: var(--ng-radius-control);
+  background: transparent; color: var(--ng-text-600); cursor: pointer;
+}
+.orders-import__close:focus-visible { outline: 3px solid var(--ng-primary-focus); outline-offset: 2px; }
+
+.orders-import__help, .orders-import__summary { margin: 0; color: var(--ng-text-600); overflow-wrap: anywhere; }
+.orders-import__summary strong { color: var(--ng-text-900); }
+
+.orders-import__table-scroll { overflow-x: auto; }
+.orders-import__table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.orders-import__table caption { text-align: left; font-weight: 600; padding-bottom: var(--ng-space-2); }
+.orders-import__table th, .orders-import__table td {
+  padding: var(--ng-space-2) var(--ng-space-3);
+  border-top: 1px solid var(--ng-border-subtle);
+  text-align: left; vertical-align: top;
+}
+.orders-import__table thead th { white-space: nowrap; }
+.orders-import__row--observed { background: color-mix(in srgb, var(--ng-error) 8%, transparent); }
+.orders-import__row--observed td:nth-child(5) { color: var(--ng-error); font-weight: 600; }
+
+.orders-import__material { display: flex; flex-wrap: wrap; gap: var(--ng-space-4); }
+.orders-import__material .orders-field { min-width: 180px; }
+
+@media (max-width: 680px) {
+  .orders-import__material .orders-field { flex: 1 1 100%; }
+}

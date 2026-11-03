@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useEffectEvent, useId, useRef, useState } from 'react';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
-import { ChevronDown, Loader2, PackagePlus, Plus, Save, Trash2, X } from 'lucide-react';
+import { ChevronDown, FileUp, Loader2, PackagePlus, Plus, Save, Trash2, X } from 'lucide-react';
 import { AppShell } from '../../shared/components/AppShell';
 import { ActionBar, PageCard, PageHeader } from '../../shared/components/PageLayout';
 import { ConfirmDialog, EmptyState, FeedbackMessage, FieldError, LoadingState } from '../../shared/components/feedback';
+import BulkImportPanel from './BulkImportPanel';
 import CustomPieceEditor from './CustomPieceEditor';
 import OrderClientSelector from './OrderClientSelector';
 import { validateConvexPolygon } from './convexityValidation';
@@ -107,6 +108,8 @@ export default function FormularioPedido({
   const [touched, setTouched] = useState({});
   const [piezaEnEdicion, setPiezaEnEdicion] = useState(null);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
+  const importButtonRef = useRef(null);
   const [listaAnimada] = useAutoAnimate();
   const nextGroupIdRef = useRef(0);
   const nextPieceIdRef = useRef(0);
@@ -381,7 +384,18 @@ export default function FormularioPedido({
                   {readOnly ? 'Detalle de las piezas solicitadas.' : 'Agrupa las piezas por tipo de vidrio y espesor.'}
                 </p>
               </div>
+              {creating && (
+                <button ref={importButtonRef} type="button" className="ng-button" aria-expanded={isImportOpen}
+                  onClick={() => setIsImportOpen(true)} disabled={isSubmitting}>
+                  <FileUp size={18} aria-hidden="true" /> Importar CSV/XLSX
+                </button>
+              )}
             </div>
+
+            {creating && isImportOpen && (
+              <BulkImportPanel token={token} materials={tiposDisponibles}
+                onClose={() => { setIsImportOpen(false); importButtonRef.current?.focus(); }} />
+            )}
 
             <div ref={listaAnimada} className="orders-materials">
               {creating && !selectedClient ? (

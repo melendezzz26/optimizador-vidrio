@@ -11,14 +11,16 @@ export function createApiRequest(ApiError, statusMessages) {
     if (signal?.aborted) abort();
     signal?.addEventListener('abort', abort, { once: true });
     const timer = timeoutMs ? setTimeout(() => { timedOut = true; controller.abort(); }, timeoutMs) : null;
+    // Un FormData (archivo) se envía tal cual: el navegador pone su Content-Type multipart.
+    const isForm = typeof FormData !== 'undefined' && body instanceof FormData;
     try {
       const response = await fetch(`${API_URL}${path}`, {
         method, signal: controller?.signal ?? signal,
         headers: {
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-          ...(body ? { 'Content-Type': 'application/json' } : {}),
+          ...(body && !isForm ? { 'Content-Type': 'application/json' } : {}),
         },
-        body: body ? JSON.stringify(body) : undefined,
+        body: isForm ? body : body ? JSON.stringify(body) : undefined,
       });
       const data = await response.json().catch(error => {
         if (error.name === 'AbortError') throw error;
