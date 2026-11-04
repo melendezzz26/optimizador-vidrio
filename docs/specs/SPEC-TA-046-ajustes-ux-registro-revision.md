@@ -5,8 +5,10 @@
 | ID | TA-046 |
 | Tareas | T01 — Enter/foco/teclado · T02 — Mostrar dimensiones originales del pedido en Optimización · T03 — Regresión UX/responsive/accesibilidad básica |
 | Sprint | Sprint 2 |
-| Estado | **Draft** |
-| Responsable | Fabricio Aguilar |
+| Estado | **Implemented** |
+| Responsable original | Fabricio Danniel Aguilar Chavez |
+| Correcciones de cierre | Andro Joseph Quispe Cesias |
+| Revisor esperado | Andro Joseph Quispe Cesias (sin atribuir aprobación formal) |
 | Rama | `feature/S2-TA046-ajustes-ux` |
 | Base | `origin/integration/sprint-01` en `3f27cd7` |
 | Fecha | 04/11/2026 |
@@ -21,7 +23,7 @@ ingresó, en mm, sin tener que abrir otra sección.
 ## 2. Alcance
 
 **Incluye:** registro y edición de pedidos (`FormularioPedido`, `CustomPieceEditor`,
-`BulkImportPanel`) y la comparación de Optimización (`ComparisonWorkspace`).
+`BulkImportPanel`), la comparación de Optimización (`ComparisonWorkspace`) y el resultado de corrida individual (`OptimizationPage`).
 
 **Fuera de alcance:** cambios de API o de base de datos; rediseño visual; Inventario, Usuarios,
 Login y las pestañas de Optimización, que ya funcionan con teclado (ver §3).
@@ -76,6 +78,10 @@ No hay un registro escrito de la demostración; las fallas salen de esta auditor
   guardados y redondeado a 0,1 mm.
 - **RN-09:** la tabla aclara que las piezas colocadas pueden aparecer giradas y que las medidas son
   las ingresadas. El bloque plegado actual se conserva para ver la geometría dibujada.
+- **RN-10:** ancho y alto del rectángulo y radio del círculo conservan la precisión numérica de
+  la geometría guardada, sin ceros decimales innecesarios. El redondeo a 0,1 mm se limita a los
+  lados calculados del polígono. En la corrida individual se utiliza la geometría original de las
+  unidades solicitadas del resultado, no la geometría orientada de sus colocaciones.
 
 ## 5. Diseño técnico
 

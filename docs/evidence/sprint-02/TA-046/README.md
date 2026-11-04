@@ -3,6 +3,13 @@
 SPEC: [`docs/specs/SPEC-TA-046-ajustes-ux-registro-revision.md`](../../../specs/SPEC-TA-046-ajustes-ux-registro-revision.md)
 Rama: `feature/S2-TA046-ajustes-ux`
 
+Responsable original: Fabricio Danniel Aguilar Chavez. Correcciones de cierre: Andro Joseph Quispe Cesias.
+Revisor esperado: Andro Joseph Quispe Cesias; no se atribuye aprobación formal antes de su registro.
+
+La corrección de cierre conserva la precisión de rectángulos y círculos y extiende la tabla de
+medidas originales al resultado individual. Los lados derivados de polígonos mantienen su regla
+de redondeo. Las pruebas de precisión y de resultado individual complementan las siguientes.
+
 ## Auditoría con teclado (04/11/2026)
 
 Recorrido con Playwright usando solo el teclado sobre `integration/sprint-01` (`3f27cd7`), antes de
