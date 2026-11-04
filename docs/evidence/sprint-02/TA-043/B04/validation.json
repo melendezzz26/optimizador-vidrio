@@ -1,0 +1,72 @@
+{
+  "result": "PASS",
+  "baseline": "f1fce9f",
+  "requirements": 36,
+  "acceptance_criteria": 36,
+  "traceability_rows": 36,
+  "unchanged_development_blocks": 11,
+  "preserved_sources": [
+    "backend/app/modules/optimization/domain/first_fit.py",
+    "backend/app/modules/optimization/domain/best_fit.py",
+    "backend/app/modules/optimization/domain/worst_fit.py",
+    "backend/app/modules/optimization/domain/hole_filling.py",
+    "backend/app/modules/optimization/domain/best_residual_fit.py",
+    "backend/app/modules/optimization/domain/beam_search.py",
+    "backend/app/modules/optimization/application/comparison_limits.py",
+    "backend/app/modules/optimization/application/engine_execution.py",
+    "backend/app/modules/optimization/application/admission.py",
+    "backend/app/modules/optimization/application/resource_policy.py",
+    "backend/app/modules/optimization/application/load_budget.py",
+    "backend/app/modules/optimization/infrastructure/comparison_runner.py",
+    "backend/app/modules/optimization/infrastructure/in_process_admission.py",
+    "backend/app/modules/optimization/infrastructure/process_lifecycle.py",
+    "backend/app/modules/optimization/infrastructure/comparison_transport.py",
+    "backend/app/modules/optimization/infrastructure/comparison_uow.py",
+    "backend/app/modules/optimization/infrastructure/comparison_v2_uow.py",
+    "backend/app/modules/optimization/infrastructure/comparison_v2_snapshot.py",
+    "backend/app/modules/optimization/application/comparison_v2_contracts.py",
+    "backend/app/modules/optimization/presentation/comparison_v2_schemas.py",
+    "backend/app/modules/optimization/presentation/comparison_runtime.py",
+    "backend/app/models.py",
+    "backend/alembic/versions/s2cmp02d4e6f8_six_method_catalog.py",
+    "docs/contracts/optimization/comparison-v1.md",
+    "docs/contracts/optimization/comparison-v1.json",
+    "docs/contracts/optimization/comparison-v2.md",
+    "docs/contracts/optimization/comparison-v2.json"
+  ],
+  "compile": "PASS",
+  "links": "PASS",
+  "git_diff_check": "PASS",
+  "git_diff_cached_check": "PASS",
+  "verified_test_counts": {
+    "process-verified-junit.xml": 26,
+    "contracts-adapters-junit.xml": 186,
+    "v1-process-junit.xml": 14
+  },
+  "distinct_backend_tests": 226,
+  "available_flow_smoke_cases": 2,
+  "decision": "VIABLE",
+  "sampled_case_only": true,
+  "smoke_sources_match": true,
+  "pending": [
+    "B05 shared admission, owner-supervisor stop proof and transactional orchestration",
+    "B06 public six-engine API",
+    "B07 UI"
+  ],
+  "ports_free": [
+    8017,
+    5188
+  ],
+  "private_smoke_roots_remaining": [],
+  "pytest_temp_root_exists": false,
+  "source_sha256": {
+    "backend/app/modules/optimization/application/sequential_policy.py": "40bb8650b5f0da6855a56c555d64eea0b943fd947d95f6ea795a1a8959ace2d4",
+    "backend/app/modules/optimization/infrastructure/sequential_runner.py": "c3eba58849cc33ffaaee43a05550bce21c24ad8ff3f96d9c09f8ba350dd0aea3",
+    "backend/app/modules/optimization/infrastructure/sequential_worker.py": "38eb419da4f793a03f9050d4a69423d1c34ba92fa603c7b40b0e1f61cae9f5f1",
+    "backend/scripts/check_comparison_environment.py": "62442c1c9cbfe16c180fd32e98c8f71e2cddb0739b93b1173ab8c2681280ffc6",
+    "backend/tests/optimization_b01_smoke.py": "6ebc59d64fba258595290eff1f4305eed5cca2b7e00b1ba689dc3ebd0c3a0254",
+    "backend/tests/optimization_b04_probe.py": "4667f1468167429408ecaf6b6efd44334e9a769ced18675ca1c3d58867621a4f",
+    "backend/tests/optimization_b04_validation.py": "82510cabea5293dd7c66f44239d3d28c8f1fe627be7116ca43f792affbb21cc9",
+    "backend/tests/unit/optimization/test_sequential_runner.py": "be78704a41237fa9c9808990c2afefc39434db007008be79ed796e1c06be4b22"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "python": "3.11.9",
+  "platform": "linux",
+  "budget": {
+    "aggregate_rss_bytes": 1073741824,
+    "worker_address_bytes": 268435456,
+    "supervisor_rss_bytes": 251658240,
+    "helper_reserve_bytes": 16777216,
+    "packet_bytes": 12582912,
+    "visual_packet_bytes": 4194304,
+    "queued_packets_per_worker": 1,
+    "retained_visual_bytes": 33554432,
+    "retained_event_bytes": 8388608,
+    "startup_seconds": 30,
+    "calculation_seconds": 120,
+    "global_seconds": 180
+  },
+  "profile": "comparison-v2",
+  "available": true
+}

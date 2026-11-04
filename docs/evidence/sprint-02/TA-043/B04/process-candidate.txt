@@ -1,0 +1,10 @@
+..................F......                                                [100%]
+=================================== FAILURES ===================================
+___ test_observer_transport_failure_is_explicit_and_does_not_change_solution ___
+tests/unit/optimization/test_sequential_runner.py:257: in test_observer_transport_failure_is_explicit_and_does_not_change_solution
+    assert all(s['worker_report']['observer_error_type']=='ValueError' for s in service.last_report['executions'].values())
+E   assert False
+E    +  where False = all(<generator object test_observer_transport_failure_is_explicit_and_does_not_change_solution.<locals>.<genexpr> at 0x73efa36879f0>)
+=========================== short test summary info ============================
+FAILED tests/unit/optimization/test_sequential_runner.py::test_observer_transport_failure_is_explicit_and_does_not_change_solution
+1 failed, 24 passed in 125.33s (0:02:05)
