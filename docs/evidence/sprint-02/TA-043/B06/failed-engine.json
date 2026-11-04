@@ -1,0 +1,288 @@
+{
+  "summary": {
+    "profile": "comparison-v2",
+    "schema_version": 2,
+    "comparison_id": 1,
+    "version": 49,
+    "status": "COMPLETADA",
+    "input_sha256": "70b02389fcee9ab7c2564d89127dbec832ed6324bd39a5db421dc42bf9e379e1",
+    "order_ids": [
+      1,
+      2
+    ],
+    "configuration": {
+      "resolucion_raster_mm": "1.000",
+      "margen_mm": "0.00",
+      "separacion_mm": "0.00",
+      "paso_angular_grados": "5.00"
+    },
+    "configuration_id": 1,
+    "configuration_version": 1,
+    "requested_pieces": [
+      {
+        "area_mm2": "4.00",
+        "cantidad": 2,
+        "dimensiones": {
+          "height_mm": 2,
+          "width_mm": 2
+        },
+        "espesor_mm": "6.0",
+        "geometria": {
+          "height_mm": 2,
+          "type": "RECTANGULO",
+          "width_mm": 2
+        },
+        "id_pedido": 1,
+        "id_pieza": 1,
+        "id_tipo_vidrio": 7,
+        "material_nombre": "Material de prueba 7",
+        "tipo_forma": "RECTANGULO"
+      },
+      {
+        "area_mm2": "4.00",
+        "cantidad": 2,
+        "dimensiones": {
+          "height_mm": 2,
+          "width_mm": 2
+        },
+        "espesor_mm": "6.0",
+        "geometria": {
+          "height_mm": 2,
+          "type": "RECTANGULO",
+          "width_mm": 2
+        },
+        "id_pedido": 2,
+        "id_pieza": 2,
+        "id_tipo_vidrio": 7,
+        "material_nombre": "Material de prueba 7",
+        "tipo_forma": "RECTANGULO"
+      }
+    ],
+    "executions": [
+      {
+        "execution_id": 1,
+        "method": "FF",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": true,
+        "placed_units": 4,
+        "total_units": 4,
+        "metrics": {
+          "aprovechamiento_pct": "100.000",
+          "merma_mm2": "0.0000",
+          "planchas_nuevas_usadas": 2,
+          "retazo_recuperable_mm2": "0",
+          "area_material_total_mm2": "16.0000",
+          "area_piezas_colocadas_mm2": "16.00",
+          "tiempo_computacional_ms": 9
+        },
+        "computation_time_ms": 9,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1
+          }
+        }
+      },
+      {
+        "execution_id": 2,
+        "method": "BF",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": true,
+        "placed_units": 4,
+        "total_units": 4,
+        "metrics": {
+          "aprovechamiento_pct": "100.000",
+          "merma_mm2": "0.0000",
+          "planchas_nuevas_usadas": 2,
+          "retazo_recuperable_mm2": "0",
+          "area_material_total_mm2": "16.0000",
+          "area_piezas_colocadas_mm2": "16.00",
+          "tiempo_computacional_ms": 8
+        },
+        "computation_time_ms": 8,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1
+          }
+        }
+      },
+      {
+        "execution_id": 3,
+        "method": "WF",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": true,
+        "placed_units": 4,
+        "total_units": 4,
+        "metrics": {
+          "aprovechamiento_pct": "100.000",
+          "merma_mm2": "0.0000",
+          "planchas_nuevas_usadas": 2,
+          "retazo_recuperable_mm2": "0",
+          "area_material_total_mm2": "16.0000",
+          "area_piezas_colocadas_mm2": "16.00",
+          "tiempo_computacional_ms": 8
+        },
+        "computation_time_ms": 8,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1
+          }
+        }
+      },
+      {
+        "execution_id": 4,
+        "method": "HF",
+        "status": "FALLIDA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "FAILED",
+        "result_available": false,
+        "complete": false,
+        "eligible": false,
+        "placed_units": 0,
+        "total_units": 4,
+        "metrics": null,
+        "computation_time_ms": null,
+        "diagnostic": {
+          "origin": "SUPERVISOR",
+          "termination_reason": "EXECUTION_FAILED",
+          "statistics": {
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 0
+          }
+        }
+      },
+      {
+        "execution_id": 5,
+        "method": "M5",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": true,
+        "placed_units": 4,
+        "total_units": 4,
+        "metrics": {
+          "aprovechamiento_pct": "100.000",
+          "merma_mm2": "0.0000",
+          "planchas_nuevas_usadas": 2,
+          "retazo_recuperable_mm2": "0",
+          "area_material_total_mm2": "16.0000",
+          "area_piezas_colocadas_mm2": "16.00",
+          "tiempo_computacional_ms": 8
+        },
+        "computation_time_ms": 8,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1
+          }
+        }
+      },
+      {
+        "execution_id": 6,
+        "method": "M6-BS",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": true,
+        "placed_units": 4,
+        "total_units": 4,
+        "metrics": {
+          "aprovechamiento_pct": "100.000",
+          "merma_mm2": "0.0000",
+          "planchas_nuevas_usadas": 2,
+          "retazo_recuperable_mm2": "0",
+          "area_material_total_mm2": "16.0000",
+          "area_piezas_colocadas_mm2": "16.00",
+          "tiempo_computacional_ms": 11
+        },
+        "computation_time_ms": 11,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "alternatives_pruned": 0,
+            "completed_levels": 4,
+            "expansions": 16,
+            "geometry_probes": 52,
+            "max_frontier": 2,
+            "parents": 7,
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1,
+            "state_bytes_bound": 143808
+          }
+        }
+      }
+    ],
+    "selected_execution_id": null,
+    "terminal": true,
+    "incomplete": true,
+    "released": false,
+    "confirmed": false,
+    "selection_allowed": true,
+    "confirmable": false,
+    "confirmation": null,
+    "methods": [
+      "FF",
+      "BF",
+      "WF",
+      "HF",
+      "M5",
+      "M6-BS"
+    ],
+    "supervisor_stopped": true
+  },
+  "execution": {
+    "profile": "comparison-v2",
+    "schema_version": 2,
+    "comparison_id": 1,
+    "execution": {
+      "execution_id": 4,
+      "method": "HF",
+      "status": "FALLIDA",
+      "dispatch_state": "TERMINATED",
+      "outcome": "FAILED",
+      "result_available": false,
+      "complete": false,
+      "eligible": false,
+      "placed_units": 0,
+      "total_units": 4,
+      "metrics": null,
+      "computation_time_ms": null,
+      "diagnostic": {
+        "origin": "SUPERVISOR",
+        "termination_reason": "EXECUTION_FAILED",
+        "statistics": {
+          "runtime_dispatched": 1,
+          "runtime_engine_started": 0
+        }
+      }
+    },
+    "result": null
+  }
+}

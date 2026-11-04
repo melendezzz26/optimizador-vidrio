@@ -4,14 +4,14 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Draft — B05 autorizado; resultado pendiente de revisión** |
+| Estado | **Draft — B06 autorizado; resultado pendiente de revisión** |
 | SPEC | [SPEC-TA-043-integracion-seis-motores.md](SPEC-TA-043-integracion-seis-motores.md) |
 | Responsable | Fabricio Meléndez |
 | Reviewer | Por designar; revisión humana pendiente |
 | Fecha | 03/11/2026, America/Lima |
-| Base oficial | `origin/integration-02`, `d85a8d3c4fa2ba1b3f70c401ed947adcfbe2470b` |
+| Base oficial | `integration-02` local, `d85a8d3c4fa2ba1b3f70c401ed947adcfbe2470b`; referencia remota ausente tras fetch del 04/11/2026 |
 | Única rama de trabajo | `feature/TA-043-integracion-seis-motores` |
-| Autorización actual | Exclusivamente B05, coordinación y cierre seguro, T-04/T-05/T-06 pertinentes, ST-INC-05 del flujo disponible y commits locales; detenerse antes de B06 |
+| Autorización actual | Exclusivamente B06: persistencia, API v2 y recuperación, pruebas pertinentes, ST-INC-06 y commits locales; detenerse antes de B07 |
 
 ## 1. Resultado esperado y reglas de ejecución futura
 
@@ -720,6 +720,14 @@ Esta evidencia no acredita ejecución pública de seis motores, prueba de parada
 del supervisor v2, selección/confirmación v2 ni ST-INT. No iniciar B03 sin revisión.
 
 ## Historial de estado
+
+- 04/11/2026 — **Draft**: autorización exclusiva B06 y ST-INC-06. Primer smoke
+  con seis motores por HTTP real, servicios/navegador y PostgreSQL aislados;
+  la aplicación vigente sigue con UI v1 y su integración visual v2 queda
+  PENDIENTE B07. Reinicio TCP real y recuperación sin recálculo se documentan
+  por separado del smoke. [Evidencia B06](../evidence/sprint-02/TA-043/B06/README.md).
+  Se preservan 36 requisitos/CA, matriz, B01–B11 y sus dependencias. No avanzar
+  a B07/B08 ni declarar ST-INT aprobado.
 
 - 03/11/2026 — **Draft**: B05 autorizado, incluida la ampliación interna de
   `runtime` revisada por Fabricio. Coordinación v2 se comprueba con PostgreSQL y

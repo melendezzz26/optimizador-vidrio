@@ -231,3 +231,61 @@ Los estados de ejecución y snapshots siguen siendo los de B01/B02.
 del diagnóstico existente para distinguir las ejecuciones nunca iniciadas; no
 sustituyen sus causas ENGINE/SUPERVISOR. `result_persisted` se entrega solo tras
 commit. Este puerto interno no publica eventos HTTP v2: su exposición es B06.
+
+## Publicación B06 — 04/11/2026
+
+Los contratos anteriores de B01 quedan publicados en el prefijo explícito
+`/api/optimization/comparisons-v2`. Se implementan POST colección, GET por ID/clave,
+GET ejecución, GET eventos, GET manifiesto/máscara y POST release, con los
+subrecursos de la tabla. PUT selection y POST confirm **no están registrados**:
+continúan pendientes de B08. Las capacidades de elegibilidad del resumen conservan
+la semántica contractual B01; no certifican disponibilidad de esos endpoints.
+
+V2 requiere permiso vigente y pertenencia al actor de la comparación. Solicitud
+ajena o ejecución/máscara fuera de scope devuelve 404 sin revelar sus datos.
+Por clave se consulta exclusivamente al actor autenticado. Recurso propio de otro
+perfil devuelve 409 `COMPARISON_PROFILE_MISMATCH`. V1 conserva su acceso por
+permiso, sus tres métodos y el error 409 `STATE_CONFLICT` existente al recibir un
+recurso v2; `/runs` sigue siendo el lector FF histórico. No se detectan perfiles
+mediante intentos de selección/confirmación ni se convierten registros.
+
+POST responde 201 y Location con un resumen autoritativo, que puede haber avanzado
+desde la aceptación. La misma clave/actor/lote recupera el mismo agregado y seis
+IDs; otro lote/perfil da conflicto. Los IDs JSON v2 son enteros estrictos; no se
+coercionan booleanos o strings. Se conservan los guards RBAC y el formato seguro
+`{"detail":{"code":"...","message":"..."}}` de categorías vigentes. No cambian
+schemas ni errores históricos v1.
+
+La consulta de un agregado sin dueño local con cierre incierto devuelve 503
+`RECOVERY_BLOCKED`, con `comparison_id` público y mensaje controlado; mantiene la
+reserva operativa. Sus ejecuciones durables siguen consultables y declaran
+`eligible: false`; el header `X-Comparison-Recovery: BLOCKED`, expuesto por CORS,
+hace explícita la incertidumbre. No se publican token interno, PID, start_ticks,
+trazas, rutas privadas o metadatos crudos de runtime. La recuperación delega en el
+dueño B05 y nunca fuerza marcas de cierre ni vuelve a optimizar.
+
+Los eventos respetan `ComparisonEventV2`, secuencia global y por ejecución,
+presentación y UTC. Se entrega solo historia realmente retenida, con máximo dos
+observadores y ventanas B04/B05 compartidas. Cursor futuro da 422; cursor ya
+expulsado da 409 `EVENT_CURSOR_EXPIRED` y `latest_sequence`, o `snapshot_required`
+si la expulsión ocurre durante un stream. Recuperar por GET el resumen/resultados
+persistidos. Runtime expirado/reiniciado da 410 `VISUAL_DATA_UNAVAILABLE`, nunca
+replay fabricado. La desconexión HTTP libera al observador, no cancela los motores.
+El stream no conserva conexiones DB abiertas.
+
+La proyección usa exactamente la retención B05: reemplaza el registro interno por
+NDJSON, sin segunda ventana. TTL o relevo de trabajo retiran máscaras/eventos;
+sus referencias durables no garantizan disponibilidad del bitmap. M6 solo publica
+contadores PROVISIONAL; su resultado final procede del snapshot ganador y no se
+recalcula para animarlo. La UI de seis motores y visores integrados siguen en B07.
+
+POST release exige dueño, permiso execute, versión vigente y cierre seguro ya
+demostrado; no cancela ni desbloquea un supervisor incierto. Reutiliza el ciclo de
+pedidos sin consumo y conserva resultados/IDs. El repositorio compone los mismos
+metadatos operativos de liberación del ciclo v1 (`released_at`, `released_by`,
+`released_selection_id: null`) junto a la entrada, separados del codec puro B01
+y de `runtime`. Son opcionales para lectores históricos; no se ejecuta backfill,
+no cambia SQL/Alembic y no se implementa selección/confirmación. Un reintento
+inmediato de la misma liberación recupera su versión sin duplicar efectos.
+
+Pruebas, endpoints, datos sintéticos y límites: [evidencia B06](../../evidence/sprint-02/TA-043/B06/README.md).

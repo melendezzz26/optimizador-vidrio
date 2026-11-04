@@ -4,16 +4,16 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Draft — B05 autorizado; resultado pendiente de revisión** |
+| Estado | **Draft — B06 autorizado; resultado pendiente de revisión** |
 | PBI / módulo | TA-043 / Sprint 2 / Optimization |
 | Responsable | Fabricio Meléndez |
 | Reviewer | Por designar; no se atribuye aprobación humana |
 | Fecha | 03/11/2026, America/Lima |
-| Base oficial | `origin/integration-02` |
+| Base oficial | `integration-02` local; referencia remota ausente tras fetch del 04/11/2026 |
 | Commit base verificado | `d85a8d3c4fa2ba1b3f70c401ed947adcfbe2470b` |
 | Única rama de trabajo TA-043 | `feature/TA-043-integracion-seis-motores` |
 | PLAN | [PLAN-TA-043-integracion-seis-motores.md](PLAN-TA-043-integracion-seis-motores.md) |
-| Autorización actual | Exclusivamente B05, coordinación y cierre seguro, T-04/T-05/T-06 pertinentes, ST-INC-05 del flujo disponible y commits locales; detenerse antes de B06 |
+| Autorización actual | Exclusivamente B06: persistencia, API v2 y recuperación, pruebas pertinentes, ST-INC-06 y commits locales; detenerse antes de B07 |
 
 La autorización documental inicial fue ampliada para B01 y posteriormente,
 por instrucción expresa de Fabricio, exclusivamente para **B02**. Sus alcances
@@ -474,6 +474,15 @@ no almacenar secretos. El cierre exige CA-N06 y CA-S01–CA-S10, smoke increment
 e integral reales, regresión y revisión humana; documentar una prueba no la ejecuta.
 
 ## Historial de estado
+
+- 04/11/2026 — **Draft**: Fabricio autoriza exclusivamente B06 sobre B05
+  `70084ce`, `42e98bd`, `18c36bc`. API explícita v2, lectura por propietario,
+  transporte y recuperación sin recálculo; selección/confirmación pendientes B08
+  y seis pestañas pendientes B07. Fetch detecta eliminación externa de
+  `origin/integration-02`; se conserva la base local `integration-02` en
+  `d85a8d3`, sin recrear/publicar referencias ni incorporar otra integración.
+  [Evidencia B06](../evidence/sprint-02/TA-043/B06/README.md). Se conservan los
+  36 requisitos/CA y las decisiones de algoritmos, contratos y cierre seguro.
 
 - 03/11/2026 — **Draft**: autorización exclusiva B05 y ampliación interna de
   `runtime` aprobada por Fabricio para propiedad versionada, token del supervisor
