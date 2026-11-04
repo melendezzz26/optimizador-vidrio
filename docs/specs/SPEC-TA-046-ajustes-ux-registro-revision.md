@@ -60,8 +60,9 @@ No hay un registro escrito de la demostración; las fallas salen de esta auditor
   vidrio, el foco pasa al encabezado del grupo anterior o, si no hay, al siguiente. El foco nunca
   queda en `body`.
 - **RN-05 (K-05):** Enter en un campo de corrección de la importación ejecuta "Revalidar".
-- **RN-06 (K-06):** el editor de polígono ofrece una alternativa al dibujo: un campo
-  "Número de lados" (3 a 128) y el botón "Crear boceto", que genera un polígono regular cerrado.
+- **RN-06 (K-06):** el editor de polígono ofrece una alternativa al dibujo: debajo del lienzo, un
+  campo "Número de lados" (3 a 128, texto con teclado numérico) y el botón "Crear boceto", que
+  genera un polígono regular cerrado. Va debajo del lienzo para no desplazarlo mientras se dibuja.
   Desde ahí, las longitudes de los lados y los ángulos se escriben con teclado como hoy. El dibujo
   con mouse se mantiene sin cambios.
 
@@ -88,6 +89,8 @@ Solo frontend; sin cambios de API, esquema ni migraciones.
 | `features/optimization/originalMeasures.js` | Nuevo: función pura que describe las medidas de una pieza (RN-08). |
 | `features/optimization/OriginalMeasuresTable.jsx` | Nuevo: tabla de RN-07 y RN-09, con `caption` y desplazamiento horizontal en móvil. |
 | `features/optimization/ComparisonWorkspace.jsx` | Muestra la tabla en "Resultado" y "Comparación". |
+| `features/orders/CustomPieceEditor.css`, `features/optimization/OriginalMeasuresTable.css` | Estilos de los controles nuevos, con los tokens de UI. |
+| `features/optimization/__tests__/ComparisonWorkspace.test.jsx` | Ajuste de una línea: busca la tabla de métricas por su nombre, porque la pestaña Comparación ahora tiene dos tablas. |
 
 ## 6. Criterios de aceptación
 
@@ -120,3 +123,4 @@ del PR.
 | Fecha | Versión | Estado | Cambio |
 |---|---|---|---|
 | 04/11/2026 | 0.1 | Draft | Auditoría con teclado, reglas RN-01 a RN-09, diseño y criterios. |
+| 04/11/2026 | 0.2 | Implemented | T01–T03 implementadas. K-01 a K-06 con pruebas de regresión que fallan sin el arreglo; tabla de medidas originales en resultado y comparación; E2E `ta046-keyboard.spec.js` en `criticalSpecs.js`. Regresión completa en verde. |
