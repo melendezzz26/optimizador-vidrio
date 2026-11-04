@@ -1,0 +1,9 @@
+
+Running 4 tests using 1 worker
+
+  ✓  1 [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:8:1 › TA-043 B08 smoke: seleccion manual y confirmacion v2 atomica real (9.4s)
+  ✓  2 [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:194:1 › TA-043 B07 smoke: interfaz v2, seis distribuciones y recuperacion visual real (14.9s)
+  ✓  3 [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:8:1 › TA-043 B08 smoke: seleccion manual y confirmacion v2 atomica real (9.2s)
+  ✓  4 [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:194:1 › TA-043 B07 smoke: interfaz v2, seis distribuciones y recuperacion visual real (13.7s)
+
+  4 passed (54.5s)

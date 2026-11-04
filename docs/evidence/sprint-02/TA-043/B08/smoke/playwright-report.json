@@ -2,19 +2,19 @@
   "config": {
     "argv": [
       "/home/fabri/.cache/newglass-validation.SXhCMM/node-v22.23.2-linux-x64/bin/node",
-      "/tmp/newglass-ta043-b08-s9svuesp/frontend/node_modules/@playwright/test/cli.js",
+      "/tmp/newglass-ta043-b08-85dchkz6/frontend/node_modules/@playwright/test/cli.js",
       "test",
       "--config=playwright.b01.config.mjs",
       "--grep",
       "TA-043 B08"
     ],
-    "configFile": "/tmp/newglass-ta043-b08-s9svuesp/frontend/playwright.b01.config.mjs",
-    "rootDir": "/tmp/newglass-ta043-b08-s9svuesp/frontend/tests/e2e",
+    "configFile": "/tmp/newglass-ta043-b08-85dchkz6/frontend/playwright.b01.config.mjs",
+    "rootDir": "/tmp/newglass-ta043-b08-85dchkz6/frontend/tests/e2e",
     "failOnFlakyTests": false,
     "forbidOnly": true,
     "fullyParallel": true,
     "globalSetup": null,
-    "globalTeardown": "/tmp/newglass-ta043-b08-s9svuesp/frontend/tests/e2e/globalTeardown.js",
+    "globalTeardown": "/tmp/newglass-ta043-b08-85dchkz6/frontend/tests/e2e/globalTeardown.js",
     "globalTimeout": 0,
     "grep": {},
     "grepInvert": null,
@@ -25,7 +25,7 @@
     "preserveOutput": "always",
     "projects": [
       {
-        "outputDir": "/tmp/newglass-ta043-b08-s9svuesp/frontend/test-results/b01",
+        "outputDir": "/tmp/newglass-ta043-b08-85dchkz6/frontend/test-results/b01",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
@@ -33,7 +33,7 @@
         },
         "id": "chromium-desktop",
         "name": "chromium-desktop",
-        "testDir": "/tmp/newglass-ta043-b08-s9svuesp/frontend/tests/e2e",
+        "testDir": "/tmp/newglass-ta043-b08-85dchkz6/frontend/tests/e2e",
         "testIgnore": [],
         "testMatch": [
           "optimization-comparison.spec.js"
@@ -41,7 +41,7 @@
         "timeout": 30000
       },
       {
-        "outputDir": "/tmp/newglass-ta043-b08-s9svuesp/frontend/test-results/b01",
+        "outputDir": "/tmp/newglass-ta043-b08-85dchkz6/frontend/test-results/b01",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
@@ -49,7 +49,7 @@
         },
         "id": "chromium-mobile",
         "name": "chromium-mobile",
-        "testDir": "/tmp/newglass-ta043-b08-s9svuesp/frontend/tests/e2e",
+        "testDir": "/tmp/newglass-ta043-b08-85dchkz6/frontend/tests/e2e",
         "testIgnore": [],
         "testMatch": [
           "optimization-comparison.spec.js"
@@ -105,12 +105,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 9117,
+                  "duration": 9936,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-11-04T13:19:37.910Z",
+                  "startTime": "2026-11-04T13:54:29.450Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -139,12 +139,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 8753,
+                  "duration": 9482,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-11-04T13:19:47.546Z",
+                  "startTime": "2026-11-04T13:54:40.365Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -162,8 +162,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-11-04T13:19:32.882Z",
-    "duration": 24032.064000000002,
+    "startTime": "2026-11-04T13:54:22.910Z",
+    "duration": 27618.419,
     "expected": 2,
     "skipped": 0,
     "unexpected": 0,

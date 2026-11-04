@@ -1,0 +1,2077 @@
+{
+  "current": {
+    "profile": "comparison-v2",
+    "schema_version": 2,
+    "comparison_id": 1,
+    "version": 44,
+    "status": "COMPLETADA",
+    "input_sha256": "ce5a45bc1382c470edab349745dcedf8869636ed061f2b45aa9dfdc0dfdf9d93",
+    "order_ids": [
+      1
+    ],
+    "configuration": {
+      "resolucion_raster_mm": "1.000",
+      "margen_mm": "0.00",
+      "separacion_mm": "0.00",
+      "paso_angular_grados": "5.00"
+    },
+    "configuration_id": 1,
+    "configuration_version": 1,
+    "requested_pieces": [
+      {
+        "area_mm2": "2500.00",
+        "cantidad": 1,
+        "dimensiones": {
+          "height_mm": 50,
+          "type": "RECTANGULO",
+          "width_mm": 50
+        },
+        "espesor_mm": "6.0",
+        "geometria": {
+          "height_mm": 50,
+          "type": "RECTANGULO",
+          "width_mm": 50
+        },
+        "id_pedido": 1,
+        "id_pieza": 1,
+        "id_tipo_vidrio": 8,
+        "material_nombre": "E2E-single-c99c661823-0",
+        "tipo_forma": "RECTANGULO"
+      }
+    ],
+    "executions": [
+      {
+        "execution_id": 1,
+        "method": "FF",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": true,
+        "placed_units": 1,
+        "total_units": 1,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 1
+        },
+        "computation_time_ms": 1,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1
+          }
+        }
+      },
+      {
+        "execution_id": 2,
+        "method": "BF",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": true,
+        "placed_units": 1,
+        "total_units": 1,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 1
+        },
+        "computation_time_ms": 1,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1
+          }
+        }
+      },
+      {
+        "execution_id": 3,
+        "method": "WF",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": true,
+        "placed_units": 1,
+        "total_units": 1,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 1
+        },
+        "computation_time_ms": 1,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1
+          }
+        }
+      },
+      {
+        "execution_id": 4,
+        "method": "HF",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": true,
+        "placed_units": 1,
+        "total_units": 1,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 2
+        },
+        "computation_time_ms": 2,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "accepted_pocket": 0,
+            "activation_attempts": 0,
+            "anchors_checked": 0,
+            "boundary_rows": 0,
+            "budget_exhausted": 0,
+            "check_rows": 0,
+            "coverage_fallback": 0,
+            "fallback_used": 1,
+            "max_region_anchors_observed": 0,
+            "max_region_checks_observed": 0,
+            "orientations_inspected": 0,
+            "placement_checks": 0,
+            "pocket_candidates": 0,
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1,
+            "seed_probes": 0,
+            "sheet_fallback": 0
+          }
+        }
+      },
+      {
+        "execution_id": 5,
+        "method": "M5",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": true,
+        "placed_units": 1,
+        "total_units": 1,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 1
+        },
+        "computation_time_ms": 1,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1
+          }
+        }
+      },
+      {
+        "execution_id": 6,
+        "method": "M6-BS",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": true,
+        "placed_units": 1,
+        "total_units": 1,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 22
+        },
+        "computation_time_ms": 22,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "alternatives_pruned": 0,
+            "completed_levels": 1,
+            "expansions": 2,
+            "geometry_probes": 20,
+            "max_frontier": 2,
+            "parents": 1,
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1,
+            "state_bytes_bound": 299712
+          }
+        }
+      }
+    ],
+    "selected_execution_id": 5,
+    "terminal": true,
+    "incomplete": false,
+    "released": false,
+    "confirmed": false,
+    "selection_allowed": true,
+    "confirmable": true,
+    "confirmation": null,
+    "methods": [
+      "FF",
+      "BF",
+      "WF",
+      "HF",
+      "M5",
+      "M6-BS"
+    ],
+    "supervisor_stopped": true
+  },
+  "receipt": {
+    "profile": "comparison-v2",
+    "schema_version": 2,
+    "comparison_id": 1,
+    "execution_id": 5,
+    "version": 45,
+    "receipt": {
+      "schema_version": 1,
+      "id_optimizacion": 1,
+      "confirmed": true,
+      "orders": [
+        {
+          "id_pedido": 1,
+          "estado": "CONFIRMADO"
+        }
+      ],
+      "materials_consumed": [
+        {
+          "material_source": "PLANCHA",
+          "material_id": 702,
+          "stock_unit_index": 1
+        }
+      ],
+      "remnants_created": [
+        {
+          "id_retazo": 1,
+          "source": {
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1
+          },
+          "x_mm": "50.000",
+          "y_mm": "0.000",
+          "geometria": {
+            "type": "RECTANGULO",
+            "width_mm": 50,
+            "height_mm": 50
+          },
+          "area_mm2": "2500.00"
+        }
+      ]
+    }
+  },
+  "before": {
+    "sheets": [
+      {
+        "id_plancha": 701,
+        "ancho_mm": "1000.00",
+        "alto_mm": "500.00",
+        "espesor_mm": "5.5",
+        "cantidad": 2,
+        "estado": true,
+        "fecha_registro": "2026-11-04 13:55:03.161599+00:00",
+        "id_tipo_vidrio": 7
+      },
+      {
+        "id_plancha": 702,
+        "ancho_mm": "100.00",
+        "alto_mm": "50.00",
+        "espesor_mm": "6.0",
+        "cantidad": 1,
+        "estado": true,
+        "fecha_registro": "2026-11-04 13:55:07.368080+00:00",
+        "id_tipo_vidrio": 8
+      }
+    ],
+    "remnants": [],
+    "movements": [],
+    "orders": [
+      {
+        "id_pedido": 1,
+        "estado": "OPTIMIZADO"
+      }
+    ],
+    "comparison": [
+      {
+        "id_optimizacion": 1,
+        "id_ejecucion_seleccionada": null,
+        "comparison_version": 43,
+        "comparison_snapshot": {
+          "input": {
+            "problem": {
+              "config": {
+                "margin_mm": "0.00",
+                "resolution_mm": "1.000",
+                "separation_mm": "0.00",
+                "angular_step_deg": "5.00"
+              },
+              "groups": [
+                {
+                  "units": [
+                    {
+                      "area_mm2": "2500.00",
+                      "geometry": {
+                        "type": "RECTANGULO",
+                        "width_mm": 50,
+                        "height_mm": 50
+                      },
+                      "order_id": 1,
+                      "piece_id": 1,
+                      "unit_index": 1,
+                      "thickness_mm": "6.0",
+                      "glass_type_id": 8
+                    }
+                  ],
+                  "thickness_mm": "6.0",
+                  "glass_type_id": 8,
+                  "stock_candidates": [
+                    {
+                      "source": "PLANCHA",
+                      "area_mm2": "5000.0000",
+                      "geometry": {
+                        "type": "RECTANGULO",
+                        "width_mm": 100,
+                        "height_mm": 50
+                      },
+                      "material_id": 702,
+                      "thickness_mm": "6.0",
+                      "glass_type_id": 8,
+                      "physical_unit_index": 1
+                    }
+                  ]
+                }
+              ],
+              "order_ids": [
+                1
+              ]
+            },
+            "input_version": 1
+          },
+          "methods": [
+            "FF",
+            "BF",
+            "WF",
+            "HF",
+            "M5",
+            "M6-BS"
+          ],
+          "profile": "comparison-v2",
+          "runtime": {
+            "workers": {
+              "1": {
+                "pid": 1288,
+                "start_ticks": "20882"
+              },
+              "2": {
+                "pid": 1291,
+                "start_ticks": "20923"
+              },
+              "3": {
+                "pid": 1294,
+                "start_ticks": "20962"
+              },
+              "4": {
+                "pid": 1297,
+                "start_ticks": "21002"
+              },
+              "5": {
+                "pid": 1309,
+                "start_ticks": "21048"
+              },
+              "6": {
+                "pid": 1312,
+                "start_ticks": "21090"
+              }
+            },
+            "supervisor": {
+              "token": "fdc0e86dbde64bbe961dc3e5edae71ee",
+              "identity": {
+                "pid": 1024,
+                "start_ticks": "19956"
+              }
+            },
+            "runtime_version": 1,
+            "supervisor_stopped_at": "2026-11-04T13:55:12.444887+00:00"
+          },
+          "input_sha256": "ce5a45bc1382c470edab349745dcedf8869636ed061f2b45aa9dfdc0dfdf9d93",
+          "configuration_id": 1,
+          "minimum_width_mm": "10.00",
+          "requested_pieces": [
+            {
+              "area_mm2": "2500.00",
+              "cantidad": 1,
+              "id_pieza": 1,
+              "geometria": {
+                "type": "RECTANGULO",
+                "width_mm": 50,
+                "height_mm": 50
+              },
+              "id_pedido": 1,
+              "espesor_mm": "6.0",
+              "tipo_forma": "RECTANGULO",
+              "dimensiones": {
+                "type": "RECTANGULO",
+                "width_mm": 50,
+                "height_mm": 50
+              },
+              "id_tipo_vidrio": 8,
+              "material_nombre": "E2E-single-c99c661823-0"
+            }
+          ],
+          "engine_parameters": {
+            "M6-BS": {
+              "width": 2
+            }
+          },
+          "minimum_height_mm": "10.00",
+          "configuration_version": 1,
+          "comparison_snapshot_version": 2
+        }
+      }
+    ]
+  },
+  "afterSelection": {
+    "sheets": [
+      {
+        "id_plancha": 701,
+        "ancho_mm": "1000.00",
+        "alto_mm": "500.00",
+        "espesor_mm": "5.5",
+        "cantidad": 2,
+        "estado": true,
+        "fecha_registro": "2026-11-04 13:55:03.161599+00:00",
+        "id_tipo_vidrio": 7
+      },
+      {
+        "id_plancha": 702,
+        "ancho_mm": "100.00",
+        "alto_mm": "50.00",
+        "espesor_mm": "6.0",
+        "cantidad": 1,
+        "estado": true,
+        "fecha_registro": "2026-11-04 13:55:07.368080+00:00",
+        "id_tipo_vidrio": 8
+      }
+    ],
+    "remnants": [],
+    "movements": [],
+    "orders": [
+      {
+        "id_pedido": 1,
+        "estado": "OPTIMIZADO"
+      }
+    ],
+    "comparison": [
+      {
+        "id_optimizacion": 1,
+        "id_ejecucion_seleccionada": 5,
+        "comparison_version": 44,
+        "comparison_snapshot": {
+          "input": {
+            "problem": {
+              "config": {
+                "margin_mm": "0.00",
+                "resolution_mm": "1.000",
+                "separation_mm": "0.00",
+                "angular_step_deg": "5.00"
+              },
+              "groups": [
+                {
+                  "units": [
+                    {
+                      "area_mm2": "2500.00",
+                      "geometry": {
+                        "type": "RECTANGULO",
+                        "width_mm": 50,
+                        "height_mm": 50
+                      },
+                      "order_id": 1,
+                      "piece_id": 1,
+                      "unit_index": 1,
+                      "thickness_mm": "6.0",
+                      "glass_type_id": 8
+                    }
+                  ],
+                  "thickness_mm": "6.0",
+                  "glass_type_id": 8,
+                  "stock_candidates": [
+                    {
+                      "source": "PLANCHA",
+                      "area_mm2": "5000.0000",
+                      "geometry": {
+                        "type": "RECTANGULO",
+                        "width_mm": 100,
+                        "height_mm": 50
+                      },
+                      "material_id": 702,
+                      "thickness_mm": "6.0",
+                      "glass_type_id": 8,
+                      "physical_unit_index": 1
+                    }
+                  ]
+                }
+              ],
+              "order_ids": [
+                1
+              ]
+            },
+            "input_version": 1
+          },
+          "methods": [
+            "FF",
+            "BF",
+            "WF",
+            "HF",
+            "M5",
+            "M6-BS"
+          ],
+          "profile": "comparison-v2",
+          "runtime": {
+            "workers": {
+              "1": {
+                "pid": 1288,
+                "start_ticks": "20882"
+              },
+              "2": {
+                "pid": 1291,
+                "start_ticks": "20923"
+              },
+              "3": {
+                "pid": 1294,
+                "start_ticks": "20962"
+              },
+              "4": {
+                "pid": 1297,
+                "start_ticks": "21002"
+              },
+              "5": {
+                "pid": 1309,
+                "start_ticks": "21048"
+              },
+              "6": {
+                "pid": 1312,
+                "start_ticks": "21090"
+              }
+            },
+            "supervisor": {
+              "token": "fdc0e86dbde64bbe961dc3e5edae71ee",
+              "identity": {
+                "pid": 1024,
+                "start_ticks": "19956"
+              }
+            },
+            "runtime_version": 1,
+            "supervisor_stopped_at": "2026-11-04T13:55:12.444887+00:00"
+          },
+          "input_sha256": "ce5a45bc1382c470edab349745dcedf8869636ed061f2b45aa9dfdc0dfdf9d93",
+          "configuration_id": 1,
+          "minimum_width_mm": "10.00",
+          "requested_pieces": [
+            {
+              "area_mm2": "2500.00",
+              "cantidad": 1,
+              "id_pieza": 1,
+              "geometria": {
+                "type": "RECTANGULO",
+                "width_mm": 50,
+                "height_mm": 50
+              },
+              "id_pedido": 1,
+              "espesor_mm": "6.0",
+              "tipo_forma": "RECTANGULO",
+              "dimensiones": {
+                "type": "RECTANGULO",
+                "width_mm": 50,
+                "height_mm": 50
+              },
+              "id_tipo_vidrio": 8,
+              "material_nombre": "E2E-single-c99c661823-0"
+            }
+          ],
+          "engine_parameters": {
+            "M6-BS": {
+              "width": 2
+            }
+          },
+          "minimum_height_mm": "10.00",
+          "configuration_version": 1,
+          "comparison_snapshot_version": 2
+        }
+      }
+    ]
+  },
+  "after": {
+    "sheets": [
+      {
+        "id_plancha": 701,
+        "ancho_mm": "1000.00",
+        "alto_mm": "500.00",
+        "espesor_mm": "5.5",
+        "cantidad": 2,
+        "estado": true,
+        "fecha_registro": "2026-11-04 13:55:03.161599+00:00",
+        "id_tipo_vidrio": 7
+      },
+      {
+        "id_plancha": 702,
+        "ancho_mm": "100.00",
+        "alto_mm": "50.00",
+        "espesor_mm": "6.0",
+        "cantidad": 0,
+        "estado": false,
+        "fecha_registro": "2026-11-04 13:55:07.368080+00:00",
+        "id_tipo_vidrio": 8
+      }
+    ],
+    "remnants": [
+      {
+        "id_retazo": 1,
+        "codigo": "M5-1-P702-1",
+        "espesor_mm": "6.0",
+        "geometria": {
+          "type": "RECTANGULO",
+          "width_mm": 50,
+          "height_mm": 50
+        },
+        "area_mm2": "2500.00",
+        "estado": true,
+        "fecha_registro": "2026-11-04 13:55:14.456874+00:00",
+        "id_ejecucion_origen": 5,
+        "id_tipo_vidrio": 8
+      }
+    ],
+    "movements": [
+      {
+        "id_movimiento": 1,
+        "id_plancha": 702,
+        "id_retazo": null,
+        "cantidad_afectada": 1,
+        "tipo_evento": "CONSUMO_OPTIMIZACION",
+        "motivo": "Confirmación Best Residual Fit de optimización 1.",
+        "observacion": "stock_unit_index=1",
+        "id_usuario": 5,
+        "fecha": "2026-11-04 13:55:14.454005+00:00",
+        "id_optimizacion": 1
+      }
+    ],
+    "orders": [
+      {
+        "id_pedido": 1,
+        "estado": "CONFIRMADO"
+      }
+    ],
+    "comparison": [
+      {
+        "id_optimizacion": 1,
+        "id_ejecucion_seleccionada": 5,
+        "comparison_version": 45,
+        "comparison_snapshot": {
+          "input": {
+            "problem": {
+              "config": {
+                "margin_mm": "0.00",
+                "resolution_mm": "1.000",
+                "separation_mm": "0.00",
+                "angular_step_deg": "5.00"
+              },
+              "groups": [
+                {
+                  "units": [
+                    {
+                      "area_mm2": "2500.00",
+                      "geometry": {
+                        "type": "RECTANGULO",
+                        "width_mm": 50,
+                        "height_mm": 50
+                      },
+                      "order_id": 1,
+                      "piece_id": 1,
+                      "unit_index": 1,
+                      "thickness_mm": "6.0",
+                      "glass_type_id": 8
+                    }
+                  ],
+                  "thickness_mm": "6.0",
+                  "glass_type_id": 8,
+                  "stock_candidates": [
+                    {
+                      "source": "PLANCHA",
+                      "area_mm2": "5000.0000",
+                      "geometry": {
+                        "type": "RECTANGULO",
+                        "width_mm": 100,
+                        "height_mm": 50
+                      },
+                      "material_id": 702,
+                      "thickness_mm": "6.0",
+                      "glass_type_id": 8,
+                      "physical_unit_index": 1
+                    }
+                  ]
+                }
+              ],
+              "order_ids": [
+                1
+              ]
+            },
+            "input_version": 1
+          },
+          "methods": [
+            "FF",
+            "BF",
+            "WF",
+            "HF",
+            "M5",
+            "M6-BS"
+          ],
+          "profile": "comparison-v2",
+          "runtime": {
+            "workers": {
+              "1": {
+                "pid": 1288,
+                "start_ticks": "20882"
+              },
+              "2": {
+                "pid": 1291,
+                "start_ticks": "20923"
+              },
+              "3": {
+                "pid": 1294,
+                "start_ticks": "20962"
+              },
+              "4": {
+                "pid": 1297,
+                "start_ticks": "21002"
+              },
+              "5": {
+                "pid": 1309,
+                "start_ticks": "21048"
+              },
+              "6": {
+                "pid": 1312,
+                "start_ticks": "21090"
+              }
+            },
+            "supervisor": {
+              "token": "fdc0e86dbde64bbe961dc3e5edae71ee",
+              "identity": {
+                "pid": 1024,
+                "start_ticks": "19956"
+              }
+            },
+            "runtime_version": 1,
+            "supervisor_stopped_at": "2026-11-04T13:55:12.444887+00:00"
+          },
+          "confirmation": {
+            "key": "5711427f-4a18-4ae6-8523-a1b41b000aa9",
+            "method": "M5",
+            "receipt": {
+              "order_ids": [
+                1
+              ],
+              "optimization_id": 1,
+              "remnants_created": [
+                {
+                  "x_mm": "50.000",
+                  "y_mm": "0.000",
+                  "source": {
+                    "source": "PLANCHA",
+                    "area_mm2": "5000.0000",
+                    "geometry": {
+                      "type": "RECTANGULO",
+                      "width_mm": 100,
+                      "height_mm": 50
+                    },
+                    "material_id": 702,
+                    "thickness_mm": "6.0",
+                    "glass_type_id": 8,
+                    "physical_unit_index": 1
+                  },
+                  "area_mm2": "2500.00",
+                  "geometry": {
+                    "type": "RECTANGULO",
+                    "width_mm": 50,
+                    "height_mm": 50
+                  },
+                  "remnant_id": 1,
+                  "exact_area_mm2": "2500.000000"
+                }
+              ],
+              "materials_consumed": [
+                {
+                  "source": "PLANCHA",
+                  "area_mm2": "5000.0000",
+                  "geometry": {
+                    "type": "RECTANGULO",
+                    "width_mm": 100,
+                    "height_mm": 50
+                  },
+                  "material_id": 702,
+                  "thickness_mm": "6.0",
+                  "glass_type_id": 8,
+                  "physical_unit_index": 1
+                }
+              ]
+            },
+            "actor_id": 5,
+            "confirmed_at": "2026-11-04T13:55:14.461974+00:00",
+            "execution_id": 5,
+            "receipt_version": 1,
+            "expected_version": 44,
+            "skipped_residuals": []
+          },
+          "input_sha256": "ce5a45bc1382c470edab349745dcedf8869636ed061f2b45aa9dfdc0dfdf9d93",
+          "configuration_id": 1,
+          "minimum_width_mm": "10.00",
+          "requested_pieces": [
+            {
+              "area_mm2": "2500.00",
+              "cantidad": 1,
+              "id_pieza": 1,
+              "geometria": {
+                "type": "RECTANGULO",
+                "width_mm": 50,
+                "height_mm": 50
+              },
+              "id_pedido": 1,
+              "espesor_mm": "6.0",
+              "tipo_forma": "RECTANGULO",
+              "dimensiones": {
+                "type": "RECTANGULO",
+                "width_mm": 50,
+                "height_mm": 50
+              },
+              "id_tipo_vidrio": 8,
+              "material_nombre": "E2E-single-c99c661823-0"
+            }
+          ],
+          "engine_parameters": {
+            "M6-BS": {
+              "width": 2
+            }
+          },
+          "minimum_height_mm": "10.00",
+          "configuration_version": 1,
+          "comparison_snapshot_version": 2
+        }
+      }
+    ]
+  },
+  "originalResults": {
+    "1": {
+      "profile": "comparison-v2",
+      "schema_version": 2,
+      "comparison_id": 1,
+      "execution": {
+        "execution_id": 1,
+        "method": "FF",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": true,
+        "placed_units": 1,
+        "total_units": 1,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 1
+        },
+        "computation_time_ms": 1,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1
+          }
+        }
+      },
+      "result": {
+        "placed_units": 1,
+        "total_units": 1,
+        "progress_pct": "100",
+        "schema_version": 2,
+        "id_optimizacion": 1,
+        "estado": "COMPLETADA",
+        "metodo": "FF",
+        "order_ids": [
+          1
+        ],
+        "configuracion": {
+          "resolucion_raster_mm": "1.000",
+          "margen_mm": "0.00",
+          "separacion_mm": "0.00",
+          "paso_angular_grados": "5.00"
+        },
+        "groups": [
+          {
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "units": [
+              {
+                "id_tipo_vidrio": 8,
+                "espesor_mm": "6.0",
+                "id_pedido": 1,
+                "id_pieza": 1,
+                "unit_index": 1,
+                "tipo_forma": "RECTANGULO",
+                "geometria": {
+                  "type": "RECTANGULO",
+                  "width_mm": 50,
+                  "height_mm": 50
+                },
+                "area_mm2": "2500.00"
+              }
+            ],
+            "stock_compatible": true
+          }
+        ],
+        "placements": [
+          {
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "id_pedido": 1,
+            "id_pieza": 1,
+            "unit_index": 1,
+            "x_mm": "0.000",
+            "y_mm": "0.000",
+            "rotation_deg": "0",
+            "resolution_mm": "1.000",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 50,
+              "height_mm": 50
+            }
+          }
+        ],
+        "materials_used": [
+          {
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 100,
+              "height_mm": 50
+            },
+            "area_mm2": "5000.0000"
+          }
+        ],
+        "residual_regions": [
+          {
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "x_mm": "50.000",
+            "y_mm": "0.000",
+            "width_mm": "50.000",
+            "height_mm": "50.000",
+            "area_mm2": "2500.000000"
+          }
+        ],
+        "unplaced_units": [],
+        "completo": true,
+        "metrics_available": true,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 1
+        },
+        "tiempo_computacional_ms": 1,
+        "termination_reason": "COMPLETED"
+      }
+    },
+    "2": {
+      "profile": "comparison-v2",
+      "schema_version": 2,
+      "comparison_id": 1,
+      "execution": {
+        "execution_id": 2,
+        "method": "BF",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": true,
+        "placed_units": 1,
+        "total_units": 1,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 1
+        },
+        "computation_time_ms": 1,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1
+          }
+        }
+      },
+      "result": {
+        "placed_units": 1,
+        "total_units": 1,
+        "progress_pct": "100",
+        "schema_version": 2,
+        "id_optimizacion": 1,
+        "estado": "COMPLETADA",
+        "metodo": "BF",
+        "order_ids": [
+          1
+        ],
+        "configuracion": {
+          "resolucion_raster_mm": "1.000",
+          "margen_mm": "0.00",
+          "separacion_mm": "0.00",
+          "paso_angular_grados": "5.00"
+        },
+        "groups": [
+          {
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "units": [
+              {
+                "id_tipo_vidrio": 8,
+                "espesor_mm": "6.0",
+                "id_pedido": 1,
+                "id_pieza": 1,
+                "unit_index": 1,
+                "tipo_forma": "RECTANGULO",
+                "geometria": {
+                  "type": "RECTANGULO",
+                  "width_mm": 50,
+                  "height_mm": 50
+                },
+                "area_mm2": "2500.00"
+              }
+            ],
+            "stock_compatible": true
+          }
+        ],
+        "placements": [
+          {
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "id_pedido": 1,
+            "id_pieza": 1,
+            "unit_index": 1,
+            "x_mm": "0.000",
+            "y_mm": "0.000",
+            "rotation_deg": "0",
+            "resolution_mm": "1.000",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 50,
+              "height_mm": 50
+            }
+          }
+        ],
+        "materials_used": [
+          {
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 100,
+              "height_mm": 50
+            },
+            "area_mm2": "5000.0000"
+          }
+        ],
+        "residual_regions": [
+          {
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "x_mm": "50.000",
+            "y_mm": "0.000",
+            "width_mm": "50.000",
+            "height_mm": "50.000",
+            "area_mm2": "2500.000000"
+          }
+        ],
+        "unplaced_units": [],
+        "completo": true,
+        "metrics_available": true,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 1
+        },
+        "tiempo_computacional_ms": 1,
+        "termination_reason": "COMPLETED"
+      }
+    },
+    "3": {
+      "profile": "comparison-v2",
+      "schema_version": 2,
+      "comparison_id": 1,
+      "execution": {
+        "execution_id": 3,
+        "method": "WF",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": true,
+        "placed_units": 1,
+        "total_units": 1,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 1
+        },
+        "computation_time_ms": 1,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1
+          }
+        }
+      },
+      "result": {
+        "placed_units": 1,
+        "total_units": 1,
+        "progress_pct": "100",
+        "schema_version": 2,
+        "id_optimizacion": 1,
+        "estado": "COMPLETADA",
+        "metodo": "WF",
+        "order_ids": [
+          1
+        ],
+        "configuracion": {
+          "resolucion_raster_mm": "1.000",
+          "margen_mm": "0.00",
+          "separacion_mm": "0.00",
+          "paso_angular_grados": "5.00"
+        },
+        "groups": [
+          {
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "units": [
+              {
+                "id_tipo_vidrio": 8,
+                "espesor_mm": "6.0",
+                "id_pedido": 1,
+                "id_pieza": 1,
+                "unit_index": 1,
+                "tipo_forma": "RECTANGULO",
+                "geometria": {
+                  "type": "RECTANGULO",
+                  "width_mm": 50,
+                  "height_mm": 50
+                },
+                "area_mm2": "2500.00"
+              }
+            ],
+            "stock_compatible": true
+          }
+        ],
+        "placements": [
+          {
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "id_pedido": 1,
+            "id_pieza": 1,
+            "unit_index": 1,
+            "x_mm": "0.000",
+            "y_mm": "0.000",
+            "rotation_deg": "0",
+            "resolution_mm": "1.000",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 50,
+              "height_mm": 50
+            }
+          }
+        ],
+        "materials_used": [
+          {
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 100,
+              "height_mm": 50
+            },
+            "area_mm2": "5000.0000"
+          }
+        ],
+        "residual_regions": [
+          {
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "x_mm": "50.000",
+            "y_mm": "0.000",
+            "width_mm": "50.000",
+            "height_mm": "50.000",
+            "area_mm2": "2500.000000"
+          }
+        ],
+        "unplaced_units": [],
+        "completo": true,
+        "metrics_available": true,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 1
+        },
+        "tiempo_computacional_ms": 1,
+        "termination_reason": "COMPLETED"
+      }
+    },
+    "4": {
+      "profile": "comparison-v2",
+      "schema_version": 2,
+      "comparison_id": 1,
+      "execution": {
+        "execution_id": 4,
+        "method": "HF",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": true,
+        "placed_units": 1,
+        "total_units": 1,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 2
+        },
+        "computation_time_ms": 2,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "accepted_pocket": 0,
+            "activation_attempts": 0,
+            "anchors_checked": 0,
+            "boundary_rows": 0,
+            "budget_exhausted": 0,
+            "check_rows": 0,
+            "coverage_fallback": 0,
+            "fallback_used": 1,
+            "max_region_anchors_observed": 0,
+            "max_region_checks_observed": 0,
+            "orientations_inspected": 0,
+            "placement_checks": 0,
+            "pocket_candidates": 0,
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1,
+            "seed_probes": 0,
+            "sheet_fallback": 0
+          }
+        }
+      },
+      "result": {
+        "placed_units": 1,
+        "total_units": 1,
+        "progress_pct": "100",
+        "schema_version": 2,
+        "id_optimizacion": 1,
+        "estado": "COMPLETADA",
+        "metodo": "HF",
+        "order_ids": [
+          1
+        ],
+        "configuracion": {
+          "resolucion_raster_mm": "1.000",
+          "margen_mm": "0.00",
+          "separacion_mm": "0.00",
+          "paso_angular_grados": "5.00"
+        },
+        "groups": [
+          {
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "units": [
+              {
+                "id_tipo_vidrio": 8,
+                "espesor_mm": "6.0",
+                "id_pedido": 1,
+                "id_pieza": 1,
+                "unit_index": 1,
+                "tipo_forma": "RECTANGULO",
+                "geometria": {
+                  "type": "RECTANGULO",
+                  "width_mm": 50,
+                  "height_mm": 50
+                },
+                "area_mm2": "2500.00"
+              }
+            ],
+            "stock_compatible": true
+          }
+        ],
+        "placements": [
+          {
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "id_pedido": 1,
+            "id_pieza": 1,
+            "unit_index": 1,
+            "x_mm": "0.000",
+            "y_mm": "0.000",
+            "rotation_deg": "0",
+            "resolution_mm": "1.000",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 50,
+              "height_mm": 50
+            }
+          }
+        ],
+        "materials_used": [
+          {
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 100,
+              "height_mm": 50
+            },
+            "area_mm2": "5000.0000"
+          }
+        ],
+        "residual_regions": [
+          {
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "x_mm": "50.000",
+            "y_mm": "0.000",
+            "width_mm": "50.000",
+            "height_mm": "50.000",
+            "area_mm2": "2500.000000"
+          }
+        ],
+        "unplaced_units": [],
+        "completo": true,
+        "metrics_available": true,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 2
+        },
+        "tiempo_computacional_ms": 2,
+        "termination_reason": "COMPLETED"
+      }
+    },
+    "5": {
+      "profile": "comparison-v2",
+      "schema_version": 2,
+      "comparison_id": 1,
+      "execution": {
+        "execution_id": 5,
+        "method": "M5",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": true,
+        "placed_units": 1,
+        "total_units": 1,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 1
+        },
+        "computation_time_ms": 1,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1
+          }
+        }
+      },
+      "result": {
+        "placed_units": 1,
+        "total_units": 1,
+        "progress_pct": "100",
+        "schema_version": 2,
+        "id_optimizacion": 1,
+        "estado": "COMPLETADA",
+        "metodo": "M5",
+        "order_ids": [
+          1
+        ],
+        "configuracion": {
+          "resolucion_raster_mm": "1.000",
+          "margen_mm": "0.00",
+          "separacion_mm": "0.00",
+          "paso_angular_grados": "5.00"
+        },
+        "groups": [
+          {
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "units": [
+              {
+                "id_tipo_vidrio": 8,
+                "espesor_mm": "6.0",
+                "id_pedido": 1,
+                "id_pieza": 1,
+                "unit_index": 1,
+                "tipo_forma": "RECTANGULO",
+                "geometria": {
+                  "type": "RECTANGULO",
+                  "width_mm": 50,
+                  "height_mm": 50
+                },
+                "area_mm2": "2500.00"
+              }
+            ],
+            "stock_compatible": true
+          }
+        ],
+        "placements": [
+          {
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "id_pedido": 1,
+            "id_pieza": 1,
+            "unit_index": 1,
+            "x_mm": "0.000",
+            "y_mm": "0.000",
+            "rotation_deg": "0",
+            "resolution_mm": "1.000",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 50,
+              "height_mm": 50
+            }
+          }
+        ],
+        "materials_used": [
+          {
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 100,
+              "height_mm": 50
+            },
+            "area_mm2": "5000.0000"
+          }
+        ],
+        "residual_regions": [
+          {
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "x_mm": "50.000",
+            "y_mm": "0.000",
+            "width_mm": "50.000",
+            "height_mm": "50.000",
+            "area_mm2": "2500.000000"
+          }
+        ],
+        "unplaced_units": [],
+        "completo": true,
+        "metrics_available": true,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 1
+        },
+        "tiempo_computacional_ms": 1,
+        "termination_reason": "COMPLETED"
+      }
+    },
+    "6": {
+      "profile": "comparison-v2",
+      "schema_version": 2,
+      "comparison_id": 1,
+      "execution": {
+        "execution_id": 6,
+        "method": "M6-BS",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": true,
+        "placed_units": 1,
+        "total_units": 1,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 22
+        },
+        "computation_time_ms": 22,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "alternatives_pruned": 0,
+            "completed_levels": 1,
+            "expansions": 2,
+            "geometry_probes": 20,
+            "max_frontier": 2,
+            "parents": 1,
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1,
+            "state_bytes_bound": 299712
+          }
+        }
+      },
+      "result": {
+        "placed_units": 1,
+        "total_units": 1,
+        "progress_pct": "100",
+        "schema_version": 2,
+        "id_optimizacion": 1,
+        "estado": "COMPLETADA",
+        "metodo": "M6-BS",
+        "order_ids": [
+          1
+        ],
+        "configuracion": {
+          "resolucion_raster_mm": "1.000",
+          "margen_mm": "0.00",
+          "separacion_mm": "0.00",
+          "paso_angular_grados": "5.00"
+        },
+        "groups": [
+          {
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "units": [
+              {
+                "id_tipo_vidrio": 8,
+                "espesor_mm": "6.0",
+                "id_pedido": 1,
+                "id_pieza": 1,
+                "unit_index": 1,
+                "tipo_forma": "RECTANGULO",
+                "geometria": {
+                  "type": "RECTANGULO",
+                  "width_mm": 50,
+                  "height_mm": 50
+                },
+                "area_mm2": "2500.00"
+              }
+            ],
+            "stock_compatible": true
+          }
+        ],
+        "placements": [
+          {
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "id_pedido": 1,
+            "id_pieza": 1,
+            "unit_index": 1,
+            "x_mm": "0.000",
+            "y_mm": "0.000",
+            "rotation_deg": "0",
+            "resolution_mm": "1.000",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 50,
+              "height_mm": 50
+            }
+          }
+        ],
+        "materials_used": [
+          {
+            "id_tipo_vidrio": 8,
+            "espesor_mm": "6.0",
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 100,
+              "height_mm": 50
+            },
+            "area_mm2": "5000.0000"
+          }
+        ],
+        "residual_regions": [
+          {
+            "material_source": "PLANCHA",
+            "material_id": 702,
+            "stock_unit_index": 1,
+            "x_mm": "50.000",
+            "y_mm": "0.000",
+            "width_mm": "50.000",
+            "height_mm": "50.000",
+            "area_mm2": "2500.000000"
+          }
+        ],
+        "unplaced_units": [],
+        "completo": true,
+        "metrics_available": true,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 22
+        },
+        "tiempo_computacional_ms": 22,
+        "termination_reason": "COMPLETED"
+      }
+    }
+  },
+  "recovered": {
+    "profile": "comparison-v2",
+    "schema_version": 2,
+    "comparison_id": 1,
+    "version": 45,
+    "status": "COMPLETADA",
+    "input_sha256": "ce5a45bc1382c470edab349745dcedf8869636ed061f2b45aa9dfdc0dfdf9d93",
+    "order_ids": [
+      1
+    ],
+    "configuration": {
+      "resolucion_raster_mm": "1.000",
+      "margen_mm": "0.00",
+      "separacion_mm": "0.00",
+      "paso_angular_grados": "5.00"
+    },
+    "configuration_id": 1,
+    "configuration_version": 1,
+    "requested_pieces": [
+      {
+        "area_mm2": "2500.00",
+        "cantidad": 1,
+        "dimensiones": {
+          "height_mm": 50,
+          "type": "RECTANGULO",
+          "width_mm": 50
+        },
+        "espesor_mm": "6.0",
+        "geometria": {
+          "height_mm": 50,
+          "type": "RECTANGULO",
+          "width_mm": 50
+        },
+        "id_pedido": 1,
+        "id_pieza": 1,
+        "id_tipo_vidrio": 8,
+        "material_nombre": "E2E-single-c99c661823-0",
+        "tipo_forma": "RECTANGULO"
+      }
+    ],
+    "executions": [
+      {
+        "execution_id": 1,
+        "method": "FF",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": false,
+        "placed_units": 1,
+        "total_units": 1,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 1
+        },
+        "computation_time_ms": 1,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1
+          }
+        }
+      },
+      {
+        "execution_id": 2,
+        "method": "BF",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": false,
+        "placed_units": 1,
+        "total_units": 1,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 1
+        },
+        "computation_time_ms": 1,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1
+          }
+        }
+      },
+      {
+        "execution_id": 3,
+        "method": "WF",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": false,
+        "placed_units": 1,
+        "total_units": 1,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 1
+        },
+        "computation_time_ms": 1,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1
+          }
+        }
+      },
+      {
+        "execution_id": 4,
+        "method": "HF",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": false,
+        "placed_units": 1,
+        "total_units": 1,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 2
+        },
+        "computation_time_ms": 2,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "accepted_pocket": 0,
+            "activation_attempts": 0,
+            "anchors_checked": 0,
+            "boundary_rows": 0,
+            "budget_exhausted": 0,
+            "check_rows": 0,
+            "coverage_fallback": 0,
+            "fallback_used": 1,
+            "max_region_anchors_observed": 0,
+            "max_region_checks_observed": 0,
+            "orientations_inspected": 0,
+            "placement_checks": 0,
+            "pocket_candidates": 0,
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1,
+            "seed_probes": 0,
+            "sheet_fallback": 0
+          }
+        }
+      },
+      {
+        "execution_id": 5,
+        "method": "M5",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": false,
+        "placed_units": 1,
+        "total_units": 1,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 1
+        },
+        "computation_time_ms": 1,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1
+          }
+        }
+      },
+      {
+        "execution_id": 6,
+        "method": "M6-BS",
+        "status": "COMPLETADA",
+        "dispatch_state": "TERMINATED",
+        "outcome": "COMPLETE",
+        "result_available": true,
+        "complete": true,
+        "eligible": false,
+        "placed_units": 1,
+        "total_units": 1,
+        "metrics": {
+          "aprovechamiento_pct": "50.000",
+          "merma_mm2": "0.000000",
+          "planchas_nuevas_usadas": 1,
+          "retazo_recuperable_mm2": "2500.000000",
+          "area_material_total_mm2": "5000.0000",
+          "area_piezas_colocadas_mm2": "2500.00",
+          "tiempo_computacional_ms": 22
+        },
+        "computation_time_ms": 22,
+        "diagnostic": {
+          "origin": "ENGINE",
+          "termination_reason": "COMPLETED",
+          "statistics": {
+            "alternatives_pruned": 0,
+            "completed_levels": 1,
+            "expansions": 2,
+            "geometry_probes": 20,
+            "max_frontier": 2,
+            "parents": 1,
+            "runtime_dispatched": 1,
+            "runtime_engine_started": 1,
+            "state_bytes_bound": 299712
+          }
+        }
+      }
+    ],
+    "selected_execution_id": 5,
+    "terminal": true,
+    "incomplete": false,
+    "released": false,
+    "confirmed": true,
+    "selection_allowed": false,
+    "confirmable": false,
+    "confirmation": {
+      "key": "5711427f-4a18-4ae6-8523-a1b41b000aa9",
+      "method": "M5",
+      "receipt": {
+        "order_ids": [
+          1
+        ],
+        "optimization_id": 1,
+        "remnants_created": [
+          {
+            "x_mm": "50.000",
+            "y_mm": "0.000",
+            "source": {
+              "source": "PLANCHA",
+              "area_mm2": "5000.0000",
+              "geometry": {
+                "type": "RECTANGULO",
+                "width_mm": 100,
+                "height_mm": 50
+              },
+              "material_id": 702,
+              "thickness_mm": "6.0",
+              "glass_type_id": 8,
+              "physical_unit_index": 1
+            },
+            "area_mm2": "2500.00",
+            "geometry": {
+              "type": "RECTANGULO",
+              "width_mm": 50,
+              "height_mm": 50
+            },
+            "remnant_id": 1,
+            "exact_area_mm2": "2500.000000"
+          }
+        ],
+        "materials_consumed": [
+          {
+            "source": "PLANCHA",
+            "area_mm2": "5000.0000",
+            "geometry": {
+              "type": "RECTANGULO",
+              "width_mm": 100,
+              "height_mm": 50
+            },
+            "material_id": 702,
+            "thickness_mm": "6.0",
+            "glass_type_id": 8,
+            "physical_unit_index": 1
+          }
+        ]
+      },
+      "actor_id": 5,
+      "confirmed_at": "2026-11-04T13:55:14.461974+00:00",
+      "execution_id": 5,
+      "receipt_version": 1,
+      "expected_version": 44,
+      "skipped_residuals": []
+    },
+    "methods": [
+      "FF",
+      "BF",
+      "WF",
+      "HF",
+      "M5",
+      "M6-BS"
+    ],
+    "supervisor_stopped": true
+  },
+  "posts": 1,
+  "retry": "SAME_RECEIPT_NO_DELTA"
+}

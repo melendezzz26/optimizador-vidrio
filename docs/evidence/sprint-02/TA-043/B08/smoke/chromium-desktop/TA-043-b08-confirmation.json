@@ -35,7 +35,7 @@
         "id_pedido": 1,
         "id_pieza": 1,
         "id_tipo_vidrio": 8,
-        "material_nombre": "E2E-single-b0d57869c2-0",
+        "material_nombre": "E2E-single-abfacc6cc6-0",
         "tipo_forma": "RECTANGULO"
       }
     ],
@@ -88,9 +88,9 @@
           "retazo_recuperable_mm2": "2500.000000",
           "area_material_total_mm2": "5000.0000",
           "area_piezas_colocadas_mm2": "2500.00",
-          "tiempo_computacional_ms": 2
+          "tiempo_computacional_ms": 1
         },
-        "computation_time_ms": 2,
+        "computation_time_ms": 1,
         "diagnostic": {
           "origin": "ENGINE",
           "termination_reason": "COMPLETED",
@@ -148,9 +148,9 @@
           "retazo_recuperable_mm2": "2500.000000",
           "area_material_total_mm2": "5000.0000",
           "area_piezas_colocadas_mm2": "2500.00",
-          "tiempo_computacional_ms": 1
+          "tiempo_computacional_ms": 3
         },
-        "computation_time_ms": 1,
+        "computation_time_ms": 3,
         "diagnostic": {
           "origin": "ENGINE",
           "termination_reason": "COMPLETED",
@@ -193,9 +193,9 @@
           "retazo_recuperable_mm2": "2500.000000",
           "area_material_total_mm2": "5000.0000",
           "area_piezas_colocadas_mm2": "2500.00",
-          "tiempo_computacional_ms": 1
+          "tiempo_computacional_ms": 2
         },
-        "computation_time_ms": 1,
+        "computation_time_ms": 2,
         "diagnostic": {
           "origin": "ENGINE",
           "termination_reason": "COMPLETED",
@@ -223,9 +223,9 @@
           "retazo_recuperable_mm2": "2500.000000",
           "area_material_total_mm2": "5000.0000",
           "area_piezas_colocadas_mm2": "2500.00",
-          "tiempo_computacional_ms": 15
+          "tiempo_computacional_ms": 17
         },
-        "computation_time_ms": 15,
+        "computation_time_ms": 17,
         "diagnostic": {
           "origin": "ENGINE",
           "termination_reason": "COMPLETED",
@@ -313,7 +313,7 @@
         "espesor_mm": "5.5",
         "cantidad": 2,
         "estado": true,
-        "fecha_registro": "2026-11-04 13:19:35.182556+00:00",
+        "fecha_registro": "2026-11-04 13:54:25.718268+00:00",
         "id_tipo_vidrio": 7
       },
       {
@@ -323,7 +323,7 @@
         "espesor_mm": "6.0",
         "cantidad": 1,
         "estado": true,
-        "fecha_registro": "2026-11-04 13:19:38.441629+00:00",
+        "fecha_registro": "2026-11-04 13:54:30.600379+00:00",
         "id_tipo_vidrio": 8
       }
     ],
@@ -403,39 +403,39 @@
           "runtime": {
             "workers": {
               "1": {
-                "pid": 1256,
-                "start_ticks": "49804"
+                "pid": 751,
+                "start_ticks": "17225"
               },
               "2": {
-                "pid": 1259,
-                "start_ticks": "49843"
+                "pid": 754,
+                "start_ticks": "17267"
               },
               "3": {
-                "pid": 1262,
-                "start_ticks": "49880"
+                "pid": 757,
+                "start_ticks": "17307"
               },
               "4": {
-                "pid": 1267,
-                "start_ticks": "49920"
+                "pid": 760,
+                "start_ticks": "17353"
               },
               "5": {
-                "pid": 1275,
-                "start_ticks": "49961"
+                "pid": 773,
+                "start_ticks": "17396"
               },
               "6": {
-                "pid": 1278,
-                "start_ticks": "50007"
+                "pid": 776,
+                "start_ticks": "17440"
               }
             },
             "supervisor": {
-              "token": "757b220cb97e49599c0db065ffa451f3",
+              "token": "5acf67452f7d4ad893a92c27602a7e3a",
               "identity": {
-                "pid": 989,
-                "start_ticks": "48986"
+                "pid": 472,
+                "start_ticks": "16178"
               }
             },
             "runtime_version": 1,
-            "supervisor_stopped_at": "2026-11-04T13:19:43.459158+00:00"
+            "supervisor_stopped_at": "2026-11-04T13:54:35.964048+00:00"
           },
           "input_sha256": "ce5a45bc1382c470edab349745dcedf8869636ed061f2b45aa9dfdc0dfdf9d93",
           "configuration_id": 1,
@@ -459,7 +459,7 @@
                 "height_mm": 50
               },
               "id_tipo_vidrio": 8,
-              "material_nombre": "E2E-single-b0d57869c2-0"
+              "material_nombre": "E2E-single-abfacc6cc6-0"
             }
           ],
           "engine_parameters": {
@@ -483,7 +483,7 @@
         "espesor_mm": "5.5",
         "cantidad": 2,
         "estado": true,
-        "fecha_registro": "2026-11-04 13:19:35.182556+00:00",
+        "fecha_registro": "2026-11-04 13:54:25.718268+00:00",
         "id_tipo_vidrio": 7
       },
       {
@@ -493,7 +493,7 @@
         "espesor_mm": "6.0",
         "cantidad": 1,
         "estado": true,
-        "fecha_registro": "2026-11-04 13:19:38.441629+00:00",
+        "fecha_registro": "2026-11-04 13:54:30.600379+00:00",
         "id_tipo_vidrio": 8
       }
     ],
@@ -573,39 +573,39 @@
           "runtime": {
             "workers": {
               "1": {
-                "pid": 1256,
-                "start_ticks": "49804"
+                "pid": 751,
+                "start_ticks": "17225"
               },
               "2": {
-                "pid": 1259,
-                "start_ticks": "49843"
+                "pid": 754,
+                "start_ticks": "17267"
               },
               "3": {
-                "pid": 1262,
-                "start_ticks": "49880"
+                "pid": 757,
+                "start_ticks": "17307"
               },
               "4": {
-                "pid": 1267,
-                "start_ticks": "49920"
+                "pid": 760,
+                "start_ticks": "17353"
               },
               "5": {
-                "pid": 1275,
-                "start_ticks": "49961"
+                "pid": 773,
+                "start_ticks": "17396"
               },
               "6": {
-                "pid": 1278,
-                "start_ticks": "50007"
+                "pid": 776,
+                "start_ticks": "17440"
               }
             },
             "supervisor": {
-              "token": "757b220cb97e49599c0db065ffa451f3",
+              "token": "5acf67452f7d4ad893a92c27602a7e3a",
               "identity": {
-                "pid": 989,
-                "start_ticks": "48986"
+                "pid": 472,
+                "start_ticks": "16178"
               }
             },
             "runtime_version": 1,
-            "supervisor_stopped_at": "2026-11-04T13:19:43.459158+00:00"
+            "supervisor_stopped_at": "2026-11-04T13:54:35.964048+00:00"
           },
           "input_sha256": "ce5a45bc1382c470edab349745dcedf8869636ed061f2b45aa9dfdc0dfdf9d93",
           "configuration_id": 1,
@@ -629,7 +629,7 @@
                 "height_mm": 50
               },
               "id_tipo_vidrio": 8,
-              "material_nombre": "E2E-single-b0d57869c2-0"
+              "material_nombre": "E2E-single-abfacc6cc6-0"
             }
           ],
           "engine_parameters": {
@@ -653,7 +653,7 @@
         "espesor_mm": "5.5",
         "cantidad": 2,
         "estado": true,
-        "fecha_registro": "2026-11-04 13:19:35.182556+00:00",
+        "fecha_registro": "2026-11-04 13:54:25.718268+00:00",
         "id_tipo_vidrio": 7
       },
       {
@@ -663,7 +663,7 @@
         "espesor_mm": "6.0",
         "cantidad": 0,
         "estado": false,
-        "fecha_registro": "2026-11-04 13:19:38.441629+00:00",
+        "fecha_registro": "2026-11-04 13:54:30.600379+00:00",
         "id_tipo_vidrio": 8
       }
     ],
@@ -679,7 +679,7 @@
         },
         "area_mm2": "2500.00",
         "estado": true,
-        "fecha_registro": "2026-11-04 13:19:45.445193+00:00",
+        "fecha_registro": "2026-11-04 13:54:37.909422+00:00",
         "id_ejecucion_origen": 5,
         "id_tipo_vidrio": 8
       }
@@ -694,7 +694,7 @@
         "motivo": "Confirmación Best Residual Fit de optimización 1.",
         "observacion": "stock_unit_index=1",
         "id_usuario": 5,
-        "fecha": "2026-11-04 13:19:45.441789+00:00",
+        "fecha": "2026-11-04 13:54:37.906911+00:00",
         "id_optimizacion": 1
       }
     ],
@@ -772,42 +772,42 @@
           "runtime": {
             "workers": {
               "1": {
-                "pid": 1256,
-                "start_ticks": "49804"
+                "pid": 751,
+                "start_ticks": "17225"
               },
               "2": {
-                "pid": 1259,
-                "start_ticks": "49843"
+                "pid": 754,
+                "start_ticks": "17267"
               },
               "3": {
-                "pid": 1262,
-                "start_ticks": "49880"
+                "pid": 757,
+                "start_ticks": "17307"
               },
               "4": {
-                "pid": 1267,
-                "start_ticks": "49920"
+                "pid": 760,
+                "start_ticks": "17353"
               },
               "5": {
-                "pid": 1275,
-                "start_ticks": "49961"
+                "pid": 773,
+                "start_ticks": "17396"
               },
               "6": {
-                "pid": 1278,
-                "start_ticks": "50007"
+                "pid": 776,
+                "start_ticks": "17440"
               }
             },
             "supervisor": {
-              "token": "757b220cb97e49599c0db065ffa451f3",
+              "token": "5acf67452f7d4ad893a92c27602a7e3a",
               "identity": {
-                "pid": 989,
-                "start_ticks": "48986"
+                "pid": 472,
+                "start_ticks": "16178"
               }
             },
             "runtime_version": 1,
-            "supervisor_stopped_at": "2026-11-04T13:19:43.459158+00:00"
+            "supervisor_stopped_at": "2026-11-04T13:54:35.964048+00:00"
           },
           "confirmation": {
-            "key": "aba85137-f23b-4af7-a81d-e73094a4be0d",
+            "key": "e8d93228-1fd8-4ac4-baaf-734329686298",
             "method": "M5",
             "receipt": {
               "order_ids": [
@@ -858,7 +858,7 @@
               ]
             },
             "actor_id": 5,
-            "confirmed_at": "2026-11-04T13:19:45.450861+00:00",
+            "confirmed_at": "2026-11-04T13:54:37.916268+00:00",
             "execution_id": 5,
             "receipt_version": 1,
             "expected_version": 44,
@@ -886,7 +886,7 @@
                 "height_mm": 50
               },
               "id_tipo_vidrio": 8,
-              "material_nombre": "E2E-single-b0d57869c2-0"
+              "material_nombre": "E2E-single-abfacc6cc6-0"
             }
           ],
           "engine_parameters": {
@@ -1062,9 +1062,9 @@
           "retazo_recuperable_mm2": "2500.000000",
           "area_material_total_mm2": "5000.0000",
           "area_piezas_colocadas_mm2": "2500.00",
-          "tiempo_computacional_ms": 2
+          "tiempo_computacional_ms": 1
         },
-        "computation_time_ms": 2,
+        "computation_time_ms": 1,
         "diagnostic": {
           "origin": "ENGINE",
           "termination_reason": "COMPLETED",
@@ -1172,9 +1172,9 @@
           "retazo_recuperable_mm2": "2500.000000",
           "area_material_total_mm2": "5000.0000",
           "area_piezas_colocadas_mm2": "2500.00",
-          "tiempo_computacional_ms": 2
+          "tiempo_computacional_ms": 1
         },
-        "tiempo_computacional_ms": 2,
+        "tiempo_computacional_ms": 1,
         "termination_reason": "COMPLETED"
       }
     },
@@ -1338,9 +1338,9 @@
           "retazo_recuperable_mm2": "2500.000000",
           "area_material_total_mm2": "5000.0000",
           "area_piezas_colocadas_mm2": "2500.00",
-          "tiempo_computacional_ms": 1
+          "tiempo_computacional_ms": 3
         },
-        "computation_time_ms": 1,
+        "computation_time_ms": 3,
         "diagnostic": {
           "origin": "ENGINE",
           "termination_reason": "COMPLETED",
@@ -1463,9 +1463,9 @@
           "retazo_recuperable_mm2": "2500.000000",
           "area_material_total_mm2": "5000.0000",
           "area_piezas_colocadas_mm2": "2500.00",
-          "tiempo_computacional_ms": 1
+          "tiempo_computacional_ms": 3
         },
-        "tiempo_computacional_ms": 1,
+        "tiempo_computacional_ms": 3,
         "termination_reason": "COMPLETED"
       }
     },
@@ -1491,9 +1491,9 @@
           "retazo_recuperable_mm2": "2500.000000",
           "area_material_total_mm2": "5000.0000",
           "area_piezas_colocadas_mm2": "2500.00",
-          "tiempo_computacional_ms": 1
+          "tiempo_computacional_ms": 2
         },
-        "computation_time_ms": 1,
+        "computation_time_ms": 2,
         "diagnostic": {
           "origin": "ENGINE",
           "termination_reason": "COMPLETED",
@@ -1601,9 +1601,9 @@
           "retazo_recuperable_mm2": "2500.000000",
           "area_material_total_mm2": "5000.0000",
           "area_piezas_colocadas_mm2": "2500.00",
-          "tiempo_computacional_ms": 1
+          "tiempo_computacional_ms": 2
         },
-        "tiempo_computacional_ms": 1,
+        "tiempo_computacional_ms": 2,
         "termination_reason": "COMPLETED"
       }
     },
@@ -1629,9 +1629,9 @@
           "retazo_recuperable_mm2": "2500.000000",
           "area_material_total_mm2": "5000.0000",
           "area_piezas_colocadas_mm2": "2500.00",
-          "tiempo_computacional_ms": 15
+          "tiempo_computacional_ms": 17
         },
-        "computation_time_ms": 15,
+        "computation_time_ms": 17,
         "diagnostic": {
           "origin": "ENGINE",
           "termination_reason": "COMPLETED",
@@ -1746,9 +1746,9 @@
           "retazo_recuperable_mm2": "2500.000000",
           "area_material_total_mm2": "5000.0000",
           "area_piezas_colocadas_mm2": "2500.00",
-          "tiempo_computacional_ms": 15
+          "tiempo_computacional_ms": 17
         },
-        "tiempo_computacional_ms": 15,
+        "tiempo_computacional_ms": 17,
         "termination_reason": "COMPLETED"
       }
     }
@@ -1789,7 +1789,7 @@
         "id_pedido": 1,
         "id_pieza": 1,
         "id_tipo_vidrio": 8,
-        "material_nombre": "E2E-single-b0d57869c2-0",
+        "material_nombre": "E2E-single-abfacc6cc6-0",
         "tipo_forma": "RECTANGULO"
       }
     ],
@@ -1842,9 +1842,9 @@
           "retazo_recuperable_mm2": "2500.000000",
           "area_material_total_mm2": "5000.0000",
           "area_piezas_colocadas_mm2": "2500.00",
-          "tiempo_computacional_ms": 2
+          "tiempo_computacional_ms": 1
         },
-        "computation_time_ms": 2,
+        "computation_time_ms": 1,
         "diagnostic": {
           "origin": "ENGINE",
           "termination_reason": "COMPLETED",
@@ -1902,9 +1902,9 @@
           "retazo_recuperable_mm2": "2500.000000",
           "area_material_total_mm2": "5000.0000",
           "area_piezas_colocadas_mm2": "2500.00",
-          "tiempo_computacional_ms": 1
+          "tiempo_computacional_ms": 3
         },
-        "computation_time_ms": 1,
+        "computation_time_ms": 3,
         "diagnostic": {
           "origin": "ENGINE",
           "termination_reason": "COMPLETED",
@@ -1947,9 +1947,9 @@
           "retazo_recuperable_mm2": "2500.000000",
           "area_material_total_mm2": "5000.0000",
           "area_piezas_colocadas_mm2": "2500.00",
-          "tiempo_computacional_ms": 1
+          "tiempo_computacional_ms": 2
         },
-        "computation_time_ms": 1,
+        "computation_time_ms": 2,
         "diagnostic": {
           "origin": "ENGINE",
           "termination_reason": "COMPLETED",
@@ -1977,9 +1977,9 @@
           "retazo_recuperable_mm2": "2500.000000",
           "area_material_total_mm2": "5000.0000",
           "area_piezas_colocadas_mm2": "2500.00",
-          "tiempo_computacional_ms": 15
+          "tiempo_computacional_ms": 17
         },
-        "computation_time_ms": 15,
+        "computation_time_ms": 17,
         "diagnostic": {
           "origin": "ENGINE",
           "termination_reason": "COMPLETED",
@@ -2005,7 +2005,7 @@
     "selection_allowed": false,
     "confirmable": false,
     "confirmation": {
-      "key": "aba85137-f23b-4af7-a81d-e73094a4be0d",
+      "key": "e8d93228-1fd8-4ac4-baaf-734329686298",
       "method": "M5",
       "receipt": {
         "order_ids": [
@@ -2056,7 +2056,7 @@
         ]
       },
       "actor_id": 5,
-      "confirmed_at": "2026-11-04T13:19:45.450861+00:00",
+      "confirmed_at": "2026-11-04T13:54:37.916268+00:00",
       "execution_id": 5,
       "receipt_version": 1,
       "expected_version": 44,

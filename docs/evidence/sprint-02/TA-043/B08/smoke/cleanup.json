@@ -1,7 +1,7 @@
 {
   "scope": "ST-INC-08: real manual v2 selection, confirmation, PostgreSQL deltas and retry",
   "runtime_root": "/home/fabri/.cache/newglass-validation.SXhCMM",
-  "temporary_root": "/tmp/newglass-ta043-b08-s9svuesp",
+  "temporary_root": "/tmp/newglass-ta043-b08-85dchkz6",
   "result": "PASS",
   "reused_test_selection": "TA-043 B08",
   "integral_smoke": "PENDING_B09",
