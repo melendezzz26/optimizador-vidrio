@@ -1,0 +1,98 @@
+{
+  "base": "df4a75be180d9dd59ba4b7fe7697cced3b1c161b",
+  "head": "df4a75be180d9dd59ba4b7fe7697cced3b1c161b",
+  "reports": {
+    "backend-confirmed-residual-review.xml": 43,
+    "backend-connection-review.xml": 2,
+    "backend-focused.xml": 50,
+    "backend-regression.xml": 179
+  },
+  "backend_distinct_passed": 183,
+  "frontend_distinct_passed": 54,
+  "smokes": {
+    "B07": {
+      "passed": 2,
+      "duration_ms": 37114.141,
+      "processes_after": [],
+      "cleaned": true
+    },
+    "B08": {
+      "passed": 2,
+      "duration_ms": 24032.064000000002,
+      "processes_after": [],
+      "cleaned": true
+    }
+  },
+  "stock_deltas": {
+    "chromium-desktop": {
+      "comparison_id": 1,
+      "execution_id": 5,
+      "method": "M5",
+      "new_movements": 1,
+      "consumed_quantity": 1,
+      "selection_inventory_unchanged": true,
+      "repeat_no_delta": true,
+      "new_remnants": 1,
+      "order_states": [
+        "CONFIRMADO"
+      ]
+    },
+    "chromium-mobile": {
+      "comparison_id": 2,
+      "execution_id": 11,
+      "method": "M5",
+      "new_movements": 1,
+      "consumed_quantity": 1,
+      "selection_inventory_unchanged": true,
+      "repeat_no_delta": true,
+      "new_remnants": 1,
+      "order_states": [
+        "CONFIRMADO"
+      ]
+    }
+  },
+  "requirements": 36,
+  "acceptance_criteria": 36,
+  "traceability_rows": 36,
+  "blocks": 11,
+  "spec_plan_unchanged": true,
+  "protected_code_unchanged": true,
+  "source_files": [
+    "backend/app/modules/optimization/application/comparison_confirmation.py",
+    "backend/app/modules/optimization/infrastructure/comparison_confirmation.py",
+    "backend/app/modules/optimization/infrastructure/comparison_v2_uow.py",
+    "backend/app/modules/optimization/presentation/comparison_v2_routes.py",
+    "backend/tests/api/optimization/test_comparison_v2_confirmation_api.py",
+    "backend/tests/api/optimization/test_comparisons_v2_api.py",
+    "backend/tests/integration/optimization/test_comparison_v2_confirmation.py",
+    "backend/tests/optimization_b01_smoke.py",
+    "backend/tests/optimization_b08_snapshot.py",
+    "backend/tests/optimization_b08_validation.py",
+    "frontend/src/features/optimization/ComparisonWorkspace.jsx",
+    "frontend/src/features/optimization/__tests__/ComparisonApiV2.test.jsx",
+    "frontend/src/features/optimization/__tests__/ComparisonWorkspaceV2.test.jsx",
+    "frontend/src/features/optimization/comparisonApiV2.js",
+    "frontend/src/features/optimization/comparisonController.js",
+    "frontend/tests/e2e/optimization-comparison.spec.js"
+  ],
+  "source_sha256": {
+    "backend/app/modules/optimization/application/comparison_confirmation.py": "58df807001603b6189f2aeffd8b954f5b675b977e73204d6570b16ac879671c4",
+    "backend/app/modules/optimization/infrastructure/comparison_confirmation.py": "6356b6628560bd0e985c6bc8b574db4942fef0a37e424c91f630567216a31f5b",
+    "backend/app/modules/optimization/infrastructure/comparison_v2_uow.py": "6cf0a25fd7fa51d9f1b72b7d9485b39dd606f6e71f0ed545d374072f78dfdc69",
+    "backend/app/modules/optimization/presentation/comparison_v2_routes.py": "51e2f93b7fcb1eb08c3c3a9771c07f1e8d7bd8a37d531b922918d9059a9b8521",
+    "backend/tests/api/optimization/test_comparison_v2_confirmation_api.py": "275a40cc9a1d2818863b7162df158df26ec071dda86f63368708882857f8bacb",
+    "backend/tests/api/optimization/test_comparisons_v2_api.py": "2e24a6feae80e571198520b2cdfd9a5bdb166ffa11e714aadd4558f3029d0440",
+    "backend/tests/integration/optimization/test_comparison_v2_confirmation.py": "5889a9711efd619a59e680344a5ab047acd2801a36a0f020d922b184f5a03053",
+    "backend/tests/optimization_b01_smoke.py": "d0deec857f58c02e85b0953f26c1c3dbcba34f180c7440aae0aad2b1ef6a3ffd",
+    "backend/tests/optimization_b08_snapshot.py": "205840305d80314a4dd2979614600706967a65f0bf7d4b8bb5e83b6351593b54",
+    "backend/tests/optimization_b08_validation.py": "127021ff100e5f904df51e0dc7a2fe7b492fe3ecd6bffdf7728bed9dd1654836",
+    "frontend/src/features/optimization/ComparisonWorkspace.jsx": "7a9d4d81299b13701fe563e4b3e5178fba6a30de88f1b0a5333f1a13f39ee2da",
+    "frontend/src/features/optimization/__tests__/ComparisonApiV2.test.jsx": "be7f191140637288b056f01a6576f19b6198ecb8d5901cfd1ea8f4a8b15a14b7",
+    "frontend/src/features/optimization/__tests__/ComparisonWorkspaceV2.test.jsx": "3ee42d4946ff9f807d55b5c31718e5a64a7bf19a51b9a8c4682b27cc61a25290",
+    "frontend/src/features/optimization/comparisonApiV2.js": "6921abdaf397503a48dc25f080724a2275e0755029fa15c9e8434dee85cb5d00",
+    "frontend/src/features/optimization/comparisonController.js": "156180f9dc3c71f4255cc75b880b1a04e3d6d7c624f2e9d3ad5afca6e914a2c4",
+    "frontend/tests/e2e/optimization-comparison.spec.js": "5c196dfc7fabdced5df98df00941074aa2c96d8068dea5bffad083db89a6e4ba"
+  },
+  "static_validation": "AST and git diff --check PASS",
+  "integral_smoke": "NOT_EXECUTED_B09_NOT_AUTHORIZED"
+}

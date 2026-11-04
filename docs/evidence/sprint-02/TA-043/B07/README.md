@@ -1,9 +1,9 @@
 # TA-043 / B07 — Interfaz, visualización y progreso
 
-**Estado: PARCIAL.** La interfaz y las pruebas focalizadas están preparadas y
-validadas localmente. ST-INC-07 **no ejecutado / bloqueado por entorno**, por lo
-que B07 no se declara COMPLETADO. Revisión de Fabricio pendiente. Fecha:
-04/11/2026.
+**Estado: COMPLETADO en su alcance técnico; revisión de Fabricio pendiente.**
+El bloqueo original se resolvió durante B08: ST-INC-07 pasó realmente en Chromium
+escritorio y móvil, con PostgreSQL aislado, FastAPI y Vite. Fecha: 04/11/2026.
+Los resultados locales iniciales se conservan debajo como antecedentes.
 
 [SPEC](../../../../specs/SPEC-TA-043-integracion-seis-motores.md) ·
 [PLAN](../../../../specs/PLAN-TA-043-integracion-seis-motores.md) ·
@@ -76,7 +76,7 @@ se repitió de forma aislada y sus 8 casos pasaron.
 
 ## ST-INC-07 — estado del smoke real
 
-**BLOQUEADO / NO EJECUTADO; no es PASS ni un resultado funcional FAIL.** El smoke
+**Antecedente de la entrega inicial: BLOQUEADO / NO EJECUTADO.** El smoke
 debe ejecutarse con el harness en Linux/WSL2, PostgreSQL privado, FastAPI, Vite y
 Chromium reales. En este host, `wsl.exe` respondió
 `Wsl/Service/CreateInstance/E_ACCESSDENIED`; Docker está instalado pero su daemon
@@ -96,3 +96,36 @@ caso en escritorio y móvil en un runtime válido. La interfaz v2 de selección 
 confirmación continúa pendiente de B08. ST-INT permanece pendiente de B09–B11.
 
 El resultado del entorno queda detallado en [environment.json](environment.json).
+
+### Recuperación autorizada durante B08
+
+La denegación `E_ACCESSDENIED` corresponde al sandbox del ejecutor. Un comando
+Linux mínimo y el arnés funcionaron al ejecutarse con la elevación autorizada;
+no se reinstaló WSL ni se cambiaron permisos globales, servicios o seguridad de
+Windows. No se utilizó Docker ni PostgreSQL compartido.
+
+**Resultado vigente: ST-INC-07 PASS, 2/2 escenarios reales.**
+[Reporte Playwright](smoke/playwright-report.json), [salida](smoke/execution.txt)
+y [limpieza/manifiesto de fuentes](smoke/cleanup.json). Se verificaron seis
+resultados completos y las siete pestañas, seis layouts 2D/3D con geometrías
+mixtas a 5°, métricas contra API, máscaras, recuperación por clave y recarga sin
+otro POST, historia v1 de tres métodos y `/runs`. Simular/consultar conservó
+inventario y movimientos. Hay capturas separadas de escritorio/móvil en `smoke/`.
+
+El primer intento real falló por buscar radios fuera de la pestaña Comparación;
+se conserva en [attempts/01-tab-context-failure.txt](attempts/01-tab-context-failure.txt)
+y [su limpieza](attempts/01-cleanup.json). Se corrigió el contexto de pestaña,
+el selector del panel y la comparación histórica contra el estado v1 terminal,
+sin aceptar una enumeración de Playwright como ejecución. Los radios incorporados
+por B08 se comprueban sin selección automática y con confirmación deshabilitada.
+ST-INC-07 no realiza confirmación: esa evidencia pertenece a B08.
+
+Desde la raíz del repositorio, PowerShell externa o ejecución WSL autorizada:
+
+```powershell
+wsl.exe -e bash -lc 'cd backend && /home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/bin/python -m tests.optimization_b01_smoke --block B07 --runtime-root /home/fabri/.cache/newglass-validation.SXhCMM'
+```
+
+El arnés conserva hashes de las fuentes ejecutadas, detiene sus servicios y
+elimina únicamente su copia temporal. `runner_exit: 0`, `processes_after: []`,
+`temporary_copy_removed: true`. SPEC/PLAN siguen Draft y ST-INT permanece pendiente.
