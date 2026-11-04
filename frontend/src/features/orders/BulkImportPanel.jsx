@@ -137,6 +137,7 @@ export default function BulkImportPanel({ token, materials = [], onClose, onAdd,
                 <label htmlFor={`${fixId}-${row.fila}`}>Fila {row.fila}</label>
                 <input id={`${fixId}-${row.fila}`} className="ng-control" value={drafts[row.fila] ?? row.texto}
                   aria-describedby={`${fixId}-${row.fila}-causes`} spellCheck={false}
+                  onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); revalidate(); } }}
                   onChange={event => setDrafts(current => ({ ...current, [row.fila]: event.target.value }))} />
                 <span id={`${fixId}-${row.fila}-causes`} className="orders-import__causes">{row.causas.join('; ')}</span>
               </div>

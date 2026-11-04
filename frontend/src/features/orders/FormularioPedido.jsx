@@ -113,6 +113,8 @@ export default function FormularioPedido({
   const [importPreview, setImportPreview] = useState(null);
   const bulkImportHasBlockingObservations = isImportOpen && (importPreview?.filas.some(row => row.estado !== 'VALIDO') ?? false);
   const importButtonRef = useRef(null);
+  // TA-046: después de agregar o eliminar, el foco va al primer control disponible de esta lista.
+  const focusRequestRef = useRef(null);
   const [listaAnimada] = useAutoAnimate();
   const nextGroupIdRef = useRef(0);
   const nextPieceIdRef = useRef(0);
@@ -212,6 +214,13 @@ export default function FormularioPedido({
     return () => trigger?.focus?.();
   }, [piezaEnEdicion]);
 
+  useEffect(() => {
+    const ids = focusRequestRef.current;
+    if (!ids) return;
+    focusRequestRef.current = null;
+    ids.map(id => document.getElementById(id)).find(element => element && !element.disabled)?.focus();
+  }, [materialGroups]);
+
   const recalculatePieceNames = (groups) => {
     let index = 1;
     return groups.map(group => ({
@@ -220,14 +229,21 @@ export default function FormularioPedido({
     }));
   };
 
+  const groupHeaderId = (groupId) => `${formId}-${groupId}-summary`;
+
   const addMaterialGroup = () => {
-    setCollapsedGroups(current => [...new Set([...current, ...materialGroups.filter(groupComplete).map(group => group.id)])]);
-    setMaterialGroups(curr => recalculatePieceNames([...curr, {
-      id: `group-${nextGroupIdRef.current++}`, tipo_vidrio_id: '', espesor: '', piezas: [createEmptyPiece()]
-    }]));
+    const group = { id: `group-${nextGroupIdRef.current++}`, tipo_vidrio_id: '', espesor: '', piezas: [createEmptyPiece()] };
+    setCollapsedGroups(current => [...new Set([...current, ...materialGroups.filter(groupComplete).map(item => item.id)])]);
+    setMaterialGroups(curr => recalculatePieceNames([...curr, group]));
+    focusRequestRef.current = [`${formId}-${group.id}-material`];
   };
 
-  const removeMaterialGroup = (groupId) => setMaterialGroups(curr => recalculatePieceNames(curr.filter(g => g.id !== groupId)));
+  const removeMaterialGroup = (groupId) => {
+    const index = materialGroups.findIndex(group => group.id === groupId);
+    const neighbours = [materialGroups[index - 1], materialGroups[index + 1]].filter(Boolean);
+    setMaterialGroups(curr => recalculatePieceNames(curr.filter(g => g.id !== groupId)));
+    focusRequestRef.current = neighbours.map(group => groupHeaderId(group.id));
+  };
 
   const updateMaterialGroup = (groupId, field, value) => {
     setMaterialGroups(curr => curr.map(group => {
@@ -238,18 +254,33 @@ export default function FormularioPedido({
   };
 
   const addPieceToGroup = (groupId) => {
+    const piece = createEmptyPiece();
     setMaterialGroups(curr => recalculatePieceNames(curr.map(group => {
       if (group.id !== groupId) return group;
-      return { ...group, piezas: [...group.piezas, createEmptyPiece()] };
+      return { ...group, piezas: [...group.piezas, piece] };
     })));
+    focusRequestRef.current = [`forma-${piece.id}`];
   };
 
   const removePiece = (groupId, pieceId) => {
+    const pieces = materialGroups.find(group => group.id === groupId)?.piezas ?? [];
+    const index = pieces.findIndex(piece => piece.id === pieceId);
+    const neighbours = [pieces[index + 1], pieces[index - 1]].filter(Boolean);
     setMaterialGroups(curr => recalculatePieceNames(curr.map(group => {
       if (group.id !== groupId) return group;
       return { ...group, piezas: group.piezas.filter(p => p.id !== pieceId) };
     })));
+    focusRequestRef.current = [...neighbours.map(piece => `forma-${piece.id}`), `${formId}-${groupId}-add-piece`, groupHeaderId(groupId)];
   };
+
+  // TA-046 RN-01: Enter en un campo de las piezas guarda el pedido, solo si es válido.
+  function handlePiecesKeyDown(event) {
+    const { target } = event;
+    if (event.key !== 'Enter' || event.nativeEvent.isComposing || target.tagName !== 'INPUT') return;
+    if (!['number', 'text'].includes(target.type) || target.closest('.orders-import')) return;
+    event.preventDefault();
+    saveOrder();
+  }
 
   const updatePiece = useCallback((groupId, pieceId, field, value) => {
     setMaterialGroups(curr => curr.map(group => {
@@ -398,7 +429,7 @@ export default function FormularioPedido({
         {!isLoading && (!loadError || creating) && <>
           {creating && <OrderClientSelector key={clientFormKey} value={selectedClient} onChange={setSelectedClient} disabled={isSubmitting} token={token} />}
 
-          <section className="orders-section">
+          <section className="orders-section" onKeyDown={handlePiecesKeyDown}>
             <div className="orders-section__header">
               <div>
                 <h2>Vidrios y piezas</h2>
@@ -591,7 +622,7 @@ export default function FormularioPedido({
 
                         {!readOnly && (
                           <div style={{ marginTop: '12px' }}>
-                            <button type="button" className="ng-button" onClick={() => addPieceToGroup(group.id)}
+                            <button id={`${formId}-${group.id}-add-piece`} type="button" className="ng-button" onClick={() => addPieceToGroup(group.id)}
                             disabled={disableEditing || isMaterialMissing} /* BLOQUEADO SI FALTA MATERIAL */>
                               <Plus size={16} /> Agregar pieza
                             </button>

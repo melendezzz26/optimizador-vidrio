@@ -321,3 +321,9 @@
   .custom-piece-editor__split-layout { grid-template-columns: minmax(0, 1fr); gap: var(--ng-space-8); }
   .custom-piece-editor__canvas { height: 350px; }
 }
+
+
+/* TA-046: alternativa por teclado al dibujo libre. */
+.custom-piece-editor__sketch-sides { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
+.custom-piece-editor__sketch-sides label { font-size: 13px; font-weight: 600; }
+.custom-piece-editor__sketch-sides input { width: 5.5rem; min-height: 36px; padding: 0 8px; border: 1px solid var(--ng-border-strong, #8a8a8a); border-radius: 6px; }
