@@ -1,0 +1,971 @@
+{
+  "metadata": {
+    "date": "04/11/2026",
+    "cpu_count": 12,
+    "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "win32"
+  },
+  "determinism_results": [
+    {
+      "scale_n": 10,
+      "case_id": "CAP-10",
+      "method": "FF",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "1b6d37438a941860c75865294d8b1a0ff82ba2c62db1289fc0a0617a5769588d",
+      "avg_time_ms": 33.21,
+      "time_std_ms": 0.89
+    },
+    {
+      "scale_n": 10,
+      "case_id": "CAP-10",
+      "method": "BF",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "22f6f9ae0ad8749a6eae921cb6df5d89c62c23525b0ca17660e4544bdbd9db6c",
+      "avg_time_ms": 39.74,
+      "time_std_ms": 5.17
+    },
+    {
+      "scale_n": 10,
+      "case_id": "CAP-10",
+      "method": "WF",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "36a988fba1cf17b1960eb072d9a7b7345d08af8081fb5c171b9aba96b9974047",
+      "avg_time_ms": 34.36,
+      "time_std_ms": 0.26
+    },
+    {
+      "scale_n": 10,
+      "case_id": "CAP-10",
+      "method": "M4",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "1b6d37438a941860c75865294d8b1a0ff82ba2c62db1289fc0a0617a5769588d",
+      "avg_time_ms": 34.53,
+      "time_std_ms": 1.26
+    },
+    {
+      "scale_n": 10,
+      "case_id": "CAP-10",
+      "method": "M5",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "7fbc96621cef6fc621672356c6465f340a04f689a5ccf76610beeb0752ac2bfe",
+      "avg_time_ms": 36.23,
+      "time_std_ms": 1.47
+    },
+    {
+      "scale_n": 25,
+      "case_id": "CAP-25",
+      "method": "FF",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+      "avg_time_ms": 51.03,
+      "time_std_ms": 0.59
+    },
+    {
+      "scale_n": 25,
+      "case_id": "CAP-25",
+      "method": "BF",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "776146960ad7acddedface8d4b73a9dfef239f95c2c01b83c32c70afa965cfc2",
+      "avg_time_ms": 60.28,
+      "time_std_ms": 1.69
+    },
+    {
+      "scale_n": 25,
+      "case_id": "CAP-25",
+      "method": "WF",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "02fdb91906cfe6e578bf0db2ef6f90173be1ed311fc3164ee16f5b67c93d516c",
+      "avg_time_ms": 58.2,
+      "time_std_ms": 3.05
+    },
+    {
+      "scale_n": 25,
+      "case_id": "CAP-25",
+      "method": "M4",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+      "avg_time_ms": 54.76,
+      "time_std_ms": 0.26
+    },
+    {
+      "scale_n": 25,
+      "case_id": "CAP-25",
+      "method": "M5",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+      "avg_time_ms": 63.35,
+      "time_std_ms": 2.8
+    },
+    {
+      "scale_n": 50,
+      "case_id": "CAP-50",
+      "method": "FF",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+      "avg_time_ms": 105.76,
+      "time_std_ms": 2.01
+    },
+    {
+      "scale_n": 50,
+      "case_id": "CAP-50",
+      "method": "BF",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "de94c9e07e941395acf2b169db77886248dd1ea188f42062fdb5c59a87934db0",
+      "avg_time_ms": 135.42,
+      "time_std_ms": 0.83
+    },
+    {
+      "scale_n": 50,
+      "case_id": "CAP-50",
+      "method": "WF",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "7d5b5801a8496f3879abd9d4aa221b54c020580764d42d0c1af73d262e491001",
+      "avg_time_ms": 109.76,
+      "time_std_ms": 0.47
+    },
+    {
+      "scale_n": 50,
+      "case_id": "CAP-50",
+      "method": "M4",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+      "avg_time_ms": 108.62,
+      "time_std_ms": 2.59
+    },
+    {
+      "scale_n": 50,
+      "case_id": "CAP-50",
+      "method": "M5",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+      "avg_time_ms": 128.99,
+      "time_std_ms": 1.41
+    },
+    {
+      "scale_n": 75,
+      "case_id": "CAP-75",
+      "method": "FF",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "ded5a0f4e7c709f8cb1ebbe8ce6b83eb5022527e7e899eb7b1e5f342a5167df5",
+      "avg_time_ms": 158.22,
+      "time_std_ms": 0.66
+    },
+    {
+      "scale_n": 75,
+      "case_id": "CAP-75",
+      "method": "BF",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "59194c509e08bca05ccefa58f7ebafcdf623baba8d5a580ee4aa398614ee2a8b",
+      "avg_time_ms": 219.06,
+      "time_std_ms": 1.07
+    },
+    {
+      "scale_n": 75,
+      "case_id": "CAP-75",
+      "method": "WF",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "e5e6c61e05b65b03c1e9433bd89541b1b3c02e4adb0e85b7d2117da748379af1",
+      "avg_time_ms": 158.56,
+      "time_std_ms": 1.46
+    },
+    {
+      "scale_n": 75,
+      "case_id": "CAP-75",
+      "method": "M4",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "ded5a0f4e7c709f8cb1ebbe8ce6b83eb5022527e7e899eb7b1e5f342a5167df5",
+      "avg_time_ms": 159.95,
+      "time_std_ms": 1.16
+    },
+    {
+      "scale_n": 75,
+      "case_id": "CAP-75",
+      "method": "M5",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "d9c8a919d7ad62cab122f8d5840e545d08ccc33fcb06fe0d334f632a36f31108",
+      "avg_time_ms": 198.92,
+      "time_std_ms": 1.98
+    },
+    {
+      "scale_n": 100,
+      "case_id": "CAP-100",
+      "method": "FF",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "d4b543bc3503d33915a38a1798e4401a11f5523fded9969dd73a18e58a8db7e6",
+      "avg_time_ms": 221.38,
+      "time_std_ms": 3.16
+    },
+    {
+      "scale_n": 100,
+      "case_id": "CAP-100",
+      "method": "BF",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "0b71b08f1746ef36614f81555062993c8f4e224a70f61d2830f8c806a9551d1e",
+      "avg_time_ms": 327.48,
+      "time_std_ms": 2.54
+    },
+    {
+      "scale_n": 100,
+      "case_id": "CAP-100",
+      "method": "WF",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "fb8da224dea53f95cd8734865500c1b40fd5a895bd2eeae416aa8a1eaaf851cf",
+      "avg_time_ms": 215.81,
+      "time_std_ms": 5.45
+    },
+    {
+      "scale_n": 100,
+      "case_id": "CAP-100",
+      "method": "M4",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "d4b543bc3503d33915a38a1798e4401a11f5523fded9969dd73a18e58a8db7e6",
+      "avg_time_ms": 223.43,
+      "time_std_ms": 3.96
+    },
+    {
+      "scale_n": 100,
+      "case_id": "CAP-100",
+      "method": "M5",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "8cd90a5f156e8faab4eba8096fe4ac1b9f17d0f1d2263d46fa85b5cd4072c649",
+      "avg_time_ms": 288.85,
+      "time_std_ms": 6.44
+    }
+  ],
+  "concurrency_results": [
+    {
+      "scale_n": 25,
+      "case_id": "CAP-25",
+      "method": "FF",
+      "concurrency_workers": 2,
+      "all_success": true,
+      "no_interference_hash_match": true,
+      "total_wall_time_ms": 381.7,
+      "baseline_single_ms": 51.11,
+      "avg_worker_time_ms": 53.89,
+      "slowdown_factor": 1.05,
+      "throughput_ops_sec": 5.24,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 54.16,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 53.62,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 25,
+      "case_id": "CAP-25",
+      "method": "FF",
+      "concurrency_workers": 4,
+      "all_success": true,
+      "no_interference_hash_match": true,
+      "total_wall_time_ms": 347.13,
+      "baseline_single_ms": 51.11,
+      "avg_worker_time_ms": 55.23,
+      "slowdown_factor": 1.08,
+      "throughput_ops_sec": 11.52,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 55.76,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 55.36,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 2,
+          "success": true,
+          "execution_time_ms": 54.86,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 3,
+          "success": true,
+          "execution_time_ms": 54.93,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 25,
+      "case_id": "CAP-25",
+      "method": "FF",
+      "concurrency_workers": 8,
+      "all_success": true,
+      "no_interference_hash_match": true,
+      "total_wall_time_ms": 490.1,
+      "baseline_single_ms": 51.11,
+      "avg_worker_time_ms": 67.33,
+      "slowdown_factor": 1.32,
+      "throughput_ops_sec": 16.32,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 72.06,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 75.42,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 2,
+          "success": true,
+          "execution_time_ms": 69.33,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 3,
+          "success": true,
+          "execution_time_ms": 78.97,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 4,
+          "success": true,
+          "execution_time_ms": 56.74,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 5,
+          "success": true,
+          "execution_time_ms": 75.13,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 6,
+          "success": true,
+          "execution_time_ms": 55.61,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 7,
+          "success": true,
+          "execution_time_ms": 55.38,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 25,
+      "case_id": "CAP-25",
+      "method": "M5",
+      "concurrency_workers": 2,
+      "all_success": true,
+      "no_interference_hash_match": true,
+      "total_wall_time_ms": 309.76,
+      "baseline_single_ms": 62.64,
+      "avg_worker_time_ms": 69.06,
+      "slowdown_factor": 1.1,
+      "throughput_ops_sec": 6.46,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 69.2,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 68.92,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 25,
+      "case_id": "CAP-25",
+      "method": "M5",
+      "concurrency_workers": 4,
+      "all_success": true,
+      "no_interference_hash_match": true,
+      "total_wall_time_ms": 383.08,
+      "baseline_single_ms": 62.64,
+      "avg_worker_time_ms": 71.89,
+      "slowdown_factor": 1.15,
+      "throughput_ops_sec": 10.44,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 70.42,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 70.41,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 2,
+          "success": true,
+          "execution_time_ms": 70.82,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 3,
+          "success": true,
+          "execution_time_ms": 75.92,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 25,
+      "case_id": "CAP-25",
+      "method": "M5",
+      "concurrency_workers": 8,
+      "all_success": true,
+      "no_interference_hash_match": true,
+      "total_wall_time_ms": 946.86,
+      "baseline_single_ms": 62.64,
+      "avg_worker_time_ms": 110.78,
+      "slowdown_factor": 1.77,
+      "throughput_ops_sec": 8.45,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 123.13,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 125.29,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 2,
+          "success": true,
+          "execution_time_ms": 104.28,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 3,
+          "success": true,
+          "execution_time_ms": 98.91,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 4,
+          "success": true,
+          "execution_time_ms": 107.81,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 5,
+          "success": true,
+          "execution_time_ms": 118.28,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 6,
+          "success": true,
+          "execution_time_ms": 104.32,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 7,
+          "success": true,
+          "execution_time_ms": 104.21,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 50,
+      "case_id": "CAP-50",
+      "method": "FF",
+      "concurrency_workers": 2,
+      "all_success": true,
+      "no_interference_hash_match": true,
+      "total_wall_time_ms": 534.32,
+      "baseline_single_ms": 149.52,
+      "avg_worker_time_ms": 113.68,
+      "slowdown_factor": 0.76,
+      "throughput_ops_sec": 3.74,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 113.38,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 113.98,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 50,
+      "case_id": "CAP-50",
+      "method": "FF",
+      "concurrency_workers": 4,
+      "all_success": true,
+      "no_interference_hash_match": true,
+      "total_wall_time_ms": 695.26,
+      "baseline_single_ms": 149.52,
+      "avg_worker_time_ms": 207.91,
+      "slowdown_factor": 1.39,
+      "throughput_ops_sec": 5.75,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 212.38,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 206.95,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 2,
+          "success": true,
+          "execution_time_ms": 200.82,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 3,
+          "success": true,
+          "execution_time_ms": 211.49,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 50,
+      "case_id": "CAP-50",
+      "method": "FF",
+      "concurrency_workers": 8,
+      "all_success": true,
+      "no_interference_hash_match": true,
+      "total_wall_time_ms": 856.63,
+      "baseline_single_ms": 149.52,
+      "avg_worker_time_ms": 237.22,
+      "slowdown_factor": 1.59,
+      "throughput_ops_sec": 9.34,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 238.56,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 247.2,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 2,
+          "success": true,
+          "execution_time_ms": 239.17,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 3,
+          "success": true,
+          "execution_time_ms": 253.13,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 4,
+          "success": true,
+          "execution_time_ms": 231.85,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 5,
+          "success": true,
+          "execution_time_ms": 237.12,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 6,
+          "success": true,
+          "execution_time_ms": 226.9,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 7,
+          "success": true,
+          "execution_time_ms": 223.82,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 50,
+      "case_id": "CAP-50",
+      "method": "M5",
+      "concurrency_workers": 2,
+      "all_success": true,
+      "no_interference_hash_match": true,
+      "total_wall_time_ms": 475.71,
+      "baseline_single_ms": 149.86,
+      "avg_worker_time_ms": 150.73,
+      "slowdown_factor": 1.01,
+      "throughput_ops_sec": 4.2,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 150.85,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 150.61,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 50,
+      "case_id": "CAP-50",
+      "method": "M5",
+      "concurrency_workers": 4,
+      "all_success": true,
+      "no_interference_hash_match": true,
+      "total_wall_time_ms": 908.77,
+      "baseline_single_ms": 149.86,
+      "avg_worker_time_ms": 213.96,
+      "slowdown_factor": 1.43,
+      "throughput_ops_sec": 4.4,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 209.57,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 244.65,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 2,
+          "success": true,
+          "execution_time_ms": 214.59,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 3,
+          "success": true,
+          "execution_time_ms": 187.02,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 50,
+      "case_id": "CAP-50",
+      "method": "M5",
+      "concurrency_workers": 8,
+      "all_success": true,
+      "no_interference_hash_match": true,
+      "total_wall_time_ms": 1326.58,
+      "baseline_single_ms": 149.86,
+      "avg_worker_time_ms": 308.21,
+      "slowdown_factor": 2.06,
+      "throughput_ops_sec": 6.03,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 347.73,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 318.35,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 2,
+          "success": true,
+          "execution_time_ms": 320.75,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 3,
+          "success": true,
+          "execution_time_ms": 308.34,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 4,
+          "success": true,
+          "execution_time_ms": 304.77,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 5,
+          "success": true,
+          "execution_time_ms": 333.79,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 6,
+          "success": true,
+          "execution_time_ms": 274.68,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 7,
+          "success": true,
+          "execution_time_ms": 257.26,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        }
+      ]
+    }
+  ]
+}
