@@ -154,4 +154,10 @@ jobs:
       - name: Install managed Chromium
         run: npx playwright install --with-deps chromium
       - name: E2E desktop and mobile
-        run: npm run test:e2e
+        # The B02 migration smoke must start with an empty isolated database:
+        # its --prepare downgrade intentionally rejects existing v2 rows.
+        # Run it once in a fresh Playwright server, then run every other
+        # critical E2E test in a second fresh server.
+        run: |
+          npx playwright test --grep "TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL"
+          npx playwright test --grep-invert "TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL"
