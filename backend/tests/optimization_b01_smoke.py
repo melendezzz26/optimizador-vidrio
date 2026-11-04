@@ -1,4 +1,4 @@
-"""ST-INC-01/02/03 on a private Linux copy, borrowing installed runtimes/dependencies.
+"""ST-INC-01/02/03/04 on a private Linux copy, borrowing installed runtimes/dependencies.
 
 No installs, shared databases or edits to the borrowed runtime. Run from backend:
 python -m tests.optimization_b01_smoke --runtime-root /path/to/linux-validation
@@ -39,7 +39,7 @@ def owned_processes(root):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--runtime-root", type=Path, required=True)
-    parser.add_argument("--block", choices=("B01", "B02", "B03"), default="B01")
+    parser.add_argument("--block", choices=("B01", "B02", "B03", "B04"), default="B01")
     args = parser.parse_args()
     runtime = args.runtime_root.resolve()
     block = args.block
@@ -66,10 +66,13 @@ def main():
         "test-results", "playwright-report", "__pycache__", ".pytest_cache", "*.pyc")
     report = dict(scope=f"{smoke}: real historical v1 and legacy; no public six-engine validation",
                   runtime_root=str(runtime), temporary_root=str(root), result="FAIL")
-    if block == "B03":
+    if block in ("B03", "B04"):
         report.update(new_adapter_service_validation="PENDING_INTEGRATION",
                       public_six_engine_validation="PENDING_INTEGRATION",
                       reused_test_selection="TA-043 B01")
+    if block == "B04":
+        report.update(v2_dispatch_service_validation="PENDING_INTEGRATION_B05_B06",
+                      shared_admission_v2="PENDING_INTEGRATION_B05")
     runner = None
     try:
         for folder in ("backend", "frontend", "docs/contracts"):
@@ -112,7 +115,7 @@ export default { ...base, testMatch: 'optimization-comparison.spec.js',
         report["processes_before"] = owned_processes(root)
         with (evidence / "execution.txt").open("w", encoding="utf-8") as log:
             runner = subprocess.Popen([str(node), str(root / "frontend/node_modules/@playwright/test/cli.js"),
-                "test", "--config=playwright.b01.config.mjs", "--grep", "TA-043 B01" if block == "B03" else f"TA-043 {block}"],
+                "test", "--config=playwright.b01.config.mjs", "--grep", "TA-043 B01" if block in ("B03", "B04") else f"TA-043 {block}"],
                 cwd=root / "frontend", env=env, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
             report["runner_exit"] = runner.wait(timeout=300)
         report_file = root / "frontend/test-results/b01-report.json"
