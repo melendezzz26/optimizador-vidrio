@@ -4,14 +4,14 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Draft — B04 autorizado; resultado pendiente de revisión** |
+| Estado | **Draft — B05 autorizado; resultado pendiente de revisión** |
 | SPEC | [SPEC-TA-043-integracion-seis-motores.md](SPEC-TA-043-integracion-seis-motores.md) |
 | Responsable | Fabricio Meléndez |
 | Reviewer | Por designar; revisión humana pendiente |
 | Fecha | 03/11/2026, America/Lima |
 | Base oficial | `origin/integration-02`, `d85a8d3c4fa2ba1b3f70c401ed947adcfbe2470b` |
 | Única rama de trabajo | `feature/TA-043-integracion-seis-motores` |
-| Autorización actual | Exclusivamente B04, puerta temprana, T-04/T-05/T-11 pertinentes, ST-INC-04 del flujo disponible y commits locales; detenerse antes de B05 |
+| Autorización actual | Exclusivamente B05, coordinación y cierre seguro, T-04/T-05/T-06 pertinentes, ST-INC-05 del flujo disponible y commits locales; detenerse antes de B06 |
 
 ## 1. Resultado esperado y reglas de ejecución futura
 
@@ -720,6 +720,14 @@ Esta evidencia no acredita ejecución pública de seis motores, prueba de parada
 del supervisor v2, selección/confirmación v2 ni ST-INT. No iniciar B03 sin revisión.
 
 ## Historial de estado
+
+- 03/11/2026 — **Draft**: B05 autorizado, incluida la ampliación interna de
+  `runtime` revisada por Fabricio. Coordinación v2 se comprueba con PostgreSQL y
+  spawn reales; ST-INC-05 conserva el smoke HTTP del flujo v1/legacy y registra
+  inicio/consulta pública v2 como PENDIENTE DE INTEGRACIÓN B06, sin rutas
+  temporales. [Evidencia B05](../evidence/sprint-02/TA-043/B05/README.md).
+  Se conservan 36 requisitos/CA, matriz, once bloques y dependencias; detenerse
+  antes de B06 y mantener ST-INT obligatorio para cierre de TA-043.
 
 - 03/11/2026 — **Draft**: autorización exclusiva B04, puerta de viabilidad,
   primitiva secuencial y validación de recursos; integración de admisión/supervisor

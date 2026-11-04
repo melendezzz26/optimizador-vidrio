@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Draft — B04 autorizado; resultado pendiente de revisión** |
+| Estado | **Draft — B05 autorizado; resultado pendiente de revisión** |
 | PBI / módulo | TA-043 / Sprint 2 / Optimization |
 | Responsable | Fabricio Meléndez |
 | Reviewer | Por designar; no se atribuye aprobación humana |
@@ -13,7 +13,7 @@
 | Commit base verificado | `d85a8d3c4fa2ba1b3f70c401ed947adcfbe2470b` |
 | Única rama de trabajo TA-043 | `feature/TA-043-integracion-seis-motores` |
 | PLAN | [PLAN-TA-043-integracion-seis-motores.md](PLAN-TA-043-integracion-seis-motores.md) |
-| Autorización actual | Fabricio autoriza exclusivamente B04, medición temprana, T-04/T-05/T-11 pertinentes, ST-INC-04 del flujo disponible y commits locales; detenerse antes de B05 |
+| Autorización actual | Exclusivamente B05, coordinación y cierre seguro, T-04/T-05/T-06 pertinentes, ST-INC-05 del flujo disponible y commits locales; detenerse antes de B06 |
 
 La autorización documental inicial fue ampliada para B01 y posteriormente,
 por instrucción expresa de Fabricio, exclusivamente para **B02**. Sus alcances
@@ -474,6 +474,13 @@ no almacenar secretos. El cierre exige CA-N06 y CA-S01–CA-S10, smoke increment
 e integral reales, regresión y revisión humana; documentar una prueba no la ejecuta.
 
 ## Historial de estado
+
+- 03/11/2026 — **Draft**: autorización exclusiva B05 y ampliación interna de
+  `runtime` aprobada por Fabricio para propiedad versionada, token del supervisor
+  y PID/start_ticks de dueño/workers; lector B02 anterior conservado. Sin cambios
+  SQL/Alembic, codecs B01 o cotas B04. Coordinación v2 validable en aplicación/BD/
+  procesos; comprobación pública v2 pendiente de B06. Evidencia en
+  [B05](../evidence/sprint-02/TA-043/B05/README.md); parada obligatoria antes de B06.
 
 - 03/11/2026 — **Draft**: autorización exclusiva B04; puerta temprana y primitiva
   secuencial de recursos documentadas. Smoke de servicios disponibles separado

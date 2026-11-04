@@ -195,3 +195,39 @@ prueba real de procesos y la liberación de admisión pertenecen a B05, y no se
 deducen de esa marca por sí sola. Selección/confirmación v2 pertenecen a B08.
 
 Validación y límites de lo demostrado: [evidencia B02](../../evidence/sprint-02/TA-043/B02/README.md).
+
+## Propiedad interna del runtime B05 (ampliación autorizada)
+
+Fabricio autorizó ampliar exclusivamente el hermano `runtime`, sin cambiar el
+esquema SQL/Alembic ni los contratos HTTP, codecs puros de entrada/resultado o
+presupuestos B04. El lector conserva el formato B02 anterior de un solo campo.
+Las nuevas aceptaciones coordinadas escriben `runtime_version: 1`,
+`supervisor_stopped_at`, `supervisor` y `workers`.
+
+`supervisor` es null antes del claim o `{token, identity: {pid, start_ticks}}`;
+el token identifica al dueño del hilo y la identidad a su proceso Linux.
+`workers` relaciona IDs de ejecución pertenecientes al agregado con identidades
+PID/start_ticks. Un valor null registra intención de spawn antes de crear el
+proceso y conserva la ambigüedad si el dueño muere sin registrar su identidad.
+La identidad se persiste antes de permitir que el worker atraviese el gate.
+
+El cierre local exige join externo del supervisor y prueba de parada de procesos,
+lectores y monitor; luego confirma la marca durable y libera admisión compartida
+FF/v1/v2. Una marca lógica, un TTL o recibir el último resultado no prueba parada.
+Recuperación no recalcula ni mata procesos ajenos: dueño vivo/desconocido,
+intención sin identidad o falta de acceso a los metadatos mantienen el bloqueo
+operativo. Se compara PID **y** start_ticks para no confundir reutilización de PID.
+El formato antiguo legible no recibe identidades inventadas.
+
+Tras perder el proceso dueño, solo se cierra automáticamente una aceptación sin
+intenciones de spawn registradas y con dueño demostrado muerto. Si hubo workers,
+sus PID directos muertos no acreditan por sí solos ausencia de descendientes;
+sin el reporte de join previo se conserva el bloqueo hasta obtener evidencia
+externa. La recuperación exige plataforma/preflight admitidos para interpretar
+identidades de procesos. No se añade una ruta administrativa en B05.
+
+Los estados de ejecución y snapshots siguen siendo los de B01/B02.
+`runtime_dispatched` y `runtime_engine_started` son estadísticas enteras internas
+del diagnóstico existente para distinguir las ejecuciones nunca iniciadas; no
+sustituyen sus causas ENGINE/SUPERVISOR. `result_persisted` se entrega solo tras
+commit. Este puerto interno no publica eventos HTTP v2: su exposición es B06.
