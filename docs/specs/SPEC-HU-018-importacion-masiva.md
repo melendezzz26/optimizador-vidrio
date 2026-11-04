@@ -8,7 +8,7 @@
 | Nombre | Importación masiva de piezas |
 | Tareas | T01 — Definir contrato CSV/XLSX · T02 — Parsear y previsualizar archivo · T03 — Validar filas y estado OBSERVADO · T04 — Corregir/confirmar importación · T05 — Pruebas unitarias/integración/E2E |
 | Sprint | Sprint 2 |
-| Estado | **Implemented** |
+| Estado | **Verified** |
 | Responsable | Fabricio Aguilar |
 | Reviewer | Andro Joseph Quispe Cesias (Scrum Master) |
 | Rama | `feature/S2-HU018-importacion-masiva` |
@@ -509,9 +509,16 @@ resultados de las pruebas y enlace al PR.
   se revalidan sin volver a subir el archivo (T03), como sugirió el docente.
 - **D-07 (decidida):** alcance = mensaje del Scrum Master + backlog de Notion (T01–T05).
   La duplicación por reintento (S1-09) queda fuera.
-- **P-03:** ¿las dos librerías nuevas (§8.2) requieren ADR o basta con esta SPEC?
-- **P-04:** límites de 1 MB y 500 filas (§4.6). Cubren las pruebas de estrés previstas
-  (hasta 200 piezas) con margen.
+- **D-08 (decidida, antes P-03):** `python-multipart` y `openpyxl` no requieren ADR: son
+  librerías usadas dentro de capas existentes (Presentation e Infrastructure), no una
+  tecnología, capa o servicio nuevo. Quedan registradas en §8.2.
+- **D-09 (decidida, antes P-04):** límites de protección: 1 MB por archivo, 500 filas con
+  contenido, 2000 filas leídas contando vacías, 300 columnas y 4000 caracteres por fila
+  (§4.6 y §7.2). Cubren las pruebas de estrés previstas (hasta 200 piezas) con margen.
+- **O-01 (observación conocida):** un XLSX cuya hoja no declara su rango (etiqueta
+  `<dimension>`) se rechaza con el mensaje de "máximo de 300 columnas". Excel, LibreOffice
+  y Google Sheets sí la declaran; se resuelve abriendo y guardando el archivo en Excel.
+  Pendiente de corrección en un PR posterior.
 
 ## Historial de estado
 
@@ -523,3 +530,4 @@ resultados de las pruebas y enlace al PR.
 | 03/11/2026 | 0.3 | Implemented | T01–T05 implementadas. Límite de 4000 caracteres por fila; revalidación sin fila de títulos; reemplazo del borrador vacío del formulario; archivos del frontend y pruebas implementadas (§11.1). |
 | 03/11/2026 | 0.4 | Implemented | Correcciones de la revisión del PR #96: límite de 2000 filas leídas y 300 columnas; una fila vaciada al revalidar queda OBSERVADO. |
 | 03/11/2026 | 0.5 | Implemented | Se conservan huecos XLSX, se reconoce solo el encabezado documentado y las observaciones bloquean guardar hasta corregir o cancelar la importación. |
+| 03/11/2026 | 0.5 | Verified | Verificada tras el merge del PR #96 en `integration/sprint-01`: CI en verde (backend, frontend y E2E en escritorio y móvil). P-03 y P-04 decididas (D-08, D-09); O-01 registrada. |
