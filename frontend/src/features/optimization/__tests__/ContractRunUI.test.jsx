@@ -15,6 +15,22 @@ function mount(name = 'complete', permissions = view, adapter = {}) {
 }
 beforeEach(() => vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({ fillRect: vi.fn(), setTransform: vi.fn() }));
 
+test('el resultado individual muestra geometría original sin alterar los placements orientados', () => {
+  const result = scenarioFixture('complete');
+  result.groups[0].units.forEach(unit => { unit.geometria = { type: 'RECTANGULO', width_mm: 125.36, height_mm: 80.04 }; });
+  const original = structuredClone(result);
+  render(<OptimizationPage user={user(view)} result={result} source={createFixturePendingOrdersSource([])} adapter={{}} />);
+  const table = screen.getByRole('table', { name: 'Medidas originales del pedido' });
+  expect(within(table).getByText('125.36 × 80.04 mm')).toBeVisible();
+  expect(within(table).getByText('3')).toBeVisible();
+  fireEvent.change(screen.getByLabelText('Plancha o retazo'), { target: { value: 'PLANCHA:5:2' } });
+  const placed = document.querySelector('[data-placement="10:27:2"]');
+  expect(placed).toHaveAttribute('transform', 'translate(0 0)');
+  expect(placed.querySelector('rect')).toHaveAttribute('width', '5');
+  expect(placed.querySelector('rect')).toHaveAttribute('height', '10');
+  expect(result).toEqual(original);
+});
+
 test('without view denies module and never loads a source, even if execute is present', () => {
   const source = { load: vi.fn() };
   render(<OptimizationPage user={user(['optimization.execute'])} source={source} />);

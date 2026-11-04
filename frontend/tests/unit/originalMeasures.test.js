@@ -1,7 +1,16 @@
 // TA-046 T02: medidas originales de cada forma, en mm (SPEC-TA-046 RN-08).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { describeOriginalMeasures, formatMm, polygonSides } from '../../src/features/optimization/originalMeasures.js';
+import { describeOriginalMeasures, formatMm, formatOriginalMm, polygonSides } from '../../src/features/optimization/originalMeasures.js';
+
+test('conserva la precisión de las medidas originales sin ceros innecesarios', () => {
+  assert.equal(describeOriginalMeasures({ tipo_forma: 'RECTANGULO', geometria: { width_mm: '125.3600', height_mm: 80.04 } }), '125.36 × 80.04 mm');
+  assert.equal(describeOriginalMeasures({ tipo_forma: 'CIRCUNFERENCIA', geometria: { radius_mm: '3.04' } }), 'Radio 3.04 mm');
+  assert.equal(formatOriginalMm('125.00'), '125');
+  assert.equal(formatOriginalMm(80), '80');
+  assert.equal(formatOriginalMm(3.5), '3.5');
+  assert.equal(formatOriginalMm('12.345678900'), '12.3456789');
+});
 
 test('rectángulo y círculo muestran las medidas ingresadas en mm', () => {
   assert.equal(describeOriginalMeasures({ tipo_forma: 'RECTANGULO', geometria: { type: 'RECTANGULO', width_mm: 800, height_mm: 600 } }), '800 × 600 mm');

@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import { SHAPE_NAMES, describeOriginalMeasures, formatMm } from './originalMeasures';
+import { SHAPE_NAMES, describeOriginalMeasures, formatOriginalMm } from './originalMeasures';
 import './OriginalMeasuresTable.css';
 
 // TA-046 T02: medidas que ingresó el usuario, visibles junto al resultado (SPEC-TA-046 RN-07 y RN-09).
@@ -24,7 +24,7 @@ export function OriginalMeasuresTable({ pieces }) {
                 <th scope="row">#{piece.id_pieza}</th>
                 <td>{SHAPE_NAMES[piece.tipo_forma] ?? piece.tipo_forma}</td>
                 <td>{piece.cantidad}</td>
-                <td>{piece.material_nombre ?? `Vidrio #${piece.id_tipo_vidrio}`} · {formatMm(piece.espesor_mm)} mm</td>
+                <td>{piece.material_nombre ?? `Vidrio #${piece.id_tipo_vidrio}`} · {formatOriginalMm(piece.espesor_mm)} mm</td>
                 <td>{describeOriginalMeasures(piece)}</td>
               </tr>
             ))}

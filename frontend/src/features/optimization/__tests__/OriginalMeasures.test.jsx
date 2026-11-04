@@ -14,6 +14,15 @@ beforeEach(() => {
 
 const rows = table => within(table).getAllByRole('row').slice(1).map(row => [...row.querySelectorAll('th, td')].map(cell => cell.textContent));
 
+test('la tabla conserva decimales originales de rectángulos y círculos', () => {
+  render(<OriginalMeasuresTable pieces={[
+    { id_pedido: 4, id_pieza: 10, tipo_forma: 'RECTANGULO', cantidad: 1, id_tipo_vidrio: 7, espesor_mm: '6.00', geometria: { width_mm: '125.36', height_mm: '80.04' } },
+    { id_pedido: 4, id_pieza: 11, tipo_forma: 'CIRCUNFERENCIA', cantidad: 1, id_tipo_vidrio: 7, espesor_mm: '6.00', geometria: { radius_mm: '3.04' } },
+  ]} />);
+  expect(screen.getByText('125.36 × 80.04 mm')).toBeVisible();
+  expect(screen.getByText('Radio 3.04 mm')).toBeVisible();
+});
+
 test('la tabla describe forma, cantidad, vidrio y medidas en mm, incluidos los lados del polígono', () => {
   render(<OriginalMeasuresTable pieces={[
     { id_pedido: 4, id_pieza: 10, tipo_forma: 'RECTANGULO', cantidad: 3, material_nombre: 'Templado', espesor_mm: '6.00', geometria: { type: 'RECTANGULO', width_mm: 800, height_mm: 600 } },
