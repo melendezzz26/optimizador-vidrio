@@ -3,6 +3,109 @@ import { test, expect } from '@playwright/test';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { api, setup, login, loginApi, open, stock, capture, save } from './optimizationRealSupport.js';
+import { parseComparisonV2, parseExecutionV2, parseComparisonEventV2 } from '../../src/features/optimization/comparisonV2Contract.js';
+
+test('TA-043 B06 smoke: API publica seis motores, recuperacion y compatibilidad real', async ({ page }, info) => {
+  test.setTimeout(90_000);
+  const errors = []; page.on('pageerror', error => errors.push(error.message));
+  const data = await setup(page, 'single', { createOrders: false });
+  const before = await stock(page, data);
+  const allInventory = async () => {
+    const read = async route => {
+      const response = await page.request.get(`${api}/api/inventory/${route}`, { headers: data.headers });
+      expect(response.status()).toBe(200); return response.json();
+    };
+    const sheets = await read('planchas'); const remnants = await read('retazos');
+    const movements = await Promise.all([
+      ...sheets.map(s => read(`planchas/${s.id_plancha}/movimientos`)),
+      ...remnants.map(r => read(`retazos/${r.id_retazo}/movimientos`)),
+    ]);
+    return { sheets, remnants, movements };
+  };
+  const allBefore = await allInventory();
+  const created = await page.request.post(`${api}/api/orders`, { headers: data.headers, data: { id_cliente: 41, piezas: [
+    { ...data.materials[0], tipo_forma: 'RECTANGULO', cantidad: 1, width_mm: 10, height_mm: 10 },
+    { ...data.materials[0], tipo_forma: 'CIRCUNFERENCIA', cantidad: 1, radius_mm: 2 },
+    { ...data.materials[0], tipo_forma: 'POLIGONO_CONVEXO', cantidad: 1, vertices_mm: [[0, 0], [4, 0], [0, 3]] },
+  ] } });
+  expect(created.status()).toBe(201); data.orders = [(await created.json()).id_pedido];
+  await login(page, data.actors.all, { comparative: true }); await open(page);
+  const http = async (path, { method = 'GET', body, key } = {}) => page.evaluate(async args => {
+    const response = await fetch(args.url, { method: args.method, headers: args.headers,
+      ...(args.body ? { body: JSON.stringify(args.body) } : {}) });
+    const text = await response.text();
+    return { status: response.status, location: response.headers.get('Location'),
+      body: response.headers.get('content-type')?.includes('application/json') ? JSON.parse(text) : text };
+  }, { url: `${api}${path}`, method, body,
+    headers: { ...data.headers, 'Content-Type': 'application/json', ...(key ? { 'Idempotency-Key': key } : {}) } });
+  expect((await http('/health/ready')).status).toBe(200);
+  const key = `b06-browser-${info.project.name}`;
+  const post = await http('/api/optimization/comparisons-v2', { method: 'POST', body: { order_ids: data.orders }, key });
+  expect(post.status).toBe(201);
+  const accepted = parseComparisonV2(post.body);
+  let current;
+  await expect.poll(async () => {
+    const response = await http(post.location); expect(response.status).toBe(200);
+    current = parseComparisonV2(response.body); return current.terminal;
+  }, { timeout: 30_000 }).toBe(true);
+  expect(current.methods).toEqual(['FF', 'BF', 'WF', 'HF', 'M5', 'M6-BS']);
+  expect(Number(current.configuration.paso_angular_grados)).toBe(5);
+  expect(current.executions.every(e => e.complete && e.result_available && e.diagnostic.termination_reason === 'COMPLETED')).toBe(true);
+  const results = [];
+  for (const execution of current.executions) {
+    const result = await http(`${post.location}/executions/${execution.execution_id}`);
+    expect(result.status).toBe(200); results.push(parseExecutionV2(result.body, current, execution));
+    expect(result.body.result.placed_units).toBe(3); expect(result.body.result.metrics).not.toBeNull();
+  }
+  const stream = await http(`${post.location}/events`); expect(stream.status).toBe(200);
+  const events = stream.body.trim().split('\n').map(line => parseComparisonEventV2(JSON.parse(line), current));
+  expect(events.filter(e => e.event === 'result_persisted')).toHaveLength(6);
+  expect(events.at(-1).event).toBe('comparison_finished');
+  expect((await http('/api/optimization/comparisons-v2/requests/' + key)).body).toEqual(current);
+  const replay = await http('/api/optimization/comparisons-v2', { method: 'POST', body: { order_ids: data.orders }, key });
+  expect(replay.status).toBe(201); expect(replay.body.comparison_id).toBe(accepted.comparison_id);
+  expect((await http(`/api/optimization/comparisons/${current.comparison_id}`)).status).toBe(409);
+  await page.reload(); await open(page);
+  expect((await http(post.location)).body).toEqual(current);
+  expect(await stock(page, data)).toEqual(before);
+  expect(await allInventory()).toEqual(allBefore);
+  save(info, 'b06-six-results.json', { accepted, current, results, events, runtime: data.runtime,
+    inventoryBefore: before, inventoryAfter: await stock(page, data),
+    allInventoryBefore: allBefore, allInventoryAfter: await allInventory(),
+    visualIntegration: 'PENDING_B07', smokeIntegral: 'PENDING_B09_B11' });
+  await capture(page, info, 'b06-current-application');
+  const released = await http(`${post.location}/release`, { method: 'POST', body: { expected_version: current.version } });
+  expect(released.status).toBe(200); expect(released.body.released).toBe(true);
+  // Real existing UI remains FF/BF/WF; no v2 tabs are created by this test.
+  await page.reload(); await open(page);
+  await page.getByRole('checkbox', { name: new RegExp(`Pedido #${data.orders[0]}\\b`) }).check();
+  const v1post = page.waitForResponse(r => new URL(r.url()).pathname === '/api/optimization/comparisons' && r.request().method() === 'POST');
+  await page.getByRole('button', { name: 'Comparar con los tres motores', exact: true }).click();
+  const v1response = await v1post; expect(v1response.status()).toBe(201);
+  const v1id = (await v1response.json()).comparison_id;
+  await expect(page.getByText('Comparación finalizada', { exact: true })).toBeVisible();
+  await expect(page.getByRole('tab')).toHaveCount(4);
+  const v1 = await http(`/api/optimization/comparisons/${v1id}`);
+  expect(v1.body.executions.map(e => e.method)).toEqual(['FF', 'BF', 'WF']);
+  const mismatch = await http(`/api/optimization/comparisons-v2/${v1id}`);
+  expect(mismatch.status).toBe(409); expect(mismatch.body.detail.code).toBe('COMPARISON_PROFILE_MISMATCH');
+  expect((await http('/api/optimization/comparisons-v2', { method: 'POST', body: { order_ids: data.orders }, key: 'browser-conflict-0001' })).status).toBe(409);
+  expect((await http('/api/optimization/comparisons-v2/0')).status).toBe(422);
+  await page.reload(); await open(page);
+  await expect(page.getByText('Comparación finalizada', { exact: true })).toBeVisible();
+  expect((await http(`/api/optimization/comparisons/${v1id}`)).body).toEqual(v1.body);
+  await page.getByRole('button', { name: 'Liberar pedidos sin confirmar', exact: true }).click();
+  await expect(page.getByText(new RegExp(`Trabajo #${v1id} liberado sin confirmar`))).toBeVisible();
+  const legacy = await http('/api/optimization/runs', { method: 'POST', body: { order_ids: data.orders } });
+  expect(legacy.status).toBe(201);
+  const lines = legacy.body.trim().split('\n').map(JSON.parse);
+  expect(lines.at(-1).event).toBe('optimization_completed');
+  const ff = await http(`/api/optimization/runs/${lines[0].id_optimizacion}`);
+  expect(ff.status).toBe(200); expect(ff.body.metodo).toBe('FF'); expect(ff.body.completo).toBe(true);
+  expect(await stock(page, data)).toEqual(before); expect(errors).toEqual([]);
+  expect(await allInventory()).toEqual(allBefore);
+  save(info, 'b06-history-legacy.json', { v1: v1.body, legacy: ff.body, mismatch, cleanup: 'HARNESS_OWNED_SERVICES' });
+});
 
 test('TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL', async ({ page }, info) => {
   const backend = fileURLToPath(new URL('../../../backend/', import.meta.url));
@@ -75,7 +178,8 @@ test('TA-043 B01 smoke: arranque real, comparison-v1 y runs legacy sin consumir 
   const paths = (await openapi.json()).paths;
   expect(paths['/api/optimization/comparisons']).toBeTruthy();
   expect(paths['/api/optimization/runs']).toBeTruthy();
-  expect(paths['/api/optimization/comparisons-v2']).toBeUndefined();
+  // B06 publishes v2 explicitly; existing v1/legacy behavior below stays intact.
+  expect(paths['/api/optimization/comparisons-v2']).toBeTruthy();
   const data = await setup(page, 'single');
   const before = await stock(page, data);
   await login(page, data.actors.all, { comparative: true }); await open(page);

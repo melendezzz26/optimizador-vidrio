@@ -354,7 +354,8 @@ def test_fastapi_lifespan_recovers_and_shuts_down_real_v2_without_routes(setup,m
             assert await asyncio.to_thread(started.wait,5)
     asyncio.run(lifecycle())
     assert wait_closed(coordinator).terminal
-    assert not any('comparisons-v2' in path for path in main.app.openapi()['paths'])
+    assert not any(path.startswith('/api/optimization/comparisons-v2') and
+        path.endswith(('/selection','/confirm')) for path in main.app.openapi()['paths'])
 
 
 def test_spawn_failure_keeps_other_engines_and_closes_spawn_intent(setup,monkeypatch):

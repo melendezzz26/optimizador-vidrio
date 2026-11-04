@@ -40,7 +40,7 @@ def owned_processes(root):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--runtime-root", type=Path, required=True)
-    parser.add_argument("--block", choices=("B01", "B02", "B03", "B04", "B05"), default="B01")
+    parser.add_argument("--block", choices=("B01", "B02", "B03", "B04", "B05", "B06"), default="B01")
     args = parser.parse_args()
     runtime = args.runtime_root.resolve()
     block = args.block
@@ -77,6 +77,9 @@ def main():
     if block == "B05":
         report.update(public_v2_start_and_query="PENDING_INTEGRATION_B06",
                       application_database_process_validation="SEPARATE_B05_INTEGRATION_SUITE")
+    if block == "B06":
+        report.update(scope="ST-INC-06: real public six-engine API, v1/legacy and browser; visual v2 pending B07",
+                      public_six_engine_validation="EXECUTED_BY_B06_SMOKE", visual_v2="PENDING_B07")
     runner = None
     try:
         for folder in ("backend", "frontend", "docs/contracts"):
@@ -113,7 +116,7 @@ export default { ...base, testMatch: 'optimization-comparison.spec.js',
             raise RuntimeError("Use the complete CI gate in CI; this helper is a local B01 subset")
         source_files = sorted((root / "backend/app/modules/optimization").rglob("*.py"))
         source_files += [root / "backend/app/models.py"]
-        if block == "B05":
+        if block in ("B05", "B06"):
             source_files += [root / "backend/main.py"]
         source_files += sorted((root / "backend/alembic/versions").glob("*.py"))
         report["source_sha256"] = {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
