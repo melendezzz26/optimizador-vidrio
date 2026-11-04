@@ -354,8 +354,11 @@ def test_fastapi_lifespan_recovers_and_shuts_down_real_v2_without_routes(setup,m
             assert await asyncio.to_thread(started.wait,5)
     asyncio.run(lifecycle())
     assert wait_closed(coordinator).terminal
-    assert not any(path.startswith('/api/optimization/comparisons-v2') and
-        path.endswith(('/selection','/confirm')) for path in main.app.openapi()['paths'])
+    # B08 publicó la selección y la confirmación v2: el ciclo de vida no depende de ellas,
+    # pero deben existir exactamente una vez cada una.
+    v2_paths=[path for path in main.app.openapi()['paths'] if path.startswith('/api/optimization/comparisons-v2')]
+    assert sum(path.endswith('/selection') for path in v2_paths)==1
+    assert sum(path.endswith('/confirm') for path in v2_paths)==1
 
 
 def test_spawn_failure_keeps_other_engines_and_closes_spawn_intent(setup,monkeypatch):
