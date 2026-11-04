@@ -31,8 +31,30 @@ def test_ci_covers_backend_frontend_e2e_without_staging_secrets():
     assert ci["permissions"] == {"contents": "read"}
     jobs = ci["jobs"]
     backend_commands = '\n'.join(step.get('run', '') for step in jobs['backend']['steps'])
-    assert 'python -m pytest tests --ignore=tests/unit/optimization/test_comparison_runner.py -q -ra' in backend_commands
-    assert 'python -m pytest tests/unit/optimization/test_comparison_runner.py -q -ra' in backend_commands
+    general_start = 'python -m pytest tests \\'
+    assert general_start in backend_commands
+    general = backend_commands.split(general_start, 1)[1].split(
+        'python -m pytest tests/integration/optimization/test_comparison_calculation.py',
+        1,
+    )[0]
+    for path in (
+        'tests/unit/optimization/test_comparison_runner.py',
+        'tests/integration/optimization/test_comparison_calculation.py',
+        'tests/integration/optimization/test_comparison_supervision_v2.py',
+        'tests/unit/optimization/test_sequential_runner.py',
+    ):
+        assert f'--ignore={path}' in general
+    for path in (
+        'tests/integration/optimization/test_comparison_calculation.py',
+        'tests/integration/optimization/test_comparison_supervision_v2.py',
+        'tests/unit/optimization/test_sequential_runner.py',
+        'tests/unit/optimization/test_comparison_runner.py',
+    ):
+        assert f'python -m pytest {path} -q -ra' in backend_commands
+    assert 'python -m pytest tests --ignore=tests/unit/optimization/test_comparison_runner.py -q -ra' not in backend_commands
+    assert 'continue-on-error' not in backend_commands
+    assert '|| true' not in backend_commands
+    assert '--deselect' not in backend_commands
     for name in ("backend", "e2e"):
         assert jobs[name]["env"]["NEWGLASS_REQUIRE_POSTGRES"] == "1"
         commands = "\n".join(step.get("run", "") for step in jobs[name]["steps"])
@@ -40,7 +62,9 @@ def test_ci_covers_backend_frontend_e2e_without_staging_secrets():
     commands = {step.get("run") for step in jobs["frontend"]["steps"] if "run" in step}
     assert {"npm ci", "npm run test:unit", "npm run test:component", "npm run lint", "npm run build"} <= commands
     assert jobs["e2e"]["env"]["PLAYWRIGHT_CHANNEL"] == "chromium"
-    assert any(step.get("run") == "npm run test:e2e" for step in jobs["e2e"]["steps"])
+    e2e_commands = "\n".join(step.get("run", "") for step in jobs["e2e"]["steps"])
+    assert 'npx playwright test --grep "TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL"' in e2e_commands
+    assert 'npx playwright test --grep-invert "TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL"' in e2e_commands
     raw = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
     assert "secrets." not in raw and "DATABASE_URL:" not in raw
     assert "continue-on-error" not in raw
