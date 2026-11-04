@@ -5,6 +5,7 @@ import hashlib
 import re
 
 from sqlalchemy import select, text
+from sqlalchemy.exc import DBAPIError
 
 from app.models import (Configuracion, EjecucionOptimizacion, MaterialUtilizado,
                         MetricaEjecucion, Optimizacion, OptimizacionPedido)
@@ -14,6 +15,7 @@ from ..application.comparison_persistence_contracts import (
 )
 from ..application.comparison_v2_contracts import ComparisonInputV2, ExecutionPayloadV2
 from ..application.errors import RunError
+from ..application.supervision_contracts import runtime_metadata, identity
 from ..domain.metrics import ResidualRectangle
 from ..domain.problem import MaterialSource
 from .comparison_snapshot import canonical_json
@@ -42,7 +44,7 @@ class SqlComparisonV2Repository:
             Optimizacion.id_usuario_ejecutor == actor_id, Optimizacion.comparison_key == key))
         return self.get(identifier) if identifier is not None else None
 
-    def create(self, frozen: ComparisonInputV2, actor_id, key):
+    def create(self, frozen: ComparisonInputV2, actor_id, key, *, managed=False):
         if (not isinstance(frozen, ComparisonInputV2) or type(actor_id) is not int
                 or not 0 < actor_id <= 2147483647 or not isinstance(key, str)
                 or re.fullmatch(r"[A-Za-z0-9_-]{8,64}", key) is None):
@@ -59,7 +61,8 @@ class SqlComparisonV2Repository:
         row = Optimizacion(fecha_inicio=now(), estado="EN_EJECUCION", id_pedido=frozen.problem.order_ids[0],
             id_configuracion=frozen.configuration_id, id_usuario_ejecutor=actor_id,
             criterio_seleccion_version="CMP-v2", comparison_key=key, comparison_version=1,
-            comparison_snapshot={**encoded, "runtime": {"supervisor_stopped_at": None}})
+            comparison_snapshot={**encoded, "runtime": (dict(runtime_version=1, supervisor_stopped_at=None,
+                supervisor=None, workers={}) if managed else {"supervisor_stopped_at": None})})
         self.session.add(row)
         self.session.flush()
         self.session.add_all([OptimizacionPedido(id_optimizacion=row.id_optimizacion, id_pedido=i)
@@ -116,8 +119,7 @@ class SqlComparisonV2Repository:
             if row.criterio_seleccion_version != "CMP-v2" or row.id_configuracion != frozen.configuration_id:
                 raise ValueError("Aggregate profile/configuration identity mismatch")
             runtime = stored["runtime"]
-            if not isinstance(runtime, dict) or set(runtime) != {"supervisor_stopped_at"}:
-                raise ValueError("Invalid persisted runtime metadata")
+            runtime_metadata(runtime, [e.id_ejecucion for _, e in pairs if e is not None])
             stopped = runtime["supervisor_stopped_at"] is not None
             if stopped:
                 if row.fecha_fin is None or _utc(runtime["supervisor_stopped_at"]) != row.fecha_fin:
@@ -146,7 +148,8 @@ class SqlComparisonV2Repository:
                 problem=frozen.problem, requested_pieces=frozen.requested_pieces, methods=frozen.methods,
                 configuration_id=frozen.configuration_id, configuration_version=frozen.configuration_version,
                 minimum_width_mm=frozen.minimum_width_mm, minimum_height_mm=frozen.minimum_height_mm,
-                executions=executions, selected_execution_id=row.id_ejecucion_seleccionada, workers_stopped=stopped)
+                executions=executions, selected_execution_id=row.id_ejecucion_seleccionada, workers_stopped=stopped,
+                runtime=runtime)
         except (KeyError, TypeError, ValueError, ArithmeticError, OverflowError) as error:
             raise RunError("INTERNAL_ERROR", "La trazabilidad persistida v2 requiere revisión.") from error
 
@@ -276,10 +279,47 @@ class SqlComparisonV2Repository:
         if any(e.dispatch_state != "TERMINATED" for e in current.executions):
             raise RunError("STATE_CONFLICT", "Todavía hay ejecuciones sin resolver.")
         stamp = _utc(stopped_at)
-        row.comparison_snapshot = {**row.comparison_snapshot, "runtime": {"supervisor_stopped_at": stamp.isoformat()}}
+        row.comparison_snapshot = {**row.comparison_snapshot, "runtime": {
+            **row.comparison_snapshot["runtime"], "supervisor_stopped_at": stamp.isoformat()}}
         row.estado = ("COMPLETADA" if any(e.eligible for e in current.executions) else
                       "FALLIDA" if any(e.status == "FALLIDA" for e in current.executions) else "SIN_SOLUCION")
         row.fecha_fin = stamp
+        row.comparison_version += 1
+        self.session.flush()
+        return self.get(comparison_id)
+
+    def claim_supervisor(self, comparison_id, token, owner):
+        row = self.legacy._lock(comparison_id)
+        current = self.get(comparison_id)
+        runtime = row.comparison_snapshot["runtime"]
+        if (current.terminal or runtime.get("runtime_version") != 1 or runtime["supervisor"] is not None
+            or any(e.dispatch_state != "QUEUED" for e in current.executions)):
+            return False
+        updated = {**runtime, "supervisor": dict(token=token, identity=identity(owner))}
+        runtime_metadata(updated, [e.execution_id for e in current.executions])
+        row.comparison_snapshot = {**row.comparison_snapshot, "runtime": updated}
+        row.comparison_version += 1
+        self.session.flush()
+        return True
+
+    def require_supervisor(self, comparison_id, token):
+        row = self.legacy._lock(comparison_id)
+        current = self.get(comparison_id)
+        owner = current.runtime.get("supervisor")
+        if owner is None or owner["token"] != token:
+            raise RunError("STATE_CONFLICT", "La comparación tiene otro dueño o no tiene identidad verificable.")
+        return row, current
+
+    def record_worker(self, comparison_id, execution_id, token, worker):
+        row, current = self.require_supervisor(comparison_id, token)
+        self.legacy._execution(comparison_id, execution_id)
+        runtime = row.comparison_snapshot["runtime"]
+        key = str(execution_id)
+        workers = dict(runtime["workers"])
+        if key in workers and workers[key] is not None and workers[key] != worker:
+            raise RunError("STATE_CONFLICT", "La identidad del worker no puede sustituirse.")
+        workers[key] = identity(worker) if worker is not None else None
+        row.comparison_snapshot = {**row.comparison_snapshot, "runtime": {**runtime, "workers": workers}}
         row.comparison_version += 1
         self.session.flush()
         return self.get(comparison_id)
@@ -290,3 +330,44 @@ class SqlComparisonPersistenceUnitOfWork(SqlComparisonUnitOfWork):
         super().__enter__()
         self.comparisons_v2 = SqlComparisonV2Repository(self.session)
         return self
+
+    def consistent_snapshot(self):
+        self.session.connection(execution_options={"isolation_level": "REPEATABLE READ"})
+
+    def captured_configuration(self):
+        from ..domain.problem import OptimizationConfig
+        rows = self.session.scalars(select(Configuracion).where(Configuracion.vigente.is_(True))).all()
+        if len(rows) != 1:
+            raise RunError("CONFIG_CONFLICT", "Se requiere una configuración vigente única.")
+        c = rows[0]
+        self._captured_config = c
+        try:
+            config = OptimizationConfig(resolution_mm=c.resolucion_raster_mm, margin_mm=c.margen_mm,
+                separation_mm=c.separacion_mm, angular_step_deg=c.paso_angular_grados)
+        except (ValueError, TypeError) as error:
+            raise RunError("CONFIG_CONFLICT", "La configuracion vigente no es valida.") from error
+        return c.id_configuracion, c.version, config, c.ancho_min_retazo_mm, c.alto_min_retazo_mm
+
+    def unfinished(self):
+        return list(self.session.scalars(select(Optimizacion.id_optimizacion).where(
+            Optimizacion.estado == "EN_EJECUCION").order_by(Optimizacion.id_optimizacion)))
+
+    def recover_historical(self, comparison_id):
+        row = self.session.get(Optimizacion, comparison_id)
+        if row.comparison_snapshot and row.comparison_snapshot.get("comparison_snapshot_version") == 1:
+            return self.comparisons.reconcile_stopped(comparison_id).terminal
+        return None
+
+    def __exit__(self, exc_type, exc, traceback):
+        from ..application.comparison_acceptance_v2 import SnapshotConflict
+        def conflict(error):
+            return isinstance(error, DBAPIError) and (getattr(error.orig, "sqlstate", None) in ("40001", "40P01")
+                or getattr(error.orig, "sqlstate", None) == "23505" and getattr(
+                    getattr(error.orig, "diag", None), "constraint_name", None) == "uq_optimizaciones_comparison_key")
+        try:
+            result = super().__exit__(exc_type, exc, traceback)
+        except DBAPIError as error:
+            if conflict(error): raise SnapshotConflict() from error
+            raise
+        if conflict(exc): raise SnapshotConflict() from exc
+        return result

@@ -54,12 +54,14 @@ class PersistedComparisonV2(Comparison):
     executions: tuple[PersistedExecutionV2, ...]
     methods: tuple[str, ...] = METHODS_V2
     profile: str = "comparison-v2"
+    runtime: object = None
 
     def __post_init__(self):
         super().__post_init__()
         object.__setattr__(self, "executions", tuple(self.executions))
         object.__setattr__(self, "methods", tuple(self.methods))
         object.__setattr__(self, "confirmation", immutable_json(self.confirmation))
+        object.__setattr__(self, "runtime", immutable_json(self.runtime))
 
     @property
     def incomplete(self):

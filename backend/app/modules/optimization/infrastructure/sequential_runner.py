@@ -101,13 +101,13 @@ class SequentialProcessRunner:
             if self.last_report is previous_report or self.last_report["all_workers_stopped"]:
                 self._active.release()
 
-    def _events(self, scopes, problem, minimums, *, cancel=None, observed=True, retain_observations=True):
+    def _events(self, scopes, problem, minimums, *, cancel=None, observed=True, retain_observations=True, lifecycle=False):
         scopes = tuple(scopes)
         if (len(scopes) != 6 or any(not isinstance(s, ExecutionScope) for s in scopes)
             or tuple(s.method for s in scopes) != METHODS_V2 or len({s.comparison_id for s in scopes}) != 1
             or len({s.execution_id for s in scopes}) != 6):
             raise ValueError("Runner requires the owned ordered six-execution scope")
-        if type(observed) is not bool or type(retain_observations) is not bool:
+        if type(observed) is not bool or type(retain_observations) is not bool or type(lifecycle) is not bool:
             raise ValueError("Observation flag must be explicit boolean")
         self.preflight()
         budget, context = self.policy.budget, mp.get_context("spawn")
@@ -193,6 +193,8 @@ class SequentialProcessRunner:
                             if process.is_alive(): process.terminate()
                             return
                 try:
+                    if lifecycle: yield dict(scope=scope,kind="dispatching",data={})
+                    launched = time.monotonic()  # The global clock still includes intent persistence.
                     process.start()
                     state.update(state="STARTING",dispatched=True,identity=process_identity(process.pid))
                     report["maximum_active_workers"] = max(report["maximum_active_workers"],int(process.is_alive()))
@@ -200,6 +202,7 @@ class SequentialProcessRunner:
                     reader = Thread(target=_reader,args=(receiving,channel,stop,budget.packet_bytes),daemon=True)
                     monitor = Thread(target=enforce,daemon=True)
                     reader.start(); monitor.start()
+                    if lifecycle: yield dict(scope=scope,kind="spawned",data=dict(identity=state["identity"]))
                     while terminal is None:
                         if reason:
                             code, global_stop = reason[0]
@@ -226,8 +229,9 @@ class SequentialProcessRunner:
                                     raise ValueError("Worker identity/input mismatch")
                                 ready = True
                                 state["startup_ms"] = (time.monotonic()-launched)*1000
-                                gate.set()
+                                if not lifecycle: gate.set()
                                 yield dict(scope=scope,kind=kind,data=data)
+                                if lifecycle: gate.set()  # B05 committed identity/hash before engine start.
                             elif kind == "failed":
                                 terminal = failed(scope,data["code"],dispatched=True,engine_started=bool(started_clock.value))
                             elif not ready:
