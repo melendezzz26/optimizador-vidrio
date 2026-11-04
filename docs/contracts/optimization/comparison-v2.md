@@ -289,3 +289,37 @@ no cambia SQL/Alembic y no se implementa selección/confirmación. Un reintento
 inmediato de la misma liberación recupera su versión sin duplicar efectos.
 
 Pruebas, endpoints, datos sintéticos y límites: [evidencia B06](../../evidence/sprint-02/TA-043/B06/README.md).
+
+## Activación B08 — selección y confirmación manual
+
+El estado de publicación descrito en B06 es histórico. B08 activa exactamente
+`PUT /{id}/selection` y `POST /{id}/confirm` de la tabla contractual, sin alterar
+sus schemas B01 ni las rutas v1. Selección exige `optimization.execute` y
+confirmación `optimization.confirm`; ambas exigen dueño, perfil v2, pertenencia,
+resultado completo durable y cierre seguro B05. `RECOVERY_BLOCKED` no se fuerza.
+
+La selección inicial sigue siendo null. Se permite cambiarla antes de confirmar
+con `expected_version` vigente, incrementando `comparison_version`; no consume
+inventario. Tras confirmar, selección y recibo son inmutables. Liberar antes de
+confirmar borra la selección y conserva su ID en `released_selection_id`, usando
+el mismo ciclo v1 y sin consumir stock.
+
+La confirmación reutiliza la transacción v1 y su revalidación de inventario:
+comparación, ejecución elegida, asociaciones, pedidos y fuentes en orden estable;
+consumo, movimientos, retazos, pedidos y recibo en un solo commit. El recibo
+operativo `confirmation` ocupa los sobres JSON existentes del agregado y de la
+ejecución elegida, separado de la entrada B01 y del resultado snapshot 3. No hay
+nuevas columnas, constraints, migraciones ni cambios del codec puro. Las lecturas
+validan concordancia de método, ejecución, actor, versión y fuentes; los cinco
+resultados no elegidos permanecen intactos. Los diagnósticos de motor sobreviven
+a la actualización de métricas efectivamente recuperables; un retazo descartado
+por Inventario no se presenta como creado.
+
+La clave, ejecución y versión originales recuperan el mismo recibo después de un
+commit, incluso si la respuesta se perdió. Otra operación sobre una comparación
+confirmada produce `ALREADY_CONFIRMED`; versión obsoleta produce `STATE_CONFLICT`,
+stock incompatible `STOCK_CONFLICT` y resultado no elegible `NOT_CONFIRMABLE`, con
+los códigos HTTP existentes (incluido 422 para este último). La UI conserva el
+ID histórico y la clave durante reintentos, y consulta antes de repetir efectos.
+
+Alcance, pruebas y smoke reales: [evidencia B08](../../evidence/sprint-02/TA-043/B08/README.md).

@@ -37,6 +37,12 @@ class SqlComparisonV2Repository:
         self.session = session
         self.legacy = SqlComparisonRepository(session)
 
+    def _lock(self, comparison_id):
+        return self.legacy._lock(comparison_id)
+
+    def _execution(self, comparison_id, execution_id):
+        return self.legacy._execution(comparison_id, execution_id)
+
     def find_by_key(self, actor_id, key):
         lock_id = int.from_bytes(hashlib.sha256(f"comparison:{actor_id}:{key}".encode()).digest()[:8], "big", signed=True)
         self.session.execute(text("SELECT pg_advisory_xact_lock(:key)"), {"key": lock_id})
@@ -115,19 +121,20 @@ class SqlComparisonV2Repository:
         if stored.get("comparison_snapshot_version") == 1:
             raise RunError("COMPARISON_PROFILE_MISMATCH", "La comparación pertenece al perfil comparison-v1.")
         try:
-            operational = {"runtime", "released_at", "released_by", "released_selection_id"}
+            operational = {"runtime", "released_at", "released_by", "released_selection_id", "confirmation"}
             frozen = decode_comparison_input_v2({k: v for k, v in stored.items() if k not in operational})
             if row.criterio_seleccion_version != "CMP-v2" or row.id_configuracion != frozen.configuration_id:
                 raise ValueError("Aggregate profile/configuration identity mismatch")
             runtime = stored["runtime"]
             runtime_metadata(runtime, [e.id_ejecucion for _, e in pairs if e is not None])
             stopped = runtime["supervisor_stopped_at"] is not None
-            release_keys = set(stored) & (operational - {"runtime"})
+            release_fields = {"released_at", "released_by", "released_selection_id"}
+            release_keys = set(stored) & release_fields
             released = bool(release_keys)
             if released:
-                if (release_keys != operational - {"runtime"} or not stopped
+                if (release_keys != release_fields or not stopped
                     or type(stored["released_by"]) is not int or stored["released_by"] != row.id_usuario_ejecutor
-                    or stored["released_selection_id"] is not None or row.id_ejecucion_seleccionada is not None):
+                    or row.id_ejecucion_seleccionada is not None):
                     raise ValueError("Invalid release ownership or closure")
                 if _utc(stored["released_at"]) < _utc(runtime["supervisor_stopped_at"]):
                     raise ValueError("Release precedes safe closure")
@@ -149,6 +156,34 @@ class SqlComparisonV2Repository:
             selected = next((e for e in executions if e.execution_id == row.id_ejecucion_seleccionada), None)
             if row.id_ejecucion_seleccionada is not None and (not stopped or selected is None or not selected.eligible):
                 raise ValueError("Selected execution is not an eligible owned result")
+            if released and stored["released_selection_id"] is not None and not any(
+                    type(stored["released_selection_id"]) is int and e.execution_id == stored["released_selection_id"]
+                    and e.eligible for e in executions):
+                raise ValueError("Released selection does not belong to the comparison")
+            confirmation = stored.get("confirmation")
+            if "confirmation" in stored:
+                from .comparison_confirmation import decode_receipt
+                if (not isinstance(confirmation, dict) or released or selected is None or not stopped
+                    or confirmation.get("receipt_version") != 1
+                    or type(confirmation.get("receipt_version")) is not int
+                    or confirmation.get("actor_id") != row.id_usuario_ejecutor
+                    or confirmation.get("execution_id") != selected.execution_id
+                    or confirmation.get("method") != selected.method
+                    or type(confirmation.get("expected_version")) is not int
+                    or confirmation["expected_version"] != row.comparison_version - 1
+                    or not isinstance(confirmation.get("key"), str)
+                    or re.fullmatch(r"[A-Za-z0-9_-]{8,64}", confirmation["key"]) is None):
+                    raise ValueError("Invalid durable confirmation identity/version")
+                receipt = decode_receipt(confirmation["receipt"])
+                if (receipt.optimization_id != identifier or receipt.order_ids != frozen.problem.order_ids
+                    or receipt.materials_consumed != selected.result.materials_used
+                    or _utc(confirmation["confirmed_at"]) < _utc(runtime["supervisor_stopped_at"])):
+                    raise ValueError("Confirmation receipt differs from selected execution")
+            for _, execution in pairs:
+                own_receipt = execution.patron_resultado.get("confirmation")
+                if (own_receipt != (confirmation if selected and execution.id_ejecucion == selected.execution_id else None)
+                    or "confirmation" in execution.patron_resultado and own_receipt is None):
+                    raise ValueError("Execution confirmation differs from aggregate")
             links = tuple(self.session.scalars(select(OptimizacionPedido.id_pedido).where(
                 OptimizacionPedido.id_optimizacion == identifier).order_by(OptimizacionPedido.id_pedido)))
             if links != frozen.problem.order_ids or row.id_pedido != links[0]:
@@ -159,7 +194,7 @@ class SqlComparisonV2Repository:
                 configuration_id=frozen.configuration_id, configuration_version=frozen.configuration_version,
                 minimum_width_mm=frozen.minimum_width_mm, minimum_height_mm=frozen.minimum_height_mm,
                 executions=executions, selected_execution_id=row.id_ejecucion_seleccionada, workers_stopped=stopped,
-                runtime=runtime, released=released)
+                runtime=runtime, released=released, confirmation=confirmation)
         except (KeyError, TypeError, ValueError, ArithmeticError, OverflowError) as error:
             raise RunError("INTERNAL_ERROR", "La trazabilidad persistida v2 requiere revisión.") from error
 
@@ -180,13 +215,29 @@ class SqlComparisonV2Repository:
             return current
         if current.version != expected_version or not current.terminal or not current.supervisor_stopped:
             raise RunError("STATE_CONFLICT", "El trabajo debe tener cierre seguro y versión vigente.")
-        if current.confirmation is not None or current.selected_execution_id is not None:
+        if current.confirmation is not None:
             raise RunError("STATE_CONFLICT", "El trabajo tiene una elección que requiere otro ciclo.")
         if any(e.eligible for e in current.executions):
             from .run_uow import SqlOrdersBatch
             SqlOrdersBatch(self.session).transition(current.problem.order_ids,"OPTIMIZADO","PENDIENTE")
         row.comparison_snapshot = {**row.comparison_snapshot,"released_at":now().isoformat(),
-            "released_by":actor_id,"released_selection_id":None}
+            "released_by":actor_id,"released_selection_id":current.selected_execution_id}
+        row.id_ejecucion_seleccionada = None
+        row.comparison_version += 1
+        self.session.flush()
+        return self.get(identifier)
+
+    def select(self, identifier, execution_id, expected_version, actor_id):
+        row = self._lock(identifier)
+        current = self.get_owned(identifier, actor_id)
+        if (type(expected_version) is not int or current.version != expected_version
+            or not current.terminal or not current.supervisor_stopped or current.released
+            or current.confirmation is not None):
+            raise RunError("STATE_CONFLICT", "La comparación no admite cambios en este estado o versión.")
+        if type(execution_id) is not int or not any(
+                e.execution_id == execution_id and e.eligible for e in current.executions):
+            raise RunError("NOT_CONFIRMABLE", "Selecciona un resultado completo y guardado de esta comparación.")
+        row.id_ejecucion_seleccionada = execution_id
         row.comparison_version += 1
         self.session.flush()
         return self.get(identifier)
@@ -203,7 +254,7 @@ class SqlComparisonV2Repository:
 
     def _read_execution(self, comparison_id, row, problem):
         data = row.patron_resultado
-        if not isinstance(data, dict) or set(data) != {"profile", "comparison_id", "execution_id", "method",
+        if not isinstance(data, dict) or set(data) - {"confirmation"} != {"profile", "comparison_id", "execution_id", "method",
                 "dispatch_state", "snapshot", "residual_rectangles", "visual_references"}:
             raise ValueError("Invalid execution envelope")
         if (data["profile"], data["comparison_id"], data["execution_id"], data["method"]) != (
@@ -230,6 +281,12 @@ class SqlComparisonV2Repository:
         used = {(s.source.value, s.material_id, s.physical_unit_index) for s in result.materials_used} if result else set()
         if any((r.material_source, r.material_id, r.stock_unit_index) not in used for r in residuals):
             raise ValueError("Residual references an unowned source")
+        if data.get("confirmation") is not None:
+            created = data["confirmation"]["receipt"]["remnants_created"]
+            persisted = {(r["source"]["source"], r["source"]["material_id"],
+                          r["source"]["physical_unit_index"]) for r in created}
+            residuals = tuple(r for r in residuals if
+                (r.material_source, r.material_id, r.stock_unit_index) in persisted)
         return PersistedExecutionV2(execution_id=row.id_ejecucion, method=row.metodo, status=row.estado,
             result=result, residuals=residuals, diagnostic=payload.diagnostic if payload else None,
             failure_code=payload.diagnostic.termination_reason if payload and result is None else None,
@@ -367,6 +424,8 @@ class SqlComparisonPersistenceUnitOfWork(SqlComparisonUnitOfWork):
     def __enter__(self):
         super().__enter__()
         self.comparisons_v2 = SqlComparisonV2Repository(self.session)
+        from .comparison_confirmation import SqlComparisonV2ConfirmationRepository
+        self.comparison_confirmation_v2 = SqlComparisonV2ConfirmationRepository(self.session, self.comparisons_v2)
         return self
 
     def consistent_snapshot(self):

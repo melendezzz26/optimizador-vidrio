@@ -213,7 +213,7 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
       pendingHeading.current?.closest('.comparison-workspace')?.scrollIntoView?.({ block: 'start' });
     }
   }, [current, state.success]);
-  const selected = current?.profile !== 'comparison-v2' ? current?.executions.find(e => e.execution_id === current.selected_execution_id) : null;
+  const selected = current?.executions.find(e => e.execution_id === current.selected_execution_id);
   const methods = current ? current.executions.map(e => e.method) : state.profile === 'comparison-v2' ? apiV2.methods : METHODS;
   const tabs = current?.profile === 'comparison-v2' ? ['comparison', ...methods] : [...methods, 'comparison'];
   const activeApi = current?.profile === 'comparison-v2' ? apiV2 : api;
@@ -266,7 +266,7 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
         <p className="comparison-table-hint">Desliza horizontalmente para consultar todas las métricas.</p>
         <div className="comparison-table-scroll" role="region" aria-label="Tabla comparativa con desplazamiento horizontal" tabIndex={0}><table><caption>Métricas de {current.executions.length} motores</caption><thead><tr><th>Motor</th><th>Estado / diagnóstico</th>
           {(current.profile === 'comparison-v2' ? comparisonMetrics : [['pieces', 'Piezas', ''], ...metricRows]).map(([, label, unit]) => <th key={label}>{label}{unit && <small>{unit}</small>}</th>)}
-          {current.profile !== 'comparison-v2' && <th>Elegir</th>}</tr></thead>
+          <th>Elegir</th></tr></thead>
           <tbody>{current.executions.map(execution => {
             const result = state.results[execution.execution_id]?.result;
             const rows = current.profile === 'comparison-v2' ? comparisonMetrics : [['pieces', 'Piezas', ''], ...metricRows];
@@ -275,17 +275,17 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
               <td>{executionStatus(execution)}{execution.diagnostic && <small>{execution.diagnostic.termination_reason}</small>}</td>
               {rows.map(([key]) => <td key={key}>{key === 'pieces' ? (execution.status === 'FALLIDA' || execution.outcome === 'FAILED' ? '—' : `${execution.placed_units} / ${execution.total_units}`)
                 : current.profile === 'comparison-v2' ? metricValue(key, execution, result) ?? '—' : execution.metrics?.[key] ?? '—'}</td>)}
-              {current.profile !== 'comparison-v2' && <td><label><input type="radio" name={`${id}-engine`} aria-label={`Elegir ${methodName(execution.method)}`}
+              <td><label><input type="radio" name={`${id}-engine`} aria-label={`Elegir ${methodName(execution.method)}`}
                 checked={current.selected_execution_id === execution.execution_id} disabled={!execute || state.busy || !current.selection_allowed || !execution.eligible}
-                onChange={() => flow.choose(execution.execution_id)} />{current.selected_execution_id === execution.execution_id ? 'Elegido' : 'Elegir'}</label></td>}
+                onChange={() => flow.choose(execution.execution_id)} />{current.selected_execution_id === execution.execution_id ? 'Elegido' : 'Elegir'}</label></td>
             </tr>;
           })}</tbody></table></div>
-        {current.profile === 'comparison-v2' ? <p role="status">La selección y confirmación transaccional corresponden a la siguiente fase.</p> : <>
-          {!current.terminal && <p role="status">La elección se habilita cuando terminan los tres procesos y sus resultados están guardados.</p>}
+        <>
+          {!current.terminal && <p role="status">La elección se habilita tras el cierre seguro de los {current.executions.length} motores y la persistencia de sus resultados.</p>}
           <div className="comparison-choice"><div><strong>{selected ? `${methodName(selected.method)} seleccionado` : 'Todavía no has elegido un motor'}</strong>
             <p>{current.confirmed ? 'El inventario y los pedidos reflejan únicamente la distribución elegida.' : 'Elegir un motor conserva el inventario. Confirma cuando hayas revisado su distribución.'}</p></div>
             {canConfirm && <button className="ng-button ng-button--primary" disabled={state.busy || !current.confirmable} onClick={() => setDialog(true)}>{state.busy ? 'Procesando…' : 'Confirmar distribución elegida'}</button>}
-          </div></>}
+          </div></>
       </section>
       <footer className="comparison-footer">
         {execute && current.terminal && !current.confirmed && !current.released && <button className="ng-button" disabled={state.busy} onClick={flow.release}>Liberar pedidos sin confirmar</button>}
@@ -293,7 +293,7 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
         <p>{current.confirmed ? 'Confirmado' : current.released ? 'Liberado' : current.terminal ? 'Resultados guardados' : 'Cálculo en curso'} · Trabajo #{current.comparison_id}</p>
       </footer>
     </>}
-    <ConfirmDialog open={dialog && current?.profile !== 'comparison-v2'} title={`Confirmar ${selected ? methodName(selected.method) : 'distribución'}`} confirmLabel="Confirmar corte"
+    <ConfirmDialog open={dialog && canConfirm && current?.confirmable && !state.busy} title={`Confirmar ${selected ? methodName(selected.method) : 'distribución'}`} confirmLabel="Confirmar corte"
       onCancel={() => setDialog(false)} onConfirm={() => { setDialog(false); flow.confirm(); }}>
       <p>Se descontarán únicamente las planchas y retazos de {selected ? methodName(selected.method) : 'la distribución elegida'} y se confirmarán sus pedidos.</p>
     </ConfirmDialog>

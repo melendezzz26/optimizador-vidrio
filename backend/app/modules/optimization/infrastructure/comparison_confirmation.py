@@ -29,6 +29,11 @@ def decode_receipt(value):
 
 
 class SqlComparisonConfirmationRepository(SqlConfirmationRepository):
+    method_names = {"FF": "First Fit", "BF": "Best Fit", "WF": "Worst Fit"}
+
+    def confirmed_snapshot(self, result, execution):
+        return encode_result(result)
+
     def __init__(self, session, comparisons):
         super().__init__(session, None)
         self.comparisons = comparisons
@@ -64,7 +69,7 @@ class SqlComparisonConfirmationRepository(SqlConfirmationRepository):
                 MovimientoInventario.tipo_evento == "CONSUMO_OPTIMIZACION").limit(1)) is not None:
             raise RunError("ALREADY_CONFIRMED", "La comparación ya tiene consumos registrados.")
         self.key, self.expected_version = key, expected_version
-        self.method_name = {"FF": "First Fit", "BF": "Best Fit", "WF": "Worst Fit"}[execution.method]
+        self.method_name = self.method_names[execution.method]
         run = OptimizationRun(optimization_id=comparison_id, status=RunStatus.COMPLETED,
                               result=execution.result, residuals=execution.residuals)
         return ConfirmationContext(run=run, execution_id=execution_id, minimum_width_mm=current.minimum_width_mm,
@@ -90,6 +95,17 @@ class SqlComparisonConfirmationRepository(SqlConfirmationRepository):
             "confirmed_at": datetime.now(timezone.utc).isoformat(), "receipt": json_value(receipt),
             "skipped_residuals": self.skipped}
         # Inventory consulta el origen por ejecución; conservar ese contrato de lectura.
-        execution.patron_resultado = {**execution.patron_resultado, "snapshot": encode_result(result), "confirmation": confirmation}
+        execution.patron_resultado = {**execution.patron_resultado, "snapshot": self.confirmed_snapshot(result, execution), "confirmation": confirmation}
         row.comparison_snapshot = {**row.comparison_snapshot, "confirmation": confirmation}
         row.comparison_version += 1
+
+
+class SqlComparisonV2ConfirmationRepository(SqlComparisonConfirmationRepository):
+    from ..application.comparison_catalog import CATALOG_V2
+    method_names = {definition.code: definition.name for definition in CATALOG_V2}
+
+    def confirmed_snapshot(self, result, execution):
+        from ..application.comparison_v2_contracts import ExecutionPayloadV2
+        from .comparison_v2_snapshot import decode_result_v3, encode_result_v3
+        original = decode_result_v3(execution.patron_resultado["snapshot"], expected_method=result.method)
+        return encode_result_v3(ExecutionPayloadV2(method=result.method, result=result, diagnostic=original.diagnostic))

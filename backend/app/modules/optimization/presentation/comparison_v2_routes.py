@@ -1,4 +1,4 @@
-"""Explicit comparison-v2 HTTP surface. Selection/confirmation stay absent until B08."""
+"""Explicit comparison-v2 HTTP surface with versioned manual confirmation."""
 import json
 import time
 from typing import Annotated
@@ -7,10 +7,13 @@ from pydantic import Field
 from fastapi import APIRouter, Depends, Header, Path, Query, Response
 
 from ..application.errors import RunError
+from ..application.comparison_confirmation import ConfirmComparisonV2
 from ..application.visual import MAX_RESPONSE_BYTES, mask_window
 from .comparison_routes import ObservationResponse
 from .comparison_supervision_v2 import get_comparison_v2_coordinator
 from .comparison_v2_schemas import ComparisonSummaryV2, ExecutionResponseV2, ComparisonReleaseV2, ComparisonMaskPayloadV2, PositiveIdV2
+from .comparison_v2_schemas import ComparisonSelectionV2, ComparisonConfirmationV2
+from .confirmation_serialization import confirmation_response
 from .comparison_v2_serialization import comparison_response_v2, execution_response_v2
 from .run_auth import run_permission
 from .run_routes import RunRoute, visual_response
@@ -98,6 +101,28 @@ def get_execution(comparison_id:Id,execution_id:Id,response:Response,
                   uow=Depends(get_comparison_v2_uow),coordinator=Depends(get_comparison_v2_coordinator)):
     current=load(comparison_id,user.user_id,uow,coordinator,response=response,allow_blocked=True)
     return execution_response_v2(current,execution_in(current,execution_id))
+
+
+@router.put('/{comparison_id}/selection', response_model=ComparisonSummaryV2)
+def select_execution(comparison_id: Id, request: ComparisonSelectionV2,
+                     user=Depends(run_permission('optimization.execute')),
+                     uow=Depends(get_comparison_v2_uow), coordinator=Depends(get_comparison_v2_coordinator)):
+    load(comparison_id, user.user_id, uow, coordinator)
+    with uow() as tx:
+        current = tx.comparisons_v2.select(comparison_id, request.execution_id, request.expected_version, user.user_id)
+    return comparison_response_v2(current)
+
+
+@router.post('/{comparison_id}/confirm', response_model=ComparisonConfirmationV2)
+def confirm(comparison_id: Id, request: ComparisonSelectionV2, key: Key,
+            user=Depends(run_permission('optimization.confirm')),
+            uow=Depends(get_comparison_v2_uow), coordinator=Depends(get_comparison_v2_coordinator)):
+    load(comparison_id, user.user_id, uow, coordinator)
+    receipt = ConfirmComparisonV2(uow).execute(comparison_id, request.execution_id, request.expected_version, key, user.user_id)
+    with uow() as tx:
+        current = tx.comparisons_v2.get_owned(comparison_id, user.user_id)
+    return ComparisonConfirmationV2(comparison_id=comparison_id, execution_id=request.execution_id,
+        version=current.version, receipt=confirmation_response(receipt))
 
 
 @router.get('/{comparison_id}/events')

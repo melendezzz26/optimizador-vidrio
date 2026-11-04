@@ -13,13 +13,16 @@ class ConfirmComparison:
     def __init__(self, unit_of_work):
         self.unit_of_work = unit_of_work
 
+    def repository(self, uow, comparison_id, actor_id):
+        return uow.comparison_confirmation
+
     def execute(self, comparison_id, execution_id, expected_version, key, actor_id):
         if (any(type(i) is not int or not 0 < i <= 2147483647
                 for i in (comparison_id, execution_id, expected_version, actor_id))
                 or not isinstance(key, str) or re.fullmatch(r"[A-Za-z0-9_-]{8,64}", key) is None):
             raise RunError("INVALID_INPUT", "La solicitud de confirmación no es válida.")
         with self.unit_of_work() as uow:
-            repository = uow.comparison_confirmation
+            repository = self.repository(uow, comparison_id, actor_id)
             context = repository.lock_comparison(comparison_id, execution_id, expected_version, key)
             if isinstance(context, ConfirmationResult):
                 return context
@@ -40,3 +43,14 @@ class ConfirmComparison:
             repository.mark_confirmed(context, receipt, actor_id)
             uow.orders.transition(receipt.order_ids, "OPTIMIZADO", "CONFIRMADO")
         return receipt
+
+
+class ConfirmComparisonV2(ConfirmComparison):
+    """Same inventory transaction, with ownership and safe closure checked under lock."""
+
+    def repository(self, uow, comparison_id, actor_id):
+        uow.comparisons_v2.legacy._lock(comparison_id)
+        current = uow.comparisons_v2.get_owned(comparison_id, actor_id)
+        if not current.terminal or not current.supervisor_stopped:
+            raise RunError("NOT_CONFIRMABLE", "La comparación todavía no acredita cierre seguro.")
+        return uow.comparison_confirmation_v2

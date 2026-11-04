@@ -1,7 +1,7 @@
 // TA-043/B07: explicit comparison-v2 transport. The comparison-v1 API is unchanged.
 import { API_URL } from '../../shared/apiUrl';
 import { getAccessToken } from '../authentication/authApi';
-import { RunContractError } from './runContract';
+import { RunContractError, parseConfirmation } from './runContract';
 import { parseMaskDescriptor, parseVisualMask } from './visualContract';
 import { CATALOG_V2, METHODS_V2, parseComparisonEventV2, parseComparisonV2, parseExecutionV2 } from './comparisonV2Contract';
 
@@ -61,6 +61,23 @@ export function createComparisonV2Api({ token, fetchImpl = globalThis.fetch } = 
       return parseComparisonV2(await request(`/${comparisonId}`, { signal }));
     },
     lookup: async (key, signal) => parseComparisonV2(await request(`/requests/${encodeURIComponent(key)}`, { signal })),
+    async choose(current, executionId) {
+      check(current.profile === 'comparison-v2' && current.executions.some(e => e.execution_id === executionId));
+      const data = parseComparisonV2(await request(`/${current.comparison_id}/selection`, {
+        method: 'PUT', body: { execution_id: executionId, expected_version: current.version } }));
+      check(data.comparison_id === current.comparison_id && data.selected_execution_id === executionId);
+      return data;
+    },
+    async confirm(current, operation) {
+      check(current.profile === 'comparison-v2' && operation.executionId === current.selected_execution_id);
+      const data = await request(`/${current.comparison_id}/confirm`, { method: 'POST', key: operation.key,
+        body: { execution_id: operation.executionId, expected_version: operation.version } });
+      check(data?.profile === 'comparison-v2' && data.schema_version === 2
+        && data.comparison_id === current.comparison_id && data.execution_id === operation.executionId
+        && id(data.version) && data.version === operation.version + 1);
+      parseConfirmation(data.receipt, current.comparison_id);
+      return data;
+    },
     release: async current => parseComparisonV2(await request(`/${current.comparison_id}/release`, {
       method: 'POST', body: { expected_version: current.version } })),
     async result(comparison, execution, signal) {

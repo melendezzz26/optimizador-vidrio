@@ -221,17 +221,34 @@ export function createComparisonController({ api, apiV2, source, storageKey, ini
     }),
     choose: id => action(async () => {
       const current = state.comparison, g = generation;
-      if (current?.profile === 'comparison-v2' || !current?.selection_allowed) return;
-      const next = await api.choose(current, id);
+      if (!current?.selection_allowed) return;
+      const next = await client(current.profile).choose(current, id);
       if (valid(g)) { apply(next); operation = null; remember(); }
     }),
     confirm: () => action(async () => {
       const current = state.comparison;
-      if (current?.profile === 'comparison-v2' || !current?.confirmable || current.confirmed || current.released) return;
+      if (!current?.confirmable || current.confirmed || current.released) return;
       const g = generation;
       if (!operation || operation.executionId !== current.selected_execution_id) operation = { executionId: current.selected_execution_id, version: current.version, key: newKey() };
-      remember(); await api.confirm(current, operation);
-      if (valid(g)) confirmed(current);
+      remember();
+      try { await client(current.profile).confirm(current, operation); }
+      catch (error) {
+        if (current.profile !== 'comparison-v2' || !valid(g)) throw error;
+        // A lost response can follow a successful commit. Read before retrying effects.
+        try { await sync(); } catch { /* Keep the stable operation for a later retry. */ }
+        const receipt = state.comparison?.confirmation;
+        if (!valid(g) || !state.comparison?.confirmed || receipt?.key !== operation.key
+          || receipt.execution_id !== operation.executionId || receipt.expected_version !== operation.version) throw error;
+      }
+      if (!valid(g)) return;
+      if (current.profile === 'comparison-v2') {
+        await sync();
+        if (!valid(g)) return;
+        operation = null;
+        current.order_ids.forEach(id => confirmedOrders.add(id));
+        set({ history: true, error: '', success: `Trabajo #${current.comparison_id} confirmado. Se conserva su resultado histórico.` });
+        remember(); source.refresh?.({ force: true });
+      } else confirmed(current);
     }),
     release: () => action(async () => {
       const current = state.comparison, g = generation;
