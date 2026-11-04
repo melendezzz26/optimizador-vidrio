@@ -1,8 +1,9 @@
-"""ST-INC-01/02 on a private Linux copy, borrowing installed runtimes/dependencies.
+"""ST-INC-01/02/03 on a private Linux copy, borrowing installed runtimes/dependencies.
 
 No installs, shared databases or edits to the borrowed runtime. Run from backend:
 python -m tests.optimization_b01_smoke --runtime-root /path/to/linux-validation
 Add --block B02 for historical data created on the previous schema before upgrade.
+Add --block B03 for the available real v1/legacy regression; new adapters are not routed yet.
 """
 import argparse
 import hashlib
@@ -38,11 +39,11 @@ def owned_processes(root):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--runtime-root", type=Path, required=True)
-    parser.add_argument("--block", choices=("B01", "B02"), default="B01")
+    parser.add_argument("--block", choices=("B01", "B02", "B03"), default="B01")
     args = parser.parse_args()
     runtime = args.runtime_root.resolve()
     block = args.block
-    smoke = "ST-INC-01" if block == "B01" else "ST-INC-02"
+    smoke = f"ST-INC-{block[1:]}"
     evidence = REPO / f"docs/evidence/sprint-02/TA-043/{block}/smoke"
     prefix = f"newglass-ta043-{block.lower()}-"
     node = runtime / "node-v22.23.2-linux-x64/bin/node"
@@ -65,6 +66,10 @@ def main():
         "test-results", "playwright-report", "__pycache__", ".pytest_cache", "*.pyc")
     report = dict(scope=f"{smoke}: real historical v1 and legacy; no public six-engine validation",
                   runtime_root=str(runtime), temporary_root=str(root), result="FAIL")
+    if block == "B03":
+        report.update(new_adapter_service_validation="PENDING_INTEGRATION",
+                      public_six_engine_validation="PENDING_INTEGRATION",
+                      reused_test_selection="TA-043 B01")
     runner = None
     try:
         for folder in ("backend", "frontend", "docs/contracts"):
@@ -107,7 +112,7 @@ export default { ...base, testMatch: 'optimization-comparison.spec.js',
         report["processes_before"] = owned_processes(root)
         with (evidence / "execution.txt").open("w", encoding="utf-8") as log:
             runner = subprocess.Popen([str(node), str(root / "frontend/node_modules/@playwright/test/cli.js"),
-                "test", "--config=playwright.b01.config.mjs", "--grep", f"TA-043 {block}"],
+                "test", "--config=playwright.b01.config.mjs", "--grep", "TA-043 B01" if block == "B03" else f"TA-043 {block}"],
                 cwd=root / "frontend", env=env, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
             report["runner_exit"] = runner.wait(timeout=300)
         report_file = root / "frontend/test-results/b01-report.json"
