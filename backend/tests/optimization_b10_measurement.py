@@ -27,32 +27,13 @@ def expanded_fixture(source: dict, repeats: int) -> dict:
         stock = deepcopy(source["problem"]["groups"][0]["stock_candidates"][0])
         stock["physical_unit_index"] = stock_index
         group["stock_candidates"].append(stock)
-    for batch in range(repeats):
-        for unit in original_units:
+    for piece_position, unit in enumerate(original_units):
+        for batch in range(repeats):
             copy = deepcopy(unit)
-            copy["piece_id"] = batch * len(original_units) + unit["piece_id"]
+            copy["piece_id"] = piece_position * repeats + batch + 1
             copy["order_id"] = batch + 1
             copy["unit_index"] = 1
             group["units"].append(copy)
-    return fixture
-
-
-def scaled_fixture(source: dict, factor: int) -> dict:
-    fixture = deepcopy(source)
-    group = fixture["problem"]["groups"][0]
-    for item in [*group["units"], *group["stock_candidates"]]:
-        item["area_mm2"] = str(float(item["area_mm2"]) * factor * factor)
-        geometry = item["geometry"]
-        if geometry["type"] == "RECTANGULO":
-            geometry["width_mm"] *= factor
-            geometry["height_mm"] *= factor
-        elif geometry["type"] == "CIRCUNFERENCIA":
-            geometry["radius_mm"] *= factor
-        else:
-            geometry["vertices_mm"] = [
-                [coordinate * factor for coordinate in vertex]
-                for vertex in geometry["vertices_mm"]
-            ]
     return fixture
 
 
@@ -129,9 +110,17 @@ def measure(case_name: str, fixture: dict, budget: dict) -> dict:
             process.close()
     return {
         "case": case_name,
-        "input_sha256": input_hash,
+        "input_sha256_payload": input_hash,
+        "engine_input_sha256s": sorted(
+            {record["input_sha256"] for record in records if "input_sha256" in record}
+        ),
         "units": len(fixture["problem"]["groups"][0]["units"]),
         "stock_candidates": len(fixture["problem"]["groups"][0]["stock_candidates"]),
+        "geometry_types": sorted(
+            {unit["geometry"]["type"] for unit in fixture["problem"]["groups"][0]["units"]}
+        ),
+        "config": fixture["problem"]["config"],
+        "angular_step_deg": fixture["problem"]["config"]["angular_step_deg"],
         "methods": METHODS,
         "records": records,
         "maximum_aggregate_rss_bytes": max_rss,
@@ -158,14 +147,14 @@ def main() -> int:
         if not key.startswith("_")
     }
     small = source["problem"]
-    large = scaled_fixture(expanded_fixture(small, 1), 10)
+    large = expanded_fixture(small, 4)
     measurements = {
         "measurement": "B10 observed Linux spawn measurements",
         "source_fixture": "B03 adapter-validation.json",
         "budget": budget,
         "cases": [
             measure("small-b09-reference", small, budget),
-            measure("representative-scaled-3-units", large, budget),
+            measure("representative-12-units", large, budget),
         ],
     }
     target = ROOT / "docs/evidence/sprint-02/TA-043/B10/measurements.json"
