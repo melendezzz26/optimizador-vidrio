@@ -2,7 +2,7 @@
 import { test, expect } from '@playwright/test';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { api, setup, login, loginApi, open, stock, capture, save } from './optimizationRealSupport.js';
+import { api, setup, login, loginApi, open, run, stock, capture, save } from './optimizationRealSupport.js';
 import { parseComparisonV2, parseExecutionV2, parseComparisonEventV2 } from '../../src/features/optimization/comparisonV2Contract.js';
 
 test('TA-043 B06 smoke: API publica seis motores, recuperacion y compatibilidad real', async ({ page }, info) => {
@@ -105,6 +105,211 @@ test('TA-043 B06 smoke: API publica seis motores, recuperacion y compatibilidad 
   expect(await stock(page, data)).toEqual(before); expect(errors).toEqual([]);
   expect(await allInventory()).toEqual(allBefore);
   save(info, 'b06-history-legacy.json', { v1: v1.body, legacy: ff.body, mismatch, cleanup: 'HARNESS_OWNED_SERVICES' });
+});
+
+test('TA-043 B07 smoke: interfaz v2, seis distribuciones y recuperacion visual real', async ({ page }, info) => {
+  test.setTimeout(180_000);
+  const errors = []; page.on('pageerror', error => errors.push(error.message));
+  const v2Posts = [], v1Posts = [];
+  page.on('request', request => {
+    if (request.method() !== 'POST') return;
+    const pathname = new URL(request.url()).pathname;
+    if (pathname === '/api/optimization/comparisons-v2') v2Posts.push(request);
+    if (pathname === '/api/optimization/comparisons') v1Posts.push(request);
+  });
+  const data = await setup(page, 'single', { createOrders: false });
+  const allInventory = async () => {
+    const read = async route => {
+      const response = await page.request.get(`${api}/api/inventory/${route}`, { headers: data.headers });
+      expect(response.status()).toBe(200); return response.json();
+    };
+    const sheets = await read('planchas'), remnants = await read('retazos');
+    const movements = await Promise.all([
+      ...sheets.map(sheet => read(`planchas/${sheet.id_plancha}/movimientos`)),
+      ...remnants.map(remnant => read(`retazos/${remnant.id_retazo}/movimientos`)),
+    ]);
+    return { sheets, remnants, movements };
+  };
+  const inventoryBefore = await allInventory(), stockBefore = await stock(page, data);
+  const created = await page.request.post(`${api}/api/orders`, { headers: data.headers, data: { id_cliente: 41, piezas: [
+    { ...data.materials[0], tipo_forma: 'RECTANGULO', cantidad: 1, width_mm: 10, height_mm: 10 },
+    { ...data.materials[0], tipo_forma: 'CIRCUNFERENCIA', cantidad: 1, radius_mm: 2 },
+    { ...data.materials[0], tipo_forma: 'POLIGONO_CONVEXO', cantidad: 1, vertices_mm: [[0, 0], [4, 0], [0, 3]] },
+  ] } });
+  expect(created.status()).toBe(201); data.orders = [(await created.json()).id_pedido];
+
+  await login(page, data.actors.all, { comparative: true }); await open(page);
+  await page.getByRole('checkbox', { name: new RegExp(`Pedido #${data.orders[0]}\\b`) }).check();
+  await page.getByLabel('Perfil').selectOption('comparison-v2');
+  const acceptedResponse = page.waitForResponse(response => new URL(response.url()).pathname === '/api/optimization/comparisons-v2'
+    && response.request().method() === 'POST');
+  await page.getByRole('button', { name: 'Comparar con los seis motores', exact: true }).click();
+  const acceptedHttp = await acceptedResponse;
+  expect(acceptedHttp.status()).toBe(201);
+  const accepted = parseComparisonV2(await acceptedHttp.json());
+  const idempotencyKey = acceptedHttp.request().headers()['idempotency-key'];
+  expect(idempotencyKey).toMatch(/^[A-Za-z0-9_-]{8,64}$/);
+
+  let current;
+  await expect.poll(async () => {
+    const response = await page.request.get(`${api}/api/optimization/comparisons-v2/${accepted.comparison_id}`, { headers: data.headers });
+    expect(response.status()).toBe(200); current = parseComparisonV2(await response.json()); return current.terminal;
+  }, { timeout: 60_000, intervals: [100, 250, 500] }).toBe(true);
+  expect(current.methods).toEqual(['FF', 'BF', 'WF', 'HF', 'M5', 'M6-BS']);
+  expect(Number(current.configuration.paso_angular_grados)).toBe(5);
+  expect(current.executions.every(execution => execution.complete && execution.result_available
+    && execution.diagnostic.termination_reason === 'COMPLETED')).toBe(true);
+  await expect(page.getByText(/Comparación finalizada/)).toBeVisible();
+  await expect(page.getByRole('tab')).toHaveCount(7);
+  await page.getByLabel('Recuperar por clave idempotente').fill(idempotencyKey);
+  await page.getByRole('button', { name: 'Recuperar', exact: true }).click();
+  await expect(page.getByRole('tab')).toHaveCount(7);
+  expect(v2Posts).toHaveLength(1);
+  await expect(page.getByRole('radio')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Confirmar distribución elegida' })).toHaveCount(0);
+
+  const results = {}, manifests = {}, masks = {};
+  for (const execution of current.executions) {
+    const prefix = `/api/optimization/comparisons-v2/${current.comparison_id}/executions/${execution.execution_id}`;
+    const response = await page.request.get(`${api}${prefix}`, { headers: data.headers });
+    expect(response.status()).toBe(200);
+    const value = parseExecutionV2(await response.json(), current, execution);
+    expect(value.result).not.toBeNull(); expect(value.result.placed_units).toBe(3);
+    expect(value.result.metrics).not.toBeNull();
+    const geometryTypes = new Set(value.result.placements.map(placement => placement.geometria.type));
+    expect([...geometryTypes].sort()).toEqual(['CIRCUNFERENCIA', 'POLIGONO_CONVEXO', 'RECTANGULO']);
+    expect(value.result.placements.every(placement => Number(placement.rotation_deg) % 5 === 0)).toBe(true);
+    results[execution.method] = value;
+
+    const manifestResponse = await page.request.get(`${api}${prefix}/visual`, { headers: data.headers });
+    expect(manifestResponse.status()).toBe(200);
+    const manifest = await manifestResponse.json();
+    expect(manifest).toMatchObject({ profile: 'comparison-v2', schema_version: 2,
+      comparison_id: current.comparison_id, execution_id: execution.execution_id, method: execution.method });
+    manifests[execution.method] = manifest;
+    for (const descriptor of manifest.items) {
+      expect(descriptor).toMatchObject({ profile: 'comparison-v2', schema_version: 2,
+        comparison_id: current.comparison_id, execution_id: execution.execution_id, method: execution.method });
+    }
+    if (manifest.items.length) {
+      const descriptor = manifest.items[0];
+      const maskResponse = await page.request.get(`${api}${prefix}/visual/masks/${descriptor.mask_ref}`, { headers: data.headers });
+      expect(maskResponse.status()).toBe(200);
+      const mask = await maskResponse.json();
+      expect(mask).toMatchObject({ profile: 'comparison-v2', comparison_id: current.comparison_id,
+        execution_id: execution.execution_id, method: execution.method, mask_ref: descriptor.mask_ref });
+      masks[execution.method] = mask;
+    }
+  }
+  expect(Object.keys(masks).length).toBeGreaterThan(0);
+
+  const tableTab = page.getByRole('tab', { name: /^Comparación/ });
+  await tableTab.click();
+  const table = page.getByRole('table');
+  await expect(table).toContainText('Métricas de 6 motores');
+  await expect(page.getByText(/no se ordenan ni recomiendan un motor/)).toBeVisible();
+  const headings = await table.locator('thead th').allTextContents();
+  const metricColumn = name => headings.findIndex(heading => heading.includes(name)) - 1;
+  for (const execution of current.executions) {
+    const name = ({ FF: 'First Fit', BF: 'Best Fit', WF: 'Worst Fit', HF: 'Hole Filling',
+      M5: 'Best Residual Fit', 'M6-BS': 'Beam Search acotada' })[execution.method];
+    const row = table.locator('tbody tr').filter({ hasText: name });
+    await expect(row).toHaveCount(1);
+    await expect(row.locator('td').nth(0)).toContainText('Completo');
+    const metrics = results[execution.method].execution.metrics;
+    for (const [label, expected] of [
+      ['Cobertura', `${(execution.placed_units / execution.total_units * 100).toFixed(1)} %`],
+      ['Aprovechamiento', metrics.aprovechamiento_pct], ['Merma', metrics.merma_mm2],
+      ['Material recuperable', metrics.retazo_recuperable_mm2], ['Planchas usadas', metrics.planchas_nuevas_usadas],
+      ['Retazos reutilizados', results[execution.method].result.materials_used.filter(item => item.material_source === 'RETAZO').length],
+      ['Piezas colocadas', `${execution.placed_units} / ${execution.total_units}`],
+      ['Piezas no colocadas', 0], ['Tiempo de cálculo', metrics.tiempo_computacional_ms], ['Completitud', 'Completo'],
+    ]) {
+      const index = metricColumn(label);
+      expect(index).toBeGreaterThanOrEqual(0);
+      await expect(row.locator('td').nth(index)).toContainText(String(expected));
+    }
+  }
+  await capture(page, info, 'comparison-v2-six-metrics');
+
+  const tabLabels = { FF: 'FF', BF: 'BF', WF: 'WF', HF: 'HF', M5: 'BRF', 'M6-BS': 'BS-2' };
+  const visualEvidence = {};
+  for (const execution of current.executions) {
+    const tab = page.getByRole('tab', { name: new RegExp(`^${tabLabels[execution.method]}`) });
+    const panel = page.locator(`#${await tab.getAttribute('aria-controls')}`);
+    await tab.click();
+    await panel.getByRole('button', { name: /Resultado/ }).click();
+    const canvas = panel.getByRole('region', { name: 'Distribución de piezas', exact: true });
+    const expectedKeys = results[execution.method].result.placements.map(placement => `${placement.id_pedido}:${placement.id_pieza}:${placement.unit_index}`).sort();
+    await expect(canvas.locator('[data-placement]')).toHaveCount(expectedKeys.length);
+    const actualKeys = await canvas.locator('[data-placement]').evaluateAll(nodes => nodes.map(node => node.getAttribute('data-placement')).sort());
+    expect(actualKeys).toEqual(expectedKeys);
+    await capture(page, info, `${execution.method}-2d`, canvas);
+    await canvas.getByRole('button', { name: 'Ver en 3D', exact: true }).click();
+    const scene = canvas.getByRole('region', { name: 'Vista 3D del resultado', exact: true });
+    await expect(scene.locator('[data-piece-3d]')).toHaveCount(expectedKeys.length);
+    expect((await scene.locator('[data-piece-3d]').evaluateAll(nodes => nodes.map(node => node.getAttribute('data-piece-3d')).sort())))
+      .toEqual(expectedKeys);
+    await capture(page, info, `${execution.method}-3d`, scene);
+    visualEvidence[execution.method] = { expectedKeys, displayedKeys: actualKeys, pieces3d: expectedKeys.length };
+    if (manifests[execution.method].items.length) {
+      await panel.getByRole('button', { name: /Máscaras/ }).click();
+      await expect(panel.getByRole('heading', { name: 'Máscara real de la corrida' })).toBeVisible();
+      await expect(panel.locator('[data-mask-ref]')).toBeVisible();
+    }
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+
+  const eventsResponse = await page.request.get(`${api}/api/optimization/comparisons-v2/${current.comparison_id}/events`, { headers: data.headers });
+  expect(eventsResponse.status()).toBe(200);
+  const events = (await eventsResponse.text()).trim().split('\n').map(JSON.parse);
+  expect(events.filter(event => event.event === 'result_persisted')).toHaveLength(6);
+  expect(events.filter(event => event.event === 'search_progress').every(event => event.method === 'M6-BS'
+    && event.presentation === 'PROVISIONAL')).toBe(true);
+  expect(events.some(event => event.method === 'M6-BS' && event.event === 'piece_placed')).toBe(false);
+
+  const byKey = await page.request.get(`${api}/api/optimization/comparisons-v2/requests/${encodeURIComponent(idempotencyKey)}`, { headers: data.headers });
+  expect(byKey.status()).toBe(200); expect(await byKey.json()).toEqual(current);
+  await page.reload(); await open(page);
+  await expect(page.getByRole('tab')).toHaveCount(7);
+  expect(v2Posts).toHaveLength(1);
+  const restored = await page.request.get(`${api}/api/optimization/comparisons-v2/${current.comparison_id}`, { headers: data.headers });
+  expect(await restored.json()).toEqual(current);
+  expect(await stock(page, data)).toEqual(stockBefore); expect(await allInventory()).toEqual(inventoryBefore);
+  await capture(page, info, 'comparison-v2-restored');
+  save(info, 'b07-six-engine-ui.json', { accepted, current, results, manifests, masks, events,
+    visualEvidence, postsAfterRestore: v2Posts.length, inventoryBefore, inventoryAfterV2: await allInventory(),
+    profileV1VisualTabs: '4_EXPECTED', b08: 'NOT_IMPLEMENTED' });
+
+  await page.getByRole('button', { name: 'Liberar pedidos sin confirmar', exact: true }).click();
+  await expect(page.getByText(new RegExp(`Trabajo #${current.comparison_id} liberado sin confirmar`))).toBeVisible();
+  await page.getByLabel('Perfil').selectOption('comparison-v1');
+  await expect(page.getByRole('checkbox', { name: new RegExp(`Pedido #${data.orders[0]}\\b`) })).toBeEnabled();
+  await page.getByRole('checkbox', { name: new RegExp(`Pedido #${data.orders[0]}\\b`) }).check();
+  const v1Accepted = page.waitForResponse(response => new URL(response.url()).pathname === '/api/optimization/comparisons'
+    && response.request().method() === 'POST');
+  await page.getByRole('button', { name: 'Comparar con los tres motores', exact: true }).click();
+  const v1Response = await v1Accepted; expect(v1Response.status()).toBe(201);
+  const v1 = await v1Response.json();
+  await expect(page.getByText(/Comparación finalizada/)).toBeVisible();
+  await expect(page.getByRole('tab')).toHaveCount(4);
+  expect(v1.executions.map(execution => execution.method)).toEqual(['FF', 'BF', 'WF']);
+  await page.reload(); await open(page);
+  await expect(page.getByRole('tab')).toHaveCount(4);
+  expect(v1Posts).toHaveLength(1);
+  const historical = await page.request.get(`${api}/api/optimization/comparisons/${v1.comparison_id}`, { headers: data.headers });
+  expect(historical.status()).toBe(200); expect(await historical.json()).toEqual(v1);
+  await capture(page, info, 'comparison-v1-three-engines');
+  await page.getByRole('button', { name: 'Liberar pedidos sin confirmar', exact: true }).click();
+  await expect(page.getByText(new RegExp(`Trabajo #${v1.comparison_id} liberado sin confirmar`))).toBeVisible();
+
+  await page.goto('/first-fit-compatibility.html'); await open(page);
+  const legacy = await run(page, data, info);
+  expect(legacy.result.metodo).toBe('FF');
+  expect(await stock(page, data)).toEqual(stockBefore); expect(await allInventory()).toEqual(inventoryBefore);
+  expect(errors).toEqual([]);
+  save(info, 'b07-history-v1-legacy.json', { v1, legacy: legacy.result, inventoryBefore,
+    inventoryAfterAllSimulation: await allInventory(), comparisonsPostedV2: v2Posts.length, comparisonsPostedV1: v1Posts.length });
 });
 
 test('TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL', async ({ page }, info) => {
