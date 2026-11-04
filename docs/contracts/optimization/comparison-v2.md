@@ -165,3 +165,33 @@ Evidencia, inventario de condiciones de tres y alcance de CA-02/11/12/14 en
 servicios reales v1 y legacy; los seis públicos, migración, adapters/supervisión
 v2 y smoke integral permanecen pendientes de sus bloques. Se requiere revisión
 de Fabricio antes de avanzar a consumidores B02/B03.
+
+## Persistencia B02: composición durable interna
+
+La autorización posterior de B02 incorpora una migración aditiva y un repositorio
+optativo; no cambia estos schemas HTTP, los codecs/fixtures B01, `/comparisons`
+ni `/runs`, ni publica todavía rutas v2.
+
+`comparison_snapshot` guarda íntegro el sobre de entrada B01 versión 2, con
+perfil y seis métodos congelados, más un objeto hermano `runtime` cuyo único
+campo inicial es `supervisor_stopped_at` (UTC o null). El codec puro recibe solo
+la entrada; `comparison_version` continúa siendo el contador SQL optimista,
+independiente de las versiones de perfil, entrada y resultado.
+
+Cada `patron_resultado` v2 contiene `profile`, `comparison_id`, `execution_id`,
+`method`, `dispatch_state`, `snapshot`, `residual_rectangles` y `visual_references`.
+`snapshot` es null mientras está activo y es el sobre B01 de resultado versión 3
+al terminar, con resultado/completitud y diagnóstico; permite fallos sin layout.
+El despacho QUEUED/STARTING/RUNNING/TERMINATED no cambia los estados SQL históricos.
+Las referencias de máscara guardan perfil/versión y propietario completo;
+persistir una referencia no garantiza disponibilidad del bitmap ni replay visual.
+
+Se reutilizan tablas, FK y unicidad actuales. Solo `ck_ejecuciones_metodo` se
+amplía a `FF/BF/WF/HF/M5/M6-BS`. Los lectores históricos de resultado 1/2 y agregado
+1 se conservan sin backfill; el lector compatible devuelve sus DTO originales.
+El downgrade comprueba incompatibilidades bajo bloqueo antes de cualquier DDL.
+Registrar una parada observada es una operación interna de persistencia: la
+prueba real de procesos y la liberación de admisión pertenecen a B05, y no se
+deducen de esa marca por sí sola. Selección/confirmación v2 pertenecen a B08.
+
+Validación y límites de lo demostrado: [evidencia B02](../../evidence/sprint-02/TA-043/B02/README.md).

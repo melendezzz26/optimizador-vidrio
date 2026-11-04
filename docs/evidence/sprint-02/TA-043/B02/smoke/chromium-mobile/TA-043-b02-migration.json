@@ -1,0 +1,264 @@
+{
+  "result": "PASS",
+  "previous_revision": "s2cmp01a1b2c",
+  "new_revision": "s2cmp02d4e6f8",
+  "rows": {
+    "optimizaciones": 4,
+    "ejecuciones_optimizacion": 8,
+    "optimizacion_pedidos": 4,
+    "metricas_ejecucion": 8,
+    "materiales_utilizados": 8
+  },
+  "before_sha256": {
+    "optimizaciones": "db682e8579c5b39285048eb8a8871b259c9894dccc47137f8218b0a120b32abe",
+    "ejecuciones_optimizacion": "4f9d083d611575aea3f861d8545cdce3390fc10d666dc5ac71184a53dca323e2",
+    "optimizacion_pedidos": "dcbb5fdd547e355dbcb4733b9c029959e65ef96a25cb4099d46ca160a58f1bef",
+    "metricas_ejecucion": "59b132aa7d3e3462be7a78fb5bad0c8e50b65dc4c20bc66c4a5dfff117964527",
+    "materiales_utilizados": "5e298f757cd12e69ddc71001d8cba12629aa103e5815efb95ecc0e59301d4fa7"
+  },
+  "after_sha256": {
+    "optimizaciones": "db682e8579c5b39285048eb8a8871b259c9894dccc47137f8218b0a120b32abe",
+    "ejecuciones_optimizacion": "4f9d083d611575aea3f861d8545cdce3390fc10d666dc5ac71184a53dca323e2",
+    "optimizacion_pedidos": "dcbb5fdd547e355dbcb4733b9c029959e65ef96a25cb4099d46ca160a58f1bef",
+    "metricas_ejecucion": "59b132aa7d3e3462be7a78fb5bad0c8e50b65dc4c20bc66c4a5dfff117964527",
+    "materiales_utilizados": "5e298f757cd12e69ddc71001d8cba12629aa103e5815efb95ecc0e59301d4fa7"
+  },
+  "constraints_before": {
+    "ejecuciones_optimizacion": {
+      "columns": [
+        [
+          "id_ejecucion",
+          "INTEGER",
+          false,
+          "nextval('ejecuciones_optimizacion_id_ejecucion_seq'::regclass)"
+        ],
+        [
+          "metodo",
+          "VARCHAR(10)",
+          false,
+          null
+        ],
+        [
+          "fecha_inicio",
+          "TIMESTAMP",
+          false,
+          null
+        ],
+        [
+          "patron_resultado",
+          "JSONB",
+          true,
+          null
+        ],
+        [
+          "id_optimizacion",
+          "INTEGER",
+          false,
+          null
+        ],
+        [
+          "fecha_fin",
+          "TIMESTAMP",
+          true,
+          null
+        ],
+        [
+          "estado",
+          "VARCHAR(20)",
+          false,
+          null
+        ],
+        [
+          "completo",
+          "BOOLEAN",
+          false,
+          null
+        ]
+      ],
+      "pk": {
+        "constrained_columns": [
+          "id_ejecucion"
+        ],
+        "name": "ejecuciones_optimizacion_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "fk": [
+        {
+          "name": "ejecuciones_optimizacion_id_optimizacion_fkey",
+          "constrained_columns": [
+            "id_optimizacion"
+          ],
+          "referred_schema": null,
+          "referred_table": "optimizaciones",
+          "referred_columns": [
+            "id_optimizacion"
+          ],
+          "options": {},
+          "comment": null
+        }
+      ],
+      "unique": [
+        {
+          "column_names": [
+            "id_optimizacion",
+            "metodo"
+          ],
+          "name": "ejecuciones_optimizacion_metodo_key",
+          "comment": null,
+          "dialect_options": {
+            "postgresql_include": [],
+            "postgresql_nulls_not_distinct": false
+          }
+        }
+      ],
+      "check": [
+        {
+          "name": "ck_ejecuciones_estado",
+          "sqltext": "estado::text = ANY (ARRAY['EN_EJECUCION'::character varying, 'COMPLETADA'::character varying, 'FALLIDA'::character varying]::text[])",
+          "comment": null
+        },
+        {
+          "name": "ck_ejecuciones_metodo",
+          "sqltext": "metodo::text = ANY (ARRAY['FF'::character varying, 'BF'::character varying, 'WF'::character varying]::text[])",
+          "comment": null
+        }
+      ],
+      "indexes": [
+        {
+          "name": "ejecuciones_optimizacion_metodo_key",
+          "unique": true,
+          "column_names": [
+            "id_optimizacion",
+            "metodo"
+          ],
+          "duplicates_constraint": "ejecuciones_optimizacion_metodo_key",
+          "dialect_options": {
+            "postgresql_include": []
+          }
+        }
+      ]
+    }
+  },
+  "constraints_after": {
+    "ejecuciones_optimizacion": {
+      "columns": [
+        [
+          "id_ejecucion",
+          "INTEGER",
+          false,
+          "nextval('ejecuciones_optimizacion_id_ejecucion_seq'::regclass)"
+        ],
+        [
+          "metodo",
+          "VARCHAR(10)",
+          false,
+          null
+        ],
+        [
+          "fecha_inicio",
+          "TIMESTAMP",
+          false,
+          null
+        ],
+        [
+          "patron_resultado",
+          "JSONB",
+          true,
+          null
+        ],
+        [
+          "id_optimizacion",
+          "INTEGER",
+          false,
+          null
+        ],
+        [
+          "fecha_fin",
+          "TIMESTAMP",
+          true,
+          null
+        ],
+        [
+          "estado",
+          "VARCHAR(20)",
+          false,
+          null
+        ],
+        [
+          "completo",
+          "BOOLEAN",
+          false,
+          null
+        ]
+      ],
+      "pk": {
+        "constrained_columns": [
+          "id_ejecucion"
+        ],
+        "name": "ejecuciones_optimizacion_pkey",
+        "comment": null,
+        "dialect_options": {
+          "postgresql_include": []
+        }
+      },
+      "fk": [
+        {
+          "name": "ejecuciones_optimizacion_id_optimizacion_fkey",
+          "constrained_columns": [
+            "id_optimizacion"
+          ],
+          "referred_schema": null,
+          "referred_table": "optimizaciones",
+          "referred_columns": [
+            "id_optimizacion"
+          ],
+          "options": {},
+          "comment": null
+        }
+      ],
+      "unique": [
+        {
+          "column_names": [
+            "id_optimizacion",
+            "metodo"
+          ],
+          "name": "ejecuciones_optimizacion_metodo_key",
+          "comment": null,
+          "dialect_options": {
+            "postgresql_include": [],
+            "postgresql_nulls_not_distinct": false
+          }
+        }
+      ],
+      "check": [
+        {
+          "name": "ck_ejecuciones_estado",
+          "sqltext": "estado::text = ANY (ARRAY['EN_EJECUCION'::character varying, 'COMPLETADA'::character varying, 'FALLIDA'::character varying]::text[])",
+          "comment": null
+        },
+        {
+          "name": "ck_ejecuciones_metodo",
+          "sqltext": "metodo::text = ANY (ARRAY['FF'::character varying, 'BF'::character varying, 'WF'::character varying, 'HF'::character varying, 'M5'::character varying, 'M6-BS'::character varying]::text[])",
+          "comment": null
+        }
+      ],
+      "indexes": [
+        {
+          "name": "ejecuciones_optimizacion_metodo_key",
+          "unique": true,
+          "column_names": [
+            "id_optimizacion",
+            "metodo"
+          ],
+          "duplicates_constraint": "ejecuciones_optimizacion_metodo_key",
+          "dialect_options": {
+            "postgresql_include": []
+          }
+        }
+      ]
+    }
+  }
+}

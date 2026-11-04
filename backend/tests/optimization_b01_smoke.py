@@ -1,7 +1,8 @@
-"""ST-INC-01 on a private Linux copy, borrowing installed runtimes/dependencies.
+"""ST-INC-01/02 on a private Linux copy, borrowing installed runtimes/dependencies.
 
 No installs, shared databases or edits to the borrowed runtime. Run from backend:
 python -m tests.optimization_b01_smoke --runtime-root /path/to/linux-validation
+Add --block B02 for historical data created on the previous schema before upgrade.
 """
 import argparse
 import hashlib
@@ -16,7 +17,6 @@ import tempfile
 import time
 
 REPO = Path(__file__).resolve().parents[2]
-EVIDENCE = REPO / "docs/evidence/sprint-02/TA-043/B01/smoke"
 
 
 def owned_processes(root):
@@ -38,7 +38,13 @@ def owned_processes(root):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--runtime-root", type=Path, required=True)
-    runtime = parser.parse_args().runtime_root.resolve()
+    parser.add_argument("--block", choices=("B01", "B02"), default="B01")
+    args = parser.parse_args()
+    runtime = args.runtime_root.resolve()
+    block = args.block
+    smoke = "ST-INC-01" if block == "B01" else "ST-INC-02"
+    evidence = REPO / f"docs/evidence/sprint-02/TA-043/{block}/smoke"
+    prefix = f"newglass-ta043-{block.lower()}-"
     node = runtime / "node-v22.23.2-linux-x64/bin/node"
     python = runtime / "backend/.venv/wsl/bin/python"
     dependencies = runtime / "frontend/node_modules"
@@ -47,16 +53,17 @@ def main():
             raise RuntimeError(f"Missing Linux runtime/dependency: {path}")
     for port in (8017, 5188):
         with socket.socket() as probe:
+            probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             probe.bind(("127.0.0.1", port))
-    root = Path(tempfile.mkdtemp(prefix="newglass-ta043-b01-")).resolve()
-    assert root.parent == Path(tempfile.gettempdir()).resolve() and root.name.startswith("newglass-ta043-b01-")
+    root = Path(tempfile.mkdtemp(prefix=prefix)).resolve()
+    assert root.parent == Path(tempfile.gettempdir()).resolve() and root.name.startswith(prefix)
     private_tmp = root / "service-tmp"
     private_tmp.mkdir()
     state = private_tmp / "newglass-orders-e2e-8017.json"
-    EVIDENCE.mkdir(parents=True, exist_ok=True)
+    evidence.mkdir(parents=True, exist_ok=True)
     ignored = shutil.ignore_patterns(".env*", "venv", ".venv", "node_modules", "dist",
         "test-results", "playwright-report", "__pycache__", ".pytest_cache", "*.pyc")
-    report = dict(scope="ST-INC-01 only: real v1 and legacy; no public six-engine validation",
+    report = dict(scope=f"{smoke}: real historical v1 and legacy; no public six-engine validation",
                   runtime_root=str(runtime), temporary_root=str(root), result="FAIL")
     runner = None
     try:
@@ -86,24 +93,26 @@ export default { ...base, testMatch: 'optimization-comparison.spec.js',
             env.pop(name, None)
         env.update(PYTHON_DOTENV_DISABLED="1", NEWGLASS_REQUIRE_POSTGRES="1",
             NEWGLASS_TEST_PG_BIN="/usr/lib/postgresql/18/bin", PLAYWRIGHT_CHANNEL="chromium",
-            TMPDIR=str(private_tmp),
-            NEWGLASS_OPTIMIZATION_EVIDENCE_DIR=str(EVIDENCE),
+            TMPDIR=str(private_tmp), NEWGLASS_E2E_SCHEMA_REVISION="s2cmp01a1b2c" if block == "B02" else "head",
+            NEWGLASS_OPTIMIZATION_EVIDENCE_DIR=str(evidence),
             PATH=f"{root / 'backend/.venv/wsl/bin'}:{node.parent}:{env.get('PATH', '')}")
         # This is an explicit local subset, not the complete CI gate of all critical specs.
         if env.get("CI") == "true" or env.get("NEWGLASS_E2E_GATE") == "1":
             raise RuntimeError("Use the complete CI gate in CI; this helper is a local B01 subset")
         source_files = sorted((root / "backend/app/modules/optimization").rglob("*.py"))
+        source_files += [root / "backend/app/models.py"]
+        source_files += sorted((root / "backend/alembic/versions").glob("*.py"))
         report["source_sha256"] = {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
                                    for path in source_files}
         report["processes_before"] = owned_processes(root)
-        with (EVIDENCE / "execution.txt").open("w", encoding="utf-8") as log:
+        with (evidence / "execution.txt").open("w", encoding="utf-8") as log:
             runner = subprocess.Popen([str(node), str(root / "frontend/node_modules/@playwright/test/cli.js"),
-                "test", "--config=playwright.b01.config.mjs", "--grep", "TA-043 B01"],
+                "test", "--config=playwright.b01.config.mjs", "--grep", f"TA-043 {block}"],
                 cwd=root / "frontend", env=env, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
             report["runner_exit"] = runner.wait(timeout=300)
         report_file = root / "frontend/test-results/b01-report.json"
         if report_file.exists():
-            shutil.copy2(report_file, EVIDENCE / "playwright-report.json")
+            shutil.copy2(report_file, evidence / "playwright-report.json")
         if report["runner_exit"] == 0:
             report["result"] = "PASS"
     finally:
@@ -134,11 +143,11 @@ export default { ...base, testMatch: 'optimization-comparison.spec.js',
             current = {p["pid"]: p for p in owned_processes(root)}.get(process["pid"])
             if current and current["start_ticks"] == process["start_ticks"]:
                 os.kill(process["pid"], signal.SIGKILL)
-        assert root.parent == Path(tempfile.gettempdir()).resolve() and root.name.startswith("newglass-ta043-b01-")
+        assert root.parent == Path(tempfile.gettempdir()).resolve() and root.name.startswith(prefix)
         shutil.rmtree(root)  # Only the private, resolved root created above; symlinks are not followed.
         report["temporary_copy_removed"] = not root.exists()
-        (EVIDENCE / "cleanup.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
-    print("ST-INC-01: " + report["result"] + "; evidence: " + str(EVIDENCE))
+        (evidence / "cleanup.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    print(smoke + ": " + report["result"] + "; evidence: " + str(evidence))
     return 0 if report["result"] == "PASS" else 1
 
 

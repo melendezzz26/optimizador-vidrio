@@ -4,14 +4,14 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Draft — B01 autorizado; puerta de revisión pendiente** |
+| Estado | **Draft — B02 autorizado; resultado pendiente de revisión** |
 | SPEC | [SPEC-TA-043-integracion-seis-motores.md](SPEC-TA-043-integracion-seis-motores.md) |
 | Responsable | Fabricio Meléndez |
 | Reviewer | Por designar; revisión humana pendiente |
 | Fecha | 03/11/2026, America/Lima |
 | Base oficial | `origin/integration-02`, `d85a8d3c4fa2ba1b3f70c401ed947adcfbe2470b` |
 | Única rama de trabajo | `feature/TA-043-integracion-seis-motores` |
-| Autorización actual | Exclusivamente B01, T-01/T-07 pertinentes, ST-INC-01 y commits locales; detenerse al presentar su resultado |
+| Autorización actual | Exclusivamente B02, T-02/regresiones pertinentes, ST-INC-02 y commits locales; detenerse antes de B03 |
 
 ## 1. Resultado esperado y reglas de ejecución futura
 
@@ -36,7 +36,9 @@ usarlas para desarrollar. No publicar la feature, fusionar, migrar entornos
 compartidos ni desplegar sin autorización. La entrega documental inicial terminó
 en Draft; Fabricio autorizó posteriormente solo B01 y su validación. El resultado
 se registra en [evidencia B01](../evidence/sprint-02/TA-043/B01/README.md).
-Los demás bloques continúan pendientes y no se avanza sin superar la puerta B01.
+Fabricio autorizó posteriormente B02 de forma expresa; su alcance y validaciones
+se registran en [evidencia B02](../evidence/sprint-02/TA-043/B02/README.md).
+La autorización no se extiende a B03–B11; se detiene al presentar B02.
 
 ### 1.1 Agrupaciones de gestión T01, T02 y T03
 
@@ -692,7 +694,18 @@ ST-INC de entregas ejecutables y **ST-INT PASS obligatorio**, medición operativ
 revisión humana. D6 pendiente por HU-018 se registra por separado y no se presenta
 como prueba aprobada; cualquier exclusión futura requiere decisión visible.
 
+La instrucción posterior de Fabricio habilita exclusivamente B02 sobre los commits
+B01 `5dcc316`, `8ab8eaa` y `f65292f`. T-02 se concreta en
+`test_comparison_v2_migration.py` y `test_comparison_v2_persistence.py`, conservando
+las suites históricas; ST-INC-02 comprueba historia real creada antes del upgrade.
+Esta evidencia no acredita ejecución pública de seis motores, prueba de parada
+del supervisor v2, selección/confirmación v2 ni ST-INT. No iniciar B03 sin revisión.
+
 ## Historial de estado
+
+- 03/11/2026 — **Draft**: autorización limitada a B02 y sus validaciones;
+  migración/persistencia y ST-INC-02 documentados en evidencia B02. Se conservan
+  los once bloques, dependencias, 36 requisitos/CA y matriz; parada antes de B03.
 
 - 03/11/2026 — **Draft**: PLAN redactado después de la SPEC, con once bloques y
   actividad obligatoria TA-043 — Smoke Tests; documentación para revisión.

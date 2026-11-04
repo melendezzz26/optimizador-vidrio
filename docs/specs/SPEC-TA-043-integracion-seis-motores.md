@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Draft — B01 autorizado; resultado pendiente de revisión** |
+| Estado | **Draft — B02 autorizado; resultado pendiente de revisión** |
 | PBI / módulo | TA-043 / Sprint 2 / Optimization |
 | Responsable | Fabricio Meléndez |
 | Reviewer | Por designar; no se atribuye aprobación humana |
@@ -13,13 +13,15 @@
 | Commit base verificado | `d85a8d3c4fa2ba1b3f70c401ed947adcfbe2470b` |
 | Única rama de trabajo TA-043 | `feature/TA-043-integracion-seis-motores` |
 | PLAN | [PLAN-TA-043-integracion-seis-motores.md](PLAN-TA-043-integracion-seis-motores.md) |
-| Autorización actual | Fabricio autoriza exclusivamente B01, sus pruebas contractuales, ST-INC-01 y commits locales; detenerse antes de B02/B03 |
+| Autorización actual | Fabricio autoriza exclusivamente B02, T-02/regresiones pertinentes, ST-INC-02 y commits locales; detenerse antes de B03 |
 
-La autorización documental inicial fue ampliada expresamente para **B01**. Su
-alcance y verificación se registran en [evidencia B01](../evidence/sprint-02/TA-043/B01/README.md).
-No autoriza endpoints/coordinación v2, persistencia de producción ni consumidores
-de bloques posteriores. El estado general sigue Draft y la puerta B01 requiere
-revisión de Fabricio antes de avanzar.
+La autorización documental inicial fue ampliada para B01 y posteriormente,
+por instrucción expresa de Fabricio, exclusivamente para **B02**. Sus alcances
+se registran en [evidencia B01](../evidence/sprint-02/TA-043/B01/README.md) y
+[evidencia B02](../evidence/sprint-02/TA-043/B02/README.md). Esta ampliación permite
+migración y persistencia optativa, probadas solo en PostgreSQL propio; no autoriza
+coordinador/endpoints/UI v2 ni otros bloques. El estado general sigue Draft y se
+requiere otra parada para revisión antes de B03.
 
 ## 1. Objetivo, fuentes y base verificada
 
@@ -465,6 +467,10 @@ no almacenar secretos. El cierre exige CA-N06 y CA-S01–CA-S10, smoke increment
 e integral reales, regresión y revisión humana; documentar una prueba no la ejecuta.
 
 ## Historial de estado
+
+- 03/11/2026 — **Draft**: autorización limitada a B02; migración aditiva,
+  persistencia v2 optativa, lectores históricos y ST-INC-02 registrados en su
+  evidencia. B03 y posteriores, así como el cierre integral, siguen pendientes.
 
 - 03/11/2026 — **Draft**: verificación de base y revisión documental; SPEC y PLAN
   preparados para revisión de Fabricio. Implementación, pruebas y smoke pendientes

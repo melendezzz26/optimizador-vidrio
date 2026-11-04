@@ -1,6 +1,71 @@
 // Autor: Fabricio Melendez Quezada. Revisor asignado: Andro Quispe.
 import { test, expect } from '@playwright/test';
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { api, setup, login, loginApi, open, stock, capture, save } from './optimizationRealSupport.js';
+
+test('TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL', async ({ page }, info) => {
+  const backend = fileURLToPath(new URL('../../../backend/', import.meta.url));
+  const migrate = (...args) => JSON.parse(execFileSync('python', ['-m', 'tests.optimization_b02_upgrade', ...args],
+    { cwd: backend, encoding: 'utf8' }));
+  expect(migrate('--prepare').prepared_revision).toBe('s2cmp01a1b2c');
+  const errors = []; page.on('pageerror', error => errors.push(error.message));
+  const data = await setup(page, 'single');
+  const inventory = await stock(page, data);
+  await login(page, data.actors.all, { comparative: true }); await open(page);
+  await page.getByRole('checkbox', { name: new RegExp(`Pedido #${data.orders[0]}\\b`) }).check();
+  const accepted = page.waitForResponse(r => new URL(r.url()).pathname === '/api/optimization/comparisons'
+    && r.request().method() === 'POST');
+  await page.getByRole('button', { name: 'Comparar con los tres motores', exact: true }).click();
+  const response = await accepted; expect(response.status()).toBe(201);
+  const id = (await response.json()).comparison_id;
+  await expect(page.getByText('Comparación finalizada', { exact: true })).toBeVisible();
+  const get = async url => {
+    const result = await page.request.get(`${api}/api/optimization/${url}`, { headers: data.headers });
+    expect(result.status()).toBe(200); return result.json();
+  };
+  const current = await get(`comparisons/${id}`);
+  expect(current.executions.map(e => e.method)).toEqual(['FF', 'BF', 'WF']);
+  const results = await Promise.all(current.executions.map(e => get(`comparisons/${id}/executions/${e.execution_id}`)));
+  const order = await page.request.post(`${api}/api/orders`, { headers: data.headers,
+    data: { id_cliente: 41, piezas: [{ ...data.materials[0], tipo_forma: 'RECTANGULO', cantidad: 1, width_mm: 10, height_mm: 10 }] } });
+  expect(order.status()).toBe(201);
+  const legacy = await page.request.post(`${api}/api/optimization/runs`, { headers: data.headers,
+    data: { order_ids: [(await order.json()).id_pedido] } });
+  expect(legacy.status()).toBe(201);
+  const lines = (await legacy.text()).trim().split('\n').map(JSON.parse);
+  expect(lines.at(-1).event).toBe('optimization_completed');
+  const runId = lines[0].id_optimizacion;
+  const ff = await get(`runs/${runId}`); expect(ff.metodo).toBe('FF'); expect(ff.completo).toBe(true);
+  const migration = migrate();
+  expect(migration.result).toBe('PASS');
+  expect(migration.before_sha256).toEqual(migration.after_sha256);
+  expect(await get(`comparisons/${id}`)).toEqual(current);
+  for (let i = 0; i < results.length; i++) {
+    expect(await get(`comparisons/${id}/executions/${current.executions[i].execution_id}`)).toEqual(results[i]);
+  }
+  expect(await get(`runs/${runId}`)).toEqual(ff);
+  await page.reload(); await open(page);
+  // Let the existing automatic recovery settle before testing explicit lookup.
+  await expect(page.getByRole('tab')).toHaveCount(4);
+  await expect(page.getByText('Comparación finalizada', { exact: true })).toBeVisible();
+  await page.getByLabel('Consultar trabajo guardado').fill(String(id));
+  await page.getByRole('button', { name: 'Consultar', exact: true }).click();
+  await expect(page.getByRole('tab')).toHaveCount(4);
+  for (const name of ['First Fit', 'Best Fit', 'Worst Fit']) {
+    await page.getByRole('tab', { name: new RegExp(name) }).click();
+    const panel = page.getByRole('tabpanel', { name: new RegExp(name) });
+    await expect(panel).toBeVisible();
+    await panel.getByRole('button', { name: /Resultado/ }).click();
+    await expect(panel.locator('[data-placement]')).toHaveCount(1);
+    await capture(page, info, `b02-history-${name.replaceAll(' ', '-')}`, panel);
+  }
+  expect(await stock(page, data)).toEqual(inventory);
+  expect(errors).toEqual([]);
+  save(info, 'b02-migration.json', migration);
+  save(info, 'b02-historical-comparison.json', { before: current, after: await get(`comparisons/${id}`), results });
+  save(info, 'b02-historical-ff.json', { before: ff, after: await get(`runs/${runId}`) });
+});
 
 test('TA-043 B01 smoke: arranque real, comparison-v1 y runs legacy sin consumir stock', async ({ page }, info) => {
   const errors = [];
