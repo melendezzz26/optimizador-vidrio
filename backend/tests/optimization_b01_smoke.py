@@ -1,4 +1,4 @@
-"""ST-INC-01/02/03/04/05/06/07 on a private Linux copy, borrowing installed runtimes/dependencies.
+"""ST-INC-01/02/03/04/05/06/07/08/09 on a private Linux copy, borrowing installed runtimes/dependencies.
 
 No installs, shared databases or edits to the borrowed runtime. Run from backend:
 python -m tests.optimization_b01_smoke --runtime-root /path/to/linux-validation
@@ -6,6 +6,7 @@ Add --block B02 for historical data created on the previous schema before upgrad
 Add --block B03 for the available real v1/legacy regression; new adapters are not routed yet.
 Add --block B05 for v1/legacy smoke; public v2 start/query remains pending B06.
 Add --block B07 for the real v2 workspace, six 2D/3D results, and v1/legacy regression.
+Add --block B09 for the integral B07+B08 browser gate on the same isolated runtime.
 """
 import argparse
 import hashlib
@@ -41,7 +42,7 @@ def owned_processes(root):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--runtime-root", type=Path, required=True)
-    parser.add_argument("--block", choices=("B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08"), default="B01")
+    parser.add_argument("--block", choices=("B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09"), default="B01")
     args = parser.parse_args()
     runtime = args.runtime_root.resolve()
     block = args.block
@@ -88,6 +89,11 @@ def main():
     if block == "B08":
         report.update(scope="ST-INC-08: real manual v2 selection, confirmation, PostgreSQL deltas and retry",
                       reused_test_selection="TA-043 B08", integral_smoke="PENDING_B09")
+    if block == "B09":
+        report.update(scope="ST-INT: isolated v2 six-engine workspace, v1/legacy compatibility and atomic confirmation",
+                      public_v2_ui="EXECUTED_BY_B07_SCENARIO",
+                      transactional_confirmation="EXECUTED_BY_B08_SCENARIO",
+                      scenarios=("TA-043 B07 smoke", "TA-043 B08 smoke"))
     runner = None
     try:
         for folder in ("backend", "frontend", "docs/contracts"):
@@ -124,15 +130,17 @@ export default { ...base, testMatch: 'optimization-comparison.spec.js',
             raise RuntimeError("Use the complete CI gate in CI; this helper is a local B01 subset")
         source_files = sorted((root / "backend/app/modules/optimization").rglob("*.py"))
         source_files += [root / "backend/app/models.py"]
-        if block in ("B05", "B06", "B07", "B08"):
+        if block in ("B05", "B06", "B07", "B08", "B09"):
             source_files += [root / "backend/main.py"]
         source_files += sorted((root / "backend/alembic/versions").glob("*.py"))
         report["source_sha256"] = {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
                                    for path in source_files}
         report["processes_before"] = owned_processes(root)
         with (evidence / "execution.txt").open("w", encoding="utf-8") as log:
+            grep = "TA-043 B01" if block in ("B03", "B04", "B05") else (
+                "TA-043 B07 smoke|TA-043 B08 smoke" if block == "B09" else f"TA-043 {block}")
             runner = subprocess.Popen([str(node), str(root / "frontend/node_modules/@playwright/test/cli.js"),
-                "test", "--config=playwright.b01.config.mjs", "--grep", "TA-043 B01" if block in ("B03", "B04", "B05") else f"TA-043 {block}"],
+                "test", "--config=playwright.b01.config.mjs", "--grep", grep],
                 cwd=root / "frontend", env=env, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
             report["runner_exit"] = runner.wait(timeout=300)
         report_file = root / "frontend/test-results/b01-report.json"
