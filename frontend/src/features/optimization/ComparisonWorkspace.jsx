@@ -8,6 +8,7 @@ import { createComparisonApi, METHODS, METHOD_NAMES } from './comparisonApi';
 import { createComparisonController } from './comparisonController';
 import { resultSnapshot, visualPlacement } from './runContract';
 import { GeometryPreview } from './GeometryPreview';
+import { OriginalMeasuresTable } from './OriginalMeasuresTable';
 import { getGeometryBounds, getRasterComparisonFrame } from './visualizationGeometry';
 import { PlacementCanvas } from './PlacementCanvas';
 import { RunMaskInspection } from './RunMaskInspection';
@@ -135,6 +136,7 @@ function EnginePanel({ comparison, execution, visual: supplied, live, result, ap
         </FeedbackMessage>}
         <Metrics metrics={execution.metrics} />{!result.completo && <p role="status">Hay piezas sin colocar; este resultado no puede confirmarse.</p>}
         {!!result.unplaced_units.length && <ul aria-label="Piezas sin colocar">{result.unplaced_units.map(p => <li key={`${p.id_pieza}:${p.unit_index}`}>Pedido #{p.id_pedido} · Pieza #{p.id_pieza} · unidad {p.unit_index}</li>)}</ul>}
+        <OriginalMeasuresTable pieces={comparison.requested_pieces} />
         <PlacementCanvas snapshot={viewSnapshot} placements={viewPlacements} visualContext={{ visual, runId: comparison.comparison_id, adapter }} /></>}
     </div>
   </section>;
@@ -209,6 +211,7 @@ function ComparisonView({ state, flow, api, execute, canConfirm, onSessionExpire
       </div>)}
       <section className="comparison-panel comparison-results" role="tabpanel" id={`${id}-panel-comparison`} aria-labelledby={`${id}-tab-comparison`} hidden={tab !== 'comparison'}>
         <h2>Comparación de resultados</h2><p>Los tres motores usaron la misma solicitud, configuración e inventario inicial. La elección es tuya.</p>
+        <OriginalMeasuresTable pieces={current.requested_pieces} />
         {current.incomplete && <FeedbackMessage variant="warning">La comparación está incompleta porque falló un motor. Al finalizar los tres procesos puedes elegir un resultado completo guardado.</FeedbackMessage>}
         <p className="comparison-table-hint">Desliza horizontalmente para consultar todas las métricas.</p>
         <div className="comparison-table-scroll" role="region" aria-label="Tabla comparativa con desplazamiento horizontal" tabIndex={0}><table><caption>Métricas de los tres motores</caption><thead><tr><th>Motor</th><th>Estado</th><th>Piezas</th>{metricRows.map(([, label, unit]) => <th key={label}>{label}{unit && <small>{unit}</small>}</th>)}<th>Elegir</th></tr></thead>
