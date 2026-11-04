@@ -14,16 +14,10 @@ Rama: `feature/S2-HU018-importacion-masiva`
 |---|---|---|
 | T01 | `HU018-dominio-rojo.png` | Pruebas del dominio fallando antes de implementar las reglas de fila. |
 | T01 | `HU018-dominio-verde.png` | Las mismas pruebas en verde. |
-| T02 | `HU018-T02-backend-rojo.png` / `-verde.png` | Lectura CSV/XLSX y API de vista previa: rojo y verde. |
-| T02 | `HU018-T02-frontend-rojo.png` / `-verde.png` | Panel de importación: rojo y verde. |
-| T02 | `HU018-T02-vista-previa.png` | Tabla con resumen y filas observadas resaltadas. |
-| T02 | `HU018-T02-material.png` | Vidrio y espesor elegidos después de cargar el archivo. |
-| T03/T04 | `HU018-T03-T04-rojo.png` / `-verde.png` | Corrección, revalidación y agregar al pedido: rojo y verde. |
-| T03 | `HU018-T03-bloqueado.png` | "Agregar al pedido" deshabilitado con filas observadas. |
-| T03 | `HU018-T03-revalidado.png` | Filas corregidas y revalidadas: 16 de 16 válidas. |
-| T04 | `HU018-T04-piezas-agregadas.png` | Piezas importadas en el grupo de su material. |
-| T04 | `HU018-T04-pedido-registrado.png` | Pedido registrado una sola vez. |
-| T05 | `HU018-T05-ci.png` | Checks del PR en verde (backend, frontend y E2E en escritorio y móvil). |
+| T02–T05 | `HU018-pruebas-backend-verde.png` | Suite de pruebas del backend en verde. |
+
+La verificación de T02 a T05 (componentes, E2E en escritorio y móvil) está en los
+checks del PR #96. Las capturas de la interfaz se agregarán en un PR posterior.
 
 Las capturas no muestran URLs de base de datos, contraseñas ni tokens.
 
