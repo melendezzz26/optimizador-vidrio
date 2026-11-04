@@ -4,14 +4,14 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Draft — B02 autorizado; resultado pendiente de revisión** |
+| Estado | **Draft — B03 autorizado; resultado pendiente de revisión** |
 | SPEC | [SPEC-TA-043-integracion-seis-motores.md](SPEC-TA-043-integracion-seis-motores.md) |
 | Responsable | Fabricio Meléndez |
 | Reviewer | Por designar; revisión humana pendiente |
 | Fecha | 03/11/2026, America/Lima |
 | Base oficial | `origin/integration-02`, `d85a8d3c4fa2ba1b3f70c401ed947adcfbe2470b` |
 | Única rama de trabajo | `feature/TA-043-integracion-seis-motores` |
-| Autorización actual | Exclusivamente B02, T-02/regresiones pertinentes, ST-INC-02 y commits locales; detenerse antes de B03 |
+| Autorización actual | Exclusivamente B03, T-03/T-10 pertinentes, ST-INC-03 del flujo disponible y commits locales; detenerse antes de B04 |
 
 ## 1. Resultado esperado y reglas de ejecución futura
 
@@ -39,6 +39,9 @@ se registra en [evidencia B01](../evidence/sprint-02/TA-043/B01/README.md).
 Fabricio autorizó posteriormente B02 de forma expresa; su alcance y validaciones
 se registran en [evidencia B02](../evidence/sprint-02/TA-043/B02/README.md).
 La autorización no se extiende a B03–B11; se detiene al presentar B02.
+Una instrucción posterior autoriza exclusivamente B03; resultados y límites en
+[evidencia B03](../evidence/sprint-02/TA-043/B03/README.md). B04–B11 permanecen
+pendientes de nueva autorización. Se mantiene el desarrollo bloque por bloque.
 
 ### 1.1 Agrupaciones de gestión T01, T02 y T03
 
@@ -427,15 +430,19 @@ no crear una suite paralela que solo replique aserciones internas.
 - **Evidencias:** índice final con comandos, resultados y enlaces; historial de
   revisión y decisión de cierre, sin secretos ni datos compartidos mutados.
 - **Orden / coordinación:** último; Fabricio y reviewer humano por designar.
-  B11 no forma parte de la autorización actual limitada a B01.
+  B11 no forma parte de la autorización actual limitada a B03.
 
 ## 4. Actividad identificable: TA-043 — Smoke Tests
 
 **ID de actividad:** ST; niveles **ST-INC** (T-13) y **ST-INT** (T-14).
-**Estado actual:** ST-INC-01 ejecutado con alcance v1/legacy; resultado y limpieza
-en [evidencia B01](../evidence/sprint-02/TA-043/B01/README.md). Los demás smoke,
-incluido ST-INT, siguen **PLANIFICADOS / NO EJECUTADOS**. Sus harness y servicios
-se prepararán solo cuando se autorice el bloque correspondiente, en esta rama.
+**Estado actual:** ST-INC-01, ST-INC-02 y ST-INC-03 ejecutados en sus capacidades
+disponibles; resultados y limpieza en evidencias
+[B01](../evidence/sprint-02/TA-043/B01/README.md),
+[B02](../evidence/sprint-02/TA-043/B02/README.md) y
+[B03](../evidence/sprint-02/TA-043/B03/README.md). En ST-INC-03 la regresión real
+v1/legacy pasa; los nuevos adaptadores desde servicios y los seis motores públicos
+permanecen **PENDIENTES DE INTEGRACIÓN**, sin PASS anticipado. Los smoke posteriores,
+incluido ST-INT obligatorio, siguen **PLANIFICADOS / NO EJECUTADOS**.
 
 ### 4.1 Contrato común obligatorio E0 / D0 / P0 / L0
 
@@ -702,6 +709,11 @@ Esta evidencia no acredita ejecución pública de seis motores, prueba de parada
 del supervisor v2, selección/confirmación v2 ni ST-INT. No iniciar B03 sin revisión.
 
 ## Historial de estado
+
+- 03/11/2026 — **Draft**: autorización exclusiva B03; T-03/T-10 pertinentes,
+  integración con B02 y smoke real del flujo disponible registrados. Nuevos
+  adaptadores desde HTTP pendientes de B05/B06; parada antes de B04. Se conservan
+  requisitos, CA, matriz, once bloques y dependencias.
 
 - 03/11/2026 — **Draft**: autorización limitada a B02 y sus validaciones;
   migración/persistencia y ST-INC-02 documentados en evidencia B02. Se conservan

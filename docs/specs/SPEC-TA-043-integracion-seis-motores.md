@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Draft — B02 autorizado; resultado pendiente de revisión** |
+| Estado | **Draft — B03 autorizado; resultado pendiente de revisión** |
 | PBI / módulo | TA-043 / Sprint 2 / Optimization |
 | Responsable | Fabricio Meléndez |
 | Reviewer | Por designar; no se atribuye aprobación humana |
@@ -13,7 +13,7 @@
 | Commit base verificado | `d85a8d3c4fa2ba1b3f70c401ed947adcfbe2470b` |
 | Única rama de trabajo TA-043 | `feature/TA-043-integracion-seis-motores` |
 | PLAN | [PLAN-TA-043-integracion-seis-motores.md](PLAN-TA-043-integracion-seis-motores.md) |
-| Autorización actual | Fabricio autoriza exclusivamente B02, T-02/regresiones pertinentes, ST-INC-02 y commits locales; detenerse antes de B03 |
+| Autorización actual | Fabricio autoriza exclusivamente B03, T-03/T-10 pertinentes, ST-INC-03 del flujo disponible y commits locales; detenerse antes de B04 |
 
 La autorización documental inicial fue ampliada para B01 y posteriormente,
 por instrucción expresa de Fabricio, exclusivamente para **B02**. Sus alcances
@@ -21,7 +21,10 @@ se registran en [evidencia B01](../evidence/sprint-02/TA-043/B01/README.md) y
 [evidencia B02](../evidence/sprint-02/TA-043/B02/README.md). Esta ampliación permite
 migración y persistencia optativa, probadas solo en PostgreSQL propio; no autoriza
 coordinador/endpoints/UI v2 ni otros bloques. El estado general sigue Draft y se
-requiere otra parada para revisión antes de B03.
+requiere otra parada para revisión antes de cada bloque siguiente. Fabricio
+autorizó después exclusivamente **B03**; su adaptación y validación se registran
+en [evidencia B03](../evidence/sprint-02/TA-043/B03/README.md). Esta autorización
+no habilita B04–B11 ni la ejecución pública de seis motores.
 
 ## 1. Objetivo, fuentes y base verificada
 
@@ -123,7 +126,7 @@ humanas pendientes en evidencias previas tampoco se presumen concedidas.
 
 ### Fuera de alcance
 
-- Implementación y pruebas de B02–B11 en esta entrega B01; no se habilita el
+- Implementación y pruebas de B04–B11 en esta entrega B03; no se habilita el
   coordinador público de seis motores ni se ejecuta el smoke integral.
 - Cambiar heurísticas, geometría, scores, desempates, prioridades o fórmulas para
   igualar resultados; reintroducir DJD-1/3, Filler o Pair-Block como M4.
@@ -467,6 +470,11 @@ no almacenar secretos. El cierre exige CA-N06 y CA-S01–CA-S10, smoke increment
 e integral reales, regresión y revisión humana; documentar una prueba no la ejecuta.
 
 ## Historial de estado
+
+- 03/11/2026 — **Draft**: autorización limitada a B03. Adaptadores optativos,
+  observación neutral M6 y validación directa/durable registradas en evidencia.
+  ST-INC-03 valida v1/legacy; los adaptadores desde HTTP siguen pendientes de
+  integración B05/B06. Parada antes de B04; no se aprueba el cierre de TA-043.
 
 - 03/11/2026 — **Draft**: autorización limitada a B02; migración aditiva,
   persistencia v2 optativa, lectores históricos y ST-INC-02 registrados en su
