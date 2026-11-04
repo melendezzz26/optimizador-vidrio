@@ -34,8 +34,23 @@ def historical_metadata(revision):
         "d6e7f8a9b0c1",
         "s1rbac01a2b3",
         "s1opt02b4c6d",
+        "s2cmp01a1b2c",
     }:
         raise ValueError("No hay contrato histórico para esta revisión")
+
+    if revision == "s2cmp01a1b2c":
+        from sqlalchemy.dialects.postgresql import JSONB
+        metadata = historical_metadata("s1opt02b4c6d")
+        table = metadata.tables["optimizaciones"]
+        table.append_column(sa.Column("comparison_key", sa.String(64), nullable=True))
+        table.append_column(sa.Column("comparison_snapshot", JSONB(), nullable=True))
+        table.append_column(sa.Column("comparison_version", sa.Integer(), nullable=False, server_default="1"))
+        table.append_constraint(sa.UniqueConstraint("id_usuario_ejecutor", "comparison_key",
+                                                   name="uq_optimizaciones_comparison_key"))
+        table.append_constraint(sa.CheckConstraint("comparison_version > 0", name="ck_optimizaciones_comparison_version"))
+        table.append_constraint(sa.CheckConstraint("(comparison_key IS NULL) = (comparison_snapshot IS NULL)",
+                                                   name="ck_optimizaciones_comparison_metadata"))
+        return metadata
 
     if revision == "s1opt02b4c6d":
         metadata = _load(BACKEND / "tests/contracts/s1rbac_models.py")
