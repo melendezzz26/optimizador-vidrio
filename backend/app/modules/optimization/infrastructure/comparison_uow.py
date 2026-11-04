@@ -84,6 +84,8 @@ class SqlComparisonRepository:
         if not pairs or pairs[0][0].comparison_snapshot is None:
             raise RunError("NOT_FOUND", "No se encontró la comparación.")
         row, snapshot = pairs[0][0], pairs[0][0].comparison_snapshot
+        if snapshot.get("comparison_snapshot_version") == 2 and snapshot.get("profile") == "comparison-v2":
+            raise RunError("STATE_CONFLICT", "La comparación requiere el perfil comparison-v2.")
         try:
             if type(snapshot.get("comparison_snapshot_version")) is not int or snapshot["comparison_snapshot_version"] != 1:
                 raise ValueError("Unsupported comparison snapshot")
