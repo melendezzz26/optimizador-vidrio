@@ -42,7 +42,7 @@ app.add_middleware(
     allow_credentials=False,
     allow_methods=["GET", "POST", "PATCH", "DELETE", "PUT"],
     allow_headers=["Authorization", "Content-Type", "Idempotency-Key"],
-    expose_headers=["Location"],
+    expose_headers=["Location", "X-Comparison-Recovery"],
 )
 
 # Rutas de autenticaciÃ³n (HU-001)

@@ -113,14 +113,24 @@ class SqlComparisonV2Repository:
             raise RunError("NOT_FOUND", "No se encontró la comparación v2.")
         row, stored = pairs[0][0], pairs[0][0].comparison_snapshot
         if stored.get("comparison_snapshot_version") == 1:
-            raise RunError("STATE_CONFLICT", "La comparación pertenece al perfil comparison-v1.")
+            raise RunError("COMPARISON_PROFILE_MISMATCH", "La comparación pertenece al perfil comparison-v1.")
         try:
-            frozen = decode_comparison_input_v2({k: v for k, v in stored.items() if k != "runtime"})
+            operational = {"runtime", "released_at", "released_by", "released_selection_id"}
+            frozen = decode_comparison_input_v2({k: v for k, v in stored.items() if k not in operational})
             if row.criterio_seleccion_version != "CMP-v2" or row.id_configuracion != frozen.configuration_id:
                 raise ValueError("Aggregate profile/configuration identity mismatch")
             runtime = stored["runtime"]
             runtime_metadata(runtime, [e.id_ejecucion for _, e in pairs if e is not None])
             stopped = runtime["supervisor_stopped_at"] is not None
+            release_keys = set(stored) & (operational - {"runtime"})
+            released = bool(release_keys)
+            if released:
+                if (release_keys != operational - {"runtime"} or not stopped
+                    or type(stored["released_by"]) is not int or stored["released_by"] != row.id_usuario_ejecutor
+                    or stored["released_selection_id"] is not None or row.id_ejecucion_seleccionada is not None):
+                    raise ValueError("Invalid release ownership or closure")
+                if _utc(stored["released_at"]) < _utc(runtime["supervisor_stopped_at"]):
+                    raise ValueError("Release precedes safe closure")
             if stopped:
                 if row.fecha_fin is None or _utc(runtime["supervisor_stopped_at"]) != row.fecha_fin:
                     raise ValueError("Inconsistent supervisor stop marker")
@@ -149,9 +159,37 @@ class SqlComparisonV2Repository:
                 configuration_id=frozen.configuration_id, configuration_version=frozen.configuration_version,
                 minimum_width_mm=frozen.minimum_width_mm, minimum_height_mm=frozen.minimum_height_mm,
                 executions=executions, selected_execution_id=row.id_ejecucion_seleccionada, workers_stopped=stopped,
-                runtime=runtime)
+                runtime=runtime, released=released)
         except (KeyError, TypeError, ValueError, ArithmeticError, OverflowError) as error:
             raise RunError("INTERNAL_ERROR", "La trazabilidad persistida v2 requiere revisión.") from error
+
+    def get_owned(self, identifier, actor_id):
+        row = self.session.get(Optimizacion,identifier,populate_existing=True)
+        if row is None or row.id_usuario_ejecutor != actor_id:
+            raise RunError("NOT_FOUND", "No se encontró la comparación.")
+        if not row.comparison_snapshot or row.comparison_snapshot.get("profile") != "comparison-v2":
+            raise RunError("COMPARISON_PROFILE_MISMATCH", "El recurso pertenece a otro perfil de optimización.")
+        return self.get(identifier)
+
+    def release(self, identifier, actor_id, expected_version):
+        row = self.legacy._lock(identifier)
+        current = self.get_owned(identifier,actor_id)
+        if current.released:
+            if expected_version not in (current.version-1,current.version):
+                raise RunError("STATE_CONFLICT", "La versión del trabajo cambió.")
+            return current
+        if current.version != expected_version or not current.terminal or not current.supervisor_stopped:
+            raise RunError("STATE_CONFLICT", "El trabajo debe tener cierre seguro y versión vigente.")
+        if current.confirmation is not None or current.selected_execution_id is not None:
+            raise RunError("STATE_CONFLICT", "El trabajo tiene una elección que requiere otro ciclo.")
+        if any(e.eligible for e in current.executions):
+            from .run_uow import SqlOrdersBatch
+            SqlOrdersBatch(self.session).transition(current.problem.order_ids,"OPTIMIZADO","PENDIENTE")
+        row.comparison_snapshot = {**row.comparison_snapshot,"released_at":now().isoformat(),
+            "released_by":actor_id,"released_selection_id":None}
+        row.comparison_version += 1
+        self.session.flush()
+        return self.get(identifier)
 
     @staticmethod
     def _references(values, comparison_id, execution_id, method):

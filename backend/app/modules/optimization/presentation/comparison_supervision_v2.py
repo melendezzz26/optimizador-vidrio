@@ -80,12 +80,16 @@ class SupervisedJob:
                 self.mark(signal.kind)
                 data = dict(status=data.status,complete=bool(data.result and data.result.complete),
                     diagnostic=data.diagnostic.public())
-            raw = canonical_json(dict(comparison_id=signal.comparison_id,execution_id=signal.execution_id,
-                method=signal.method,kind=signal.kind,data=data),maximum_bytes=MAX_EVENT_BYTES).encode()
-            self.events.append(raw); self.event_bytes += len(raw)
-            while self.event_bytes > self.event_limit or len(self.events)>4096:
-                self.event_bytes -= len(self.events.popleft())
+            self.record(signal, data)
         if self.sink is not None: self.sink(signal)
+
+    def record(self, signal, data):
+        """Single retention owner; B06 may project this slot into its wire envelope."""
+        raw = canonical_json(dict(comparison_id=signal.comparison_id,execution_id=signal.execution_id,
+            method=signal.method,kind=signal.kind,data=data),maximum_bytes=MAX_EVENT_BYTES).encode()
+        self.events.append(raw); self.event_bytes += len(raw)
+        while self.event_bytes > self.event_limit or len(self.events)>4096:
+            self.event_bytes -= len(self.events.popleft())
 
     def dispose(self):
         with self.lock:
@@ -96,11 +100,12 @@ class SupervisedJob:
 class ComparisonV2Coordinator:
     """One web-process owner; shares the exact admission object with FF/v1."""
     def __init__(self, unit_of_work, admission, *, authorize=authorize_actor, runner_factory=SequentialProcessRunner,
-                 retention=None):
+                 retention=None, job_factory=None):
         self.uow, self.admission, self.authorize, self.runner_factory = unit_of_work,admission,authorize,runner_factory
         self.lock, self.job = RLock(),None
         self.recovery_lease, self.recovery_errors = None,{}
         self.retention = retention
+        self.job_factory = job_factory
 
     def start(self, order_ids, actor_id, key, *, sink=None):
         order_ids = AcceptComparisonV2.validate_request(order_ids,actor_id,key)
@@ -122,7 +127,7 @@ class ComparisonV2Coordinator:
                     if not self.job.closed.is_set(): raise WorkersNotStopped("Previous owner has not closed")
                     self.job.dispose()
                 accepted = AcceptComparisonV2(self.uow,self.authorize).execute(order_ids,actor_id,key)
-                job = SupervisedJob(accepted,runner,self.uow,lease,sink)
+                job = (self.job_factory or SupervisedJob)(accepted,runner,self.uow,lease,sink)
                 self.job = job
                 with self.uow() as tx:
                     if not tx.comparisons_v2.claim_supervisor(accepted.comparison_id,job.token,job.identity):
@@ -163,6 +168,16 @@ class ComparisonV2Coordinator:
     def _reap(self, job):
         job.thread.join()
         self._close(job)
+
+    def reconcile(self, identifier):
+        """B06 read/recovery port; delegates exclusively to the verified B05 owner."""
+        with self.lock:
+            job = self.job
+            if job is not None and job.comparison.comparison_id == identifier:
+                if job.thread is not None and job.thread.is_alive():
+                    return True
+                return self._close(job)
+            return self.recover_pending()
 
     def _close(self, job):
         with self.lock:
@@ -271,6 +286,7 @@ def get_comparison_v2_coordinator():
         from ..infrastructure.comparison_v2_uow import SqlComparisonPersistenceUnitOfWork
         from .run_routes import get_run_admission
         from .comparison_retention import COMPARISON_RETENTION
+        from .comparison_http_runtime_v2 import HttpComparisonJob
         _coordinator=ComparisonV2Coordinator(lambda:SqlComparisonPersistenceUnitOfWork(SessionLocal),get_run_admission(),
-            retention=COMPARISON_RETENTION)
+            retention=COMPARISON_RETENTION, job_factory=HttpComparisonJob)
     return _coordinator
