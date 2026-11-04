@@ -1,0 +1,630 @@
+{
+  "measurement": "B10 observed Linux spawn measurements",
+  "source_fixture": "B03 adapter-validation.json",
+  "budget": {
+    "aggregate_rss_bytes": 1073741824,
+    "worker_address_bytes": 268435456,
+    "supervisor_rss_bytes": 251658240,
+    "helper_reserve_bytes": 16777216,
+    "packet_bytes": 12582912,
+    "visual_packet_bytes": 4194304,
+    "queued_packets_per_worker": 1,
+    "retained_visual_bytes": 33554432,
+    "retained_event_bytes": 8388608,
+    "startup_seconds": 30,
+    "calculation_seconds": 120,
+    "global_seconds": 180
+  },
+  "cases": [
+    {
+      "case": "small-b09-reference",
+      "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+      "units": 3,
+      "stock_candidates": 1,
+      "methods": [
+        "FF",
+        "BF",
+        "WF",
+        "HF",
+        "M5",
+        "M6-BS"
+      ],
+      "records": [
+        {
+          "kind": "result",
+          "method": "FF",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 460,
+            "start_ticks": "22264"
+          },
+          "decode_ms": 0.319169,
+          "execution_wall_ms": 2.902628,
+          "preparation_exclusive_ms": 0.539768,
+          "engine_body_exclusive_ms": 0.417285,
+          "timings_ms": {
+            "preparation": 0.93736,
+            "preparation_observer": 0.397592,
+            "engine": 2.250334,
+            "observation": 1.490608,
+            "metrics": 0.374591,
+            "observation_serialization": 1.490608,
+            "result_serialization": 0.461105,
+            "engine_observation": 1.293281
+          },
+          "events": 24,
+          "observation_bytes": 15158,
+          "result_bytes": 2579,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24633344,
+            "virtual": 40148992
+          },
+          "maxrss_bytes": 24371200,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 381.2123919999806,
+          "spawn_to_result_ms": 393.69040200000427,
+          "cleanup_ms": 8.792395000000397,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "BF",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 461,
+            "start_ticks": "22304"
+          },
+          "decode_ms": 0.356986,
+          "execution_wall_ms": 2.914497,
+          "preparation_exclusive_ms": 0.525488,
+          "engine_body_exclusive_ms": 0.495666,
+          "timings_ms": {
+            "preparation": 0.913746,
+            "preparation_observer": 0.388258,
+            "engine": 2.21533,
+            "observation": 1.429053,
+            "metrics": 0.359539,
+            "observation_serialization": 1.429053,
+            "result_serialization": 0.303845,
+            "engine_observation": 1.194176
+          },
+          "events": 24,
+          "observation_bytes": 15152,
+          "result_bytes": 2579,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24707072,
+            "virtual": 40148992
+          },
+          "maxrss_bytes": 24477696,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 501.60775999998464,
+          "spawn_to_result_ms": 514.0525770000011,
+          "cleanup_ms": 9.003731000007065,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "WF",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 462,
+            "start_ticks": "22355"
+          },
+          "decode_ms": 0.297894,
+          "execution_wall_ms": 2.998497,
+          "preparation_exclusive_ms": 0.528947,
+          "engine_body_exclusive_ms": 0.461696,
+          "timings_ms": {
+            "preparation": 0.963107,
+            "preparation_observer": 0.43416,
+            "engine": 2.200384,
+            "observation": 1.477911,
+            "metrics": 0.449909,
+            "observation_serialization": 1.477911,
+            "result_serialization": 0.274253,
+            "engine_observation": 1.209741
+          },
+          "events": 24,
+          "observation_bytes": 15152,
+          "result_bytes": 2579,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24702976,
+            "virtual": 40148992
+          },
+          "maxrss_bytes": 24289280,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 445.8692030000009,
+          "spawn_to_result_ms": 456.53825899998424,
+          "cleanup_ms": 7.146129000005885,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "HF",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 463,
+            "start_ticks": "22401"
+          },
+          "decode_ms": 0.318975,
+          "execution_wall_ms": 4.400669,
+          "preparation_exclusive_ms": 0.966345,
+          "engine_body_exclusive_ms": 1.490372,
+          "timings_ms": {
+            "preparation": 1.511705,
+            "preparation_observer": 0.54536,
+            "engine": 3.749779,
+            "observation": 1.484321,
+            "metrics": 0.326286,
+            "observation_serialization": 1.484321,
+            "result_serialization": 0.461896,
+            "engine_observation": 1.293062
+          },
+          "events": 24,
+          "observation_bytes": 15250,
+          "result_bytes": 2911,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {
+              "activation_attempts": 2,
+              "orientations_inspected": 5,
+              "boundary_rows": 15,
+              "seed_probes": 18,
+              "pocket_candidates": 2,
+              "max_region_checks_observed": 10,
+              "max_region_anchors_observed": 13,
+              "anchors_checked": 42,
+              "placement_checks": 42,
+              "check_rows": 65,
+              "accepted_pocket": 0,
+              "budget_exhausted": 0,
+              "fallback_used": 3,
+              "coverage_fallback": 0,
+              "sheet_fallback": 0
+            }
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24793088,
+            "virtual": 40148992
+          },
+          "maxrss_bytes": 24485888,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 411.1658329999841,
+          "spawn_to_result_ms": 425.9741699999893,
+          "cleanup_ms": 9.631960999996636,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "M5",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 464,
+            "start_ticks": "22443"
+          },
+          "decode_ms": 0.309461,
+          "execution_wall_ms": 2.833782,
+          "preparation_exclusive_ms": 0.551428,
+          "engine_body_exclusive_ms": 0.458782,
+          "timings_ms": {
+            "preparation": 0.942451,
+            "preparation_observer": 0.391023,
+            "engine": 2.194568,
+            "observation": 1.376511,
+            "metrics": 0.351971,
+            "observation_serialization": 1.376511,
+            "result_serialization": 0.303623,
+            "engine_observation": 1.184358
+          },
+          "events": 24,
+          "observation_bytes": 15152,
+          "result_bytes": 2579,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24702976,
+            "virtual": 40148992
+          },
+          "maxrss_bytes": 24125440,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 393.5404519999963,
+          "spawn_to_result_ms": 405.5453130000046,
+          "cleanup_ms": 8.569964999992408,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "M6-BS",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 465,
+            "start_ticks": "22484"
+          },
+          "decode_ms": 0.353173,
+          "execution_wall_ms": 21.520129,
+          "preparation_exclusive_ms": 0.443225,
+          "engine_body_exclusive_ms": 20.104766,
+          "timings_ms": {
+            "preparation": 0.443225,
+            "preparation_observer": 0.0,
+            "engine": 20.709319,
+            "observation": 0.399107,
+            "metrics": 0.460479,
+            "observation_serialization": 0.399107,
+            "result_serialization": 0.296311,
+            "engine_observation": 0.161328
+          },
+          "events": 5,
+          "observation_bytes": 3522,
+          "result_bytes": 2725,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {
+              "expansions": 178,
+              "geometry_probes": 249,
+              "parents": 5,
+              "alternatives_pruned": 128,
+              "max_frontier": 2,
+              "completed_levels": 3,
+              "state_bytes_bound": 129696
+            }
+          },
+          "complete": true,
+          "memory": {
+            "rss": 25128960,
+            "virtual": 40148992
+          },
+          "maxrss_bytes": 25042944,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 442.7941760000067,
+          "spawn_to_result_ms": 474.3232889999831,
+          "cleanup_ms": 9.367620999995552,
+          "exitcode": 0
+        }
+      ],
+      "maximum_aggregate_rss_bytes": 64307200,
+      "maximum_worker_virtual_bytes": 40148992,
+      "maximum_packet_bytes_observed": 1201,
+      "maximum_active_workers": 1,
+      "total_ms": 2685.093462999987,
+      "all_workers_stopped": true,
+      "inventory_consumed": false
+    },
+    {
+      "case": "representative-scaled-3-units",
+      "input_sha256": "61bd4fe3d41b9704ac3b788cc8bc513811793cca75173fd7c3554f44ef2d8fb6",
+      "units": 3,
+      "stock_candidates": 1,
+      "methods": [
+        "FF",
+        "BF",
+        "WF",
+        "HF",
+        "M5",
+        "M6-BS"
+      ],
+      "records": [
+        {
+          "kind": "result",
+          "method": "FF",
+          "input_sha256": "61bd4fe3d41b9704ac3b788cc8bc513811793cca75173fd7c3554f44ef2d8fb6",
+          "identity": {
+            "pid": 466,
+            "start_ticks": "22531"
+          },
+          "decode_ms": 0.32839,
+          "execution_wall_ms": 4.756272,
+          "preparation_exclusive_ms": 0.950858,
+          "engine_body_exclusive_ms": 0.568616,
+          "timings_ms": {
+            "preparation": 1.49922,
+            "preparation_observer": 0.548362,
+            "engine": 3.550927,
+            "observation": 2.353058,
+            "metrics": 0.788275,
+            "observation_serialization": 2.353058,
+            "result_serialization": 0.296097,
+            "engine_observation": 2.031453
+          },
+          "events": 24,
+          "observation_bytes": 18004,
+          "result_bytes": 2642,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24727552,
+            "virtual": 40148992
+          },
+          "maxrss_bytes": 24682496,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 372.58107799999607,
+          "spawn_to_result_ms": 386.5322439999943,
+          "cleanup_ms": 8.55064300000663,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "BF",
+          "input_sha256": "61bd4fe3d41b9704ac3b788cc8bc513811793cca75173fd7c3554f44ef2d8fb6",
+          "identity": {
+            "pid": 467,
+            "start_ticks": "22570"
+          },
+          "decode_ms": 0.289967,
+          "execution_wall_ms": 4.282623,
+          "preparation_exclusive_ms": 0.725799,
+          "engine_body_exclusive_ms": 0.533812,
+          "timings_ms": {
+            "preparation": 1.318142,
+            "preparation_observer": 0.592343,
+            "engine": 3.258905,
+            "observation": 2.176776,
+            "metrics": 0.764363,
+            "observation_serialization": 2.176776,
+            "result_serialization": 0.279614,
+            "engine_observation": 1.999294
+          },
+          "events": 24,
+          "observation_bytes": 18004,
+          "result_bytes": 2642,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24735744,
+            "virtual": 40148992
+          },
+          "maxrss_bytes": 24125440,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 396.88717499998916,
+          "spawn_to_result_ms": 410.383534999994,
+          "cleanup_ms": 8.662377999996806,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "WF",
+          "input_sha256": "61bd4fe3d41b9704ac3b788cc8bc513811793cca75173fd7c3554f44ef2d8fb6",
+          "identity": {
+            "pid": 468,
+            "start_ticks": "22611"
+          },
+          "decode_ms": 0.309403,
+          "execution_wall_ms": 4.54896,
+          "preparation_exclusive_ms": 0.721443,
+          "engine_body_exclusive_ms": 0.54796,
+          "timings_ms": {
+            "preparation": 1.278151,
+            "preparation_observer": 0.556708,
+            "engine": 3.36441,
+            "observation": 2.293652,
+            "metrics": 0.893859,
+            "observation_serialization": 2.293652,
+            "result_serialization": 0.305925,
+            "engine_observation": 2.095007
+          },
+          "events": 24,
+          "observation_bytes": 18004,
+          "result_bytes": 2642,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24735744,
+            "virtual": 40148992
+          },
+          "maxrss_bytes": 24485888,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 415.7531879999965,
+          "spawn_to_result_ms": 430.89998700000365,
+          "cleanup_ms": 9.97433700001693,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "HF",
+          "input_sha256": "61bd4fe3d41b9704ac3b788cc8bc513811793cca75173fd7c3554f44ef2d8fb6",
+          "identity": {
+            "pid": 469,
+            "start_ticks": "22654"
+          },
+          "decode_ms": 0.308133,
+          "execution_wall_ms": 20.541097,
+          "preparation_exclusive_ms": 1.164665,
+          "engine_body_exclusive_ms": 16.145551,
+          "timings_ms": {
+            "preparation": 1.706462,
+            "preparation_observer": 0.541797,
+            "engine": 19.444711,
+            "observation": 2.331097,
+            "metrics": 0.774585,
+            "observation_serialization": 2.331097,
+            "result_serialization": 0.386836,
+            "engine_observation": 2.134495
+          },
+          "events": 24,
+          "observation_bytes": 18097,
+          "result_bytes": 2986,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {
+              "activation_attempts": 2,
+              "orientations_inspected": 6,
+              "boundary_rows": 236,
+              "seed_probes": 360,
+              "pocket_candidates": 7,
+              "max_region_checks_observed": 512,
+              "max_region_anchors_observed": 512,
+              "anchors_checked": 2469,
+              "placement_checks": 2469,
+              "check_rows": 31438,
+              "accepted_pocket": 0,
+              "budget_exhausted": 1,
+              "fallback_used": 3,
+              "coverage_fallback": 0,
+              "sheet_fallback": 0
+            }
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24940544,
+            "virtual": 40148992
+          },
+          "maxrss_bytes": 24289280,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 445.37653399999044,
+          "spawn_to_result_ms": 474.9171560000036,
+          "cleanup_ms": 8.124089000006052,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "M5",
+          "input_sha256": "61bd4fe3d41b9704ac3b788cc8bc513811793cca75173fd7c3554f44ef2d8fb6",
+          "identity": {
+            "pid": 470,
+            "start_ticks": "22702"
+          },
+          "decode_ms": 0.294572,
+          "execution_wall_ms": 6.728014,
+          "preparation_exclusive_ms": 0.766698,
+          "engine_body_exclusive_ms": 1.363277,
+          "timings_ms": {
+            "preparation": 1.303771,
+            "preparation_observer": 0.537073,
+            "engine": 4.798998,
+            "observation": 2.882825,
+            "metrics": 1.599783,
+            "observation_serialization": 2.882825,
+            "result_serialization": 0.329337,
+            "engine_observation": 2.669023
+          },
+          "events": 24,
+          "observation_bytes": 18004,
+          "result_bytes": 2642,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24801280,
+            "virtual": 40148992
+          },
+          "maxrss_bytes": 24682496,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 422.71100700000375,
+          "spawn_to_result_ms": 438.69091499999513,
+          "cleanup_ms": 8.594582999990052,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "M6-BS",
+          "input_sha256": "61bd4fe3d41b9704ac3b788cc8bc513811793cca75173fd7c3554f44ef2d8fb6",
+          "identity": {
+            "pid": 471,
+            "start_ticks": "22746"
+          },
+          "decode_ms": 0.293433,
+          "execution_wall_ms": 207.599836,
+          "preparation_exclusive_ms": 0.648151,
+          "engine_body_exclusive_ms": 205.662812,
+          "timings_ms": {
+            "preparation": 0.648151,
+            "preparation_observer": 0.0,
+            "engine": 206.475019,
+            "observation": 0.401741,
+            "metrics": 0.786347,
+            "observation_serialization": 0.401741,
+            "result_serialization": 0.288695,
+            "engine_observation": 0.164056
+          },
+          "events": 5,
+          "observation_bytes": 3592,
+          "result_bytes": 2794,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {
+              "expansions": 434,
+              "geometry_probes": 3308,
+              "parents": 5,
+              "alternatives_pruned": 384,
+              "max_frontier": 2,
+              "completed_levels": 3,
+              "state_bytes_bound": 369600
+            }
+          },
+          "complete": true,
+          "memory": {
+            "rss": 25313280,
+            "virtual": 40148992
+          },
+          "maxrss_bytes": 24788992,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 426.5928810000048,
+          "spawn_to_result_ms": 643.3623460000035,
+          "cleanup_ms": 8.492584999999053,
+          "exitcode": 0
+        }
+      ],
+      "maximum_aggregate_rss_bytes": 64516096,
+      "maximum_worker_virtual_bytes": 40148992,
+      "maximum_packet_bytes_observed": 1216,
+      "maximum_active_workers": 1,
+      "total_ms": 2786.08431699999,
+      "all_workers_stopped": true,
+      "inventory_consumed": false
+    }
+  ]
+}
