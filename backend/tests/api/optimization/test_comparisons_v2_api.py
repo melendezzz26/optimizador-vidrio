@@ -305,6 +305,10 @@ def test_uncertain_restart_blocks_aggregate_and_keeps_durable_results_accessible
     assert not response.json()['execution']['eligible'] and response.json()['result']['completo']
     assert response.json()['execution']['metrics'] is not None
     assert client.post(path+'/release',json={'expected_version':accepted.version},headers=headers).status_code==503
+    selection = {'execution_id': first.execution_id, 'expected_version': accepted.version}
+    assert client.put(path+'/selection', json=selection, headers=headers).status_code == 503
+    assert client.post(path+'/confirm', json=selection,
+        headers={**headers, 'Idempotency-Key': 'b08-uncertain-close'}).status_code == 503
     assert all(secret not in blocked.text for secret in ('start_ticks','runtime_version','/proc','Traceback'))
     save_evidence('ambiguous-recovery',dict(aggregate=blocked.json(),execution=response.json(),
         recovery_header=response.headers['X-Comparison-Recovery'],admission_active=coordinator.admission.active()))
@@ -321,10 +325,11 @@ def test_v1_profile_key_conflicts_and_legacy_read_without_conversion(api):
     assert client.get(BASE+f'/{v1.comparison_id}',headers=headers).json()['detail']['code']=='COMPARISON_PROFILE_MISMATCH'
 
 
-def test_no_selection_confirmation_or_alternative_routes_are_published(api):
+def test_b08_adds_only_contractual_selection_confirmation_routes(api):
     paths=app.openapi()['paths']
     assert BASE in paths
-    assert not any(path.startswith(BASE) and path.endswith(('/selection','/confirm')) for path in paths)
+    assert set(paths[BASE+'/{comparison_id}/selection']) == {'put'}
+    assert set(paths[BASE+'/{comparison_id}/confirm']) == {'post'}
     assert BASE+'/{comparison_id}/executions/{execution_id}' in paths
 
 

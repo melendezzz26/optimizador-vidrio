@@ -41,7 +41,7 @@ def owned_processes(root):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--runtime-root", type=Path, required=True)
-    parser.add_argument("--block", choices=("B01", "B02", "B03", "B04", "B05", "B06", "B07"), default="B01")
+    parser.add_argument("--block", choices=("B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08"), default="B01")
     args = parser.parse_args()
     runtime = args.runtime_root.resolve()
     block = args.block
@@ -84,7 +84,10 @@ def main():
     if block == "B07":
         report.update(scope="ST-INC-07: real six-engine v2 workspace, six 2D/3D layouts, masks, durable reload and v1/legacy",
                       public_v2_ui="EXECUTED_BY_B07_SMOKE", visual_v2="EXECUTED_BY_B07_SMOKE",
-                      selection_confirmation="PENDING_B08", reused_test_selection="TA-043 B07")
+                      selection_confirmation="NOT_EXERCISED_IN_ST_INC_07", reused_test_selection="TA-043 B07")
+    if block == "B08":
+        report.update(scope="ST-INC-08: real manual v2 selection, confirmation, PostgreSQL deltas and retry",
+                      reused_test_selection="TA-043 B08", integral_smoke="PENDING_B09")
     runner = None
     try:
         for folder in ("backend", "frontend", "docs/contracts"):
@@ -121,7 +124,7 @@ export default { ...base, testMatch: 'optimization-comparison.spec.js',
             raise RuntimeError("Use the complete CI gate in CI; this helper is a local B01 subset")
         source_files = sorted((root / "backend/app/modules/optimization").rglob("*.py"))
         source_files += [root / "backend/app/models.py"]
-        if block in ("B05", "B06", "B07"):
+        if block in ("B05", "B06", "B07", "B08"):
             source_files += [root / "backend/main.py"]
         source_files += sorted((root / "backend/alembic/versions").glob("*.py"))
         report["source_sha256"] = {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()

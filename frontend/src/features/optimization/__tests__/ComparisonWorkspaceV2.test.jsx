@@ -9,7 +9,7 @@ import { withPermissions } from '../../authentication/__tests__/permissionFixtur
 const user = withPermissions({ id_usuario: 1, usuario: 'Operario', rol: 'Operario' });
 beforeEach(() => localStorage.clear());
 
-function setupV2({ partial = false } = {}) {
+function setupV2({ partial = false, lostResponse = false, conflict = false, actingUser = user } = {}) {
   const current = structuredClone(partial ? comparisonV2.mixed : comparisonV2.completed);
   current.requested_pieces = structuredClone(comparisonV1.completed.requested_pieces).map(piece => ({ ...piece, cantidad: 2 }));
   const source = createFixturePendingOrdersSource([{ id_pedido: 1, cliente: 'Cliente de prueba',
@@ -19,6 +19,19 @@ function setupV2({ partial = false } = {}) {
     catalog: comparisonV2.catalog,
     start: vi.fn(async () => structuredClone(current)),
     lookup: vi.fn(async () => structuredClone(current)),
+    choose: vi.fn(async (_, executionId) => {
+      current.selected_execution_id = executionId; current.version++; current.confirmable = true;
+      return structuredClone(current);
+    }),
+    confirm: vi.fn(async (_, operation) => {
+      if (conflict) throw Object.assign(new Error('El stock cambió.'), { status: 409 });
+      current.confirmed = true; current.confirmable = false; current.selection_allowed = false; current.version++;
+      current.confirmation = { execution_id: current.selected_execution_id, key: operation.key, expected_version: operation.version,
+        method: current.executions.find(e => e.execution_id === current.selected_execution_id).method };
+      current.executions.forEach(e => { e.eligible = false; });
+      if (lostResponse) throw Object.assign(new Error('Respuesta perdida.'), { status: 0 });
+      return {};
+    }),
     load: vi.fn(async () => structuredClone(current)),
     result: vi.fn(async (_, execution) => {
       if (execution.result_available === false) return structuredClone(comparisonV2.failed_result);
@@ -35,8 +48,8 @@ function setupV2({ partial = false } = {}) {
   };
   const v1 = { start: vi.fn(), load: vi.fn(), lookup: vi.fn(), observe: vi.fn(), result: vi.fn(), manifest: vi.fn(),
     forExecution: vi.fn(), choose: vi.fn(), confirm: vi.fn(), release: vi.fn() };
-  render(<OptimizationPage user={user} source={source} comparisonAdapter={v1} comparisonV2Adapter={apiV2} />);
-  return { apiV2, v1 };
+  const view = render(<OptimizationPage user={actingUser} source={source} comparisonAdapter={v1} comparisonV2Adapter={apiV2} />);
+  return { apiV2, v1, view };
 }
 
 async function startV2() {
@@ -46,7 +59,7 @@ async function startV2() {
   await screen.findByRole('tab', { name: 'Comparación' });
 }
 
-test('comparison-v2 reuses the workspace with seven dynamic tabs and never offers B08 actions', async () => {
+test('comparison-v2 reuses seven dynamic tabs and requires a manual choice before confirmation', async () => {
   const { apiV2, v1 } = setupV2(); await startV2();
   const expectedTabs = ['Comparación', 'FF', 'BF', 'WF', 'HF', 'BRF', 'BS-2'];
   expect(screen.getAllByRole('tab')).toHaveLength(7);
@@ -57,12 +70,69 @@ test('comparison-v2 reuses the workspace with seven dynamic tabs and never offer
   expect(screen.getByRole('table')).toHaveTextContent('Métricas de 6 motores');
   expect(screen.getByRole('table')).toHaveTextContent('Cobertura');
   expect(screen.getByRole('table')).toHaveTextContent('Retazos reutilizados');
-  expect(screen.queryAllByRole('radio')).toHaveLength(0);
-  expect(screen.queryByRole('button', { name: 'Confirmar distribución elegida' })).not.toBeInTheDocument();
+  expect(screen.getAllByRole('radio')).toHaveLength(6);
+  expect(screen.queryAllByRole('radio', { checked: true })).toHaveLength(0);
+  expect(screen.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeDisabled();
   const lastTab = screen.getByRole('tab', { name: /BS-2/ });
   screen.getByRole('tab', { name: 'Comparación' }).focus();
   fireEvent.keyDown(screen.getByRole('tab', { name: 'Comparación' }), { key: 'End' });
   expect(lastTab).toHaveFocus();
+});
+
+test.each([false, true])('manual v2 confirmation keeps history after reload, lost response=%s', async lostResponse => {
+  const { apiV2, v1, view } = setupV2({ lostResponse }); await startV2();
+  fireEvent.click(screen.getByRole('tab', { name: 'Comparación' }));
+  fireEvent.click(screen.getByRole('radio', { name: /Best Residual Fit/ }));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeEnabled());
+  fireEvent.click(screen.getByRole('button', { name: 'Confirmar distribución elegida' }));
+  expect(screen.getByRole('alertdialog')).toHaveTextContent('Best Residual Fit');
+  fireEvent.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Confirmar corte' }));
+  await screen.findByText(/Trabajo #43 confirmado/);
+  expect(apiV2.confirm).toHaveBeenCalledOnce(); expect(v1.confirm).not.toHaveBeenCalled();
+  expect(screen.getAllByRole('tab')).toHaveLength(7);
+  view.unmount();
+  render(<OptimizationPage user={user} source={createFixturePendingOrdersSource([])} comparisonAdapter={v1} comparisonV2Adapter={apiV2} />);
+  await screen.findByText('Corte confirmado');
+  expect(apiV2.start).toHaveBeenCalledOnce();
+  fireEvent.click(screen.getByRole('tab', { name: 'Comparación' }));
+  expect(screen.getByRole('radio', { name: /Best Residual Fit/ })).toBeChecked();
+  expect(screen.getAllByRole('radio').every(r => r.disabled)).toBe(true);
+});
+
+test('v2 conflict refreshes durable state and preserves the manual selection', async () => {
+  const { apiV2 } = setupV2({ conflict: true }); await startV2();
+  fireEvent.click(screen.getByRole('tab', { name: 'Comparación' }));
+  fireEvent.click(screen.getByRole('radio', { name: /Best Residual Fit/ }));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeEnabled());
+  fireEvent.click(screen.getByRole('button', { name: 'Confirmar distribución elegida' }));
+  fireEvent.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Confirmar corte' }));
+  await screen.findByText('El stock cambió.');
+  await waitFor(() => expect(screen.getByRole('radio', { name: /Best Residual Fit/ })).toBeEnabled());
+  expect(screen.getByRole('radio', { name: /Best Residual Fit/ })).toBeChecked();
+  expect(apiV2.confirm).toHaveBeenCalledOnce();
+});
+
+test('a network failure before commit retains the same idempotent operation on retry', async () => {
+  const { apiV2 } = setupV2(); await startV2();
+  apiV2.confirm.mockRejectedValueOnce(Object.assign(new Error('Sin conexión.'), { status: 0 }));
+  fireEvent.click(screen.getByRole('tab', { name: 'Comparación' }));
+  fireEvent.click(screen.getByRole('radio', { name: /Best Residual Fit/ }));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeEnabled());
+  const submit = () => {
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmar distribución elegida' }));
+    fireEvent.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Confirmar corte' }));
+  };
+  submit(); await screen.findByText('Sin conexión.');
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeEnabled());
+  submit(); await screen.findByText(/Trabajo #43 confirmado/);
+  expect(apiV2.confirm).toHaveBeenCalledTimes(2);
+  expect(apiV2.confirm.mock.calls[0][1]).toEqual(apiV2.confirm.mock.calls[1][1]);
+});
+
+test('v2 confirmation requires the confirmation permission', async () => {
+  setupV2({ actingUser: { ...user, permisos: user.permisos.filter(p => p !== 'optimization.confirm') } });
+  await startV2(); fireEvent.click(screen.getByRole('tab', { name: 'Comparación' }));
+  expect(screen.queryByRole('button', { name: 'Confirmar distribución elegida' })).not.toBeInTheDocument();
 });
 
 test('partial M6 and failed HF remain independent and retain their actual diagnostics', async () => {
@@ -77,8 +147,10 @@ test('partial M6 and failed HF remain independent and retain their actual diagno
   const beamPanel = screen.getByRole('tabpanel', { name: /BS-2/ });
   fireEvent.click(within(beamPanel).getByRole('button', { name: /Resultado/ }));
   expect(await within(beamPanel).findAllByText(/pendiente por límite de recursos/)).toHaveLength(2);
-  expect(screen.queryByRole('radio')).not.toBeInTheDocument();
-  expect(screen.queryByRole('button', { name: 'Confirmar distribución elegida' })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('tab', { name: 'Comparación' }));
+  expect(screen.getByRole('radio', { name: /Hole Filling/ })).toBeDisabled();
+  expect(screen.getByRole('radio', { name: /Beam Search/ })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeDisabled();
 });
 
 test('reloading a v2 comparison consults its durable ID without starting another comparison', async () => {

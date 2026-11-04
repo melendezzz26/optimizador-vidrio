@@ -9,6 +9,29 @@ const descriptor = (executionId = 4301, method = 'FF') => ({ profile: 'compariso
   mask_ref: 'a'.repeat(32), kind: 'PIECE', resolution_mm: '1', rotation_deg: '0', columns: 4,
   row_count: 2, occupied_cells: 4, piece: { id_pedido: 1, id_pieza: 1 }, source: null, reason: null });
 
+test('v2 selection and confirmation use the approved bodies and validate receipt ownership', async () => {
+  const selected = { ...structuredClone(fixture.completed), selected_execution_id: 4305,
+    version: fixture.completed.version + 1, confirmable: true };
+  const operation = { executionId: 4305, version: selected.version, key: 'stable-confirm-key' };
+  const confirmed = { profile: 'comparison-v2', schema_version: 2, comparison_id: 43,
+    execution_id: 4305, version: selected.version + 1, receipt: {
+      schema_version: 1, id_optimizacion: 43, confirmed: true,
+      orders: [{ id_pedido: 1, estado: 'CONFIRMADO' }],
+      materials_consumed: [{ material_source: 'PLANCHA', material_id: 1, stock_unit_index: 1 }], remnants_created: [],
+    } };
+  const fetchImpl = vi.fn().mockResolvedValueOnce(jsonResponse(selected)).mockResolvedValueOnce(jsonResponse(confirmed))
+    .mockResolvedValueOnce(jsonResponse({ ...confirmed, execution_id: 4306 }));
+  const api = createComparisonV2Api({ fetchImpl });
+  expect(await api.choose(fixture.completed, 4305)).toEqual(selected);
+  expect(await api.confirm(selected, operation)).toEqual(confirmed);
+  expect(fetchImpl.mock.calls[0][0]).toMatch(/comparisons-v2\/43\/selection$/);
+  expect(JSON.parse(fetchImpl.mock.calls[0][1].body)).toEqual({ execution_id: 4305, expected_version: fixture.completed.version });
+  expect(fetchImpl.mock.calls[1][0]).toMatch(/comparisons-v2\/43\/confirm$/);
+  expect(fetchImpl.mock.calls[1][1].headers['Idempotency-Key']).toBe(operation.key);
+  expect(JSON.parse(fetchImpl.mock.calls[1][1].body)).toEqual({ execution_id: 4305, expected_version: selected.version });
+  await expect(api.confirm(selected, operation)).rejects.toThrow();
+});
+
 test('v2 start, ID/key recovery and execution reads stay on the explicit v2 paths', async () => {
   const fetchImpl = vi.fn().mockResolvedValueOnce(jsonResponse(fixture.accepted))
     .mockResolvedValueOnce(jsonResponse(fixture.completed)).mockResolvedValueOnce(jsonResponse(fixture.completed))

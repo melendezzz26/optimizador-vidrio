@@ -5,6 +5,90 @@ import { fileURLToPath } from 'node:url';
 import { api, setup, login, loginApi, open, run, stock, capture, save } from './optimizationRealSupport.js';
 import { parseComparisonV2, parseExecutionV2, parseComparisonEventV2 } from '../../src/features/optimization/comparisonV2Contract.js';
 
+test('TA-043 B08 smoke: seleccion manual y confirmacion v2 atomica real', async ({ page }, info) => {
+  test.setTimeout(90_000);
+  const data = await setup(page, 'single');
+  const stockBefore = await stock(page, data), requests = [];
+  page.on('request', request => {
+    if (request.method() === 'POST' && new URL(request.url()).pathname === '/api/optimization/comparisons-v2') requests.push(request.url());
+  });
+  await login(page, data.actors.all, { comparative: true }); await open(page);
+  await page.getByRole('checkbox', { name: new RegExp(`Pedido #${data.orders[0]}\\b`) }).check();
+  await page.getByLabel('Perfil').selectOption('comparison-v2');
+  const acceptedResponse = page.waitForResponse(r => new URL(r.url()).pathname === '/api/optimization/comparisons-v2' && r.request().method() === 'POST');
+  await page.getByRole('button', { name: 'Comparar con los seis motores', exact: true }).click();
+  const acceptedHttp = await acceptedResponse; expect(acceptedHttp.status()).toBe(201);
+  const accepted = parseComparisonV2(await acceptedHttp.json());
+  const endpoint = `${api}/api/optimization/comparisons-v2/${accepted.comparison_id}`;
+  const read = async () => {
+    const response = await page.request.get(endpoint, { headers: data.headers });
+    expect(response.status()).toBe(200); return parseComparisonV2(await response.json());
+  };
+  let current;
+  await expect.poll(async () => { current = await read(); return current.terminal; }, { timeout: 60_000 }).toBe(true);
+  expect(current.executions.every(e => e.complete && e.result_available)).toBe(true);
+  expect(Number(current.configuration.paso_angular_grados)).toBe(5);
+  await expect(page.getByText('Comparación finalizada', { exact: true })).toBeVisible();
+  await page.getByRole('tab', { name: 'Comparación', exact: true }).click();
+  const db = () => JSON.parse(execFileSync('python', ['-m', 'tests.optimization_b08_snapshot', String(current.comparison_id)],
+    { cwd: fileURLToPath(new URL('../../../backend/', import.meta.url)), encoding: 'utf8' }));
+  const before = db();
+  expect(await stock(page, data)).toEqual(stockBefore);
+  await expect(page.getByRole('radio', { checked: true })).toHaveCount(0);
+  await page.getByRole('radio', { name: 'Elegir Best Residual Fit', exact: true }).check();
+  await expect(page.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeEnabled();
+  current = await read();
+  const chosen = current.executions.find(e => e.method === 'M5');
+  expect(current.selected_execution_id).toBe(chosen.execution_id);
+  const afterSelection = db();
+  for (const field of ['sheets', 'remnants', 'movements', 'orders']) expect(afterSelection[field]).toEqual(before[field]);
+  const results = {};
+  for (const execution of current.executions) {
+    const response = await page.request.get(`${endpoint}/executions/${execution.execution_id}`, { headers: data.headers });
+    expect(response.status()).toBe(200); results[execution.execution_id] = await response.json();
+  }
+  await capture(page, info, 'b08-manual-choice');
+  await page.getByRole('button', { name: 'Confirmar distribución elegida' }).click();
+  await expect(page.getByRole('alertdialog')).toContainText('Best Residual Fit');
+  await capture(page, info, 'b08-confirmation-dialog');
+  const confirmationResponse = page.waitForResponse(r => r.url() === `${endpoint}/confirm` && r.request().method() === 'POST');
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Confirmar corte', exact: true }).click();
+  const confirmedHttp = await confirmationResponse; expect(confirmedHttp.status()).toBe(200);
+  const receipt = await confirmedHttp.json();
+  await expect(page.getByText(new RegExp(`Trabajo #${current.comparison_id} confirmado`))).toBeVisible();
+  const after = db();
+  const consumed = receipt.receipt.materials_consumed;
+  expect(consumed).toHaveLength(1);
+  expect(consumed[0].material_id).toBe(data.sheets[0]);
+  for (const sheet of before.sheets) {
+    const expected = consumed.filter(s => s.material_source === 'PLANCHA' && s.material_id === sheet.id_plancha).length;
+    expect(after.sheets.find(s => s.id_plancha === sheet.id_plancha).cantidad).toBe(sheet.cantidad - expected);
+  }
+  const movements = after.movements.filter(m => !before.movements.some(old => old.id_movimiento === m.id_movimiento));
+  expect(movements).toHaveLength(1);
+  expect(movements[0]).toMatchObject({ id_optimizacion: current.comparison_id, id_plancha: data.sheets[0], cantidad_afectada: 1 });
+  expect(after.orders.every(o => o.estado === 'CONFIRMADO')).toBe(true);
+  for (const remnant of after.remnants.filter(r => !before.remnants.some(old => old.id_retazo === r.id_retazo)))
+    expect(remnant.id_ejecucion_origen).toBe(chosen.execution_id);
+  const retry = await page.request.post(`${endpoint}/confirm`, { headers: { ...data.headers,
+    'Idempotency-Key': confirmedHttp.request().headers()['idempotency-key'] }, data: confirmedHttp.request().postDataJSON() });
+  expect(retry.status()).toBe(200); expect(await retry.json()).toEqual(receipt); expect(db()).toEqual(after);
+  await page.reload(); await open(page);
+  await expect(page.getByText('Corte confirmado', { exact: true })).toBeVisible();
+  await page.getByRole('tab', { name: 'Comparación', exact: true }).click();
+  await expect(page.getByRole('radio', { name: 'Elegir Best Residual Fit', exact: true })).toBeChecked();
+  for (const radio of await page.getByRole('radio').all()) await expect(radio).toBeDisabled();
+  expect(requests).toHaveLength(1);
+  for (const execution of current.executions) {
+    const response = await page.request.get(`${endpoint}/executions/${execution.execution_id}`, { headers: data.headers });
+    expect(response.status()).toBe(200);
+    expect((await response.json()).result.placements).toEqual(results[execution.execution_id].result.placements);
+  }
+  await capture(page, info, 'b08-confirmed-history');
+  save(info, 'b08-confirmation.json', { current, receipt, before, afterSelection, after,
+    originalResults: results, recovered: await read(), posts: requests.length, retry: 'SAME_RECEIPT_NO_DELTA' });
+});
+
 test('TA-043 B06 smoke: API publica seis motores, recuperacion y compatibilidad real', async ({ page }, info) => {
   test.setTimeout(90_000);
   const errors = []; page.on('pageerror', error => errors.push(error.message));
@@ -165,8 +249,10 @@ test('TA-043 B07 smoke: interfaz v2, seis distribuciones y recuperacion visual r
   await page.getByRole('button', { name: 'Recuperar', exact: true }).click();
   await expect(page.getByRole('tab')).toHaveCount(7);
   expect(v2Posts).toHaveLength(1);
-  await expect(page.getByRole('radio')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Confirmar distribución elegida' })).toHaveCount(0);
+  await page.getByRole('tab', { name: 'Comparación', exact: true }).click();
+  await expect(page.getByRole('radio')).toHaveCount(6);
+  await expect(page.getByRole('radio', { checked: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeDisabled();
 
   const results = {}, manifests = {}, masks = {};
   for (const execution of current.executions) {
@@ -236,7 +322,7 @@ test('TA-043 B07 smoke: interfaz v2, seis distribuciones y recuperacion visual r
   const visualEvidence = {};
   for (const execution of current.executions) {
     const tab = page.getByRole('tab', { name: new RegExp(`^${tabLabels[execution.method]}`) });
-    const panel = page.locator(`#${await tab.getAttribute('aria-controls')}`);
+    const panel = page.locator(`[id="${await tab.getAttribute('aria-controls')}"]`);
     await tab.click();
     await panel.getByRole('button', { name: /Resultado/ }).click();
     const canvas = panel.getByRole('region', { name: 'Distribución de piezas', exact: true });
@@ -279,7 +365,7 @@ test('TA-043 B07 smoke: interfaz v2, seis distribuciones y recuperacion visual r
   await capture(page, info, 'comparison-v2-restored');
   save(info, 'b07-six-engine-ui.json', { accepted, current, results, manifests, masks, events,
     visualEvidence, postsAfterRestore: v2Posts.length, inventoryBefore, inventoryAfterV2: await allInventory(),
-    profileV1VisualTabs: '4_EXPECTED', b08: 'NOT_IMPLEMENTED' });
+    profileV1VisualTabs: '4_EXPECTED', b08: 'NOT_EXERCISED_IN_ST_INC_07' });
 
   await page.getByRole('button', { name: 'Liberar pedidos sin confirmar', exact: true }).click();
   await expect(page.getByText(new RegExp(`Trabajo #${current.comparison_id} liberado sin confirmar`))).toBeVisible();
@@ -290,8 +376,9 @@ test('TA-043 B07 smoke: interfaz v2, seis distribuciones y recuperacion visual r
     && response.request().method() === 'POST');
   await page.getByRole('button', { name: 'Comparar con los tres motores', exact: true }).click();
   const v1Response = await v1Accepted; expect(v1Response.status()).toBe(201);
-  const v1 = await v1Response.json();
+  let v1 = await v1Response.json();
   await expect(page.getByText(/Comparación finalizada/)).toBeVisible();
+  v1 = await (await page.request.get(`${api}/api/optimization/comparisons/${v1.comparison_id}`, { headers: data.headers })).json();
   await expect(page.getByRole('tab')).toHaveCount(4);
   expect(v1.executions.map(execution => execution.method)).toEqual(['FF', 'BF', 'WF']);
   await page.reload(); await open(page);
