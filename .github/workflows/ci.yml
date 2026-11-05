@@ -158,6 +158,13 @@ jobs:
         # its --prepare downgrade intentionally rejects existing v2 rows.
         # Run it once in a fresh Playwright server, then run every other
         # critical E2E test in a second fresh server.
-        run: |
-          npx playwright test --grep "TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL"
-          npx playwright test --grep-invert "TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL"
+        run: node scripts/run-e2e-phases.js
+      - name: Preserve E2E phase reports and diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-phases-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            frontend/test-results/e2e-phases/
+            frontend/playwright-report/e2e-phases/
+          if-no-files-found: error

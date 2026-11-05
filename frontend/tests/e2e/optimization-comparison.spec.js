@@ -100,10 +100,12 @@ test('TA-043 B06 smoke: API publica seis motores, recuperacion y compatibilidad 
       expect(response.status()).toBe(200); return response.json();
     };
     const sheets = await read('planchas'); const remnants = await read('retazos');
-    const movements = await Promise.all([
-      ...sheets.map(s => read(`planchas/${s.id_plancha}/movimientos`)),
-      ...remnants.map(r => read(`retazos/${r.id_retazo}/movimientos`)),
-    ]);
+    const routes = [...sheets.map(s => `planchas/${s.id_plancha}/movimientos`),
+      ...remnants.map(r => `retazos/${r.id_retazo}/movimientos`)];
+    const movements = [];
+    // La suite acumula inventario: leer todos los historiales en orden evita
+    // una ráfaga de conexiones proporcional a los datos de escenarios previos.
+    for (const route of routes) movements.push(await read(route));
     return { sheets, remnants, movements };
   };
   const allBefore = await allInventory();
@@ -208,10 +210,10 @@ test('TA-043 B07 smoke: interfaz v2, seis distribuciones y recuperacion visual r
       expect(response.status()).toBe(200); return response.json();
     };
     const sheets = await read('planchas'), remnants = await read('retazos');
-    const movements = await Promise.all([
-      ...sheets.map(sheet => read(`planchas/${sheet.id_plancha}/movimientos`)),
-      ...remnants.map(remnant => read(`retazos/${remnant.id_retazo}/movimientos`)),
-    ]);
+    const routes = [...sheets.map(sheet => `planchas/${sheet.id_plancha}/movimientos`),
+      ...remnants.map(remnant => `retazos/${remnant.id_retazo}/movimientos`)];
+    const movements = [];
+    for (const route of routes) movements.push(await read(route));
     return { sheets, remnants, movements };
   };
   const inventoryBefore = await allInventory(), stockBefore = await stock(page, data);
@@ -291,7 +293,7 @@ test('TA-043 B07 smoke: interfaz v2, seis distribuciones y recuperacion visual r
 
   const tableTab = page.getByRole('tab', { name: /^Comparación/ });
   await tableTab.click();
-  const table = page.getByRole('table');
+  const table = page.getByRole('table', { name: 'Métricas de 6 motores', exact: true });
   await expect(table).toContainText('Métricas de 6 motores');
   await expect(page.getByText(/no se ordenan ni recomiendan un motor/)).toBeVisible();
   const headings = await table.locator('thead th').allTextContents();

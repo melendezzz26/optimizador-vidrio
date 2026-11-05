@@ -63,8 +63,27 @@ def test_ci_covers_backend_frontend_e2e_without_staging_secrets():
     assert {"npm ci", "npm run test:unit", "npm run test:component", "npm run lint", "npm run build"} <= commands
     assert jobs["e2e"]["env"]["PLAYWRIGHT_CHANNEL"] == "chromium"
     e2e_commands = "\n".join(step.get("run", "") for step in jobs["e2e"]["steps"])
-    assert 'npx playwright test --grep "TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL"' in e2e_commands
-    assert 'npx playwright test --grep-invert "TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL"' in e2e_commands
+    assert 'node scripts/run-e2e-phases.js' in e2e_commands
+    assert 'npx playwright test --grep' not in e2e_commands
+    orchestrator = (ROOT / 'frontend/scripts/run-e2e-phases.js').read_text(encoding='utf-8')
+    assert "['test', '--list', '--reporter=./tests/e2e/e2eGateReporter.js']" in orchestrator
+    assert 'for (const phase of E2E_PHASES)' in orchestrator
+    assert 'readCombinedEvidence(directory, context)' in orchestrator
+    assert 'process.exitCode = summary.ok ? 0 : 1' in orchestrator
+    assert "NEWGLASS_E2E_GATE: '1'" in orchestrator
+    protocol = (ROOT / 'frontend/tests/e2e/e2ePhases.js').read_text(encoding='utf-8')
+    assert "['b02', 'remaining']" in protocol
+    assert "phase === 'b02' ? '--grep' : '--grep-invert'" in protocol
+    assert 'TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL' in protocol
+    config = (ROOT / 'frontend/playwright.config.js').read_text(encoding='utf-8')
+    assert 'reuseExistingServer: false' in config
+    assert "command: 'python -m tests.e2e_server'" in config
+    assert "outputDir: path.join(phase.directory, phase.phase)" in config
+    artifact = next(step for step in jobs['e2e']['steps'] if step.get('uses', '').startswith('actions/upload-artifact@'))
+    assert artifact['if'] == 'always()'
+    assert artifact['with']['if-no-files-found'] == 'error'
+    assert 'frontend/test-results/e2e-phases/' in artifact['with']['path']
+    assert 'frontend/playwright-report/e2e-phases/' in artifact['with']['path']
     raw = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
     assert "secrets." not in raw and "DATABASE_URL:" not in raw
     assert "continue-on-error" not in raw
