@@ -1,7 +1,7 @@
 """Generador determinista y reproducible de escenarios de capacidad progresiva (TA-044).
 
 Autor: Luis Anthony Ibáñez Herrera.
-Revisión: Andro Joseph Quispe Cesias / Wilder Fabricio Melendez Quezada.
+Revisor esperado: Andro Joseph Quispe Cesias.
 
 Provee la matriz canónica de casos para evaluar el optimizador de NewGlass:
 - 10 piezas (CAP-10)
@@ -9,6 +9,8 @@ Provee la matriz canónica de casos para evaluar el optimizador de NewGlass:
 - 50 piezas (CAP-50)
 - 75 piezas (CAP-75)
 - 100 piezas (CAP-100)
+- 150 piezas (CAP-150)
+- 200 piezas (CAP-200)
 
 Condiciones representativas:
 - Múltiples geometrías: rectángulos, circunferencias y polígonos convexos.
@@ -32,7 +34,7 @@ if str(ROOT) not in sys.path:
 from experiments.optimization.loader import build_problem
 
 CAPACITY_DIR = Path(__file__).resolve().parent / "cases" / "capacity"
-CAPACITY_SCENARIOS = (10, 25, 50, 75, 100)
+CAPACITY_SCENARIOS = (10, 25, 50, 75, 100, 150, 200)
 
 # Catálogo canónico de geometrías de piezas
 PIECE_SPECS = {
@@ -58,6 +60,8 @@ PIECE_DISTRIBUTIONS = {
     50: {1: 7, 2: 6, 3: 6, 5: 6, 6: 5, 7: 6, 8: 4, 9: 5, 10: 5},  # G1: 30, G2: 20 -> Total 50
     75: {1: 10, 2: 9, 3: 9, 5: 9, 6: 8, 7: 8, 8: 7, 9: 7, 10: 8},  # G1: 45, G2: 30 -> Total 75
     100: {1: 14, 2: 12, 3: 12, 5: 12, 6: 10, 7: 11, 8: 9, 9: 10, 10: 10},  # G1: 60, G2: 40 -> Total 100
+    150: {1: 21, 2: 18, 3: 18, 5: 18, 6: 15, 7: 16, 8: 14, 9: 15, 10: 15},
+    200: {1: 28, 2: 24, 3: 24, 5: 24, 6: 20, 7: 22, 8: 18, 9: 20, 10: 20},
 }
 
 
@@ -179,7 +183,7 @@ def generate_capacity_case(scale_n: int) -> dict[str, Any]:
 
 
 def export_capacity_cases(output_dir: Path | None = None) -> list[Path]:
-    """Exporta los 5 casos congelados a disco en formato JSON."""
+    """Exporta los casos congelados a disco en formato JSON."""
     target_dir = output_dir or CAPACITY_DIR
     target_dir.mkdir(parents=True, exist_ok=True)
     generated_paths = []

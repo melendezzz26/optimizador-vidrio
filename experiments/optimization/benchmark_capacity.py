@@ -1,12 +1,12 @@
 """Runner formal de pruebas de capacidad, estrés y límites del optimizador (TA-044 - T02).
 
 Autor: Luis Anthony Ibáñez Herrera.
-Revisión: Andro Joseph Quispe Cesias / Wilder Fabricio Melendez Quezada.
+Revisor esperado: Andro Joseph Quispe Cesias.
 
-Ejecuta la matriz progresiva de capacidad (10, 25, 50, 75, 100 piezas) sobre los
+Ejecuta la matriz progresiva de capacidad (10, 25, 50, 75, 100, 150, 200 piezas) sobre los
 métodos disponibles (FF, BF, WF, M4, M5, M6), midiendo de forma reproducible:
 - Tiempo de ejecución monotónico (ms)
-- Memoria pico utilizada (KB y MB)
+- Pico de asignaciones Python trazadas por tracemalloc (KB y MB)
 - Piezas solicitadas vs. colocadas
 - Planchas nuevas consumidas y retazos aprovechados
 - Porcentaje de utilización y área de merma
@@ -56,7 +56,7 @@ class BenchmarkRecord:
     scale_n: int
     case_id: str
     method: str
-    status: str  # SUCCESS, PARTIAL, FAILED
+    status: str  # COMPLETE, PARTIAL, TIMEOUT, ERROR
     execution_time_ms: float
     peak_memory_kb: float
     peak_memory_mb: float
@@ -70,6 +70,13 @@ class BenchmarkRecord:
     waste_mm2: float | None
     recoverable_remnant_mm2: float | None
     error_message: str | None = None
+    stop_reason: str | None = None
+
+
+def classify_status(placed: int, total: int, stop_reason: str | None) -> str:
+    if stop_reason == "TIME_LIMIT":
+        return "TIMEOUT"
+    return "COMPLETE" if placed == total else "PARTIAL"
 
 
 def run_single_benchmark(scale_n: int, method_code: str, factory) -> BenchmarkRecord:
@@ -79,10 +86,15 @@ def run_single_benchmark(scale_n: int, method_code: str, factory) -> BenchmarkRe
     t0 = time.perf_counter_ns()
     error_msg = None
     res = None
+    stop_reason = None
 
     try:
         optimizer = factory()
-        res = optimizer.optimize(problem)
+        if isinstance(optimizer, BeamSearchOptimizer):
+            outcome = optimizer.run(problem)
+            res, stop_reason = outcome.result, outcome.stop_reason
+        else:
+            res = optimizer.optimize(problem)
     except Exception as exc:
         error_msg = f"{type(exc).__name__}: {exc}"
     finally:
@@ -99,7 +111,7 @@ def run_single_benchmark(scale_n: int, method_code: str, factory) -> BenchmarkRe
             scale_n=scale_n,
             case_id=f"CAP-{scale_n}",
             method=method_code,
-            status="FAILED",
+            status="ERROR",
             execution_time_ms=execution_time_ms,
             peak_memory_kb=peak_memory_kb,
             peak_memory_mb=peak_memory_mb,
@@ -133,7 +145,7 @@ def run_single_benchmark(scale_n: int, method_code: str, factory) -> BenchmarkRe
         except Exception as m_exc:
             error_msg = f"Metrics calculation warning: {m_exc}"
 
-    status = "SUCCESS" if res.placed_units == res.total_units else "PARTIAL"
+    status = classify_status(res.placed_units, res.total_units, stop_reason)
 
     return BenchmarkRecord(
         scale_n=scale_n,
@@ -153,6 +165,7 @@ def run_single_benchmark(scale_n: int, method_code: str, factory) -> BenchmarkRe
         waste_mm2=waste,
         recoverable_remnant_mm2=rec_rem,
         error_message=error_msg,
+        stop_reason=stop_reason,
     )
 
 
@@ -172,7 +185,7 @@ def run_full_capacity_benchmark(output_dir: Path | None = None) -> list[Benchmar
             print(f"  Ejecutando método {code}...", end="", flush=True)
             rec = run_single_benchmark(scale, code, factory)
             records.append(rec)
-            print(f" {rec.status} en {rec.execution_time_ms} ms | Colocadas: {rec.placed_units}/{rec.total_units} | RAM: {rec.peak_memory_mb} MB")
+            print(f" {rec.status} en {rec.execution_time_ms} ms | Colocadas: {rec.placed_units}/{rec.total_units} | memoria Python trazada: {rec.peak_memory_mb} MB")
 
     # Guardar JSON
     json_path = target_dir / "capacity_benchmark_results.json"
@@ -187,7 +200,9 @@ def run_full_capacity_benchmark(output_dir: Path | None = None) -> list[Benchmar
         writer.writerows(json_data)
 
     print("\n" + "=" * 78)
-    print(f"BENCHMARK COMPLETADO EXITOSAMENTE")
+    from collections import Counter
+    counts = Counter(r.status for r in records)
+    print(f"Resumen: total={len(records)} COMPLETE={counts['COMPLETE']} PARTIAL={counts['PARTIAL']} TIMEOUT={counts['TIMEOUT']} ERROR={counts['ERROR']}")
     print(f"Resultados crudos guardados en:")
     print(f" - {json_path}")
     print(f" - {csv_path}")

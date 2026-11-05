@@ -1,7 +1,7 @@
 """Pruebas unitarias de conformidad de escenarios de capacidad (TA-044 - T01).
 
 Autor: Luis Anthony Ibáñez Herrera.
-Revisión: Andro Joseph Quispe Cesias / Wilder Fabricio Melendez Quezada.
+Revisor esperado: Andro Joseph Quispe Cesias.
 
 Valida que la matriz progresiva de capacidad (10, 25, 50, 75, 100 piezas)
 cumple rigurosamente las reglas de dominio e invariantes de NewGlass:
@@ -105,3 +105,15 @@ def test_capacity_cap10_smoke_execution():
     # Verificar que las colocaciones respeten invariante de material
     for placement in result.placements:
         assert placement.piece.material_key == placement.stock.material_key
+
+
+@pytest.mark.parametrize("scale_n", CAPACITY_SCENARIOS)
+def test_frozen_capacity_case_matches_generator(scale_n: int):
+    """Versioned cases must reproduce the generator, including configuration."""
+    import json
+
+    case_path = ROOT / "experiments" / "optimization" / "cases" / "capacity" / f"CAP-{scale_n}.json"
+    case = json.loads(case_path.read_text(encoding="utf-8"))
+    assert case == generate_capacity_case(scale_n)
+    assert case["config"] == {"resolution_mm": 1, "angular_step_deg": 5,
+                              "margin_mm": 1, "separation_mm": 1}

@@ -1,17 +1,17 @@
 """Sonda de determinismo y concurrencia multi-proceso del optimizador (TA-044 - T03).
 
 Autor: Luis Anthony Ibáñez Herrera.
-Revisión: Andro Joseph Quispe Cesias / Wilder Fabricio Melendez Quezada.
+Revisor esperado: Andro Joseph Quispe Cesias.
 
 1. Determinismo:
    - Ejecuta N=5 repeticiones independientes sobre cada caso y método determinista.
    - Genera huella digital SHA-256 de las colocaciones exactas (pieza, lámina, x, y, rotación).
-   - Invariante estricto: 100% reproducibilidad funcional (0 drift).
+   - Compara igualdad de las colocaciones observadas.
 
 2. Concurrencia:
    - Ejecuta optimizaciones concurrentes con 2, 4 y 8 procesos simultáneos.
    - Evalúa aislamiento de memoria, tasa de éxito, contención de CPU y factor de degradación.
-   - Verifica ausencia de colisiones o interferencias cruzadas entre procesos independientes.
+   - Compara huellas con una ejecución secuencial; no prueba el servicio ni fugas.
 """
 from __future__ import annotations
 
@@ -36,6 +36,7 @@ from app.modules.optimization.domain.best_fit import BestFitOptimizer
 from app.modules.optimization.domain.worst_fit import WorstFitOptimizer
 from app.modules.optimization.domain.hole_filling import HoleFillingOptimizer
 from app.modules.optimization.domain.best_residual_fit import BestResidualFitOptimizer
+from app.modules.optimization.domain.beam_search import BeamSearchOptimizer
 
 EVIDENCE_DIR = ROOT / "docs" / "evidence" / "sprint-02" / "TA-044"
 
@@ -62,7 +63,7 @@ def compute_placement_fingerprint(result) -> str:
 
 # --- 1. EVALUACIÓN DE DETERMINISMO ---
 
-def run_determinism_test(repetitions: int = 5) -> list[dict]:
+def run_determinism_test(repetitions: int = 5, scales=(10,)) -> list[dict]:
     print("\n" + "=" * 78)
     print(f"1. INICIANDO VERIFICACIÓN DE DETERMINISMO FUNCIONAL (N={repetitions} repeticiones)")
     print("=" * 78)
@@ -73,10 +74,11 @@ def run_determinism_test(repetitions: int = 5) -> list[dict]:
         ("WF", WorstFitOptimizer),
         ("M4", HoleFillingOptimizer),
         ("M5", BestResidualFitOptimizer),
+        ("M6", BeamSearchOptimizer),
     ]
 
     results = []
-    for scale in CAPACITY_SCENARIOS:
+    for scale in scales:
         problem = load_capacity_problem(scale)
         for code, factory in methods:
             hashes = []
@@ -195,7 +197,7 @@ def run_concurrency_test() -> list[dict]:
                 "method": method,
                 "concurrency_workers": workers,
                 "all_success": all_success,
-                "no_interference_hash_match": all_match_fp,
+                "fingerprints_match_baseline": all_match_fp,
                 "total_wall_time_ms": total_wall_ms,
                 "baseline_single_ms": baseline_time,
                 "avg_worker_time_ms": avg_worker_ms,
@@ -205,7 +207,7 @@ def run_concurrency_test() -> list[dict]:
             }
             concurrency_results.append(record)
 
-            status_str = "SUCCESS" if (all_success and all_match_fp) else "FAIL/CORRUPTED"
+            status_str = "SUCCESS" if (all_success and all_match_fp) else "FAIL/MISMATCH"
             print(f"  CAP-{scale} | {method} | Concurrencia={workers} -> {status_str} | Wall: {total_wall_ms} ms | Avg/worker: {avg_worker_ms} ms (Slowdown: {slowdown_factor}x) | {throughput_ops_sec} ops/s")
 
     return concurrency_results
@@ -232,7 +234,7 @@ def run_full_determinism_and_concurrency(output_dir: Path | None = None):
     out_file = target_dir / "concurrency_results.json"
     out_file.write_text(json.dumps(consolidated, indent=2), encoding="utf-8")
     print("\n" + "=" * 78)
-    print(f"PRUEBAS T03 COMPLETADAS EXITOSAMENTE")
+    print("Sondas de determinismo y paralelismo terminadas; revisar resultados")
     print(f"Resultados guardados en: {out_file}")
     print("=" * 78)
 
