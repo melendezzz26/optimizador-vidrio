@@ -1,0 +1,8 @@
+# Preserve the bytes attested by SHA256SUMS on Linux and Windows checkouts.
+*.json text eol=lf
+*.txt text eol=lf
+SHA256SUMS text eol=lf
+EXTERNAL-SHA256SUMS text eol=lf
+*.log -text
+*.conf -text
+*.zip binary

@@ -141,6 +141,7 @@ antes de ejecutar; el manifiesto conserva esos hashes y los códigos de salida.
 | Sequential runner aislado | 26 passed, 0 failed, 0 skipped |
 | Comparison runner aislado | 14 passed, 0 failed, 0 skipped |
 | E2E focalizado, comparación salvo B02 | 16 passed (8 desktop + 8 mobile), 0 failed, 0 skipped, 0 flaky |
+| E2E global posterior sobre 04fa083, orquestación real de dos fases | 146 passed (2 B02 + 144 restantes), gate conjunto PASS; 0 failed/skipped/flaky/retries |
 | Lint frontend en copia temporal | PASS, exit 0 |
 | Compilación Python e indentación | PASS, 4 archivos con compileall y tabnanny |
 | git diff --check | PASS, también requerido sobre el índice antes de commit |
@@ -181,10 +182,18 @@ se eliminó al finalizar, sin seguir sus symlinks a dependencias.
 
 ## Riesgos y criterio de integración
 
-La corrección geométrica queda validada por las ejecuciones anteriores. Se recomienda
-integrarla en `recovery/sprint-02` después de ejecutar y aprobar el E2E global completo
-en sus dos fases: una selección focalizada no lo certifica. No se hizo push ni
-se modificó el PR #102 o las ramas protegidas. No se declara la totalidad histórica
+La corrección geométrica queda validada por las ejecuciones anteriores. La validación
+E2E global pendiente se completó sobre **04fa083**, con **146/146 PASS** y gate conjunto
+TA-040 aprobado. Véase [la certificación global, identidades y hashes](global-e2e/README.md).
+La integración local posterior dejó **04fa083** y su documentación en
+`recovery/sprint-02`. Antes del push se reconstruyó exclusivamente el commit documental
+no publicado **0b759f6**, preservando el commit productivo y sus pruebas. El ZIP de
+54 MB se respalda fuera del repositorio y se excluye del historial candidato;
+un clon limpio conserva las evidencias ligeras verificables y sus manifiestos.
+Véase [la limpieza, el respaldo y sus verificaciones](global-e2e/cleanup/README.md).
+`origin/recovery/sprint-02` permanece en **2c59229**, ancestro de la rama candidata:
+el avance sigue siendo fast-forward. No se hizo push ni se modificó el PR #102,
+Supabase, despliegues u otras ramas oficiales. No se declara la totalidad histórica
 de TA-045/T03 verificada ni aprobación formal de revisión.
 La métrica cuadrada y la reserva adicional propia de la discretización permanecen;
 esta corrección no certifica el espacio continuo ni el rendimiento de toda orden.

@@ -1,0 +1,46 @@
+{
+  "observations": [
+    {
+      "phase": "b02",
+      "root": "/tmp/newglass-ta045-global-ds_p1d1y/service-tmp/newglass-orders-e2e-j2g1os39",
+      "hostname": "127.0.0.1",
+      "port": 50291,
+      "username": "r1_test",
+      "database": "r1_bf9540046c2b420889aeac035474ad01",
+      "observed_at": "2026-11-05T13:58:15.362195+00:00",
+      "postmaster_pid_exists_after": false,
+      "pg_ctl_status_after": 3,
+      "postgres_options": [
+        "/usr/lib/postgresql/18/bin/postgres",
+        "-D",
+        "/tmp/newglass-ta045-global-ds_p1d1y/service-tmp/newglass-orders-e2e-j2g1os39/data",
+        "-h",
+        "127.0.0.1",
+        "-p",
+        "50291"
+      ]
+    },
+    {
+      "phase": "remaining",
+      "root": "/tmp/newglass-ta045-global-ds_p1d1y/service-tmp/newglass-orders-e2e-pqm62upc",
+      "hostname": "127.0.0.1",
+      "port": 37195,
+      "username": "r1_test",
+      "database": "r1_b858f3edc29a42cfa5d572fc6c2b2ff2",
+      "observed_at": "2026-11-05T13:58:38.411491+00:00",
+      "postmaster_pid_exists_after": false,
+      "pg_ctl_status_after": 3,
+      "postgres_options": [
+        "/usr/lib/postgresql/18/bin/postgres",
+        "-D",
+        "/tmp/newglass-ta045-global-ds_p1d1y/service-tmp/newglass-orders-e2e-pqm62upc/data",
+        "-h",
+        "127.0.0.1",
+        "-p",
+        "37195"
+      ]
+    }
+  ],
+  "errors": [],
+  "state_exists_after": false
+}

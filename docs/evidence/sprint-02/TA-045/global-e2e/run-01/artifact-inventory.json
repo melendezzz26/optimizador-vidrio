@@ -1,0 +1,3117 @@
+[
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/b02/.last-run.json",
+    "bytes": 45,
+    "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/b02/optimization-comparison-TA-e1e14-pués-del-upgrade-PostgreSQL-chromium-desktop/TA-043-b02-historical-comparison.json",
+    "bytes": 17047,
+    "sha256": "33cdca9bae523f8ee3463e7a68a22b937960f8abf88404eeac73dc8c1fb3792b"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/b02/optimization-comparison-TA-e1e14-pués-del-upgrade-PostgreSQL-chromium-desktop/TA-043-b02-historical-ff.json",
+    "bytes": 5016,
+    "sha256": "f898aefd2dd6f8712ece133c0edb8a6be56a64fbf956384e1d92834d8d8f4064"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/b02/optimization-comparison-TA-e1e14-pués-del-upgrade-PostgreSQL-chromium-desktop/TA-043-b02-history-Best-Fit.png",
+    "bytes": 168351,
+    "sha256": "067a821434275e7d0d3839feba506da30e738817173243e91eb723919dc1dee6"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/b02/optimization-comparison-TA-e1e14-pués-del-upgrade-PostgreSQL-chromium-desktop/TA-043-b02-history-First-Fit.png",
+    "bytes": 167191,
+    "sha256": "d292b52095bc734cd6ff040816c4f576a5c085300206aa0ec30c7ac938fea41f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/b02/optimization-comparison-TA-e1e14-pués-del-upgrade-PostgreSQL-chromium-desktop/TA-043-b02-history-Worst-Fit.png",
+    "bytes": 169207,
+    "sha256": "32eccd15f483c898346b8ae24862215b3d953e76c0263127a833813f82ddc5ca"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/b02/optimization-comparison-TA-e1e14-pués-del-upgrade-PostgreSQL-chromium-desktop/TA-043-b02-migration.json",
+    "bytes": 6981,
+    "sha256": "ae0b475b307b329269b6a244a127a246f3d90533e2bf64d1ebda51c994664d8e"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/b02/optimization-comparison-TA-e1e14-pués-del-upgrade-PostgreSQL-chromium-mobile/TA-043-b02-historical-comparison.json",
+    "bytes": 17047,
+    "sha256": "d6b6ef2be8052bd96135e3369b5be5ec1a2adea1b2bb5aa69feff0ef906270e3"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/b02/optimization-comparison-TA-e1e14-pués-del-upgrade-PostgreSQL-chromium-mobile/TA-043-b02-historical-ff.json",
+    "bytes": 5016,
+    "sha256": "f0d0195d39d3abf1de8a1b673b59e4f6be07c2a753a924021b19ce2b7d5dbc14"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/b02/optimization-comparison-TA-e1e14-pués-del-upgrade-PostgreSQL-chromium-mobile/TA-043-b02-history-Best-Fit.png",
+    "bytes": 154138,
+    "sha256": "fb910cbfa9964c45a56e754850ae85f9c81a373e7a4e85ab6fb14bdbfd898c6b"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/b02/optimization-comparison-TA-e1e14-pués-del-upgrade-PostgreSQL-chromium-mobile/TA-043-b02-history-First-Fit.png",
+    "bytes": 152926,
+    "sha256": "0165d2e4ebf86e997936b6a4f673cac88777f2b5ac39c72f416467caf2ca8f65"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/b02/optimization-comparison-TA-e1e14-pués-del-upgrade-PostgreSQL-chromium-mobile/TA-043-b02-history-Worst-Fit.png",
+    "bytes": 155155,
+    "sha256": "28824f20f237a1fe7b472d64c45b514cc341f027f52f2f43b2644b1204b2643c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/b02/optimization-comparison-TA-e1e14-pués-del-upgrade-PostgreSQL-chromium-mobile/TA-043-b02-migration.json",
+    "bytes": 6981,
+    "sha256": "dd729b2061520dc8af01ffb726b52c808eee30afadd1ec280bfbedc3c5f9a385"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/b02.json",
+    "bytes": 1247,
+    "sha256": "01421f541eca62caa4fd01051b6466aa12b965e4394f2b5bdbf33fb6ebec4b02"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/context.json",
+    "bytes": 172,
+    "sha256": "529c975786f9210dc746b3efe9bf0229535e6ee0a74d3e4831467118fc1dd0a2"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/plan.json",
+    "bytes": 44681,
+    "sha256": "42c307bb065cdbe7bf69e33896a745b987dfda271a3f6d9fae4bbdcb12a04ea1"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/.last-run.json",
+    "bytes": 45,
+    "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu015-rasterization-HU-015-490ec-la-máscara-real-del-backend-chromium-desktop/HU-015-raster-circle.png",
+    "bytes": 34772,
+    "sha256": "6b83d6c4d040b7ff171a0caaa6fa86dd7d11ddba77641885ea058fcbae75a73a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu015-rasterization-HU-015-490ec-la-máscara-real-del-backend-chromium-mobile/HU-015-raster-circle.png",
+    "bytes": 35905,
+    "sha256": "b38427afadf610801a5ab577afdb3b7d71bb30ff6b3fbb5ce0cab77e85568678"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu015-rasterization-HU-015-5ac9c-ión-resolución-y-responsive-chromium-desktop/HU-015-raster-rectangle.png",
+    "bytes": 35073,
+    "sha256": "311425b91c6b9c0568d08eecf3b0bb5a75e7b0741881d0339b52db4c6d7639b2"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu015-rasterization-HU-015-5ac9c-ión-resolución-y-responsive-chromium-mobile/HU-015-raster-rectangle.png",
+    "bytes": 36773,
+    "sha256": "5884bfe8aa54580af70afe7c0b537154785e867817fe46d8b182b859e54cd3fb"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu015-rasterization-HU-015-fbae3-gativos-y-columnas-sobre-53-chromium-desktop/HU-015-raster-polygon.png",
+    "bytes": 35742,
+    "sha256": "ac0a872fbbc42576718df7121b0fb09f6ed292293179dad4d93e87ac5863fcc2"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu015-rasterization-HU-015-fbae3-gativos-y-columnas-sobre-53-chromium-mobile/HU-015-raster-polygon.png",
+    "bytes": 37062,
+    "sha256": "0ccdf79d6fb61ccca62638e50fc7dcbb1d2f270fa9c1df2bf0d5b87b5cc3e0b6"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--62e12-ificar-etapas-no-observadas-chromium-desktop/HU-017-metrics.png",
+    "bytes": 23789,
+    "sha256": "af3fdec9d82ff38b7a0f0a02c299ef503ff5abdb593986f86eddced102371829"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--62e12-ificar-etapas-no-observadas-chromium-desktop/HU-017-placements.png",
+    "bytes": 97848,
+    "sha256": "e612110104a74e54bc55121108093f1feede65e1c14a60a3a8c35bda91996790"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--62e12-ificar-etapas-no-observadas-chromium-desktop/HU-017-progress-final.png",
+    "bytes": 18874,
+    "sha256": "5a90958e52c354376eb69718e22ba03426ee43b9e6113d257bd060747e3ac3e7"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--62e12-ificar-etapas-no-observadas-chromium-desktop/HU-017-result.json",
+    "bytes": 2578,
+    "sha256": "3aab9218cf77b6c4b25dd3a2bda30a3ec0679f2f350e2fd0f2d20109e90d1ce1"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--62e12-ificar-etapas-no-observadas-chromium-desktop/HU-017-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--62e12-ificar-etapas-no-observadas-chromium-desktop/HU-017-selection.png",
+    "bytes": 409661,
+    "sha256": "ddfe0e91483f736c51167618602db3b0726cf8ee4c0522cadb57bb1901640efc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--62e12-ificar-etapas-no-observadas-chromium-desktop/HU-017-stock-before.json",
+    "bytes": 282,
+    "sha256": "c29a8cfdea4ae6eefbc4210f8aaaf56e9017081ffb7f0beee6b09ecdbd5e1c0a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--62e12-ificar-etapas-no-observadas-chromium-desktop/HU-017-stream.ndjson",
+    "bytes": 7492,
+    "sha256": "c6c16a26284c8e4eab8b5e6ec0f498d2b7fddfb76a0977cb3ffac3d5377e70cf"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--62e12-ificar-etapas-no-observadas-chromium-mobile/HU-017-metrics.png",
+    "bytes": 24000,
+    "sha256": "d329922096c018004465f1362c7e4b88fc5d342ec7434facc967c38e8c3d2983"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--62e12-ificar-etapas-no-observadas-chromium-mobile/HU-017-placements.png",
+    "bytes": 89120,
+    "sha256": "2292afbccf2b57aa8b06661e5dc9226051e4dd8d9550703a2db078bab4ab0332"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--62e12-ificar-etapas-no-observadas-chromium-mobile/HU-017-progress-final.png",
+    "bytes": 19970,
+    "sha256": "b633e354baed28037da4ea63b0a64a54bc580fe95939c812104c887f5261b039"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--62e12-ificar-etapas-no-observadas-chromium-mobile/HU-017-result.json",
+    "bytes": 2579,
+    "sha256": "b02cb515aa04d7d24df26f74edf5bd6c9651cf00e08b50465a9d8c5a94da2b60"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--62e12-ificar-etapas-no-observadas-chromium-mobile/HU-017-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--62e12-ificar-etapas-no-observadas-chromium-mobile/HU-017-selection.png",
+    "bytes": 70823,
+    "sha256": "d25a163ce12efe4c1feb8fa8b880c3b6dcd97294f814914a74b214499dab1fd4"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--62e12-ificar-etapas-no-observadas-chromium-mobile/HU-017-stock-before.json",
+    "bytes": 282,
+    "sha256": "9d0f3b9c973233857d1549d7ff24bff6c2ed1f894a38bb07d7e19725ca988114"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--62e12-ificar-etapas-no-observadas-chromium-mobile/HU-017-stream.ndjson",
+    "bytes": 7517,
+    "sha256": "530285b1b030373553c7e689fa9c7bbd1e50ed50117d7c54442fc169a1c93d7b"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--d0bf1-ta-y-simulación-sin-consumo-chromium-desktop/HU-017-metrics.png",
+    "bytes": 24406,
+    "sha256": "f00bd39c3a4190b3f0ae7c3d74f1c2eb7612588e02f166e5547371ef78dee729"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--d0bf1-ta-y-simulación-sin-consumo-chromium-desktop/HU-017-placements.png",
+    "bytes": 109716,
+    "sha256": "bd6055c0760de15fa6bdfe32b144c4456e5dfacccaeaa11369ad588d6c64edfe"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--d0bf1-ta-y-simulación-sin-consumo-chromium-desktop/HU-017-progress-final.png",
+    "bytes": 19036,
+    "sha256": "a9d7bc640e17d0eaa5fe84dffefc99e1b1aff3a10d35f9bf98a90b060bb96bdc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--d0bf1-ta-y-simulación-sin-consumo-chromium-desktop/HU-017-result.json",
+    "bytes": 6738,
+    "sha256": "85392af24a8751a09f24f6ad67f5d228675d491a5df6ef50213a0f4fa818802d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--d0bf1-ta-y-simulación-sin-consumo-chromium-desktop/HU-017-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--d0bf1-ta-y-simulación-sin-consumo-chromium-desktop/HU-017-selection.png",
+    "bytes": 240687,
+    "sha256": "b6e4fa045168eb7cf2b65bef68bc23c84ca1671d5a2820924cbac1b3fba30544"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--d0bf1-ta-y-simulación-sin-consumo-chromium-desktop/HU-017-stock-before.json",
+    "bytes": 525,
+    "sha256": "20c2fde44d8080e3a9a5108e0d15860afc50dc3f44899bc0ec0100a51cf19255"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--d0bf1-ta-y-simulación-sin-consumo-chromium-desktop/HU-017-stream.ndjson",
+    "bytes": 22457,
+    "sha256": "e44d807957767b77201ec79c8d51c0cd5c9a6b46d74e44d96b71985adfd5525b"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--d0bf1-ta-y-simulación-sin-consumo-chromium-mobile/HU-017-metrics.png",
+    "bytes": 24384,
+    "sha256": "632747e85bc7e04ed6b90034c585e09bfede5c7372611fb73863b6469943eb3f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--d0bf1-ta-y-simulación-sin-consumo-chromium-mobile/HU-017-placements.png",
+    "bytes": 113738,
+    "sha256": "814113e54c651578cd9c1dc3a5971d924d9ee37e05033add5e1cae03ce79f3f3"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--d0bf1-ta-y-simulación-sin-consumo-chromium-mobile/HU-017-progress-final.png",
+    "bytes": 19036,
+    "sha256": "a9d7bc640e17d0eaa5fe84dffefc99e1b1aff3a10d35f9bf98a90b060bb96bdc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--d0bf1-ta-y-simulación-sin-consumo-chromium-mobile/HU-017-result.json",
+    "bytes": 6756,
+    "sha256": "78df63f6bee5f33376fcbd0ac7889e969d62d1b18791c13e2d886c15dc1ed95f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--d0bf1-ta-y-simulación-sin-consumo-chromium-mobile/HU-017-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--d0bf1-ta-y-simulación-sin-consumo-chromium-mobile/HU-017-selection.png",
+    "bytes": 265637,
+    "sha256": "5e05340a224bc8c1ca7b5339d933c77f8dfbf1ccac17d7d7e40b78c36a5ad718"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--d0bf1-ta-y-simulación-sin-consumo-chromium-mobile/HU-017-stock-before.json",
+    "bytes": 527,
+    "sha256": "c48629a504173d707b303131084b7e8caafdd0cceaf06a9069804e35f6437eb9"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--d0bf1-ta-y-simulación-sin-consumo-chromium-mobile/HU-017-stream.ndjson",
+    "bytes": 22570,
+    "sha256": "c6e16f298145076abb365b441ccec06e558365b35fc4e34179d216e8db919ae3"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-desktop/HU-017-metrics.png",
+    "bytes": 23398,
+    "sha256": "e82d0cd68ce8013bba8c29a45972e6424b0a0daa2687c345f246e1d1a9ab5a85"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-desktop/HU-017-placements.png",
+    "bytes": 97788,
+    "sha256": "191440753ba8d2542a1cbd00256154566b588cf8ee49cf907cd8f908679c6e82"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-desktop/HU-017-progress-final.png",
+    "bytes": 19036,
+    "sha256": "a9d7bc640e17d0eaa5fe84dffefc99e1b1aff3a10d35f9bf98a90b060bb96bdc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-desktop/HU-017-result.json",
+    "bytes": 2050,
+    "sha256": "417085bdb067b0412ae34c8bfcae2e5fc73682675e5a96b4d9c05d0e17ea9d77"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-desktop/HU-017-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-desktop/HU-017-selection.png",
+    "bytes": 409683,
+    "sha256": "d559a0c14318eea052e2a19d10333696405c1e15b589d1a14d76a29c896298f8"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-desktop/HU-017-stock-before.json",
+    "bytes": 282,
+    "sha256": "0e7d8c5cc624dfb6480cca549ed1d8c9ca3e3852dbe78714c1016506658ec608"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-desktop/HU-017-stream.ndjson",
+    "bytes": 6213,
+    "sha256": "7100654b55e5888248d5fa02cd7e1e00234ee7336d5e1e1c9a91ab4e567797cc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-desktop/HU-017-visual-1440.png",
+    "bytes": 120145,
+    "sha256": "4c8135f61fba735304ae8134056402badfb2d715bac4c11d266a89093e6e2cc5"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-desktop/HU-017-visual-360.png",
+    "bytes": 116544,
+    "sha256": "be709279d71153a3248e0643ec6813b7a16ef7594e7b2e9a418030f373205256"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-mobile/HU-017-metrics.png",
+    "bytes": 23741,
+    "sha256": "9c5694084fea1483d3d037f55fffd95ca478085821774eedadc0a5410496cf13"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-mobile/HU-017-placements.png",
+    "bytes": 88041,
+    "sha256": "e1272239324292dff45deffa3b5706558637310721064d72b95834eea6b6e064"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-mobile/HU-017-progress-final.png",
+    "bytes": 20226,
+    "sha256": "006177ac0224b55f58157925c779d9aa068dbd7b5cc250214e0809b4eb843e4a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-mobile/HU-017-result.json",
+    "bytes": 2051,
+    "sha256": "3a7328edc818f73e9c2ac837d0d8a8835d1dc1e716fb99caec39cd38f02cb811"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-mobile/HU-017-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-mobile/HU-017-selection.png",
+    "bytes": 70815,
+    "sha256": "613c18ccf53b4b542be8e1f8426f0dc0dd77091856a3cc8ec3e0ae614d0a45b2"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-mobile/HU-017-stock-before.json",
+    "bytes": 282,
+    "sha256": "102c4f25f541354f39e0a185e0fff6aa8be4b38dc766aafbd0edab6275d49b6b"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-mobile/HU-017-stream.ndjson",
+    "bytes": 6234,
+    "sha256": "859e0ef46da66e4bd7be71510d5eca14fc1d5ca70bbe72ec494acdbcf436ec1a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-mobile/HU-017-visual-1440.png",
+    "bytes": 120568,
+    "sha256": "c108d18a4a98070a48fd4ca1f088ea338a75aac97fbf372cbcf777c4faa0026d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/hu017-unified-flow-HU-017--dd023-recuperación-sin-recalcular-chromium-mobile/HU-017-visual-360.png",
+    "bytes": 116891,
+    "sha256": "6269e61a07a4dcc52f0ab6d2813f77ba6fab258b9d9f4ae7c097ad62dd7f0252"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-FF-a6788-a-vez-regresando-al-listado-chromium-desktop/FF-confirmacion-parcial-limpia.png",
+    "bytes": 320512,
+    "sha256": "7e04dcaa7ef30f103a462f9838a70f3a128375015a5a0de7475eb9d13b971860"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-FF-a6788-a-vez-regresando-al-listado-chromium-desktop/FF-ff-fallido-bf-elegido.png",
+    "bytes": 242696,
+    "sha256": "ce045b825e3bd8f2d2ba30a98e77e137487b54dabe394baee39e84c456243ef8"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-FF-a6788-a-vez-regresando-al-listado-chromium-mobile/FF-confirmacion-parcial-limpia.png",
+    "bytes": 77957,
+    "sha256": "65cac7558a49e174fd40ea9983bddf6a6600e1b7865d1b943a8682c31caa2e1a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-FF-a6788-a-vez-regresando-al-listado-chromium-mobile/FF-ff-fallido-bf-elegido.png",
+    "bytes": 72675,
+    "sha256": "d7d115383ff25f2a6f84c2459426d301e9fd88ddd2e26c63b66303ea7d8c8b1c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-31f78-acion-y-compatibilidad-real-chromium-desktop/TA-043-b06-current-application.png",
+    "bytes": 523905,
+    "sha256": "b79ef917e77db2a12146c73c4e0f6c26c843279aa9306dee16bfe8a5847dd70a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-31f78-acion-y-compatibilidad-real-chromium-desktop/TA-043-b06-history-legacy.json",
+    "bytes": 9025,
+    "sha256": "9d0629519cb868440e0c4dc2bb193dc8f66b153d241e6a06e2e508e51b663f7e"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-31f78-acion-y-compatibilidad-real-chromium-desktop/TA-043-b06-six-results.json",
+    "bytes": 211453,
+    "sha256": "6a8f921e6360ef383d7b6d8fc54d81196303718f3081ce77f31075153719ccfc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-31f78-acion-y-compatibilidad-real-chromium-mobile/TA-043-b06-current-application.png",
+    "bytes": 120297,
+    "sha256": "8f0ebdaa19539725afb80dd4b0b01f7354e7e869c2ede80f2cf85d2af1dadc57"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-31f78-acion-y-compatibilidad-real-chromium-mobile/TA-043-b06-history-legacy.json",
+    "bytes": 9033,
+    "sha256": "02a5c5d5777193f766d80fa9279c95dc55d37dd394feacc75f6804019e71d07c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-31f78-acion-y-compatibilidad-real-chromium-mobile/TA-043-b06-six-results.json",
+    "bytes": 260447,
+    "sha256": "2d4ea65651440094a47a31588e0ca2787333a9a623d4bb0d6fb75bcc4ee14f5d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-4febb-s-legacy-sin-consumir-stock-chromium-desktop/TA-043-b01-comparison-v1.json",
+    "bytes": 2858,
+    "sha256": "79c59b6e64fa3bfff85525f2c8e38da76f83d24dc5ed8f45a79a792723802199"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-4febb-s-legacy-sin-consumir-stock-chromium-desktop/TA-043-b01-comparison-v1.png",
+    "bytes": 285632,
+    "sha256": "e0c894f9585e5f01c55dfca1865651889f64a322a4efe0bb4431423ec902102d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-4febb-s-legacy-sin-consumir-stock-chromium-desktop/TA-043-b01-runs-legacy.json",
+    "bytes": 2301,
+    "sha256": "0b599e6d87042bd37b83adf133bd3708b73814f7366f1905cafad10e7299f74a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-4febb-s-legacy-sin-consumir-stock-chromium-desktop/TA-043-b01-runs-legacy.png",
+    "bytes": 229530,
+    "sha256": "b4b7cc8f8623525dd46681c19b289567e29b47c71fb8a5b2e3afc12737a568be"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-4febb-s-legacy-sin-consumir-stock-chromium-mobile/TA-043-b01-comparison-v1.json",
+    "bytes": 2861,
+    "sha256": "a926d35e4c8a9f44e3cdca74b8abb2063df8ee8ecc684b821e535146ffc7752c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-4febb-s-legacy-sin-consumir-stock-chromium-mobile/TA-043-b01-comparison-v1.png",
+    "bytes": 84284,
+    "sha256": "2b4bdda941fbcb125c5d1f6886591f4fc7359fa1c050f07c19184b353559ea14"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-4febb-s-legacy-sin-consumir-stock-chromium-mobile/TA-043-b01-runs-legacy.json",
+    "bytes": 2303,
+    "sha256": "63a36e8ef7ee01e5007bab697b91906262e60002e504cc0917159ba1d122ad26"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-4febb-s-legacy-sin-consumir-stock-chromium-mobile/TA-043-b01-runs-legacy.png",
+    "bytes": 57901,
+    "sha256": "ddf86321ac8293ff94f5a5c85e3425d693e9bd6048c0c7f29941b39d930884ca"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-BF-2d.png",
+    "bytes": 109575,
+    "sha256": "43a8ceb0217492007d1e1fbe79e7b4b201ff9102a00137fb521f1b687049e272"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-BF-3d.png",
+    "bytes": 292345,
+    "sha256": "0fca8b021146723ee10d5976957b3dc7af1b28095b63ec1cfcaceec40e16e83d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-FF-2d.png",
+    "bytes": 109575,
+    "sha256": "43a8ceb0217492007d1e1fbe79e7b4b201ff9102a00137fb521f1b687049e272"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-FF-3d.png",
+    "bytes": 292345,
+    "sha256": "0fca8b021146723ee10d5976957b3dc7af1b28095b63ec1cfcaceec40e16e83d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-HF-2d.png",
+    "bytes": 109575,
+    "sha256": "43a8ceb0217492007d1e1fbe79e7b4b201ff9102a00137fb521f1b687049e272"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-HF-3d.png",
+    "bytes": 292345,
+    "sha256": "0fca8b021146723ee10d5976957b3dc7af1b28095b63ec1cfcaceec40e16e83d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-M5-2d.png",
+    "bytes": 109575,
+    "sha256": "43a8ceb0217492007d1e1fbe79e7b4b201ff9102a00137fb521f1b687049e272"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-M5-3d.png",
+    "bytes": 292345,
+    "sha256": "0fca8b021146723ee10d5976957b3dc7af1b28095b63ec1cfcaceec40e16e83d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-M6-BS-2d.png",
+    "bytes": 110841,
+    "sha256": "12fd37f9982e2225bf2406c68a0e9d94db8121ae2c4981681bdd4a1a69aa43a8"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-M6-BS-3d.png",
+    "bytes": 293411,
+    "sha256": "7fcce2aeb67916f67a239cccf92cbcdcb445335185e1e80852cb3a7008869c8f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-WF-2d.png",
+    "bytes": 109575,
+    "sha256": "43a8ceb0217492007d1e1fbe79e7b4b201ff9102a00137fb521f1b687049e272"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-WF-3d.png",
+    "bytes": 292345,
+    "sha256": "0fca8b021146723ee10d5976957b3dc7af1b28095b63ec1cfcaceec40e16e83d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-b07-history-v1-legacy.json",
+    "bytes": 16993,
+    "sha256": "da836fecd47d5b27225ce51503cfe47d6bc5ab86b2638bcb6d3ba9a44c9dd598"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-b07-six-engine-ui.json",
+    "bytes": 259772,
+    "sha256": "66fd659e0f0faeabb820094d3d89a1a53b9e7a8be59682dab72cf8d24619f1a0"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-comparison-v1-three-engines.png",
+    "bytes": 453735,
+    "sha256": "3c70b32a23a816e78f30aa7e0d7ddfd5298664c9f31d57bdf873722e9be2346e"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-comparison-v2-restored.png",
+    "bytes": 394285,
+    "sha256": "1cfdb063e21aba2248a41e4bc9c910614eed919479ecdfa7ab446782a522d58a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-comparison-v2-six-metrics.png",
+    "bytes": 298582,
+    "sha256": "76c5abde2444d54036903029159117fb0e0599ba291ce129f3f3e688fa37ceed"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-metrics.png",
+    "bytes": 27276,
+    "sha256": "1abbeaa5769178555011c6be3235393fefd46eddb61e0adf3fae0bd40d13fceb"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-placements.png",
+    "bytes": 109109,
+    "sha256": "f934aabab45492c6e666ef8cfa9d0931485ae72f97a79243e2e5823662654f3c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-progress-final.png",
+    "bytes": 19036,
+    "sha256": "a9d7bc640e17d0eaa5fe84dffefc99e1b1aff3a10d35f9bf98a90b060bb96bdc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-result.json",
+    "bytes": 4219,
+    "sha256": "37c4d24571c9206c80459e861c4494024b1df6c22738882c50061ab163dbaf67"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-selection.png",
+    "bytes": 404305,
+    "sha256": "deb3cedfb6090f5c5634afeb48f86febb4e3303a053b2aa04c548a71e02c5ad7"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-stock-before.json",
+    "bytes": 283,
+    "sha256": "13f77b6c492369c8d141b33d6ec4568069be89f108aa25214299f6db1c4621b8"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-desktop/TA-043-stream.ndjson",
+    "bytes": 12458,
+    "sha256": "2515d3d786428da92ecac6dadb93f9a10fd7c1003c82d120f9bc30d367656649"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-BF-2d.png",
+    "bytes": 108112,
+    "sha256": "ac947ff5cc3f1fa86647d71399e19b5f7bef53c857b4684c1eaa26bd9091a3a2"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-BF-3d.png",
+    "bytes": 143234,
+    "sha256": "d763f8b67204f78a826ee817529a64b5f348065bacd222b7c6590a05b859c666"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-FF-2d.png",
+    "bytes": 108112,
+    "sha256": "ac947ff5cc3f1fa86647d71399e19b5f7bef53c857b4684c1eaa26bd9091a3a2"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-FF-3d.png",
+    "bytes": 143234,
+    "sha256": "d763f8b67204f78a826ee817529a64b5f348065bacd222b7c6590a05b859c666"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-HF-2d.png",
+    "bytes": 108112,
+    "sha256": "ac947ff5cc3f1fa86647d71399e19b5f7bef53c857b4684c1eaa26bd9091a3a2"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-HF-3d.png",
+    "bytes": 143234,
+    "sha256": "d763f8b67204f78a826ee817529a64b5f348065bacd222b7c6590a05b859c666"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-M5-2d.png",
+    "bytes": 102392,
+    "sha256": "e09b1c2d2cdf12a13f8643279e902e912d72f9a862e60102abdbf88bd644da11"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-M5-3d.png",
+    "bytes": 142952,
+    "sha256": "0fcd733ce0ad964f3f76dd3ac53ad02f0e9ec4f23627554b256889cc106cb426"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-M6-BS-2d.png",
+    "bytes": 108774,
+    "sha256": "f54a12bf82e4f9ffbe61b94ba512f50b52744f005229d9e6807f58d95922733f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-M6-BS-3d.png",
+    "bytes": 143371,
+    "sha256": "b11f113fe0cdf6d4ca59d87d33246eb8761d314d7c19c891c2379151a3c0d269"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-WF-2d.png",
+    "bytes": 108112,
+    "sha256": "ac947ff5cc3f1fa86647d71399e19b5f7bef53c857b4684c1eaa26bd9091a3a2"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-WF-3d.png",
+    "bytes": 143234,
+    "sha256": "d763f8b67204f78a826ee817529a64b5f348065bacd222b7c6590a05b859c666"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-b07-history-v1-legacy.json",
+    "bytes": 65564,
+    "sha256": "98ee465e8dc2647f61e4b04fda229f6d30e0b2721cd38f5f25a820589a5f746f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-b07-six-engine-ui.json",
+    "bytes": 309009,
+    "sha256": "ad00d169eaa814f6400f65e45a17d0d0dcac1fc8178adbdaf233c20daa3301d8"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-comparison-v1-three-engines.png",
+    "bytes": 123877,
+    "sha256": "0e537ba6c0aa67681c3e029f02575099592e507e7bd4f60cfd1220ae998f2817"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-comparison-v2-restored.png",
+    "bytes": 124448,
+    "sha256": "9bcfe56d300a6b258206bc3b559ab8e82ddd75e480650f968ebea44f504d7a10"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-comparison-v2-six-metrics.png",
+    "bytes": 70051,
+    "sha256": "8a3506e19d1e7389ad26266cbee00eba740d80d30d4ada9a502978eb89568310"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-metrics.png",
+    "bytes": 26626,
+    "sha256": "df342b9ce0287bbf8ae2a8262c7e3f9bda1e0f5177058278456170715e27aba7"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-placements.png",
+    "bytes": 102483,
+    "sha256": "9944e88a94dfafb5b5335f5f1331f90fee84281f3537c259a822f497b6cbbfc0"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-progress-final.png",
+    "bytes": 20226,
+    "sha256": "006177ac0224b55f58157925c779d9aa068dbd7b5cc250214e0809b4eb843e4a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-result.json",
+    "bytes": 4225,
+    "sha256": "05c0e8dcb6a9cc77d2742151dc7465d8da7123d7a48b88bf15aff359e2efa6fa"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-selection.png",
+    "bytes": 71360,
+    "sha256": "4f34779db8f7fbb1472ffb760ebdb67ee0aee0231fa9cef609572124428c47f8"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-stock-before.json",
+    "bytes": 283,
+    "sha256": "df78bac859a2a001fd6c1c727b7e451c299dc8a46bb09416d74ea0e5ac4f235d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-5ea82--y-recuperacion-visual-real-chromium-mobile/TA-043-stream.ndjson",
+    "bytes": 12485,
+    "sha256": "aef21595b324810a53c767410fb54a8eedeb4615af325757114612d19c96c2e6"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-f909a-onfirmacion-v2-atomica-real-chromium-desktop/TA-043-b08-confirmation-dialog.png",
+    "bytes": 213858,
+    "sha256": "a973cff41dc5bede778f775d42005d96811da011cd7aaeea2dbc5882574fb80f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-f909a-onfirmacion-v2-atomica-real-chromium-desktop/TA-043-b08-confirmation.json",
+    "bytes": 65629,
+    "sha256": "cb56b3592dbd170c2a691d57636394748a3ac5c4a6cf0526bab845e599ba0393"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-f909a-onfirmacion-v2-atomica-real-chromium-desktop/TA-043-b08-confirmed-history.png",
+    "bytes": 247471,
+    "sha256": "ec695a24f99c0521bffc83da3f4b00ca791e0b6db8843e6c9e18f1ed3618ad79"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-f909a-onfirmacion-v2-atomica-real-chromium-desktop/TA-043-b08-manual-choice.png",
+    "bytes": 215694,
+    "sha256": "469a7b76ec6c2d96bdc6b879eb4801eedecc06fd7806d59a1d87027d894e7861"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-f909a-onfirmacion-v2-atomica-real-chromium-mobile/TA-043-b08-confirmation-dialog.png",
+    "bytes": 70657,
+    "sha256": "b7362b613c90289f8d6a9e1044d5da031e88409181d42340b216a04cd0e98cc6"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-f909a-onfirmacion-v2-atomica-real-chromium-mobile/TA-043-b08-confirmation.json",
+    "bytes": 136155,
+    "sha256": "b9b339140415fd85910b2620cccc80e04353453c218537988d9e43a41da6802e"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-f909a-onfirmacion-v2-atomica-real-chromium-mobile/TA-043-b08-confirmed-history.png",
+    "bytes": 77209,
+    "sha256": "244bcdcce6df14bf4e83a816cb4bfb7c4ec1801c0148b05bd762fb4d0cfed010"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-TA-f909a-onfirmacion-v2-atomica-real-chromium-mobile/TA-043-b08-manual-choice.png",
+    "bytes": 63766,
+    "sha256": "de534d0e35fa5bce7924be141c0d21d90f0e1771a274c781dee032410a18b75a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-co-345e2-BF-y-confirmar-una-sola-vez-chromium-desktop/comparar-comparacion-antes-de-confirmar.png",
+    "bytes": 247196,
+    "sha256": "cc4ca6e6d0faaf463d51b476bb88f2c5cc739b62bd0e1562c618a8827bbd276b"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-co-345e2-BF-y-confirmar-una-sola-vez-chromium-desktop/comparar-comparison-events.json",
+    "bytes": 157493,
+    "sha256": "813db01d8ea8406270d92b3e8b5c2f7c2b34ad0921a850742ecef5a311ce1004"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-co-345e2-BF-y-confirmar-una-sola-vez-chromium-desktop/comparar-confirmacion-limpia-pedidos-pendientes.png",
+    "bytes": 320426,
+    "sha256": "0a7c6757624f379d5abb23991ce6887ac70cff4d2528a151833c40208904a9f0"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-co-345e2-BF-y-confirmar-una-sola-vez-chromium-desktop/comparar-mascaras-first-fit.png",
+    "bytes": 112491,
+    "sha256": "b05847d00f6a979b6123dbf6a13409a424adf8eb296688d7db7e6bffa01de18e"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-co-345e2-BF-y-confirmar-una-sola-vez-chromium-desktop/comparar-orden-first-fit.png",
+    "bytes": 69337,
+    "sha256": "51f8f2b99459820a611b52ce6ae4210494b4c4ab35c98332626346f4502a55dc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-co-345e2-BF-y-confirmar-una-sola-vez-chromium-desktop/comparar-solicitud-original.png",
+    "bytes": 152439,
+    "sha256": "a326fb92d7b8f1cbe52fc8143f3996d34c5135195462e10667674320008aff97"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-co-345e2-BF-y-confirmar-una-sola-vez-chromium-mobile/comparar-comparacion-antes-de-confirmar.png",
+    "bytes": 65933,
+    "sha256": "8c88e2bcbf2282cee641f96c5f26ebc6b92e1952a20e0969a94881c9076c1f19"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-co-345e2-BF-y-confirmar-una-sola-vez-chromium-mobile/comparar-comparison-events.json",
+    "bytes": 157987,
+    "sha256": "37965dc1350e0200bc464b8e7f5130133a3e64999adb574feb30c00c5565b33c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-co-345e2-BF-y-confirmar-una-sola-vez-chromium-mobile/comparar-confirmacion-limpia-pedidos-pendientes.png",
+    "bytes": 78026,
+    "sha256": "aa8d3380dff62f4decd3112966b0db39f217f29efc26fa19d9553a3cb392bdc1"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-co-345e2-BF-y-confirmar-una-sola-vez-chromium-mobile/comparar-mascaras-first-fit.png",
+    "bytes": 109921,
+    "sha256": "1a2c4d862ef84782614da2e577fe079df35351c61c56b1c4c16dc21b28d15372"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-co-345e2-BF-y-confirmar-una-sola-vez-chromium-mobile/comparar-orden-first-fit.png",
+    "bytes": 65202,
+    "sha256": "61ac7a5d5efe27c4423e96771118f5ad3ec5b38eff529fc2fd3404e886a0372f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-co-345e2-BF-y-confirmar-una-sola-vez-chromium-mobile/comparar-solicitud-original.png",
+    "bytes": 208109,
+    "sha256": "17bef20ae65db2aba2e1208b15bdeafb523c0b3853d5ba1bd06778cca6be47f3"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-ro-caf0b-trabajo-al-cambiar-pestañas-chromium-desktop/rotacin-giro-real-best-fit.png",
+    "bytes": 358655,
+    "sha256": "945661c95702c7d38b99403d8c8e3781a6aaa394dad706da8668dd6686160fc1"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-ro-caf0b-trabajo-al-cambiar-pestañas-chromium-desktop/rotacin-giro-real-first-fit.png",
+    "bytes": 358020,
+    "sha256": "e70e92767d107b8096390f5438f39c7981b694c940de660a3a4afcc3e198358f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-ro-caf0b-trabajo-al-cambiar-pestañas-chromium-desktop/rotacin-giro-real-worst-fit.png",
+    "bytes": 359142,
+    "sha256": "7aa5ccfa453e3ec6faee93cbd7e6fee789ae4a64910ff8bc1b29935ec59d11e2"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-ro-caf0b-trabajo-al-cambiar-pestañas-chromium-mobile/rotacin-giro-real-best-fit.png",
+    "bytes": 300764,
+    "sha256": "8e80cb31a61490e7c1ad4b677beb9cd9e99dd22e4d9dcb7d81e0c8a61d779dbb"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-ro-caf0b-trabajo-al-cambiar-pestañas-chromium-mobile/rotacin-giro-real-first-fit.png",
+    "bytes": 300018,
+    "sha256": "8c289ea49d711c5d0cbacf4e6c8989ea3bd559c46e9c40ee6aa587a9b378ba7c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-comparison-ro-caf0b-trabajo-al-cambiar-pestañas-chromium-mobile/rotacin-giro-real-worst-fit.png",
+    "bytes": 301363,
+    "sha256": "04fdf8b7e8e0670fd4df2857f29d4d3047cbc811729e56acd8aa2c43236bab15"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-policy-audit--a214a--3D-corresponden-al-backend-chromium-desktop/polticas-mixed-BF-backend-3d.png",
+    "bytes": 408784,
+    "sha256": "45fcc625f68e8e8dcfe77cd23a21e824f7661516123a0cb097f8a33b2af473e3"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-policy-audit--a214a--3D-corresponden-al-backend-chromium-desktop/polticas-mixed-FF-backend-3d.png",
+    "bytes": 408276,
+    "sha256": "ba62cf626051985720c06190eabb926617f35bca296b01fae5ed4863161ff15e"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-policy-audit--a214a--3D-corresponden-al-backend-chromium-desktop/polticas-mixed-WF-backend-3d.png",
+    "bytes": 410328,
+    "sha256": "1b57cb6ddf0c896359b2f8ed8b05a87eafb7f04aeddfae35ae8a47eb34e99dce"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-policy-audit--a214a--3D-corresponden-al-backend-chromium-desktop/polticas-mixed-backend-results.json",
+    "bytes": 22358,
+    "sha256": "0103fa1c114d7df2a55380487f7101b56a214bbc0ca0763b54297c6ede3cc24e"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-policy-audit--a214a--3D-corresponden-al-backend-chromium-mobile/polticas-mixed-BF-backend-3d.png",
+    "bytes": 234288,
+    "sha256": "fb6e452a8c182427538a1f6099e36ac60f940f32b9481115fb8a6830cda2f58b"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-policy-audit--a214a--3D-corresponden-al-backend-chromium-mobile/polticas-mixed-FF-backend-3d.png",
+    "bytes": 234829,
+    "sha256": "9b0afd91cb3aab84100791ffaee04ac87b41fe29e9f5f4753abdf84a4e0dbeeb"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-policy-audit--a214a--3D-corresponden-al-backend-chromium-mobile/polticas-mixed-WF-backend-3d.png",
+    "bytes": 235559,
+    "sha256": "a2f019b4cdf4bb6d16e24b47c6349207caec272c698a6ab75be5cb3e894cf33a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-policy-audit--a214a--3D-corresponden-al-backend-chromium-mobile/polticas-mixed-backend-results.json",
+    "bytes": 22406,
+    "sha256": "33ba74875552af35c02ec2350617f0ff80803e62ce87a201ce45d081b2d2b479"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-policy-audit--a6072--3D-corresponden-al-backend-chromium-desktop/polticas-differential-BF-backend-3d.png",
+    "bytes": 374321,
+    "sha256": "61d477cb2c8a0033278be357597b9e33ad5d070b21d4a06b33a41c4b9603b8b1"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-policy-audit--a6072--3D-corresponden-al-backend-chromium-desktop/polticas-differential-FF-backend-3d.png",
+    "bytes": 387104,
+    "sha256": "6f449c0b290769d28883b46b737ed96058fd4d61e3d6c82e715691ab1456d73d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-policy-audit--a6072--3D-corresponden-al-backend-chromium-desktop/polticas-differential-WF-backend-3d.png",
+    "bytes": 389300,
+    "sha256": "fc5c6f207da07b12ae774b24cd469bb720984214fff47e14c4e9d3377ba848bd"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-policy-audit--a6072--3D-corresponden-al-backend-chromium-desktop/polticas-differential-backend-results.json",
+    "bytes": 7537,
+    "sha256": "d50f63ed3a6626fd9defd38be31c05d08cbae35868e8e1b023b4c8183b16f5e9"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-policy-audit--a6072--3D-corresponden-al-backend-chromium-mobile/polticas-differential-BF-backend-3d.png",
+    "bytes": 220672,
+    "sha256": "037c0469265c1fa9a21f6d868b868153575edfd2c7d0f0e429f41e3f6d29164a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-policy-audit--a6072--3D-corresponden-al-backend-chromium-mobile/polticas-differential-FF-backend-3d.png",
+    "bytes": 226390,
+    "sha256": "dbb9f9e04b8835ce4080e4e9e20b4db1e11c5dca4fdd3edbebfdf14102c4fafd"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-policy-audit--a6072--3D-corresponden-al-backend-chromium-mobile/polticas-differential-WF-backend-3d.png",
+    "bytes": 224291,
+    "sha256": "7adafa1a72e9b67955a509c253b5fc9cd411508d39887c5a6a9657ff6d3dacbd"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/optimization-policy-audit--a6072--3D-corresponden-al-backend-chromium-mobile/polticas-differential-backend-results.json",
+    "bytes": 7558,
+    "sha256": "17539d02057c18d13fe080ce2f90159c94e72012d86074d0a5e941ba4bab7ab7"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-confirmation.json",
+    "bytes": 658,
+    "sha256": "c1e1b961110909fb87217c2100ff7429183a2f0238c63f5afe9a585ed7000d06"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-confirmation.png",
+    "bytes": 249969,
+    "sha256": "3b9cc25f0a77f3aefed6b70fd1b3f7126aa9f4a0d855a8703798e759195592f5"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-confirmed-result.json",
+    "bytes": 2301,
+    "sha256": "a08193110f3d49b691326ba31b6a78cfd8ad44303af5b6a38005ecd6d184ea3c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-confirmed.png",
+    "bytes": 246440,
+    "sha256": "70ee1a1e766bd3911f7fa8f72507c09c8a0cb90ace36cc20d93d7b73f014b340"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-inventory-movement.png",
+    "bytes": 33028,
+    "sha256": "d32b0b4edeb8ed28e8693814a02eeae5954b0e4a08a93ee8661996a0f33b1f51"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-inventory-updated.png",
+    "bytes": 16406,
+    "sha256": "f6231930ff4787485f3b9d986742d2bb0c451dcfe23839f2d0ee6271c85fd4b4"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-metrics.png",
+    "bytes": 23882,
+    "sha256": "b915248d94a1298794d6b1f72ea395e1ae16c998c0748a2f7a3e04c48903fd1a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-movements.json",
+    "bytes": 348,
+    "sha256": "706db20e98644a0722ca750f1d431272cac76be9710a8c1503753caaf5576733"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-orders-after.json",
+    "bytes": 68,
+    "sha256": "02e60a845e47b69fd0ed2ed60d04360cfc0013ab0a99e10f6e888e017e9a89bb"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-orders-confirmed.png",
+    "bytes": 9167,
+    "sha256": "b3c03ff009121213332169697c5cb3aae10d6812a360249a322b55b8c7eb4fbf"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-placements.png",
+    "bytes": 92246,
+    "sha256": "d61a2678c682ff89a8fb71d158a608352b5127e98a81b6f506c907070731577c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-progress-final.png",
+    "bytes": 19036,
+    "sha256": "a9d7bc640e17d0eaa5fe84dffefc99e1b1aff3a10d35f9bf98a90b060bb96bdc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-result.json",
+    "bytes": 2301,
+    "sha256": "e5a45897da6845e6a5e9bdd7a87f4c5f01e81daff8fb87bb912ff2c98e047ff0"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-selection.png",
+    "bytes": 398650,
+    "sha256": "edf2c18abe0728ddc4020388103f42b0dcafed428df3102f5a22b9ecc5b7e411"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-stock-after.json",
+    "bytes": 284,
+    "sha256": "fa55944b4d8e40f540590d8cc91fd72fd15e0c1dd32247645db9f652115fc238"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-stock-before.json",
+    "bytes": 283,
+    "sha256": "6b122e493c271d1a31d156bd736e5afbc465daaa948bf9f4d3d25dac69addf85"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-desktop/E2E1-stream.ndjson",
+    "bytes": 5560,
+    "sha256": "1b08e43f0eb603bc5bb0eb1473b733a78b43428cb30eb6078c5204a98c674357"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-confirmation.json",
+    "bytes": 658,
+    "sha256": "ef3c5991a6119ddf4610ed4f3d2efbd7bc84c3a9169d7d77a2291aef634a3e53"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-confirmation.png",
+    "bytes": 60520,
+    "sha256": "70b85bccd0bbaecdaf52ce265c1017640385155f1a0581a9496d62e0509d50e0"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-confirmed-result.json",
+    "bytes": 2303,
+    "sha256": "7a811e6d672d464b02405e52c820293e9293bfd31dcb5efa4d962a9361ab7ed8"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-confirmed.png",
+    "bytes": 54172,
+    "sha256": "426299b69280b584eda0e92df26da7ac295f72eefee2fbd28ecfd0bd63f1d257"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-inventory-movement.png",
+    "bytes": 33276,
+    "sha256": "6c3a38cab2e301af62cca29dadb621b08b3e891ae261495c628a33954df60815"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-inventory-updated.png",
+    "bytes": 4924,
+    "sha256": "49eb3a2acfcb3c88825b9df199fab36dce5225c684a9a36c09471a8511d0d343"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-metrics.png",
+    "bytes": 24812,
+    "sha256": "4a812e589f6b0289de9a13fa3b8ceff359a137ccfe07f0ba60f19822dff37b3d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-movements.json",
+    "bytes": 350,
+    "sha256": "d945ddbcdff4cbb6e653718c48780517d40f6397e7ace2cbbd1361ef4a42edd6"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-orders-after.json",
+    "bytes": 68,
+    "sha256": "409859b6029ad525e454e7dcbdedfa5df66e21edf4604babba15104d80bc5bf2"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-orders-confirmed.png",
+    "bytes": 7565,
+    "sha256": "b243be61c2d5e5777c1034dcde496c32cd713a0ec56bf500f3fc534b41e31e7a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-placements.png",
+    "bytes": 82442,
+    "sha256": "cb89808da877451ddbf01d1ba0c37142d39d7df673a58d5314c8a16616c96d5e"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-progress-final.png",
+    "bytes": 20226,
+    "sha256": "006177ac0224b55f58157925c779d9aa068dbd7b5cc250214e0809b4eb843e4a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-result.json",
+    "bytes": 2303,
+    "sha256": "e175356ba4a886ea24dfdb911e337830a98deb6eab6f38e5b3fa90131730572a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-selection.png",
+    "bytes": 70880,
+    "sha256": "55e95b2ae7e18acd6b8b636e743d633fc472c4137b3549af7d292c76d44acfe6"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-stock-after.json",
+    "bytes": 284,
+    "sha256": "769a060c7c6a5b9ab2f8639ed1f4472c94925b931a5835cd20fdb2c310843152"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-stock-before.json",
+    "bytes": 283,
+    "sha256": "3ff22b35e155b8dc0ef3db4b0f35b021d62f5e127490c8b612f7def669f7cbd8"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E1-N--f59d2-confirmación-stock-y-pedido-chromium-mobile/E2E1-stream.ndjson",
+    "bytes": 5569,
+    "sha256": "d074efd1ff121ab60a57f19113bbf7a71f529fde0b64878f6feec00f6c50d62a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-desktop/E2E10-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-desktop/E2E10-confirmation.json",
+    "bytes": 585,
+    "sha256": "111490c9f56f77908a0fc407bbb85c623054e26e609748a9cb493a25b4fa155a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-desktop/E2E10-confirmation.png",
+    "bytes": 245390,
+    "sha256": "cfb5433baf702cf90eff78894fb6ff52c18fbc22998a86ee34c80be44916d311"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-desktop/E2E10-confirmed-result.json",
+    "bytes": 6756,
+    "sha256": "9bdc779ba75ca1a075b0f34d36a48dd329e6b05912e0b79bd5623dcb24b37939"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-desktop/E2E10-confirmed.png",
+    "bytes": 247947,
+    "sha256": "13f0f8c5742bd243dc88a0a585e1d0bbfea0da9c3e76a20aecbae94e077393bd"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-desktop/E2E10-metrics.png",
+    "bytes": 24363,
+    "sha256": "0add8e5d6a03add59036f36789b106d485dd85f0b569b9fd3cdcf381a3a7276c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-desktop/E2E10-movements.json",
+    "bytes": 699,
+    "sha256": "dff0e1a55f78527f68b76456c94c8297361a2caca73528ab7263c163a433e7c4"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-desktop/E2E10-orders-after.json",
+    "bytes": 94,
+    "sha256": "01ba4f2d69216fdcabdbd59e8a4e1c42b65610ae0a778db539ba242ef718fba5"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-desktop/E2E10-placements.png",
+    "bytes": 117131,
+    "sha256": "9cf5246d12565da17ebc1139781cc36110a419a7dd6861ff6a8b7b0a6944ddf8"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-desktop/E2E10-progress-final.png",
+    "bytes": 19036,
+    "sha256": "a9d7bc640e17d0eaa5fe84dffefc99e1b1aff3a10d35f9bf98a90b060bb96bdc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-desktop/E2E10-result.json",
+    "bytes": 6756,
+    "sha256": "2f272ea13b5c72a52a9cde85ae03cb6f8e9adc92893e206d68857634e35401d1"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-desktop/E2E10-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-desktop/E2E10-selection.png",
+    "bytes": 387456,
+    "sha256": "d2a78ac00f0ceeccbbd633e944e3c95baa362d1dfdc5bb40b0fc6404a95e1e51"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-desktop/E2E10-stock-after.json",
+    "bytes": 529,
+    "sha256": "86e76e6404018e0731712904fd374da8abae9ce6a28d914b84fb79f898a7631d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-desktop/E2E10-stock-before.json",
+    "bytes": 527,
+    "sha256": "2e0d05bd88f00554cf9b1f72b0241d9c36e63a488526a26b9bd833e530f029cc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-desktop/E2E10-stream.ndjson",
+    "bytes": 22570,
+    "sha256": "0a30fc5b7f679c565aef15cee82350a0f75c97ac20b057650ffdd214f9c2843c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-mobile/E2E10-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-mobile/E2E10-confirmation.json",
+    "bytes": 585,
+    "sha256": "3bd2e330a7f8512d082fd2c59423601553771def1f4d75b0d41bc570ef2fa847"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-mobile/E2E10-confirmation.png",
+    "bytes": 58685,
+    "sha256": "e7e7031e5a60fe7cf55d7426efaaf8c01754b3e5c491f2f901bce8e3969ebb45"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-mobile/E2E10-confirmed-result.json",
+    "bytes": 6768,
+    "sha256": "eb9966674c4c270c6560c4204d26927d573d18cb323226d2f73db8887731ce3d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-mobile/E2E10-confirmed.png",
+    "bytes": 53881,
+    "sha256": "d4933fa982a68040a64565d24c172cbd69763310d96bc4c75cc572afbb226c1b"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-mobile/E2E10-metrics.png",
+    "bytes": 24788,
+    "sha256": "b25e1af199d15cd89c8ffc366332b47cc75307529a6b74094a35f4690531567c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-mobile/E2E10-movements.json",
+    "bytes": 699,
+    "sha256": "815d483f2ccde7ebccebcc5802fd4ec195c24bd676084013ea54d6fc60a4f803"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-mobile/E2E10-orders-after.json",
+    "bytes": 94,
+    "sha256": "4801eeb823782cf274e69322fff9c8c359f9f73d89ff89e177d889e224801c55"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-mobile/E2E10-placements.png",
+    "bytes": 100281,
+    "sha256": "fc7f9fa5928f16cb90195debb2d146ad3219829fc7ac7bd777c8f2a24a4a6032"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-mobile/E2E10-progress-final.png",
+    "bytes": 20226,
+    "sha256": "006177ac0224b55f58157925c779d9aa068dbd7b5cc250214e0809b4eb843e4a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-mobile/E2E10-result.json",
+    "bytes": 6768,
+    "sha256": "68897c08e078ca1450b79d8f717ae8ec070b984ad6c13f2a354ab9b24dde2b45"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-mobile/E2E10-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-mobile/E2E10-selection.png",
+    "bytes": 76616,
+    "sha256": "047b9c0683a3093bc573bcdea3c2bdf9098ba1dbf53e46c3c2ef99986504dfae"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-mobile/E2E10-stock-after.json",
+    "bytes": 529,
+    "sha256": "0f9911f1c774c83a0064dc128b92ce353131246095998aa8d782c40f0aeb9f19"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-mobile/E2E10-stock-before.json",
+    "bytes": 527,
+    "sha256": "480710057950f48864898e113ec5cc2c037be875c2aa61657ebb8b83b6824de4"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E10-C-9b8c2-d-y-unidades-físicas-reales-chromium-mobile/E2E10-stream.ndjson",
+    "bytes": 22620,
+    "sha256": "cee287311dca875ff1201ceae571e66b45fabccba62e12511e84e39590c1211a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-commercial-2d.png",
+    "bytes": 186280,
+    "sha256": "34bba465a64a0664360a6f43143e05aef671c32c639b3501a925120dda4c9066"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-commercial-3d.png",
+    "bytes": 311355,
+    "sha256": "5fd86072e3f2206f4fb3e6c460d0ecb6e945e9810aa2fc16eab4a7a01a5fdc46"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-commercial-origin.json",
+    "bytes": 401,
+    "sha256": "eebcaf3c20315eb0d6a521d49bb64eb39457d3b1f52b337d9faf7a4ed7eb055b"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-commercial-remnant.png",
+    "bytes": 64178,
+    "sha256": "a7078b76986e11e471e3609e1035e3c9bfa0770cf33ebde3a05bdf55b55290c4"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-confirmation.json",
+    "bytes": 666,
+    "sha256": "2d98b6902f024a954d18ee010762ed0d85029ea3ec5fcefb5735162eff2af541"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-confirmation.png",
+    "bytes": 246384,
+    "sha256": "2ea391a8633e411b4c6c438d490d5a2ca0e04550dae449b0704e14d2931ff5af"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-confirmed-result.json",
+    "bytes": 8011,
+    "sha256": "f5fefa6d10a4b945856d4b78413647c5109cc84fa162dda79acfe0ce6bc91629"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-confirmed.png",
+    "bytes": 235330,
+    "sha256": "6308b1b4d82fdbebcc7ae2f7eb97a07fc5daf9ea1a3cb0c18609e70e4f23c707"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-metrics.png",
+    "bytes": 28496,
+    "sha256": "4075c60139f4588024a21ef071aef1fb626c73e06b303bb909ef238715f2f675"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-movements.json",
+    "bytes": 350,
+    "sha256": "4df2f456f0d47f90bc4f0942d90d325ce5f8364157eb03d620abc8436cf2cfea"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-orders-after.json",
+    "bytes": 68,
+    "sha256": "6e694acede98766583c6352763119c4f1b8e78605cb99bbe5dc3378ab41ea2cd"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-placements.png",
+    "bytes": 186280,
+    "sha256": "34bba465a64a0664360a6f43143e05aef671c32c639b3501a925120dda4c9066"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-progress-final.png",
+    "bytes": 19036,
+    "sha256": "a9d7bc640e17d0eaa5fe84dffefc99e1b1aff3a10d35f9bf98a90b060bb96bdc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-result.json",
+    "bytes": 8011,
+    "sha256": "e2b318bb89aae5e4aa3394907fab9466e27f4c4c29c6ba37e423f772ddb9d8c5"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-selection.png",
+    "bytes": 392856,
+    "sha256": "407dbe1fdfdf5eac3052e577a7002b3e028cccf4702278747884e5d442581a12"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-stock-after.json",
+    "bytes": 286,
+    "sha256": "b8b5f691bc3ed6ebf736dd061944e27b66bf3ef803566397dd9a839b66c8ac31"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-stock-before.json",
+    "bytes": 287,
+    "sha256": "b21f52adda33f40994e26240e227570e4dade7b6415d6834fc05775f258474a7"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-desktop/E2E11-stream.ndjson",
+    "bytes": 24456,
+    "sha256": "68a2019398bb3db6271bf71d802a733f04d694d0351c675d650a0e70b2056f34"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-commercial-2d.png",
+    "bytes": 185535,
+    "sha256": "b1949a7de85000a7aad6f982d8d47fd04b2fb87f23c769d2bc2d7b3e9164ecd0"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-commercial-3d.png",
+    "bytes": 190733,
+    "sha256": "2ee675e57f81aa2f6738092dd8bfd510e512a2f4388b7a66f6d46a5c7392dca8"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-commercial-origin.json",
+    "bytes": 403,
+    "sha256": "80d35b7468fe56c1b680def029b9c0b4c7dda5724111500c17084ccb0d420cd9"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-commercial-remnant.png",
+    "bytes": 52767,
+    "sha256": "5e4d5c37d5224415eb93a1ddc2fcb9c5478ddbc72fa86d067cc5081f8c2dadef"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-confirmation.json",
+    "bytes": 666,
+    "sha256": "e6c0ae7a2ae640f102a3bc8e9e5524b8aa9141b8d80fd12ed99cbb7ee7d6f029"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-confirmation.png",
+    "bytes": 65061,
+    "sha256": "5608cddfd2d621e82b94d306c78df8c7be8ff6a03763e277ca7973e162490bf9"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-confirmed-result.json",
+    "bytes": 8027,
+    "sha256": "060be0275ce55ac3f6ff10ae17c9769bfcc72c5cf3a6c8b2163b5d3ba20ba856"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-confirmed.png",
+    "bytes": 64289,
+    "sha256": "e693568a284da76720dac48117d000e554bf63d9b4c904cc486ac4a187d15aee"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-metrics.png",
+    "bytes": 28731,
+    "sha256": "cf3799d01728bf9a55ee0878cc9c8398f8848ccf992629bf7d61ed5353bf5105"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-movements.json",
+    "bytes": 350,
+    "sha256": "0d6a1dcd7448d7518acfcf80ad0fc95cdf90f9b7be58896af5576d33252749c2"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-orders-after.json",
+    "bytes": 68,
+    "sha256": "c4d27addf8182bd428dc01d09acdf7df466446088289fb035cdb5be2cce20fde"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-placements.png",
+    "bytes": 185078,
+    "sha256": "56e98512d219a48f9354065e2bd91caad9a5e2c981172eafdc7b797d6db764cc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-progress-final.png",
+    "bytes": 20226,
+    "sha256": "006177ac0224b55f58157925c779d9aa068dbd7b5cc250214e0809b4eb843e4a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-result.json",
+    "bytes": 8027,
+    "sha256": "aaf5bdb6c3893734d7b64d82151e26f8a5dc65afb82ce93d87b1e92ec0332e9d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-selection.png",
+    "bytes": 70954,
+    "sha256": "62b099d59b8f34502207de34679275a2de5ae335be938fdfa4e9c17238bbb7ca"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-stock-after.json",
+    "bytes": 286,
+    "sha256": "ffc918b5e60fbd7074753d64c9b1c85385ede73a3438bc190d6984687ae726d4"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-stock-before.json",
+    "bytes": 287,
+    "sha256": "43ba47056ac5364cd1b194eaedd16898417bb8e90b59798963f3e4dd31a38aea"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E11-c-9c749-rmación-y-origen-del-retazo-chromium-mobile/E2E11-stream.ndjson",
+    "bytes": 24507,
+    "sha256": "86486d1ade54dfad2238cd83a2f8648607f5fa9a73762a877d73dafb87894654"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-desktop/E2E2-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-desktop/E2E2-confirmation.json",
+    "bytes": 379,
+    "sha256": "8e7274bfbbae653276fee0083049af3b122b6ff1d3935f0565203b8f160fa6f0"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-desktop/E2E2-confirmation.png",
+    "bytes": 252940,
+    "sha256": "09bfbe06275ef788b6ca505ce97d7726200cfe889adc565593be1740b653f6e5"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-desktop/E2E2-confirmed-result.json",
+    "bytes": 2858,
+    "sha256": "305e799f9a28855245447207b27390617452bdb0ded37c3180007ae17207d76f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-desktop/E2E2-confirmed.png",
+    "bytes": 251712,
+    "sha256": "0a511b566b0963065884ffc1882983630226de3bf04c33e62ca7f22f905529ca"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-desktop/E2E2-metrics.png",
+    "bytes": 23327,
+    "sha256": "e7bf9b641b0eb6c9b19d50fb8b22876bade6dd5ec1b2d2d49c43738f18432a19"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-desktop/E2E2-movements.json",
+    "bytes": 348,
+    "sha256": "f75979974ee7f87b19b63b9e29619539f69dd2fd41d92934b0c8d38ff61620d9"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-desktop/E2E2-orders-after.json",
+    "bytes": 94,
+    "sha256": "fd0d41f94ca4441c459cbee4a36af3ea801530526d30e1378db8c05e6413cb0b"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-desktop/E2E2-placements.png",
+    "bytes": 110695,
+    "sha256": "c312896b87e3dfa142c44fdef4b2848b439dd4e90db993ab5b43124fe38bcb9a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-desktop/E2E2-progress-final.png",
+    "bytes": 19036,
+    "sha256": "a9d7bc640e17d0eaa5fe84dffefc99e1b1aff3a10d35f9bf98a90b060bb96bdc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-desktop/E2E2-result.json",
+    "bytes": 2858,
+    "sha256": "c41a3718fd7553457f1169be7dfa324c870ab42e479ff15a1aaaef279551cd40"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-desktop/E2E2-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-desktop/E2E2-selection.png",
+    "bytes": 393340,
+    "sha256": "205e6d4b805412036fc9eae781de46bfb29e0aaf47f23db8fe37f6a7260b2e05"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-desktop/E2E2-stock-after.json",
+    "bytes": 284,
+    "sha256": "a5788b968765ca8f8e5d52693b63bfc515e323941052d2ce52c0369efed1c1cb"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-desktop/E2E2-stock-before.json",
+    "bytes": 283,
+    "sha256": "d92f269f1c36c6dfe95758865596b0cf1aa616ccf75c23966dc3fb30a8af2b33"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-desktop/E2E2-stream.ndjson",
+    "bytes": 8913,
+    "sha256": "234606beac6949f300250dc4b9cec394050aad6922b735de47ac983ba01b91fe"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-mobile/E2E2-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-mobile/E2E2-confirmation.json",
+    "bytes": 379,
+    "sha256": "c3da17af02b6dba9e7c787e453f16c3a66935c7d8780631513fd32204312d1ec"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-mobile/E2E2-confirmation.png",
+    "bytes": 59364,
+    "sha256": "5f34296cae954ae5eed4399f9d84ee04251722431050c09a1ce336bcffb8dcc7"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-mobile/E2E2-confirmed-result.json",
+    "bytes": 2862,
+    "sha256": "be01fd752783fd24da54e280ad1198af15d5f7b53c5b81c00ef269c3407aa6e8"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-mobile/E2E2-confirmed.png",
+    "bytes": 53162,
+    "sha256": "b14156008527eb9702613e47460d0c1cd4f128ccdba404861390d5707708861f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-mobile/E2E2-metrics.png",
+    "bytes": 23860,
+    "sha256": "a43b4ddf5d2597ade3fecaa461a918a0179522729d0bac1d4d86d408b1add834"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-mobile/E2E2-movements.json",
+    "bytes": 350,
+    "sha256": "749e83dae38714047c31a542c5581c9252221bc86f4d4d799a51f40c18de3f3a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-mobile/E2E2-orders-after.json",
+    "bytes": 94,
+    "sha256": "77c9b46b3b27704258aa469c61a99fcfab15797f24518198d868c030b112face"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-mobile/E2E2-placements.png",
+    "bytes": 99753,
+    "sha256": "13d06f224c5eafe5bee0b438ff7d9358993c93472511d57e7e95d214464509c5"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-mobile/E2E2-progress-final.png",
+    "bytes": 20226,
+    "sha256": "006177ac0224b55f58157925c779d9aa068dbd7b5cc250214e0809b4eb843e4a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-mobile/E2E2-result.json",
+    "bytes": 2862,
+    "sha256": "e2585ff5945162de4e4d4fd8a54f74d54d2778c47a40b6087121ffbc4ea6d800"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-mobile/E2E2-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-mobile/E2E2-selection.png",
+    "bytes": 76944,
+    "sha256": "f75c242d1cf3ea51e3d6623e7cc3d7524be04b349012650b40ccb37b5fb16345"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-mobile/E2E2-stock-after.json",
+    "bytes": 284,
+    "sha256": "5668041300bbd24ef1381824d51cb3a895f5239a63f43ca8d6e53cbd24688db0"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-mobile/E2E2-stock-before.json",
+    "bytes": 283,
+    "sha256": "3cdc550ab4f07f49592ead2eba9ec2da4c5efc7e5a208f07b495d1414023b177"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E2-mu-a17a2--una-corrida-confirma-todos-chromium-mobile/E2E2-stream.ndjson",
+    "bytes": 8931,
+    "sha256": "7b53f6090e1b8aeb9cdb7c738381faedb32a2d6213c5787595cfcf8edbf8df51"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-desktop/E2E3-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-desktop/E2E3-confirmation.json",
+    "bytes": 1103,
+    "sha256": "ec7f28fd34e606a1d1058f7cf4aa78ffa206bb78a5b6a9ddde95c4f544010c9e"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-desktop/E2E3-confirmation.png",
+    "bytes": 251740,
+    "sha256": "2ffb3455429ab902fe7cceb87319bf79e2d9e6725c5217a51e581d73a7ec834a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-desktop/E2E3-confirmed-result.json",
+    "bytes": 3733,
+    "sha256": "aa0c1f2b3923cdb9fb8bd42f39d4e77755099797aa4f0e1231dde764140cd2da"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-desktop/E2E3-confirmed.png",
+    "bytes": 250494,
+    "sha256": "de6b486d9021b035dd5cc6f1f51d6a44b1ff0df556cb2120a365e9703020a8cb"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-desktop/E2E3-material-29.png",
+    "bytes": 270411,
+    "sha256": "0c14753ee162adc9c0131320215da8c28005e7d3ce242b96130d9bcd38d55dfb"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-desktop/E2E3-material-30.png",
+    "bytes": 270055,
+    "sha256": "51ae3fc7b1564ee51fab739ad73829b03624569d66e82830521ddbd215ad6154"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-desktop/E2E3-metrics.png",
+    "bytes": 23807,
+    "sha256": "a94d15ad23fc3e7f0beb2995a902af2877aa47d1ea70aa28305d3d4b710fc9e1"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-desktop/E2E3-movements.json",
+    "bytes": 694,
+    "sha256": "704a5d8c763f53e60df32fb3901cdb3e8c1fed34b73414acd9d537aab21cb431"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-desktop/E2E3-orders-after.json",
+    "bytes": 68,
+    "sha256": "04cb8befb755f7caa824726f79041b0d1ef06b72282793c393bf98ff84ddf822"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-desktop/E2E3-placements.png",
+    "bytes": 93691,
+    "sha256": "5eff4adfb38ca459dd02b81943abbbb64a258a5fddb2e9c36897d71856b98954"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-desktop/E2E3-progress-final.png",
+    "bytes": 19036,
+    "sha256": "a9d7bc640e17d0eaa5fe84dffefc99e1b1aff3a10d35f9bf98a90b060bb96bdc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-desktop/E2E3-result.json",
+    "bytes": 3733,
+    "sha256": "5772a3df045ebcab4eec166af270880a38665f71f34b66f1efbdc1d80f1a07d8"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-desktop/E2E3-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-desktop/E2E3-selection.png",
+    "bytes": 398937,
+    "sha256": "9d780512406d11267c2767bb03404680770df645d035be40d2007aa4f99522d5"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-desktop/E2E3-stock-after.json",
+    "bytes": 529,
+    "sha256": "ae65f4ffab8d671853a36cfc29e7945551f33417683b96f6f9cc80c9b947870e"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-desktop/E2E3-stock-before.json",
+    "bytes": 527,
+    "sha256": "56998da85e35a35a7c4bc875574e6e190dca1b788c5a7b2de669674782ecb034"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-desktop/E2E3-stream.ndjson",
+    "bytes": 9419,
+    "sha256": "06bf0239febcadced55010932b66b27366e73ede84921ada1c2c28f14e1a00ef"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-mobile/E2E3-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-mobile/E2E3-confirmation.json",
+    "bytes": 1103,
+    "sha256": "bc890d2f0ce2adef2ff347213d1af932ccd887726582b0f6a2bcc2d8dccfbd57"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-mobile/E2E3-confirmation.png",
+    "bytes": 58913,
+    "sha256": "db829168ef55afbb0bcba6c2a95f3d1750e1b0cb47f8a6afe8202badf90f7802"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-mobile/E2E3-confirmed-result.json",
+    "bytes": 3737,
+    "sha256": "f7a3a9093e99ad0bfb28e22abf321e70d76a8a0690a34c3df7af5d8ae958783c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-mobile/E2E3-confirmed.png",
+    "bytes": 53976,
+    "sha256": "4138186376916e5546ef02c426589389755504e1a6a2cb39bbb300c825404447"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-mobile/E2E3-material-63.png",
+    "bytes": 48438,
+    "sha256": "36cfcff361c3c0fa38bf37a3867c0119b357f8aa6785d9a6534ba67737eb74f4"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-mobile/E2E3-material-64.png",
+    "bytes": 48438,
+    "sha256": "36cfcff361c3c0fa38bf37a3867c0119b357f8aa6785d9a6534ba67737eb74f4"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-mobile/E2E3-metrics.png",
+    "bytes": 24884,
+    "sha256": "4fe6ff3870ddc87fad5298434d32d6a80ba24e072dd4b8d4e569a0aece0d0dfc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-mobile/E2E3-movements.json",
+    "bytes": 697,
+    "sha256": "b2cd78703595457797d7e81712c69136e267e2e4d87853c967af4138f33cd7dd"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-mobile/E2E3-orders-after.json",
+    "bytes": 68,
+    "sha256": "0e24219b2ab15696885f6967cb8bc2d0ba597e39d348eaa954598dd9fa8f3f42"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-mobile/E2E3-placements.png",
+    "bytes": 84661,
+    "sha256": "6f1d57bb8e8a7f6a50cbfa3513d46d3af8ca35c80708bea8fe71ac75c87bd3b2"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-mobile/E2E3-progress-final.png",
+    "bytes": 20226,
+    "sha256": "006177ac0224b55f58157925c779d9aa068dbd7b5cc250214e0809b4eb843e4a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-mobile/E2E3-result.json",
+    "bytes": 3737,
+    "sha256": "ff549d419f569bf3bd43c3a38aeb5f7588d6becddb314478b1b17aa612147edc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-mobile/E2E3-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-mobile/E2E3-selection.png",
+    "bytes": 70916,
+    "sha256": "27de38e116521863e50c7b2b687d9c65a5eaa7b4dfa3fe50ab52b244f7ec29ee"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-mobile/E2E3-stock-after.json",
+    "bytes": 529,
+    "sha256": "f6a4ec5bf36df1424644aaf0f0ddc51e212f8bd21a26a68904fb04b3c129b1e1"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-mobile/E2E3-stock-before.json",
+    "bytes": 527,
+    "sha256": "b0146c96d9c2ed4afe187d55e4283f68d1bb349aea2d146e0a757fbae53513d4"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E3-mu-c1699-ayouts-y-métricas-separados-chromium-mobile/E2E3-stream.ndjson",
+    "bytes": 9437,
+    "sha256": "7b0651fafa47ee2cbf88818d31c0274f346dc6a599f14be561bbfd7cd901aa0f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-desktop/E2E4-3d-unit2.png",
+    "bytes": 412343,
+    "sha256": "154088c048fa10f51f03b6f9a271b2f623acf54832203fa173e10b333ad4c23f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-desktop/E2E4-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-desktop/E2E4-confirmation.json",
+    "bytes": 761,
+    "sha256": "9ddfe93c694c92acaf22ff0025e1456867c337e2f3279c0d99f83f75dfe7e7b7"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-desktop/E2E4-confirmation.png",
+    "bytes": 241964,
+    "sha256": "2913776a36cce609378d8dcab2d4b0192b53f280f34462378bb5533c25acb413"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-desktop/E2E4-confirmed-result.json",
+    "bytes": 4205,
+    "sha256": "7329fc6afab05e9b3dc27a05ec3563ada92ac006e2ab84f3b2058ee2d69f50a9"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-desktop/E2E4-confirmed.png",
+    "bytes": 240792,
+    "sha256": "697c0a65965c97c1c9e57d5bf84ca497d5bda64b22252efcf21d4a5f5dbd3bbe"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-desktop/E2E4-metrics.png",
+    "bytes": 24702,
+    "sha256": "ffa514789ff8b493776a4e5518819827ca3e2914647a54caca496a2840514467"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-desktop/E2E4-movements.json",
+    "bytes": 351,
+    "sha256": "b70730f64726ee3cde71a05d4be58ddc55aa32229f674e79c02660353d557281"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-desktop/E2E4-orders-after.json",
+    "bytes": 68,
+    "sha256": "966859eef89173183bf2b4abe27f6c9c43b1b845336080326e5e69dcbdd3bb27"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-desktop/E2E4-placements.png",
+    "bytes": 110219,
+    "sha256": "e03132fa49d6202934a6068cb6ac790598f1bff4259b6e43e3ba5e42c0fca89e"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-desktop/E2E4-progress-final.png",
+    "bytes": 19036,
+    "sha256": "a9d7bc640e17d0eaa5fe84dffefc99e1b1aff3a10d35f9bf98a90b060bb96bdc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-desktop/E2E4-result.json",
+    "bytes": 4205,
+    "sha256": "3a8e13dde2a0b6f60a25e9c51f7b4d7cfd9a2d28c958a8f0961f69a48867524f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-desktop/E2E4-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-desktop/E2E4-selection.png",
+    "bytes": 397797,
+    "sha256": "d9aae7823cd9019ab7d7cd71be3030deba57087375c1c7d45ec00fe80c4f9764"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-desktop/E2E4-stock-after.json",
+    "bytes": 283,
+    "sha256": "162f5cb5a13d6e958aa6460e8223d60ee4539001d42cdb75fa91a79cdbc8fe28"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-desktop/E2E4-stock-before.json",
+    "bytes": 283,
+    "sha256": "940d7ff661fca1836fb27c3ae8a502dbe21fd4bebd7f626834d987015e38504e"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-desktop/E2E4-stream.ndjson",
+    "bytes": 11794,
+    "sha256": "dbd8116d95aa54c1c42b27ae63f5727d74d93c5a8d49777bb744267b0fe60086"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-mobile/E2E4-3d-unit2.png",
+    "bytes": 109123,
+    "sha256": "20447acb90aa66b5bb2cbba0a558713bc788760bf5c1e83131fa80d93b57485b"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-mobile/E2E4-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-mobile/E2E4-confirmation.json",
+    "bytes": 761,
+    "sha256": "b0e19dce0f3389cb8409c953ddf32448c459af5f335174850dc30a9d0326277c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-mobile/E2E4-confirmation.png",
+    "bytes": 60786,
+    "sha256": "24acfde43e67bfb6bdbc10f5abdf0780f3c574b1fff6548ea435aa3c87f0ac74"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-mobile/E2E4-confirmed-result.json",
+    "bytes": 4211,
+    "sha256": "e23c601d621c4f4eeea7008cc1859ac4f0e4ce877e24895f8fa5e6d6ffc8d36b"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-mobile/E2E4-confirmed.png",
+    "bytes": 54629,
+    "sha256": "f9f625c86e342492421bc7828e6c50a9526e479fd264b052288bffa7bbf73956"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-mobile/E2E4-metrics.png",
+    "bytes": 25322,
+    "sha256": "83d8354f28b823e153cd10c492d9948d25abac366bd897f96f208f9a4dcb0a0a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-mobile/E2E4-movements.json",
+    "bytes": 352,
+    "sha256": "3fdbc72bd003e7a7a5670e9bc7e1bedb4f7712c11e9e728774837fb5af8368ca"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-mobile/E2E4-orders-after.json",
+    "bytes": 68,
+    "sha256": "8d16a0cdd2946edf14fcd72ddf459110d44ee026c0c624a30d8cda1b1780c3c2"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-mobile/E2E4-placements.png",
+    "bytes": 101206,
+    "sha256": "7dae6ea7bef7b612a1335612984d7b1a505073068d6b9f95eaa0064940f8c551"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-mobile/E2E4-progress-final.png",
+    "bytes": 20226,
+    "sha256": "006177ac0224b55f58157925c779d9aa068dbd7b5cc250214e0809b4eb843e4a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-mobile/E2E4-result.json",
+    "bytes": 4211,
+    "sha256": "649f53674da76b02e7d90379755d9323f443cd473839c0eeaa41267d9ecf54d5"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-mobile/E2E4-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-mobile/E2E4-selection.png",
+    "bytes": 70649,
+    "sha256": "b45758f93a1b464c855f2dc0ef3e71d71b6dc2359690d68bc0522d0b3a31dd3e"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-mobile/E2E4-stock-after.json",
+    "bytes": 283,
+    "sha256": "8b262b1534ddc4632a9ea1a6c0142f349708362a2e074548145be675311ecc99"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-mobile/E2E4-stock-before.json",
+    "bytes": 283,
+    "sha256": "13bd6c7c9568c8256e615db852eeff75b944844a6d083bd8b40c7b94597e835c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E4-pl-85172-cements-consumen-2-unidades-chromium-mobile/E2E4-stream.ndjson",
+    "bytes": 11817,
+    "sha256": "7107acb167bba7ba0ae2517d987b84993844210b471e5b0a40b49b46cf068604"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-desktop/E2E5-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-desktop/E2E5-confirmation.json",
+    "bytes": 312,
+    "sha256": "81fbf387f3a36a31617c1106d0542a5bdbbff50812f6699153abb35bd428ee54"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-desktop/E2E5-confirmation.png",
+    "bytes": 263823,
+    "sha256": "a2cf7acc5cb528a012c331784f4d7cec6978d13db4c44aff871f29e83d5c4c10"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-desktop/E2E5-confirmed-result.json",
+    "bytes": 2838,
+    "sha256": "8a3cc75dd269a6a60d97fdf41e0d367de077beba0e808ab8040c5f6130563e3f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-desktop/E2E5-confirmed.png",
+    "bytes": 259654,
+    "sha256": "01e0607802e112591703092cfd03c0c96fc92e85e6e1943e91e8a000d1eb0fb0"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-desktop/E2E5-metrics.png",
+    "bytes": 23783,
+    "sha256": "6ddc93ef9260ba6a96a13ce62f0f7e17210bb617b71a8d0c3757eac0daca7e3e"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-desktop/E2E5-movements.json",
+    "bytes": 349,
+    "sha256": "30c47a2d8f32367edf480759fc03b03f3d5cd2d2e93f2e02cd87814e0a8dae36"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-desktop/E2E5-orders-after.json",
+    "bytes": 68,
+    "sha256": "2fb50019452cccf0e2ef9af0351cd5335d2a9d012e44b76a69395433bce85709"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-desktop/E2E5-placements.png",
+    "bytes": 111794,
+    "sha256": "0f9786eb7eff10ab5564af6e4f2f81606cc29c0bb062578a765804cad3bd81b0"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-desktop/E2E5-progress-final.png",
+    "bytes": 19036,
+    "sha256": "a9d7bc640e17d0eaa5fe84dffefc99e1b1aff3a10d35f9bf98a90b060bb96bdc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-desktop/E2E5-result.json",
+    "bytes": 2838,
+    "sha256": "a4c84c77ad732b8bfb4f7e414e15b25368e3c3ec50459d8c4de3cd38bf3b4a87"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-desktop/E2E5-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-desktop/E2E5-selection.png",
+    "bytes": 398672,
+    "sha256": "bea1592e57aea757ea82425e8a1d39b87a2c15cb4d4cd75c7402f0f4e356e05f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-desktop/E2E5-stock-after.json",
+    "bytes": 664,
+    "sha256": "fb9933c25559733b5825a0c4a7894d47dc4c15be237d6fd2814193d2ac6b3520"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-desktop/E2E5-stock-before.json",
+    "bytes": 663,
+    "sha256": "d37ed03fa104c0e535cce242a97994deacbebd0697a857f916e195955a9188a0"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-desktop/E2E5-stream.ndjson",
+    "bytes": 8184,
+    "sha256": "64c332756bd576ee71a5f7ddfeab3f9ab3c8a6e30ca7f1f2a626c2997b1f8dfe"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-mobile/E2E5-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-mobile/E2E5-confirmation.json",
+    "bytes": 312,
+    "sha256": "9ce6eceda0bb4918983ac2e01e889ed0c6d569e25bc0b4fb9dd613bfa4bc0296"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-mobile/E2E5-confirmation.png",
+    "bytes": 59321,
+    "sha256": "5693e579c00609f3b565f1afce5526c45fc32339ec0b3a7b1ec7ba5ef90b3886"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-mobile/E2E5-confirmed-result.json",
+    "bytes": 2842,
+    "sha256": "456908e34864ee3bd246907ebe923842583c61672ca30958898de6b10ba6b3a5"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-mobile/E2E5-confirmed.png",
+    "bytes": 53188,
+    "sha256": "448eefbd0fe8a3654a8fb23b490913eb2d8772560eb871e10dcf28c460e95654"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-mobile/E2E5-metrics.png",
+    "bytes": 23935,
+    "sha256": "11925728cd6ae7ef7245e5b2674c3c85b378c1dd3a485c41208e58aa52151639"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-mobile/E2E5-movements.json",
+    "bytes": 349,
+    "sha256": "b84c2a1426a832f337dbce4a7fcd5e917a2fbdf56742fe670117150c9882e365"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-mobile/E2E5-orders-after.json",
+    "bytes": 68,
+    "sha256": "74fa1835328cc1ae12e60c3cf0010881b2639fa6f5e68907c0d2ffbeaba2d7ed"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-mobile/E2E5-placements.png",
+    "bytes": 99760,
+    "sha256": "6196745c9dfa40731415d474ef8df629271d4b6cad9be660f0ab2f6a45497245"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-mobile/E2E5-progress-final.png",
+    "bytes": 20226,
+    "sha256": "006177ac0224b55f58157925c779d9aa068dbd7b5cc250214e0809b4eb843e4a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-mobile/E2E5-result.json",
+    "bytes": 2842,
+    "sha256": "48fcca329546983c1fdf8495f9055fbe2b17e2872eb37c6eafe6dac6d8cd71a4"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-mobile/E2E5-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-mobile/E2E5-selection.png",
+    "bytes": 70928,
+    "sha256": "794bb60c709c66b689cff42dc4c4e58de2526fcac63ba8f987bad5c53437cab6"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-mobile/E2E5-stock-after.json",
+    "bytes": 664,
+    "sha256": "39bc8e2075bc3ad3be23a3d90aaa263ec8719dc73d38c81f8e214bfdb2de097d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-mobile/E2E5-stock-before.json",
+    "bytes": 663,
+    "sha256": "4b2b276a3ca8dd68d19d1df6f8cb2739860549e3755ffd4aa782d2b9995a4b78"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E5-re-0b344-umen-un-retazo-una-sola-vez-chromium-mobile/E2E5-stream.ndjson",
+    "bytes": 8199,
+    "sha256": "ceb75d31907f1dd90d3a6b36f9f33775b1942455155bda49e41e7038f4e39271"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-desktop/E2E6-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-desktop/E2E6-metrics.png",
+    "bytes": 23789,
+    "sha256": "af3fdec9d82ff38b7a0f0a02c299ef503ff5abdb593986f86eddced102371829"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-desktop/E2E6-orders-after.json",
+    "bytes": 67,
+    "sha256": "2fc3e6347122783e31507a9afa4d9bec039d8a9b4be53a878b57e88d3482fce1"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-desktop/E2E6-placements.png",
+    "bytes": 100523,
+    "sha256": "4880fa7b7e379b1b92c024c7bbf99a46af3cfebe4f57437ab7dce03c633ef720"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-desktop/E2E6-progress-final.png",
+    "bytes": 18874,
+    "sha256": "5a90958e52c354376eb69718e22ba03426ee43b9e6113d257bd060747e3ac3e7"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-desktop/E2E6-result.json",
+    "bytes": 2579,
+    "sha256": "2b6deebb3d73b38585f58c0a790b58d9c5714dbd80e76e8c84c0eb82520493f9"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-desktop/E2E6-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-desktop/E2E6-selection.png",
+    "bytes": 398562,
+    "sha256": "d9b9968084920cb4788cfa1eeb4e313146dec2c51f8e030e480d18d79c9f707d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-desktop/E2E6-sin-solucion.png",
+    "bytes": 276320,
+    "sha256": "e0056ad0dfd29bf8d15a5a9807bd55194e30699ff1ab20b8a9e6c7d6e13ce29d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-desktop/E2E6-stock-after.json",
+    "bytes": 282,
+    "sha256": "2efc67a89b8185fd5d5eccf4c2e592c215a955beafff9bd6c09eeb43035f4848"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-desktop/E2E6-stock-before.json",
+    "bytes": 282,
+    "sha256": "2efc67a89b8185fd5d5eccf4c2e592c215a955beafff9bd6c09eeb43035f4848"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-desktop/E2E6-stream.ndjson",
+    "bytes": 7517,
+    "sha256": "3461847feb53d57dc62357e7e2c0ecb25f90eae5ad73055ba3da001209cc3ed3"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-mobile/E2E6-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-mobile/E2E6-metrics.png",
+    "bytes": 24084,
+    "sha256": "e850d90fe819aaa843eacf67841b36fb904b19f0426a054c3a6f7247d9e1508f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-mobile/E2E6-orders-after.json",
+    "bytes": 67,
+    "sha256": "f9b478078ebe05e93b712da3d2bc87f1ee84df6485082d07dd8d272d64681b33"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-mobile/E2E6-placements.png",
+    "bytes": 91538,
+    "sha256": "f4d21709338151e8bffde903239799aa4250c02425f59d23e098da3e10613e22"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-mobile/E2E6-progress-final.png",
+    "bytes": 19970,
+    "sha256": "b633e354baed28037da4ea63b0a64a54bc580fe95939c812104c887f5261b039"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-mobile/E2E6-result.json",
+    "bytes": 2583,
+    "sha256": "1c1b052486785db025ef16bce966fa73506615c235d4191391b9df9c3e3012ca"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-mobile/E2E6-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-mobile/E2E6-selection.png",
+    "bytes": 70916,
+    "sha256": "63c11dc414a18aa5ff4fbb84a457f314835e1714992343e873158b7961635e73"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-mobile/E2E6-sin-solucion.png",
+    "bytes": 52641,
+    "sha256": "552362a0eca2af553b67a884c44bfa21247d25fe23fc402001228edb33c537c6"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-mobile/E2E6-stock-after.json",
+    "bytes": 282,
+    "sha256": "e796d033d68dbf955aa849ab8077eade6ea1bb4eb40b9b7c6c6779700875bcda"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-mobile/E2E6-stock-before.json",
+    "bytes": 282,
+    "sha256": "e796d033d68dbf955aa849ab8077eade6ea1bb4eb40b9b7c6c6779700875bcda"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E6-SI-a9c5e-s-PENDIENTE-y-stock-intacto-chromium-mobile/E2E6-stream.ndjson",
+    "bytes": 7532,
+    "sha256": "9ae3b7cb3d8bcec4a83c5fa97df5fff205d058739559e2f1cccc48207b23db02"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-desktop/E2E7-409.png",
+    "bytes": 251976,
+    "sha256": "659ee968d82e6e6c17b172637f48561c5fcb86539bf11f49b27fecf7841fec51"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-desktop/E2E7-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-desktop/E2E7-conflict-stock-after.json",
+    "bytes": 284,
+    "sha256": "1f3d9b03e945575807da0c9dd025696c89c32099c169aa836214dfe5f4dbfbe6"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-desktop/E2E7-conflict-stock-before.json",
+    "bytes": 284,
+    "sha256": "1f3d9b03e945575807da0c9dd025696c89c32099c169aa836214dfe5f4dbfbe6"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-desktop/E2E7-conflict.json",
+    "bytes": 122,
+    "sha256": "85269d2db701c8fd061a5052628a7bf43e5df58a46ee164c1e2bbf9162a30547"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-desktop/E2E7-metrics.png",
+    "bytes": 24053,
+    "sha256": "6365377b9199e8c5f941e1fb397540f9ca86777c08837373e492bcc0e0e0b668"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-desktop/E2E7-movements.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-desktop/E2E7-orders-after.json",
+    "bytes": 68,
+    "sha256": "22b7f5b962efa4259b51094e6b75e6020404a11c840af94b0f01f249fa14a818"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-desktop/E2E7-placements.png",
+    "bytes": 92753,
+    "sha256": "b26d4ce5c2c43309ea4747861cc152e2eaf9b9a416f5769621c66189fd77c117"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-desktop/E2E7-progress-final.png",
+    "bytes": 19036,
+    "sha256": "a9d7bc640e17d0eaa5fe84dffefc99e1b1aff3a10d35f9bf98a90b060bb96bdc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-desktop/E2E7-result.json",
+    "bytes": 2301,
+    "sha256": "7f7f47b10e29b4d017b3e1077ee4b87420a2ee943a50ab0fe097c969b82f2470"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-desktop/E2E7-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-desktop/E2E7-selection.png",
+    "bytes": 393538,
+    "sha256": "98dba249e354c8d058899de3b1ecd9521327edea43068ca47ba4ac4180f02f0f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-desktop/E2E7-stock-before.json",
+    "bytes": 283,
+    "sha256": "37ed1a357f930fb06c8a8b865a3e80fe139c9ab061c2f5b0d59fd660fef1f246"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-desktop/E2E7-stream.ndjson",
+    "bytes": 5560,
+    "sha256": "dbb2c474df0f46fe67fa02fc1da97f3e9a741bd09ab312a1461264373aa63f36"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-mobile/E2E7-409.png",
+    "bytes": 55563,
+    "sha256": "1c9a90697282b148fa7198437f118f7ef69acdff891ccd534dd0d572376b5798"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-mobile/E2E7-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-mobile/E2E7-conflict-stock-after.json",
+    "bytes": 284,
+    "sha256": "729b30355eb8b5557e484941deb5b9cb4afe539e7b0bfb2a03840e126e012d69"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-mobile/E2E7-conflict-stock-before.json",
+    "bytes": 284,
+    "sha256": "729b30355eb8b5557e484941deb5b9cb4afe539e7b0bfb2a03840e126e012d69"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-mobile/E2E7-conflict.json",
+    "bytes": 122,
+    "sha256": "85269d2db701c8fd061a5052628a7bf43e5df58a46ee164c1e2bbf9162a30547"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-mobile/E2E7-metrics.png",
+    "bytes": 24860,
+    "sha256": "5fda77c1d530c8f7dc45f2aa63c5f849121a70436b2069e66b40c5805039c061"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-mobile/E2E7-movements.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-mobile/E2E7-orders-after.json",
+    "bytes": 68,
+    "sha256": "fcbd98c050c9767c07b7ecd1ea0b0a05d74da8cdc40efb51525a5500ff16e215"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-mobile/E2E7-placements.png",
+    "bytes": 83697,
+    "sha256": "8ae31576d169462eb8ba04fcc3d341520c0d056532ba5b4c8484fc4bdea8057f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-mobile/E2E7-progress-final.png",
+    "bytes": 20226,
+    "sha256": "006177ac0224b55f58157925c779d9aa068dbd7b5cc250214e0809b4eb843e4a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-mobile/E2E7-result.json",
+    "bytes": 2303,
+    "sha256": "600b46a3504648593cef65a59916f1289b3af9f032c9318291d38d5355c2fe44"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-mobile/E2E7-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-mobile/E2E7-selection.png",
+    "bytes": 71022,
+    "sha256": "b59e247131b6ddbce59f4a74d019ee1fa513d1490cad8c2be09ac5f54fff8231"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-mobile/E2E7-stock-before.json",
+    "bytes": 283,
+    "sha256": "21b7406d23cce287351d8f3989b5301027c6c377466d026f8b8594107abdb888"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E7-40-7be81-inguna-confirmación-parcial-chromium-mobile/E2E7-stream.ndjson",
+    "bytes": 5569,
+    "sha256": "a303f46965db5f064b91aadeae8e2e20f4734067e4bd10f6ee8577c2899eb7b6"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-desktop/E2E8-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-desktop/E2E8-confirmation.json",
+    "bytes": 658,
+    "sha256": "6a93c73e600c9e40235a817df7ac9573608b444c26ed36a61bf29dca71d98772"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-desktop/E2E8-confirmation.png",
+    "bytes": 266898,
+    "sha256": "1a946ef657bc6448c594b4ce8b3775a1c7ee0a10da7ce2629c75c9409e3822dc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-desktop/E2E8-confirmed-result.json",
+    "bytes": 2301,
+    "sha256": "203229333e501ed83f0c0b139ab24f3b55fe617edff5227d2536b4d78f216c03"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-desktop/E2E8-confirmed.png",
+    "bytes": 249670,
+    "sha256": "aa49e4911be45be94dc6b722d8d13b839a7488b8f01cbb5cb13e84ad5b4f9a0e"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-desktop/E2E8-metrics.png",
+    "bytes": 23835,
+    "sha256": "ea3a383c486a0445e6d4e69dda6537f4cabb42fed5c911f5e5ec9a894e1ff5d9"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-desktop/E2E8-movements.json",
+    "bytes": 350,
+    "sha256": "5cbf0a3c6879cbdbdc3f2a15821fe862c44265a267a2fad6f5a4b1d3f65dd583"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-desktop/E2E8-orders-after.json",
+    "bytes": 68,
+    "sha256": "d54ed31fb7bd4ae8c52cd1cc30f09582ae3021f13106cdaeef4001b04e6e3eb9"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-desktop/E2E8-placements.png",
+    "bytes": 89931,
+    "sha256": "ec7395ad1442297821196ba8221423bc5e64da0f1d82485233ce8a60679388f9"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-desktop/E2E8-progress-final.png",
+    "bytes": 19036,
+    "sha256": "a9d7bc640e17d0eaa5fe84dffefc99e1b1aff3a10d35f9bf98a90b060bb96bdc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-desktop/E2E8-result.json",
+    "bytes": 2301,
+    "sha256": "413d4d2f37bd8277ab2947b943e103b50e9edb0693f35df0822abe45cb1db612"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-desktop/E2E8-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-desktop/E2E8-selection.png",
+    "bytes": 378682,
+    "sha256": "aa3a46c15f91394ca9ade4aed08fecce3c1d91ef0b9f149d57cf7e6b51b251d2"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-desktop/E2E8-stock-after.json",
+    "bytes": 284,
+    "sha256": "eff1378b9823d52612d31120c8481f7f188e0c04c73a7bc0d120394d0d934b67"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-desktop/E2E8-stock-before.json",
+    "bytes": 283,
+    "sha256": "bd2bc9644be073daf5c401220e294982938fc4b9a2fffd360d3d1121b9bf6ffa"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-desktop/E2E8-stream.ndjson",
+    "bytes": 5560,
+    "sha256": "32118327b17e4d9104f8d3650a97c606732bba318bc5c8b3f32a7538c9d84e07"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-desktop/E2E8-view-only.png",
+    "bytes": 331346,
+    "sha256": "80ee920fdab5e1d2d17e5345ee4ad3213e921a00811244b94aadabd515a5e79d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-mobile/E2E8-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-mobile/E2E8-confirmation.json",
+    "bytes": 658,
+    "sha256": "81d16658382a4e226ff987e0987cc94c207d80bbb362a2e3e2ff33a8ac702dad"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-mobile/E2E8-confirmation.png",
+    "bytes": 61002,
+    "sha256": "7b67f716584ea988e685a103cacdd28ecc16ba229b211a7338aea9260f6c1374"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-mobile/E2E8-confirmed-result.json",
+    "bytes": 2303,
+    "sha256": "e34629840f8c6adc5b2c9761a465fb16defa755e87e8b81f1143af5b1865a3ac"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-mobile/E2E8-confirmed.png",
+    "bytes": 56225,
+    "sha256": "0262f17c7f9367b63611fce0a1789ad82375eb7f993b526b83db91dedd743022"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-mobile/E2E8-metrics.png",
+    "bytes": 24831,
+    "sha256": "ae31eef0dfd21304ad0ea58efab08f9c81248a20d5b643c38e0e69b7a516a41f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-mobile/E2E8-movements.json",
+    "bytes": 350,
+    "sha256": "2266e421383e7781d6e02916f1844f761938f8636c263dc782ae6e211b38f3a1"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-mobile/E2E8-orders-after.json",
+    "bytes": 68,
+    "sha256": "6e4c969bd7b52bda5ff91c9bfcfc3041e4f45273226584ad07c66a86dfe84d80"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-mobile/E2E8-placements.png",
+    "bytes": 81094,
+    "sha256": "8321ee26a559caeff4ad7e83bf305406bfba069d1620fcb5d15f12955283981d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-mobile/E2E8-progress-final.png",
+    "bytes": 20226,
+    "sha256": "006177ac0224b55f58157925c779d9aa068dbd7b5cc250214e0809b4eb843e4a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-mobile/E2E8-result.json",
+    "bytes": 2303,
+    "sha256": "ab06ce774b077100a976c77f1f257467d15cb1c8c21b818a711bd183ec9c9a3e"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-mobile/E2E8-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-mobile/E2E8-selection.png",
+    "bytes": 70424,
+    "sha256": "24a8daeef1102117a36d6c4fbbd66afa49d5e38b9d8ccd7b7507eb5673b80c1c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-mobile/E2E8-stock-after.json",
+    "bytes": 284,
+    "sha256": "b827ad008d91b740e4dc8b2c07e9abfe1aae1629f3e6fee2278566cf5a6238a8"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-mobile/E2E8-stock-before.json",
+    "bytes": 283,
+    "sha256": "e6bad31df8c7a2d9b6984aa402f8086cdb2ab39cadcb3b46fbcdccbeaad75c5a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-mobile/E2E8-stream.ndjson",
+    "bytes": 5569,
+    "sha256": "36942317d9df938312be6548416620a5e54bbb0fb12d9a78b1a3ba83daa47b9b"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E8-RB-e6bf8-te-y-confirm-independientes-chromium-mobile/E2E8-view-only.png",
+    "bytes": 115413,
+    "sha256": "cf434104c28a135ba58eba69b88275a6a011110cf6c3c16af745b081a47af5c0"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-desktop/E2E9-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-desktop/E2E9-confirmation.json",
+    "bytes": 314,
+    "sha256": "a5c20ecb8461977c30276ad4b7ba406da8b78da435368707f8f56a828301cbc8"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-desktop/E2E9-confirmation.png",
+    "bytes": 224512,
+    "sha256": "f6405120f499dc90103ec00d3a46037f8ea5061fd04d4a4cde5bb0285a9b6353"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-desktop/E2E9-confirmed-result.json",
+    "bytes": 2053,
+    "sha256": "54959d84c8d4899c2fd4516e827e506fd1ae2a69b5a01972721b1bc9a89821cd"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-desktop/E2E9-confirmed.png",
+    "bytes": 233081,
+    "sha256": "4db803a26f56a04b9d098f1476bf68e32c2637653e290f9010ad832d10a7af1c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-desktop/E2E9-metrics.png",
+    "bytes": 23388,
+    "sha256": "1e8b18fb6284ecba7e1bb0f7b2b9bca831323b453bf2f90f4229302ca5ca62de"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-desktop/E2E9-movements.json",
+    "bytes": 350,
+    "sha256": "11c361bdf1dd6044b30ed803cd06ef9308dfbcf9e7eedceaae16b17c15c9b901"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-desktop/E2E9-orders-after.json",
+    "bytes": 68,
+    "sha256": "ec22f35c4dae31a77f294c6461726054f36a15a3476ed29ea6c532fc8fe4c635"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-desktop/E2E9-oriented-3d.png",
+    "bytes": 277471,
+    "sha256": "c0b12096a7bfe12dd62e4d8c2ac184549a393ba7900bbe4f303c2d73746acad4"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-desktop/E2E9-placements.png",
+    "bytes": 98188,
+    "sha256": "a08c7fc0316a7ea6d7e166d7287bfa5519c100cca908e06006b65498672cde8f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-desktop/E2E9-progress-final.png",
+    "bytes": 19036,
+    "sha256": "a9d7bc640e17d0eaa5fe84dffefc99e1b1aff3a10d35f9bf98a90b060bb96bdc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-desktop/E2E9-result.json",
+    "bytes": 2053,
+    "sha256": "e5eb6b7c47dc1edf149bb6c2081d29da7b094037140ed4556b20e90d54bf969c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-desktop/E2E9-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-desktop/E2E9-selection.png",
+    "bytes": 393224,
+    "sha256": "d445dc1265bc412cec5b8f48e28d2368959f96b6b9b8ad0da5aa22cde7a27908"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-desktop/E2E9-stock-after.json",
+    "bytes": 283,
+    "sha256": "ba1c9a1bed5e36327d2ba02e9ba8b1d71c0565cfd3435ce4695503748fc4a399"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-desktop/E2E9-stock-before.json",
+    "bytes": 282,
+    "sha256": "3071e2b411ba1bcf6fed8543a2399db3445e5c57734ec663c494de18bccb84fa"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-desktop/E2E9-stream.ndjson",
+    "bytes": 6235,
+    "sha256": "15a52a71089ccba9cb398d78f749c2218b2199f3a491c392d67260b32c43d189"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-mobile/E2E9-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-mobile/E2E9-confirmation.json",
+    "bytes": 314,
+    "sha256": "797c3255875202438d01b04b36e23b0bfcca966d31d52a3709bd81e76d6c35a0"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-mobile/E2E9-confirmation.png",
+    "bytes": 60137,
+    "sha256": "7a2dc9242017d85e0d1645926cecef0ee13694cde4a2f88e6fee03fa488a3f96"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-mobile/E2E9-confirmed-result.json",
+    "bytes": 2053,
+    "sha256": "be0e435418bf1423619c1d4030a22dcb6fd053b2f58f6d18bca28d834204dc73"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-mobile/E2E9-confirmed.png",
+    "bytes": 55040,
+    "sha256": "e521740762986566fe061b88ffdcd13d69f249c5f95ac73d2af472c3607aa7f1"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-mobile/E2E9-metrics.png",
+    "bytes": 23826,
+    "sha256": "ab036f0a4cd63dec53f3bcc0e02361fc1af81cf3111158b03e224c5d606c5d58"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-mobile/E2E9-movements.json",
+    "bytes": 350,
+    "sha256": "469b5e23bf951f7e2d1bc935c8cd80d9e9e47199da2ea384510eed5a574b9698"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-mobile/E2E9-orders-after.json",
+    "bytes": 68,
+    "sha256": "090c0d77fe16d688c24b7bade73e9ccd5c8909adaa46844b7353f4f6ea427b32"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-mobile/E2E9-oriented-3d.png",
+    "bytes": 86763,
+    "sha256": "57e1143ef8153e2a30df67352b788f9d7b744f8380a7252208509a6df0c31b27"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-mobile/E2E9-placements.png",
+    "bytes": 89280,
+    "sha256": "f0973ec9f09664f5a96ecf6a59d7debe3d4f3b37d5b5ae0acf62147356f1dd19"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-mobile/E2E9-progress-final.png",
+    "bytes": 20226,
+    "sha256": "006177ac0224b55f58157925c779d9aa068dbd7b5cc250214e0809b4eb843e4a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-mobile/E2E9-result.json",
+    "bytes": 2053,
+    "sha256": "8c4cebf6def071fd2271ddaa261db3a2667e8a7e55d1c169e5a4e385e01c49e2"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-mobile/E2E9-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-mobile/E2E9-selection.png",
+    "bytes": 70973,
+    "sha256": "3bf1fa94699132bb0d9ec3524b87b6f9b498051b21f7f253109cd0221b8ab415"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-mobile/E2E9-stock-after.json",
+    "bytes": 283,
+    "sha256": "7e9942f830026c41bf801341deb58c9918464dcf9151590ef2ec079d2a29d7a1"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-mobile/E2E9-stock-before.json",
+    "bytes": 282,
+    "sha256": "a1ab7f417be37a471b2dd5e9d523eb3bee73de36562089dcd890516edbc5ae58"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-E2E9-ro-fd352-uce-una-sola-vez-en-2D-y-3D-chromium-mobile/E2E9-stream.ndjson",
+    "bytes": 6245,
+    "sha256": "bec2dc55b9b1e8c664c681494e69ee5a9a722bfc2bad8c9feaa0050aaa1181e4"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-desktop/S1-01-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-desktop/S1-01-confirmation.json",
+    "bytes": 657,
+    "sha256": "a09007e83b118ed69a2f2b1a255390e5434456cb68d4d378d780c54ed27ea1f1"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-desktop/S1-01-confirmation.png",
+    "bytes": 249964,
+    "sha256": "668385cee2ebe61107595cc79ad900db96568057a8313a995d8ea04fb9c23750"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-desktop/S1-01-confirmed-result.json",
+    "bytes": 2301,
+    "sha256": "0ffbcaaf275216390b04be5185299c50dd5c56d95156c59405661772885033cf"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-desktop/S1-01-confirmed.png",
+    "bytes": 246560,
+    "sha256": "4a25f35dc0ddf3f2b6e05c57e5fe69c2b85378e1a79dff6901c71be92447354f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-desktop/S1-01-metrics.png",
+    "bytes": 23835,
+    "sha256": "ea3a383c486a0445e6d4e69dda6537f4cabb42fed5c911f5e5ec9a894e1ff5d9"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-desktop/S1-01-movements.json",
+    "bytes": 348,
+    "sha256": "c8b1b26038c03708b4450dbfe1ddd78655103581ce97b13dcc056c36cf4e43be"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-desktop/S1-01-orders-after.json",
+    "bytes": 68,
+    "sha256": "d610923f24b6a83675404f1562552aeb4ee1a03385bcff9865ac462ca39123f5"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-desktop/S1-01-placements.png",
+    "bytes": 93645,
+    "sha256": "fa239848df72335b3e030fa4bad3b322cb1da7c6ace27c32dd34092f95014186"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-desktop/S1-01-progress-final.png",
+    "bytes": 19036,
+    "sha256": "a9d7bc640e17d0eaa5fe84dffefc99e1b1aff3a10d35f9bf98a90b060bb96bdc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-desktop/S1-01-result.json",
+    "bytes": 2301,
+    "sha256": "0694d1426df9fdc848764d7f3941c1efbbcdc16459781602baa8d6b39f666577"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-desktop/S1-01-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-desktop/S1-01-selection.png",
+    "bytes": 398443,
+    "sha256": "652811c26933a7272d2d2b54fd73c7089ef022dcc08bd91909e84b02ed2184ee"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-desktop/S1-01-stock-after.json",
+    "bytes": 284,
+    "sha256": "7494d8c0f9c7e7a1a5452e43bdea6f0b67e250f5643904760798af979032f35f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-desktop/S1-01-stock-before.json",
+    "bytes": 283,
+    "sha256": "d42f083e6fcb05bf01ef0f869ec191acc35b9fec22438aac98ba77d9cea9b525"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-desktop/S1-01-stream.ndjson",
+    "bytes": 5560,
+    "sha256": "dd331f5c390c0e51ad24f4dd46b4e4d0bb3ca35db8d7199bd0260de44db4d359"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-mobile/S1-01-browser-errors.json",
+    "bytes": 3,
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-mobile/S1-01-confirmation.json",
+    "bytes": 658,
+    "sha256": "abf73dcfbf41c109b504c352ac07fb4773f6c30e1141f9027bfcac0a7e14472e"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-mobile/S1-01-confirmation.png",
+    "bytes": 60520,
+    "sha256": "70b85bccd0bbaecdaf52ce265c1017640385155f1a0581a9496d62e0509d50e0"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-mobile/S1-01-confirmed-result.json",
+    "bytes": 2303,
+    "sha256": "e363bcacff06cb4e3e2d8a10c7c98bea28be59655d85b4bd8e0496fd8486a94f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-mobile/S1-01-confirmed.png",
+    "bytes": 54272,
+    "sha256": "01b458c6ba233ac5c4bc49c9ee66d955ba4a76e35bbe39ed335696197a698171"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-mobile/S1-01-metrics.png",
+    "bytes": 24884,
+    "sha256": "bdca9cacecf522199584e8b6d492dad51ffc786f216f934f0bc2fd462716c67f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-mobile/S1-01-movements.json",
+    "bytes": 350,
+    "sha256": "49195c1c0fb185dc6f499f340bce9016c11fc2a76242b7a60d78dbdcf5833537"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-mobile/S1-01-orders-after.json",
+    "bytes": 68,
+    "sha256": "52b287da14aa6fee913f0012f7e3c24e135348e609714bd05cd25cada8ee5220"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-mobile/S1-01-placements.png",
+    "bytes": 82925,
+    "sha256": "2ffb8c0422d519e38d7254ce09e45d391b223b199475144c47933d98ee856cb7"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-mobile/S1-01-progress-final.png",
+    "bytes": 20226,
+    "sha256": "006177ac0224b55f58157925c779d9aa068dbd7b5cc250214e0809b4eb843e4a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-mobile/S1-01-result.json",
+    "bytes": 2303,
+    "sha256": "d6d623441a8377f6f75a333c797d340d5c731fee41dfd0263f5fef200572d541"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-mobile/S1-01-runtime.json",
+    "bytes": 171,
+    "sha256": "a9db8c0128c0e2851fa7d64589f857f9ed149e78e7b5010aeda7b6bd1bcb0838"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-mobile/S1-01-selection.png",
+    "bytes": 70860,
+    "sha256": "a2fa4268eadcda949fb7fe0ab7699a7dab60f3ce7474ba9b060d3be3e6a25bbc"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-mobile/S1-01-stock-after.json",
+    "bytes": 284,
+    "sha256": "cc4dd80bf045a41c8eb9a1edba1ebdc19015d44cc6b261473af4c54ae5f99d56"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-mobile/S1-01-stock-before.json",
+    "bytes": 283,
+    "sha256": "eec61bead5225427d24a0e03b5c68021a214273ee5e1bd19e62221ad3a113d6f"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/s1-optimization-ui-S1-01-v-bb6b0-y-confirma-con-trazabilidad-chromium-mobile/S1-01-stream.ndjson",
+    "bytes": 5569,
+    "sha256": "4045dbb3712469db2d3a8aea5b0669e2818a3953c753e031f4dc747e76f24e8d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-CONTROLLED-FA-08989-rvando-otras-fuentes-reales-chromium-desktop/dashboard-partial-error.png",
+    "bytes": 590281,
+    "sha256": "e9da5270f3199f5c741266e273594830766629af80694a0b065425fbe93ac129"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-CONTROLLED-FA-08989-rvando-otras-fuentes-reales-chromium-mobile/dashboard-partial-error.png",
+    "bytes": 280356,
+    "sha256": "1bf3d6f9e7af0ffebde55f52d615e5c1beb4b3d7b2f23dffc42e9f9980df13ea"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-047dd-datos-permisos-y-navegación-chromium-desktop/dashboard-administrador-navegacion.png",
+    "bytes": 1015753,
+    "sha256": "6369d6f14b357cd5239315437953b00e450756798121bb62fdb63847beac7806"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-047dd-datos-permisos-y-navegación-chromium-desktop/dashboard-administrador-optimizacion.png",
+    "bytes": 539370,
+    "sha256": "91aa7284b8688edf9722d9c649b7dd6f6c800efbcab1c59560d6067ca9a625b1"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-047dd-datos-permisos-y-navegación-chromium-desktop/dashboard-administrador.png",
+    "bytes": 580919,
+    "sha256": "570fe1d1388cc9032bd1d54142a8a4a25bc2e91c839deb6e73b42e2a9626d181"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-047dd-datos-permisos-y-navegación-chromium-mobile/dashboard-administrador-navegacion.png",
+    "bytes": 486226,
+    "sha256": "bda92d1fe087a955d74c96e5b2f6aa0ad2699b1b09d6477017e4a55744c6601b"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-047dd-datos-permisos-y-navegación-chromium-mobile/dashboard-administrador-optimizacion.png",
+    "bytes": 166455,
+    "sha256": "ae924cca7140b31760d219e0f9965cd52b0c50634f71093fec7e0f808af4832c"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-047dd-datos-permisos-y-navegación-chromium-mobile/dashboard-administrador.png",
+    "bytes": 268015,
+    "sha256": "7ebc56f0726907d472d385185b0a97e8e8f801ccae81f0b5e46fdb98ef4d1778"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-51e75-datos-permisos-y-navegación-chromium-desktop/dashboard-operario-navegacion.png",
+    "bytes": 1010205,
+    "sha256": "fc700e07669bd9ab75131da8425db6f2aa0df4712f6687c9715f6660ca92f7ab"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-51e75-datos-permisos-y-navegación-chromium-desktop/dashboard-operario-optimizacion.png",
+    "bytes": 535629,
+    "sha256": "01172ede1f3c9dff025c368dd9ed8555c2e79a4a4f42f9560f34c2a0b52a64f5"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-51e75-datos-permisos-y-navegación-chromium-desktop/dashboard-operario.png",
+    "bytes": 573896,
+    "sha256": "be3b8b9123a84c1a34b48b592680f3cdbb616763b66122736acdc2fa2dda54a3"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-51e75-datos-permisos-y-navegación-chromium-mobile/dashboard-operario-navegacion.png",
+    "bytes": 478358,
+    "sha256": "39d1533cce3134cca37f61ed5d5b459519223bb705c495dd6df1c69070bb0e51"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-51e75-datos-permisos-y-navegación-chromium-mobile/dashboard-operario-optimizacion.png",
+    "bytes": 349677,
+    "sha256": "29b701ec9c7a867148b5e7a835ac89e807bcf256940443f9f2ee4a70bd7591e3"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-51e75-datos-permisos-y-navegación-chromium-mobile/dashboard-operario.png",
+    "bytes": 261971,
+    "sha256": "b2882934ae260a7f022ffde8145300310e6bee6ffc9e232ca0fbc39ca10ed5ee"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-544ac-erflow-y-Sidebar-utilizable-chromium-desktop/dashboard-viewport-800.png",
+    "bytes": 277170,
+    "sha256": "e87601b8ff439e489510fb417201702a96c62d3a9f2f7dad3d742c2fadfda695"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-544ac-erflow-y-Sidebar-utilizable-chromium-mobile/dashboard-viewport-800.png",
+    "bytes": 280816,
+    "sha256": "6c4535810e00d871999efff671c7c83b9e38e0a2d540c04621389d5024b71c51"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-6c720-datos-permisos-y-navegación-chromium-desktop/dashboard-almacenero-inventario.png",
+    "bytes": 1009955,
+    "sha256": "ef5777995425385e083f2b8c414da21c33e5616b70769f5c653df714915505c2"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-6c720-datos-permisos-y-navegación-chromium-desktop/dashboard-almacenero-optimizacion.png",
+    "bytes": 800811,
+    "sha256": "92b86d66793190934470ff00dfe1fd930c039c3011051a709d1ad68bdb76854b"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-6c720-datos-permisos-y-navegación-chromium-desktop/dashboard-almacenero.png",
+    "bytes": 434485,
+    "sha256": "1e5b27ffe9a1a8c05b0bd7324c499eeee9f63cce8f3ad1e281ef363616b4c331"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-6c720-datos-permisos-y-navegación-chromium-mobile/dashboard-almacenero-inventario.png",
+    "bytes": 477505,
+    "sha256": "feaf986db747945b906761b6597f2e27c0224ee347b9678b94a6186491a9a6fa"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-6c720-datos-permisos-y-navegación-chromium-mobile/dashboard-almacenero-optimizacion.png",
+    "bytes": 169621,
+    "sha256": "aec1c9e2dc02cc0e96bfaa3b54ac0ecaecbd7045de7ba09ef921ca5ae24a32bf"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-6c720-datos-permisos-y-navegación-chromium-mobile/dashboard-almacenero.png",
+    "bytes": 152199,
+    "sha256": "5799657e0772f30c5c3a029c995b4dfec52ab5bcdaf111d791e891e40dad891d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-a83fb-erflow-y-Sidebar-utilizable-chromium-desktop/dashboard-viewport-390.png",
+    "bytes": 267558,
+    "sha256": "b7899d9400d00feefafe6fe3a3fbe529db7b0e82ba2a169a1f45902667101678"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-a83fb-erflow-y-Sidebar-utilizable-chromium-mobile/dashboard-viewport-390.png",
+    "bytes": 268936,
+    "sha256": "a3409eaf1e03b33e8d9ff884535c088a14bdcc80e745ab9635f674e8b155204b"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-aa9d7-erflow-y-Sidebar-utilizable-chromium-desktop/dashboard-viewport-1024.png",
+    "bytes": 391659,
+    "sha256": "06e022b27c91a2793c9b75c78e074de381e2f581145c12212883dbfde0ba5d4d"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-aa9d7-erflow-y-Sidebar-utilizable-chromium-mobile/dashboard-viewport-1024.png",
+    "bytes": 393799,
+    "sha256": "fc520b1206948e45454bfac6d94743944fce0500fc8aae7405d267ce169eb294"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-c3517-erflow-y-Sidebar-utilizable-chromium-desktop/dashboard-viewport-1440.png",
+    "bytes": 583391,
+    "sha256": "906a50e7659b8cc7b45ace118149a34125f94bc3a9da626c7b7292f0e1369fc5"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-Dashboard-rea-c3517-erflow-y-Sidebar-utilizable-chromium-mobile/dashboard-viewport-1440.png",
+    "bytes": 585366,
+    "sha256": "a32177bc0109162f93409358e8f803d7fbe49c99ee2d9f74bae9fc34743b9474"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-logout-elimin-cc727-ón-real-y-devuelve-al-login-chromium-desktop/dashboard-logout.png",
+    "bytes": 252747,
+    "sha256": "5b41acf349cad6a41463bcaab2342a3cfb652f50b713bbac66c904d0683f2757"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-logout-elimin-cc727-ón-real-y-devuelve-al-login-chromium-mobile/dashboard-logout.png",
+    "bytes": 29070,
+    "sha256": "9212544a1501ec0cb2fec436e24d0c01ff685cd8f454cbcad6ec72b8c1001e07"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-refresh-conse-50dc9-al-mediante-GET-api-auth-me-chromium-desktop/dashboard-refresh-session.png",
+    "bytes": 580919,
+    "sha256": "570fe1d1388cc9032bd1d54142a8a4a25bc2e91c839deb6e73b42e2a9626d181"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-refresh-conse-50dc9-al-mediante-GET-api-auth-me-chromium-mobile/dashboard-refresh-session.png",
+    "bytes": 268015,
+    "sha256": "7ebc56f0726907d472d385185b0a97e8e8f801ccae81f0b5e46fdb98ef4d1778"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-sesión-real-s-8f165-sultar-módulos-restringidos-chromium-desktop/dashboard-sin-funciones.png",
+    "bytes": 898002,
+    "sha256": "276a1a212ed61223aaddcf6022565661fa633e503b03c87381882fa83628764a"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta-dashboard-sesión-real-s-8f165-sultar-módulos-restringidos-chromium-mobile/dashboard-sin-funciones.png",
+    "bytes": 241151,
+    "sha256": "0109a5b0c8b31d8e7b85e7d285b8dd8557da83ffdb9b5f9cecfc049dcc208364"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta037-load-feedback-TA037--d04a4-o-pendiente-y-stock-intacto-chromium-desktop/TA037-aviso-limite.png",
+    "bytes": 20813,
+    "sha256": "23ed2e44769d5d3ee853179f31de50b95a5285153068f228604eaa6c63fc5e85"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining/ta037-load-feedback-TA037--d04a4-o-pendiente-y-stock-intacto-chromium-mobile/TA037-aviso-limite.png",
+    "bytes": 22473,
+    "sha256": "2c8acc785b249101350a3fa94eea48381a904a8ecf25aff37b1c9a51d272e4d3"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/remaining.json",
+    "bytes": 59136,
+    "sha256": "ce18572dab9b92d60fde9f4017bc11202bd3dafcc3ee3664d642db40f7622bac"
+  },
+  {
+    "path": "test-results/e2e-phases/run-CQKTdX/validation.json",
+    "bytes": 260,
+    "sha256": "d4f1ccefd9e017643125588dcf3f8f9c040c64166585ba3d0cc70e0b3fc371e5"
+  },
+  {
+    "path": "playwright-report/e2e-phases/run-CQKTdX/b02/index.html",
+    "bytes": 533703,
+    "sha256": "b94e0f98ef1591f740f0d7ad22d4ba3eb53fdad9ad0a1b734e4e1aa4fcaa63e3"
+  },
+  {
+    "path": "playwright-report/e2e-phases/run-CQKTdX/remaining/index.html",
+    "bytes": 1387395,
+    "sha256": "841d48212b3e6e9c69b54a16fa701ebd794b9c851b0e86a3969df724b443b98a"
+  }
+]

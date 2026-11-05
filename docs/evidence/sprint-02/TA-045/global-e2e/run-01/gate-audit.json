@@ -1,0 +1,31 @@
+{
+  "ok": true,
+  "task": "TA-045",
+  "sha": "04fa083822f1b9e297092a9fa3507f9c8bbe3d08",
+  "runId": "82919e96-75f1-4625-8694-a64e6d090fb6",
+  "planDigest": "9a1e20d8eb9767f4e399f5bfc65e613d5d597f5b565d73cb138c712e2fb4c18b",
+  "counts": {
+    "b02": {
+      "chromium-desktop": 1,
+      "chromium-mobile": 1
+    },
+    "remaining": {
+      "chromium-desktop": 72,
+      "chromium-mobile": 72
+    }
+  },
+  "planned": 146,
+  "validated": 146,
+  "duplicateIds": 0,
+  "missing": 0,
+  "unexpected": 0,
+  "skipped": 0,
+  "flaky": 0,
+  "retries": 0,
+  "errors": 0,
+  "gate": {
+    "ok": true,
+    "problems": [],
+    "approved": []
+  }
+}

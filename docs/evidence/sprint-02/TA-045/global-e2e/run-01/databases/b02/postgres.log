@@ -1,0 +1,17 @@
+2026-11-05 08:58:14.917 -05 [620] LOG:  starting PostgreSQL 18.6 (Ubuntu 18.6-0ubuntu0.26.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, 64-bit
+2026-11-05 08:58:14.917 -05 [620] LOG:  listening on IPv4 address "127.0.0.1", port 50291
+2026-11-05 08:58:14.919 -05 [626] LOG:  database system was shut down at 2026-11-05 08:58:14 -05
+2026-11-05 08:58:14.921 -05 [620] LOG:  database system is ready to accept connections
+2026-11-05 08:58:36.820 -05 [620] LOG:  received fast shutdown request
+2026-11-05 08:58:36.820 -05 [620] LOG:  aborting any active transactions
+2026-11-05 08:58:36.820 -05 [872] FATAL:  terminating connection due to administrator command
+2026-11-05 08:58:36.820 -05 [879] FATAL:  terminating connection due to administrator command
+2026-11-05 08:58:36.820 -05 [876] FATAL:  terminating connection due to administrator command
+2026-11-05 08:58:36.820 -05 [871] FATAL:  terminating connection due to administrator command
+2026-11-05 08:58:36.820 -05 [638] FATAL:  terminating connection due to administrator command
+2026-11-05 08:58:36.821 -05 [633] FATAL:  terminating connection due to administrator command
+2026-11-05 08:58:36.823 -05 [620] LOG:  background worker "logical replication launcher" (PID 629) exited with exit code 1
+2026-11-05 08:58:36.824 -05 [624] LOG:  shutting down
+2026-11-05 08:58:36.824 -05 [624] LOG:  checkpoint starting: shutdown immediate
+2026-11-05 08:58:36.831 -05 [624] LOG:  checkpoint complete: wrote 1126 buffers (6.9%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.008 s, sync=0.001 s, total=0.008 s; sync files=476, longest=0.001 s, average=0.000 s; distance=5617 kB, estimate=5617 kB; lsn=0/1CE24C8, redo lsn=0/1CE24C8
+2026-11-05 08:58:36.836 -05 [620] LOG:  database system is shut down

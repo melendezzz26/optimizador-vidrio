@@ -1,0 +1,154 @@
+{
+  "reviewed_commit": "0b759f6ce82516d08f9134ccea540b57f34a2549",
+  "scope": "docs/evidence/sprint-02/TA-045/",
+  "excluded_external_bundle": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/artifacts.zip",
+  "files_reviewed": 27,
+  "json_files_reviewed": 11,
+  "methods": [
+    "specific credential/key/token patterns",
+    "email patterns",
+    "recursive JSON sensitive-field review",
+    "database isolation review",
+    "original SHA256SUMS verification"
+  ],
+  "findings": [],
+  "original_checksums_verified": 16,
+  "loopback_only_synthetic_databases": true,
+  "reviewed": [
+    {
+      "file": "docs/evidence/sprint-02/TA-045/README.md",
+      "bytes": 11906,
+      "sha256": "75cd4ebada5419242c0462d2bcbc7ab2ed63880dc5eb6d3e56a9b3b4a9cc9b55"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/global-e2e/.gitattributes",
+      "bytes": 181,
+      "sha256": "7bda5b2c42b9ff715f803359e9f7ce75f24a6d5138e15d02c6b208e77e22f238"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/global-e2e/README.md",
+      "bytes": 7644,
+      "sha256": "88c6597eb8f22170f6857176a4b748d68cba9e516dd6c2c6430335e90091f9c3"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/SHA256SUMS",
+      "bytes": 1418,
+      "sha256": "ca4cae2b8ac3fc4d87593f31b65eb63e716f5867675e4a01921b432a1590030f"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/artifact-inventory.json",
+      "bytes": 167844,
+      "sha256": "2be3b091b769c863d2614ec434216fb6a2795c375d2736b75cb28f17d453aec6"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/b02-migrations.json",
+      "bytes": 16440,
+      "sha256": "e8ee203e7a338e7e8284e27c86e8b7e86f1c0faf93b85fe8b238f3ca28402c07"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/database-isolation.json",
+      "bytes": 1390,
+      "sha256": "bf13e4d3f46c77af261ab2e8d682fef5a83b2d58b643780f0b1770a6d05357cc"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/databases/b02/postgres.log",
+      "bytes": 1803,
+      "sha256": "762efd83a2e10b5bc95d5b24d2e8d6f6b0c526b0c705910767352f24f6962fa5"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/databases/b02/postgresql.conf",
+      "bytes": 32723,
+      "sha256": "76689ea35f764777c5cc508f728a192dac5d766b67f5852ab611cd3a1349e9dc"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/databases/remaining/postgres.log",
+      "bytes": 4420,
+      "sha256": "eaef29b54eb416ec57e893a1601e6ef57019dc81298917ac2738bd7bc2b60321"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/databases/remaining/postgresql.conf",
+      "bytes": 32723,
+      "sha256": "76689ea35f764777c5cc508f728a192dac5d766b67f5852ab611cd3a1349e9dc"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/execution.txt",
+      "bytes": 38785,
+      "sha256": "edb0033afaa72a5e1fd0dc87b5814ac76b8e603d25b3762d6e5d82a2f9a379ee"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/gate-audit.json",
+      "bytes": 630,
+      "sha256": "9f2ba782c6d9c0783fee8b65b700212d70c69c57325f687a8ffe7720eaf2a0b0"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/protocol/b02.json",
+      "bytes": 1247,
+      "sha256": "01421f541eca62caa4fd01051b6466aa12b965e4394f2b5bdbf33fb6ebec4b02"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/protocol/context.json",
+      "bytes": 172,
+      "sha256": "529c975786f9210dc746b3efe9bf0229535e6ee0a74d3e4831467118fc1dd0a2"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/protocol/plan.json",
+      "bytes": 44681,
+      "sha256": "42c307bb065cdbe7bf69e33896a745b987dfda271a3f6d9fae4bbdcb12a04ea1"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/protocol/remaining.json",
+      "bytes": 59136,
+      "sha256": "ce18572dab9b92d60fde9f4017bc11202bd3dafcc3ee3664d642db40f7622bac"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/protocol/validation.json",
+      "bytes": 260,
+      "sha256": "d4f1ccefd9e017643125588dcf3f8f9c040c64166585ba3d0cc70e0b3fc371e5"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/provenance.json",
+      "bytes": 2498,
+      "sha256": "6b94a365faec1abc6849bac854468cd94b0c54e367ee8d10a2818838c49a0352"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/test-results/backend-main.txt",
+      "bytes": 4115,
+      "sha256": "aa902835c9aeb23552d7deae5b8815e6c90ce06f2ce9f4d0772e0809177a91a7"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/test-results/comparison-calculation.txt",
+      "bytes": 100,
+      "sha256": "5da8f0de8b96a777f02c0e413c2a65265dcc70a61eec8f9b862b308f27f39e4e"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/test-results/comparison-runner.txt",
+      "bytes": 101,
+      "sha256": "bd17a6dc937e643d81ad0fe7f0f88e78069c86b032e93ece258bf88c3b74ce4f"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/test-results/comparison-supervision-v2.txt",
+      "bytes": 102,
+      "sha256": "40f88c6fbde71373b94d6e73dce36c6ca5078a6fa3c49b2d2389e579d40d191f"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/test-results/e2e.txt",
+      "bytes": 17467,
+      "sha256": "e49c5350f246a46140c6deebe5ee7b9ce40a2a471c823d0018879135964e6c27"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/test-results/frontend-lint.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/test-results/sequential-runner.txt",
+      "bytes": 102,
+      "sha256": "52b1fcdb2bdbc15d0e3b6922f4f594bf8e4271434bd4d9209c2a1c330bcae08f"
+    },
+    {
+      "file": "docs/evidence/sprint-02/TA-045/test-results/validation-runtime.json",
+      "bytes": 3421,
+      "sha256": "8018b985a2b74211137b35249a01f8c441535bd408fbb79af397f31bed79f1be"
+    }
+  ]
+}

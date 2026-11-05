@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "task": "TA-045",
+  "filename": "artifacts.zip",
+  "versioned": false,
+  "storage": "external local backup outside Git worktrees",
+  "original_repository_path": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/artifacts.zip",
+  "bytes": 54650696,
+  "sha256": "5b49c09234f6377e5f1e1d41ab92c911f5fcb5a6f25de7df04d0bbb03553f92a",
+  "original_git_blob": "3f4a2ad95ac5e58749daa1cd37dd114a96f2e717",
+  "original_documentation_commit": "0b759f6ce82516d08f9134ccea540b57f34a2549",
+  "tested_commit": "04fa083822f1b9e297092a9fa3507f9c8bbe3d08",
+  "backup_reference": "refs/heads/backup/TA-045-e2e-before-zip-exclusion-0b759f6",
+  "backup_root_label": "newglass-evidence-backups/TA-045/0b759f6ce82516d08f9134ccea540b57f34a2549",
+  "path_relative_to_backup_root": "docs/evidence/sprint-02/TA-045/global-e2e/run-01/artifacts.zip",
+  "external_checksum_manifest": "EXTERNAL-SHA256SUMS",
+  "artifact_inventory": "artifact-inventory.json",
+  "playwright_artifacts": 623,
+  "additional_entry": "execution.raw.txt",
+  "availability": "not included in a clean clone; requires the external backup for HTML, captures and raw output",
+  "versioned_certification": "protocol/context.json, plan.json, b02.json, remaining.json and validation.json remain byte-identical"
+}
