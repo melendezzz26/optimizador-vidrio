@@ -1,0 +1,92 @@
+.......................................F................................ [ 27%]
+........................................................................ [ 54%]
+........................................................................ [ 81%]
+..................................................                       [100%]
+=================================== FAILURES ===================================
+_ test_frozen_input_envelope_has_independent_version_hash_and_immutable_metadata _
+
+snapshot = {'comparison_snapshot_version': 2, 'configuration_id': 1, 'configuration_version': 1, 'engine_parameters': {'M6-BS': {'width': 2}}, ...}
+
+    def decode_comparison_input_v2(snapshot: Mapping):
+        """B01 input envelope only; mutable runtime/DB metadata belongs to B02/B05."""
+        try:
+            value = json.loads(canonical_json(snapshot))
+            if not isinstance(value, dict) or set(value) != {
+                "comparison_snapshot_version", "profile", "methods", "input", "input_sha256",
+                "configuration_id", "configuration_version", "requested_pieces", "minimum_width_mm",
+                "minimum_height_mm", "engine_parameters"
+            } or type(value["comparison_snapshot_version"]) is not int or value["comparison_snapshot_version"] != 2:
+                raise ValueError("Invalid comparison input envelope")
+            problem = decode_problem(value["input"])
+            parameters = value["engine_parameters"]
+            if (value["profile"] != "comparison-v2" or value["input_sha256"] != problem_fingerprint(problem)
+                    or parameters != {"M6-BS": {"width": 2}}
+                    or type(parameters["M6-BS"]["width"]) is not int):
+                raise ValueError("Input fingerprint/profile/BS-2 variant mismatch")
+>           return ComparisonInputV2(problem=problem, methods=tuple(value["methods"]),
+                configuration_id=value["configuration_id"], configuration_version=value["configuration_version"],
+                requested_pieces=value["requested_pieces"], minimum_width_mm=value["minimum_width_mm"],
+                minimum_height_mm=value["minimum_height_mm"])
+
+app/modules/optimization/infrastructure/comparison_v2_snapshot.py:84:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app/modules/optimization/application/comparison_v2_contracts.py:100: in __post_init__
+    value = decimal_value(getattr(self, name), name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = '1', label = 'minimum_width_mm', positive = False
+
+    def decimal_value(value: Decimal | int, label: str, *, positive=False) -> Decimal:
+        # No implicit binary-float conversion for thickness, area or configuration.
+        if type(value) not in (Decimal, int):
+>           raise ValueError(f"{label} must be Decimal or int.")
+E           ValueError: minimum_width_mm must be Decimal or int.
+
+app/modules/optimization/domain/problem.py:32: ValueError
+
+The above exception was the direct cause of the following exception:
+
+wire = {'provenance': {'scope': 'B01 contract example; not public six-engine integration', 'results': 'six direct production ... 2}}, ...}, 'accepted': {'profile': 'comparison-v2', 'schema_version': 2, 'comparison_id': 43, 'version': 1, ...}, ...}
+
+    def test_frozen_input_envelope_has_independent_version_hash_and_immutable_metadata(wire):
+        value = frozen_input(wire)
+        encoded = encode_comparison_input_v2(value)
+        assert encoded["comparison_snapshot_version"] == 2 and encoded["input"]["input_version"] == 1
+        assert encoded["engine_parameters"] == {"M6-BS": {"width": 2}}
+>       assert decode_comparison_input_v2(encoded) == value
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/optimization/test_comparison_v2_contract.py:192:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+snapshot = {'comparison_snapshot_version': 2, 'configuration_id': 1, 'configuration_version': 1, 'engine_parameters': {'M6-BS': {'width': 2}}, ...}
+
+    def decode_comparison_input_v2(snapshot: Mapping):
+        """B01 input envelope only; mutable runtime/DB metadata belongs to B02/B05."""
+        try:
+            value = json.loads(canonical_json(snapshot))
+            if not isinstance(value, dict) or set(value) != {
+                "comparison_snapshot_version", "profile", "methods", "input", "input_sha256",
+                "configuration_id", "configuration_version", "requested_pieces", "minimum_width_mm",
+                "minimum_height_mm", "engine_parameters"
+            } or type(value["comparison_snapshot_version"]) is not int or value["comparison_snapshot_version"] != 2:
+                raise ValueError("Invalid comparison input envelope")
+            problem = decode_problem(value["input"])
+            parameters = value["engine_parameters"]
+            if (value["profile"] != "comparison-v2" or value["input_sha256"] != problem_fingerprint(problem)
+                    or parameters != {"M6-BS": {"width": 2}}
+                    or type(parameters["M6-BS"]["width"]) is not int):
+                raise ValueError("Input fingerprint/profile/BS-2 variant mismatch")
+            return ComparisonInputV2(problem=problem, methods=tuple(value["methods"]),
+                configuration_id=value["configuration_id"], configuration_version=value["configuration_version"],
+                requested_pieces=value["requested_pieces"], minimum_width_mm=value["minimum_width_mm"],
+                minimum_height_mm=value["minimum_height_mm"])
+        except (KeyError, TypeError, ValueError, ArithmeticError, OverflowError) as error:
+>           raise ComparisonSnapshotError("Entrada comparison-v2 inválida o incoherente") from error
+E           app.modules.optimization.infrastructure.comparison_snapshot.ComparisonSnapshotError: Entrada comparison-v2 inválida o incoherente
+
+app/modules/optimization/infrastructure/comparison_v2_snapshot.py:89: ComparisonSnapshotError
+=========================== short test summary info ============================
+FAILED tests/unit/optimization/test_comparison_v2_contract.py::test_frozen_input_envelope_has_independent_version_hash_and_immutable_metadata
+1 failed, 265 passed in 44.23s

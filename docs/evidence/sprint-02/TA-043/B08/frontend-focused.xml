@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="54" failures="0" errors="0" time="7.9707571">
+    <testsuite name="src/features/optimization/__tests__/ComparisonApiV2.test.jsx" timestamp="2026-11-04T13:14:45.458Z" hostname="LAPTOP-0G82G9DF" tests="4" failures="0" errors="0" skipped="0" time="0.0165062">
+        <testcase classname="src/features/optimization/__tests__/ComparisonApiV2.test.jsx" name="v2 selection and confirmation use the approved bodies and validate receipt ownership" time="0.00844">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonApiV2.test.jsx" name="v2 start, ID/key recovery and execution reads stay on the explicit v2 paths" time="0.0035169">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonApiV2.test.jsx" name="manifest pages and mask windows preserve comparison/execution/method ownership" time="0.0023308">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonApiV2.test.jsx" name="a mask descriptor from another engine is rejected before any HTTP request" time="0.0009158">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/features/optimization/__tests__/ComparisonContract.test.jsx" timestamp="2026-11-04T13:14:45.466Z" hostname="LAPTOP-0G82G9DF" tests="2" failures="0" errors="0" skipped="0" time="0.0136072">
+        <testcase classname="src/features/optimization/__tests__/ComparisonContract.test.jsx" name="shared real-engine fixture is accepted without widening legacy FF" time="0.0107739">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonContract.test.jsx" name="cross-execution masks and results are rejected" time="0.0012085">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/features/optimization/__tests__/ComparisonLifecycle.test.jsx" timestamp="2026-11-04T13:14:45.466Z" hostname="LAPTOP-0G82G9DF" tests="10" failures="0" errors="0" skipped="0" time="0.0852874">
+        <testcase classname="src/features/optimization/__tests__/ComparisonLifecycle.test.jsx" name="acknowledged confirmation clears transient state and storage once, preserving only success and pending orders" time="0.0101886">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonLifecycle.test.jsx" name="failed confirmation status 409 retains the work and shows no success" time="0.0016838">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonLifecycle.test.jsx" name="failed confirmation status 500 retains the work and shows no success" time="0.0011812">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonLifecycle.test.jsx" name="failed confirmation status 503 retains the work and shows no success" time="0.0011001">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonLifecycle.test.jsx" name="failed confirmation status 0 retains the work and shows no success" time="0.0011174">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonLifecycle.test.jsx" name="ambiguous confirmation recovers committed backend state by GET without posting another confirmation" time="0.0012581">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonLifecycle.test.jsx" name="late visual replies cannot restore a work after confirmation" time="0.0620834">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonLifecycle.test.jsx" name="confirmed history is consultable explicitly and cannot be selected or confirmed again" time="0.0023481">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonLifecycle.test.jsx" name="release returns to pending without confirming and clearing the view does not delete history" time="0.0021122">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonLifecycle.test.jsx" name="an automatically recovered confirmed work is cleared rather than restored as an active operation" time="0.0008474">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" timestamp="2026-11-04T13:14:45.469Z" hostname="LAPTOP-0G82G9DF" tests="21" failures="0" errors="0" skipped="0" time="0.0302897">
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="backend fixture and frontend catalog share exact identities, names, order and capabilities" time="0.0038405">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="invalid method selection undefined is rejected" time="0.001283">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="invalid method selection &quot;AUTO&quot; is rejected" time="0.00062">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="invalid method selection &quot;BRF&quot; is rejected" time="0.000543">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="invalid method selection &quot;BS-2&quot; is rejected" time="0.0003531">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="invalid method selection &quot;FF&quot; is rejected" time="0.0002355">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="invalid method selection true is rejected" time="0.0002434">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="profile catalogs remain separate and require a complete set explicitly" time="0.0005559">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="shared accepted, completed, partial and failed examples round-trip without mutating bytes" time="0.0096143">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="legacy parsers remain strict and v1 history is still accepted" time="0.0018683">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="inconsistent method is rejected" time="0.0005692">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="inconsistent duplicate is rejected" time="0.0021273">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="inconsistent id is rejected" time="0.0005003">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="inconsistent selection is rejected" time="0.0005626">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="inconsistent supervisor is rejected" time="0.0003828">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="inconsistent outcome is rejected" time="0.0004763">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="inconsistent diagnostic is rejected" time="0.0003041">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="array position never defines execution identity" time="0.0009067">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="partial resource termination is not NO_FIT and failures do not fabricate metrics" time="0.0009148">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="M6 progress has no provisional placements and persisted results keep execution scope" time="0.0009682">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonV2Contract.test.jsx" name="v2 masks retain their comparison, execution and method identities" time="0.0012946">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/features/optimization/__tests__/ComparisonWorkspace.test.jsx" timestamp="2026-11-04T13:14:45.479Z" hostname="LAPTOP-0G82G9DF" tests="8" failures="0" errors="0" skipped="0" time="4.0907697">
+        <testcase classname="src/features/optimization/__tests__/ComparisonWorkspace.test.jsx" name="default workspace has four stable tabs, real phases and no automatic choice" time="2.3124886">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonWorkspace.test.jsx" name="manual BF selection, original measures and confirmation use the same work" time="0.7138986">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonWorkspace.test.jsx" name="reload recovers the saved comparison without starting another calculation" time="0.2047665">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonWorkspace.test.jsx" name="configuration rejection retains selected orders and does not invent an execution" time="0.0572543">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonWorkspace.test.jsx" name="failed engine has no fake zero metrics and successful results stay eligible" time="0.1716803">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonWorkspace.test.jsx" name="no compatible stock identifies every affected material group and never offers confirmation" time="0.1875009">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonWorkspace.test.jsx" name="FF failure does not prevent confirming BF and returning to a clean pending selector" time="0.3227617">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonWorkspace.test.jsx" name="ambiguous acceptance is recovered by request key without submitting another calculation" time="0.1187999">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/features/optimization/__tests__/ComparisonWorkspaceV2.test.jsx" timestamp="2026-11-04T13:14:45.481Z" hostname="LAPTOP-0G82G9DF" tests="9" failures="0" errors="0" skipped="0" time="3.7342969">
+        <testcase classname="src/features/optimization/__tests__/ComparisonWorkspaceV2.test.jsx" name="comparison-v2 reuses seven dynamic tabs and requires a manual choice before confirmation" time="0.5089746">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonWorkspaceV2.test.jsx" name="manual v2 confirmation keeps history after reload, lost response=false" time="0.6185245">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonWorkspaceV2.test.jsx" name="manual v2 confirmation keeps history after reload, lost response=true" time="0.6778803">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonWorkspaceV2.test.jsx" name="v2 conflict refreshes durable state and preserves the manual selection" time="0.4292971">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonWorkspaceV2.test.jsx" name="a network failure before commit retains the same idempotent operation on retry" time="0.6176344">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonWorkspaceV2.test.jsx" name="v2 confirmation requires the confirmation permission" time="0.1298405">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonWorkspaceV2.test.jsx" name="partial M6 and failed HF remain independent and retain their actual diagnostics" time="0.328213">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonWorkspaceV2.test.jsx" name="reloading a v2 comparison consults its durable ID without starting another comparison" time="0.1228944">
+        </testcase>
+        <testcase classname="src/features/optimization/__tests__/ComparisonWorkspaceV2.test.jsx" name="explicit idempotency-key recovery uses the v2 profile without starting a second comparison" time="0.2995615">
+        </testcase>
+    </testsuite>
+</testsuites>

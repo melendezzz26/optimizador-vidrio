@@ -13,10 +13,11 @@ from main import app
 def test_live_does_not_touch_database(monkeypatch):
     def forbidden(*args, **kwargs):
         pytest.fail("Liveness intentó conectar a BD")
-    monkeypatch.setattr(Engine, "connect", forbidden)
-    monkeypatch.setattr(Engine, "raw_connection", forbidden)
-    monkeypatch.setattr(health, "check_database", forbidden)
     with TestClient(app) as client:
+        # B05 startup recovery reads durable ownership; the liveness request itself must not.
+        monkeypatch.setattr(Engine, "connect", forbidden)
+        monkeypatch.setattr(Engine, "raw_connection", forbidden)
+        monkeypatch.setattr(health, "check_database", forbidden)
         response = client.get("/health/live")
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}

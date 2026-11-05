@@ -1,0 +1,406 @@
+{
+  "comparison_id": 1,
+  "input_sha256": "70b02389fcee9ab7c2564d89127dbec832ed6324bd39a5db421dc42bf9e379e1",
+  "problem": {
+    "input_version": 1,
+    "problem": {
+      "config": {
+        "angular_step_deg": "5.00",
+        "margin_mm": "0.00",
+        "resolution_mm": "1.000",
+        "separation_mm": "0.00"
+      },
+      "groups": [
+        {
+          "glass_type_id": 7,
+          "stock_candidates": [
+            {
+              "area_mm2": "8.0000",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 4
+              },
+              "glass_type_id": 7,
+              "material_id": 5,
+              "physical_unit_index": 1,
+              "source": "PLANCHA",
+              "thickness_mm": "6.0"
+            },
+            {
+              "area_mm2": "8.0000",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 4
+              },
+              "glass_type_id": 7,
+              "material_id": 5,
+              "physical_unit_index": 2,
+              "source": "PLANCHA",
+              "thickness_mm": "6.0"
+            }
+          ],
+          "thickness_mm": "6.0",
+          "units": [
+            {
+              "area_mm2": "4.00",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 2
+              },
+              "glass_type_id": 7,
+              "order_id": 1,
+              "piece_id": 1,
+              "thickness_mm": "6.0",
+              "unit_index": 1
+            },
+            {
+              "area_mm2": "4.00",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 2
+              },
+              "glass_type_id": 7,
+              "order_id": 1,
+              "piece_id": 1,
+              "thickness_mm": "6.0",
+              "unit_index": 2
+            },
+            {
+              "area_mm2": "4.00",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 2
+              },
+              "glass_type_id": 7,
+              "order_id": 2,
+              "piece_id": 2,
+              "thickness_mm": "6.0",
+              "unit_index": 1
+            },
+            {
+              "area_mm2": "4.00",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 2
+              },
+              "glass_type_id": 7,
+              "order_id": 2,
+              "piece_id": 2,
+              "thickness_mm": "6.0",
+              "unit_index": 2
+            }
+          ]
+        }
+      ],
+      "order_ids": [
+        1,
+        2
+      ]
+    }
+  },
+  "methods": [
+    "FF",
+    "BF",
+    "WF",
+    "HF",
+    "M5",
+    "M6-BS"
+  ],
+  "configuration_id": 1,
+  "configuration_version": 1,
+  "angular_step_deg": "5.00",
+  "states": [
+    {
+      "execution_id": 1,
+      "method": "FF",
+      "status": "FALLIDA",
+      "dispatch": "TERMINATED",
+      "complete": false,
+      "diagnostic": {
+        "origin": "SUPERVISOR",
+        "termination_reason": "CANCELLED",
+        "statistics": {
+          "runtime_dispatched": 1,
+          "runtime_engine_started": 1
+        }
+      },
+      "placed_units": null
+    },
+    {
+      "execution_id": 2,
+      "method": "BF",
+      "status": "FALLIDA",
+      "dispatch": "TERMINATED",
+      "complete": false,
+      "diagnostic": {
+        "origin": "SUPERVISOR",
+        "termination_reason": "CANCELLED",
+        "statistics": {
+          "runtime_dispatched": 0,
+          "runtime_engine_started": 0
+        }
+      },
+      "placed_units": null
+    },
+    {
+      "execution_id": 3,
+      "method": "WF",
+      "status": "FALLIDA",
+      "dispatch": "TERMINATED",
+      "complete": false,
+      "diagnostic": {
+        "origin": "SUPERVISOR",
+        "termination_reason": "CANCELLED",
+        "statistics": {
+          "runtime_dispatched": 0,
+          "runtime_engine_started": 0
+        }
+      },
+      "placed_units": null
+    },
+    {
+      "execution_id": 4,
+      "method": "HF",
+      "status": "FALLIDA",
+      "dispatch": "TERMINATED",
+      "complete": false,
+      "diagnostic": {
+        "origin": "SUPERVISOR",
+        "termination_reason": "CANCELLED",
+        "statistics": {
+          "runtime_dispatched": 0,
+          "runtime_engine_started": 0
+        }
+      },
+      "placed_units": null
+    },
+    {
+      "execution_id": 5,
+      "method": "M5",
+      "status": "FALLIDA",
+      "dispatch": "TERMINATED",
+      "complete": false,
+      "diagnostic": {
+        "origin": "SUPERVISOR",
+        "termination_reason": "CANCELLED",
+        "statistics": {
+          "runtime_dispatched": 0,
+          "runtime_engine_started": 0
+        }
+      },
+      "placed_units": null
+    },
+    {
+      "execution_id": 6,
+      "method": "M6-BS",
+      "status": "FALLIDA",
+      "dispatch": "TERMINATED",
+      "complete": false,
+      "diagnostic": {
+        "origin": "SUPERVISOR",
+        "termination_reason": "CANCELLED",
+        "statistics": {
+          "runtime_dispatched": 0,
+          "runtime_engine_started": 0
+        }
+      },
+      "placed_units": null
+    }
+  ],
+  "timeline": [
+    {
+      "kind": "supervisor_started",
+      "monotonic": 102.878641974,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "execution_failed",
+      "monotonic": 104.507501939,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "execution_failed",
+      "monotonic": 104.516795216,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "execution_failed",
+      "monotonic": 104.524855316,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "execution_failed",
+      "monotonic": 104.533444715,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "execution_failed",
+      "monotonic": 104.541129206,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "execution_failed",
+      "monotonic": 104.549041194,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "supervisor_returning",
+      "monotonic": 104.549566413,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "supervisor_joined",
+      "monotonic": 104.549713562,
+      "thread": "comparison-v2-owner-1"
+    },
+    {
+      "kind": "processes_verified",
+      "monotonic": 104.552311669,
+      "thread": "comparison-v2-owner-1"
+    },
+    {
+      "kind": "safe_close_committed",
+      "monotonic": 104.562642804,
+      "thread": "comparison-v2-owner-1"
+    },
+    {
+      "kind": "admission_released",
+      "monotonic": 104.562649231,
+      "thread": "comparison-v2-owner-1"
+    }
+  ],
+  "processes": {
+    "maximum_active_workers": 1,
+    "maximum_queued_packets": 0,
+    "maximum_packet_bytes": 227,
+    "maximum_aggregate_rss": 149508096,
+    "supervisor_peak_rss": 99356672,
+    "maximum_worker_virtual": 48795648,
+    "samples": 63,
+    "maximum_sample_gap_ms": 25.5470430000031,
+    "budget": {
+      "aggregate_rss_bytes": 1073741824,
+      "worker_address_bytes": 268435456,
+      "supervisor_rss_bytes": 251658240,
+      "helper_reserve_bytes": 16777216,
+      "packet_bytes": 12582912,
+      "visual_packet_bytes": 4194304,
+      "queued_packets_per_worker": 1,
+      "retained_visual_bytes": 33554432,
+      "retained_event_bytes": 8388608,
+      "startup_seconds": 30,
+      "calculation_seconds": 120,
+      "global_seconds": 2
+    },
+    "all_workers_stopped": true,
+    "global_reason": "CANCELLED",
+    "executions": {
+      "FF": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 1,
+          "method": "FF"
+        },
+        "state": "TERMINATED",
+        "dispatched": true,
+        "engine_started": true,
+        "identity": {
+          "pid": 705,
+          "start_ticks": "10289"
+        },
+        "launched_monotonic": 102.883577312,
+        "queue_ms": 1.1508230000032427,
+        "descendants": [],
+        "peak_rss": 33374208,
+        "peak_virtual": 48795648,
+        "startup_ms": 1576.9380220000073,
+        "limit_detected_monotonic": 104.496432183,
+        "identity_after": null,
+        "exitcode": -15,
+        "descendants_after": [],
+        "cleanup_ms": 1.5602309999991348,
+        "elapsed_ms": 1602.4208190000024,
+        "execution_external_wall_ms": 19.388113999994516,
+        "stopped_monotonic": 104.498436822,
+        "reason": "CANCELLED"
+      },
+      "BF": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 2,
+          "method": "BF"
+        },
+        "state": "TERMINATED",
+        "dispatched": false,
+        "engine_started": false,
+        "identity": null,
+        "reason": "CANCELLED"
+      },
+      "WF": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 3,
+          "method": "WF"
+        },
+        "state": "TERMINATED",
+        "dispatched": false,
+        "engine_started": false,
+        "identity": null,
+        "reason": "CANCELLED"
+      },
+      "HF": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 4,
+          "method": "HF"
+        },
+        "state": "TERMINATED",
+        "dispatched": false,
+        "engine_started": false,
+        "identity": null,
+        "reason": "CANCELLED"
+      },
+      "M5": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 5,
+          "method": "M5"
+        },
+        "state": "TERMINATED",
+        "dispatched": false,
+        "engine_started": false,
+        "identity": null,
+        "reason": "CANCELLED"
+      },
+      "M6-BS": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 6,
+          "method": "M6-BS"
+        },
+        "state": "TERMINATED",
+        "dispatched": false,
+        "engine_started": false,
+        "identity": null,
+        "reason": "CANCELLED"
+      }
+    },
+    "elapsed_ms": 1666.6447110000036,
+    "retained_bytes": {
+      "visual": 0,
+      "event": 0
+    },
+    "evicted_observations": {
+      "visual": 0,
+      "event": 0
+    }
+  },
+  "retained_event_bytes": 2044,
+  "retained_visual_bytes": 0
+}

@@ -13,6 +13,7 @@ import time
 
 from ..application.admission import OptimizerBusy
 from ..application.comparison_calculation import CalculateComparison
+from ..application.comparison_contracts import ComparisonSignal
 from ..application.errors import RunError, WorkersNotStopped
 from ..application.visual import MAX_EVENT_BYTES
 from ..domain.problem import Placement
@@ -226,8 +227,9 @@ class ComparisonJob:
 
 
 class ComparisonRuntime:
-    def __init__(self, runner_factory=ComparisonProcessRunner):
+    def __init__(self, runner_factory=ComparisonProcessRunner, *, retention=None):
         self.runner_factory, self.lock, self.job = runner_factory, RLock(), None
+        self.retention = retention
 
     def reserve(self):
         with self.lock:
@@ -242,11 +244,15 @@ class ComparisonRuntime:
             runner.preflight()
             self.job = ComparisonJob(runner.budget)
             self.job.runner = runner
+            if self.retention is not None:
+                self.retention.replace(self.job)
             return self.job
 
     def abort(self, job):
         with self.lock:
             job.dispose()
+            if self.retention is not None:
+                self.retention.clear(job)
             if self.job is job:
                 self.job = None
 
@@ -255,20 +261,21 @@ class ComparisonRuntime:
         job.lease = lease
         job.uow = uow
         def work():
-            safe = True
             try:
-                CalculateComparison(uow, job.runner).execute(comparison.comparison_id, job.accept, cancel=job.cancel)
+                CalculateComparison(uow, job.runner).execute(comparison.comparison_id, job.accept, cancel=job.cancel,defer_finish=True)
             except WorkersNotStopped:
-                safe, job.unsafe = False, True
+                job.unsafe = True
                 logger.exception("Comparison termination requires reconciliation")
             except Exception:
+                job.unsafe = True
                 logger.exception("Comparison supervisor requires persisted-state reconciliation")
-            finally:
-                if safe:
-                    job.finish()
-                    lease.release()
+        def reap():
+            job.thread.join()
+            self.stopped(comparison.comparison_id)
         job.thread = Thread(target=work, name=f"comparison-supervisor-{comparison.comparison_id}", daemon=True)
         job.thread.start()
+        job.reaper = Thread(target=reap,name=f"comparison-owner-{comparison.comparison_id}",daemon=True)
+        job.reaper.start()
 
     def get(self, comparison_id):
         with self.lock:
@@ -284,6 +291,12 @@ class ComparisonRuntime:
                 return False
         if job.thread is not None and job.thread.is_alive():
             return False
+        if job.finished:
+            return True
+        report = job.runner.last_report or {}
+        if report and not report.get("all_workers_stopped"):
+            job.unsafe = True
+            return False  # Dead PIDs alone do not prove readers/monitor have joined.
         if job.unsafe:
             owned = (job.runner.last_report or {}).get("owned_processes", {})
             if not owned:
@@ -293,8 +306,19 @@ class ComparisonRuntime:
                 if actual is not None and (identity["start_ticks"] is None or actual == identity):
                     return False
             job.unsafe = False
-            job.finish()
-            job.lease.release()
+        try:
+            with self.lock:
+                if job.finished: return True
+                with job.uow() as tx:
+                    closed = tx.comparisons.reconcile_stopped(comparison_id,supervisor_stopped=True)
+                job.accept(ComparisonSignal(comparison_id=comparison_id,execution_id=None,
+                    method=None,kind="comparison_finished",payload=closed))
+                job.finish()
+                job.lease.release()
+        except Exception:
+            job.unsafe=True
+            logger.exception("V1 external owner could not commit safe closure")
+            return False
         return job.finished
 
     def shutdown(self):
@@ -302,6 +326,10 @@ class ComparisonRuntime:
         if job and job.thread and job.thread.is_alive():
             job.cancel.set()
             job.thread.join(timeout=15)
+        if job and job.comparison is not None:
+            self.stopped(job.comparison.comparison_id)
+            reaper=getattr(job,'reaper',None)
+            if reaper is not None: reaper.join(timeout=15)
 
 
 class Observation:

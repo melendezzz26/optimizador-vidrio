@@ -1,0 +1,51 @@
+......FFFFFF............................................................ [ 67%]
+.............................F.F..                                       [100%]
+=================================== FAILURES ===================================
+___ test_direct_and_adapted_parity_including_native_observation[problem1-FF] ___
+tests/unit/optimization/test_engine_execution.py:43: in test_direct_and_adapted_parity_including_native_observation
+    assert adapted.error_type is None and adapted.payload.result is not None
+E   AssertionError: assert ('ValueError' is None)
+E    +  where 'ValueError' = AdaptedExecution(scope=ExecutionScope(comparison_id=43, execution_id=4301, method='FF'), payload=ExecutionPayloadV2(me...ED', statistics=mappingproxy({}))), residuals=(), beam_outcome=None, observer_error_type=None, error_type='ValueError').error_type
+___ test_direct_and_adapted_parity_including_native_observation[problem1-BF] ___
+tests/unit/optimization/test_engine_execution.py:43: in test_direct_and_adapted_parity_including_native_observation
+    assert adapted.error_type is None and adapted.payload.result is not None
+E   AssertionError: assert ('ValueError' is None)
+E    +  where 'ValueError' = AdaptedExecution(scope=ExecutionScope(comparison_id=43, execution_id=4301, method='BF'), payload=ExecutionPayloadV2(me...ED', statistics=mappingproxy({}))), residuals=(), beam_outcome=None, observer_error_type=None, error_type='ValueError').error_type
+___ test_direct_and_adapted_parity_including_native_observation[problem1-WF] ___
+tests/unit/optimization/test_engine_execution.py:43: in test_direct_and_adapted_parity_including_native_observation
+    assert adapted.error_type is None and adapted.payload.result is not None
+E   AssertionError: assert ('ValueError' is None)
+E    +  where 'ValueError' = AdaptedExecution(scope=ExecutionScope(comparison_id=43, execution_id=4301, method='WF'), payload=ExecutionPayloadV2(me...ED', statistics=mappingproxy({}))), residuals=(), beam_outcome=None, observer_error_type=None, error_type='ValueError').error_type
+___ test_direct_and_adapted_parity_including_native_observation[problem1-HF] ___
+tests/unit/optimization/test_engine_execution.py:43: in test_direct_and_adapted_parity_including_native_observation
+    assert adapted.error_type is None and adapted.payload.result is not None
+E   AssertionError: assert ('ValueError' is None)
+E    +  where 'ValueError' = AdaptedExecution(scope=ExecutionScope(comparison_id=43, execution_id=4301, method='HF'), payload=ExecutionPayloadV2(me...ED', statistics=mappingproxy({}))), residuals=(), beam_outcome=None, observer_error_type=None, error_type='ValueError').error_type
+___ test_direct_and_adapted_parity_including_native_observation[problem1-M5] ___
+tests/unit/optimization/test_engine_execution.py:43: in test_direct_and_adapted_parity_including_native_observation
+    assert adapted.error_type is None and adapted.payload.result is not None
+E   AssertionError: assert ('ValueError' is None)
+E    +  where 'ValueError' = AdaptedExecution(scope=ExecutionScope(comparison_id=43, execution_id=4301, method='M5'), payload=ExecutionPayloadV2(me...ED', statistics=mappingproxy({}))), residuals=(), beam_outcome=None, observer_error_type=None, error_type='ValueError').error_type
+_ test_direct_and_adapted_parity_including_native_observation[problem1-M6-BS] __
+tests/unit/optimization/test_engine_execution.py:43: in test_direct_and_adapted_parity_including_native_observation
+    assert adapted.error_type is None and adapted.payload.result is not None
+E   AssertionError: assert ('ValueError' is None)
+E    +  where 'ValueError' = AdaptedExecution(scope=ExecutionScope(comparison_id=43, execution_id=4301, method='M6-BS'), payload=ExecutionPayloadV2...129696}, trace=((0, 0, 0, 0, 0), (0, 1, 0, 0, 0), (0, 2, 0, 0, 0))), observer_error_type=None, error_type='ValueError').error_type
+_ test_hf_chosen_solution_and_protection_flags_match_direct[differentiating_problem-accepted_pocket] _
+tests/unit/optimization/test_engine_execution.py:186: in test_hf_chosen_solution_and_protection_flags_match_direct
+    assert result.payload.diagnostic.statistics[flag] > 0
+E   assert 0 > 0
+_ test_hf_chosen_solution_and_protection_flags_match_direct[sheet_problem-sheet_fallback] _
+tests/unit/optimization/test_engine_execution.py:186: in test_hf_chosen_solution_and_protection_flags_match_direct
+    assert result.payload.diagnostic.statistics[flag] > 0
+E   assert 0 > 0
+=========================== short test summary info ============================
+FAILED tests/unit/optimization/test_engine_execution.py::test_direct_and_adapted_parity_including_native_observation[problem1-FF]
+FAILED tests/unit/optimization/test_engine_execution.py::test_direct_and_adapted_parity_including_native_observation[problem1-BF]
+FAILED tests/unit/optimization/test_engine_execution.py::test_direct_and_adapted_parity_including_native_observation[problem1-WF]
+FAILED tests/unit/optimization/test_engine_execution.py::test_direct_and_adapted_parity_including_native_observation[problem1-HF]
+FAILED tests/unit/optimization/test_engine_execution.py::test_direct_and_adapted_parity_including_native_observation[problem1-M5]
+FAILED tests/unit/optimization/test_engine_execution.py::test_direct_and_adapted_parity_including_native_observation[problem1-M6-BS]
+FAILED tests/unit/optimization/test_engine_execution.py::test_hf_chosen_solution_and_protection_flags_match_direct[differentiating_problem-accepted_pocket]
+FAILED tests/unit/optimization/test_engine_execution.py::test_hf_chosen_solution_and_protection_flags_match_direct[sheet_problem-sheet_fallback]
+8 failed, 98 passed in 5.41s

@@ -1,0 +1,567 @@
+{
+  "comparison_id": 1,
+  "input_sha256": "70b02389fcee9ab7c2564d89127dbec832ed6324bd39a5db421dc42bf9e379e1",
+  "problem": {
+    "input_version": 1,
+    "problem": {
+      "config": {
+        "angular_step_deg": "5.00",
+        "margin_mm": "0.00",
+        "resolution_mm": "1.000",
+        "separation_mm": "0.00"
+      },
+      "groups": [
+        {
+          "glass_type_id": 7,
+          "stock_candidates": [
+            {
+              "area_mm2": "8.0000",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 4
+              },
+              "glass_type_id": 7,
+              "material_id": 5,
+              "physical_unit_index": 1,
+              "source": "PLANCHA",
+              "thickness_mm": "6.0"
+            },
+            {
+              "area_mm2": "8.0000",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 4
+              },
+              "glass_type_id": 7,
+              "material_id": 5,
+              "physical_unit_index": 2,
+              "source": "PLANCHA",
+              "thickness_mm": "6.0"
+            }
+          ],
+          "thickness_mm": "6.0",
+          "units": [
+            {
+              "area_mm2": "4.00",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 2
+              },
+              "glass_type_id": 7,
+              "order_id": 1,
+              "piece_id": 1,
+              "thickness_mm": "6.0",
+              "unit_index": 1
+            },
+            {
+              "area_mm2": "4.00",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 2
+              },
+              "glass_type_id": 7,
+              "order_id": 1,
+              "piece_id": 1,
+              "thickness_mm": "6.0",
+              "unit_index": 2
+            },
+            {
+              "area_mm2": "4.00",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 2
+              },
+              "glass_type_id": 7,
+              "order_id": 2,
+              "piece_id": 2,
+              "thickness_mm": "6.0",
+              "unit_index": 1
+            },
+            {
+              "area_mm2": "4.00",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 2
+              },
+              "glass_type_id": 7,
+              "order_id": 2,
+              "piece_id": 2,
+              "thickness_mm": "6.0",
+              "unit_index": 2
+            }
+          ]
+        }
+      ],
+      "order_ids": [
+        1,
+        2
+      ]
+    }
+  },
+  "methods": [
+    "FF",
+    "BF",
+    "WF",
+    "HF",
+    "M5",
+    "M6-BS"
+  ],
+  "configuration_id": 1,
+  "configuration_version": 1,
+  "angular_step_deg": "5.00",
+  "states": [
+    {
+      "execution_id": 1,
+      "method": "FF",
+      "status": "COMPLETADA",
+      "dispatch": "TERMINATED",
+      "complete": true,
+      "diagnostic": {
+        "origin": "ENGINE",
+        "termination_reason": "COMPLETED",
+        "statistics": {
+          "runtime_dispatched": 1,
+          "runtime_engine_started": 1
+        }
+      },
+      "placed_units": 4
+    },
+    {
+      "execution_id": 2,
+      "method": "BF",
+      "status": "COMPLETADA",
+      "dispatch": "TERMINATED",
+      "complete": true,
+      "diagnostic": {
+        "origin": "ENGINE",
+        "termination_reason": "COMPLETED",
+        "statistics": {
+          "runtime_dispatched": 1,
+          "runtime_engine_started": 1
+        }
+      },
+      "placed_units": 4
+    },
+    {
+      "execution_id": 3,
+      "method": "WF",
+      "status": "COMPLETADA",
+      "dispatch": "TERMINATED",
+      "complete": true,
+      "diagnostic": {
+        "origin": "ENGINE",
+        "termination_reason": "COMPLETED",
+        "statistics": {
+          "runtime_dispatched": 1,
+          "runtime_engine_started": 1
+        }
+      },
+      "placed_units": 4
+    },
+    {
+      "execution_id": 4,
+      "method": "HF",
+      "status": "COMPLETADA",
+      "dispatch": "TERMINATED",
+      "complete": true,
+      "diagnostic": {
+        "origin": "ENGINE",
+        "termination_reason": "COMPLETED",
+        "statistics": {
+          "accepted_pocket": 0,
+          "activation_attempts": 2,
+          "anchors_checked": 0,
+          "boundary_rows": 0,
+          "budget_exhausted": 0,
+          "check_rows": 0,
+          "coverage_fallback": 0,
+          "fallback_used": 4,
+          "max_region_anchors_observed": 0,
+          "max_region_checks_observed": 0,
+          "orientations_inspected": 4,
+          "placement_checks": 0,
+          "pocket_candidates": 0,
+          "runtime_dispatched": 1,
+          "runtime_engine_started": 1,
+          "seed_probes": 0,
+          "sheet_fallback": 0
+        }
+      },
+      "placed_units": 4
+    },
+    {
+      "execution_id": 5,
+      "method": "M5",
+      "status": "COMPLETADA",
+      "dispatch": "TERMINATED",
+      "complete": true,
+      "diagnostic": {
+        "origin": "ENGINE",
+        "termination_reason": "COMPLETED",
+        "statistics": {
+          "runtime_dispatched": 1,
+          "runtime_engine_started": 1
+        }
+      },
+      "placed_units": 4
+    },
+    {
+      "execution_id": 6,
+      "method": "M6-BS",
+      "status": "COMPLETADA",
+      "dispatch": "TERMINATED",
+      "complete": false,
+      "diagnostic": {
+        "origin": "ENGINE",
+        "termination_reason": "STATE_MEMORY_LIMIT",
+        "statistics": {
+          "alternatives_pruned": 0,
+          "completed_levels": 0,
+          "expansions": 0,
+          "geometry_probes": 0,
+          "max_frontier": 1,
+          "parents": 0,
+          "runtime_dispatched": 1,
+          "runtime_engine_started": 1,
+          "state_bytes_bound": 143808
+        }
+      },
+      "placed_units": 0
+    }
+  ],
+  "timeline": [
+    {
+      "kind": "supervisor_started",
+      "monotonic": 79.67569822,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "result_persisted",
+      "monotonic": 81.528439592,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "result_persisted",
+      "monotonic": 83.248367325,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "result_persisted",
+      "monotonic": 85.038417989,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "result_persisted",
+      "monotonic": 86.769120794,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "result_persisted",
+      "monotonic": 88.556488666,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "result_persisted",
+      "monotonic": 90.254327377,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "supervisor_returning",
+      "monotonic": 90.254849713,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "supervisor_joined",
+      "monotonic": 90.254912889,
+      "thread": "comparison-v2-owner-1"
+    },
+    {
+      "kind": "processes_verified",
+      "monotonic": 90.259715416,
+      "thread": "comparison-v2-owner-1"
+    },
+    {
+      "kind": "safe_close_committed",
+      "monotonic": 90.278627709,
+      "thread": "comparison-v2-owner-1"
+    },
+    {
+      "kind": "admission_released",
+      "monotonic": 90.278635741,
+      "thread": "comparison-v2-owner-1"
+    }
+  ],
+  "processes": {
+    "maximum_active_workers": 1,
+    "maximum_queued_packets": 1,
+    "maximum_packet_bytes": 4107,
+    "maximum_aggregate_rss": 150044672,
+    "supervisor_peak_rss": 99348480,
+    "maximum_worker_virtual": 49848320,
+    "samples": 404,
+    "maximum_sample_gap_ms": 50.378326000000584,
+    "budget": {
+      "aggregate_rss_bytes": 1073741824,
+      "worker_address_bytes": 268435456,
+      "supervisor_rss_bytes": 251658240,
+      "helper_reserve_bytes": 16777216,
+      "packet_bytes": 12582912,
+      "visual_packet_bytes": 4194304,
+      "queued_packets_per_worker": 1,
+      "retained_visual_bytes": 33554432,
+      "retained_event_bytes": 8388608,
+      "startup_seconds": 30,
+      "calculation_seconds": 120,
+      "global_seconds": 180
+    },
+    "all_workers_stopped": true,
+    "global_reason": null,
+    "executions": {
+      "FF": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 1,
+          "method": "FF"
+        },
+        "state": "TERMINATED",
+        "dispatched": true,
+        "engine_started": true,
+        "identity": {
+          "pid": 659,
+          "start_ticks": "7969"
+        },
+        "launched_monotonic": 79.680335901,
+        "queue_ms": 1.638578000012103,
+        "descendants": [],
+        "peak_rss": 33488896,
+        "peak_virtual": 49848320,
+        "startup_ms": 1767.9238709999936,
+        "worker_report": {
+          "address_limit_bytes": 268435456,
+          "ended_monotonic": 81.47778152,
+          "engine_stop_reason": null,
+          "error_type": null,
+          "maxrss_bytes": 97992704,
+          "observation_bytes": 15407,
+          "observations": 26,
+          "observer_error_type": null
+        },
+        "identity_after": null,
+        "exitcode": 0,
+        "descendants_after": [],
+        "cleanup_ms": 0.39261499999554417,
+        "elapsed_ms": 1825.3852669999874,
+        "execution_external_wall_ms": 51.65062700000078,
+        "stopped_monotonic": 81.519217852,
+        "reason": "COMPLETED"
+      },
+      "BF": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 2,
+          "method": "BF"
+        },
+        "state": "TERMINATED",
+        "dispatched": true,
+        "engine_started": true,
+        "identity": {
+          "pid": 662,
+          "start_ticks": "8154"
+        },
+        "launched_monotonic": 81.529508772,
+        "queue_ms": 1850.8114490000053,
+        "descendants": [],
+        "peak_rss": 33755136,
+        "peak_virtual": 49848320,
+        "startup_ms": 1639.629020000001,
+        "worker_report": {
+          "address_limit_bytes": 268435456,
+          "ended_monotonic": 83.197786887,
+          "engine_stop_reason": null,
+          "error_type": null,
+          "maxrss_bytes": 97992704,
+          "observation_bytes": 15323,
+          "observations": 26,
+          "observer_error_type": null
+        },
+        "identity_after": null,
+        "exitcode": 0,
+        "descendants_after": [],
+        "cleanup_ms": 0.4285629999998264,
+        "elapsed_ms": 1695.095809999998,
+        "execution_external_wall_ms": 49.887373999993656,
+        "stopped_monotonic": 83.237701261,
+        "reason": "COMPLETED"
+      },
+      "WF": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 3,
+          "method": "WF"
+        },
+        "state": "TERMINATED",
+        "dispatched": true,
+        "engine_started": true,
+        "identity": {
+          "pid": 665,
+          "start_ticks": "8326"
+        },
+        "launched_monotonic": 83.249568465,
+        "queue_ms": 3570.8711420000013,
+        "descendants": [],
+        "peak_rss": 33357824,
+        "peak_virtual": 48799744,
+        "startup_ms": 1644.9710130000028,
+        "worker_report": {
+          "address_limit_bytes": 268435456,
+          "ended_monotonic": 84.927145191,
+          "engine_stop_reason": null,
+          "error_type": null,
+          "maxrss_bytes": 97992704,
+          "observation_bytes": 15323,
+          "observations": 26,
+          "observer_error_type": null
+        },
+        "identity_after": null,
+        "exitcode": 0,
+        "descendants_after": [],
+        "cleanup_ms": 0.37240899999346766,
+        "elapsed_ms": 1758.5206360000002,
+        "execution_external_wall_ms": 107.22367099999985,
+        "stopped_monotonic": 85.025005602,
+        "reason": "COMPLETED"
+      },
+      "HF": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 4,
+          "method": "HF"
+        },
+        "state": "TERMINATED",
+        "dispatched": true,
+        "engine_started": true,
+        "identity": {
+          "pid": 668,
+          "start_ticks": "8505"
+        },
+        "launched_monotonic": 85.039708038,
+        "queue_ms": 5361.010715000006,
+        "descendants": [],
+        "peak_rss": 33947648,
+        "peak_virtual": 49848320,
+        "startup_ms": 1613.8201729999935,
+        "worker_report": {
+          "address_limit_bytes": 268435456,
+          "ended_monotonic": 86.695930748,
+          "engine_stop_reason": null,
+          "error_type": null,
+          "maxrss_bytes": 97992704,
+          "observation_bytes": 15511,
+          "observations": 26,
+          "observer_error_type": null
+        },
+        "identity_after": null,
+        "exitcode": 0,
+        "descendants_after": [],
+        "cleanup_ms": 0.5217249999986961,
+        "elapsed_ms": 1696.4182589999978,
+        "execution_external_wall_ms": 76.69592000000591,
+        "stopped_monotonic": 86.7554122,
+        "reason": "COMPLETED"
+      },
+      "M5": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 5,
+          "method": "M5"
+        },
+        "state": "TERMINATED",
+        "dispatched": true,
+        "engine_started": true,
+        "identity": {
+          "pid": 671,
+          "start_ticks": "8679"
+        },
+        "launched_monotonic": 86.770235487,
+        "queue_ms": 7091.538164,
+        "descendants": [],
+        "peak_rss": 33640448,
+        "peak_virtual": 49799168,
+        "startup_ms": 1669.957882999995,
+        "worker_report": {
+          "address_limit_bytes": 268435456,
+          "ended_monotonic": 88.47708838,
+          "engine_stop_reason": null,
+          "error_type": null,
+          "maxrss_bytes": 97992704,
+          "observation_bytes": 15323,
+          "observations": 26,
+          "observer_error_type": null
+        },
+        "identity_after": null,
+        "exitcode": 0,
+        "descendants_after": [],
+        "cleanup_ms": 0.5103640000072573,
+        "elapsed_ms": 1750.5611249999902,
+        "execution_external_wall_ms": 73.37028199999907,
+        "stopped_monotonic": 88.541389027,
+        "reason": "COMPLETED"
+      },
+      "M6-BS": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 6,
+          "method": "M6-BS"
+        },
+        "state": "TERMINATED",
+        "dispatched": true,
+        "engine_started": true,
+        "identity": {
+          "pid": 674,
+          "start_ticks": "8858"
+        },
+        "launched_monotonic": 88.557713607,
+        "queue_ms": 8879.016284000003,
+        "descendants": [],
+        "peak_rss": 33505280,
+        "peak_virtual": 48771072,
+        "startup_ms": 1628.026847000001,
+        "worker_report": {
+          "address_limit_bytes": 268435456,
+          "ended_monotonic": 90.217697,
+          "engine_stop_reason": "STATE_MEMORY_LIMIT",
+          "error_type": null,
+          "maxrss_bytes": 97992704,
+          "observation_bytes": 0,
+          "observations": 0,
+          "observer_error_type": null
+        },
+        "identity_after": null,
+        "exitcode": 0,
+        "descendants_after": [],
+        "cleanup_ms": 5.045005999988916,
+        "elapsed_ms": 1657.4499289999949,
+        "execution_external_wall_ms": 16.499439000000393,
+        "stopped_monotonic": 90.238871223,
+        "reason": "STATE_MEMORY_LIMIT"
+      }
+    },
+    "elapsed_ms": 10575.666351999998,
+    "retained_bytes": {
+      "visual": 0,
+      "event": 0
+    },
+    "evicted_observations": {
+      "visual": 0,
+      "event": 0
+    }
+  },
+  "retained_event_bytes": 79048,
+  "retained_visual_bytes": 96232
+}

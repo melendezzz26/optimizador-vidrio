@@ -1,0 +1,172 @@
+{
+  "config": {
+    "argv": [
+      "/home/fabri/.cache/newglass-validation.SXhCMM/node-v22.23.2-linux-x64/bin/node",
+      "/tmp/newglass-ta043-b06-rgjq3_ce/frontend/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config=playwright.b01.config.mjs",
+      "--grep",
+      "TA-043 B06"
+    ],
+    "configFile": "/tmp/newglass-ta043-b06-rgjq3_ce/frontend/playwright.b01.config.mjs",
+    "rootDir": "/tmp/newglass-ta043-b06-rgjq3_ce/frontend/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": "/tmp/newglass-ta043-b06-rgjq3_ce/frontend/tests/e2e/globalTeardown.js",
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/tmp/newglass-ta043-b06-rgjq3_ce/frontend/test-results/b01",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium-desktop",
+        "name": "chromium-desktop",
+        "testDir": "/tmp/newglass-ta043-b06-rgjq3_ce/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "optimization-comparison.spec.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/tmp/newglass-ta043-b06-rgjq3_ce/frontend/test-results/b01",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium-mobile",
+        "name": "chromium-mobile",
+        "testDir": "/tmp/newglass-ta043-b06-rgjq3_ce/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "optimization-comparison.spec.js"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "./test-results/b01-report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "optimization-comparison.spec.js",
+      "file": "optimization-comparison.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "TA-043 B06 smoke: API publica seis motores, recuperacion y compatibilidad real",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium-desktop",
+              "projectName": "chromium-desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9644,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-04T11:49:54.598Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5a81a45ccfe4ff4d1220-ee60197156acf4135880",
+          "file": "optimization-comparison.spec.js",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "title": "TA-043 B06 smoke: API publica seis motores, recuperacion y compatibilidad real",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium-mobile",
+              "projectName": "chromium-mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9142,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-04T11:50:05.240Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "5a81a45ccfe4ff4d1220-1fbd662fa766beed5dc6",
+          "file": "optimization-comparison.spec.js",
+          "line": 8,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-04T11:49:48.112Z",
+    "duration": 26954.383,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

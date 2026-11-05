@@ -1,0 +1,406 @@
+{
+  "comparison_id": 1,
+  "input_sha256": "70b02389fcee9ab7c2564d89127dbec832ed6324bd39a5db421dc42bf9e379e1",
+  "problem": {
+    "input_version": 1,
+    "problem": {
+      "config": {
+        "angular_step_deg": "5.00",
+        "margin_mm": "0.00",
+        "resolution_mm": "1.000",
+        "separation_mm": "0.00"
+      },
+      "groups": [
+        {
+          "glass_type_id": 7,
+          "stock_candidates": [
+            {
+              "area_mm2": "8.0000",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 4
+              },
+              "glass_type_id": 7,
+              "material_id": 5,
+              "physical_unit_index": 1,
+              "source": "PLANCHA",
+              "thickness_mm": "6.0"
+            },
+            {
+              "area_mm2": "8.0000",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 4
+              },
+              "glass_type_id": 7,
+              "material_id": 5,
+              "physical_unit_index": 2,
+              "source": "PLANCHA",
+              "thickness_mm": "6.0"
+            }
+          ],
+          "thickness_mm": "6.0",
+          "units": [
+            {
+              "area_mm2": "4.00",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 2
+              },
+              "glass_type_id": 7,
+              "order_id": 1,
+              "piece_id": 1,
+              "thickness_mm": "6.0",
+              "unit_index": 1
+            },
+            {
+              "area_mm2": "4.00",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 2
+              },
+              "glass_type_id": 7,
+              "order_id": 1,
+              "piece_id": 1,
+              "thickness_mm": "6.0",
+              "unit_index": 2
+            },
+            {
+              "area_mm2": "4.00",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 2
+              },
+              "glass_type_id": 7,
+              "order_id": 2,
+              "piece_id": 2,
+              "thickness_mm": "6.0",
+              "unit_index": 1
+            },
+            {
+              "area_mm2": "4.00",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 2
+              },
+              "glass_type_id": 7,
+              "order_id": 2,
+              "piece_id": 2,
+              "thickness_mm": "6.0",
+              "unit_index": 2
+            }
+          ]
+        }
+      ],
+      "order_ids": [
+        1,
+        2
+      ]
+    }
+  },
+  "methods": [
+    "FF",
+    "BF",
+    "WF",
+    "HF",
+    "M5",
+    "M6-BS"
+  ],
+  "configuration_id": 1,
+  "configuration_version": 1,
+  "angular_step_deg": "5.00",
+  "states": [
+    {
+      "execution_id": 1,
+      "method": "FF",
+      "status": "FALLIDA",
+      "dispatch": "TERMINATED",
+      "complete": false,
+      "diagnostic": {
+        "origin": "SUPERVISOR",
+        "termination_reason": "GLOBAL_TIME_LIMIT",
+        "statistics": {
+          "runtime_dispatched": 1,
+          "runtime_engine_started": 1
+        }
+      },
+      "placed_units": null
+    },
+    {
+      "execution_id": 2,
+      "method": "BF",
+      "status": "FALLIDA",
+      "dispatch": "TERMINATED",
+      "complete": false,
+      "diagnostic": {
+        "origin": "SUPERVISOR",
+        "termination_reason": "GLOBAL_TIME_LIMIT",
+        "statistics": {
+          "runtime_dispatched": 0,
+          "runtime_engine_started": 0
+        }
+      },
+      "placed_units": null
+    },
+    {
+      "execution_id": 3,
+      "method": "WF",
+      "status": "FALLIDA",
+      "dispatch": "TERMINATED",
+      "complete": false,
+      "diagnostic": {
+        "origin": "SUPERVISOR",
+        "termination_reason": "GLOBAL_TIME_LIMIT",
+        "statistics": {
+          "runtime_dispatched": 0,
+          "runtime_engine_started": 0
+        }
+      },
+      "placed_units": null
+    },
+    {
+      "execution_id": 4,
+      "method": "HF",
+      "status": "FALLIDA",
+      "dispatch": "TERMINATED",
+      "complete": false,
+      "diagnostic": {
+        "origin": "SUPERVISOR",
+        "termination_reason": "GLOBAL_TIME_LIMIT",
+        "statistics": {
+          "runtime_dispatched": 0,
+          "runtime_engine_started": 0
+        }
+      },
+      "placed_units": null
+    },
+    {
+      "execution_id": 5,
+      "method": "M5",
+      "status": "FALLIDA",
+      "dispatch": "TERMINATED",
+      "complete": false,
+      "diagnostic": {
+        "origin": "SUPERVISOR",
+        "termination_reason": "GLOBAL_TIME_LIMIT",
+        "statistics": {
+          "runtime_dispatched": 0,
+          "runtime_engine_started": 0
+        }
+      },
+      "placed_units": null
+    },
+    {
+      "execution_id": 6,
+      "method": "M6-BS",
+      "status": "FALLIDA",
+      "dispatch": "TERMINATED",
+      "complete": false,
+      "diagnostic": {
+        "origin": "SUPERVISOR",
+        "termination_reason": "GLOBAL_TIME_LIMIT",
+        "statistics": {
+          "runtime_dispatched": 0,
+          "runtime_engine_started": 0
+        }
+      },
+      "placed_units": null
+    }
+  ],
+  "timeline": [
+    {
+      "kind": "supervisor_started",
+      "monotonic": 100.736562866,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "execution_failed",
+      "monotonic": 102.772400684,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "execution_failed",
+      "monotonic": 102.779450234,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "execution_failed",
+      "monotonic": 102.787687002,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "execution_failed",
+      "monotonic": 102.794629421,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "execution_failed",
+      "monotonic": 102.802684904,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "execution_failed",
+      "monotonic": 102.809547662,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "supervisor_returning",
+      "monotonic": 102.810043046,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "supervisor_joined",
+      "monotonic": 102.810097191,
+      "thread": "comparison-v2-owner-1"
+    },
+    {
+      "kind": "processes_verified",
+      "monotonic": 102.812508467,
+      "thread": "comparison-v2-owner-1"
+    },
+    {
+      "kind": "safe_close_committed",
+      "monotonic": 102.824394043,
+      "thread": "comparison-v2-owner-1"
+    },
+    {
+      "kind": "admission_released",
+      "monotonic": 102.824402507,
+      "thread": "comparison-v2-owner-1"
+    }
+  ],
+  "processes": {
+    "maximum_active_workers": 1,
+    "maximum_queued_packets": 0,
+    "maximum_packet_bytes": 227,
+    "maximum_aggregate_rss": 149520384,
+    "supervisor_peak_rss": 99356672,
+    "maximum_worker_virtual": 48795648,
+    "samples": 79,
+    "maximum_sample_gap_ms": 25.600140000008764,
+    "budget": {
+      "aggregate_rss_bytes": 1073741824,
+      "worker_address_bytes": 268435456,
+      "supervisor_rss_bytes": 251658240,
+      "helper_reserve_bytes": 16777216,
+      "packet_bytes": 12582912,
+      "visual_packet_bytes": 4194304,
+      "queued_packets_per_worker": 1,
+      "retained_visual_bytes": 33554432,
+      "retained_event_bytes": 8388608,
+      "startup_seconds": 30,
+      "calculation_seconds": 120,
+      "global_seconds": 2
+    },
+    "all_workers_stopped": true,
+    "global_reason": "GLOBAL_TIME_LIMIT",
+    "executions": {
+      "FF": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 1,
+          "method": "FF"
+        },
+        "state": "TERMINATED",
+        "dispatched": true,
+        "engine_started": true,
+        "identity": {
+          "pid": 700,
+          "start_ticks": "10075"
+        },
+        "launched_monotonic": 100.740268376,
+        "queue_ms": 1.019909999996571,
+        "descendants": [],
+        "peak_rss": 33386496,
+        "peak_virtual": 48795648,
+        "startup_ms": 1752.074245000003,
+        "limit_detected_monotonic": 102.759679646,
+        "identity_after": null,
+        "exitcode": -15,
+        "descendants_after": [],
+        "cleanup_ms": 0.4909270000013066,
+        "elapsed_ms": 2007.8015290000053,
+        "execution_external_wall_ms": 248.94643099999314,
+        "stopped_monotonic": 102.762237421,
+        "reason": "GLOBAL_TIME_LIMIT"
+      },
+      "BF": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 2,
+          "method": "BF"
+        },
+        "state": "TERMINATED",
+        "dispatched": false,
+        "engine_started": false,
+        "identity": null,
+        "reason": "GLOBAL_TIME_LIMIT"
+      },
+      "WF": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 3,
+          "method": "WF"
+        },
+        "state": "TERMINATED",
+        "dispatched": false,
+        "engine_started": false,
+        "identity": null,
+        "reason": "GLOBAL_TIME_LIMIT"
+      },
+      "HF": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 4,
+          "method": "HF"
+        },
+        "state": "TERMINATED",
+        "dispatched": false,
+        "engine_started": false,
+        "identity": null,
+        "reason": "GLOBAL_TIME_LIMIT"
+      },
+      "M5": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 5,
+          "method": "M5"
+        },
+        "state": "TERMINATED",
+        "dispatched": false,
+        "engine_started": false,
+        "identity": null,
+        "reason": "GLOBAL_TIME_LIMIT"
+      },
+      "M6-BS": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 6,
+          "method": "M6-BS"
+        },
+        "state": "TERMINATED",
+        "dispatched": false,
+        "engine_started": false,
+        "identity": null,
+        "reason": "GLOBAL_TIME_LIMIT"
+      }
+    },
+    "elapsed_ms": 2070.3263439999946,
+    "retained_bytes": {
+      "visual": 0,
+      "event": 0
+    },
+    "evicted_observations": {
+      "visual": 0,
+      "event": 0
+    }
+  },
+  "retained_event_bytes": 2092,
+  "retained_visual_bytes": 0
+}

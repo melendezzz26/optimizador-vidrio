@@ -433,7 +433,7 @@ class MovimientoInventario(Base):
 class EjecucionOptimizacion(Base):
     __tablename__ = "ejecuciones_optimizacion"
     __table_args__ = (
-        CheckConstraint("metodo IN ('FF', 'BF', 'WF')", name="ck_ejecuciones_metodo"),
+        CheckConstraint("metodo IN ('FF', 'BF', 'WF', 'HF', 'M5', 'M6-BS')", name="ck_ejecuciones_metodo"),
         CheckConstraint(
             "estado IN ('EN_EJECUCION', 'COMPLETADA', 'FALLIDA')",
             name="ck_ejecuciones_estado",

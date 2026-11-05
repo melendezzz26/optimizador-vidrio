@@ -1,0 +1,92 @@
+
+Running 2 tests using 1 worker
+
+  ✘  1 [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:7:1 › TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL (30.0s)
+  ✘  2 [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:7:1 › TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL (30.0s)
+
+
+  1) [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:7:1 › TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'Consultar', exact: true })
+        - locator resolved to <button class="ng-button">Consultar</button>
+      - attempting click action
+        - waiting for element to be visible, enabled and stable
+        - element is not stable
+      - retrying click action
+        - waiting for element to be visible, enabled and stable
+      - element was detached from the DOM, retrying
+        - locator resolved to <button disabled class="ng-button">Consultar</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+          - waiting 100ms
+        44 × waiting for element to be visible, enabled and stable
+           - element is not enabled
+         - retrying click action
+           - waiting 500ms
+
+
+      48 |   await page.reload(); await open(page);
+      49 |   await page.getByLabel('Consultar trabajo guardado').fill(String(id));
+    > 50 |   await page.getByRole('button', { name: 'Consultar', exact: true }).click();
+         |                                                                      ^
+      51 |   await expect(page.getByRole('tab')).toHaveCount(4);
+      52 |   for (const name of ['First Fit', 'Best Fit', 'Worst Fit']) {
+      53 |     await page.getByRole('tab', { name: new RegExp(name) }).click();
+        at /tmp/newglass-ta043-b02-03jtlc_x/frontend/tests/e2e/optimization-comparison.spec.js:50:70
+
+    Error Context: test-results/b01/optimization-comparison-TA-e1e14-pués-del-upgrade-PostgreSQL-chromium-desktop/error-context.md
+
+  2) [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:7:1 › TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'Consultar', exact: true })
+        - locator resolved to <button class="ng-button">Consultar</button>
+      - attempting click action
+        - waiting for element to be visible, enabled and stable
+        - element is not stable
+      - retrying click action
+        - waiting for element to be visible, enabled and stable
+      - element was detached from the DOM, retrying
+        - locator resolved to <button disabled class="ng-button">Consultar</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+          - waiting 100ms
+        46 × waiting for element to be visible, enabled and stable
+           - element is not enabled
+         - retrying click action
+           - waiting 500ms
+
+
+      48 |   await page.reload(); await open(page);
+      49 |   await page.getByLabel('Consultar trabajo guardado').fill(String(id));
+    > 50 |   await page.getByRole('button', { name: 'Consultar', exact: true }).click();
+         |                                                                      ^
+      51 |   await expect(page.getByRole('tab')).toHaveCount(4);
+      52 |   for (const name of ['First Fit', 'Best Fit', 'Worst Fit']) {
+      53 |     await page.getByRole('tab', { name: new RegExp(name) }).click();
+        at /tmp/newglass-ta043-b02-03jtlc_x/frontend/tests/e2e/optimization-comparison.spec.js:50:70
+
+    Error Context: test-results/b01/optimization-comparison-TA-e1e14-pués-del-upgrade-PostgreSQL-chromium-mobile/error-context.md
+
+  2 failed
+    [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:7:1 › TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL
+    [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:7:1 › TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL

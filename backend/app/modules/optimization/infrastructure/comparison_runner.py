@@ -335,5 +335,7 @@ class ComparisonProcessRunner:
                 connection.close()
             if monitor is not None:
                 monitor.join(timeout=2)
+                if monitor.is_alive():
+                    raise WorkersNotStopped("Comparison monitor could not be stopped")
             report["all_workers_stopped"] = True
             report["elapsed_ms_including_ipc_and_cleanup"] = (time.monotonic() - began) * 1000

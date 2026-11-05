@@ -1,0 +1,1 @@
+{"decision": "VIABLE", "sequences": [{"observed": false, "result": "PASS", "elapsed_ms": 5117.757350999995, "peak_rss": 65331200, "maximum_active_workers": 1}, {"observed": true, "result": "PASS", "elapsed_ms": 4990.167842000005, "peak_rss": 65847296, "maximum_active_workers": 1}]}

@@ -8,6 +8,7 @@ from ..application.comparison_confirmation import ConfirmComparison
 from ..application.errors import RunError
 from ..application.visual import mask_window
 from .comparison_runtime import ComparisonRuntime
+from .comparison_retention import COMPARISON_RETENTION
 from .comparison_schemas import ComparisonSummary, ComparisonSelection, ComparisonRelease, ExecutionResponse, ComparisonConfirmation, ComparisonMaskPayload
 from .comparison_serialization import comparison_response, execution_response
 from .confirmation_serialization import confirmation_response
@@ -16,7 +17,7 @@ from .run_routes import RunRoute, get_run_admission, visual_response
 from .run_schemas import RunRequestV1
 from .visual_serialization import describe_record
 
-_RUNTIME = ComparisonRuntime()
+_RUNTIME = ComparisonRuntime(retention=COMPARISON_RETENTION)
 Id = Annotated[int, Path(gt=0, le=2147483647)]
 Key = Annotated[str, Header(alias="Idempotency-Key", min_length=8, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")]
 router = APIRouter(prefix="/comparisons", route_class=RunRoute)

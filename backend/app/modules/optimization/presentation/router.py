@@ -69,3 +69,5 @@ from .run_routes import router as run_router  # noqa: E402
 router.include_router(run_router)
 from .comparison_routes import router as comparison_router  # noqa: E402
 router.include_router(comparison_router)
+from .comparison_v2_routes import router as comparison_v2_router  # noqa: E402
+router.include_router(comparison_v2_router)

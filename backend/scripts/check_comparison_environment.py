@@ -1,5 +1,6 @@
 """Diagnóstico local sin DB ni credenciales; no sustituye una comparación real."""
 from dataclasses import asdict
+import argparse
 import json
 import platform
 import sys
@@ -10,13 +11,21 @@ from app.modules.optimization.infrastructure.comparison_runner import Comparison
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--profile',choices=('comparison-v1','comparison-v2'),default='comparison-v1')
+    profile=parser.parse_args().profile
+    service=ComparisonProcessRunner()
+    if profile=='comparison-v2':
+        from app.modules.optimization.infrastructure.sequential_runner import SequentialProcessRunner
+        service=SequentialProcessRunner()
     report = {
         "python": platform.python_version(),
         "platform": sys.platform,
         "budget": asdict(DEFAULT_COMPARISON_BUDGET),
+        "profile": profile,
     }
     try:
-        ComparisonProcessRunner().preflight()
+        service.preflight()
     except RunError as error:
         report.update(available=False, code=error.code, message=error.message)
         if error.__cause__ is not None:

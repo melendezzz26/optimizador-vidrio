@@ -1,0 +1,37 @@
+......FFF...FF...                                                        [100%]
+=================================== FAILURES ===================================
+____ test_individual_startup_is_bounded_without_dispatching_simultaneously _____
+tests/unit/optimization/test_sequential_runner.py:115: in test_individual_startup_is_bounded_without_dispatching_simultaneously
+    assert all(v.payload.diagnostic.termination_reason=='PROCESS_START_FAILED' for v in values)
+E   assert False
+E    +  where False = all(<generator object test_individual_startup_is_bounded_without_dispatching_simultaneously.<locals>.<genexpr> at 0x7d55bcbd13c0>)
+_______ test_individual_calculation_includes_blocked_observer_wall_time ________
+tests/unit/optimization/test_sequential_runner.py:124: in test_individual_calculation_includes_blocked_observer_wall_time
+    assert all(v.payload.diagnostic.termination_reason=='TIME_BUDGET_EXCEEDED' for v in values)
+E   assert False
+E    +  where False = all(<generator object test_individual_calculation_includes_blocked_observer_wall_time.<locals>.<genexpr> at 0x7d55bcad3d30>)
+_ test_global_deadline_marks_queued_never_dispatched_and_stops_while_consumer_is_paused _
+tests/unit/optimization/test_sequential_runner.py:132: in test_global_deadline_marks_queued_never_dispatched_and_stops_while_consumer_is_paused
+    assert first['kind']=='ready'
+E   AssertionError: assert 'result' == 'ready'
+E
+E     - ready
+E     + result
+__________ test_aggregate_rss_aborts_global_queue_with_real_processes __________
+tests/unit/optimization/test_sequential_runner.py:161: in test_aggregate_rss_aborts_global_queue_with_real_processes
+    assert all(v.payload.diagnostic.termination_reason=='MEMORY_BUDGET_EXCEEDED' for v in values)
+E   assert False
+E    +  where False = all(<generator object test_aggregate_rss_aborts_global_queue_with_real_processes.<locals>.<genexpr> at 0x7d55bca5edc0>)
+_____________ test_cancel_and_explicit_close_stop_owned_processes ______________
+tests/unit/optimization/test_sequential_runner.py:173: in test_cancel_and_explicit_close_stop_owned_processes
+    assert len(values)==6 and all(v.payload.diagnostic.termination_reason=='CANCELLED' for v in values)
+E   AssertionError: assert (6 == 6 and False)
+E    +  where 6 = len([ProcessExecution(scope=ExecutionScope(comparison_id=43, execution_id=4301, method='FF'), payload=ExecutionPayloadV2(m..., termination_reason='CANCELLED', statistics=mappingproxy({}))), residuals=(), dispatched=False, engine_started=False)])
+E    +  and   False = all(<generator object test_cancel_and_explicit_close_stop_owned_processes.<locals>.<genexpr> at 0x7d55bcad20c0>)
+=========================== short test summary info ============================
+FAILED tests/unit/optimization/test_sequential_runner.py::test_individual_startup_is_bounded_without_dispatching_simultaneously
+FAILED tests/unit/optimization/test_sequential_runner.py::test_individual_calculation_includes_blocked_observer_wall_time
+FAILED tests/unit/optimization/test_sequential_runner.py::test_global_deadline_marks_queued_never_dispatched_and_stops_while_consumer_is_paused
+FAILED tests/unit/optimization/test_sequential_runner.py::test_aggregate_rss_aborts_global_queue_with_real_processes
+FAILED tests/unit/optimization/test_sequential_runner.py::test_cancel_and_explicit_close_stop_owned_processes
+5 failed, 12 passed in 61.65s (0:01:01)

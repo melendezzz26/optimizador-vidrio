@@ -1,0 +1,160 @@
+{
+  "profile": "comparison-v2",
+  "schema_version": 2,
+  "comparison_id": 1,
+  "execution": {
+    "execution_id": 6,
+    "method": "M6-BS",
+    "status": "COMPLETADA",
+    "dispatch_state": "TERMINATED",
+    "outcome": "PARTIAL",
+    "result_available": true,
+    "complete": false,
+    "eligible": false,
+    "placed_units": 0,
+    "total_units": 4,
+    "metrics": null,
+    "computation_time_ms": 6,
+    "diagnostic": {
+      "origin": "ENGINE",
+      "termination_reason": "GEOMETRY_PROBE_LIMIT",
+      "statistics": {
+        "alternatives_pruned": 0,
+        "completed_levels": 0,
+        "expansions": 0,
+        "geometry_probes": 1,
+        "max_frontier": 1,
+        "parents": 1,
+        "runtime_dispatched": 1,
+        "runtime_engine_started": 1,
+        "state_bytes_bound": 143808
+      }
+    }
+  },
+  "result": {
+    "placed_units": 0,
+    "total_units": 4,
+    "progress_pct": "0",
+    "schema_version": 2,
+    "id_optimizacion": 1,
+    "estado": "SIN_SOLUCION",
+    "metodo": "M6-BS",
+    "order_ids": [
+      1,
+      2
+    ],
+    "configuracion": {
+      "resolucion_raster_mm": "1.000",
+      "margen_mm": "0.00",
+      "separacion_mm": "0.00",
+      "paso_angular_grados": "5.00"
+    },
+    "groups": [
+      {
+        "id_tipo_vidrio": 7,
+        "espesor_mm": "6.0",
+        "units": [
+          {
+            "id_tipo_vidrio": 7,
+            "espesor_mm": "6.0",
+            "id_pedido": 1,
+            "id_pieza": 1,
+            "unit_index": 1,
+            "tipo_forma": "RECTANGULO",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 2,
+              "height_mm": 2
+            },
+            "area_mm2": "4.00"
+          },
+          {
+            "id_tipo_vidrio": 7,
+            "espesor_mm": "6.0",
+            "id_pedido": 1,
+            "id_pieza": 1,
+            "unit_index": 2,
+            "tipo_forma": "RECTANGULO",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 2,
+              "height_mm": 2
+            },
+            "area_mm2": "4.00"
+          },
+          {
+            "id_tipo_vidrio": 7,
+            "espesor_mm": "6.0",
+            "id_pedido": 2,
+            "id_pieza": 2,
+            "unit_index": 1,
+            "tipo_forma": "RECTANGULO",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 2,
+              "height_mm": 2
+            },
+            "area_mm2": "4.00"
+          },
+          {
+            "id_tipo_vidrio": 7,
+            "espesor_mm": "6.0",
+            "id_pedido": 2,
+            "id_pieza": 2,
+            "unit_index": 2,
+            "tipo_forma": "RECTANGULO",
+            "geometria": {
+              "type": "RECTANGULO",
+              "width_mm": 2,
+              "height_mm": 2
+            },
+            "area_mm2": "4.00"
+          }
+        ],
+        "stock_compatible": true
+      }
+    ],
+    "placements": [],
+    "materials_used": [],
+    "residual_regions": [],
+    "unplaced_units": [
+      {
+        "id_tipo_vidrio": 7,
+        "espesor_mm": "6.0",
+        "id_pedido": 1,
+        "id_pieza": 1,
+        "unit_index": 1,
+        "reason": "RESOURCE_LIMIT"
+      },
+      {
+        "id_tipo_vidrio": 7,
+        "espesor_mm": "6.0",
+        "id_pedido": 1,
+        "id_pieza": 1,
+        "unit_index": 2,
+        "reason": "RESOURCE_LIMIT"
+      },
+      {
+        "id_tipo_vidrio": 7,
+        "espesor_mm": "6.0",
+        "id_pedido": 2,
+        "id_pieza": 2,
+        "unit_index": 1,
+        "reason": "RESOURCE_LIMIT"
+      },
+      {
+        "id_tipo_vidrio": 7,
+        "espesor_mm": "6.0",
+        "id_pedido": 2,
+        "id_pieza": 2,
+        "unit_index": 2,
+        "reason": "RESOURCE_LIMIT"
+      }
+    ],
+    "completo": false,
+    "metrics_available": false,
+    "metrics": null,
+    "tiempo_computacional_ms": 6,
+    "termination_reason": "GEOMETRY_PROBE_LIMIT"
+  }
+}

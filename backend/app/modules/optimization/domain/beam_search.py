@@ -89,6 +89,17 @@ class BeamSearchOutcome:
     trace: tuple
 
 
+@dataclass(frozen=True)
+class BeamSearchProgress:
+    """Counters of the retained frontier; no provisional placements escape here."""
+    completed_levels: int
+    processed_units: int
+    total_units: int
+    expansions: int
+    geometry_probes: int
+    frontier_size: int
+
+
 class BeamSearchOptimizer:
     def __init__(self, limits: BeamSearchLimits | None = None):
         self.limits = limits or BeamSearchLimits()
@@ -100,7 +111,7 @@ class BeamSearchOptimizer:
 
     def run(self, problem: OptimizationProblem,
             on_event: Callable[[FirstFitEvent], None] | None = None,
-            *, checkpoint=None) -> BeamSearchOutcome:
+            *, checkpoint=None, on_progress: Callable[[BeamSearchProgress], None] | None = None) -> BeamSearchOutcome:
         limits = self.limits
         external_check = checkpoint or (lambda: None)
         started = perf_counter()
@@ -160,6 +171,17 @@ class BeamSearchOptimizer:
                         for stock in stocks)
         beam = [BeamNode(initial)]
         stop_reason = None
+
+        def progress():
+            if on_progress is not None:
+                on_progress(BeamSearchProgress(
+                    completed_levels=stats["completed_levels"],
+                    processed_units=beam[0].processed,
+                    total_units=len(problem.units), expansions=stats["expansions"],
+                    geometry_probes=stats["geometry_probes"], frontier_size=len(beam),
+                ))
+
+        progress()
 
         def emit(kind, group, unit=None, placement=None, placed_units=0):
             if on_event is not None:
@@ -261,6 +283,7 @@ class BeamSearchOptimizer:
                     beam = pool
                     stats["completed_levels"] += 1
                     stats["max_frontier"] = max(stats["max_frontier"], len(beam))
+                    progress()
                     if beam and beam[0].placements and beam[0].placements[-1].piece.identity == unit.identity:
                         emit("piece_placed", group, unit,
                              beam[0].placements[-1], len(beam[0].placements))
