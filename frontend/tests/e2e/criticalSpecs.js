@@ -15,4 +15,5 @@ export const CRITICAL_E2E_SPECS = Object.freeze([
   'ta-dashboard.spec.js',
   'ta036-retazo-personalizado.spec.js',
   'ta037-load-feedback.spec.js',
+  'ta046-keyboard.spec.js',
 ]);

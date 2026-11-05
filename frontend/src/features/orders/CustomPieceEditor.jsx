@@ -9,6 +9,17 @@ import { buildConstrainedGeometry } from "./constrainedGeometry";
 
 const DRAWING_WIDTH = 800;
 const DRAWING_HEIGHT = 500;
+const MIN_SKETCH_SIDES = 3;
+const MAX_SKETCH_SIDES = 128;
+
+// TA-046 RN-06: boceto regular para crear el polígono sin mouse; las medidas reales se escriben después.
+function regularSketch(sides) {
+  const radius = Math.min(DRAWING_WIDTH, DRAWING_HEIGHT) * 0.35;
+  return Array.from({ length: sides }, (_, index) => {
+    const angle = -Math.PI / 2 + (2 * Math.PI * index) / sides;
+    return { x: DRAWING_WIDTH / 2 + radius * Math.cos(angle), y: DRAWING_HEIGHT / 2 + radius * Math.sin(angle) };
+  });
+}
 
 // Hook para adaptar el lienzo al tamaño de la columna izquierda
 function useCanvasSize() {
@@ -147,6 +158,11 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
   const firstInputRef = useRef(null);
   const angleInputRef = useRef(null);
   const closedWithKeyboard = useRef(false);
+  const sidesId = useId();
+  const [sketchSides, setSketchSides] = useState('4');
+  // Campo de texto con teclado numérico: no es una medida, así que no se suma a los campos de longitud.
+  const sketchSidesValid = /^\d{1,3}$/.test(sketchSides.trim())
+    && Number(sketchSides) >= MIN_SKETCH_SIDES && Number(sketchSides) <= MAX_SKETCH_SIDES;
 
   const [canvasRef, canvasSize] = useCanvasSize();
   const [drawing, setDrawing] = useState(initialState?.drawing || { vertices: [], isClosed: false });
@@ -242,6 +258,16 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
     setActiveSegmentIndex(0);
     setSelectedVertexIndex(null);
     setDrawing((current) => ({ ...current, isClosed: true }));
+  }
+
+  function createSketch() {
+    if (!sketchSidesValid || isClosed || vertices.length) return;
+    const sketch = regularSketch(Number(sketchSides));
+    closedWithKeyboard.current = true;
+    setSegments(createSegments(sketch));
+    setActiveSegmentIndex(0);
+    setSelectedVertexIndex(null);
+    setDrawing({ vertices: sketch, isClosed: true });
   }
 
   function resetDrawing() {
@@ -342,6 +368,19 @@ export default function CustomPieceEditor({ onGuardarVertices, initialState, hea
                 </div>
               )}
             </div>
+
+            {/* TA-046 RN-06: alternativa al dibujo con mouse. Va debajo del lienzo para no moverlo. */}
+            {!isClosed && (
+              <div className="custom-piece-editor__sketch-sides">
+                <label htmlFor={sidesId}>O crea un boceto con teclado. Número de lados</label>
+                <input id={sidesId} type="text" inputMode="numeric" maxLength={3} autoComplete="off"
+                  value={sketchSides} onChange={event => setSketchSides(event.target.value)} disabled={vertices.length > 0}
+                  onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); createSketch(); } }} />
+                <button type="button" className="custom-piece-editor__button" disabled={!sketchSidesValid || vertices.length > 0} onClick={createSketch}>
+                  Crear boceto
+                </button>
+              </div>
+            )}
 
             {/* NUEVO LUGAR PARA LA VALIDACIÓN GEOMÉTRICA */}
             {isClosed && (

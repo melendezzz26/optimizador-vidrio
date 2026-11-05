@@ -152,7 +152,7 @@ test('configuration rejection retains selected orders and does not invent an exe
 test('failed engine has no fake zero metrics and successful results stay eligible', async () => {
   setup({ partial: true }); await execute();
   fireEvent.click(screen.getByRole('tab', { name: 'Comparación' }));
-  const row = within(screen.getByRole('table')).getByRole('row', { name: /Best Fit/ });
+  const row = within(screen.getByRole('table', { name: 'Métricas de los tres motores' })).getByRole('row', { name: /Best Fit/ });
   expect(within(row).getByRole('radio')).toBeDisabled();
   expect(within(row).getAllByText('—')).toHaveLength(6);
   expect(screen.getByLabelText('Elegir Worst Fit')).toBeEnabled();
