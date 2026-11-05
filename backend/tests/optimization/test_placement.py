@@ -1,5 +1,7 @@
 """Pruebas de validación de colocaciones (TA-007 T01 y T02, SPEC-TA-007)."""
 import dataclasses
+import math
+from fractions import Fraction
 
 import pytest
 
@@ -191,11 +193,41 @@ def test_issues_are_reported_in_the_specified_order():
 
 @pytest.mark.parametrize(
     "distance_mm, resolution, expected",
-    [(0, 10, 0), (1, 10, 1), (10, 10, 1), (11, 10, 2), (12.5, 5, 3), (15, 5, 3), (3, 2, 2)],
+    [
+        (0, 10, 0), (-0.0, 1, 0), (1, 10, 1), (10, 10, 1),
+        (11, 10, 2), (12.5, 5, 3), (15, 5, 3), (3, 2, 2),
+        (1e-10, 1, 1), (1.0000000001, 1, 2),
+        (math.nextafter(1, math.inf), 1, 2),
+        (math.nextafter(1, 0), 1, 1),
+        (math.nextafter(0, 1), 1, 1),
+        (1e-300, 1e300, 1),
+        (0.07, 0.01, 7), (0.3, 0.1, 3), (0.21, 0.07, 3),
+        (0.070000000001, 0.01, 8),
+    ],
 )
 def test_distances_are_rounded_up_to_whole_cells(distance_mm, resolution, expected):
     # CA-09 / RN-06: nunca se aplica menos distancia que la configurada.
     assert distance_in_cells(distance_mm, resolution, "La distancia") == expected
+
+
+@pytest.mark.parametrize("resolution", [0.001, 0.01, 0.07, 0.1, 1, 2.5, 5])
+def test_distance_conversion_is_minimal_conservative_and_monotone(resolution):
+    # Independent rational oracle over the accepted decimal representations.
+    previous = 0
+    for distance in [0, 1e-12, 0.01, 0.07, 0.1, 0.3, 1, 1.0000000001, 5, 12.5]:
+        count = distance_in_cells(distance, resolution, "La distancia")
+        physical, cell = Fraction(str(distance)), Fraction(str(resolution))
+        assert count * cell >= physical
+        assert count == 0 or (count - 1) * cell < physical
+        assert count >= previous
+        previous = count
+
+
+@pytest.mark.parametrize("resolution", [0, -1, float("nan"), float("inf"), -float("inf"), True, "1", None])
+@pytest.mark.parametrize("distance", [0, 1])
+def test_distance_conversion_rejects_invalid_resolution(resolution, distance):
+    with pytest.raises(PlacementError, match="resolución.*positivo"):
+        distance_in_cells(distance, resolution, "La distancia")
 
 
 def test_rounding_up_is_applied_to_the_layout():
@@ -221,7 +253,7 @@ def test_zero_margin_and_separation_behave_like_t01():
     assert zeros.blocked == zeros.occupied
 
 
-@pytest.mark.parametrize("value", [-1, -0.5, float("nan"), float("inf"), "10", None, True])
+@pytest.mark.parametrize("value", [-1, -0.5, -1e-300, float("nan"), float("inf"), -float("inf"), "10", None, True, False])
 @pytest.mark.parametrize("field", ["margin_mm", "separation_mm"])
 def test_invalid_margin_or_separation_raises(field, value):
     # CA-10.

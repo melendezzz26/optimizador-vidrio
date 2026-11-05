@@ -1,0 +1,159 @@
+
+Running 16 tests using 1 worker
+
+  ✓   1 [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:8:1 › TA-043 B08 smoke: seleccion manual y confirmacion v2 atomica real (11.2s)
+  ✓   2 [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:92:1 › TA-043 B06 smoke: API publica seis motores, recuperacion y compatibilidad real (9.2s)
+  ✓   3 [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:196:1 › TA-043 B07 smoke: interfaz v2, seis distribuciones y recuperacion visual real (15.3s)
+  ✓   4 [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:467:1 › TA-043 B01 smoke: arranque real, comparison-v1 y runs legacy sin consumir stock (5.0s)
+  ✓   5 [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:527:1 › comparar tres motores, revisar fases y solicitud, elegir BF y confirmar una sola vez (7.1s)
+[WebServer] Comparison result could not be saved: comparison_id=12 execution_id=37 method=FF
+[WebServer] Traceback (most recent call last):
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1943, in _exec_single_context
+[WebServer]     self.dialect.do_execute(
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 1180, in do_execute
+[WebServer]     cursor.execute(statement, parameters)
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/psycopg/cursor.py", line 117, in execute
+[WebServer]     raise ex.with_traceback(None)
+[WebServer] psycopg.errors.RaiseException: Synthetic FF persistence failure
+[WebServer] CONTEXT:  PL/pgSQL function e2e_ff_save_failure() line 4 at RAISE
+[WebServer]
+[WebServer] The above exception was the direct cause of the following exception:
+[WebServer]
+[WebServer] Traceback (most recent call last):
+[WebServer]   File "/tmp/newglass-ta045-validation-qqet9z1n/backend/app/modules/optimization/application/comparison_calculation.py", line 51, in execute
+[WebServer]     saved = tx.comparisons.save_result(comparison_id, execution.execution_id,
+[WebServer]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[WebServer]   File "/tmp/newglass-ta045-validation-qqet9z1n/backend/app/modules/optimization/infrastructure/comparison_uow.py", line 237, in save_result
+[WebServer]     self.session.flush()
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4536, in flush
+[WebServer]     self._flush(objects)
+[WebServer]   File "<sqlalchemy generated warned() wrapper for sqlalchemy.orm.session.Session._flush>", line 2, in _flush
+[WebServer]     return target(fn, self, objects=objects)
+[WebServer]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/util/deprecations.py", line 281, in warned
+[WebServer]     return fn(*args, **kwargs)  # type: ignore[no-any-return]
+[WebServer]            ^^^^^^^^^^^^^^^^^^^
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4679, in _flush
+[WebServer]     with util.safe_reraise():
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 166, in __exit__
+[WebServer]     raise exc_value.with_traceback(exc_tb)
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4640, in _flush
+[WebServer]     flush_context.execute()
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py", line 467, in execute
+[WebServer]     rec.execute(self)
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py", line 643, in execute
+[WebServer]     util.preloaded.orm_persistence._save_obj(
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py", line 92, in _save_obj
+[WebServer]     _emit_insert_statements(
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py", line 1237, in _emit_insert_statements
+[WebServer]     result = connection.execute(
+[WebServer]              ^^^^^^^^^^^^^^^^^^^
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1448, in execute
+[WebServer]     return meth(
+[WebServer]            ^^^^^
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 533, in _execute_on_connection
+[WebServer]     return connection._execute_clauseelement(
+[WebServer]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1668, in _execute_clauseelement
+[WebServer]     ret = self._execute_context(
+[WebServer]           ^^^^^^^^^^^^^^^^^^^^^^
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1822, in _execute_context
+[WebServer]     return self._exec_single_context(
+[WebServer]            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1962, in _exec_single_context
+[WebServer]     self._handle_dbapi_exception(
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2332, in _handle_dbapi_exception
+[WebServer]     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1943, in _exec_single_context
+[WebServer]     self.dialect.do_execute(
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 1180, in do_execute
+[WebServer]     cursor.execute(statement, parameters)
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/psycopg/cursor.py", line 117, in execute
+[WebServer]     raise ex.with_traceback(None)
+[WebServer] sqlalchemy.exc.ProgrammingError: (psycopg.errors.RaiseException) Synthetic FF persistence failure
+[WebServer] CONTEXT:  PL/pgSQL function e2e_ff_save_failure() line 4 at RAISE
+[WebServer] [SQL: INSERT INTO metricas_ejecucion (id_ejecucion, area_material_total_mm2, area_piezas_colocadas_mm2, aprovechamiento_pct, merma_mm2, retazo_recuperable_mm2, planchas_nuevas_usadas, tiempo_computacional_ms, memoria_pico_mb, tiempo_cpu_ms) VALUES (%(id_ejecucion)s::INTEGER, %(area_material_total_mm2)s, %(area_piezas_colocadas_mm2)s, %(aprovechamiento_pct)s, %(merma_mm2)s, %(retazo_recuperable_mm2)s, %(planchas_nuevas_usadas)s::INTEGER, %(tiempo_computacional_ms)s::BIGINT, %(memoria_pico_mb)s, %(tiempo_cpu_ms)s::BIGINT) RETURNING metricas_ejecucion.id_metrica]
+[WebServer] [parameters: {'id_ejecucion': 37, 'area_material_total_mm2': Decimal('5000.0000'), 'area_piezas_colocadas_mm2': Decimal('2500.00'), 'aprovechamiento_pct': Decimal('50.000'), 'merma_mm2': Decimal('0.000000'), 'retazo_recuperable_mm2': Decimal('2500.000000'), 'planchas_nuevas_usadas': 1, 'tiempo_computacional_ms': 1, 'memoria_pico_mb': None, 'tiempo_cpu_ms': None}]
+[WebServer] (Background on this error at: https://sqlalche.me/e/21/f405)
+  ✓   6 [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:635:1 › FF falla al persistir y BF se confirma una vez, regresando al listado (4.2s)
+  ✓   7 [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:676:1 › rotación real de 90 grados y movimiento reducido sin ejecutar otro trabajo al cambiar pestañas (4.7s)
+  ✓   8 [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:702:1 › consulta sin permisos de ejecución recupera resultados sin permitir elección ni consumo (3.2s)
+  ✓   9 [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:8:1 › TA-043 B08 smoke: seleccion manual y confirmacion v2 atomica real (10.4s)
+  ✓  10 [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:92:1 › TA-043 B06 smoke: API publica seis motores, recuperacion y compatibilidad real (9.2s)
+  ✓  11 [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:196:1 › TA-043 B07 smoke: interfaz v2, seis distribuciones y recuperacion visual real (14.4s)
+  ✓  12 [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:467:1 › TA-043 B01 smoke: arranque real, comparison-v1 y runs legacy sin consumir stock (4.6s)
+  ✓  13 [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:527:1 › comparar tres motores, revisar fases y solicitud, elegir BF y confirmar una sola vez (6.7s)
+[WebServer] Comparison result could not be saved: comparison_id=26 execution_id=82 method=FF
+[WebServer] Traceback (most recent call last):
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1943, in _exec_single_context
+[WebServer]     self.dialect.do_execute(
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 1180, in do_execute
+[WebServer]     cursor.execute(statement, parameters)
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/psycopg/cursor.py", line 117, in execute
+[WebServer]     raise ex.with_traceback(None)
+[WebServer] psycopg.errors.RaiseException: Synthetic FF persistence failure
+[WebServer] CONTEXT:  PL/pgSQL function e2e_ff_save_failure() line 4 at RAISE
+[WebServer]
+[WebServer] The above exception was the direct cause of the following exception:
+[WebServer]
+[WebServer] Traceback (most recent call last):
+[WebServer]   File "/tmp/newglass-ta045-validation-qqet9z1n/backend/app/modules/optimization/application/comparison_calculation.py", line 51, in execute
+[WebServer]     saved = tx.comparisons.save_result(comparison_id, execution.execution_id,
+[WebServer]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[WebServer]   File "/tmp/newglass-ta045-validation-qqet9z1n/backend/app/modules/optimization/infrastructure/comparison_uow.py", line 237, in save_result
+[WebServer]     self.session.flush()
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4536, in flush
+[WebServer]     self._flush(objects)
+[WebServer]   File "<sqlalchemy generated warned() wrapper for sqlalchemy.orm.session.Session._flush>", line 2, in _flush
+[WebServer]     return target(fn, self, objects=objects)
+[WebServer]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/util/deprecations.py", line 281, in warned
+[WebServer]     return fn(*args, **kwargs)  # type: ignore[no-any-return]
+[WebServer]            ^^^^^^^^^^^^^^^^^^^
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4679, in _flush
+[WebServer]     with util.safe_reraise():
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 166, in __exit__
+[WebServer]     raise exc_value.with_traceback(exc_tb)
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4640, in _flush
+[WebServer]     flush_context.execute()
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py", line 467, in execute
+[WebServer]     rec.execute(self)
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py", line 643, in execute
+[WebServer]     util.preloaded.orm_persistence._save_obj(
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py", line 92, in _save_obj
+[WebServer]     _emit_insert_statements(
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py", line 1237, in _emit_insert_statements
+[WebServer]     result = connection.execute(
+[WebServer]              ^^^^^^^^^^^^^^^^^^^
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1448, in execute
+[WebServer]     return meth(
+[WebServer]            ^^^^^
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 533, in _execute_on_connection
+[WebServer]     return connection._execute_clauseelement(
+[WebServer]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1668, in _execute_clauseelement
+[WebServer]     ret = self._execute_context(
+[WebServer]           ^^^^^^^^^^^^^^^^^^^^^^
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1822, in _execute_context
+[WebServer]     return self._exec_single_context(
+[WebServer]            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1962, in _exec_single_context
+[WebServer]     self._handle_dbapi_exception(
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2332, in _handle_dbapi_exception
+[WebServer]     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1943, in _exec_single_context
+[WebServer]     self.dialect.do_execute(
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 1180, in do_execute
+[WebServer]     cursor.execute(statement, parameters)
+[WebServer]   File "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/lib/python3.11/site-packages/psycopg/cursor.py", line 117, in execute
+[WebServer]     raise ex.with_traceback(None)
+[WebServer] sqlalchemy.exc.ProgrammingError: (psycopg.errors.RaiseException) Synthetic FF persistence failure
+[WebServer] CONTEXT:  PL/pgSQL function e2e_ff_save_failure() line 4 at RAISE
+[WebServer] [SQL: INSERT INTO metricas_ejecucion (id_ejecucion, area_material_total_mm2, area_piezas_colocadas_mm2, aprovechamiento_pct, merma_mm2, retazo_recuperable_mm2, planchas_nuevas_usadas, tiempo_computacional_ms, memoria_pico_mb, tiempo_cpu_ms) VALUES (%(id_ejecucion)s::INTEGER, %(area_material_total_mm2)s, %(area_piezas_colocadas_mm2)s, %(aprovechamiento_pct)s, %(merma_mm2)s, %(retazo_recuperable_mm2)s, %(planchas_nuevas_usadas)s::INTEGER, %(tiempo_computacional_ms)s::BIGINT, %(memoria_pico_mb)s, %(tiempo_cpu_ms)s::BIGINT) RETURNING metricas_ejecucion.id_metrica]
+[WebServer] [parameters: {'id_ejecucion': 82, 'area_material_total_mm2': Decimal('5000.0000'), 'area_piezas_colocadas_mm2': Decimal('2500.00'), 'aprovechamiento_pct': Decimal('50.000'), 'merma_mm2': Decimal('0.000000'), 'retazo_recuperable_mm2': Decimal('2500.000000'), 'planchas_nuevas_usadas': 1, 'tiempo_computacional_ms': 1, 'memoria_pico_mb': None, 'tiempo_cpu_ms': None}]
+[WebServer] (Background on this error at: https://sqlalche.me/e/21/f405)
+  ✓  14 [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:635:1 › FF falla al persistir y BF se confirma una vez, regresando al listado (4.1s)
+  ✓  15 [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:676:1 › rotación real de 90 grados y movimiento reducido sin ejecutar otro trabajo al cambiar pestañas (4.6s)
+  ✓  16 [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:702:1 › consulta sin permisos de ejecución recupera resultados sin permitir elección ni consumo (3.2s)
+
+  16 passed (2.1m)

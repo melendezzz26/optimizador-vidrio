@@ -7,14 +7,12 @@ del material (límites) y ninguna toca una celda ya ocupada (superposición).
 Con margen y separación (T02), además debe quedar a esa distancia del borde
 del material y de las demás piezas. Todo se comprueba fila por fila con bits.
 """
-import math
+from decimal import Decimal
 from functools import lru_cache
 from dataclasses import dataclass
 from enum import Enum
 
 from .raster_mask import RasterMask, is_real_number
-
-_EPSILON = 1e-9
 
 
 class PlacementError(ValueError):
@@ -38,10 +36,14 @@ VALID = PlacementCheck(True)
 
 
 def distance_in_cells(distance_mm, resolution_mm: float, label: str) -> int:
-    """Celdas que cubren una distancia, redondeando hacia arriba (nunca menos de lo pedido)."""
+    """Techo exacto sobre los valores decimales aceptados, sin reducir distancias."""
     if not is_real_number(distance_mm) or distance_mm < 0:
         raise PlacementError(f"{label} debe ser un número mayor o igual a cero.")
-    return math.ceil(distance_mm / resolution_mm - _EPSILON) if distance_mm > 0 else 0
+    if not is_real_number(resolution_mm) or resolution_mm <= 0:
+        raise PlacementError("La resolución debe ser un número positivo.")
+    dn, dd = Decimal(str(distance_mm)).as_integer_ratio()
+    rn, rd = Decimal(str(resolution_mm)).as_integer_ratio()
+    return (dn * rd + dd * rn - 1) // (dd * rn)
 
 
 def _erode(rows: tuple[int, ...], columns: int, cells: int) -> tuple[int, ...]:
@@ -107,6 +109,11 @@ class SheetLayout:
         resolution = material.resolution_mm
         margin_cells = distance_in_cells(margin_mm, resolution, "El margen")
         separation_cells = distance_in_cells(separation_mm, resolution, "La separación")
+        return cls._from_cells(material, margin_cells, separation_cells)
+
+    @classmethod
+    def _from_cells(cls, material: RasterMask, margin_cells: int, separation_cells: int) -> "SheetLayout":
+        """Construye desde conteos internos ya validados, sin reconvertir a floats."""
         empty_rows = tuple(0 for _ in material.rows)
         return cls(
             material=material,
