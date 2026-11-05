@@ -1,5 +1,12 @@
 """Classification contract for TA-044 benchmark outcomes."""
+from pathlib import Path
+import sys
+
 import pytest
+
+ROOT = Path(__file__).resolve().parents[4]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from experiments.optimization.benchmark_capacity import classify_status, run_single_benchmark
 
