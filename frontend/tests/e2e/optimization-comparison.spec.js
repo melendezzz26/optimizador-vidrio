@@ -35,8 +35,43 @@ test('TA-043 B08 smoke: seleccion manual y confirmacion v2 atomica real', async 
   const before = db();
   expect(await stock(page, data)).toEqual(stockBefore);
   await expect(page.getByRole('radio', { checked: true })).toHaveCount(0);
-  await page.getByRole('radio', { name: 'Elegir Best Residual Fit', exact: true }).check();
+  // Keep the real selection response pending until the native control has been
+  // checked. This exposes React restoring an old checked prop after onChange.
+  let releaseSelection;
+  const selectionResponse = new Promise(resolve => { releaseSelection = resolve; });
+  await page.route(`${endpoint}/selection`, async route => {
+    const response = await route.fetch();
+    await selectionResponse;
+    await route.fulfill({ response });
+  }, { times: 1 });
+  const m5 = page.getByRole('radio', { name: 'Elegir Best Residual Fit', exact: true });
+  const originalRadio = await m5.elementHandle();
+  try {
+    await m5.check();
+    await expect(m5).toBeChecked();
+    await expect(m5).toBeFocused();
+    expect(await originalRadio.evaluate(element => element.isConnected)).toBe(true);
+    await expect(page.getByRole('button', { name: 'Procesando…', exact: true })).toBeDisabled();
+  } finally {
+    save(info, 'b08-pending-selection.json', await originalRadio.evaluate(element => ({
+      connected: element.isConnected, checked: element.checked,
+      focused: document.activeElement === element, disabled: element.disabled,
+    })));
+    releaseSelection();
+  }
   await expect(page.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeEnabled();
+  await expect(m5).toBeChecked();
+  // Traverse the native group with the keyboard, including wraparound. Every
+  // eligible engine must keep focus and its saved selection before continuing.
+  let focused = m5;
+  for (const name of ['Beam Search acotada', 'First Fit', 'Best Fit', 'Worst Fit', 'Hole Filling', 'Best Residual Fit']) {
+    await focused.press('ArrowDown');
+    focused = page.getByRole('radio', { name: `Elegir ${name}`, exact: true });
+    await expect(focused).toBeChecked();
+    await expect(page.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeEnabled();
+    await expect(focused).toBeFocused();
+    await expect(focused).toBeChecked();
+  }
   current = await read();
   const chosen = current.executions.find(e => e.method === 'M5');
   expect(current.selected_execution_id).toBe(chosen.execution_id);

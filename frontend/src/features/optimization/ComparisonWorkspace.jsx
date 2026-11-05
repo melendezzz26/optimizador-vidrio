@@ -207,6 +207,7 @@ export function ComparisonWorkspace({ token, user, initialRunId, initialProfile,
 
 function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessionExpired }) {
   const [tab, setTab] = useState('FF'), [lookup, setLookup] = useState(''), [lookupKey, setLookupKey] = useState(''), [dialog, setDialog] = useState(false);
+  const [pendingChoice, setPendingChoice] = useState(null);
   const pendingHeading = useRef(null);
   const id = useId(), current = state.comparison;
   useEffect(() => {
@@ -215,7 +216,15 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
       pendingHeading.current?.closest('.comparison-workspace')?.scrollIntoView?.({ block: 'start' });
     }
   }, [current, state.success]);
-  const selected = current?.executions.find(e => e.execution_id === current.selected_execution_id);
+  // React restores controlled inputs after onChange. Reflect the user's choice
+  // while it is being saved; confirmation still uses the durable controller state.
+  const selectedId = pendingChoice ?? current?.selected_execution_id;
+  const selected = current?.executions.find(e => e.execution_id === selectedId);
+  const choose = async executionId => {
+    setPendingChoice(executionId);
+    try { await flow.choose(executionId); }
+    finally { setPendingChoice(null); }
+  };
   const methods = current ? current.executions.map(e => e.method) : state.profile === 'comparison-v2' ? apiV2.methods : METHODS;
   const tabs = current?.profile === 'comparison-v2' ? ['comparison', ...methods] : [...methods, 'comparison'];
   const activeApi = current?.profile === 'comparison-v2' ? apiV2 : api;
@@ -273,14 +282,14 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
           <tbody>{current.executions.map(execution => {
             const result = state.results[execution.execution_id]?.result;
             const rows = current.profile === 'comparison-v2' ? comparisonMetrics : [['pieces', 'Piezas', ''], ...metricRows];
-            return <tr key={execution.execution_id} className={current.selected_execution_id === execution.execution_id ? 'is-selected' : ''}>
+            return <tr key={execution.execution_id} className={selectedId === execution.execution_id ? 'is-selected' : ''}>
               <th scope="row">{methodName(execution.method)}<small>{execution.method}</small></th>
               <td>{executionStatus(execution)}{execution.diagnostic && <small>{execution.diagnostic.termination_reason}</small>}</td>
               {rows.map(([key]) => <td key={key}>{key === 'pieces' ? (execution.status === 'FALLIDA' || execution.outcome === 'FAILED' ? '—' : `${execution.placed_units} / ${execution.total_units}`)
                 : current.profile === 'comparison-v2' ? metricValue(key, execution, result) ?? '—' : execution.metrics?.[key] ?? '—'}</td>)}
               <td><label><input type="radio" name={`${id}-engine`} aria-label={`Elegir ${methodName(execution.method)}`}
-                checked={current.selected_execution_id === execution.execution_id} disabled={!execute || state.busy || !current.selection_allowed || !execution.eligible}
-                onChange={() => flow.choose(execution.execution_id)} />{current.selected_execution_id === execution.execution_id ? 'Elegido' : 'Elegir'}</label></td>
+                checked={selectedId === execution.execution_id} disabled={!execute || state.busy && pendingChoice !== execution.execution_id || !current.selection_allowed || !execution.eligible}
+                onChange={() => choose(execution.execution_id)} />{selectedId === execution.execution_id ? 'Elegido' : 'Elegir'}</label></td>
             </tr>;
           })}</tbody></table></div>
         <>

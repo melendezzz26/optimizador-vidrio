@@ -99,6 +99,48 @@ test.each([false, true])('manual v2 confirmation keeps history after reload, los
   expect(screen.getAllByRole('radio').every(r => r.disabled)).toBe(true);
 });
 
+test.each(comparisonV2.catalog)('a pending $code selection keeps its native radio checked and focused until the durable response arrives', async ({ name }) => {
+  const { apiV2 } = setupV2(); await startV2();
+  fireEvent.click(screen.getByRole('tab', { name: 'Comparación' }));
+  const choose = apiV2.choose.getMockImplementation();
+  let releaseSelection;
+  const response = new Promise(resolve => { releaseSelection = resolve; });
+  apiV2.choose.mockImplementation(async (...args) => { await response; return choose(...args); });
+  const radio = screen.getByRole('radio', { name: `Elegir ${name}`, exact: true });
+  try {
+    radio.focus();
+    fireEvent.click(radio);
+    expect(screen.getByRole('radio', { name: `Elegir ${name}`, exact: true })).toBe(radio);
+    expect(radio).toBeChecked();
+    expect(radio).toBeEnabled();
+    expect(radio).toHaveFocus();
+    expect(screen.getByRole('button', { name: 'Procesando…' })).toBeDisabled();
+  } finally { releaseSelection(); }
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeEnabled());
+  expect(radio).toBeChecked();
+  expect(radio).toHaveFocus();
+  expect(apiV2.choose).toHaveBeenCalledOnce();
+});
+
+test.each([0, 409])('failed selection status %s restores the last durable choice and never confirms', async status => {
+  const { apiV2 } = setupV2(); await startV2();
+  fireEvent.click(screen.getByRole('tab', { name: 'Comparación' }));
+  const previous = screen.getByRole('radio', { name: 'Elegir First Fit', exact: true });
+  fireEvent.click(previous);
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeEnabled());
+  let rejectSelection;
+  apiV2.choose.mockReturnValueOnce(new Promise((_, reject) => { rejectSelection = reject; }));
+  const next = screen.getByRole('radio', { name: 'Elegir Best Residual Fit', exact: true });
+  fireEvent.click(next);
+  expect(next).toBeChecked();
+  expect(screen.getByRole('button', { name: 'Procesando…' })).toBeDisabled();
+  rejectSelection(Object.assign(new Error('No se pudo guardar la elección.'), { status }));
+  await screen.findByText('No se pudo guardar la elección.');
+  await waitFor(() => expect(previous).toBeChecked());
+  expect(next).not.toBeChecked();
+  expect(apiV2.confirm).not.toHaveBeenCalled();
+});
+
 test('v2 conflict refreshes durable state and preserves the manual selection', async () => {
   const { apiV2 } = setupV2({ conflict: true }); await startV2();
   fireEvent.click(screen.getByRole('tab', { name: 'Comparación' }));
