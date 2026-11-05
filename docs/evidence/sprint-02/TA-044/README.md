@@ -1,120 +1,127 @@
-# Evidencia TA-044 — Pruebas de capacidad, estrés, determinismo y concurrencia del optimizador
+# TA-044 - Evidencia de capacidad y concurrencia
 
-**PBI / Tarea:** TA-044 (T01 — Diseñar escenarios / T02 — Pruebas de capacidad y estrés / T03 — Determinismo y concurrencia)
-**Autor:** Luis Anthony Ibáñez Herrera
-**Revisor esperado:** Andro Joseph Quispe Cesias / Wilder Fabricio Melendez Quezada
-**Fecha:** 04/11/2026
-**Entorno:** Windows 11 / Python 3.11.1 / 12 CPUs lógicos
-**Base:** `integration/sprint-01` tras merge de M5 (PR #95)
+Autor: Luis Anthony Ibanez Herrera. Revisor esperado: Andro Joseph Quispe Cesias. Review formal: pendiente.
 
----
+## Entorno y configuracion
 
-## 1. Entrada y configuración
+- Windows build 26200; Python 3.11.15; AMD64 Family 23 Model 96; 6 CPU logicas visibles.
+- Ejecucion en entorno de medicion, no requisito de produccion. Hubo descarga de PostgreSQL en paralelo; los tiempos son observaciones de esta corrida.
+- Resolucion 1 mm, paso angular 5 grados, margen 1 mm, separacion 1 mm; limite M6 30 segundos.
+- Dos grupos de vidrio: tipo 1/6 mm y tipo 2/8 mm. Rectangulos, circulos y poligonos convexos; stock mixto.
+- El generador no usa aleatoriedad. `tracemalloc` mide asignaciones Python trazadas, no RAM total ni fugas.
 
-- **Independencia funcional:** Tarea desacoplada de HU-018 (importación CSV/Excel de Aguilar). Entradas generadas programáticamente con semilla fija y casos congelados.
-- **Artefactos y módulos creados:**
-  - `experiments/optimization/capacity_scenarios.py`: Generador determinista de matriz progresiva (10, 25, 50, 75, 100 piezas).
-  - `experiments/optimization/cases/capacity/CAP-*.json`: 5 casos congelados con rectángulos, círculos y polígonos convexos en 2 grupos de material (6mm y 8mm) con stock mixto (retazos y planchas).
-  - `backend/tests/unit/optimization/test_capacity_scenarios.py`: 11 pruebas unitarias de validación geométrica y contratos inmutables.
-  - `experiments/optimization/benchmark_capacity.py`: Runner formal de capacidad, estrés y cálculo de métricas R4.
-  - `experiments/optimization/probe_concurrency_capacity.py`: Sonda de determinismo ($N=5$) y concurrencia multi-proceso (2, 4, 8 workers).
-  - `docs/evidence/sprint-02/TA-044/capacity_benchmark_results.csv` y `.json`: Datos crudos del benchmark.
-  - `docs/evidence/sprint-02/TA-044/concurrency_results.json`: Datos crudos de determinismo y concurrencia.
-  - `Notion/Avance_TA-044_Capacidad_Estres_Concurrencia.docx`: Documento Word formal para Notion con capturas y tablas.
+## T02 - Capacidad
 
----
+Comando: `python experiments/optimization/benchmark_capacity.py`. COMPLETE: cobertura total; PARTIAL: cobertura parcial; TIMEOUT: limite de tiempo; ERROR: excepcion. TIMEOUT puede conservar resultado parcial.
 
-## 2. Procedimiento de verificación
+| Piezas | Metodo | Colocadas | Estado | Motivo | Tiempo ms | Planchas | Retazos | Aprovechamiento % | Merma mm2 | Recuperable mm2 |
+|---:|---|---:|---|---|---:|---:|---:|---:|---:|---:|
+| 10 | FF | 10/10 | COMPLETE | - | 305.34 | 2 | 3 | 15.621 | 514.86 | 388.0 |
+| 10 | BF | 10/10 | COMPLETE | - | 293.95 | 2 | 3 | 15.621 | 514.86 | 388.0 |
+| 10 | WF | 10/10 | COMPLETE | - | 294.22 | 6 | 3 | 6.493 | 1060.86 | 1346.0 |
+| 10 | M4 | 10/10 | COMPLETE | - | 356.87 | 2 | 3 | 15.621 | 514.86 | 388.0 |
+| 10 | M5 | 10/10 | COMPLETE | - | 325.8 | 4 | 3 | 9.173 | 760.86 | 894.0 |
+| 10 | M6 | 10/10 | COMPLETE | - | 7075.71 | 2 | 3 | 15.621 | 507.86 | 395.0 |
+| 25 | FF | 25/25 | COMPLETE | - | 458.64 | 4 | 3 | 23.545 | 922.01 | 471.0 |
+| 25 | BF | 25/25 | COMPLETE | - | 596.86 | 4 | 3 | 23.545 | 922.01 | 471.0 |
+| 25 | WF | 25/25 | COMPLETE | - | 504.44 | 16 | 3 | 6.655 | 2601.01 | 3416.0 |
+| 25 | M4 | 25/25 | COMPLETE | - | 477.58 | 4 | 3 | 23.545 | 922.01 | 471.0 |
+| 25 | M5 | 25/25 | COMPLETE | - | 541.27 | 12 | 3 | 8.882 | 1773.01 | 2628.0 |
+| 25 | M6 | 18/25 | TIMEOUT | TIME_LIMIT | 30002.78 | 3 | 3 | 21.723 | 714.72 | 461.0 |
+| 50 | FF | 50/50 | COMPLETE | - | 964.5 | 6 | 3 | 33.635 | 1378.23 | 330.0 |
+| 50 | BF | 50/50 | COMPLETE | - | 1328.26 | 6 | 3 | 33.635 | 1378.23 | 330.0 |
+| 50 | WF | 50/50 | COMPLETE | - | 1047.56 | 29 | 3 | 7.527 | 4436.23 | 6200.0 |
+| 50 | M4 | 50/50 | COMPLETE | - | 1082.4 | 6 | 3 | 33.635 | 1378.23 | 330.0 |
+| 50 | M5 | 50/50 | COMPLETE | - | 1217.2 | 26 | 3 | 8.391 | 3694.23 | 5758.0 |
+| 50 | M6 | 13/50 | TIMEOUT | TIME_LIMIT | 30002.27 | 2 | 2 | 28.312 | 465.0 | 325.0 |
+| 75 | FF | 75/75 | COMPLETE | - | 1494.87 | 9 | 3 | 34.569 | 1960.88 | 498.0 |
+| 75 | BF | 75/75 | COMPLETE | - | 2230.74 | 9 | 3 | 34.569 | 1960.88 | 498.0 |
+| 75 | WF | 75/75 | COMPLETE | - | 1608.33 | 41 | 3 | 8.056 | 6194.88 | 8632.0 |
+| 75 | M4 | 75/75 | COMPLETE | - | 1524.07 | 9 | 3 | 34.569 | 1960.88 | 498.0 |
+| 75 | M5 | 75/75 | COMPLETE | - | 1986.35 | 41 | 3 | 8.056 | 5728.88 | 9098.0 |
+| 75 | M6 | 9/75 | TIMEOUT | TIME_LIMIT | 30002.34 | 1 | 2 | 32.239 | 325.0 | 129.0 |
+| 100 | FF | 100/100 | COMPLETE | - | 2197.59 | 11 | 3 | 38.371 | 2467.46 | 312.0 |
+| 100 | BF | 100/100 | COMPLETE | - | 3519.31 | 11 | 3 | 38.371 | 2467.46 | 312.0 |
+| 100 | WF | 100/100 | COMPLETE | - | 2265.99 | 54 | 3 | 8.17 | 8061.46 | 11390.0 |
+| 100 | M4 | 100/100 | COMPLETE | - | 2219.76 | 11 | 3 | 38.371 | 2467.46 | 312.0 |
+| 100 | M5 | 100/100 | COMPLETE | - | 2848.47 | 53 | 3 | 8.34 | 7275.46 | 11744.0 |
+| 100 | M6 | 7/100 | TIMEOUT | TIME_LIMIT | 30001.09 | 1 | 2 | 25.075 | 310.0 | 192.0 |
+| 150 | FF | 150/150 | COMPLETE | - | 4192.11 | 16 | 3 | 40.262 | 3476.69 | 374.0 |
+| 150 | BF | 150/150 | COMPLETE | - | 7067.4 | 16 | 3 | 40.262 | 3476.69 | 374.0 |
+| 150 | WF | 150/150 | COMPLETE | - | 4022.2 | 79 | 3 | 8.409 | 11646.69 | 16620.0 |
+| 150 | M4 | 150/150 | COMPLETE | - | 4115.57 | 16 | 3 | 40.262 | 3476.69 | 374.0 |
+| 150 | M5 | 150/150 | COMPLETE | - | 5148.04 | 79 | 3 | 8.409 | 10738.69 | 17528.0 |
+| 150 | M6 | 6/150 | TIMEOUT | TIME_LIMIT | 30001.1 | 1 | 2 | 21.493 | 320.0 | 206.0 |
+| 200 | FF | 200/200 | COMPLETE | - | 6775.22 | 22 | 3 | 39.773 | 4642.92 | 598.0 |
+| 200 | BF | 200/200 | COMPLETE | - | 12220.54 | 22 | 3 | 39.773 | 4642.92 | 598.0 |
+| 200 | WF | 200/200 | COMPLETE | - | 6392.74 | 104 | 3 | 8.537 | 15230.92 | 21850.0 |
+| 200 | M4 | 200/200 | COMPLETE | - | 7156.24 | 22 | 3 | 39.773 | 4642.92 | 598.0 |
+| 200 | M5 | 200/200 | COMPLETE | - | 8724.78 | 104 | 3 | 8.537 | 14048.92 | 23032.0 |
+| 200 | M6 | 5/200 | TIMEOUT | TIME_LIMIT | 30001.21 | 1 | 2 | 17.91 | 288.0 | 262.0 |
 
-### 2.1 Validación unitaria de escenarios (T01)
-```powershell
-cd backend
-python -m pytest tests/unit/optimization/test_capacity_scenarios.py -q -ra
+Las 42 ejecuciones comprenden 36 COMPLETE y 6 TIMEOUT. FF, BF, WF, M4 y M5 colocaron todas las piezas hasta 200. M6 completo CAP-10; alcanzo TIME_LIMIT desde CAP-25 en esta corrida. No implica una capacidad universal ni causalidad.
+
+Por metodo, comparando CAP-10 con CAP-200 en esta ejecucion: FF paso de 305 a 6775 ms; BF de 294 a 12221 ms; WF de 294 a 6393 ms; M4 de 357 a 7156 ms; M5 de 326 a 8725 ms. Los cinco conservaron cobertura completa. M6 completo CAP-10 en 7076 ms y alcanzo TIME_LIMIT en las seis escalas restantes. Estas razones de crecimiento no prueban una causa y pueden variar con la carga del equipo.
+
+## Determinismo observado
+
+Cinco repeticiones CAP-10; SHA-256 compara colocaciones, no memoria ni ausencia de fugas.
+
+| Metodo | Repeticiones | Huellas iguales |
+|---|---:|---|
+| FF | 5 | Si |
+| BF | 5 | Si |
+| WF | 5 | Si |
+| M4 | 5 | Si |
+| M5 | 5 | Si |
+| M6 | 5 | Si |
+
+## Paralelismo del motor
+
+Comando: `python experiments/optimization/probe_concurrency_capacity.py`. La sonda de 2, 4 y 8 procesos compara huellas y tiempos de FF/M5 para CAP-25/50. No ejecuta el servicio y no demuestra ausencia de fugas.
+
+## Concurrencia del servicio
+
+Las pruebas usan PostgreSQL temporal en loopback, con datos sinteticos; no usan Supabase. Una fixture de solicitudes sucesivas compartia indebidamente el calculador; los casos simultaneos usan una fabrica por solicitud, como la dependencia de produccion. No se modifico codigo productivo.
+
+| Solicitudes | Admitidas | Rechazadas | Completas | Canceladas | Fallidas | Inventario |
+|---:|---:|---:|---:|---:|---:|---|
+| 1 | 1 | 0 | 1 | 0 | 0 | Sin confirmacion |
+| 2 | 2 | 0 | 2 | 0 | 0 | Sin cambios |
+| 3 | 2 | 1 | 2 | 0 | 0 | Sin cambios |
+| 3, con fallo inducido | 2 | 1 | 1 | 0 | 1 | Sin cambios |
+| 1, desconexion | 1 | 0 | 0 | 1 | 0 | Sin cambios |
+
+La desconexion finaliza como FALLIDA y no confirmable; cancelada identifica la causa, no un estado nuevo. El inventario compara filas completas de planchas, retazos y movimientos. En dos solicitudes sincronizadas y la tercera rechazada, los tiempos HTTP observados fueron 0.172/0.171 s; con fallo inducido 0.086/0.093 s. Incluyen las barreras de prueba y no son un benchmark de latencia. La politica observada admite dos ejecuciones por proceso, una por usuario; la tercera recibe 503 OPTIMIZER_BUSY. Dos se mantuvieron estables en este entorno y caso, sin extrapolar a produccion ni a varios procesos web.
+
+| Criterio | Evidencia |
+|---|---|
+| C01 dos solicitudes, identificadores y eventos | `test_two_real_requests_isolate_failure_and_reject_third` |
+| C02 admision | la misma prueba y `test_completed_run_frees_its_slot` |
+| C03 rechazo sin huerfanos | la misma prueba y `test_third_concurrent_run_gets_503_without_side_effects_and_is_admitted_later` |
+| C04 rechazo sin modificar inventario | snapshot de la misma prueba, con plancha y retazo |
+| C05 desconexion/cancelacion | `test_disconnect_preserves_full_inventory_and_releases_worker` y pruebas de desconexion |
+| C06 inventario tras cancelacion | snapshot completo en esa prueba |
+| C07 persistencia y vinculos | consultas de ejecuciones y vinculos; suites de persistencia/calculo del comparador |
+| C08 fallo aislado | variante `fail_first=True` de la prueba concurrente |
+
+La prueba de servicio ejecuta FF mediante la ruta de corridas; las pruebas del comparador verifican su persistencia y runner por separado. No se afirma haber ejecutado comparaciones simultaneas entre si.
+
+| Suite | Passed | Failed | Skipped | Setup errors |
+|---|---:|---:|---:|---:|
+| Datasets, benchmark y seis metodos (Windows) | 184 | 0 | 0 | 0 |
+| API concurrencia PostgreSQL (Windows) | 17 | 0 | 0 | 0 |
+| Comparador persistencia y calculo (WSL) | 27 | 0 | 0 | 0 |
+| Runner comparador (WSL) | 14 | 0 | 0 | 0 |
+
+Las suites son independientes; los reintentos no se suman como casos adicionales. La suite del comparador requiere Linux; su ejecucion en Windows dio 16 fallos por la comprobacion de plataforma. Una ejecucion conjunta en WSL no se recolecto por falta de openpyxl en ese entorno; las suites indicadas arriba se ejecutaron separadamente.
+
+## Comandos de pruebas
+
+```text
+python -m pytest backend/tests/unit/optimization/test_capacity_scenarios.py backend/tests/unit/optimization/test_capacity_benchmark.py -q
+python -m pytest backend/tests/api/optimization/test_run_concurrency.py backend/tests/api/optimization/test_ta044_service_concurrency.py -q
+python -m pytest backend/tests/integration/optimization/test_comparison_persistence.py backend/tests/integration/optimization/test_comparison_calculation.py backend/tests/unit/optimization/test_comparison_runner.py -q
 ```
-**Resultado:** `11 passed in 0.19s` (100% verde).
 
-### 2.2 Benchmark de capacidad y estrés (T02)
-```powershell
-python experiments/optimization/benchmark_capacity.py
-```
-**Resultado:** 30 ensayos evaluados sobre FF, BF, WF, M4, M5 y M6.
-
-### 2.3 Verificación de determinismo y concurrencia (T03)
-```powershell
-python experiments/optimization/probe_concurrency_capacity.py
-```
-**Resultado:** 25 evaluaciones de determinismo (100% PASS, 1 único hash SHA-256 por caso) y 12 pruebas de concurrencia multi-proceso (100% SUCCESS, 0 colisiones).
-
----
-
-## 3. Resultado esperado vs. resultado obtenido
-
-### 3.1 T01 — Escenarios de capacidad
-- **Esperado:** Entradas reproducibles de 10, 25, 50, 75 y 100 piezas con formas no uniformes (rectángulos, círculos, polígonos convexos), grupos compatibles de material (6mm y 8mm) y stock mixto (retazos + planchas).
-- **Obtenido:** 5 archivos JSON generados y congelados en `experiments/optimization/cases/capacity/`. Todas las geometrías validaron positivamente contra `GeometryValidator` y los contratos inmutables de `OptimizationProblem`. **PASS**.
-
-### 3.2 T02 — Capacidad y estrés del motor
-- **Esperado:** Medición de tiempo monotónico, memoria pico, colocaciones y umbrales de saturación en los 6 métodos.
-- **Obtenido:**
-  - **Métodos constructivos (FF, BF, WF, M4, M5):** Soportan 100 piezas sin degradación crítica:
-    - FF: 100 piezas en 1.86 s | RAM: 1.17 MB | Colocadas: 100/100 (100%)
-    - BF: 100 piezas en 2.88 s | RAM: 1.19 MB | Colocadas: 100/100 (100%)
-    - WF: 100 piezas en 1.94 s | RAM: 1.24 MB | Colocadas: 100/100 (100%)
-    - M4: 100 piezas en 1.92 s | RAM: 1.17 MB | Colocadas: 100/100 (100%)
-    - M5: 100 piezas en 2.36 s | RAM: 1.23 MB | Colocadas: 100/100 (100%)
-  - **Método de búsqueda en árbol (M6 Beam Search):** Funciona al 100% hasta 25 piezas (26.8 s). En 50, 75 y 100 piezas se detiene por límite de tiempo de búsqueda (30.0 s) produciendo colocaciones parciales (14, 10 y 7 piezas colocadas respectivamente). Este límite queda caracterizado. **PASS**.
-
-### 3.3 T03 — Determinismo y concurrencia
-- **Esperado:** Idéntico resultado funcional ante misma entrada (0 drift). En concurrencia, ausencia de saturación bloqueante, sin corrupción de memoria y medición del factor de ralentización.
-- **Obtenido:**
-  - **Determinismo:** En 5 repeticiones consecutivas para todos los métodos y casos, el fingerprint SHA-256 de los placements fue idéntico en el 100% de las corridas. **PASS**.
-  - **Concurrencia:** Con 2, 4 y 8 procesos paralelos sobre 12 núcleos lógicos, todas las ejecuciones completaron con éxito (`all_success = True`), sin corrupción de memoria (`no_interference_hash_match = True`). El throughput escaló hasta 16.32 ops/s con un factor de ralentización de solo 1.32x en FF y 1.77x en M5 bajo 8 workers concurrentes. **PASS**.
-
----
-
-## 4. Tabla consolidada de capacidad y estrés (Extracto T02)
-
-| Caso | Piezas | Método | Estado | Tiempo (ms) | RAM Pico (MB) | Colocadas | Planchas | Retazos | Utiliz. % |
-|---|---|---|---|---|---|---|---|---|---|
-| CAP-10 | 10 | FF | SUCCESS | 244.5 | 0.762 | 10/10 | 2 | 3 | 15.6% |
-| CAP-10 | 10 | BF | SUCCESS | 262.4 | 0.641 | 10/10 | 2 | 3 | 15.6% |
-| CAP-10 | 10 | M5 | SUCCESS | 271.6 | 0.633 | 10/10 | 4 | 3 | 9.2% |
-| CAP-10 | 10 | M6 | SUCCESS | 5745.1 | 1.625 | 10/10 | 2 | 3 | 15.6% |
-| CAP-25 | 25 | FF | SUCCESS | 386.1 | 0.820 | 25/25 | 4 | 3 | 23.5% |
-| CAP-25 | 25 | M5 | SUCCESS | 490.1 | 0.789 | 25/25 | 12 | 3 | 8.9% |
-| CAP-25 | 25 | M6 | SUCCESS | 26844.6 | 2.821 | 25/25 | 4 | 3 | 23.5% |
-| CAP-50 | 50 | FF | SUCCESS | 763.5 | 1.165 | 50/50 | 6 | 3 | 33.6% |
-| CAP-50 | 50 | M5 | SUCCESS | 932.6 | 1.153 | 50/50 | 26 | 3 | 8.4% |
-| CAP-50 | 50 | M6 | PARTIAL | 30002.6 | 0.751 | 14/50 | 2 | 2 | 30.1% |
-| CAP-100 | 100 | FF | SUCCESS | 1863.4 | 1.169 | 100/100 | 11 | 3 | 38.4% |
-| CAP-100 | 100 | BF | SUCCESS | 2877.2 | 1.189 | 100/100 | 11 | 3 | 38.4% |
-| CAP-100 | 100 | M4 | SUCCESS | 1918.2 | 1.170 | 100/100 | 11 | 3 | 38.4% |
-| CAP-100 | 100 | M5 | SUCCESS | 2364.6 | 1.233 | 100/100 | 53 | 3 | 8.3% |
-| CAP-100 | 100 | M6 | PARTIAL | 30001.7 | 0.303 | 7/100 | 1 | 2 | 25.1% |
-
----
-
-## 5. Tabla consolidada de concurrencia multi-proceso (Extracto T03)
-
-| Caso | Método | Workers | Estado | Wall Time (ms) | Avg Worker (ms) | Slowdown | Throughput (ops/s) |
-|---|---|---|---|---|---|---|---|
-| CAP-25 | FF | 2 | SUCCESS | 381.7 | 53.9 | 1.05x | 5.24 |
-| CAP-25 | FF | 4 | SUCCESS | 347.1 | 55.2 | 1.08x | 11.52 |
-| CAP-25 | FF | 8 | SUCCESS | 490.1 | 67.3 | 1.32x | 16.32 |
-| CAP-25 | M5 | 2 | SUCCESS | 309.8 | 69.1 | 1.10x | 6.46 |
-| CAP-25 | M5 | 4 | SUCCESS | 383.1 | 71.9 | 1.15x | 10.44 |
-| CAP-25 | M5 | 8 | SUCCESS | 946.9 | 110.8 | 1.77x | 8.45 |
-| CAP-50 | FF | 4 | SUCCESS | 695.3 | 207.9 | 1.39x | 5.75 |
-| CAP-50 | FF | 8 | SUCCESS | 856.6 | 237.2 | 1.59x | 9.34 |
-| CAP-50 | M5 | 4 | SUCCESS | 908.8 | 214.0 | 1.43x | 4.40 |
-| CAP-50 | M5 | 8 | SUCCESS | 1326.6 | 308.2 | 2.06x | 6.03 |
-
----
-
-## 6. Conclusión técnica
-
-El motor de optimización de NewGlass responde con robustez empírica a la pregunta de capacidad:
-1. **Límite de capacidad constructiva:** Los algoritmos FF, BF, WF, M4 y M5 procesan 100 piezas complejas en menos de 3 segundos con 100% de colocación, memoria contenida en ~1.2 MB y respeto estricto de la prioridad `RETAZO` $\to$ `PLANCHA`.
-2. **Límite de búsqueda exploratoria (M6):** Demuestra su límite práctico en $\sim 25$ piezas bajo su umbral de 30 segundos. Más allá de ese punto, su uso requiere partición previa de lotes o aumento de presupuestos computacionales.
-3. **Determinismo y Concurrencia:** Invariante de hash comprobado (0 drift) y ausencia total de interferencias o fugas de memoria en procesamiento concurrente de hasta 8 workers paralelos.
-4. **Evidencia para Notion:** El reporte completo con capturas de visual/terminal, tablas y código queda almacenado en `Notion/Avance_TA-044_Capacidad_Estres_Concurrencia.docx`.
+Las pruebas PostgreSQL requieren `NEWGLASS_TEST_PG_BIN` apuntando a binarios locales y `NEWGLASS_REQUIRE_POSTGRES=1`; la fixture crea y detiene su propio cluster. El runner del comparador requiere Linux con procfs y limites de recursos.
