@@ -1,0 +1,762 @@
+{
+  "metadata": {
+    "date": "04/11/2026",
+    "cpu_count": 6,
+    "python_version": "3.11.15 (main, Jun 23 2026, 15:20:37) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "win32"
+  },
+  "determinism_results": [
+    {
+      "scale_n": 10,
+      "case_id": "CAP-10",
+      "method": "FF",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "1b6d37438a941860c75865294d8b1a0ff82ba2c62db1289fc0a0617a5769588d",
+      "avg_time_ms": 52.77,
+      "time_std_ms": 1.1
+    },
+    {
+      "scale_n": 10,
+      "case_id": "CAP-10",
+      "method": "BF",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "22f6f9ae0ad8749a6eae921cb6df5d89c62c23525b0ca17660e4544bdbd9db6c",
+      "avg_time_ms": 56.17,
+      "time_std_ms": 1.66
+    },
+    {
+      "scale_n": 10,
+      "case_id": "CAP-10",
+      "method": "WF",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "36a988fba1cf17b1960eb072d9a7b7345d08af8081fb5c171b9aba96b9974047",
+      "avg_time_ms": 55.91,
+      "time_std_ms": 0.74
+    },
+    {
+      "scale_n": 10,
+      "case_id": "CAP-10",
+      "method": "M4",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "1b6d37438a941860c75865294d8b1a0ff82ba2c62db1289fc0a0617a5769588d",
+      "avg_time_ms": 59.51,
+      "time_std_ms": 7.14
+    },
+    {
+      "scale_n": 10,
+      "case_id": "CAP-10",
+      "method": "M5",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "7fbc96621cef6fc621672356c6465f340a04f689a5ccf76610beeb0752ac2bfe",
+      "avg_time_ms": 60.5,
+      "time_std_ms": 3.82
+    },
+    {
+      "scale_n": 10,
+      "case_id": "CAP-10",
+      "method": "M6",
+      "repetitions": 5,
+      "is_deterministic": true,
+      "unique_hashes_count": 1,
+      "fingerprint": "c56b457f55403ec826042a07a8a1931690afba864d8699350a223b692609cdb9",
+      "avg_time_ms": 1228.11,
+      "time_std_ms": 9.0
+    }
+  ],
+  "concurrency_results": [
+    {
+      "scale_n": 25,
+      "case_id": "CAP-25",
+      "method": "FF",
+      "concurrency_workers": 2,
+      "all_success": true,
+      "fingerprints_match_baseline": true,
+      "total_wall_time_ms": 442.17,
+      "baseline_single_ms": 86.66,
+      "avg_worker_time_ms": 89.72,
+      "slowdown_factor": 1.04,
+      "throughput_ops_sec": 4.52,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 88.84,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 90.6,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 25,
+      "case_id": "CAP-25",
+      "method": "FF",
+      "concurrency_workers": 4,
+      "all_success": true,
+      "fingerprints_match_baseline": true,
+      "total_wall_time_ms": 431.83,
+      "baseline_single_ms": 86.66,
+      "avg_worker_time_ms": 98.38,
+      "slowdown_factor": 1.14,
+      "throughput_ops_sec": 9.26,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 94.74,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 104.59,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 2,
+          "success": true,
+          "execution_time_ms": 94.82,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 3,
+          "success": true,
+          "execution_time_ms": 99.35,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 25,
+      "case_id": "CAP-25",
+      "method": "FF",
+      "concurrency_workers": 8,
+      "all_success": true,
+      "fingerprints_match_baseline": true,
+      "total_wall_time_ms": 689.71,
+      "baseline_single_ms": 86.66,
+      "avg_worker_time_ms": 151.14,
+      "slowdown_factor": 1.74,
+      "throughput_ops_sec": 11.6,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 189.55,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 162.91,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 2,
+          "success": true,
+          "execution_time_ms": 163.36,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 3,
+          "success": true,
+          "execution_time_ms": 149.57,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 4,
+          "success": true,
+          "execution_time_ms": 136.3,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 5,
+          "success": true,
+          "execution_time_ms": 156.99,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 6,
+          "success": true,
+          "execution_time_ms": 131.3,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        },
+        {
+          "worker_id": 7,
+          "success": true,
+          "execution_time_ms": 119.13,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "4e90f8bdf06618c41a2bb375ce13f11b3e5b1b5f2851f4905af7a126ee8fd75a",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 25,
+      "case_id": "CAP-25",
+      "method": "M5",
+      "concurrency_workers": 2,
+      "all_success": true,
+      "fingerprints_match_baseline": true,
+      "total_wall_time_ms": 387.93,
+      "baseline_single_ms": 103.82,
+      "avg_worker_time_ms": 109.98,
+      "slowdown_factor": 1.06,
+      "throughput_ops_sec": 5.16,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 111.09,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 108.88,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 25,
+      "case_id": "CAP-25",
+      "method": "M5",
+      "concurrency_workers": 4,
+      "all_success": true,
+      "fingerprints_match_baseline": true,
+      "total_wall_time_ms": 437.01,
+      "baseline_single_ms": 103.82,
+      "avg_worker_time_ms": 118.72,
+      "slowdown_factor": 1.14,
+      "throughput_ops_sec": 9.15,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 120.16,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 119.61,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 2,
+          "success": true,
+          "execution_time_ms": 117.07,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 3,
+          "success": true,
+          "execution_time_ms": 118.03,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 25,
+      "case_id": "CAP-25",
+      "method": "M5",
+      "concurrency_workers": 8,
+      "all_success": true,
+      "fingerprints_match_baseline": true,
+      "total_wall_time_ms": 708.14,
+      "baseline_single_ms": 103.82,
+      "avg_worker_time_ms": 188.04,
+      "slowdown_factor": 1.81,
+      "throughput_ops_sec": 11.3,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 255.72,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 227.96,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 2,
+          "success": true,
+          "execution_time_ms": 178.46,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 3,
+          "success": true,
+          "execution_time_ms": 161.74,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 4,
+          "success": true,
+          "execution_time_ms": 208.79,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 5,
+          "success": true,
+          "execution_time_ms": 171.01,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 6,
+          "success": true,
+          "execution_time_ms": 150.99,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        },
+        {
+          "worker_id": 7,
+          "success": true,
+          "execution_time_ms": 149.64,
+          "placed_units": 25,
+          "total_units": 25,
+          "fingerprint": "594653fc0e909bcf3f49e92bba7288d1a5fbdccaf32dbf208feebc50f19242ec",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 50,
+      "case_id": "CAP-50",
+      "method": "FF",
+      "concurrency_workers": 2,
+      "all_success": true,
+      "fingerprints_match_baseline": true,
+      "total_wall_time_ms": 477.43,
+      "baseline_single_ms": 180.22,
+      "avg_worker_time_ms": 182.63,
+      "slowdown_factor": 1.01,
+      "throughput_ops_sec": 4.19,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 182.31,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 182.95,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 50,
+      "case_id": "CAP-50",
+      "method": "FF",
+      "concurrency_workers": 4,
+      "all_success": true,
+      "fingerprints_match_baseline": true,
+      "total_wall_time_ms": 531.24,
+      "baseline_single_ms": 180.22,
+      "avg_worker_time_ms": 209.8,
+      "slowdown_factor": 1.16,
+      "throughput_ops_sec": 7.53,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 210.42,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 210.89,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 2,
+          "success": true,
+          "execution_time_ms": 207.15,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 3,
+          "success": true,
+          "execution_time_ms": 210.74,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 50,
+      "case_id": "CAP-50",
+      "method": "FF",
+      "concurrency_workers": 8,
+      "all_success": true,
+      "fingerprints_match_baseline": true,
+      "total_wall_time_ms": 882.9,
+      "baseline_single_ms": 180.22,
+      "avg_worker_time_ms": 299.66,
+      "slowdown_factor": 1.66,
+      "throughput_ops_sec": 9.06,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 329.39,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 299.84,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 2,
+          "success": true,
+          "execution_time_ms": 306.16,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 3,
+          "success": true,
+          "execution_time_ms": 331.15,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 4,
+          "success": true,
+          "execution_time_ms": 290.85,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 5,
+          "success": true,
+          "execution_time_ms": 265.27,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 6,
+          "success": true,
+          "execution_time_ms": 293.53,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        },
+        {
+          "worker_id": 7,
+          "success": true,
+          "execution_time_ms": 281.07,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "2e915f79a49da697ab80bb8179d90d0bf30bf700d18a6d48f7e431b1f87808ec",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 50,
+      "case_id": "CAP-50",
+      "method": "M5",
+      "concurrency_workers": 2,
+      "all_success": true,
+      "fingerprints_match_baseline": true,
+      "total_wall_time_ms": 486.08,
+      "baseline_single_ms": 215.44,
+      "avg_worker_time_ms": 227.97,
+      "slowdown_factor": 1.06,
+      "throughput_ops_sec": 4.11,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 227.93,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 228.01,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 50,
+      "case_id": "CAP-50",
+      "method": "M5",
+      "concurrency_workers": 4,
+      "all_success": true,
+      "fingerprints_match_baseline": true,
+      "total_wall_time_ms": 587.02,
+      "baseline_single_ms": 215.44,
+      "avg_worker_time_ms": 256.65,
+      "slowdown_factor": 1.19,
+      "throughput_ops_sec": 6.81,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 259.63,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 257.03,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 2,
+          "success": true,
+          "execution_time_ms": 256.66,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 3,
+          "success": true,
+          "execution_time_ms": 253.29,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scale_n": 50,
+      "case_id": "CAP-50",
+      "method": "M5",
+      "concurrency_workers": 8,
+      "all_success": true,
+      "fingerprints_match_baseline": true,
+      "total_wall_time_ms": 950.14,
+      "baseline_single_ms": 215.44,
+      "avg_worker_time_ms": 383.77,
+      "slowdown_factor": 1.78,
+      "throughput_ops_sec": 8.42,
+      "worker_outputs": [
+        {
+          "worker_id": 0,
+          "success": true,
+          "execution_time_ms": 414.84,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 1,
+          "success": true,
+          "execution_time_ms": 372.53,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 2,
+          "success": true,
+          "execution_time_ms": 435.66,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 3,
+          "success": true,
+          "execution_time_ms": 417.44,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 4,
+          "success": true,
+          "execution_time_ms": 410.28,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 5,
+          "success": true,
+          "execution_time_ms": 320.12,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 6,
+          "success": true,
+          "execution_time_ms": 328.83,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        },
+        {
+          "worker_id": 7,
+          "success": true,
+          "execution_time_ms": 370.49,
+          "placed_units": 50,
+          "total_units": 50,
+          "fingerprint": "415fbecd49462e1e368f8b279e39dc55269ae486282ba53c7da0f720ea36b5a2",
+          "error": null
+        }
+      ]
+    }
+  ]
+}
