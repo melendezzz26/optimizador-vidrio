@@ -190,11 +190,33 @@ class SheetLayout:
                 offset += length
             return candidates
 
-        occupied_rows = tuple((offset, bits) for offset, bits in enumerate(piece.rows) if bits)
+        # Intersections commute: test the densest constraints first, while the
+        # candidate origins still follow the exact row/leftmost-column order.
+        # For equal free material rows, masks already tested imply every subset
+        # of their union. Avoid repeating those constraints (notably circles and
+        # polygons over long rectangular free strips). Retain only one such
+        # union, local to this candidate row; no layout/global cache is added.
+        occupied_rows = [(offset, bits) for offset, bits in enumerate(piece.rows) if bits]
+        first = occupied_rows[0] if occupied_rows else None
+        occupied_rows.sort(key=lambda item: item[1].bit_count(), reverse=True)
         for row in range(rows):
             candidates = all_origins
+            previous_free, covered_shape = None, 0
+            if first is not None:
+                # Keep the cheap original top-row rejection before dense rows.
+                offset, covered_shape = first
+                previous_free = free[row + offset]
+                candidates &= origins(previous_free, covered_shape)
+                if not candidates:
+                    continue
             for offset, bits in occupied_rows:
-                candidates &= origins(free[row + offset], bits)
+                available = free[row + offset]
+                if available != previous_free:
+                    previous_free, covered_shape = available, 0
+                if bits & ~covered_shape == 0:
+                    continue
+                covered_shape |= bits
+                candidates &= origins(available, bits)
                 if not candidates:
                     break
             if candidates:
