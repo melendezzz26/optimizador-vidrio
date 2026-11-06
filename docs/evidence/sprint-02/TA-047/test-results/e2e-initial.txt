@@ -1,0 +1,188 @@
+E2E actual: SHA 678ab92f3a32d37509b67779f99359acacedde2f, run 213cd8e4-1d35-4c42-aa6c-afa2688c91e4, evidencia /home/fabri/.cache/newglass-ta047.Z4eUVh/frontend/test-results/e2e-phases/run-zuA0HH
+Inventario actual: 146 escenarios; b02=2, remaining=144.
+
+Running 2 tests using 1 worker
+
+  ✘  1 [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:439:1 › TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL (5ms)
+  ✘  2 [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:439:1 › TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL (5ms)
+
+
+  1) [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:439:1 › TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/home/fabri/.cache/newglass-ta047.Z4eUVh/evidence/e2e-service-tmp/playwright_chromiumdev_profile-drjjZ4 --remote-debugging-pipe --no-startup-window
+    <launched> pid=658
+    [pid=658][err] [658:658:1105/203054.638643:FATAL:chrome/browser/process_singleton_posix.cc:313] Socket path too long: /home/fabri/.cache/newglass-ta047.Z4eUVh/frontend/../evidence/e2e-service-tmp/org.chromium.Chromium.kPW8o7/SingletonSocket.
+    [pid=658][err] [1105/203054.666530:ERROR:third_party/crashpad/crashpad/util/file/file_io_posix.cc:145] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq: No such file or directory (2)
+    [pid=658][err] [1105/203054.666626:ERROR:third_party/crashpad/crashpad/util/file/file_io_posix.cc:145] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq: No such file or directory (2)
+    [pid=658][err] Received signal 6
+    [pid=658][err] #0 0x5a7aec4d8bc3 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x6a9abc2)
+    [pid=658][err] #1 0x5a7af119e494 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0xb760493)
+    [pid=658][err] #2 0x751d7a045cb0 (/usr/lib/x86_64-linux-gnu/libc.so.6+0x45caf)
+    [pid=658][err] #3 0x751d7a045b7e (/usr/lib/x86_64-linux-gnu/libc.so.6+0x45b7d)
+    [pid=658][err] #4 0x751d7a0288ec (/usr/lib/x86_64-linux-gnu/libc.so.6+0x288eb)
+    [pid=658][err] #5 0x5a7af1195385 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0xb757384)
+    [pid=658][err] #6 0x5a7af115514d (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0xb71714c)
+    [pid=658][err] #7 0x5a7af11550de (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0xb7170dd)
+    [pid=658][err] #8 0x5a7aec29f603 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x6861602)
+    [pid=658][err] #9 0x5a7aeaf381f9 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x54fa1f8)
+    [pid=658][err] #10 0x5a7aeb773a56 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5d35a55)
+    [pid=658][err] #11 0x5a7aeb7725af (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5d345ae)
+    [pid=658][err] #12 0x5a7aeb772564 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5d34563)
+    [pid=658][err] #13 0x5a7aea85273b (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x4e1473a)
+    [pid=658][err] #14 0x5a7aea851953 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x4e13952)
+    [pid=658][err] #15 0x5a7aeba0d106 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5fcf105)
+    [pid=658][err] #16 0x5a7aeba0c7a9 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5fce7a8)
+    [pid=658][err] #17 0x5a7aeba0bb00 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5fcdaff)
+    [pid=658][err] #18 0x751d7a02a601 (/usr/lib/x86_64-linux-gnu/libc.so.6+0x2a600)
+    [pid=658][err] #19 0x751d7a02a718 (/usr/lib/x86_64-linux-gnu/libc.so.6+0x2a717)
+    [pid=658][err] #20 0x5a7aec79b35a (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x6d5d359)
+    [pid=658][err]   r8: 0000000000000016  r9: 0000000000000001 r10: 00003368000042c2 r11: 0000000000000246
+    [pid=658][err]  r12: 0000000000000006 r13: 00003368000041e0 r14: 00000000000000e2 r15: 00007ffc0b4b1870
+    [pid=658][err]   di: 0000000000000292  si: 0000000000000292  bp: 00007ffc0b4b11e0  bx: 0000000000000292
+    [pid=658][err]   dx: 0000000000000006  ax: 0000000000000000  cx: 0000751d7a0a61ac  sp: 00007ffc0b4b11a0
+    [pid=658][err]   ip: 0000751d7a0a61ac efl: 0000000000000246 cgf: 002b000000000033 erf: 0000000000000000
+    [pid=658][err]  trp: 0000000000000000 msk: 0000000000000000 cr2: 0000000000000000
+    [pid=658][err] [end of stack trace]
+    Call log:
+      - <launching> /home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/home/fabri/.cache/newglass-ta047.Z4eUVh/evidence/e2e-service-tmp/playwright_chromiumdev_profile-drjjZ4 --remote-debugging-pipe --no-startup-window
+      - <launched> pid=658
+      - [pid=658][err] [658:658:1105/203054.638643:FATAL:chrome/browser/process_singleton_posix.cc:313] Socket path too long: /home/fabri/.cache/newglass-ta047.Z4eUVh/frontend/../evidence/e2e-service-tmp/org.chromium.Chromium.kPW8o7/SingletonSocket.
+      - [pid=658][err] [1105/203054.666530:ERROR:third_party/crashpad/crashpad/util/file/file_io_posix.cc:145] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq: No such file or directory (2)
+      - [pid=658][err] [1105/203054.666626:ERROR:third_party/crashpad/crashpad/util/file/file_io_posix.cc:145] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq: No such file or directory (2)
+      - [pid=658][err] Received signal 6
+      - [pid=658][err] #0 0x5a7aec4d8bc3 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x6a9abc2)
+      - [pid=658][err] #1 0x5a7af119e494 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0xb760493)
+      - [pid=658][err] #2 0x751d7a045cb0 (/usr/lib/x86_64-linux-gnu/libc.so.6+0x45caf)
+      - [pid=658][err] #3 0x751d7a045b7e (/usr/lib/x86_64-linux-gnu/libc.so.6+0x45b7d)
+      - [pid=658][err] #4 0x751d7a0288ec (/usr/lib/x86_64-linux-gnu/libc.so.6+0x288eb)
+      - [pid=658][err] #5 0x5a7af1195385 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0xb757384)
+      - [pid=658][err] #6 0x5a7af115514d (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0xb71714c)
+      - [pid=658][err] #7 0x5a7af11550de (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0xb7170dd)
+      - [pid=658][err] #8 0x5a7aec29f603 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x6861602)
+      - [pid=658][err] #9 0x5a7aeaf381f9 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x54fa1f8)
+      - [pid=658][err] #10 0x5a7aeb773a56 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5d35a55)
+      - [pid=658][err] #11 0x5a7aeb7725af (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5d345ae)
+      - [pid=658][err] #12 0x5a7aeb772564 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5d34563)
+      - [pid=658][err] #13 0x5a7aea85273b (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x4e1473a)
+      - [pid=658][err] #14 0x5a7aea851953 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x4e13952)
+      - [pid=658][err] #15 0x5a7aeba0d106 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5fcf105)
+      - [pid=658][err] #16 0x5a7aeba0c7a9 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5fce7a8)
+      - [pid=658][err] #17 0x5a7aeba0bb00 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5fcdaff)
+      - [pid=658][err] #18 0x751d7a02a601 (/usr/lib/x86_64-linux-gnu/libc.so.6+0x2a600)
+      - [pid=658][err] #19 0x751d7a02a718 (/usr/lib/x86_64-linux-gnu/libc.so.6+0x2a717)
+      - [pid=658][err] #20 0x5a7aec79b35a (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x6d5d359)
+      - [pid=658][err]   r8: 0000000000000016  r9: 0000000000000001 r10: 00003368000042c2 r11: 0000000000000246
+      - [pid=658][err]  r12: 0000000000000006 r13: 00003368000041e0 r14: 00000000000000e2 r15: 00007ffc0b4b1870
+      - [pid=658][err]   di: 0000000000000292  si: 0000000000000292  bp: 00007ffc0b4b11e0  bx: 0000000000000292
+      - [pid=658][err]   dx: 0000000000000006  ax: 0000000000000000  cx: 0000751d7a0a61ac  sp: 00007ffc0b4b11a0
+      - [pid=658][err]   ip: 0000751d7a0a61ac efl: 0000000000000246 cgf: 002b000000000033 erf: 0000000000000000
+      - [pid=658][err]  trp: 0000000000000000 msk: 0000000000000000 cr2: 0000000000000000
+      - [pid=658][err] [end of stack trace]
+      - [pid=658] <gracefully close start>
+      - [pid=658] <kill>
+      - [pid=658] <will force kill>
+      - [pid=658] <process did exit: exitCode=null, signal=SIGABRT>
+      - [pid=658] starting temporary directories cleanup
+      - [pid=658] finished temporary directories cleanup
+      - [pid=658] <gracefully close end>
+
+
+    Error Context: test-results/e2e-phases/run-zuA0HH/b02/optimization-comparison-TA-e1e14-pués-del-upgrade-PostgreSQL-chromium-desktop/error-context.md
+
+  2) [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:439:1 › TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/home/fabri/.cache/newglass-ta047.Z4eUVh/evidence/e2e-service-tmp/playwright_chromiumdev_profile-G6CPaI --remote-debugging-pipe --no-startup-window
+    <launched> pid=682
+    [pid=682][err] [682:682:1105/203055.561188:FATAL:chrome/browser/process_singleton_posix.cc:313] Socket path too long: /home/fabri/.cache/newglass-ta047.Z4eUVh/frontend/../evidence/e2e-service-tmp/org.chromium.Chromium.yFOP4j/SingletonSocket.
+    [pid=682][err] [1105/203055.566400:ERROR:third_party/crashpad/crashpad/util/file/file_io_posix.cc:145] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq: No such file or directory (2)
+    [pid=682][err] [1105/203055.566492:ERROR:third_party/crashpad/crashpad/util/file/file_io_posix.cc:145] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq: No such file or directory (2)
+    [pid=682][err] Received signal 6
+    [pid=682][err] #0 0x57265ad47bc3 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x6a9abc2)
+    [pid=682][err] #1 0x57265fa0d494 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0xb760493)
+    [pid=682][err] #2 0x7ef0f9645cb0 (/usr/lib/x86_64-linux-gnu/libc.so.6+0x45caf)
+    [pid=682][err] #3 0x7ef0f9645b7e (/usr/lib/x86_64-linux-gnu/libc.so.6+0x45b7d)
+    [pid=682][err] #4 0x7ef0f96288ec (/usr/lib/x86_64-linux-gnu/libc.so.6+0x288eb)
+    [pid=682][err] #5 0x57265fa04385 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0xb757384)
+    [pid=682][err] #6 0x57265f9c414d (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0xb71714c)
+    [pid=682][err] #7 0x57265f9c40de (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0xb7170dd)
+    [pid=682][err] #8 0x57265ab0e603 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x6861602)
+    [pid=682][err] #9 0x5726597a71f9 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x54fa1f8)
+    [pid=682][err] #10 0x572659fe2a56 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5d35a55)
+    [pid=682][err] #11 0x572659fe15af (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5d345ae)
+    [pid=682][err] #12 0x572659fe1564 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5d34563)
+    [pid=682][err] #13 0x5726590c173b (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x4e1473a)
+    [pid=682][err] #14 0x5726590c0953 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x4e13952)
+    [pid=682][err] #15 0x57265a27c106 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5fcf105)
+    [pid=682][err] #16 0x57265a27b7a9 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5fce7a8)
+    [pid=682][err] #17 0x57265a27ab00 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5fcdaff)
+    [pid=682][err] #18 0x7ef0f962a601 (/usr/lib/x86_64-linux-gnu/libc.so.6+0x2a600)
+    [pid=682][err] #19 0x7ef0f962a718 (/usr/lib/x86_64-linux-gnu/libc.so.6+0x2a717)
+    [pid=682][err] #20 0x57265b00a35a (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x6d5d359)
+    [pid=682][err]   r8: 0000000000000016  r9: 0000000000000001 r10: 000036c0000042c2 r11: 0000000000000246
+    [pid=682][err]  r12: 0000000000000006 r13: 000036c0000041e0 r14: 00000000000000e2 r15: 00007ffd35eeca60
+    [pid=682][err]   di: 00000000000002aa  si: 00000000000002aa  bp: 00007ffd35eec3d0  bx: 00000000000002aa
+    [pid=682][err]   dx: 0000000000000006  ax: 0000000000000000  cx: 00007ef0f96a61ac  sp: 00007ffd35eec390
+    [pid=682][err]   ip: 00007ef0f96a61ac efl: 0000000000000246 cgf: 002b000000000033 erf: 0000000000000000
+    [pid=682][err]  trp: 0000000000000000 msk: 0000000000000000 cr2: 0000000000000000
+    [pid=682][err] [end of stack trace]
+    Call log:
+      - <launching> /home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/home/fabri/.cache/newglass-ta047.Z4eUVh/evidence/e2e-service-tmp/playwright_chromiumdev_profile-G6CPaI --remote-debugging-pipe --no-startup-window
+      - <launched> pid=682
+      - [pid=682][err] [682:682:1105/203055.561188:FATAL:chrome/browser/process_singleton_posix.cc:313] Socket path too long: /home/fabri/.cache/newglass-ta047.Z4eUVh/frontend/../evidence/e2e-service-tmp/org.chromium.Chromium.yFOP4j/SingletonSocket.
+      - [pid=682][err] [1105/203055.566400:ERROR:third_party/crashpad/crashpad/util/file/file_io_posix.cc:145] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq: No such file or directory (2)
+      - [pid=682][err] [1105/203055.566492:ERROR:third_party/crashpad/crashpad/util/file/file_io_posix.cc:145] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq: No such file or directory (2)
+      - [pid=682][err] Received signal 6
+      - [pid=682][err] #0 0x57265ad47bc3 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x6a9abc2)
+      - [pid=682][err] #1 0x57265fa0d494 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0xb760493)
+      - [pid=682][err] #2 0x7ef0f9645cb0 (/usr/lib/x86_64-linux-gnu/libc.so.6+0x45caf)
+      - [pid=682][err] #3 0x7ef0f9645b7e (/usr/lib/x86_64-linux-gnu/libc.so.6+0x45b7d)
+      - [pid=682][err] #4 0x7ef0f96288ec (/usr/lib/x86_64-linux-gnu/libc.so.6+0x288eb)
+      - [pid=682][err] #5 0x57265fa04385 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0xb757384)
+      - [pid=682][err] #6 0x57265f9c414d (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0xb71714c)
+      - [pid=682][err] #7 0x57265f9c40de (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0xb7170dd)
+      - [pid=682][err] #8 0x57265ab0e603 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x6861602)
+      - [pid=682][err] #9 0x5726597a71f9 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x54fa1f8)
+      - [pid=682][err] #10 0x572659fe2a56 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5d35a55)
+      - [pid=682][err] #11 0x572659fe15af (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5d345ae)
+      - [pid=682][err] #12 0x572659fe1564 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5d34563)
+      - [pid=682][err] #13 0x5726590c173b (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x4e1473a)
+      - [pid=682][err] #14 0x5726590c0953 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x4e13952)
+      - [pid=682][err] #15 0x57265a27c106 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5fcf105)
+      - [pid=682][err] #16 0x57265a27b7a9 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5fce7a8)
+      - [pid=682][err] #17 0x57265a27ab00 (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x5fcdaff)
+      - [pid=682][err] #18 0x7ef0f962a601 (/usr/lib/x86_64-linux-gnu/libc.so.6+0x2a600)
+      - [pid=682][err] #19 0x7ef0f962a718 (/usr/lib/x86_64-linux-gnu/libc.so.6+0x2a717)
+      - [pid=682][err] #20 0x57265b00a35a (/home/fabri/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome+0x6d5d359)
+      - [pid=682][err]   r8: 0000000000000016  r9: 0000000000000001 r10: 000036c0000042c2 r11: 0000000000000246
+      - [pid=682][err]  r12: 0000000000000006 r13: 000036c0000041e0 r14: 00000000000000e2 r15: 00007ffd35eeca60
+      - [pid=682][err]   di: 00000000000002aa  si: 00000000000002aa  bp: 00007ffd35eec3d0  bx: 00000000000002aa
+      - [pid=682][err]   dx: 0000000000000006  ax: 0000000000000000  cx: 00007ef0f96a61ac  sp: 00007ffd35eec390
+      - [pid=682][err]   ip: 00007ef0f96a61ac efl: 0000000000000246 cgf: 002b000000000033 erf: 0000000000000000
+      - [pid=682][err]  trp: 0000000000000000 msk: 0000000000000000 cr2: 0000000000000000
+      - [pid=682][err] [end of stack trace]
+      - [pid=682] <gracefully close start>
+      - [pid=682] <kill>
+      - [pid=682] <will force kill>
+      - [pid=682] <process did exit: exitCode=null, signal=SIGABRT>
+      - [pid=682] starting temporary directories cleanup
+      - [pid=682] finished temporary directories cleanup
+      - [pid=682] <gracefully close end>
+
+
+    Error Context: test-results/e2e-phases/run-zuA0HH/b02/optimization-comparison-TA-e1e14-pués-del-upgrade-PostgreSQL-chromium-mobile/error-context.md
+
+  2 failed
+    [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:439:1 › TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL
+    [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:439:1 › TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL
+
+Gate E2E (TA-040) fallido:
+- ejecución incompleta o fallida: b02 (failed)
+Gate conjunto TA-040: FAIL, 0/146 escenarios validados.
+b02: proceso fallido (1)
+evidencia ausente o JSON corrupto: /home/fabri/.cache/newglass-ta047.Z4eUVh/frontend/test-results/e2e-phases/run-zuA0HH/remaining.json: ENOENT: no such file or directory, open '/home/fabri/.cache/newglass-ta047.Z4eUVh/frontend/test-results/e2e-phases/run-zuA0HH/remaining.json'

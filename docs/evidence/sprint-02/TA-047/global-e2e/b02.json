@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "runId": "78da438b-f3ad-43d0-ab66-592872589ea8",
+  "sha": "678ab92f3a32d37509b67779f99359acacedde2f",
+  "startedAt": "2026-11-06T01:31:58.386Z",
+  "phase": "b02",
+  "planDigest": "d51b6bb0e903c99af44624ba903e1d55d17fd1fd099de76fff92db7cf49aa37e",
+  "projects": [
+    "chromium-desktop",
+    "chromium-mobile"
+  ],
+  "finishedAt": "2026-11-06T01:32:36.313Z",
+  "status": "passed",
+  "errors": [],
+  "tests": [
+    {
+      "id": "5a81a45ccfe4ff4d1220-36e00b98d3158ad803d4",
+      "project": "chromium-desktop",
+      "file": "optimization-comparison.spec.js",
+      "title": "TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL",
+      "expectedStatus": "passed",
+      "phase": "b02",
+      "outcome": "expected",
+      "statuses": [
+        "passed"
+      ],
+      "annotations": []
+    },
+    {
+      "id": "5a81a45ccfe4ff4d1220-ef41d36e66aeee07639d",
+      "project": "chromium-mobile",
+      "file": "optimization-comparison.spec.js",
+      "title": "TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL",
+      "expectedStatus": "passed",
+      "phase": "b02",
+      "outcome": "expected",
+      "statuses": [
+        "passed"
+      ],
+      "annotations": []
+    }
+  ]
+}
