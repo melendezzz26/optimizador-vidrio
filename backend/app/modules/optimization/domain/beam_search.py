@@ -144,28 +144,32 @@ class BeamSearchOptimizer:
         )
         problem = replace(problem, order_ids=tuple(sorted(problem.order_ids)), groups=groups)
         stocks = tuple(stock for group in groups for stock in group.stock_candidates)
-        ranks = {stock.identity: index for index, stock in enumerate(stocks)}
-
-        memory = BeamStateMemory(limits.max_state_bytes)
+        memory = BeamStateMemory(limits.max_state_bytes, checkpoint=check)
         try:
             memory.reserve(initial_bound(stocks, problem.config))
+            ranks = {stock.identity: index for index, stock in enumerate(stocks)}
             prepared = prepare_run_geometry(problem, checkpoint=check)
             initial = []
             for stock in stocks:
                 check()
                 material = prepared.material(stock)
                 # Erosion and empty rows coexist with previously built layouts.
-                memory.check((problem, initial, material),
+                memory.check((problem, stocks, ranks, initial, material),
                              successor_reserve(material, 0))
                 initial.append(_empty_layout(material, problem.config))
             initial = tuple(initial)
             beam = [BeamNode(initial, layout_scores=((0, 0),) * len(initial))]
-            memory.check((problem, initial, beam))
+            memory.check((problem, stocks, ranks, initial, beam))
         except (BeamSearchStopped, StateMemoryLimit) as error:
             result = BeamSearchResult(problem=problem, placements=())
             return BeamSearchOutcome(result, 0, str(error),
                                      dict(stats, **memory.statistics()), ())
         stop_reason = None
+        # Prepared geometry has validated the <=10000-angle contract. Reserve
+        # Decimal angles, iterator dedup signatures and oriented-unit wrappers;
+        # raster allocations themselves retain their independent 64 MiB guard.
+        orientation_scratch = 65536 + 1024 * int((Decimal(360) /
+            problem.config.angular_step_deg).to_integral_value(rounding="ROUND_CEILING"))
 
         def progress():
             if on_progress is not None:
@@ -196,8 +200,8 @@ class BeamSearchOptimizer:
             return None
 
         def successors(node, group, unit):
-            memory.check((problem, initial, beam, pool, children),
-                         max((successor_reserve(node.layouts[ranks[s.identity]].material,
+            memory.check((problem, stocks, ranks, initial, beam, pool, children),
+                         orientation_scratch + max((successor_reserve(node.layouts[ranks[s.identity]].material,
                                                 len(problem.units))
                               for s in group.stock_candidates), default=65536))
             orientations = tuple(prepared.orientations(unit))
@@ -221,8 +225,8 @@ class BeamSearchOptimizer:
                 rank = ranks[stock.identity]
                 layout = node.layouts[rank]
                 for orientation_index, oriented in enumerate(orientations):
-                    memory.check((problem, initial, beam, pool, children),
-                                 successor_reserve(layout.material, len(problem.units)))
+                    memory.check((problem, stocks, ranks, initial, beam, pool, children),
+                                 orientation_scratch + successor_reserve(layout.material, len(problem.units)))
                     mask = oriented.orientation.mask
                     probe()
                     # Reuse the eligibility scan, retaining its logical probes.
@@ -240,8 +244,8 @@ class BeamSearchOptimizer:
                         if stats["expansions"] >= limits.max_expansions:
                             raise BeamSearchStopped("EXPANSION_LIMIT")
                         stats["expansions"] += 1
-                        memory.check((problem, initial, beam, pool, children),
-                                     successor_reserve(layout.material, len(problem.units)))
+                        memory.check((problem, stocks, ranks, initial, beam, pool, children),
+                                     orientation_scratch + successor_reserve(layout.material, len(problem.units)))
                         placement = Placement(
                             piece=unit, stock=stock,
                             x_mm=_coordinate(column, problem.config.resolution_mm),

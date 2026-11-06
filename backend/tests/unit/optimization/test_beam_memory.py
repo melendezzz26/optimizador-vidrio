@@ -4,7 +4,7 @@ from dataclasses import replace
 import pytest
 
 from app.modules.optimization.domain.beam_memory import (
-    BeamStateMemory, StateMemoryLimit, graph_bytes,
+    BeamStateMemory, StateMemoryLimit, graph_bytes, initial_bound,
 )
 from app.modules.optimization.domain.beam_search import BeamSearchLimits, BeamSearchOptimizer
 from app.modules.optimization.domain.problem import (
@@ -89,3 +89,21 @@ def test_material_and_thickness_incompatibility_is_still_rejected():
                          replace(group.stock_candidates[0], thickness_mm=8)):
         with pytest.raises(ValueError, match="match the material group"):
             replace(group, stock_candidates=(incompatible,))
+
+
+def test_initial_bound_uses_the_raster_cache_key_for_translated_polygons():
+    problem = large_problem(16)
+    original = problem.groups[0].stock_candidates
+    stocks = tuple(replace(s, source=MaterialSource.REMNANT, material_id=i+1,
+        physical_unit_index=1, geometry=dict(type="POLIGONO_CONVEXO",
+            vertices_mm=((i,0),(2140+i,0),(2140+i,3300),(i,3300)))) for i,s in enumerate(original))
+    normalized = tuple(replace(s, geometry=stocks[0].geometry) for s in stocks)
+    assert initial_bound(stocks, problem.config) == initial_bound(normalized, problem.config)
+    assert initial_bound(stocks, problem.config) < 32 * 1024 * 1024
+
+
+def test_accounting_walk_keeps_cancellation_checkpoints():
+    def cancelled():
+        raise RuntimeError("cancelled")
+    with pytest.raises(RuntimeError, match="cancelled"):
+        BeamStateMemory(32 * 1024 * 1024, checkpoint=cancelled).check(((0,) * 4000,))

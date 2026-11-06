@@ -10,6 +10,7 @@ from enum import Enum
 import sys
 
 from .preparation import bbox_dimensions
+from .rotation import _fingerprint
 
 
 class StateMemoryLimit(RuntimeError):
@@ -33,7 +34,8 @@ def initial_bound(stocks, config):
     total, scratch = 16384, 0
     for stock in stocks:
         columns, rows = dimensions(stock, config)
-        geometry = tuple(sorted(stock.geometry.items()))
+        # Same normalized key used by RasterCache, including translated polygons.
+        geometry = _fingerprint(stock.geometry)
         if geometry not in seen:
             seen.add(geometry)
             total += rows * row_bytes(columns) + 4096
@@ -56,11 +58,13 @@ def successor_reserve(material, units):
             + units * 2048 + 65536)
 
 
-def graph_bytes(roots):
+def graph_bytes(roots, checkpoint=None):
     """Owned data only: never follow classes, functions, enums or module globals."""
     seen, pending = set(), list(roots)
     total, stack_peak = 0, 0
     while pending:
+        if checkpoint is not None and len(seen) % 512 == 0:
+            checkpoint()
         stack_peak = max(stack_peak, sys.getsizeof(pending))
         value = pending.pop()
         identity = id(value)
@@ -93,8 +97,9 @@ def graph_bytes(roots):
 
 
 class BeamStateMemory:
-    def __init__(self, maximum):
+    def __init__(self, maximum, checkpoint=None):
         self.maximum = maximum
+        self.checkpoint = checkpoint
         self.peak = self.required = 0
 
     def reserve(self, amount):
@@ -104,7 +109,7 @@ class BeamStateMemory:
         self.peak = max(self.peak, amount)
 
     def check(self, roots, scratch=0):
-        self.reserve(graph_bytes(roots) + scratch)
+        self.reserve(graph_bytes(roots, self.checkpoint) + scratch)
 
     def statistics(self):
         return dict(state_bytes_bound=self.required, state_bytes_peak=self.peak)
