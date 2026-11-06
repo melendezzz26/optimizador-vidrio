@@ -142,7 +142,7 @@ def test_unexpected_failure_has_safe_event_durable_failed_not_no_solution(run_ap
     assert canonical['estado'] == 'FALLIDA' and not canonical['confirmable']
     assert canonical['placed_units'] == 1  # Retains the real diagnostic placement.
     with session_factory() as s:
-        assert [s.get(Pedido,i).estado for i in ids] == ['EN_OPTIMIZACION']*2
+        assert [s.get(Pedido,i).estado for i in ids] == ['PENDIENTE']*2
         assert s.get(Plancha,5).cantidad == 2
 
 
@@ -164,7 +164,7 @@ def test_live_event_observable_before_calculation_and_db_completion(run_api):
     asyncio.run(inspect())
 
 
-def test_disconnect_marks_failed_without_resetting_orders(run_api,session_factory):
+def test_disconnect_marks_failed_and_releases_orders(run_api,session_factory):
     client,ids,headers,uow,calculator = run_api
     accepted = AcceptRun(uow).execute(ids, 1)
     async def disconnect():
@@ -179,7 +179,7 @@ def test_disconnect_marks_failed_without_resetting_orders(run_api,session_factor
         run = tx.runs.get(accepted.optimization_id)
     assert run.status.value == 'FALLIDA' and run.result.placed_units == 1
     with session_factory() as s:
-        assert [s.get(Pedido,i).estado for i in ids] == ['EN_OPTIMIZACION']*2
+        assert [s.get(Pedido,i).estado for i in ids] == ['PENDIENTE']*2
         assert s.get(Plancha,5).cantidad == 2
 
 
@@ -240,7 +240,7 @@ def test_result_save_failure_has_distinct_event_and_durable_failed(run_api,sessi
     result=client.get(response.headers['location'],headers=headers).json()
     assert result['estado']=='FALLIDA' and not result['confirmable']
     with session_factory() as s:
-        assert [s.get(Pedido,i).estado for i in ids]==['EN_OPTIMIZACION']*2
+        assert [s.get(Pedido,i).estado for i in ids]==['PENDIENTE']*2
         assert s.get(Plancha,5).cantidad==2
         assert s.scalar(select(func.count()).select_from(MovimientoInventario))==0
 
@@ -298,7 +298,7 @@ def test_real_asgi_disconnect_is_cooperative_and_durable(run_api,session_factory
     assert failed.status.value=='FALLIDA'
     assert not failed.confirmable
     with session_factory() as s:
-        assert [s.get(Pedido,i).estado for i in ids]==['EN_OPTIMIZACION']*2
+        assert [s.get(Pedido,i).estado for i in ids]==['PENDIENTE']*2
         assert s.get(Plancha,5).cantidad==2
         assert s.scalar(select(func.count()).select_from(MovimientoInventario))==0
 

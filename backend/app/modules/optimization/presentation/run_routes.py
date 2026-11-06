@@ -113,6 +113,7 @@ def start_run(request: RunRequestV1, user=Depends(run_permission("optimization.e
               profile=Depends(get_stream_profile), visual_store=Depends(get_visual_store)):
     lease = admission.acquire(user.user_id)                                 # TA-037 P2: 503 if busy
     visual_session = None
+    accepted = None
     try:
         if profile == 'visual-v2':
             visual_session = visual_store.reserve()
@@ -120,15 +121,23 @@ def start_run(request: RunRequestV1, user=Depends(run_permission("optimization.e
         if visual_session is not None:
             visual_session.bind(accepted.optimization_id, accepted.result.problem.config.resolution_mm)
         kwargs = {'visual_session': visual_session} if visual_session is not None else {}
-        stream = LiveRunStream(unit_of_work, calculator, lease=lease, **kwargs)
+        stream = LiveRunStream(unit_of_work, calculator, lease=lease, accepted=accepted, **kwargs)
+        return RunStreamingResponse(stream.lines(accepted), stream=stream, status_code=201,
+            media_type="application/x-ndjson", headers={"Location":f"/api/optimization/runs/{accepted.optimization_id}",
+                                                     "Cache-Control":"no-cache", "X-Accel-Buffering":"no"})
     except BaseException:
-        lease.release()  # rejected or failed before streaming: the slot is free again
-        if visual_session is not None:
-            visual_session.abort()
+        try:
+            if accepted is not None:
+                with unit_of_work() as tx:
+                    tx.runs.fail(accepted.optimization_id, "EXECUTION_INTERRUPTED")
+        except Exception:
+            logger.exception("Cannot recover accepted run %s before streaming; reconciliation required",
+                             accepted.optimization_id)
+        finally:
+            lease.release()
+            if visual_session is not None:
+                visual_session.abort()
         raise
-    return RunStreamingResponse(stream.lines(accepted), stream=stream, status_code=201,
-        media_type="application/x-ndjson", headers={"Location":f"/api/optimization/runs/{accepted.optimization_id}",
-                                                 "Cache-Control":"no-cache", "X-Accel-Buffering":"no"})
 
 
 @router.get("/{id_optimizacion}", response_model=RunResponseV1)

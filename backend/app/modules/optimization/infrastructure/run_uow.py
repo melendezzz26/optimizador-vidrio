@@ -6,7 +6,7 @@ not used. Geometry rules remain in Orders' public persisted-piece validator.
 from dataclasses import replace
 from datetime import datetime, timezone
 from sqlalchemy import select
-from app.models import Pedido, Pieza, Configuracion, Optimizacion, OptimizacionPedido, EjecucionOptimizacion, MaterialUtilizado, MetricaEjecucion
+from app.models import Pedido, Pieza, Configuracion, Optimizacion, OptimizacionPedido, EjecucionOptimizacion, MaterialUtilizado, MetricaEjecucion, MovimientoInventario
 from ..application.dto import OptimizationRun, RunStatus
 from ..application.errors import RunError
 from ..domain.problem import OptimizationConfig, OptimizationResult, MaterialSource
@@ -29,7 +29,8 @@ class SqlOrdersBatch:
 
     def _lock(self, order_ids):
         rows = self.session.scalars(select(Pedido).where(Pedido.id_pedido.in_(order_ids))
-                                    .order_by(Pedido.id_pedido).with_for_update()).all()
+                                    .order_by(Pedido.id_pedido).with_for_update()
+                                    .execution_options(populate_existing=True)).all()
         if len(rows) != len(order_ids):
             raise RunError("NOT_FOUND", "No se encontraron todos los pedidos seleccionados.")
         return rows
@@ -73,11 +74,14 @@ class SqlRunRepository:
         pair = self.session.execute(select(Optimizacion, EjecucionOptimizacion).outerjoin(
             EjecucionOptimizacion, (EjecucionOptimizacion.id_optimizacion == Optimizacion.id_optimizacion)
             & (EjecucionOptimizacion.metodo == "FF"))
-            .where(Optimizacion.id_optimizacion == optimization_id)).first()
+            .where(Optimizacion.id_optimizacion == optimization_id)
+            .execution_options(populate_existing=True)).first()
         if pair is None:
             raise RunError("NOT_FOUND", "No se encontró la optimización.")
         row, execution = pair
-        if execution is None or not isinstance(execution.patron_resultado, dict) or execution.patron_resultado.get("snapshot_version") != 1:
+        if (row.criterio_seleccion_version != "S1-FF-v1" or execution is None
+                or not isinstance(execution.patron_resultado, dict)
+                or execution.patron_resultado.get("snapshot_version") != 1):
             raise RunError("NOT_FOUND", "La corrida histórica no tiene un resultado FF versionado.")
         result = decode(execution.patron_resultado)
         links = tuple(self.session.scalars(select(OptimizacionPedido.id_pedido)
@@ -116,7 +120,8 @@ class SqlRunRepository:
             EjecucionOptimizacion.id_optimizacion == optimization_id, EjecucionOptimizacion.metodo == "FF"))
 
     def save_result(self, optimization_id, result, residuals):
-        row = self.session.scalar(select(Optimizacion).where(Optimizacion.id_optimizacion == optimization_id).with_for_update())
+        row = self.session.scalar(select(Optimizacion).where(Optimizacion.id_optimizacion == optimization_id)
+                                  .with_for_update().execution_options(populate_existing=True))
         if row is None:
             raise RunError("NOT_FOUND", "No se encontró la optimización.")
         if row.estado != "EN_EJECUCION":
@@ -154,7 +159,13 @@ class SqlRunRepository:
 
 
     def fail(self, optimization_id, code, placements=()):
-        row = self.session.scalar(select(Optimizacion).where(Optimizacion.id_optimizacion == optimization_id).with_for_update())
+        """Called by the stopped calculator, in a fresh transaction after rollback.
+
+        The parent lock fences late failure reports from a subsequent execution.
+        Never release orders independently of the durable failure record.
+        """
+        row = self.session.scalar(select(Optimizacion).where(Optimizacion.id_optimizacion == optimization_id)
+                                  .with_for_update().execution_options(populate_existing=True))
         if row is None:
             raise RunError("NOT_FOUND", "No se encontró la optimización.")
         if row.estado != "EN_EJECUCION":
@@ -164,14 +175,51 @@ class SqlRunRepository:
         problem = replace(original.result.problem, groups=tuple(replace(g, stock_candidates=tuple(
             s for s in stocks.values() if s.material_key == g.key)) for g in original.result.problem.groups))
         result = OptimizationResult(problem=problem, placements=tuple(placements))
+        self._require_unconsumed(optimization_id, original)
+        SqlOrdersBatch(self.session).transition(problem.order_ids, "EN_OPTIMIZACION", "PENDIENTE")
         execution = self._execution(optimization_id)
         row.estado, execution.estado = "FALLIDA", "FALLIDA"
         row.fecha_fin = execution.fecha_fin = datetime.now(timezone.utc)
         row.id_ejecucion_seleccionada = None
         execution.completo = result.complete
         execution.patron_resultado = {**execution.patron_resultado, **encode(result), "failure_code": code}
-        # Orders stay EN_OPTIMIZACION: explicit reconciliation, never automatic NO_FIT.
         return OptimizationRun(optimization_id=optimization_id, status=RunStatus.FAILED, result=result)
+
+    def _require_unconsumed(self, optimization_id, run):
+        consumed = self.session.scalar(select(MovimientoInventario.id_movimiento).where(
+            MovimientoInventario.id_optimizacion == optimization_id,
+            MovimientoInventario.tipo_evento == "CONSUMO_OPTIMIZACION").limit(1))
+        if run.confirmed or consumed is not None:
+            raise RunError("STATE_CONFLICT", "La corrida tiene consumo de inventario; requiere revisión.")
+
+    def recover_stopped(self, optimization_id):
+        """Administrative/offline reconciliation only; caller proves owner stopped.
+
+        FF has no durable process identity. Neither a GET nor elapsed time is
+        evidence that its owner stopped. Comparisons have their own recovery.
+        """
+        row = self.session.scalar(select(Optimizacion).where(Optimizacion.id_optimizacion == optimization_id)
+                                  .with_for_update().execution_options(populate_existing=True))
+        original = self.get(optimization_id)
+        if original.status not in (RunStatus.RUNNING, RunStatus.FAILED):
+            return original
+        self._require_unconsumed(optimization_id, original)
+        orders = SqlOrdersBatch(self.session)
+        locked = orders._lock(original.result.problem.order_ids)
+        # A failed run can already have released its orders, which may now be
+        # owned by another aggregate. Never change that aggregate's state.
+        other_owner = self.session.scalar(select(OptimizacionPedido.id_optimizacion).join(Optimizacion).where(
+            OptimizacionPedido.id_pedido.in_(original.result.problem.order_ids),
+            OptimizacionPedido.id_optimizacion != optimization_id,
+            Optimizacion.estado == "EN_EJECUCION").limit(1))
+        if original.status is RunStatus.FAILED:
+            if other_owner is not None or all(o.estado == "PENDIENTE" for o in locked):
+                return original
+            orders.transition(original.result.problem.order_ids, "EN_OPTIMIZACION", "PENDIENTE")
+            return original
+        if other_owner is not None:
+            raise RunError("STATE_CONFLICT", "El lote pertenece a otra ejecución; requiere revisión.")
+        return self.fail(optimization_id, "EXECUTION_INTERRUPTED")
 
 
 class SqlRunUnitOfWork:
@@ -191,7 +239,7 @@ class SqlRunUnitOfWork:
             if exc_type is None:
                 try:
                     self.session.commit()
-                except Exception:
+                except BaseException:
                     self.session.rollback()
                     raise
             else:

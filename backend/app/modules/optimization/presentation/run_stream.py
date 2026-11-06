@@ -48,22 +48,32 @@ class RunStreamingResponse(StreamingResponse):
 
 
 class LiveRunStream:
-    def __init__(self, unit_of_work, calculator, *, lease=None, visual_session=None,
+    def __init__(self, unit_of_work, calculator, *, lease=None, visual_session=None, accepted=None,
                  time_budget_s=DEFAULT_RUN_LOAD_BUDGET.max_calculation_seconds, clock=time.monotonic):
         self.unit_of_work, self.calculator = unit_of_work, calculator
         # TA-037 T03: admission slot (L-10/L-11) and time budget (L-12).
         self.lease, self.time_budget_s, self.clock = lease, time_budget_s, clock
         self.worker_started = False
         self.visual_session = visual_session
+        self.accepted, self.idle_recovered = accepted, False
 
     def release_if_idle(self):
         """Free the slot only if no worker owns it; a running worker frees it when it ends."""
-        if not self.worker_started and self.lease is not None:
-            self.lease.release()
-        if not self.worker_started and self.visual_session is not None:
-            self.visual_session.abort()
+        if self.worker_started:
+            return
+        try:
+            if self.accepted is not None and not self.idle_recovered:
+                with self.unit_of_work() as tx:
+                    tx.runs.fail(self.accepted.optimization_id, "EXECUTION_INTERRUPTED")
+                self.idle_recovered = True
+        finally:
+            if self.lease is not None:
+                self.lease.release()
+            if self.visual_session is not None:
+                self.visual_session.abort()
 
     async def lines(self, accepted):
+        self.accepted = accepted
         identifier, problem = accepted.optimization_id, accepted.result.problem
         result_url = f"/api/optimization/runs/{identifier}"
         queue, stopped = Queue(maxsize=1), Event()
