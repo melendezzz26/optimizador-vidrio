@@ -86,7 +86,7 @@ def seed(scenario):
             types.append({'id_tipo_vidrio': glass.id_tipo_vidrio, 'espesor_mm': thickness})
             width, height = (2140, 3300) if scenario == 'commercial' else (40, 70) if scenario == 'rotated' else (50, 50) if scenario == 'incomplete' else (100, 50)
             sheet = Plancha(ancho_mm=width, alto_mm=height, espesor_mm=thickness,
-                cantidad=10 if scenario == 'commercial' else 4 if scenario == 'multiunit' else 2 if scenario == 'combined' and i == 0 else 1, estado=True,
+                cantidad=10 if scenario == 'commercial' else 8 if scenario == 'many-sources' else 4 if scenario == 'multiunit' else 2 if scenario == 'combined' and i == 0 else 1, estado=True,
                 fecha_registro=now, id_tipo_vidrio=glass.id_tipo_vidrio)
             db.add(sheet); db.flush()
             sheets.append(sheet.id_plancha)
@@ -100,5 +100,5 @@ def seed(scenario):
 
 
 if __name__ == '__main__':
-    assert sys.argv[1] in {'single', 'multiple', 'multimaterial', 'multiunit', 'remnant', 'incomplete', 'conflict', 'rbac', 'rotated', 'combined', 'commercial', 'ff-save-failure'}
+    assert sys.argv[1] in {'single', 'multiple', 'multimaterial', 'multiunit', 'many-sources', 'remnant', 'incomplete', 'conflict', 'rbac', 'rotated', 'combined', 'commercial', 'ff-save-failure'}
     print(json.dumps(seed(sys.argv[1])))

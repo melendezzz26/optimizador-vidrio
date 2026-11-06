@@ -337,7 +337,9 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
     <ConfirmDialog open={dialog && canConfirm && current?.confirmable && !!selectedResult && !state.busy} title={`Confirmar ${selected ? methodName(selected.method) : 'distribución'}`} confirmLabel="Confirmar corte"
       onCancel={() => setDialog(false)} onConfirm={() => { setDialog(false); flow.confirm(); }}>
       <p>Se descontarán únicamente las planchas y retazos de {selected ? methodName(selected.method) : 'la distribución elegida'} y se confirmarán sus pedidos.</p>
-      <MaterialTrace result={selectedResult} compact />
+      <div className="comparison-confirmation-materials" role="region" aria-label="Revisar materiales de la distribución" tabIndex={0}>
+        <MaterialTrace result={selectedResult} compact />
+      </div>
     </ConfirmDialog>
   </PageCard>;
 }

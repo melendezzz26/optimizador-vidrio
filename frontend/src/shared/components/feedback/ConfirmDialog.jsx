@@ -36,7 +36,8 @@ export function ConfirmDialog({
     }
     if (event.key !== 'Tab') return;
     // Mantiene el foco dentro del diálogo mientras está abierto.
-    const buttons = [...dialogRef.current.querySelectorAll('button:not([disabled])')];
+    // Scrollable review regions must be reachable too, before consumption.
+    const buttons = [...dialogRef.current.querySelectorAll('button:not([disabled]), [tabindex="0"]')];
     if (buttons.length === 0) {
       event.preventDefault();
       return;
