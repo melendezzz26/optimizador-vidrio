@@ -101,3 +101,61 @@ El resultado depende de la geometría, resolución y stock. M5 conserva otros co
 de búsqueda; M6 conserva límites nativos de memoria/tiempo. No se garantiza que
 el pedido real #69 complete seis resultados ni se midió latencia de Supabase.
 No se modificó Supabase, el pedido real ni inventario externo; sin push ni merge.
+
+## Finalización S2: M6-01 y M6-02
+
+Base `2402142`; rama `feat/S2-finalizacion-comparador`. La cota fija de M6 se
+sustituye por el grafo compartido por identidad y reservas conservadoras de
+construcción, búsqueda, puntuación, ordenamiento y contabilidad. Se conservan
+32 MiB, BS-2, 12 hijos, 30 s, 60000 expansiones y 1000000 sondeos. La búsqueda
+inversa usa bits, pero carga también los sondeos lógicos descartados, manteniendo
+el mismo corte por recursos. Los scores reutilizados pertenecen al mismo layout
+inmutable: no se deduplican estados ni se cambia el desempate.
+
+`python -B -m scripts.benchmark_beam_viability` reproduce siete casos por seis
+métodos en procesos nuevos de 256 MiB de espacio virtual. JSON por stdout incluye
+pared con métricas, cobertura, fuentes, aprovechamiento, merma, origen, causa,
+contadores y RSS del proceso (incluye intérprete/caché; no es memoria de estados).
+WSL/Python 3.11.9, una corrida por caso, sin suites simultáneas. Estas mediciones
+directas no ejercitan el plazo compartido de 180 s del comparador.
+
+| Caso M6 | Colocadas | Pared con métricas (s) | Causa | Reserva pico (MiB) |
+|---|---:|---:|---|---:|
+| Original, 6 unidades / ocho planchas | 0/6 | 30,003 | TIME_LIMIT | 25,173 |
+| Original, 18 unidades / ocho planchas | 0/18 | 30,003 | TIME_LIMIT | 25,213 |
+| Original, 46 unidades / ocho planchas | 0/46 | 30,003 | TIME_LIMIT | 25,306 |
+| Seis mixtas, una plancha 1000×1000 | 5/6 | 22,975 | GEOMETRY_PROBE_LIMIT | 4,503 |
+| 18 círculos r=40, una plancha 500×500 | 18/18 | 0,956 | COMPLETED | 1,245 |
+| Seis círculos r=80, cuatro retazos 500×500 y plancha 1000×1000 | 6/6 | 1,618 | COMPLETED | 3,086 |
+| Seis círculos r=80, grupos de 6/8 mm y dos planchas 1000×1000 | 6/6 | 0,589 | COMPLETED | 3,039 |
+
+Las mixtas pequeñas alternan rectángulo 200×300, círculo r=100 y pentágono
+`(0,0),(125,0),(155,100),(62.5,175),(0,100)`. Margen/separación 3 mm, rejilla 1 mm,
+giros 5°. Los otros cinco motores completaron los siete casos (35/35); M6 completó
+3/7. En las cargas originales M6 no completa el primer nivel: la frontera
+anterior está vacía y se devuelve así, sin inventar placements de un nivel
+interrumpido. La admisión de memoria ya no es la causa; puntuar alternativas
+grandes sigue siendo costoso. No se garantiza completar pedidos comerciales.
+
+Frente a la auditoría anterior, M6 pasó de 13,408 a 0,956 s en 18 círculos pequeños
+y de 8,012 a 1,618 s en retazos. Son corridas únicas: no medianas ni garantías.
+No se equipara esta matriz sintética con el pedido real #69.
+
+Comparador productivo con observación, persistencia y PostgreSQL 18 temporal:
+46 unidades en 101,557 s, RSS agregado máximo 245,08 MiB, sin causa global y con
+todos los workers detenidos. FF/BF/WF/HF/M5 colocan 46/46 y sus snapshots completos
+coinciden con la medición previa salvo `computation_time_ms`. M6 devuelve
+ENGINE/TIME_LIMIT, 0/46 y reserva pico 25,323 MiB. Se despacharon e iniciaron los
+seis motores; solo cinco completaron. Stock intacto y cero movimientos.
+
+### Comprobación manual pendiente del pedido #69
+
+En la versión final aprobada y un entorno autorizado: anotar commit, revisión
+Alembic y configuración; consultar las piezas/medidas reales de #69 y el stock
+por material/espesor antes de iniciar. Crear una comparación desde la UI y anotar
+su número. Esperar el cierre; registrar por método cobertura, fuentes, métricas
+y causa de terminación. Reabrir desde historial y actualizar sin recalcular.
+Comparar 2D/3D y fuentes propuestas contra el inventario inicial: la simulación
+no debe consumir stock. No confirmar sobre inventario real durante esta prueba.
+Una comprobación del consumo requiere autorización independiente y un pedido de
+prueba controlado. Hasta ejecutar este protocolo, #69 continúa sin verificar.
