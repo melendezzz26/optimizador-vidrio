@@ -9,6 +9,18 @@ const descriptor = (executionId = 4301, method = 'FF') => ({ profile: 'compariso
   mask_ref: 'a'.repeat(32), kind: 'PIECE', resolution_mm: '1', rotation_deg: '0', columns: 4,
   row_count: 2, occupied_cells: 4, piece: { id_pedido: 1, id_pieza: 1 }, source: null, reason: null });
 
+test('history is a bounded GET with validated owner-scoped references', async () => {
+  const value = { items: [{ comparison_id: 43, profile: 'comparison-v2', started_at: '2026-11-06T12:00:00Z',
+    status: 'COMPLETADA', order_ids: [1], confirmed: false, released: false }], next_before_id: 43 };
+  const fetchImpl = vi.fn().mockResolvedValueOnce(jsonResponse(value))
+    .mockResolvedValueOnce(jsonResponse({ ...value, items: [{ ...value.items[0], comparison_id: -1 }] }));
+  const api = createComparisonV2Api({ fetchImpl });
+  expect(await api.history()).toEqual(value);
+  expect(fetchImpl.mock.calls[0][0]).toMatch(/comparisons-v2\/history$/);
+  expect(fetchImpl.mock.calls[0][1].method).toBe('GET');
+  await expect(api.history(43)).rejects.toThrow();
+});
+
 test('v2 selection and confirmation use the approved bodies and validate receipt ownership', async () => {
   const selected = { ...structuredClone(fixture.completed), selected_execution_id: 4305,
     version: fixture.completed.version + 1, confirmable: true };

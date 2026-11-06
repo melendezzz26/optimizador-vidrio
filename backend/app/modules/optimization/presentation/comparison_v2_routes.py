@@ -13,6 +13,7 @@ from .comparison_routes import ObservationResponse
 from .comparison_supervision_v2 import get_comparison_v2_coordinator
 from .comparison_v2_schemas import ComparisonSummaryV2, ExecutionResponseV2, ComparisonReleaseV2, ComparisonMaskPayloadV2, PositiveIdV2
 from .comparison_v2_schemas import ComparisonSelectionV2, ComparisonConfirmationV2
+from .comparison_v2_schemas import ComparisonHistoryV2
 from .confirmation_serialization import confirmation_response
 from .comparison_v2_serialization import comparison_response_v2, execution_response_v2
 from .run_auth import run_permission
@@ -87,6 +88,14 @@ def request_status(key:Annotated[str,Path(min_length=8,max_length=64,pattern=r'^
     with uow() as tx: current=tx.comparisons_v2.find_by_key(user.user_id,key)
     if current is None: raise RunError('NOT_FOUND','No se encontró la solicitud comparativa.')
     return comparison_response_v2(load(current.comparison_id,user.user_id,uow,coordinator))
+
+
+@router.get('/history', response_model=ComparisonHistoryV2)
+def history(before_id: Annotated[int | None, Query(gt=0, le=2147483647)] = None,
+            limit: Annotated[int, Query(ge=1, le=20)] = 20,
+            user=Depends(run_permission('optimization.view')), uow=Depends(get_comparison_v2_uow)):
+    with uow() as tx:
+        return tx.comparisons_v2.history_owned(user.user_id, before_id=before_id, limit=limit)
 
 
 @router.get('/{comparison_id}',response_model=ComparisonSummaryV2)

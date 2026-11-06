@@ -1,5 +1,13 @@
 # comparison-v2 — Catálogo y contratos de seis motores (TA-043 / B01)
 
+Adición S2 finalización: `GET /api/optimization/comparisons-v2/history` permite
+consultar comparaciones v1/v2 propias sin ejecutar motores. Parámetros `limit`
+(1–20, por defecto 20) y `before_id` (int32 positivo). Devuelve `items` con
+`comparison_id`, `profile`, `started_at`, `status`, `order_ids`, `confirmed`,
+`released`, y `next_before_id` nullable para paginación descendente. Requiere
+`optimization.view`, respeta propiedad y no entrega snapshots ni claves.
+No cambia los contratos históricos ni requiere migración.
+
 Estado: **contratos B01 implementados; revisión de Fabricio pendiente**.
 [SPEC TA-043](../../specs/SPEC-TA-043-integracion-seis-motores.md),
 [PLAN / puerta B01](../../specs/PLAN-TA-043-integracion-seis-motores.md).

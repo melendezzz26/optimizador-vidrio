@@ -24,6 +24,31 @@ function setup({ confirmed = false } = {}) {
   return { flow, api, source, current };
 }
 
+test('an ambiguous start keeps its key and order set across reload and retry', async () => {
+  const { flow, api, source, current } = setup();
+  flow.select([1]);
+  api.start.mockRejectedValueOnce(Object.assign(new Error('Sin conexión'), { status: 0 }));
+  await flow.start();
+  const key = api.start.mock.calls[0][1];
+  expect(flow.getSnapshot().pendingRequest).toBe(true);
+  flow.select([99]);
+  await flow.start();
+  expect(api.start).toHaveBeenCalledTimes(1);
+  expect(flow.getSnapshot().error).toContain('antes de cambiar los pedidos');
+  flow.dispose();
+  api.lookup.mockRejectedValue(Object.assign(new Error('No encontrada'), { status: 404 }));
+  api.start.mockResolvedValue(current);
+  const restored = createComparisonController({ api, source, storageKey: 'lifecycle-test' });
+  restored.mount();
+  try {
+    await vi.waitFor(() => expect(api.lookup).toHaveBeenCalledWith(key));
+    expect(restored.getSnapshot().selected).toEqual([1]);
+    await restored.start();
+    expect(api.start.mock.calls[1][0]).toEqual([1]);
+    expect(api.start.mock.calls[1][1]).toBe(key);
+  } finally { restored.dispose(); }
+});
+
 test('acknowledged confirmation clears transient state and storage once, preserving only success and pending orders', async () => {
   const { flow, api, source } = setup();
   try {

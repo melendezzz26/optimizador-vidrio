@@ -188,7 +188,7 @@ test('ambiguous acceptance is recovered by request key without submitting anothe
   fireEvent.click(await screen.findByRole('checkbox', { name: /Pedido #1/ }));
   await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Comparar con los tres motores' })));
   expect(screen.getByText('Respuesta de aceptación interrumpida.')).toBeVisible();
-  fireEvent.click(screen.getByRole('button', { name: 'Recuperar estado' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Actualizar resultado' }));
   await screen.findByRole('tab', { name: 'Comparación' });
   expect(api.lookup).toHaveBeenCalledTimes(1);
   expect(api.start).toHaveBeenCalledTimes(1);

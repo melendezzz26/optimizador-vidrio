@@ -37,6 +37,30 @@ class SqlComparisonV2Repository:
         self.session = session
         self.legacy = SqlComparisonRepository(session)
 
+    def history_owned(self, actor_id, *, before_id=None, limit=20):
+        """Two bounded projections; no result blobs, locks, recovery or execution."""
+        query = select(Optimizacion.id_optimizacion, Optimizacion.fecha_inicio,
+            Optimizacion.estado, Optimizacion.criterio_seleccion_version,
+            Optimizacion.comparison_snapshot["confirmation"]["confirmed_at"].as_string().label("confirmed_at"),
+            Optimizacion.comparison_snapshot["released_at"].as_string().label("released_at")).where(
+                Optimizacion.id_usuario_ejecutor == actor_id,
+                Optimizacion.criterio_seleccion_version.in_(("CMP-v1", "CMP-v2")),
+                Optimizacion.comparison_snapshot.is_not(None))
+        if before_id is not None:
+            query = query.where(Optimizacion.id_optimizacion < before_id)
+        rows = self.session.execute(query.order_by(Optimizacion.id_optimizacion.desc()).limit(limit)).all()
+        identifiers = [row.id_optimizacion for row in rows]
+        orders = {identifier: [] for identifier in identifiers}
+        for identifier, order_id in self.session.execute(select(
+                OptimizacionPedido.id_optimizacion, OptimizacionPedido.id_pedido).where(
+                    OptimizacionPedido.id_optimizacion.in_(identifiers)).order_by(OptimizacionPedido.id_pedido)):
+            orders[identifier].append(order_id)
+        return dict(items=[dict(comparison_id=row.id_optimizacion,
+            profile="comparison-v2" if row.criterio_seleccion_version == "CMP-v2" else "comparison-v1",
+            started_at=row.fecha_inicio, status=row.estado, order_ids=orders[row.id_optimizacion],
+            confirmed=row.confirmed_at is not None, released=row.released_at is not None) for row in rows],
+            next_before_id=identifiers[-1] if len(rows) == limit else None)
+
     def _lock(self, comparison_id):
         return self.legacy._lock(comparison_id)
 

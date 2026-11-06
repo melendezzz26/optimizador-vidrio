@@ -55,6 +55,18 @@ export function createComparisonV2Api({ token, fetchImpl = globalThis.fetch } = 
   return {
     methods: METHODS_V2,
     catalog: CATALOG_V2,
+    history: async (beforeId, signal) => {
+      const value = await request(`/history${beforeId ? `?before_id=${beforeId}` : ''}`, { signal });
+      check(Array.isArray(value.items) && value.items.length <= 20
+        && (value.next_before_id === null || id(value.next_before_id)));
+      value.items.forEach(item => check(id(item.comparison_id)
+        && ['comparison-v1', 'comparison-v2'].includes(item.profile)
+        && typeof item.started_at === 'string' && Number.isFinite(Date.parse(item.started_at))
+        && ['EN_EJECUCION', 'COMPLETADA', 'FALLIDA', 'SIN_SOLUCION'].includes(item.status)
+        && Array.isArray(item.order_ids) && item.order_ids.every(id)
+        && typeof item.confirmed === 'boolean' && typeof item.released === 'boolean'));
+      return value;
+    },
     start: async (order_ids, key, signal) => parseComparisonV2(await request('', { method: 'POST', body: { order_ids }, key, signal })),
     load: async (comparisonId, signal) => {
       check(id(comparisonId));

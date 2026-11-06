@@ -14,7 +14,7 @@ test('TA-043 B08 smoke: seleccion manual y confirmacion v2 atomica real', async 
   });
   await login(page, data.actors.all, { comparative: true }); await open(page);
   await page.getByRole('checkbox', { name: new RegExp(`Pedido #${data.orders[0]}\\b`) }).check();
-  await page.getByLabel('Perfil').selectOption('comparison-v2');
+  await page.getByLabel('Métodos').selectOption('comparison-v2');
   const acceptedResponse = page.waitForResponse(r => new URL(r.url()).pathname === '/api/optimization/comparisons-v2' && r.request().method() === 'POST');
   await page.getByRole('button', { name: 'Comparar con los seis motores', exact: true }).click();
   const acceptedHttp = await acceptedResponse; expect(acceptedHttp.status()).toBe(201);
@@ -85,6 +85,7 @@ test('TA-043 B08 smoke: seleccion manual y confirmacion v2 atomica real', async 
   await capture(page, info, 'b08-manual-choice');
   await page.getByRole('button', { name: 'Confirmar distribución elegida' }).click();
   await expect(page.getByRole('alertdialog')).toContainText('Best Residual Fit');
+  await expect(page.getByRole('alertdialog').getByRole('region', { name: 'Materiales propuestos' })).toContainText(`Plancha comercial #${data.sheets[0]}`);
   await capture(page, info, 'b08-confirmation-dialog');
   const confirmationResponse = page.waitForResponse(r => r.url() === `${endpoint}/confirm` && r.request().method() === 'POST');
   await page.getByRole('alertdialog').getByRole('button', { name: 'Confirmar corte', exact: true }).click();
@@ -95,6 +96,11 @@ test('TA-043 B08 smoke: seleccion manual y confirmacion v2 atomica real', async 
   const consumed = receipt.receipt.materials_consumed;
   expect(consumed).toHaveLength(1);
   expect(consumed[0].material_id).toBe(data.sheets[0]);
+  await expect(page.getByRole('region', { name: 'Inventario registrado' })).toContainText(`Plancha comercial #${data.sheets[0]}`);
+  await page.getByRole('button', { name: 'Ver comparaciones anteriores' }).click();
+  await page.getByRole('button', { name: `Ver comparación #${current.comparison_id}`, exact: true }).click();
+  await expect(page.getByText('Corte confirmado', { exact: true })).toBeVisible();
+  expect(requests).toHaveLength(1);
   for (const sheet of before.sheets) {
     const expected = consumed.filter(s => s.material_source === 'PLANCHA' && s.material_id === sheet.id_plancha).length;
     expect(after.sheets.find(s => s.id_plancha === sheet.id_plancha).cantidad).toBe(sheet.cantidad - expected);
@@ -261,7 +267,7 @@ test('TA-043 B07 smoke: interfaz v2, seis distribuciones y recuperacion visual r
 
   await login(page, data.actors.all, { comparative: true }); await open(page);
   await page.getByRole('checkbox', { name: new RegExp(`Pedido #${data.orders[0]}\\b`) }).check();
-  await page.getByLabel('Perfil').selectOption('comparison-v2');
+  await page.getByLabel('Métodos').selectOption('comparison-v2');
   const acceptedResponse = page.waitForResponse(response => new URL(response.url()).pathname === '/api/optimization/comparisons-v2'
     && response.request().method() === 'POST');
   await page.getByRole('button', { name: 'Comparar con los seis motores', exact: true }).click();
@@ -282,6 +288,7 @@ test('TA-043 B07 smoke: interfaz v2, seis distribuciones y recuperacion visual r
     && execution.diagnostic.termination_reason === 'COMPLETED')).toBe(true);
   await expect(page.getByText(/Comparación finalizada/)).toBeVisible();
   await expect(page.getByRole('tab')).toHaveCount(7);
+  await page.getByText('Consulta avanzada', { exact: true }).click();
   await page.getByLabel('Recuperar por clave idempotente').fill(idempotencyKey);
   await page.getByRole('button', { name: 'Recuperar', exact: true }).click();
   await expect(page.getByRole('tab')).toHaveCount(7);
@@ -346,7 +353,7 @@ test('TA-043 B07 smoke: interfaz v2, seis distribuciones y recuperacion visual r
       ['Material recuperable', metrics.retazo_recuperable_mm2], ['Planchas usadas', metrics.planchas_nuevas_usadas],
       ['Retazos reutilizados', results[execution.method].result.materials_used.filter(item => item.material_source === 'RETAZO').length],
       ['Piezas colocadas', `${execution.placed_units} / ${execution.total_units}`],
-      ['Piezas no colocadas', 0], ['Tiempo de cálculo', metrics.tiempo_computacional_ms], ['Completitud', 'Completo'],
+      ['Piezas no colocadas', 0], ['Tiempo de cálculo', metrics.tiempo_computacional_ms], ['Resultado', 'Completo'],
     ]) {
       const index = metricColumn(label);
       expect(index).toBeGreaterThanOrEqual(0);
@@ -406,7 +413,7 @@ test('TA-043 B07 smoke: interfaz v2, seis distribuciones y recuperacion visual r
 
   await page.getByRole('button', { name: 'Liberar pedidos sin confirmar', exact: true }).click();
   await expect(page.getByText(new RegExp(`Trabajo #${current.comparison_id} liberado sin confirmar`))).toBeVisible();
-  await page.getByLabel('Perfil').selectOption('comparison-v1');
+  await page.getByLabel('Métodos').selectOption('comparison-v1');
   await expect(page.getByRole('checkbox', { name: new RegExp(`Pedido #${data.orders[0]}\\b`) })).toBeEnabled();
   await page.getByRole('checkbox', { name: new RegExp(`Pedido #${data.orders[0]}\\b`) }).check();
   const v1Accepted = page.waitForResponse(response => new URL(response.url()).pathname === '/api/optimization/comparisons'
@@ -481,6 +488,7 @@ test('TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL
   // Let the existing automatic recovery settle before testing explicit lookup.
   await expect(page.getByRole('tab')).toHaveCount(4);
   await expect(page.getByText('Comparación finalizada', { exact: true })).toBeVisible();
+  await page.getByText('Consulta avanzada', { exact: true }).click();
   await page.getByLabel('Consultar trabajo guardado').fill(String(id));
   await page.getByRole('button', { name: 'Consultar', exact: true }).click();
   await expect(page.getByRole('tab')).toHaveCount(4);
@@ -637,6 +645,7 @@ test('comparar tres motores, revisar fases y solicitud, elegir BF y confirmar un
   await capture(page, info, 'confirmacion-limpia-pedidos-pendientes');
   await page.reload(); await open(page);
   await expect(page.getByRole('tab')).toHaveCount(0);
+  await page.getByText('Consulta avanzada', { exact: true }).click();
   await page.getByLabel('Consultar trabajo guardado').fill(String(current.comparison_id));
   await page.getByRole('button', { name: 'Consultar', exact: true }).click();
   await expect(page.getByText('Corte confirmado', { exact: true })).toBeVisible();
@@ -740,6 +749,7 @@ test('consulta sin permisos de ejecución recupera resultados sin permitir elecc
   expect(created.status()).toBe(201);
   const comparison = await created.json();
   await login(page, data.actors.view, { comparative: true }); await open(page);
+  await page.getByText('Consulta avanzada', { exact: true }).click();
   await page.getByLabel('Consultar trabajo guardado').fill(String(comparison.comparison_id));
   await page.getByRole('button', { name: 'Consultar', exact: true }).click();
   await expect(page.getByText('Comparación finalizada', { exact: true })).toBeVisible();

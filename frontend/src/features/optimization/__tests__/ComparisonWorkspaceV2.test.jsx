@@ -54,7 +54,7 @@ function setupV2({ partial = false, lostResponse = false, conflict = false, acti
 
 async function startV2() {
   fireEvent.click(await screen.findByRole('checkbox', { name: /Pedido #1/ }));
-  fireEvent.change(screen.getByLabelText('Perfil'), { target: { value: 'comparison-v2' } });
+  fireEvent.change(screen.getByLabelText('Métodos'), { target: { value: 'comparison-v2' } });
   fireEvent.click(screen.getByRole('button', { name: 'Comparar con los seis motores' }));
   await screen.findByRole('tab', { name: 'Comparación' });
 }
@@ -181,10 +181,10 @@ test('partial M6 and failed HF remain independent and retain their actual diagno
   setupV2({ partial: true }); await startV2();
   fireEvent.click(screen.getByRole('tab', { name: 'Comparación' }));
   const table = screen.getByRole('table', { name: 'Métricas de 6 motores' });
-  expect(within(table).getByRole('row', { name: /Hole Filling/ })).toHaveTextContent('Fallido');
-  expect(within(table).getByRole('row', { name: /Hole Filling/ })).toHaveTextContent('WORKER_STOPPED');
+  expect(within(table).getByRole('row', { name: /Hole Filling/ })).toHaveTextContent('Error técnico');
+  expect(within(table).getByRole('row', { name: /Hole Filling/ })).toHaveTextContent('El proceso se interrumpió.');
   expect(within(table).getByRole('row', { name: /M6-BS/ })).toHaveTextContent('Parcial');
-  expect(within(table).getByRole('row', { name: /M6-BS/ })).toHaveTextContent('EXPANSION_LIMIT');
+  expect(within(table).getByRole('row', { name: /M6-BS/ })).toHaveTextContent('límite de expansiones');
   fireEvent.click(screen.getByRole('tab', { name: /BS-2/ }));
   const beamPanel = screen.getByRole('tabpanel', { name: /BS-2/ });
   fireEvent.click(within(beamPanel).getByRole('button', { name: /Resultado/ }));
@@ -204,6 +204,7 @@ test('reloading a v2 comparison consults its durable ID without starting another
 
 test('explicit idempotency-key recovery uses the v2 profile without starting a second comparison', async () => {
   const { apiV2, v1 } = setupV2(); await startV2();
+  fireEvent.click(screen.getByText('Consulta avanzada'));
   fireEvent.change(screen.getByLabelText('Recuperar por clave idempotente'), { target: { value: 'b07-recovery-key' } });
   fireEvent.click(screen.getByRole('button', { name: 'Recuperar', exact: true }));
   await screen.findByRole('tab', { name: 'Comparación' });
@@ -211,4 +212,18 @@ test('explicit idempotency-key recovery uses the v2 profile without starting a s
   expect(apiV2.start).toHaveBeenCalledOnce();
   expect(v1.load).not.toHaveBeenCalled();
   expect(screen.getAllByRole('tab')).toHaveLength(7);
+});
+
+test('history opens a saved comparison without IDs entered or another calculation', async () => {
+  const { apiV2 } = setupV2();
+  apiV2.history = vi.fn(async () => ({ items: [{ comparison_id: 43, profile: 'comparison-v2',
+    started_at: '2026-11-06T12:00:00Z', order_ids: [1], status: 'COMPLETADA', confirmed: false, released: false }], next_before_id: null }));
+  fireEvent.click(screen.getByRole('button', { name: 'Ver comparaciones anteriores' }));
+  fireEvent.click(await screen.findByRole('button', { name: 'Ver comparación #43' }));
+  await screen.findByRole('tab', { name: 'Comparación' });
+  expect(apiV2.load).toHaveBeenCalledWith(43, expect.anything());
+  expect(apiV2.start).not.toHaveBeenCalled();
+  expect(screen.getByText(/6 de 6 métodos completaron/)).toBeVisible();
+  expect(screen.getByRole('button', { name: 'Actualizar resultado' })).toBeVisible();
+  expect(screen.getByLabelText('Recuperar por clave idempotente')).not.toBeVisible();
 });

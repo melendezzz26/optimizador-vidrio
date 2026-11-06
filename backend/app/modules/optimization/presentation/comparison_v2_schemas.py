@@ -41,6 +41,21 @@ class ComparisonReleaseV2(ContractV1):
     expected_version: PositiveIdV2
 
 
+class ComparisonHistoryItemV2(ContractV1):
+    comparison_id: PositiveIdV2
+    profile: Literal["comparison-v1", "comparison-v2"]
+    started_at: datetime
+    status: Literal["EN_EJECUCION", "COMPLETADA", "FALLIDA", "SIN_SOLUCION"]
+    order_ids: list[PositiveIdV2]
+    confirmed: StrictBool
+    released: StrictBool
+
+
+class ComparisonHistoryV2(ContractV1):
+    items: list[ComparisonHistoryItemV2]
+    next_before_id: PositiveIdV2 | None
+
+
 class ComparisonConfirmationV2(v1.ComparisonConfirmation):
     profile: Literal["comparison-v2"] = "comparison-v2"
     schema_version: Literal[2] = 2

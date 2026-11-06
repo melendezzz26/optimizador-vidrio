@@ -20,12 +20,14 @@ import './ComparisonWorkspace.css';
 
 const PHASES = ['Máscaras', 'Orden de piezas', 'Giros y colocación', 'Resultado'];
 const metricRows = [['aprovechamiento_pct', 'Aprovechamiento', '%'], ['merma_mm2', 'Merma', 'mm²'],
-  ['retazo_recuperable_mm2', 'Retazo recuperable', 'mm²'], ['planchas_nuevas_usadas', 'Planchas nuevas', ''], ['tiempo_computacional_ms', 'Tiempo de cálculo', 'ms']];
+  ['retazo_recuperable_mm2', 'Recuperable potencial', 'mm²'], ['planchas_nuevas_usadas', 'Planchas comerciales', ''], ['tiempo_computacional_ms', 'Tiempo de cálculo', 'ms']];
 const methodName = method => METHOD_NAMES[method] ?? CATALOG_V2.find(item => item.code === method)?.name ?? method;
 const methodLabel = (method, profile) => profile === 'comparison-v2'
   ? CATALOG_V2.find(item => item.code === method)?.label ?? method : METHOD_NAMES[method] ?? method;
 const executionStatus = execution => {
-  if (execution.status === 'FALLIDA' || execution.outcome === 'FAILED') return 'Fallido';
+  const reason = execution.diagnostic?.termination_reason;
+  if (reason === 'GLOBAL_TIME_LIMIT' && execution.diagnostic?.statistics?.runtime_engine_started === 0) return 'No comenzó';
+  if (execution.status === 'FALLIDA' || execution.outcome === 'FAILED') return ['GLOBAL_TIME_LIMIT', 'TIME_BUDGET_EXCEEDED', 'MEMORY_BUDGET_EXCEEDED'].includes(reason) ? 'Interrumpido por recursos' : 'Error técnico';
   if (execution.dispatch_state === 'QUEUED') return 'En espera';
   if (execution.dispatch_state === 'STARTING') return 'Iniciando';
   if (execution.dispatch_state === 'RUNNING') return 'Calculando';
@@ -34,13 +36,13 @@ const executionStatus = execution => {
   if (execution.status === 'EN_EJECUCION') return 'En ejecución';
   return execution.complete ? 'Completo' : 'Con piezas sin colocar';
 };
-const terminationLabel = code => ({ MEMORY_BUDGET_EXCEEDED: 'Se alcanzó el presupuesto de memoria.',
-  TIME_BUDGET_EXCEEDED: 'Se alcanzó el presupuesto de cálculo.', TIME_LIMIT: 'Beam Search alcanzó su límite interno de tiempo.',
+const terminationLabel = code => ({ COMPLETED: 'Distribución completa.', NO_FIT: 'El método no pudo ubicar todas las piezas.', MEMORY_BUDGET_EXCEEDED: 'Se alcanzó el presupuesto de memoria.',
+  TIME_BUDGET_EXCEEDED: 'Se alcanzó el presupuesto de cálculo.', TIME_LIMIT: 'Este método alcanzó su tiempo máximo.',
   EXPANSION_LIMIT: 'Beam Search alcanzó su límite de expansiones.', GEOMETRY_PROBE_LIMIT: 'Beam Search alcanzó su límite de sondeos geométricos.',
-  STATE_MEMORY_LIMIT: 'Beam Search alcanzó su límite de memoria de estados.', GLOBAL_TIME_LIMIT: 'La comparación alcanzó el plazo global.',
+  STATE_MEMORY_LIMIT: 'Este método alcanzó su límite de memoria.', GLOBAL_TIME_LIMIT: 'Se agotó el tiempo disponible para comparar.',
   RESULT_SAVE_FAILED: 'No se pudo guardar el resultado de este motor.', WORKER_STOPPED: 'El proceso se interrumpió.',
   PROCESS_START_FAILED: 'No se pudo iniciar el proceso.', CANCELLED: 'La ejecución fue cancelada.',
-  EXECUTION_FAILED: 'La ejecución falló.' })[code] ?? (code ? `Terminación: ${code}.` : 'Este motor no pudo completar su ejecución.');
+  EXECUTION_FAILED: 'La ejecución falló.' })[code] ?? 'Este método no pudo completar el cálculo.';
 
 function readOnlySource() {
   let listener;
@@ -132,8 +134,10 @@ function EnginePanel({ comparison, execution, visual: supplied, live, result, ap
     <header><div><span className="comparison-eyebrow">Motor {execution.method}</span><h2>{methodName(execution.method)}</h2></div>
       <span className={`comparison-status ${execution.status === 'FALLIDA' || execution.outcome === 'FAILED' ? 'is-failed' : ''}`}>{executionStatus(execution)}</span></header>
     {(execution.status === 'FALLIDA' || execution.outcome === 'FAILED') && <FeedbackMessage variant="error">{terminationLabel(execution.diagnostic?.termination_reason ?? execution.failure_code)}</FeedbackMessage>}
-    {execution.diagnostic && <p className="comparison-diagnostic" role="status">{execution.diagnostic.origin}: {terminationLabel(execution.diagnostic.termination_reason)}</p>}
-    {beamSearch && search && !result && <div className="comparison-search-progress" role="status">Búsqueda provisional · nivel {search.completed_levels} · {search.expansions} expansiones · {search.geometry_probes} sondeos geométricos · frente {search.frontier_size}.<small>Estos estados no representan colocaciones finales.</small></div>}
+    {execution.diagnostic && <p className="comparison-diagnostic" role="status">{terminationLabel(execution.diagnostic.termination_reason)}</p>}
+    {beamSearch && search && !result && <><p role="status">Buscando una distribución. Las piezas se mostrarán cuando haya un resultado guardado.</p>
+      <details><summary>Detalles de búsqueda</summary><div className="comparison-search-progress">Búsqueda provisional · nivel {search.completed_levels} · {search.expansions} expansiones · {search.geometry_probes} sondeos geométricos · frente {search.frontier_size}.<small>Estos estados no representan colocaciones finales.</small></div></details></>}
+    {execution.diagnostic && <details><summary>Detalles del método</summary><code>{execution.diagnostic.origin} · {execution.diagnostic.termination_reason}</code></details>}
     {execution.status !== 'FALLIDA' && execution.outcome !== 'FAILED' && <div className="comparison-progress"><p role="status">{placed} / {execution.total_units} piezas colocadas · {processed} procesadas</p>
       <progress aria-label={`Piezas colocadas por ${methodName(execution.method)}`} value={placed} max={execution.total_units} /></div>}
     <ol className="comparison-phases" aria-label="Fases del motor">{PHASES.map((label, index) => <li key={label}>
@@ -170,10 +174,10 @@ function EnginePanel({ comparison, execution, visual: supplied, live, result, ap
 }
 
 const comparisonMetrics = [['coverage', 'Cobertura', ''], ['aprovechamiento_pct', 'Aprovechamiento', '%'],
-  ['merma_mm2', 'Merma', 'mm²'], ['retazo_recuperable_mm2', 'Material recuperable', 'mm²'],
+  ['merma_mm2', 'Merma', 'mm²'], ['retazo_recuperable_mm2', 'Recuperable potencial', 'mm²'],
   ['planchas_nuevas_usadas', 'Planchas usadas', ''], ['remnants', 'Retazos reutilizados', ''],
   ['pieces', 'Piezas colocadas', ''], ['unplaced', 'Piezas no colocadas', ''],
-  ['tiempo_computacional_ms', 'Tiempo de cálculo', 'ms'], ['completeness', 'Completitud', '']];
+  ['tiempo_computacional_ms', 'Tiempo de cálculo', 'ms'], ['completeness', 'Resultado', '']];
 
 function metricValue(key, execution, result) {
   if (key === 'coverage') return execution.total_units ? `${(execution.placed_units / execution.total_units * 100).toFixed(1)} %` : null;
@@ -181,7 +185,7 @@ function metricValue(key, execution, result) {
     : `${execution.placed_units} / ${execution.total_units}`;
   if (key === 'unplaced') return result ? result.unplaced_units.length : execution.outcome === 'FAILED' ? null : '—';
   if (key === 'remnants') return result ? result.materials_used.filter(item => item.material_source === 'RETAZO').length : null;
-  if (key === 'completeness') return execution.outcome === 'FAILED' ? 'Fallido' : execution.complete ? 'Completo'
+  if (key === 'completeness') return execution.outcome === 'FAILED' ? executionStatus(execution) : execution.complete ? 'Completo'
     : execution.outcome === 'PARTIAL' ? 'Parcial' : executionStatus(execution);
   return execution.metrics?.[key] ?? null;
 }
@@ -233,19 +237,37 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
   const methodCount = current?.executions.length ?? (state.profile === 'comparison-v2' ? apiV2.methods.length : METHODS.length);
   const activeTab = tabs.includes(tab) ? tab : tabs[0] ?? 'comparison';
   const locked = state.busy || current && !current.released && !current.confirmed;
+  const completeCount = current?.executions.filter(e => e.complete).length ?? 0;
   return <PageCard className="comparison-workspace">
     <header className="comparison-heading"><div><span className="comparison-eyebrow">{methodCount} motores · una misma solicitud</span><h2>Comparar distribuciones de corte</h2>
       <p>{current?.profile === 'comparison-v2' ? 'Revisa y compara los resultados independientes de las seis heurísticas.' : 'Revisa el proceso de cada motor, compara sus métricas y elige una distribución.'}</p></div>
       {current && <div className="comparison-job">Trabajo <strong>#{current.comparison_id}</strong><small>{current.confirmed ? 'Corte confirmado' : current.released ? 'Pedidos liberados' : current.terminal ? 'Comparación finalizada' : 'Comparación en curso'}</small>{selected && <small>Elegido: {methodName(selected.method)}</small>}</div>}</header>
     {state.error && <FeedbackMessage variant="error">{state.error}</FeedbackMessage>}
     {state.success && <FeedbackMessage variant="success">{state.success}</FeedbackMessage>}
-    <div className="comparison-toolbar"><form onSubmit={e => { e.preventDefault(); if (Number(lookup) > 0) flow.load(Number(lookup), { profile: state.profile }); }}>
-      <label>Perfil<select className="ng-control" value={state.profile} onChange={e => flow.setProfile(e.target.value)}><option value="comparison-v1">comparison-v1 · tres motores</option><option value="comparison-v2">comparison-v2 · seis motores</option></select></label>
+    <div className="comparison-toolbar">
+      <label>Métodos<select className="ng-control" value={state.profile} disabled={state.pendingRequest || !!current && !current.released && !current.confirmed}
+        onChange={e => flow.setProfile(e.target.value)}><option value="comparison-v1">Tres métodos (histórico)</option><option value="comparison-v2">Seis métodos</option></select></label>
+      <button className="ng-button" disabled={state.busy} onClick={() => flow.history()}>Ver comparaciones anteriores</button>
+      <button className="ng-button" disabled={state.busy} onClick={flow.refresh}>Actualizar resultado</button>
+    </div>
+    {state.pendingRequest && <p role="status">La solicitud se conserva para reintentar o actualizar sin crear otra comparación.</p>}
+    {state.historyOpen && <section className="comparison-history" aria-label="Comparaciones anteriores">
+      <h3>Comparaciones anteriores</h3>
+      {!state.savedComparisons.length && <p>No hay comparaciones guardadas.</p>}
+      <ul>{state.savedComparisons.map(item => <li key={item.comparison_id}>
+        <span>Pedidos {item.order_ids.map(id => `#${id}`).join(', ')} · {new Intl.DateTimeFormat('es-PE', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Lima' }).format(new Date(item.started_at))}
+          {' '}· {item.confirmed ? 'Corte confirmado' : item.released ? 'Pedidos liberados' : item.status === 'EN_EJECUCION' ? 'En ejecución' : 'Finalizada: revisa la cobertura'}</span>
+        <button className="ng-button" disabled={state.busy || state.pendingRequest} onClick={() => flow.load(item.comparison_id, { profile: item.profile })}>Ver comparación #{item.comparison_id}</button>
+      </li>)}</ul>
+      {state.historyNext && <button className="ng-button" disabled={state.busy} onClick={() => flow.history(state.historyNext)}>Ver más comparaciones</button>}
+    </section>}
+    <details className="comparison-technical"><summary>Consulta avanzada</summary>
+      <form onSubmit={e => { e.preventDefault(); if (Number(lookup) > 0) flow.load(Number(lookup), { profile: state.profile }); }}>
       <label>Consultar trabajo guardado<input className="ng-control" type="number" min="1" value={lookup} onChange={e => setLookup(e.target.value)} /></label>
       <button className="ng-button" disabled={state.busy || !Number.isSafeInteger(Number(lookup)) || Number(lookup) <= 0}>Consultar</button></form>
       <form onSubmit={e => { e.preventDefault(); flow.loadByKey(lookupKey, state.profile); }}><label>Recuperar por clave idempotente<input className="ng-control" value={lookupKey} onChange={e => setLookupKey(e.target.value)} /></label>
         <button className="ng-button" disabled={state.busy || !lookupKey.trim()}>Recuperar</button></form>
-      <button className="ng-button" disabled={state.busy} onClick={flow.refresh}>Recuperar estado</button></div>
+    </details>
     {state.loading && <LoadingState>Consultando pedidos y trabajo guardado…</LoadingState>}
     {execute && (!current || current.released || current.confirmed) && <section className="comparison-pending" aria-label="Seleccionar pedidos">
       <h3 ref={pendingHeading} tabIndex={-1}>Pedidos pendientes</h3><p>Las existencias se descuentan al confirmar la distribución que elijas.</p>
@@ -259,6 +281,9 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
     </section>}
     {current && <>
       <OriginalRequest comparison={current} />
+      <p role="status">{completeCount} de {current.executions.length} métodos completaron todas las piezas.
+        {' '}{current.executions.filter(e => e.outcome === 'PARTIAL').length} parciales · {current.executions.filter(e => e.outcome === 'FAILED').length} interrumpidos o con error.
+        {current.terminal && completeCount !== current.executions.length ? ' Comparación parcialmente completada.' : ''}</p>
       {current.confirmed && <InventoryReceipt confirmation={current.confirmation} />}
       <details className="comparison-configuration"><summary>Configuración y unidades aplicadas</summary><p>Resolución {current.configuration.resolucion_raster_mm} mm/celda · margen {current.configuration.margen_mm} mm · separación {current.configuration.separacion_mm} mm · paso angular {current.configuration.paso_angular_grados}°.</p></details>
       {state.partial && <FeedbackMessage variant="info">Se recuperó el estado actual. Parte del avance anterior ya no estaba retenido; los resultados guardados se conservan.</FeedbackMessage>}
@@ -287,7 +312,7 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
             const rows = current.profile === 'comparison-v2' ? comparisonMetrics : [['pieces', 'Piezas', ''], ...metricRows];
             return <tr key={execution.execution_id} className={selectedId === execution.execution_id ? 'is-selected' : ''}>
               <th scope="row">{methodName(execution.method)}<small>{execution.method}</small></th>
-              <td data-label="Estado">{executionStatus(execution)}{execution.diagnostic && <small>{execution.diagnostic.termination_reason}</small>}</td>
+              <td data-label="Estado">{executionStatus(execution)}{execution.diagnostic && <small>{terminationLabel(execution.diagnostic.termination_reason)}</small>}</td>
               {rows.map(([key, label]) => <td key={key} data-label={label}>{key === 'pieces' ? (execution.status === 'FALLIDA' || execution.outcome === 'FAILED' ? '—' : `${execution.placed_units} / ${execution.total_units}`)
                 : current.profile === 'comparison-v2' ? metricValue(key, execution, result) ?? '—' : execution.metrics?.[key] ?? '—'}</td>)}
               <td data-label="Selección"><label><input type="radio" name={`${id}-engine`} aria-label={`Elegir ${methodName(execution.method)}`}

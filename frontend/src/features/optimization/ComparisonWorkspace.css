@@ -21,6 +21,8 @@
 .comparison-material-trace,.comparison-inventory-receipt{margin:1rem 0;padding:1rem;border:1px solid var(--cmp-line);border-radius:12px;overflow-wrap:anywhere}
 .comparison-source{padding:.8rem 0;border-top:1px solid var(--cmp-line)}.comparison-source summary{cursor:pointer;font-weight:600}
 .comparison-source-areas{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem}.comparison-source-areas dd{margin:.3rem 0}.comparison-source-areas dt{color:var(--cmp-muted)}
+.comparison-history ul{padding-left:1.2rem}.comparison-history li{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem;margin:.8rem 0}.comparison-history li span{flex:1;min-width:180px}
+.comparison-technical{margin:1rem 0}.comparison-technical form{display:flex;flex-wrap:wrap;gap:.7rem;margin:.7rem 0}
 @media(max-width:680px){
   .comparison-table-hint{display:none}.comparison-table-scroll{overflow:visible;border:0}
   .comparison-results table{display:block;white-space:normal}.comparison-results caption{display:block}

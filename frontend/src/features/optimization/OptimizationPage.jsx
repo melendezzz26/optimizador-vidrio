@@ -190,7 +190,7 @@ export function OptimizationPage({ user, toolbar, initialMode = 'first-fit', ...
     {canViewResults(user) ? <>
       <div className="ng-ui optimization-workspace">
         <PageHeader title="Optimización de corte" context="Trabajo de vidriería" icon={ScanLine}
-          description={legacy ? 'Selecciona pedidos → revisa vidrios y piezas → calcula la distribución → confirma el corte.' : 'Ejecuta tres motores → compara sus resultados → elige y confirma una distribución.'} />
+          description={legacy ? 'Selecciona pedidos → revisa vidrios y piezas → calcula la distribución → confirma el corte.' : 'Compara distribuciones → revisa los materiales → elige y confirma un corte.'} />
       </div>
       {legacyOrigin && <div className="ng-ui"><button type="button" className="ng-button" onClick={() => setLegacyOrigin(false)}>Volver a comparación de motores</button></div>}
       {initialMode !== 'hu015' ? legacy ? <OptimizationContent {...props} initialRunId={typeof legacyOrigin === 'number' ? legacyOrigin : props.initialRunId} user={user} />
