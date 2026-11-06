@@ -5,6 +5,7 @@ from functools import cached_property
 from time import perf_counter
 from typing import Callable
 
+from .beam_memory import BeamStateMemory, StateMemoryLimit, initial_bound, successor_reserve
 from .metrics import largest_rectangle
 from .packing import FirstFitEvent, _coordinate, _empty_layout
 from .preparation import prepare_group_units
@@ -141,35 +142,25 @@ class BeamSearchOptimizer:
         stocks = tuple(stock for group in groups for stock in group.stock_candidates)
         ranks = {stock.identity: index for index, stock in enumerate(stocks)}
 
-        from .preparation import bbox_dimensions
-        per_node = 2048 + len(problem.units) * 1024
-        for stock in stocks:
-            width, height = bbox_dimensions(stock.geometry)
-            columns, rows = (
-                int((value / problem.config.resolution_mm).to_integral_value(
-                    rounding="ROUND_CEILING"
-                ))
-                for value in (width, height)
-            )
-            per_node += rows * (40 + 4 * ((columns + 29) // 30)) * 4
-        retained_bound = 3 * limits.width + limits.children_per_parent + 3
-        estimated = per_node * retained_bound
-        if estimated > limits.max_state_bytes:
-            result = BeamSearchResult(problem=problem, placements=())
-            return BeamSearchOutcome(result, 0, "STATE_MEMORY_LIMIT",
-                                     dict(stats, state_bytes_bound=estimated), ())
-
+        memory = BeamStateMemory(limits.max_state_bytes)
         try:
+            memory.reserve(initial_bound(stocks, problem.config))
             prepared = prepare_run_geometry(problem, checkpoint=check)
-        except BeamSearchStopped as error:
+            initial = []
+            for stock in stocks:
+                check()
+                material = prepared.material(stock)
+                # Erosion and empty rows coexist with previously built layouts.
+                memory.check((problem, initial, material),
+                             successor_reserve(material, 0))
+                initial.append(_empty_layout(material, problem.config))
+            initial = tuple(initial)
+            beam = [BeamNode(initial)]
+            memory.check((problem, initial, beam))
+        except (BeamSearchStopped, StateMemoryLimit) as error:
             result = BeamSearchResult(problem=problem, placements=())
-            return BeamSearchOutcome(
-                result, 0, str(error),
-                dict(stats, state_bytes_bound=estimated), (),
-            )
-        initial = tuple(_empty_layout(prepared.material(stock), problem.config)
-                        for stock in stocks)
-        beam = [BeamNode(initial)]
+            return BeamSearchOutcome(result, 0, str(error),
+                                     dict(stats, **memory.statistics()), ())
         stop_reason = None
 
         def progress():
@@ -201,6 +192,8 @@ class BeamSearchOptimizer:
             return None
 
         def successors(node, group, unit):
+            memory.check((problem, initial, beam, pool, children),
+                         65536 + len(problem.units) * 2048)
             orientations = tuple(prepared.orientations(unit))
             tier = []
             for source in (MaterialSource.REMNANT, MaterialSource.SHEET):
@@ -245,6 +238,8 @@ class BeamSearchOptimizer:
                         if stats["expansions"] >= limits.max_expansions:
                             raise BeamSearchStopped("EXPANSION_LIMIT")
                         stats["expansions"] += 1
+                        memory.check((problem, initial, beam, pool, children),
+                                     successor_reserve(layout.material, len(problem.units)))
                         placement = Placement(
                             piece=unit, stock=stock,
                             x_mm=_coordinate(column, problem.config.resolution_mm),
@@ -288,12 +283,12 @@ class BeamSearchOptimizer:
                         emit("piece_placed", group, unit,
                              beam[0].placements[-1], len(beam[0].placements))
                 emit("group_completed", group)
-        except BeamSearchStopped as error:
+        except (BeamSearchStopped, StateMemoryLimit) as error:
             stop_reason = str(error)
 
         winner = min(beam, key=lambda node: node.score) if beam else BeamNode(())
         result = BeamSearchResult(problem=problem, placements=winner.placements)
         return BeamSearchOutcome(
             result, winner.processed, stop_reason,
-            dict(stats, state_bytes_bound=estimated), winner.trace,
+            dict(stats, **memory.statistics()), winner.trace,
         )
