@@ -226,6 +226,7 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
   // while it is being saved; confirmation still uses the durable controller state.
   const selectedId = pendingChoice ?? current?.selected_execution_id;
   const selected = current?.executions.find(e => e.execution_id === selectedId);
+  const selectedResult = state.results[selected?.execution_id]?.result;
   const choose = async executionId => {
     setPendingChoice(executionId);
     try { await flow.choose(executionId); }
@@ -324,7 +325,7 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
           {!current.terminal && <p role="status">La elección se habilita tras el cierre seguro de los {current.executions.length} motores y la persistencia de sus resultados.</p>}
           <div className="comparison-choice"><div><strong>{selected ? `${methodName(selected.method)} seleccionado` : 'Todavía no has elegido un motor'}</strong>
             <p>{current.confirmed ? 'El inventario y los pedidos reflejan únicamente la distribución elegida.' : 'Elegir un motor conserva el inventario. Confirma cuando hayas revisado su distribución.'}</p></div>
-            {canConfirm && <button className="ng-button ng-button--primary" disabled={state.busy || !current.confirmable} onClick={() => setDialog(true)}>{state.busy ? 'Procesando…' : 'Confirmar distribución elegida'}</button>}
+            {canConfirm && <button className="ng-button ng-button--primary" disabled={state.busy || !current.confirmable || !selectedResult} onClick={() => setDialog(true)}>{state.busy ? 'Procesando…' : 'Confirmar distribución elegida'}</button>}
           </div></>
       </section>
       <footer className="comparison-footer">
@@ -333,10 +334,10 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
         <p>{current.confirmed ? 'Confirmado' : current.released ? 'Liberado' : current.terminal ? 'Resultados guardados' : 'Cálculo en curso'} · Trabajo #{current.comparison_id}</p>
       </footer>
     </>}
-    <ConfirmDialog open={dialog && canConfirm && current?.confirmable && !state.busy} title={`Confirmar ${selected ? methodName(selected.method) : 'distribución'}`} confirmLabel="Confirmar corte"
+    <ConfirmDialog open={dialog && canConfirm && current?.confirmable && !!selectedResult && !state.busy} title={`Confirmar ${selected ? methodName(selected.method) : 'distribución'}`} confirmLabel="Confirmar corte"
       onCancel={() => setDialog(false)} onConfirm={() => { setDialog(false); flow.confirm(); }}>
       <p>Se descontarán únicamente las planchas y retazos de {selected ? methodName(selected.method) : 'la distribución elegida'} y se confirmarán sus pedidos.</p>
-      <MaterialTrace result={state.results[selected?.execution_id]?.result} compact />
+      <MaterialTrace result={selectedResult} compact />
     </ConfirmDialog>
   </PageCard>;
 }

@@ -227,3 +227,20 @@ test('history opens a saved comparison without IDs entered or another calculatio
   expect(screen.getByRole('button', { name: 'Actualizar resultado' })).toBeVisible();
   expect(screen.getByLabelText('Recuperar por clave idempotente')).not.toBeVisible();
 });
+
+test('confirmation waits for the selected material proposal to load', async () => {
+  const { apiV2 } = setupV2();
+  const original = apiV2.result.getMockImplementation();
+  let release;
+  const pending = new Promise(resolve => { release = resolve; });
+  apiV2.result.mockImplementation(async (...args) => { await pending; return original(...args); });
+  try {
+    await startV2();
+    fireEvent.click(screen.getByRole('tab', { name: 'Comparación' }));
+    fireEvent.click(screen.getByRole('radio', { name: 'Elegir First Fit', exact: true }));
+    await waitFor(() => expect(apiV2.choose).toHaveBeenCalled());
+    expect(screen.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeDisabled();
+    expect(apiV2.confirm).not.toHaveBeenCalled();
+  } finally { release(); }
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeEnabled());
+});
