@@ -350,7 +350,7 @@ test('TA-043 B07 smoke: interfaz v2, seis distribuciones y recuperacion visual r
     for (const [label, expected] of [
       ['Cobertura', `${(execution.placed_units / execution.total_units * 100).toFixed(1)} %`],
       ['Aprovechamiento', metrics.aprovechamiento_pct], ['Merma', metrics.merma_mm2],
-      ['Material recuperable', metrics.retazo_recuperable_mm2], ['Planchas usadas', metrics.planchas_nuevas_usadas],
+      ['Recuperable potencial', metrics.retazo_recuperable_mm2], ['Planchas usadas', metrics.planchas_nuevas_usadas],
       ['Retazos reutilizados', results[execution.method].result.materials_used.filter(item => item.material_source === 'RETAZO').length],
       ['Piezas colocadas', `${execution.placed_units} / ${execution.total_units}`],
       ['Piezas no colocadas', 0], ['Tiempo de cálculo', metrics.tiempo_computacional_ms], ['Resultado', 'Completo'],
