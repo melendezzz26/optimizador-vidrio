@@ -121,13 +121,13 @@ directas no ejercitan el plazo compartido de 180 s del comparador.
 
 | Caso M6 | Colocadas | Pared con métricas (s) | Causa | Reserva pico (MiB) |
 |---|---:|---:|---|---:|
-| Original, 6 unidades / ocho planchas | 0/6 | 30,003 | TIME_LIMIT | 25,173 |
-| Original, 18 unidades / ocho planchas | 0/18 | 30,003 | TIME_LIMIT | 25,213 |
-| Original, 46 unidades / ocho planchas | 0/46 | 30,003 | TIME_LIMIT | 25,306 |
-| Seis mixtas, una plancha 1000×1000 | 5/6 | 22,975 | GEOMETRY_PROBE_LIMIT | 4,503 |
-| 18 círculos r=40, una plancha 500×500 | 18/18 | 0,956 | COMPLETED | 1,245 |
-| Seis círculos r=80, cuatro retazos 500×500 y plancha 1000×1000 | 6/6 | 1,618 | COMPLETED | 3,086 |
-| Seis círculos r=80, grupos de 6/8 mm y dos planchas 1000×1000 | 6/6 | 0,589 | COMPLETED | 3,039 |
+| Original, 6 unidades / ocho planchas | 0/6 | 30,003 | TIME_LIMIT | 27,333 |
+| Original, 18 unidades / ocho planchas | 0/18 | 30,004 | TIME_LIMIT | 27,373 |
+| Original, 46 unidades / ocho planchas | 0/46 | 30,003 | TIME_LIMIT | 27,466 |
+| Seis mixtas, una plancha 1000×1000 | 5/6 | 24,925 | GEOMETRY_PROBE_LIMIT | 5,145 |
+| 18 círculos r=40, una plancha 500×500 | 18/18 | 1,062 | COMPLETED | 1,507 |
+| Seis círculos r=80, cuatro retazos 500×500 y plancha 1000×1000 | 6/6 | 1,769 | COMPLETED | 3,728 |
+| Seis círculos r=80, grupos de 6/8 mm y dos planchas 1000×1000 | 6/6 | 0,659 | COMPLETED | 3,680 |
 
 Las mixtas pequeñas alternan rectángulo 200×300, círculo r=100 y pentágono
 `(0,0),(125,0),(155,100),(62.5,175),(0,100)`. Margen/separación 3 mm, rejilla 1 mm,
@@ -137,16 +137,29 @@ anterior está vacía y se devuelve así, sin inventar placements de un nivel
 interrumpido. La admisión de memoria ya no es la causa; puntuar alternativas
 grandes sigue siendo costoso. No se garantiza completar pedidos comerciales.
 
-Frente a la auditoría anterior, M6 pasó de 13,408 a 0,956 s en 18 círculos pequeños
-y de 8,012 a 1,618 s en retazos. Son corridas únicas: no medianas ni garantías.
+Frente a la auditoría anterior, M6 pasó de 13,408 a 1,062 s en 18 círculos pequeños
+y de 8,012 a 1,769 s en retazos. Son corridas únicas: no medianas ni garantías.
 No se equipara esta matriz sintética con el pedido real #69.
 
 Comparador productivo con observación, persistencia y PostgreSQL 18 temporal:
-46 unidades en 101,557 s, RSS agregado máximo 245,08 MiB, sin causa global y con
+46 unidades en 106,319 s, RSS agregado máximo 245,54 MiB, sin causa global y con
 todos los workers detenidos. FF/BF/WF/HF/M5 colocan 46/46 y sus snapshots completos
 coinciden con la medición previa salvo `computation_time_ms`. M6 devuelve
-ENGINE/TIME_LIMIT, 0/46 y reserva pico 25,323 MiB. Se despacharon e iniciaron los
+ENGINE/TIME_LIMIT, 0/46 y reserva pico 27,483 MiB. Se despacharon e iniciaron los
 seis motores; solo cinco completaron. Stock intacto y cero movimientos.
+
+| Motor, 46 unidades | Pared externa (s) | Colocadas / pendientes | Planchas / retazos | Aprovechamiento (%) | Merma (mm²) | RSS observado worker (MiB) | Terminación |
+|---|---:|---:|---:|---:|---:|---:|---|
+| FF | 6,752 | 46 / 0 | 4 / 0 | 54,928 | 5172169,44 | 90,734 | Completa |
+| BF | 7,823 | 46 / 0 | 4 / 0 | 54,928 | 5172169,44 | 92,055 | Completa |
+| WF | 7,066 | 46 / 0 | 8 / 0 | 27,464 | 7843301,44 | 90,602 | Completa |
+| HF | 11,123 | 46 / 0 | 4 / 0 | 54,928 | 5172169,44 | 90,715 | Completa |
+| M5 | 31,142 | 46 / 0 | 8 / 0 | 27,464 | 7642705,44 | 90,418 | Completa |
+| M6-BS | 30,006 | 0 / 46 | 0 / 0 | — | — | 98,977 | Parcial, ENGINE/TIME_LIMIT |
+
+La pared externa incluye cálculo/métricas y observación, excluye arranque y
+persistencia del supervisor. RSS es el máximo muestreado del worker, no memoria
+de estados. La corrida final incluye la reserva de redimensionado de buffers.
 
 ### Comprobación manual pendiente del pedido #69
 

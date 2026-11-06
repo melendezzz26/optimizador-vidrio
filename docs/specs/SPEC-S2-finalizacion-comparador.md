@@ -33,3 +33,19 @@ en 32 MiB. Regresiones en `test_beam_memory.py` y suites TA-053 existentes.
 - Cierre: suites CI separadas, frontend, TA-040, revisión de diff y secretos.
 
 La medición sintética no certifica el pedido real #69.
+
+## Validación local final (2026-11-06)
+
+Código validado: `fd9653d`. Backend: 3257 aprobadas (3183 principal y 8/26/26/14
+en procesos aislados del CI), sin omisiones, con PostgreSQL 18 temporal. Incluye
+TA-045/047/049. Frontend: 213 unitarias y 598 de componentes (58 archivos);
+lint/build correctos. TA-040: PASS 148/148 (B02 2 y restante 146), sin omisiones,
+escritorio/móvil, servidores y clústeres nuevos por fase. El caso nuevo reproduce
+ocho fuentes físicas, revisión móvil con teclado, cancelación sin consumo y
+confirmación de ocho unidades con un único movimiento por la cantidad correcta.
+
+Sin cambios de modelos, migraciones o dependencias. `git diff --check` y revisión
+de secretos correctos; salidas/capturas fuera de Git. Persisten los avisos previos
+de Starlette/httpx y tamaño de bundle. Mediciones y protocolo #69 en
+`docs/comparison-performance.md`. Solo commits locales; publicación, checks
+remotos y salida de Draft del PR #102 pendientes de autorización/revisión.
