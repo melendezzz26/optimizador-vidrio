@@ -125,8 +125,9 @@ class ComparisonV2Coordinator:
                 runner = self.runner_factory(); runner.preflight()
                 if self.job is not None:
                     if not self.job.closed.is_set(): raise WorkersNotStopped("Previous owner has not closed")
-                    self.job.dispose()
                 accepted = AcceptComparisonV2(self.uow,self.authorize).execute(order_ids,actor_id,key)
+                if self.job is not None:
+                    self.job.dispose()
                 job = (self.job_factory or SupervisedJob)(accepted,runner,self.uow,lease,sink)
                 self.job = job
                 with self.uow() as tx:

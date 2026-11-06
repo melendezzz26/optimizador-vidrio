@@ -184,6 +184,11 @@ class RasterCache:
             raise RasterPreparationError("Too many geometry vertices.")
         return axes
 
+    def check_base_geometry(self, geometry, resolution):
+        """The preparation barrier, without allocating masks or searching layouts."""
+        self.check_geometry(geometry, resolution)
+        self.check_geometry(oriented_geometry(geometry, 0), resolution)
+
     def _raster(self, geometry, resolution, *, material=False):
         columns, rows = self.check_geometry(geometry, resolution)
         # Conservative CPython int-row allocation bound, including tuple slots.

@@ -4,6 +4,7 @@ import re
 
 from .comparison_v2_contracts import ComparisonInputV2
 from .errors import RunError
+from .geometric_preflight import validate_comparison_geometry
 from .load_budget import DEFAULT_RUN_LOAD_BUDGET, check_selection, check_pieces
 from .preparation import prepare_persisted_problem
 
@@ -46,6 +47,7 @@ class AcceptComparisonV2:
                         stock = tx.stock.capture(check_pieces(pieces, config, self.budget), self.budget)
                         problem = prepare_persisted_problem(ids, pieces, config)
                         problem = replace(problem, groups=tuple(replace(g,stock_candidates=stock[g.key]) for g in problem.groups))
+                        validate_comparison_geometry(problem)
                         frozen = ComparisonInputV2(problem=problem,configuration_id=config_id,configuration_version=version,
                             requested_pieces=pieces,minimum_width_mm=width,minimum_height_mm=height)
                     except ValueError as error:
