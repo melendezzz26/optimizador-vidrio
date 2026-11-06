@@ -92,8 +92,9 @@ def graph_bytes(roots, checkpoint=None):
             pending.extend(value)
         elif is_dataclass(value) and not isinstance(value, type):
             pending.append(vars(value))
-    # Identity integers, set storage and traversal stack coexist with the graph.
-    return total + sys.getsizeof(seen) + len(seen) * 32 + stack_peak + 4096
+    # Resizing can temporarily retain old AND new set/list buffers. Identity
+    # integers themselves are shared between those buffers, not copied.
+    return total + 2 * sys.getsizeof(seen) + len(seen) * 32 + 2 * stack_peak + 4096
 
 
 class BeamStateMemory:
