@@ -46,30 +46,33 @@ class BeamSearchResult(OptimizationResult):
         return "M6-BS"
 
 
+def _layout_score(layout, checkpoint=None):
+    if not any(layout.occupied):
+        return 0, 0
+    free = tuple(usable & ~blocked for usable, blocked in zip(layout.usable, layout.blocked))
+    rectangle = largest_rectangle(free, layout.material.columns, checkpoint=checkpoint)
+    recovered = rectangle[2] * rectangle[3] if rectangle else 0
+    cells = [(row, bits) for row, bits in enumerate(layout.occupied) if bits]
+    left = min((bits & -bits).bit_length() - 1 for _, bits in cells)
+    right = max(bits.bit_length() for _, bits in cells)
+    return recovered, (cells[-1][0] - cells[0][0] + 1) * (right - left)
+
+
 @dataclass(frozen=True)
 class BeamNode:
     layouts: tuple
     placements: tuple = ()
     trace: tuple = ()
     processed: int = 0
+    layout_scores: tuple = ()
 
     @cached_property
     def score(self):
         used = {placement.stock.identity: placement.stock for placement in self.placements}
         area = sum((placement.piece.area_mm2 for placement in self.placements), Decimal(0))
-        recovered_cells = envelope_cells = 0
-        for layout in self.layouts:
-            if not any(layout.occupied):
-                continue
-            free = tuple(usable & ~blocked for usable, blocked in
-                         zip(layout.usable, layout.blocked))
-            rectangle = largest_rectangle(free, layout.material.columns)
-            if rectangle:
-                recovered_cells += rectangle[2] * rectangle[3]
-            cells = [(row, bits) for row, bits in enumerate(layout.occupied) if bits]
-            left = min((bits & -bits).bit_length() - 1 for _, bits in cells)
-            right = max(bits.bit_length() for _, bits in cells)
-            envelope_cells += (cells[-1][0] - cells[0][0] + 1) * (right - left)
+        scores = self.layout_scores or tuple(_layout_score(layout) for layout in self.layouts)
+        recovered_cells = sum(score[0] for score in scores)
+        envelope_cells = sum(score[1] for score in scores)
         return (
             self.processed - len(self.placements),
             -area,
@@ -124,11 +127,12 @@ class BeamSearchOptimizer:
             if perf_counter() - started >= limits.seconds:
                 raise BeamSearchStopped("TIME_LIMIT")
 
-        def probe():
+        def probe(count=1):
             check()
-            if stats["geometry_probes"] >= limits.max_geometry_probes:
+            if stats["geometry_probes"] + count > limits.max_geometry_probes:
+                stats["geometry_probes"] = limits.max_geometry_probes
                 raise BeamSearchStopped("GEOMETRY_PROBE_LIMIT")
-            stats["geometry_probes"] += 1
+            stats["geometry_probes"] += count
 
         groups = tuple(
             replace(group, units=prepare_group_units(group.units),
@@ -155,7 +159,7 @@ class BeamSearchOptimizer:
                              successor_reserve(material, 0))
                 initial.append(_empty_layout(material, problem.config))
             initial = tuple(initial)
-            beam = [BeamNode(initial)]
+            beam = [BeamNode(initial, layout_scores=((0, 0),) * len(initial))]
             memory.check((problem, initial, beam))
         except (BeamSearchStopped, StateMemoryLimit) as error:
             result = BeamSearchResult(problem=problem, placements=())
@@ -199,8 +203,10 @@ class BeamSearchOptimizer:
             for source in (MaterialSource.REMNANT, MaterialSource.SHEET):
                 tier = []
                 for stock in group.stock_candidates:
-                    if stock.source is source and first_feasible(node, stock, orientations):
-                        tier.append(stock)
+                    if stock.source is source:
+                        found = first_feasible(node, stock, orientations)
+                        if found is not None:
+                            tier.append((stock, found))
                 if tier:
                     break
             if not tier:
@@ -209,28 +215,20 @@ class BeamSearchOptimizer:
                     trace=node.trace + ((1, -1, -1, -1, -1),),
                 )
                 return
-            for stock in tier:
+            for stock, found in tier:
                 rank = ranks[stock.identity]
                 layout = node.layouts[rank]
                 for orientation_index, oriented in enumerate(orientations):
                     mask = oriented.orientation.mask
                     probe()
-                    first = layout.first_position(mask)
+                    # Reuse the eligibility scan, retaining its logical probes.
+                    first = (None if orientation_index < found[0] else found[2]
+                             if orientation_index == found[0] else layout.first_position(mask))
                     if first is None:
                         continue
                     positions = [first]
                     if limits.positions_per_orientation == 2:
-                        last = None
-                        for row in range(layout.material.row_count - mask.row_count,
-                                         -1, -1):
-                            for column in range(layout.material.columns - mask.columns,
-                                                 -1, -1):
-                                probe()
-                                if layout.check(mask, row, column).is_valid:
-                                    last = row, column
-                                    break
-                            if last is not None:
-                                break
+                        last = layout.last_position(mask, checkpoint=check, on_scan=probe)
                         if last is not None and last != first:
                             positions.append(last)
                     for row, column in positions:
@@ -249,11 +247,14 @@ class BeamSearchOptimizer:
                         )
                         layouts = list(node.layouts)
                         layouts[rank] = layout.place(mask, row, column)
+                        layout_scores = list(node.layout_scores)
+                        layout_scores[rank] = _layout_score(layouts[rank], checkpoint=check)
                         yield BeamNode(
                             tuple(layouts),
                             node.placements + (placement,),
                             node.trace + ((0, rank, orientation_index, row, column),),
                             node.processed + 1,
+                            tuple(layout_scores),
                         )
 
         try:

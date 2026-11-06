@@ -151,6 +151,13 @@ class SheetLayout:
         return VALID
 
     def first_position(self, piece: RasterMask):
+        return self._position(piece)
+
+    def last_position(self, piece: RasterMask, *, checkpoint=None, on_scan=None):
+        """Exact reverse row/column order; charge every logically scanned origin."""
+        return self._position(piece, reverse=True, checkpoint=checkpoint, on_scan=on_scan)
+
+    def _position(self, piece: RasterMask, *, reverse=False, checkpoint=None, on_scan=None):
         """Exact row/column First Fit, testing candidate columns in parallel bits.
 
         Intersect usable, unblocked origins for every occupied piece-row run.
@@ -199,7 +206,10 @@ class SheetLayout:
         occupied_rows = [(offset, bits) for offset, bits in enumerate(piece.rows) if bits]
         first = occupied_rows[0] if occupied_rows else None
         occupied_rows.sort(key=lambda item: item[1].bit_count(), reverse=True)
-        for row in range(rows):
+        row_order = range(rows - 1, -1, -1) if reverse else range(rows)
+        for row in row_order:
+            if checkpoint is not None:
+                checkpoint()
             candidates = all_origins
             previous_free, covered_shape = None, 0
             if first is not None:
@@ -208,8 +218,12 @@ class SheetLayout:
                 previous_free = free[row + offset]
                 candidates &= origins(previous_free, covered_shape)
                 if not candidates:
+                    if on_scan is not None:
+                        on_scan(columns)
                     continue
-            for offset, bits in occupied_rows:
+            for constraint_index, (offset, bits) in enumerate(occupied_rows):
+                if checkpoint is not None and constraint_index % 64 == 0:
+                    checkpoint()
                 available = free[row + offset]
                 if available != previous_free:
                     previous_free, covered_shape = available, 0
@@ -220,7 +234,13 @@ class SheetLayout:
                 if not candidates:
                     break
             if candidates:
-                return row, (candidates & -candidates).bit_length() - 1
+                column = (candidates.bit_length() - 1 if reverse else
+                          (candidates & -candidates).bit_length() - 1)
+                if on_scan is not None:
+                    on_scan(columns - column)
+                return row, column
+            if on_scan is not None:
+                on_scan(columns)
         return None
 
     def place(self, piece: RasterMask, row: int, column: int) -> "SheetLayout":

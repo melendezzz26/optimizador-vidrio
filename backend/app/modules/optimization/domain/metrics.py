@@ -25,11 +25,13 @@ class ResidualRectangle:
     area_mm2: Decimal
 
 
-def largest_rectangle(free_rows, columns):
+def largest_rectangle(free_rows, columns, *, checkpoint=None):
     heights = [0] * columns
     best, best_key = None, None
     row = -1
     for bits, repeated in groupby(free_rows):
+        if checkpoint is not None:
+            checkpoint()
         count = sum(1 for _ in repeated)
         row += count
         # Within identical consecutive bit rows every possible rectangle only

@@ -67,7 +67,15 @@ def graph_bytes(roots):
         if identity in seen:
             continue
         seen.add(identity)
-        total += sys.getsizeof(value)
+        # Instance dictionaries use CPython split-key tables whose reported
+        # capacity shrinks as later instances are created. Charge a stable upper
+        # bound instead, so diagnostics/admission do not depend on warm-up.
+        size = sys.getsizeof(value)
+        if isinstance(value, dict):
+            size = max(size, 128 + 72 * len(value))
+        elif isinstance(value, list):
+            size = max(size, 128 + 16 * len(value))
+        total += size
         if isinstance(value, Enum):
             continue
         if isinstance(value, Mapping):
