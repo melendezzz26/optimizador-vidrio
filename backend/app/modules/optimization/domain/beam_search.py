@@ -197,7 +197,9 @@ class BeamSearchOptimizer:
 
         def successors(node, group, unit):
             memory.check((problem, initial, beam, pool, children),
-                         65536 + len(problem.units) * 2048)
+                         max((successor_reserve(node.layouts[ranks[s.identity]].material,
+                                                len(problem.units))
+                              for s in group.stock_candidates), default=65536))
             orientations = tuple(prepared.orientations(unit))
             tier = []
             for source in (MaterialSource.REMNANT, MaterialSource.SHEET):
@@ -219,6 +221,8 @@ class BeamSearchOptimizer:
                 rank = ranks[stock.identity]
                 layout = node.layouts[rank]
                 for orientation_index, oriented in enumerate(orientations):
+                    memory.check((problem, initial, beam, pool, children),
+                                 successor_reserve(layout.material, len(problem.units)))
                     mask = oriented.orientation.mask
                     probe()
                     # Reuse the eligibility scan, retaining its logical probes.
