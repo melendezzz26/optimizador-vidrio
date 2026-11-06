@@ -15,6 +15,7 @@ import { getGeometryBounds, getRasterComparisonFrame } from './visualizationGeom
 import { PlacementCanvas } from './PlacementCanvas';
 import { RunMaskInspection } from './RunMaskInspection';
 import { RunVisualization } from './RunVisualization';
+import { MaterialTrace, InventoryReceipt } from './MaterialTrace';
 import './ComparisonWorkspace.css';
 
 const PHASES = ['Máscaras', 'Orden de piezas', 'Giros y colocación', 'Resultado'];
@@ -162,6 +163,7 @@ function EnginePanel({ comparison, execution, visual: supplied, live, result, ap
         <Metrics metrics={execution.metrics} execution={execution} result={result} />{!result.completo && <p role="status">Hay piezas sin colocar; este resultado es parcial y no puede confirmarse.</p>}
         {!!result.unplaced_units.length && <ul aria-label="Piezas sin colocar">{result.unplaced_units.map(p => <li key={`${p.id_pedido}:${p.id_pieza}:${p.unit_index}`}>Pedido #{p.id_pedido} · Pieza #{p.id_pieza} · unidad {p.unit_index}: {p.reason === 'RESOURCE_LIMIT' ? 'pendiente por límite de recursos' : 'sin espacio factible'}</li>)}</ul>}
         <OriginalMeasuresTable pieces={comparison.requested_pieces} />
+        <MaterialTrace result={result} requested={comparison.requested_pieces} />
         <PlacementCanvas snapshot={viewSnapshot} placements={viewPlacements} visualContext={{ visual, runId: comparison.comparison_id, adapter }} /></>}
     </div>
   </section>;
@@ -257,6 +259,7 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
     </section>}
     {current && <>
       <OriginalRequest comparison={current} />
+      {current.confirmed && <InventoryReceipt confirmation={current.confirmation} />}
       <details className="comparison-configuration"><summary>Configuración y unidades aplicadas</summary><p>Resolución {current.configuration.resolucion_raster_mm} mm/celda · margen {current.configuration.margen_mm} mm · separación {current.configuration.separacion_mm} mm · paso angular {current.configuration.paso_angular_grados}°.</p></details>
       {state.partial && <FeedbackMessage variant="info">Se recuperó el estado actual. Parte del avance anterior ya no estaba retenido; los resultados guardados se conservan.</FeedbackMessage>}
       {state.connection === 'reconnecting' && !current.terminal && <p role="status">Recuperando el avance; los motores continúan ejecutándose.</p>}
@@ -284,10 +287,10 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
             const rows = current.profile === 'comparison-v2' ? comparisonMetrics : [['pieces', 'Piezas', ''], ...metricRows];
             return <tr key={execution.execution_id} className={selectedId === execution.execution_id ? 'is-selected' : ''}>
               <th scope="row">{methodName(execution.method)}<small>{execution.method}</small></th>
-              <td>{executionStatus(execution)}{execution.diagnostic && <small>{execution.diagnostic.termination_reason}</small>}</td>
-              {rows.map(([key]) => <td key={key}>{key === 'pieces' ? (execution.status === 'FALLIDA' || execution.outcome === 'FAILED' ? '—' : `${execution.placed_units} / ${execution.total_units}`)
+              <td data-label="Estado">{executionStatus(execution)}{execution.diagnostic && <small>{execution.diagnostic.termination_reason}</small>}</td>
+              {rows.map(([key, label]) => <td key={key} data-label={label}>{key === 'pieces' ? (execution.status === 'FALLIDA' || execution.outcome === 'FAILED' ? '—' : `${execution.placed_units} / ${execution.total_units}`)
                 : current.profile === 'comparison-v2' ? metricValue(key, execution, result) ?? '—' : execution.metrics?.[key] ?? '—'}</td>)}
-              <td><label><input type="radio" name={`${id}-engine`} aria-label={`Elegir ${methodName(execution.method)}`}
+              <td data-label="Selección"><label><input type="radio" name={`${id}-engine`} aria-label={`Elegir ${methodName(execution.method)}`}
                 checked={selectedId === execution.execution_id} disabled={!execute || state.busy && pendingChoice !== execution.execution_id || !current.selection_allowed || !execution.eligible}
                 onChange={() => choose(execution.execution_id)} />{selectedId === execution.execution_id ? 'Elegido' : 'Elegir'}</label></td>
             </tr>;
@@ -308,6 +311,7 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
     <ConfirmDialog open={dialog && canConfirm && current?.confirmable && !state.busy} title={`Confirmar ${selected ? methodName(selected.method) : 'distribución'}`} confirmLabel="Confirmar corte"
       onCancel={() => setDialog(false)} onConfirm={() => { setDialog(false); flow.confirm(); }}>
       <p>Se descontarán únicamente las planchas y retazos de {selected ? methodName(selected.method) : 'la distribución elegida'} y se confirmarán sus pedidos.</p>
+      <MaterialTrace result={state.results[selected?.execution_id]?.result} compact />
     </ConfirmDialog>
   </PageCard>;
 }
