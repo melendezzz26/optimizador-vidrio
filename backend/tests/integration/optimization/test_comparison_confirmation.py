@@ -32,6 +32,23 @@ def completed(session_factory, comparison_setup):
     return finish(uow, current)
 
 
+@pytest.fixture
+def completed_split(session_factory, comparison_setup):
+    # Escenario propio para rollback y concurrencia: la confirmación de WF debe consumir
+    # más de una fuente y crear un retazo. Cuatro piezas 2x2; plancha 6 de 6x2 (más
+    # reciente, se ofrece primero) y plancha 5 de 4x2 x2. WF v2 llena la 6 con tres
+    # piezas y abre la 5 (unidad 1) para la cuarta: queda libre 2x2 en la 5 -> un retazo.
+    with session_factory() as s:
+        s.add(Plancha(id_plancha=6, ancho_mm=6, alto_mm=2, espesor_mm=6, cantidad=1, estado=True,
+            fecha_registro=datetime.now(timezone.utc), id_tipo_vidrio=7))
+        s.commit()
+    current = accept(comparison_setup)
+    _, _, uow = comparison_setup
+    for method in ENGINES:
+        current = save(uow, current, method)
+    return finish(uow, current)
+
+
 def choose(uow, current, method):
     identifier = next(e.execution_id for e in current.executions if e.method == method)
     with uow() as tx:
@@ -107,9 +124,9 @@ def test_stock_conflict_can_release_without_destroying_history(session_factory, 
         assert s.scalar(select(func.count()).select_from(MovimientoInventario)) == 0
 
 
-def test_failure_creating_residual_rolls_back_all_consumption(session_factory, comparison_setup, completed):
+def test_failure_creating_residual_rolls_back_all_consumption(session_factory, comparison_setup, completed_split):
     actor, ids, uow = comparison_setup
-    current = choose(uow, completed, "WF")
+    current = choose(uow, completed_split, "WF")
     def fail(session, flush_context, instances):
         if any(isinstance(o, Retazo) for o in session.new):
             raise RuntimeError("synthetic remnant write failure")
@@ -128,9 +145,9 @@ def test_failure_creating_residual_rolls_back_all_consumption(session_factory, c
         assert s.scalar(select(func.count()).select_from(MovimientoInventario)) == 0
 
 
-def test_concurrent_repeated_confirmation_returns_same_receipt_once(session_factory, comparison_setup, completed):
+def test_concurrent_repeated_confirmation_returns_same_receipt_once(session_factory, comparison_setup, completed_split):
     actor, _, uow = comparison_setup
-    current = choose(uow, completed, "WF")
+    current = choose(uow, completed_split, "WF")
     gate = Barrier(2)
     def submitted():
         gate.wait(timeout=5)
@@ -140,8 +157,10 @@ def test_concurrent_repeated_confirmation_returns_same_receipt_once(session_fact
         left, right = [f.result(timeout=15) for f in jobs]
     assert left == right
     with session_factory() as s:
+        # Consumo una sola vez: una unidad de la 6 y una de la 5 (un movimiento por plancha).
+        assert (s.get(Plancha, 5).cantidad, s.get(Plancha, 6).cantidad) == (1, 0)
         assert s.scalar(select(func.count()).select_from(MovimientoInventario)) == 2
-        assert s.scalar(select(func.count()).select_from(Retazo)) == 2
+        assert s.scalar(select(func.count()).select_from(Retazo)) == 1
 
 
 @pytest.mark.parametrize("competing", ["selection", "release"])
