@@ -2,7 +2,7 @@ name: Deploy Pages Staging
 
 on:
   push:
-    branches: [integration/sprint-01]
+    branches: [integration-02]
   workflow_dispatch:
 
 permissions:
@@ -14,13 +14,13 @@ concurrency:
 
 jobs:
   checks:
-    if: github.ref == 'refs/heads/integration/sprint-01'
+    if: github.ref == 'refs/heads/integration-02'
     uses: ./.github/workflows/ci.yml
     permissions:
       contents: read
 
   pages:
-    if: github.ref == 'refs/heads/integration/sprint-01'
+    if: github.ref == 'refs/heads/integration-02'
     needs: checks
     runs-on: ubuntu-24.04
     timeout-minutes: 15
