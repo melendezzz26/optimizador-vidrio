@@ -91,6 +91,16 @@ def _apply_address_limit():
     return hard
 
 
+def _fallback_detail(statistics):
+    """S2-M6: distingue un M6 que completó buscando de uno completado por el respaldo First Fit."""
+    if statistics.get('fallback_used') != 1:
+        return None
+    limit = next((key.removeprefix('fallback_from_').upper() for key in statistics
+                  if key.startswith('fallback_from_')), '?')
+    return (f'respaldo FF por {limit}: M6 decidió {statistics.get("fallback_beam_units", 0)}, '
+            f'respaldo {statistics.get("fallback_units", 0)}')
+
+
 def _run_engine(count, method, connection):
     """Proceso hijo: un motor, un problema, un resultado resumido."""
     try:
@@ -113,10 +123,11 @@ def _run_engine(count, method, connection):
             placed=result.placed_units if result is not None else None,
             sheets=metrics.new_sheets_used if metrics is not None else None,
             utilization=str(metrics.utilization_pct) if metrics is not None else None,
+            fallback=_fallback_detail(diagnostic.statistics),
         ))
     except BaseException as error:  # noqa: BLE001 - se informa como fila, nunca se oculta
         connection.send(dict(seconds=None, reason='EXECUTION_FAILED', error=type(error).__name__,
-                             placed=None, sheets=None, utilization=None))
+                             placed=None, sheets=None, utilization=None, fallback=None))
     finally:
         connection.close()
 
@@ -142,7 +153,8 @@ def measure(count, method):
         elapsed = time.monotonic() - began
         timed_out = elapsed >= BUDGET.startup_seconds + BUDGET.calculation_seconds
         reason = 'SUPERVISOR_TIMEOUT' if timed_out else f'PROCESS_EXITED({process.exitcode})'
-        row = dict(seconds=elapsed, reason=reason, error=None, placed=None, sheets=None, utilization=None)
+        row = dict(seconds=elapsed, reason=reason, error=None, placed=None, sheets=None, utilization=None,
+                   fallback=None)
     return row
 
 
@@ -170,6 +182,7 @@ def main(argv=None):
             seconds = None if row['seconds'] is None else f'{row["seconds"]:.2f}'
             placed = None if row['placed'] is None else f'{row["placed"]}/{size}'
             reason = row['reason'] + (f' ({row["error"]})' if row['error'] else '')
+            reason += f' · {row["fallback"]}' if row['fallback'] else ''
             print(f'{size:>6}  {method:<6}  {_cell(seconds):>8}  {_cell(placed):>9}  {_cell(row["sheets"]):>8}  '
                   f'{_cell(row["utilization"]):>7}  {reason}', flush=True)
 
