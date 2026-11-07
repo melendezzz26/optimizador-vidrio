@@ -8,7 +8,7 @@
 | Nombre | Worst Fit |
 | Sprint | Sprint 2 |
 | Tipo / épica | Tarea técnica / EP-003 Optimización |
-| Estado | **Reviewed** |
+| Estado | **Implemented** (v2) |
 | Versión | v2 (06/11/2026): regla de fuentes en uso, ver RN-02/RN-05 |
 | Responsable | Fabricio Melendez |
 | Revisor | Pendiente de asignación formal |
@@ -293,3 +293,4 @@ preparación, WF y resultado de dominio. La matriz de pruebas está en el PLAN.
 | 25/10/2026 | Draft | Evidencia técnica vinculada y CA-12 verificado; sin cambios de requisitos ni aprobación formal. |
 | 25/10/2026 | Reviewed | Aprobación del responsable comunicada en esta sesión; 22 CA satisfechos, 381 pruebas aprobadas y evidencia vinculada. Revisión cruzada pendiente; no Verified. |
 | 06/11/2026 | Reviewed (v2) | Observación del profesor en la revisión del 04/11/2026: WF compara solo fuentes en uso dentro del nivel y abre una nueva (menor `stock_rank`) solo si la pieza no cabe en ninguna. Cambian RN-02, RN-05, flujo paso 5, CA-08 y §11. Retazos primero se conserva. Cambio hecho por Fabricio Aguilar en `fix/S2-wf-presupuesto-carga`; se avisa al responsable en el PR. |
+| 06/11/2026 | Implemented (v2) | Regla v2 implementada en `domain/worst_fit.py` con prueba de regresión (falla con v1: `[1, 2] != [1, 1]`); suite backend en Windows con 0 failed. Pasa a Verified después del merge, en un PR `docs/...` aparte. |
