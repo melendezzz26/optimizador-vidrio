@@ -315,7 +315,11 @@ export default function FormularioPedido({
     setIsImportOpen(false);
     setImportPreview(null);
     setErrorGlobal('');
-    setSuccessMessage(`Se ${imported.length === 1 ? 'agregó 1 pieza' : `agregaron ${imported.length} piezas`} del archivo al pedido.`);
+    const added = `Se ${imported.length === 1 ? 'agregó 1 pieza' : `agregaron ${imported.length} piezas`} del archivo al pedido.`;
+    // Sin cliente los grupos no se muestran: el aviso explica dónde quedaron las piezas.
+    setSuccessMessage(creating && !selectedClient
+      ? `${added} Selecciona un cliente para verlas y guardar el pedido.`
+      : added);
     importButtonRef.current?.focus();
   }
 
@@ -447,7 +451,7 @@ export default function FormularioPedido({
 
             {creating && isImportOpen && (
               <BulkImportPanel token={token} materials={tiposDisponibles} onAdd={addImportedToOrder}
-                preview={importPreview} setPreview={setImportPreview}
+                preview={importPreview} setPreview={setImportPreview} hasClient={Boolean(selectedClient)}
                 onClose={() => { setIsImportOpen(false); setImportPreview(null); importButtonRef.current?.focus(); }} />
             )}
 

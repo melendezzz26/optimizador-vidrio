@@ -27,14 +27,19 @@ def optimize(rows=None, candidates=None, cfg=None):
     return BestResidualFitOptimizer().optimize(problem(rows, candidates, cfg))
 
 
-def candidate(source=None, cfg=None, row=0, column=0, **ranks):
+def candidate(source=None, cfg=None, row=0, column=0, used_at=None, **ranks):
     source, cfg = source or stock(), cfg or config()
     unit = problem([piece(width=1, height=1)], [source], cfg).units[0]
     cache = RasterCache()
+    orientation = cache.orientations(unit, cfg.resolution_mm, cfg.angular_step_deg)[0].orientation
+    layout = _empty_layout(cache.material(source, cfg.resolution_mm), cfg)
+    if used_at is not None:
+        # A real earlier 1x1 placement makes the source "in use" (SPEC-TA-052 v2).
+        layout = layout.place(orientation.mask, *used_at)
     return FeasibleCandidate(
         stock=source,
-        layout=_empty_layout(cache.material(source, cfg.resolution_mm), cfg),
-        orientation=cache.orientations(unit, cfg.resolution_mm, cfg.angular_step_deg)[0].orientation,
+        layout=layout,
+        orientation=orientation,
         row=row,
         column=column,
         stock_rank=ranks.get("stock_rank", 0),
@@ -42,7 +47,42 @@ def candidate(source=None, cfg=None, row=0, column=0, **ranks):
     )
 
 
-def test_normal_chooses_largest_residual_source_and_keeps_m5_method():
+def test_regression_two_pieces_that_fit_one_sheet_use_one_sheet():
+    # Defect reported in the 04/11/2026 review: M5 opened a new sheet per piece.
+    # Before: empty sheet 2 (2x2 residual) beat sheet 1 in use (no residual) -> [1, 2].
+    result = optimize(
+        [piece(width=2, height=2, quantity=2)],
+        [stock(1, width=4, height=2), stock(2, width=4, height=2)],
+    )
+    assert result.complete
+    assert [p.stock.material_id for p in result.placements] == [1, 1]
+    assert [(p.x_mm, p.y_mm) for p in result.placements] == [(0, 0), (2, 0)]
+    assert len(result.materials_used) == 1
+
+
+def test_among_sources_in_use_m5_picks_largest_residual_rectangle():
+    # 4x3 fills source 1; 3x3 does not fit there and opens source 2.
+    # The 1x1 goes where it leaves the largest free rectangle: source 2 (4x1 = 4)
+    # over source 1 (3x1 = 3). FF would keep it in source 1.
+    rows = [piece(1, width=4, height=3), piece(2, width=3, height=3), piece(3, width=1, height=1)]
+    sources = [stock(1, width=4, height=4), stock(2, width=4, height=4)]
+    result = optimize(rows, sources)
+    assert result.complete
+    assert [p.stock.material_id for p in result.placements] == [1, 2, 2]
+    assert (result.placements[2].x_mm, result.placements[2].y_mm) == (3, 0)
+    ff = FirstFitOptimizer().optimize(problem(rows, sources))
+    assert [p.stock.material_id for p in ff.placements] == [1, 2, 1]
+
+
+def test_selector_prefers_any_source_in_use_over_an_unused_one():
+    # v2: an unused 10x10 leaves a larger residual, but it is not even scored.
+    unused = candidate(stock(1, width=10, height=10))
+    used = candidate(stock(2), used_at=(3, 5), stock_rank=1)
+    assert BestResidualFitSelector().select(iter([unused, used])) is used
+
+
+def test_first_piece_opens_lowest_rank_source_and_keeps_m5_method():
+    # v2: with no source in use, M5 opens the lowest stock_rank (here also the 6x6).
     result = optimize(
         [piece(width=2, height=2)],
         [stock(1, width=6, height=6), stock(2, width=3, height=3)],
@@ -79,34 +119,37 @@ def test_tie_uses_upstream_rank_not_identifier():
     assert optimize(candidates=[b, a]).placements[0].stock == b
 
 
+@pytest.mark.parametrize("used_at", [None, (3, 5)], ids=["unused", "in-use"])
 @pytest.mark.parametrize("field", ["stock_rank", "orientation_rank", "row", "column"])
-def test_full_stable_tuple(field):
-    first = candidate()
+def test_full_stable_tuple(field, used_at):
+    first = candidate(used_at=used_at)
     later = replace(first, **{field: 1})
     assert BestResidualFitSelector().select(iter([later, first])) is first
     assert BestResidualFitSelector().select(iter([first, later])) is first
 
 
 def test_tie_break_minimizes_fragmentation_when_remnant_areas_are_equal():
-    # Real geometry: piece 2x2.
-    # Candidate 1 (4x3): largest remnant is 2x3 = 6, but leaves 2 fragmented cells.
-    # Candidate 2 (2x5): largest remnant is 2x3 = 6, and leaves 0 fragmented cells.
-    # M5 selects Candidate 2 because fragmented_cells (0) < fragmented_cells (2),
-    # despite Candidate 1 having a lower stock_rank.
-    result = optimize(
-        [piece(width=2, height=2)],
-        [stock(1, width=4, height=3), stock(2, width=2, height=5)],
-    )
-    assert result.complete and result.placements[0].stock.material_id == 2
+    # Real geometry, both sources in use (v2): an earlier 1x1 sits in each one.
+    # Source 1 (3x2, 1x1 at row 1, column 2): after the new 1x1 at (0, 0), 4 free
+    # cells; largest remnant 2, fragmented 2.
+    # Source 2 (1x4, 1x1 at row 3): after the new 1x1 at (0, 0), 2 free cells;
+    # largest remnant 2, fragmented 0.
+    # M5 selects source 2 because fragmented_cells (0) < fragmented_cells (2),
+    # despite source 1 having a lower stock_rank.
+    fragmented = candidate(stock(1, width=3, height=2), used_at=(1, 2))
+    clean = candidate(stock(2, width=1, height=4), used_at=(3, 0), stock_rank=1)
+    assert BestResidualFitSelector().select(iter([fragmented, clean])) is clean
 
 
 def test_first_position_is_preserved_and_only_winning_layout_is_committed():
+    # v2: the third 2x2 still fits sheet 1 in use, so sheet 2 is never opened
+    # (before: [1, 1, 2] with the third piece at (0, 0) of sheet 2).
     result = optimize(
         [piece(width=2, height=2, quantity=3)],
         [stock(1, width=4, height=4), stock(2, width=4, height=4)],
     )
-    assert [p.stock.material_id for p in result.placements] == [1, 1, 2]
-    assert [(p.x_mm, p.y_mm) for p in result.placements] == [(0, 0), (2, 0), (0, 0)]
+    assert [p.stock.material_id for p in result.placements] == [1, 1, 1]
+    assert [(p.x_mm, p.y_mm) for p in result.placements] == [(0, 0), (2, 0), (0, 2)]
 
 
 def test_remnants_compete_only_with_remnants_and_sheets_are_not_evaluated():

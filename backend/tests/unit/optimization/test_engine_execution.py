@@ -230,7 +230,8 @@ def test_hf_existing_bounded_fallback_and_brf_source_policy():
     expected = HoleFillingOptimizer(HoleFillingLimits(max_orientations=0)).optimize(p)
     assert result.payload.result.placements == expected.placements
     brf = EngineExecutionAdapter("M5").execute(scope("M5"), p)
-    assert brf.payload.result.placements[0].stock.material_id == 2
+    # SPEC-TA-052 v2: with no source in use, M5 opens the lowest stock_rank (before: 2).
+    assert brf.payload.result.placements[0].stock.material_id == 1
     assert brf.payload.method == "M5" and BY_METHOD["M5"].label == "BRF"
 
 

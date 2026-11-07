@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { ListPlus, RefreshCw, X } from 'lucide-react';
+import { FileUp, ListPlus, RefreshCw, X } from 'lucide-react';
 import { FeedbackMessage, LoadingState } from '../../shared/components/feedback';
 import {
   SHAPE_LABELS, blockingReason, canAddToOrder, describeMeasures, revalidationBody, rowsToPieces,
@@ -9,14 +9,18 @@ import './BulkImportPanel.css';
 
 // HU-018: primero se carga el archivo y después se elige el material (SPEC-HU-018 §6.1).
 // Las filas observadas se corrigen aquí y se revalidan en el backend (§6.2).
-export default function BulkImportPanel({ token, materials = [], onClose, onAdd, preview, setPreview }) {
+// hasClient: sin cliente el formulario oculta los grupos de piezas, así que se avisa antes de agregar.
+export default function BulkImportPanel({ token, materials = [], onClose, onAdd, preview, setPreview, hasClient = true }) {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [material, setMaterial] = useState({ tipo_vidrio_id: '', espesor: '' });
   const [drafts, setDrafts] = useState({});
+  const [fileName, setFileName] = useState('');
   const controllerRef = useRef(null);
+  const fileInputRef = useRef(null);
   const titleId = useId();
   const fileId = useId();
+  const fileStatusId = useId();
   const materialId = useId();
   const thicknessId = useId();
   const fixId = useId();
@@ -43,10 +47,17 @@ export default function BulkImportPanel({ token, materials = [], onClose, onAdd,
     }
   }
 
+  // El valor se vacía al ABRIR el selector (no después de leer): así volver a elegir el mismo
+  // archivo corregido dispara onChange. El input nativo está oculto, por lo que el navegador
+  // nunca muestra "No se ha seleccionado ningún archivo"; el nombre lo muestra el panel.
+  function clearBeforeChoosing(event) {
+    event.currentTarget.value = '';
+  }
+
   function handleFile(event) {
     const file = event.target.files?.[0];
-    event.target.value = ''; // permite volver a cargar el mismo archivo corregido
     if (file) {
+      setFileName(file.name);
       // No desbloquear un borrador observado al intentar cargar otro archivo.
       if (!preview?.filas.some(row => row.estado !== 'VALIDO')) setPreview(null);
       load(signal => previewImport(file, { signal, token }));
@@ -78,11 +89,28 @@ export default function BulkImportPanel({ token, materials = [], onClose, onAdd,
 
       <div className="orders-field">
         <label htmlFor={fileId}>Archivo CSV o XLSX</label>
-        <input id={fileId} type="file" accept=".csv,.xlsx" onChange={handleFile} disabled={isLoading} className="ng-control" />
+        <div className="orders-import__file">
+          <input ref={fileInputRef} id={fileId} type="file" accept=".csv,.xlsx" className="orders-import__file-input"
+            aria-describedby={fileStatusId} onClick={clearBeforeChoosing} onChange={handleFile} disabled={isLoading} />
+          {/* Botón visual del input (que es el control accesible y enfocable). */}
+          <span className="ng-button orders-import__file-button" aria-hidden="true"
+            onClick={() => { if (!isLoading) fileInputRef.current?.click(); }}>
+            <FileUp size={18} aria-hidden="true" /> {fileName ? 'Cambiar archivo' : 'Seleccionar archivo'}
+          </span>
+          <span id={fileStatusId} className="orders-import__file-name">
+            {fileName ? <>Archivo cargado: <strong>{fileName}</strong></> : 'Aún no has cargado un archivo.'}
+          </span>
+        </div>
       </div>
 
       {isLoading && <LoadingState>Leyendo archivo…</LoadingState>}
       {error && <FeedbackMessage variant="error" title="No se pudo importar el archivo">{error}</FeedbackMessage>}
+
+      {preview && !hasClient && (
+        <FeedbackMessage variant="warning" title="Falta seleccionar cliente">
+          Elige un cliente en la parte superior para ver las piezas importadas en el pedido y poder guardarlo.
+        </FeedbackMessage>
+      )}
 
       {preview && <>
         <p className="orders-import__summary" role="status">

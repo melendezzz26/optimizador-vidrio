@@ -9,7 +9,7 @@
 | Sprint | Sprint 2 |
 | Tipo / épica | Habilitador / Optimización segura |
 | Versión | **1.3**: saneamiento del ciclo de vida de plazas de T03; presupuestos y contratos de v1.2 conservados |
-| Estado | **Implemented** (v1.4: L-03 = 300). v1.3 **Verified**: T01–T04 y el saneamiento de T03 integrados (PR #66, #67, #68 y #74) con CI en verde; verificación independiente de T03 registrada en la evidencia v1.3. |
+| Estado | **Verified** (v1.4: L-03 = 300 y un solo proceso web): PR #103 y #105 fusionados en `integration-02`, desplegados en Heroku y probados en vivo el 07/11/2026. v1.3 Verified: T01–T04 y el saneamiento de T03 integrados (PR #66, #67, #68 y #74) con CI en verde; verificación independiente de T03 registrada en la evidencia v1.3. |
 | Responsable | Fabricio Aguilar |
 | Saneamiento T03 | Fabricio Melendez Quezada con asistencia de Codex; trabajo original T01–T04 de Fabricio Aguilar |
 | Revisor del cierre | PR #74 integrado en `integration/sprint-01`; verificación independiente de T03 por Fabricio Aguilar (28/10/2026) |
@@ -450,3 +450,4 @@ recibe el foco. El resto de errores conserva la presentación genérica de siemp
 | 28/10/2026 | 1.3 | Verified | Saneamiento de T03 (PR #74) integrado y verificado de forma independiente: sobre `e256bde`, 39 PASS en la regresión focal; con la admisión anterior (`445886a`) fallan las 6 regresiones de T03. CI de integración en verde (PR #78, #83 y #85). CA-01 a CA-12 en PASS. |
 | 06/11/2026 | 1.4 | Implemented | Observación del profesor (revisión del 04/11/2026): L-03 de 150 a 300 unidades; el tope del evento `ordering_ready` (backend y frontend) acompaña a L-03. Ningún otro límite de TA-037 cambia. Cambio de Fabricio Aguilar en `fix/S2-wf-presupuesto-carga`; pasa a Verified después del merge. |
 | 07/11/2026 | 1.4 | Implemented | GAP-03 / un solo proceso: Staging corría con `WEB_CONCURRENCY=2` (dos procesos uvicorn), lo que producía `RECOVERY_BLOCKED` (503) y `OPTIMIZER_BUSY`/409 alternados. El Procfile fija `--workers 1` y una prueba de contrato lo exige. Sin cambios en admisión, supervisor ni límites. Rama `fix/S2-single-web-process`; detalle en `docs/infrastructure/staging.md`. |
+| 07/11/2026 | 1.4 | Verified | PR #103 (L-03 = 300) y PR #105 (un solo proceso web) fusionados en `integration-02`. CI del PR #103 en verde (backend, frontend y E2E); tras el merge del PR #105, el workflow de Pages (que ejecuta el CI completo: backend, frontend y E2E) terminó en success para `b62bff5`. Desplegados en Heroku y probados en vivo: comparación #55 con 6 de 6 métodos completos. Registrado en `fix/S2-cierre-observaciones`. |

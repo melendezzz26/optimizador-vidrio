@@ -3,17 +3,27 @@
 Recorre el camino real: archivo CSV -> lectura -> vista previa -> registro del pedido
 con el mismo caso de uso que POST /api/orders -> snapshots -> los tres métodos.
 No mide capacidad ni tiempos (eso es TA-044): solo que las piezas importadas sirven.
+
+TA-043 CA-20: el mismo pedido importado mixto se procesa con los seis motores del
+catálogo v2 (incluidos HF, M5 y M6-BS) a 5°, por el adaptador productivo, y completa.
 """
+from collections import Counter
 from datetime import datetime, timezone
+from decimal import Decimal as D
+
+import pytest
 
 from app.models import Pedido, Plancha
+from app.modules.optimization.application.comparison_catalog import METHODS_V2
+from app.modules.optimization.application.engine_execution import EngineExecutionAdapter, ExecutionScope
+from app.modules.optimization.application.load_budget import DEFAULT_RUN_LOAD_BUDGET, check_pieces
 from app.modules.clients.infrastructure.sqlalchemy_client_repository import SqlAlchemyClientRepository
 from app.modules.inventory.infrastructure.repository import SqlAlchemyInventoryRepository
 from app.modules.optimization.application.best_fit import calculate_best_fit
 from app.modules.optimization.application.first_fit import calculate_first_fit
 from app.modules.optimization.application.preparation import prepare_persisted_problem
 from app.modules.optimization.application.stock import with_compatible_stock
-from app.modules.optimization.domain.problem import OptimizationConfig
+from app.modules.optimization.domain.problem import OptimizationConfig, geometry_snapshot
 from app.modules.optimization.domain.worst_fit import WorstFitOptimizer
 from app.modules.optimization.infrastructure.stock_adapter import InventoryStockAdapter
 from app.modules.orders.application.bulk_import import PreviewImportUseCase
@@ -35,6 +45,51 @@ def imported_pieces():
     # Igual que el formulario: material elegido en pantalla + medidas de la vista previa.
     return [{"tipo_forma": row["tipo_forma"], "cantidad": row["cantidad"], "id_tipo_vidrio": 7, "espesor_mm": 6,
              **row["medidas"]} for row in preview["filas"]]
+
+
+def create_imported_order(factory):
+    with factory() as session:
+        repository = SQLAlchemyOrderRepository(session)
+        order_id = CreateOrderUseCase(repository, SqlAlchemyClientRepository(session)).execute(
+            1, imported_pieces(), id_cliente=41)
+        session.add(Plancha(id_plancha=5, id_tipo_vidrio=7, ancho_mm=1000, alto_mm=1000, espesor_mm=6,
+                            cantidad=2, estado=True, fecha_registro=datetime.now(timezone.utc)))
+        session.commit()
+        return order_id, repository.get_order(order_id)["piezas"]
+
+
+@pytest.mark.parametrize("method", METHODS_V2)
+def test_ca20_imported_mixed_order_completes_with_each_of_the_six_engines_at_five_degrees(sqlite_slice, method):
+    factory = sqlite_slice
+    order_id, snapshots = create_imported_order(factory)
+    before = database_snapshot(factory)
+    # Same angular step, margin and separation as the six-engine load script.
+    cfg = OptimizationConfig(resolution_mm=1, margin_mm=3, separation_mm=3, angular_step_deg=5)
+    # Within the run load budget (L-03 and the rest of P3), as checked before a comparison.
+    units_by_material = check_pieces(snapshots, cfg, DEFAULT_RUN_LOAD_BUDGET)
+    assert sum(units_by_material.values()) == 5
+    provider = InventoryStockAdapter(SqlAlchemyInventoryRepository(factory))
+    problem = with_compatible_stock(prepare_persisted_problem([order_id], snapshots, cfg), provider)
+
+    adapted = EngineExecutionAdapter(method).execute(
+        ExecutionScope(comparison_id=1, execution_id=1, method=method), problem,
+        minimum_width_mm=D(1), minimum_height_mm=D(1))
+
+    assert adapted.error_type is None, adapted.payload.diagnostic
+    assert adapted.payload.diagnostic.termination_reason == "COMPLETED"
+    result = adapted.payload.result
+    assert result.method == method
+    assert result.complete and result.placed_units == result.total_units == 5
+    assert {p.piece.order_id for p in result.placements} == {order_id}
+    # Imported geometry and quantities are preserved up to the placed units.
+    by_piece = {s["id_pieza"]: s for s in snapshots}
+    assert Counter(p.piece.piece_id for p in result.placements) == {i: s["cantidad"] for i, s in by_piece.items()}
+    for placement in result.placements:
+        assert placement.piece.geometry == geometry_snapshot(by_piece[placement.piece.piece_id]["geometria"])
+        assert placement.rotation_deg % 5 == 0
+    assert database_snapshot(factory) == before
+    with factory() as session:
+        assert session.get(Pedido, order_id).estado == "PENDIENTE"
 
 
 def test_imported_order_is_processed_by_first_best_and_worst_fit(sqlite_slice):
