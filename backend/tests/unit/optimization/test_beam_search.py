@@ -76,7 +76,7 @@ def test_expansion_limit_is_distinguished_from_no_fit():
     optimizer = BeamSearchOptimizer(BeamSearchLimits(
         width=2, children_per_parent=1, positions_per_orientation=1,
         max_expansions=1, max_geometry_probes=1000000,
-        max_state_bytes=32 * 1024 * 1024, seconds=30,
+        max_state_bytes=32 * 1024 * 1024, seconds=30, complete_on_stop=False,
     ))
     outcome = optimizer.run(problem)
 

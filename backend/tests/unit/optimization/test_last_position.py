@@ -58,7 +58,7 @@ def test_rotations_irregular_remnants_traces_geometry_and_metrics_match_old_scan
 @pytest.mark.parametrize("limit", (1, 7, 30, 100, 500))
 def test_logical_probe_limit_preserves_the_same_completed_frontier(limit, monkeypatch):
     problem = loader.load_problem("EXP-MEDIUM-001")
-    optimizer = BeamSearchOptimizer(BeamSearchLimits(max_geometry_probes=limit))
+    optimizer = BeamSearchOptimizer(BeamSearchLimits(max_geometry_probes=limit, complete_on_stop=False))
     actual = optimizer.run(problem)
     monkeypatch.setattr(SheetLayout, "last_position", exhaustive)
     expected = optimizer.run(problem)

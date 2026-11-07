@@ -167,6 +167,7 @@ def test_no_fit_and_resource_limits_have_distinct_outcomes():
     limited = BeamSearchOptimizer(BeamSearchLimits(
         max_expansions=1,
         max_geometry_probes=1000000,
+        complete_on_stop=False,
     )).run(problem)
 
     assert no_fit.stop_reason is None
@@ -179,9 +180,9 @@ def test_no_fit_and_resource_limits_have_distinct_outcomes():
 @pytest.mark.parametrize(
     ("limits", "reason"),
     [
-        (BeamSearchLimits(max_geometry_probes=1), "GEOMETRY_PROBE_LIMIT"),
-        (BeamSearchLimits(max_state_bytes=1), "STATE_MEMORY_LIMIT"),
-        (BeamSearchLimits(seconds=0.000001), "TIME_LIMIT"),
+        (BeamSearchLimits(max_geometry_probes=1, complete_on_stop=False), "GEOMETRY_PROBE_LIMIT"),
+        (BeamSearchLimits(max_state_bytes=1, complete_on_stop=False), "STATE_MEMORY_LIMIT"),
+        (BeamSearchLimits(seconds=0.000001, complete_on_stop=False), "TIME_LIMIT"),
     ],
 )
 def test_each_configured_resource_limit_is_observable(limits, reason):

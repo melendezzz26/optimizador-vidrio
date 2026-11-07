@@ -111,12 +111,46 @@ su agotamiento debe distinguirse de `NO_FIT`. La preparacion conserva ademas
 los limites internos de `RasterCache`; no se amplian.
 
 Una frontera se reemplaza solo despues de completar el nivel. Si un limite
-interrumpe la expansion, se conserva la ultima frontera completa y se devuelve
-la razon de parada junto con el resultado parcial.
+interrumpe la expansion, se conserva la ultima frontera completa.
+
+**Respaldo al detenerse (v1.1, S2-M6).** Si un limite (`TIME_LIMIT`,
+`EXPANSION_LIMIT`, `GEOMETRY_PROBE_LIMIT` o `STATE_MEMORY_LIMIT`) detiene la
+busqueda, M6 completa las unidades restantes desde el mejor nodo con la regla
+First Fit y lo registra en el diagnostico. Detalle:
+
+- Se parte de los layouts del mejor nodo de la ultima frontera completa; las
+  unidades que M6 ya decidio (colocadas o `NO_FIT`) se conservan tal cual.
+- La decision de cada unidad restante es la de First Fit en
+  `packing._feasible_candidates` (retazos antes que planchas, orden del stock,
+  primera orientacion con posicion); se reutiliza, no se duplica, y
+  `packing.py` no cambia.
+- Desde ese momento solo rige el checkpoint del supervisor (cancelacion y
+  presupuesto por motor); los contadores y el reloj propios de M6 ya se
+  agotaron.
+- Si todas las unidades se procesan, la razon de parada se omite y el
+  adaptador deriva `COMPLETED` o `NO_FIT` como en cualquier corrida; el
+  contrato v2 no cambia.
+- El diagnostico agrega, solo cuando hubo respaldo: `fallback_used = 1`,
+  `fallback_from_<limite> = 1`, `fallback_beam_units` (unidades decididas por
+  M6) y `fallback_units` (unidades decididas por el respaldo). La UI lo muestra
+  en "Detalles del metodo".
+- `BeamSearchLimits.complete_on_stop` (por defecto `True`) permite desactivarlo:
+  con `False` se conserva el comportamiento T01, resultado parcial junto con la
+  razon de parada. Las pruebas de limites lo usan para seguir verificando ese
+  camino.
+- Las corridas que terminan dentro de los limites no cambian: mismo resultado,
+  traza y estadisticas.
+
+Motivo: asignado por el equipo tras la revision del 04/11/2026: M6 no colocaba
+piezas con planchas reales (por ejemplo, 1 pieza de 1000x2500 sobre un retazo
+de 2440x3255 terminaba 0/1 por `TIME_LIMIT`, mientras los otros cinco motores
+la colocaban en milisegundos).
 
 ## Requisitos funcionales
 
-- **RF-01:** ejecutar M6 sin invocar FF, BF o WF.
+- **RF-01:** ejecutar la busqueda M6 sin invocar los optimizadores FF, BF o WF.
+  Solo si un limite detiene la busqueda, las unidades restantes se completan con
+  la regla de decision de First Fit (ver "Respaldo al detenerse", v1.1).
 - **RF-02:** soportar las tres geometrias canonicas existentes.
 - **RF-03:** respetar resolucion de 1 mm cuando asi lo configure el caso.
 - **RF-04:** enumerar rotaciones en pasos de 5 grados en la configuracion SP-006.
@@ -142,10 +176,15 @@ API publica nueva.
 2. Se conservan identidades de pieza/unidad, fuente, posicion y rotacion.
 3. No existen superposiciones ni violaciones de margen/separacion.
 4. Los retazos factibles se prueban antes que las planchas.
-5. M6 produce decisiones propias; no delega en FF/BF/WF.
+5. M6 produce decisiones propias mientras su busqueda no se detenga; si un
+   limite la detiene, completa las unidades restantes desde el mejor nodo con la
+   regla First Fit y lo registra en el diagnostico (`fallback_*`).
 6. La igualdad con SP-006 se demuestra cuando se usan los mismos fixtures y
    configuracion, sin inventar evidencia de Colab.
-7. El resultado parcial y `NO_FIT` no se presentan como solucion completa.
+7. El resultado parcial y `NO_FIT` no se presentan como solucion completa. Un
+   resultado completado por el respaldo First Fit si es completo (todas las
+   unidades colocadas) y se identifica como tal en el diagnostico y en la UI;
+   con `complete_on_stop=False` se conserva el resultado parcial con su razon.
 8. La entrada y el inventario permanecen sin mutaciones.
 9. FF/BF/WF y el coordinador publico no cambian.
 10. Los limites de tiempo, expansiones, sondeos y memoria son reproducibles.
@@ -176,3 +215,11 @@ integracion publica de M6 y TA-043 siguen fuera de alcance.
 | Desviacion del experimento | pruebas de paridad con los tres fixtures y traza determinista |
 | Mutacion accidental de stock | contrato read-only y prueba de snapshots antes/despues |
 | Afectar otros motores | modulo independiente y regresion enfocada de FF/BF/WF |
+| Respaldo confundido con busqueda propia | contadores `fallback_*` en el diagnostico y etiqueta en "Detalles del metodo" |
+
+## Historial de estado
+
+| Fecha | Version | Estado | Cambio |
+|---|---|---|---|
+| Fecha a confirmar por Fabricio Melendez | 1.0 | Implemented | T01/T02: M6 Beam Search acotada integrada (Fabricio Melendez). |
+| 2026-11-07 | 1.1 | Implemented | S2-M6 (Fabricio Aguilar, rama `fix/S2-m6-rendimiento`): respaldo First Fit al detenerse por un limite (`complete_on_stop`), contadores `fallback_*` y etiqueta en la UI. Se versionaron RF-01, CA-5, CA-7 y "Limites". Asignado por el equipo tras la revision del 04/11/2026: M6 no colocaba piezas con planchas reales. |

@@ -7,7 +7,7 @@ from typing import Callable
 
 from .beam_memory import BeamStateMemory, StateMemoryLimit, initial_bound, successor_reserve
 from .metrics import largest_rectangle
-from .packing import FirstFitEvent, _coordinate, _empty_layout
+from .packing import FirstFitEvent, _coordinate, _empty_layout, _feasible_candidates
 from .preparation import prepare_group_units
 from .problem import MaterialSource, OptimizationProblem, OptimizationResult, Placement
 from .run_geometry import prepare_run_geometry
@@ -22,6 +22,10 @@ class BeamSearchLimits:
     max_geometry_probes: int = 1000000
     max_state_bytes: int = 32 * 1024 * 1024
     seconds: float = 30.0
+    # S2-M6: when a limit stops the search, finish the undecided units from the
+    # best completed frontier with First Fit's own decision (see _first_fit_completion).
+    # False keeps the T01 behaviour: a partial result plus the stop reason.
+    complete_on_stop: bool = True
 
     def __post_init__(self):
         if self.width not in (2, 3, 4):
@@ -34,6 +38,8 @@ class BeamSearchLimits:
             raise ValueError("positions_per_orientation must be 1 or 2.")
         if not 0 < self.seconds <= 120:
             raise ValueError("seconds must be between zero and 120.")
+        if type(self.complete_on_stop) is not bool:
+            raise ValueError("complete_on_stop must be a boolean.")
 
 
 class BeamSearchStopped(RuntimeError):
@@ -82,6 +88,37 @@ class BeamNode:
             envelope_cells,
             self.trace,
         )
+
+
+def _first_fit_completion(problem, winner, stocks, prepared, checkpoint):
+    """Decide the units the search did not reach, starting from ``winner``.
+
+    ``_feasible_candidates`` + ``next()`` is exactly First Fit's decision in
+    ``packing.pack`` (remnants before sheets, upstream stock order, first
+    orientation with a position); it is reused, not reimplemented. Units the
+    beam already decided, placed or NO_FIT, are kept as they are.
+    """
+    layouts = {stock.identity: layout for stock, layout in zip(stocks, winner.layouts)}
+    placements = list(winner.placements)
+    pending = [(group, unit) for group in problem.groups for unit in group.units][winner.processed:]
+    for group, unit in pending:
+        checkpoint()
+        orientations = prepared.orientations(unit)
+        for source in (MaterialSource.REMNANT, MaterialSource.SHEET):
+            chosen = next(_feasible_candidates(group, source, orientations, prepared, layouts,
+                                               problem.config, checkpoint), None)
+            if chosen is None:
+                continue
+            layouts[chosen.stock.identity] = chosen.layout_after
+            placements.append(Placement(
+                piece=unit, stock=chosen.stock,
+                x_mm=_coordinate(chosen.column, problem.config.resolution_mm),
+                y_mm=_coordinate(chosen.row, problem.config.resolution_mm),
+                rotation_deg=chosen.orientation.rotation_deg,
+                geometry=chosen.orientation.geometry,
+            ))
+            break
+    return tuple(placements), len(pending)
 
 
 @dataclass(frozen=True)
@@ -145,6 +182,7 @@ class BeamSearchOptimizer:
         problem = replace(problem, order_ids=tuple(sorted(problem.order_ids)), groups=groups)
         stocks = tuple(stock for group in groups for stock in group.stock_candidates)
         memory = BeamStateMemory(limits.max_state_bytes, checkpoint=check)
+        prepared = None
         try:
             memory.reserve(initial_bound(stocks, problem.config))
             ranks = {stock.identity: index for index, stock in enumerate(stocks)}
@@ -161,9 +199,8 @@ class BeamSearchOptimizer:
             beam = [BeamNode(initial, layout_scores=((0, 0),) * len(initial))]
             memory.check((problem, stocks, ranks, initial, beam))
         except (BeamSearchStopped, StateMemoryLimit) as error:
-            result = BeamSearchResult(problem=problem, placements=())
-            return BeamSearchOutcome(result, 0, str(error),
-                                     dict(stats, **memory.statistics()), ())
+            return self._finish(problem, BeamNode(()), str(error), stats, memory,
+                                stocks, prepared, external_check)
         stop_reason = None
         # Prepared geometry has validated the <=10000-angle contract. Reserve
         # Decimal angles, iterator dedup signatures and oriented-unit wrappers;
@@ -296,8 +333,24 @@ class BeamSearchOptimizer:
             stop_reason = str(error)
 
         winner = min(beam, key=lambda node: node.score) if beam else BeamNode(())
-        result = BeamSearchResult(problem=problem, placements=winner.placements)
-        return BeamSearchOutcome(
-            result, winner.processed, stop_reason,
-            dict(stats, **memory.statistics()), winner.trace,
-        )
+        if stop_reason is not None and limits.complete_on_stop:
+            # Only the winner continues; release the rest of the frontier first.
+            beam = pool = children = None
+        return self._finish(problem, winner, stop_reason, stats, memory,
+                            stocks, prepared, external_check)
+
+    def _finish(self, problem, winner, stop_reason, stats, memory, stocks, prepared, checkpoint):
+        statistics = dict(stats, **memory.statistics())
+        placements, processed = winner.placements, winner.processed
+        if stop_reason is not None and self.limits.complete_on_stop:
+            # The search's own clock/counters are exhausted: from here on only the
+            # supervisor checkpoint applies. Reuse the run's rasters when they exist.
+            prepared = (prepare_run_geometry(problem, checkpoint=checkpoint) if prepared is None
+                        else replace(prepared, _checkpoint=checkpoint))
+            placements, completed = _first_fit_completion(problem, winner, stocks, prepared, checkpoint)
+            # Counters only when the fallback ran, so other runs keep identical statistics.
+            statistics.update({"fallback_used": 1, f"fallback_from_{stop_reason.lower()}": 1,
+                               "fallback_beam_units": winner.processed, "fallback_units": completed})
+            processed, stop_reason = winner.processed + completed, None
+        result = BeamSearchResult(problem=problem, placements=placements)
+        return BeamSearchOutcome(result, processed, stop_reason, statistics, winner.trace)
