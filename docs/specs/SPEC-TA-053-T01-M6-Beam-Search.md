@@ -122,8 +122,9 @@ First Fit y lo registra en el diagnostico. Detalle:
   unidades que M6 ya decidio (colocadas o `NO_FIT`) se conservan tal cual.
 - La decision de cada unidad restante es la de First Fit en
   `packing._feasible_candidates` (retazos antes que planchas, orden del stock,
-  primera orientacion con posicion); se reutiliza, no se duplica, y
-  `packing.py` no cambia.
+  primera orientacion con posicion); se reutiliza, no se duplica. Los layouts
+  usados se cobran al mismo tope de 128 MiB que `pack()` (`_retain_layout`,
+  extraido en v1.2 sin cambiar FF).
 - Desde ese momento solo rige el checkpoint del supervisor (cancelacion y
   presupuesto por motor); los contadores y el reloj propios de M6 ya se
   agotaron.
@@ -145,6 +146,33 @@ Motivo: asignado por el equipo tras la revision del 04/11/2026: M6 no colocaba
 piezas con planchas reales (por ejemplo, 1 pieza de 1000x2500 sobre un retazo
 de 2440x3255 terminaba 0/1 por `TIME_LIMIT`, mientras los otros cinco motores
 la colocaban en milisegundos).
+
+**Rendimiento sin cambiar decisiones (v1.2 y v1.3, S2-M6).**
+
+- v1.2: las fuentes con el mismo raster comparten un unico layout vacio
+  inmutable, y `initial_bound` lo cobra una vez por material distinto. La
+  memoria de estado durante la busqueda se mide de forma incremental: la base se
+  recorre una vez por padre y cada hijo una vez. El valor es siempre mayor o
+  igual que `graph_bytes`, y hay una prueba que lo compara en cada verificacion.
+  El puntaje de una colocacion sobre un layout vacio compartido se calcula una
+  vez por nivel.
+- v1.3: `metrics.largest_rectangle`, compartida por M5, M6 y `calculate_metrics`,
+  recorre tramos de columnas iguales en lugar de cada columna. Devuelve
+  exactamente la misma tupla y el mismo orden de desempate. La prueba de
+  equivalencia la compara contra la implementacion anterior.
+- Las decisiones, la traza y los contadores de busqueda no cambian:
+  `test_beam_search_t02.py` y la evidencia SP-006 siguen iguales.
+
+**Limite conocido.** Con piezas rotadas a 5 grados sobre planchas de
+2140x3300 a 1 mm, cada puntaje cuesta unos 0,24 s, porque los bordes cambian en
+casi cada columna. En 30 s M6 evalua unos 117 sucesores, asi que decide muy
+pocas unidades (1 de 6 en la carga de 6 piezas; 0 con 46 y con 100) y el
+resultado lo completa el respaldo First Fit.
+
+**Mejora futura (fuera de alcance).** Redisenar el puntaje de M6, de forma
+aproximada o en dos etapas. Cambia sus decisiones, asi que exige rehacer la
+evidencia SP-006 con Fabricio Melendez. Evidencia de carga:
+[S2-WF-CARGA, seccion 7](../evidence/sprint-02/S2-WF-CARGA/README.md#7-m6-beam-search-antes-y-después).
 
 ## Requisitos funcionales
 
@@ -222,4 +250,6 @@ integracion publica de M6 y TA-043 siguen fuera de alcance.
 | Fecha | Version | Estado | Cambio |
 |---|---|---|---|
 | Fecha a confirmar por Fabricio Melendez | 1.0 | Implemented | T01/T02: M6 Beam Search acotada integrada (Fabricio Melendez). |
-| 2026-11-07 | 1.1 | Implemented | S2-M6 (Fabricio Aguilar, rama `fix/S2-m6-rendimiento`): respaldo First Fit al detenerse por un limite (`complete_on_stop`), contadores `fallback_*` y etiqueta en la UI. Se versionaron RF-01, CA-5, CA-7 y "Limites". Asignado por el equipo tras la revision del 04/11/2026: M6 no colocaba piezas con planchas reales. |
+| 2026-11-07 | 1.1 | Implemented | S2-M6 F1 (Fabricio Aguilar, rama `fix/S2-m6-rendimiento`): respaldo First Fit al detenerse por un limite (`complete_on_stop`), contadores `fallback_*` y etiqueta en la UI. Se versionaron RF-01, CA-5, CA-7 y "Limites". Asignado por el equipo tras la revision del 04/11/2026: M6 no colocaba piezas con planchas reales. Carga 6/46/100: de 0/6 (`TIME_LIMIT`) y 0/46, 0/100 (`STATE_MEMORY_LIMIT`) a 6/6, 46/46 y 100/100. |
+| 2026-11-07 | 1.2 | Implemented | S2-M6 F2: layout vacio compartido por material, `initial_bound` por material distinto, medicion incremental de memoria (siempre >= `graph_bytes`), puntaje reutilizado sobre layouts vacios compartidos, tope de 128 MiB de `pack()` en el respaldo. Con 46 y 100 piezas desaparece `STATE_MEMORY_LIMIT`; el perfil paso de 63 % del tiempo en `graph_bytes` a 95 % en `largest_rectangle` (0,38 s por llamada). |
+| 2026-11-07 | 1.3 | Implemented | S2-M6 F4b: `metrics.largest_rectangle` por tramos de columnas, con resultado identico. 0,38 s a 0,24 s por llamada; en 30 s M6 pasa de 75 puntajes calculados (perfil F4a) a 117 sucesores evaluados y decide 1 de 6 unidades (antes 0). M5 con 46 piezas: 96,9 s a 38,4 s, con el mismo resultado. Limite conocido y mejora futura documentados. |
