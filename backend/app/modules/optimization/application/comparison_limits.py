@@ -23,7 +23,9 @@ class ComparisonBudget:
     retained_event_bytes: int = 8 * MIB
     startup_seconds: float = 30
     calculation_seconds: float = 120
-    global_seconds: float = 180
+    # 6 motores × (30 s de arranque + 120 s de cálculo) = 900 s: ningún motor
+    # queda sin despachar por el plazo global (revisión del profesor, 04/11/2026).
+    global_seconds: float = 900
 
     def __post_init__(self):
         for name, value in vars(self).items():

@@ -148,15 +148,16 @@ def test_productive_six_are_sequential_isolated_and_stopped():
 
 
 @pytest.mark.parametrize("change", [dict(max_active_workers=2),dict(max_active_workers=True),
-    dict(methods=METHODS_V2[::-1]),dict(budget=replace(ComparisonBudget(),global_seconds=181))])
+    dict(methods=METHODS_V2[::-1]),dict(budget=replace(ComparisonBudget(),global_seconds=901))])
 def test_policy_rejects_unapproved_concurrency_order_or_budget(change):
     with pytest.raises(ValueError): SequentialPolicy(**change)
 
 
 def test_first_effective_deadline_and_queue_not_in_calculation_clock():
     policy=SequentialPolicy()
-    assert policy.expired(179,0,170,175) is None
-    assert policy.expired(181,0,170,175)=='GLOBAL_TIME_LIMIT'
+    # Global 900 s (6 x (30 + 120)); the engine started at 890, so its own 120 s have not run out.
+    assert policy.expired(899,0,880,890) is None
+    assert policy.expired(901,0,880,890)=='GLOBAL_TIME_LIMIT'
     assert policy.expired(140,0,1,2)=='TIME_BUDGET_EXCEEDED'
     assert policy.expired(35,0,1,0)=='PROCESS_START_FAILED'
 

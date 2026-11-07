@@ -67,7 +67,7 @@ def test_rejection_has_no_writes_workers_or_leaked_reservations(
             piece.geometria = dict(type='POLIGONO_CONVEXO', vertices_mm=[[0, 0], [4, 4], [0, 4], [4, 0]])
         if invalid == 'empty_order':
             for row in session.scalars(select(Pieza).where(Pieza.id_pedido == ids[-1])): session.delete(row)
-        if invalid == 'units': piece.cantidad = 151
+        if invalid == 'units': piece.cantidad = 301  # L-03 = 300
         if invalid == 'stock_units': session.get(Plancha, 5).cantidad = 51
         if invalid == 'angle': config.paso_angular_grados = 10
         if invalid == 'missing_angle': config.paso_angular_grados = None

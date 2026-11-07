@@ -58,7 +58,7 @@ export function parseComparisonEvent(data, comparison) {
       sequence: data.sequence, occurred_at: data.timestamp, event: data.event, data: data.data }, { methods: METHODS });
     if (data.event === 'result_persisted') check(data.data.execution_id === execution.execution_id && data.data.method === execution.method);
     if (data.event === 'ordering_ready') check(data.data.criterion === 'area_desc_max_side_desc_order_piece_unit_asc'
-      && Array.isArray(data.data.units) && data.data.units.length <= 150 && data.data.units.every(u => id(u.id_pedido) && id(u.id_pieza) && id(u.unit_index)));
+      && Array.isArray(data.data.units) && data.data.units.length <= 300 && data.data.units.every(u => id(u.id_pedido) && id(u.id_pieza) && id(u.unit_index)));
   }
   return data;
 }

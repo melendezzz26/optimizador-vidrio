@@ -38,12 +38,12 @@ def assert_load_limit(response, name, maximum, actual):
 def test_units_over_limit_answer_422_and_change_nothing(run_api, session_factory):
     client, ids, headers, *_ = run_api
     with session_factory() as s:
-        s.scalar(select(Pieza).where(Pieza.id_pedido == ids[0])).cantidad = 149  # 149 + 2 = 151
+        s.scalar(select(Pieza).where(Pieza.id_pedido == ids[0])).cantidad = 299  # 299 + 2 = 301
         s.commit()
     before = snapshot(session_factory, ids)
     response = client.post(BASE, json={"order_ids": ids}, headers=headers)
-    detail = assert_load_limit(response, "units_per_run", 150, 151)
-    assert detail.message.startswith("Los pedidos seleccionados suman 151 unidades")
+    detail = assert_load_limit(response, "units_per_run", 300, 301)
+    assert detail.message.startswith("Los pedidos seleccionados suman 301 unidades")
     assert snapshot(session_factory, ids) == before
     assert before["orders"] == ["PENDIENTE", "PENDIENTE"] and before["runs"] == [0, 0, 0]
 
@@ -51,10 +51,10 @@ def test_units_over_limit_answer_422_and_change_nothing(run_api, session_factory
 def test_units_at_exact_limit_are_accepted(run_api, session_factory):
     client, ids, headers, *_ = run_api
     with session_factory() as s:
-        s.scalar(select(Pieza).where(Pieza.id_pedido == ids[0])).cantidad = 148  # 148 + 2 = 150
+        s.scalar(select(Pieza).where(Pieza.id_pedido == ids[0])).cantidad = 298  # 298 + 2 = 300
         s.commit()
     events = parse(client.post(BASE, json={"order_ids": ids}, headers=headers))
-    assert events[0]["data"]["total_units"] == 150
+    assert events[0]["data"]["total_units"] == 300
 
 
 def test_stock_over_limit_answer_422_with_material_scope(run_api, session_factory):
