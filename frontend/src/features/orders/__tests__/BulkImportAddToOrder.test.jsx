@@ -91,6 +91,7 @@ test('CA-11: la fila corregida se revalida sin volver a subir el archivo y sin p
 test('CA-12: las piezas pasan al grupo del material y el pedido se registra una sola vez con un doble clic', async () => {
   previewData = preview([rectangle, triangle, corrected]);
   const user = await setup();
+  expect(screen.queryByText('Falta seleccionar cliente')).not.toBeInTheDocument();
   await chooseMaterial(user);
   await user.click(addButton());
 

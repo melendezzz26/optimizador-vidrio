@@ -1,5 +1,5 @@
 // HU-018 T02: cargar el archivo, ver la vista previa y elegir el material sin registrar el pedido.
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, expect, test, vi } from 'vitest';
 import FormularioPedido from '../FormularioPedido';
@@ -84,6 +84,47 @@ test('un archivo de más de 1 MB muestra el límite', async () => {
   const user = await openImport();
   await user.upload(screen.getByLabelText('Archivo CSV o XLSX'), csv());
   expect(await screen.findByRole('alert')).toHaveTextContent('El archivo supera el tamaño máximo de 1 MB.');
+});
+
+test('el archivo cargado se muestra por nombre, el input no se vacía y el mismo archivo se puede volver a cargar', async () => {
+  const user = await openImport();
+  const panel = screen.getByRole('region', { name: 'Importar piezas desde archivo' });
+  const input = within(panel).getByLabelText('Archivo CSV o XLSX');
+  expect(input).toHaveAccessibleDescription('Aún no has cargado un archivo.');
+  const file = csv();
+
+  await user.upload(input, file);
+  await within(panel).findByRole('table', { name: 'Vista previa del archivo' });
+  // Regresión: antes el input se vaciaba al leerlo y el navegador mostraba
+  // "No se ha seleccionado ningún archivo".
+  expect(input.files).toHaveLength(1);
+  expect(input.files[0].name).toBe('piezas.csv');
+  expect(input).toHaveAccessibleDescription('Archivo cargado: piezas.csv');
+  expect(within(panel).getByText('Cambiar archivo')).toBeInTheDocument();
+
+  // El mismo objeto File: solo dispara onChange si el valor se vació al abrir el selector.
+  await user.upload(input, file);
+  await waitFor(() => expect(importCalls()).toHaveLength(2));
+  await within(panel).findByRole('table', { name: 'Vista previa del archivo' });
+  expect(input).toHaveAccessibleDescription('Archivo cargado: piezas.csv');
+});
+
+test('importar sin cliente avisa que hay que elegir uno para ver y guardar las piezas', async () => {
+  previewResponse = json({ ...PREVIEW, resumen: { total: 2, validas: 2, observadas: 0 }, filas: PREVIEW.filas.slice(0, 2) });
+  const user = await openImport();
+  const panel = screen.getByRole('region', { name: 'Importar piezas desde archivo' });
+  expect(within(panel).queryByText('Falta seleccionar cliente')).not.toBeInTheDocument();
+
+  await user.upload(within(panel).getByLabelText('Archivo CSV o XLSX'), csv());
+  await within(panel).findByRole('table', { name: 'Vista previa del archivo' });
+  expect(within(panel).getByText('Falta seleccionar cliente')).toBeInTheDocument();
+  expect(within(panel).getByText(/Elige un cliente en la parte superior para ver las piezas importadas/)).toBeInTheDocument();
+
+  await user.selectOptions(within(panel).getByLabelText('Tipo de vidrio para estas piezas'), '7');
+  await user.selectOptions(within(panel).getByLabelText('Espesor (mm)'), '6');
+  await user.click(within(panel).getByRole('button', { name: 'Agregar al pedido' }));
+  expect(screen.getByText('Se agregaron 2 piezas del archivo al pedido. Selecciona un cliente para verlas y guardar el pedido.'))
+    .toBeInTheDocument();
 });
 
 test('cerrar la importación descarta la vista previa y devuelve el foco al botón', async () => {
