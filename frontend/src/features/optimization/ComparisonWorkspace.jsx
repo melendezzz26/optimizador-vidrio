@@ -7,6 +7,7 @@ import { createPendingOrdersSource } from './pendingOrdersSource';
 import { createComparisonApi, METHODS, METHOD_NAMES } from './comparisonApi';
 import { createComparisonV2Api } from './comparisonApiV2';
 import { CATALOG_V2 } from './comparisonV2Contract';
+import { beamFallbackSummary } from './beamFallbackModel';
 import { createComparisonController } from './comparisonController';
 import { resultSnapshot, visualPlacement } from './runContract';
 import { GeometryPreview } from './GeometryPreview';
@@ -130,6 +131,7 @@ function EnginePanel({ comparison, execution, visual: supplied, live, result, ap
     : visual.current?.placed_units ?? visual.lastOrientation?.placed_units ?? live?.placements.length ?? 0);
   const processed = result ? result.placed_units + result.unplaced_units.length : visual.processed ?? 0;
   const search = visual.searchProgress;
+  const fallback = beamFallbackSummary(execution.diagnostic);
   return <section className="comparison-engine" aria-label={`Ejecución ${methodName(execution.method)}`}>
     <header><div><span className="comparison-eyebrow">Motor {execution.method}</span><h2>{methodName(execution.method)}</h2></div>
       <span className={`comparison-status ${execution.status === 'FALLIDA' || execution.outcome === 'FAILED' ? 'is-failed' : ''}`}>{executionStatus(execution)}</span></header>
@@ -137,7 +139,7 @@ function EnginePanel({ comparison, execution, visual: supplied, live, result, ap
     {execution.diagnostic && <p className="comparison-diagnostic" role="status">{terminationLabel(execution.diagnostic.termination_reason)}</p>}
     {beamSearch && search && !result && <><p role="status">Buscando una distribución. Las piezas se mostrarán cuando haya un resultado guardado.</p>
       <details><summary>Detalles de búsqueda</summary><div className="comparison-search-progress">Búsqueda provisional · nivel {search.completed_levels} · {search.expansions} expansiones · {search.geometry_probes} sondeos geométricos · frente {search.frontier_size}.<small>Estos estados no representan colocaciones finales.</small></div></details></>}
-    {execution.diagnostic && <details><summary>Detalles del método</summary><code>{execution.diagnostic.origin} · {execution.diagnostic.termination_reason}</code></details>}
+    {execution.diagnostic && <details><summary>Detalles del método</summary><code>{execution.diagnostic.origin} · {execution.diagnostic.termination_reason}</code>{fallback && <p>{fallback}</p>}</details>}
     {execution.status !== 'FALLIDA' && execution.outcome !== 'FAILED' && <div className="comparison-progress"><p role="status">{placed} / {execution.total_units} piezas colocadas · {processed} procesadas</p>
       <progress aria-label={`Piezas colocadas por ${methodName(execution.method)}`} value={placed} max={execution.total_units} /></div>}
     <ol className="comparison-phases" aria-label="Fases del motor">{PHASES.map((label, index) => <li key={label}>

@@ -9,8 +9,9 @@ import { withPermissions } from '../../authentication/__tests__/permissionFixtur
 const user = withPermissions({ id_usuario: 1, usuario: 'Operario', rol: 'Operario' });
 beforeEach(() => localStorage.clear());
 
-function setupV2({ partial = false, lostResponse = false, conflict = false, actingUser = user } = {}) {
+function setupV2({ partial = false, lostResponse = false, conflict = false, actingUser = user, beamStatistics = null } = {}) {
   const current = structuredClone(partial ? comparisonV2.mixed : comparisonV2.completed);
+  if (beamStatistics) Object.assign(current.executions.find(e => e.method === 'M6-BS').diagnostic.statistics, beamStatistics);
   current.requested_pieces = structuredClone(comparisonV1.completed.requested_pieces).map(piece => ({ ...piece, cantidad: 2 }));
   const source = createFixturePendingOrdersSource([{ id_pedido: 1, cliente: 'Cliente de prueba',
     piezas: current.requested_pieces }]);
@@ -193,6 +194,24 @@ test('partial M6 and failed HF remain independent and retain their actual diagno
   expect(screen.getByRole('radio', { name: /Hole Filling/ })).toBeDisabled();
   expect(screen.getByRole('radio', { name: /Beam Search/ })).toBeDisabled();
   expect(screen.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeDisabled();
+});
+
+test('M6 completed by the First Fit fallback says so in the method details', async () => {
+  setupV2({ beamStatistics: { fallback_used: 1, fallback_from_time_limit: 1, fallback_beam_units: 0, fallback_units: 2 } });
+  await startV2();
+  fireEvent.click(screen.getByRole('tab', { name: /BS-2/ }));
+  const beamPanel = screen.getByRole('tabpanel', { name: /BS-2/ });
+  const details = within(beamPanel).getByText('Detalles del método').closest('details');
+  expect(details).toHaveTextContent('Búsqueda continuada con respaldo First Fit: M6 decidió 0 unidades y el respaldo 2 unidades.');
+  expect(within(beamPanel).getAllByText('Completo').length).toBeGreaterThan(0);
+});
+
+test('M6 without fallback counters shows no fallback label', async () => {
+  setupV2(); await startV2();
+  fireEvent.click(screen.getByRole('tab', { name: /BS-2/ }));
+  const beamPanel = screen.getByRole('tabpanel', { name: /BS-2/ });
+  expect(within(beamPanel).getByText('Detalles del método')).toBeInTheDocument();
+  expect(within(beamPanel).queryByText(/respaldo First Fit/)).not.toBeInTheDocument();
 });
 
 test('reloading a v2 comparison consults its durable ID without starting another comparison', async () => {

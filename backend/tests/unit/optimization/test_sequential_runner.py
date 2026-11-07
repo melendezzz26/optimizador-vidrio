@@ -284,9 +284,10 @@ def test_terminating_owned_worker_does_not_erase_other_five():
     assert all(v.payload.result.complete for v in values[1:])
 
 
-@pytest.mark.parametrize('options,reason',[(dict(max_expansions=1),'EXPANSION_LIMIT'),
-    (dict(max_geometry_probes=1),'GEOMETRY_PROBE_LIMIT'),(dict(max_state_bytes=1),'STATE_MEMORY_LIMIT'),
-    (dict(seconds=.000000001),'TIME_LIMIT')])
+@pytest.mark.parametrize('options,reason',[(dict(max_expansions=1,complete_on_stop=False),'EXPANSION_LIMIT'),
+    (dict(max_geometry_probes=1,complete_on_stop=False),'GEOMETRY_PROBE_LIMIT'),
+    (dict(max_state_bytes=1,complete_on_stop=False),'STATE_MEMORY_LIMIT'),
+    (dict(seconds=.000000001,complete_on_stop=False),'TIME_LIMIT')])
 def test_m6_native_resource_reason_survives_process_transport(options,reason):
     from app.modules.optimization.domain.beam_search import BeamSearchLimits
     values=runner.SequentialProcessRunner(worker_target=partial(limited_beam,limits=BeamSearchLimits(**options))).calculate(*inputs(),observed=False)

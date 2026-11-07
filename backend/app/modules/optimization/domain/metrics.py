@@ -25,11 +25,42 @@ class ResidualRectangle:
     area_mm2: Decimal
 
 
+def _column_segments(rows, columns):
+    """Columns where SOME row differs from its left neighbour (column 0 always).
+
+    Between two consecutive starts every row has the same bit in every column,
+    so those columns always share one histogram height.
+    """
+    if columns <= 0:
+        return [], 0
+    full = (1 << columns) - 1
+    changes = 1
+    for bits in rows:
+        bits &= full
+        changes |= (bits ^ (bits << 1)) & full
+    text = format(changes, "b")[::-1]  # text[c] is bit c
+    starts, position = [], text.find("1")
+    while position != -1:
+        starts.append(position)
+        position = text.find("1", position + 1)
+    return starts, full
+
+
 def largest_rectangle(free_rows, columns, *, checkpoint=None):
-    heights = [0] * columns
+    rows = free_rows if isinstance(free_rows, (tuple, list)) else tuple(free_rows)
+    # S2-M6 (F4b): the original scan visited every column of every run. Inside
+    # a segment of equal columns its stack neither pops (the top already has
+    # that height) nor pushes (equal heights are not pushed), so only segment
+    # starts and the final sentinel can act. Visiting just those positions
+    # yields the very same popped rectangles, in the same order, hence the same
+    # result and tie order; widths still come from real column positions.
+    starts, full = _column_segments(rows, columns)
+    offsets = [columns - 1 - start for start in starts]  # index of bit `start` in MSB-first text
+    positions = starts + [columns]
+    heights = [0] * len(starts)
     best, best_key = None, None
     row = -1
-    for bits, repeated in groupby(free_rows):
+    for bits, repeated in groupby(rows):
         if checkpoint is not None:
             checkpoint()
         count = sum(1 for _ in repeated)
@@ -37,10 +68,12 @@ def largest_rectangle(free_rows, columns, *, checkpoint=None):
         # Within identical consecutive bit rows every possible rectangle only
         # grows vertically. Its maximum occurs at the last row of the run.
         # This preserves the exact area/top/left/width/height tie order.
-        heights = [heights[c] + count if (bits >> c) & 1 else 0 for c in range(columns)]
+        digits = format(bits & full, f"0{columns}b") if starts else ""
+        heights = [height + count if digits[offset] == "1" else 0
+                   for height, offset in zip(heights, offsets)]
         stack = []
-        for column in range(columns + 1):
-            height = heights[column] if column < columns else 0
+        for index, column in enumerate(positions):
+            height = heights[index] if index < len(heights) else 0
             start = column
             while stack and stack[-1][1] > height:
                 left, h = stack.pop()
