@@ -345,7 +345,9 @@ workers simultáneos ni se extrapola capacidad del entorno local a Heroku.
 Se mantienen como cotas iniciales los valores existentes de
 `application/comparison_limits.py`: 1 GiB RSS agregado muestreado, 240 MiB RSS de
 supervisor, 256 MiB de espacio virtual duro por worker, reserva auxiliar 16 MiB;
-arranque 30 s, cálculo por motor 120 s y global 180 s; paquetes 12 MiB/visual 4 MiB,
+arranque 30 s, cálculo por motor 120 s y global 900 s (180 s hasta el 06/11/2026;
+6 motores × (30 s + 120 s), para que ningún motor quede sin despachar por el plazo
+global); paquetes 12 MiB/visual 4 MiB,
 un paquete en cola por worker, retención visual total 32 MiB y eventos 8 MiB.
 Las cotas se comparten entre seis, no se multiplican. RSS y espacio virtual son
 medidas distintas. Se conservan además las cotas geométricas/cache y las de
@@ -449,7 +451,7 @@ evidencia B01; el smoke integral y las capacidades futuras siguen pendientes.
 
 | Riesgo / dependencia | Tratamiento y decisión pendiente |
 |---|---|
-| Presupuesto global 180 s frente a cola de seis y HF costoso | Medir latencia/cobertura/espera real; no subir timeout ni prometer seis completos para cualquier entrada. HF tiene antecedente puntual 24,76× FF, no cota universal. |
+| Presupuesto global frente a cola de seis y HF costoso | Con 180 s, 100 piezas impedían que corrieran todos los motores; desde el 06/11/2026 el global es 900 s (6 × (30 + 120)) por observación del profesor. Sigue sin prometerse seis completos para cualquier entrada: cada motor conserva su límite de 120 s. HF tiene antecedente puntual 24,76× FF, no cota universal. |
 | Memoria M6/rasters, IPC y seis sesiones visuales | Medir RSS agregado, espacio virtual, retención, colas y descarte; mantener cotas totales. |
 | Heroku sin capacidad preflight suficiente | Plataforma/presupuesto concreto pendientes de verificación; preparación de despliegue no autoriza deploy ni seis workers. |
 | Salida M6 sin diagnóstico o ramas visuales mezcladas | Adaptador de outcome y pruebas de frontera/provisional/final obligatorios. |
@@ -461,9 +463,12 @@ evidencia B01; el smoke integral y las capacidades futuras siguen pendientes.
 
 Quedan por medir: concurrencia admisible superior a uno, picos/contabilidad real,
 duración de seis motores con callbacks, costo de serialización/replay, retención
-compartida y capacidad de la plataforma objetivo. Mantener 20 pedidos, **150
-unidades expandidas**, 128 vértices y 50 unidades físicas de stock por material,
-según TA-037; son límites de admisión, no garantía de tiempo/memoria. Ninguna
+compartida y capacidad de la plataforma objetivo. Mantener 20 pedidos, **300
+unidades expandidas** (150 hasta el 06/11/2026), 128 vértices y 50 unidades
+físicas de stock por material, según TA-037 v1.4; son límites de admisión, no
+garantía de tiempo/memoria. El evento `ordering_ready` (v1 y v2) acepta hasta
+300 referencias de unidad, en el backend y en el frontend, porque acompaña a L-03;
+300 referencias (~30 KB) siguen bajo el máximo de 64 KB por evento. Ninguna
 medición pendiente recibe un PASS ni un nuevo número sin evidencia/revisión.
 
 Evidencia por bloque en `docs/evidence/sprint-02/TA-043/`: commit probado, entorno,
@@ -474,6 +479,14 @@ no almacenar secretos. El cierre exige CA-N06 y CA-S01–CA-S10, smoke increment
 e integral reales, regresión y revisión humana; documentar una prueba no la ejecuta.
 
 ## Historial de estado
+
+- 06/11/2026 — **Draft**: observación del profesor (revisión del 04/11/2026).
+  Presupuesto global 180 → 900 s (6 × (30 s + 120 s)); arranque y cálculo por
+  motor sin cambios. L-03 (TA-037 v1.4) 150 → 300 y tope de `ordering_ready`
+  150 → 300 en `comparison_schemas.py`, `comparisonV2Contract.js`, `comparisonApi.js`
+  y en el orden visual de `visualState.js`. Sin cambios de memoria, M5, M6, Alembic
+  ni BD. Cambio de Fabricio Aguilar en `fix/S2-wf-presupuesto-carga`; se avisa al
+  responsable en el PR. [Evidencia S2-WF-CARGA](../evidence/sprint-02/S2-WF-CARGA/README.md).
 
 - 04/11/2026 — **Draft**: Fabricio autoriza exclusivamente B06 sobre B05
   `70084ce`, `42e98bd`, `18c36bc`. API explícita v2, lectura por propietario,

@@ -38,7 +38,9 @@ export async function setup(page, scenario, { createOrders = true } = {}) {
   const pieces = scenario === 'rotated' ? [rectangle(data.materials[0], 1, 70, 40)]
     : scenario === 'combined' ? [rectangle(data.materials[0], 2), rectangle(data.materials[1])]
     : scenario === 'multimaterial' ? data.materials.map(m => rectangle(m))
-      : [rectangle(data.materials[0], scenario === 'many-sources' ? 8 : scenario === 'multiunit' ? 3 : ['remnant', 'incomplete'].includes(scenario) ? 2 : 1)];
+      // SPEC-TA-019 v2: WF fills sheets in use, so 60x50 (two never fit a 100x50) keeps eight sources.
+      : scenario === 'many-sources' ? [rectangle(data.materials[0], 8, 60, 50)]
+      : [rectangle(data.materials[0], scenario === 'multiunit' ? 3 : ['remnant', 'incomplete'].includes(scenario) ? 2 : 1)];
   for (let i = 0; i < (createOrders ? (['multiple', 'combined'].includes(scenario) ? 2 : 1) : 0); i++) {
     const response = await page.request.post(`${api}/api/orders`, { headers, data: { id_cliente: 41, piezas: pieces } });
     expect(response.status()).toBe(201);

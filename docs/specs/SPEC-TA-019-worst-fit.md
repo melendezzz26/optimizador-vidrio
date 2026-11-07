@@ -8,10 +8,11 @@
 | Nombre | Worst Fit |
 | Sprint | Sprint 2 |
 | Tipo / épica | Tarea técnica / EP-003 Optimización |
-| Estado | **Reviewed** |
+| Estado | **Implemented** (v2) |
+| Versión | v2 (06/11/2026): regla de fuentes en uso, ver RN-02/RN-05 |
 | Responsable | Fabricio Melendez |
 | Revisor | Pendiente de asignación formal |
-| Fecha | 25/10/2026 |
+| Fecha | 25/10/2026 (v1) · 06/11/2026 (v2) |
 | Rama | `feature/TA-019-worst-fit` |
 | Dependencias | SP-002; TA-016; motor First Fit existente; motor geométrico/raster existente; TA-037 como guardrail técnico cuando corresponda |
 | PLAN técnico | [PLAN-TA-019-worst-fit.md](PLAN-TA-019-worst-fit.md) |
@@ -111,8 +112,23 @@ validación, margen y separación. No copiar esos motores ni sus reglas.
 2. Nivel 2: planchas compatibles, solo si ningún retazo aloja la pieza actual.
 
 WF opera exclusivamente dentro del primer nivel con candidatos factibles. Una
-plancha más grande no desplaza un retazo factible. No se introduce una prioridad
-nueva de planchas abiertas frente a planchas sin usar.
+plancha más grande no desplaza un retazo factible, aunque esa plancha ya esté
+en uso.
+
+**v2 — Fuentes en uso primero dentro del nivel.** Una fuente está *en uso*
+cuando ya tiene al menos una pieza colocada en el cálculo actual. Dentro del
+nivel permitido:
+
+1. Si la pieza cabe en alguna fuente en uso, WF elige entre ellas según RN-05.
+2. Solo si no cabe en ninguna fuente en uso, abre la fuente sin usar de menor
+   `stock_rank` (mismo criterio que FF), sin comparar scores entre fuentes vacías.
+
+Motivo: observación del profesor en la revisión del 04/11/2026. La regla v1
+(comparar también las fuentes vacías) abría una plancha nueva por pieza, porque
+una fuente vacía siempre tiene más capacidad libre: con la carga sintética de
+`scripts/benchmark_comparison.py`, 46 piezas usaban 12 planchas (FF 4) y con
+200 piezas la rasterización fallaba. La versión v1 de esta regla queda
+reemplazada.
 
 ### RN-03 — Colocación canónica por fuente
 
@@ -138,12 +154,17 @@ La capacidad libre total puede estar fragmentada; no garantiza espacio contiguo.
 
 ### RN-05 — Selección y desempates
 
-Seleccionar por: mayor score posterior; menor `stock_rank`; menor
-`orientation_rank`; menor fila; menor columna. Equivale a minimizar:
+**v2.** Entre las fuentes **en uso** factibles del nivel (RN-02), seleccionar
+por: mayor score posterior; menor `stock_rank`; menor `orientation_rank`; menor
+fila; menor columna. Equivale a minimizar:
 
 ```text
 (-remaining_free_cells_after_placement, stock_rank, orientation_rank, row, column)
 ```
+
+Si ninguna fuente en uso es factible, se elige la fuente sin usar factible que
+minimiza `(stock_rank, orientation_rank, row, column)`; su score no se calcula
+para decidir. Motivo: observación del profesor en la revisión del 04/11/2026.
 
 ### RN-06 — Inmutabilidad y retención acotada
 
@@ -177,7 +198,9 @@ igualdad de timestamps, IDs de corrida o tiempo computacional.
 2. Recorrer grupos y piezas en su orden vigente.
 3. Obtener las orientaciones mediante el componente compartido.
 4. Generar candidatos canónicos factibles del nivel de retazos.
-5. Evaluar sus layouts posteriores temporales y seleccionar según RN-05.
+5. Evaluar los layouts posteriores temporales de las fuentes en uso y
+   seleccionar según RN-05; si ninguna en uso es factible, abrir la fuente sin
+   usar de menor `stock_rank` (v2).
 6. Solo si no existe candidato de retazo, repetir con planchas.
 7. Incorporar únicamente el ganador y emitir los hitos correspondientes.
 8. Si no existe ganador, conservar la pieza faltante y continuar.
@@ -204,7 +227,7 @@ igualdad de timestamps, IDs de corrida o tiempo computacional.
 | CA-05 | Solo se consideran fuentes geométricamente factibles. | T01/T02 |
 | CA-06 | Cada fuente usa su primera orientación factible y primera posición válida. | T01/T02 |
 | CA-07 | El score usa capacidad libre posterior, incluyendo el efecto de la separación. | T01/T02 |
-| CA-08 | WF selecciona el mayor score dentro del nivel permitido. | T01/T02 |
+| CA-08 | WF selecciona el mayor score entre las fuentes en uso del nivel permitido y abre una fuente nueva (menor `stock_rank`) solo si la pieza no cabe en ninguna en uso (v2). | T01/T02 |
 | CA-09 | Los desempates siguen exactamente RN-05. | T01/T02 |
 | CA-10 | Evaluar candidatos no modifica el layout real. | T01/T02 |
 | CA-11 | Solo el candidato ganador se incorpora al cálculo. | T01/T02 |
@@ -248,9 +271,13 @@ preparación, WF y resultado de dominio. La matriz de pruebas está en el PLAN.
 ## 11. Evidencias requeridas
 
 - Comandos, entorno, entradas pequeñas verificables y resultados reales de pytest.
-- Regresión de score: pieza 1×1, resolución 1, separación 1, margen 0; fuente
-  4×4: 16 celdas previas y 12 posteriores; fuente 1×15: 15 previas y 13 posteriores.
-  Debe ganar 1×15.
+- Regresión de score (v2, entre fuentes en uso): pieza 1×1, resolución 1,
+  separación 1, margen 0, cada fuente con una pieza 1×1 previa en su extremo;
+  fuente 5×5: 21 celdas previas y 17 posteriores; fuente 1×22: 20 previas y 18
+  posteriores. Debe ganar 1×22. (v1 usaba fuentes vacías 4×4 y 1×15.)
+- Regresión v2 del defecto: dos piezas 2×2 que caben en una plancha 4×4 usan
+  una sola plancha (v1 usaba dos). Evidencia de la carga en
+  [S2-WF-CARGA](../evidence/sprint-02/S2-WF-CARGA/README.md).
 - Evidencia de no consumo y preservación FF; auditoría de retención de layouts.
 - `git diff --check`, diff de alcance y trazabilidad CA → pruebas.
 - Evidencia del cierre técnico en [README](../evidence/sprint-02/TA-019/README.md),
@@ -265,3 +292,5 @@ preparación, WF y resultado de dominio. La matriz de pruebas está en el PLAN.
 | 25/10/2026 | Draft | Formalización de decisiones autorizadas; revisión formal pendiente. Reemplaza el documento informal `TA-019-worst-fit.md`. |
 | 25/10/2026 | Draft | Evidencia técnica vinculada y CA-12 verificado; sin cambios de requisitos ni aprobación formal. |
 | 25/10/2026 | Reviewed | Aprobación del responsable comunicada en esta sesión; 22 CA satisfechos, 381 pruebas aprobadas y evidencia vinculada. Revisión cruzada pendiente; no Verified. |
+| 06/11/2026 | Reviewed (v2) | Observación del profesor en la revisión del 04/11/2026: WF compara solo fuentes en uso dentro del nivel y abre una nueva (menor `stock_rank`) solo si la pieza no cabe en ninguna. Cambian RN-02, RN-05, flujo paso 5, CA-08 y §11. Retazos primero se conserva. Cambio hecho por Fabricio Aguilar en `fix/S2-wf-presupuesto-carga`; se avisa al responsable en el PR. |
+| 06/11/2026 | Implemented (v2) | Regla v2 implementada en `domain/worst_fit.py` con prueba de regresión (falla con v1: `[1, 2] != [1, 1]`); suite backend en Windows con 0 failed. Pasa a Verified después del merge, en un PR `docs/...` aparte. |

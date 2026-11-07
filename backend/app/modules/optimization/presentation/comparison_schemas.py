@@ -175,7 +175,8 @@ class SourceSelected(SourceSelectedV2):
 
 class Ordering(ContractV1):
     criterion: Literal["area_desc_max_side_desc_order_piece_unit_asc"]
-    units: Annotated[list[UnitRefV1], Field(min_length=1, max_length=150)]
+    # Acompaña a L-03 (300 unidades); 300 referencias (~30 KB) < 64 KB por evento.
+    units: Annotated[list[UnitRefV1], Field(min_length=1, max_length=300)]
 
 
 class ExecutionReference(ContractV1):

@@ -23,7 +23,7 @@ MAX_PERSISTED_INT = 2147483647
 class RunLoadBudget:
     """Valores aprobados en SPEC-TA-037 v1.1 (paso operativo de 5°)."""
     max_orders: int = 20                                # L-01
-    max_units: int = 150                                # L-03
+    max_units: int = 300                                # L-03 (150 → 300, revisión del 04/11/2026)
     max_vertices: int = 128                             # L-04
     max_stock_units_per_material: int = 50              # L-07
     max_raster_bytes: int = INTERNAL_CACHE_BYTES        # L-13, mismo valor que RasterCache

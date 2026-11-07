@@ -9,7 +9,7 @@
 | Sprint | Sprint 2 |
 | Tipo / épica | Habilitador / Optimización segura |
 | Versión | **1.3**: saneamiento del ciclo de vida de plazas de T03; presupuestos y contratos de v1.2 conservados |
-| Estado | **Verified**: T01–T04 y el saneamiento de T03 integrados (PR #66, #67, #68 y #74) con CI en verde; verificación independiente de T03 registrada en la evidencia v1.3. |
+| Estado | **Implemented** (v1.4: L-03 = 300). v1.3 **Verified**: T01–T04 y el saneamiento de T03 integrados (PR #66, #67, #68 y #74) con CI en verde; verificación independiente de T03 registrada en la evidencia v1.3. |
 | Responsable | Fabricio Aguilar |
 | Saneamiento T03 | Fabricio Melendez Quezada con asistencia de Codex; trabajo original T01–T04 de Fabricio Aguilar |
 | Revisor del cierre | PR #74 integrado en `integration/sprint-01`; verificación independiente de T03 por Fabricio Aguilar (28/10/2026) |
@@ -147,7 +147,7 @@ debajo de L-12.
 |---|---|---:|---:|---|---|
 | L-01 | Pedidos por ejecución | **20** | 20 | pedidos | Sin cambio. Acota `IN (...)` y los bloqueos `FOR UPDATE`. |
 | L-02 | Líneas de pieza por ejecución | **Retirado** | 200 | — | Cada línea tiene `cantidad ≥ 1`, así que L-03 ya acota las líneas. |
-| L-03 | Unidades por ejecución (Σ `cantidad`) | **150** | 500 | unidades | A 5°: 150 rectángulos 3,4 s; 150 polígonos 22,4 s. Con 200 polígonos se llega a 50 s. |
+| L-03 | Unidades por ejecución (Σ `cantidad`) | **300** (v1.4; 150 en v1.1) | 500 | unidades | A 5°: 150 rectángulos 3,4 s; 150 polígonos 22,4 s. Con 200 polígonos se llega a 50 s. **v1.4:** sube a 300 por observación del profesor (revisión del 04/11/2026); L-12 (120 s por motor) sigue siendo la protección del peor caso. El evento `ordering_ready` acompaña a este límite (300 referencias, ~30 KB < 64 KB por evento). Medición en [S2-WF-CARGA](../evidence/sprint-02/S2-WF-CARGA/README.md). |
 | L-04 | Vértices por pieza | **128** | 128 | vértices | Sin cambio. Es el límite interno de `RasterCache`; se adelanta a antes de expandir. |
 | L-05 | Extensión geométrica por pieza | **4000 mm; 4000 celdas por eje; 16 000 000 celdas** | igual | — | Sin cambio. Ya existe en `RasterCache.check_geometry`; se aplica **una vez por pieza**, no por unidad. |
 | L-06 | Unidades × orientaciones | **Retirado** | 2000 | — | El paso es fijo en 5° (H-09) y L-03 ya está medido a 5°. El costo no crece en proporción a las orientaciones, así que la fórmula de v1.0 rechazaba de más. |
@@ -448,3 +448,4 @@ recibe el foco. El resto de errores conserva la presentación genérica de siemp
 | 26/10/2026 | 1.2 | Implemented | T04: avisos de frontend («divide el lote», «intenta más tarde», tiempo máximo), pruebas de peor caso y E2E real. CA-01 a CA-12 en PASS (§13). Pendiente: CI en verde y revisión para Verified. |
 | 27/10/2026 | 1.3 | Implemented | Retirado el respaldo de expiración de 300 s; CA-08/CA-09 precisan que la plaza sigue al trabajador. Presupuestos y contratos conservados. Regresión focalizada 39 PASS; optimización/geometría/API/PostgreSQL/confirmación 717 PASS. Trabajo original de Aguilar preservado; corrección y revisión técnica de Fabricio Melendez. CI y revisión del PR pendientes para cierre formal. |
 | 28/10/2026 | 1.3 | Verified | Saneamiento de T03 (PR #74) integrado y verificado de forma independiente: sobre `e256bde`, 39 PASS en la regresión focal; con la admisión anterior (`445886a`) fallan las 6 regresiones de T03. CI de integración en verde (PR #78, #83 y #85). CA-01 a CA-12 en PASS. |
+| 06/11/2026 | 1.4 | Implemented | Observación del profesor (revisión del 04/11/2026): L-03 de 150 a 300 unidades; el tope del evento `ordering_ready` (backend y frontend) acompaña a L-03. Ningún otro límite de TA-037 cambia. Cambio de Fabricio Aguilar en `fix/S2-wf-presupuesto-carga`; pasa a Verified después del merge. |

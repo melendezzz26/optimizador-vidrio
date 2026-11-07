@@ -1,0 +1,167 @@
+# S2-WF-CARGA — Worst Fit, presupuesto de la comparación y carga máxima
+
+| Campo | Valor |
+|---|---|
+| Origen | Observaciones del profesor en la revisión del 04/11/2026 (Sprint 2) |
+| Rama | `fix/S2-wf-presupuesto-carga`, desde `integration-02` (`2a57afe`) |
+| Responsable | Fabricio Aguilar |
+| Fecha de medición | 06/11/2026 |
+| SPEC afectadas | [SPEC-TA-019 v2](../../../specs/SPEC-TA-019-worst-fit.md) · [SPEC-TA-037 v1.4](../../../specs/SPEC-TA-037-control-carga-optimizador.md) · [SPEC-TA-043](../../../specs/SPEC-TA-043-integracion-seis-motores.md) |
+| Script | [`backend/scripts/benchmark_load_engines.py`](../../../../backend/scripts/benchmark_load_engines.py) |
+
+## 1. Qué pidió el profesor
+
+1. **Worst Fit** abría una plancha nueva por pieza. Con 46 piezas usaba 12 planchas
+   (First Fit, 4); con 100, 28; con 200 fallaba con `RasterPreparationError`.
+2. **Plazo global de la comparación.** Con 100 piezas, el plazo de 180 s no
+   alcanzaba para que corrieran los seis motores.
+3. **Carga máxima.** Medir de forma reproducible hasta qué cantidad de piezas
+   responde cada motor, e informar los límites con honestidad.
+
+## 2. Worst Fit: regla antes y después
+
+**Antes (v1).** En cada nivel (primero retazos, después planchas), WF puntuaba
+todas las fuentes que podían recibir la pieza, incluidas las vacías, y elegía la
+de mayor espacio libre después de colocarla. Una plancha sin usar siempre tiene
+más espacio libre que una ya empezada, así que cada pieza abría una plancha nueva.
+
+**Después (v2, RN-02 y RN-05 de SPEC-TA-019).**
+- Se mantiene el orden de niveles: **retazos primero**, después planchas.
+- Dentro del nivel, WF elige **entre las fuentes ya en uso** la que deja más espacio
+  libre después de colocar la pieza. En caso de empate decide el orden de stock, la
+  orientación, la fila y la columna.
+- Solo si la pieza no cabe en ninguna fuente en uso, **abre una nueva**: la primera
+  disponible según ese mismo orden. Las fuentes sin usar no se puntúan.
+
+**Efecto medido** (mismos motores aislados y misma carga sintética):
+
+| Piezas | Planchas WF antes | Planchas WF después | Aprovechamiento WF antes → después | FF (referencia) |
+|---:|---:|---:|---|---:|
+| 46 | 12 | **4** | 18,3 % → **54,9 %** | 4 |
+| 100 | 28 | **8** | — → **59,6 %** | 8 |
+| 200 | `RasterPreparationError` | **14** (200/200) | falla → **68,4 %** | 14 |
+
+> Los valores «antes» son la medición previa a la corrección sobre `integration-02`,
+> con la misma carga sintética. Los valores «después» salen de la tabla de la §4.
+
+**Costo.** WF ahora compara todas las fuentes en uso para cada pieza, así que
+tarda más:
+- 100 piezas: de ~17 s a 40,5 s.
+- 200 piezas: 118,66 s, cerca del límite de 120 s por motor.
+
+La prueba de regresión `test_worst_fit.py` reproduce el defecto: dos piezas que
+caben en una plancha producían `[1, 2]` con la regla anterior y producen `[1, 1]`
+con la nueva.
+
+## 3. Cambios de configuración y su justificación
+
+| Parámetro | Antes | Después | Justificación |
+|---|---:|---:|---|
+| Plazo global de la comparación (`global_seconds`) | 180 s | **900 s** | 6 motores × (30 s de arranque + 120 s de cálculo) = 900 s. Así cada motor puede agotar su propio presupuesto sin que los siguientes reciban `GLOBAL_TIME_LIMIT` antes de arrancar. |
+| Máximo de unidades por cálculo (L-03) | 150 | **300** | Permite enviar pedidos más grandes. Si un motor no termina, lo informa con su motivo explícito (`TIME_BUDGET_EXCEEDED`), no como «sin solución». |
+| Tope de unidades del evento `ordering_ready` | 150 | **300** | Acompaña a L-03. 300 referencias ocupan ~30 KB, por debajo del máximo de 64 KB por evento. |
+| Cálculo por motor | 120 s | 120 s | Sin cambio. |
+| Memoria (256 MiB por worker, 1 GiB RSS) | — | — | Sin cambio. |
+
+Con 300 piezas, la suma de los seis tiempos medidos en la §4 es ~720 s, dentro de
+los 900 s. Con el plazo anterior de 180 s, después de los 120 s de FF solo
+quedaban unos 60 s para BF, y los motores siguientes en la cola habrían recibido
+`GLOBAL_TIME_LIMIT` sin arrancar.
+
+## 4. Resultados
+
+**Condiciones de la medición:**
+- Windows, Python 3.11.9, **sin `RLIMIT_AS`** (el módulo `resource` no existe en Windows).
+- **Una corrida por tamaño.** Son tiempos de reloj, no medianas ni garantías.
+- **Motores aislados:** cada uno corre en su propio proceso `spawn`, con
+  `EngineExecutionAdapter` y un checkpoint de 120 s como el del worker de
+  producción. No usa BD ni el comparador de punta a punta (supervisor, IPC,
+  persistencia).
+- **Piezas sintéticas grandes**, copiadas de `scripts/benchmark_comparison.py`:
+  - rectángulo 600×800, círculo r 260 y pentágono (0,0)(500,0)(620,400)(250,700)(0,400);
+  - dos materiales; margen 3 mm, separación 3 mm, resolución 1 mm, paso 5°.
+- **Planchas:** 2140×3300, una por pieza del material, entre 4 y 50 (L-07).
+
+| Piezas | Motor | Segundos | Colocadas | Planchas | Aprov. % | Motivo |
+|---:|---|---:|---:|---:|---:|---|
+| 46 | FF | 4,64 | 46/46 | 4 | 54,928 | COMPLETED |
+| 46 | BF | 12,12 | 46/46 | 4 | 54,928 | COMPLETED |
+| 46 | WF | 9,53 | 46/46 | 4 | 54,928 | COMPLETED |
+| 46 | HF | 4,77 | 46/46 | 4 | 54,928 | COMPLETED |
+| 46 | M5 | 93,75 | 46/46 | 16 | 13,732 | COMPLETED |
+| 46 | M6-BS | 0,00 | 0/46 | — | — | STATE_MEMORY_LIMIT |
+| 100 | FF | 16,61 | 100/100 | 8 | 59,623 | COMPLETED |
+| 100 | BF | 54,64 | 100/100 | 8 | 59,623 | COMPLETED |
+| 100 | WF | 40,50 | 100/100 | 8 | 59,623 | COMPLETED |
+| 100 | HF | 16,47 | 100/100 | 8 | 59,623 | COMPLETED |
+| 100 | M5 | 120,12 | — | — | — | TIME_BUDGET_EXCEEDED |
+| 100 | M6-BS | 0,00 | 0/100 | — | — | STATE_MEMORY_LIMIT |
+| 150 | FF | 47,12 | 150/150 | 10 | 71,465 | COMPLETED |
+| 150 | BF | 103,81 | 150/150 | 10 | 71,465 | COMPLETED |
+| 150 | WF | 81,41 | 150/150 | 10 | 71,465 | COMPLETED |
+| 150 | HF | 47,98 | 150/150 | 10 | 71,465 | COMPLETED |
+| 150 | M5 | 120,09 | — | — | — | TIME_BUDGET_EXCEEDED |
+| 150 | M6-BS | 0,00 | 0/150 | — | — | STATE_MEMORY_LIMIT |
+| 200 | FF | 67,81 | 200/200 | 14 | 68,352 | COMPLETED |
+| 200 | BF | 120,00 | — | — | — | TIME_BUDGET_EXCEEDED |
+| 200 | WF | 118,66 | 200/200 | 14 | 68,352 | COMPLETED |
+| 200 | HF | 69,03 | 200/200 | 14 | 68,352 | COMPLETED |
+| 200 | M5 | 120,05 | — | — | — | TIME_BUDGET_EXCEEDED |
+| 200 | M6-BS | 0,00 | 0/200 | — | — | STATE_MEMORY_LIMIT |
+| 300 | FF | 120,00 | — | — | — | TIME_BUDGET_EXCEEDED |
+| 300 | BF | 120,00 | — | — | — | TIME_BUDGET_EXCEEDED |
+| 300 | WF | 120,00 | — | — | — | TIME_BUDGET_EXCEEDED |
+| 300 | HF | 120,00 | — | — | — | TIME_BUDGET_EXCEEDED |
+| 300 | M5 | 120,09 | — | — | — | TIME_BUDGET_EXCEEDED |
+| 300 | M6-BS | 0,00 | 0/300 | — | — | STATE_MEMORY_LIMIT |
+
+`—` indica que el motor no entregó un resultado. Cuando el motivo es
+`TIME_BUDGET_EXCEEDED`, la consola muestra además el tipo de excepción
+(`TimeBudgetExceeded`).
+
+## 5. Rango soportado y límites conocidos
+
+**Rango soportado con piezas grandes** (esta carga y esta máquina):
+
+| Piezas | Motores que completan en 120 s |
+|---:|---|
+| hasta 150 | FF, BF, WF y HF |
+| 200 | FF, WF y HF (BF agota sus 120 s) |
+| 300 | ninguno |
+
+Con el plazo global de 900 s, los seis motores corren y cada uno termina con su
+propio límite. Con piezas más pequeñas el rango es mayor, pero aquí no se midió.
+
+**Límites conocidos (no se corrigen en esta tarea):**
+- **M5** (motor de otro compañero, no se modificó) abre planchas nuevas igual que
+  el WF anterior: con 46 piezas usa 16 planchas y logra 13,7 % de aprovechamiento.
+  Desde 100 piezas no completa en 120 s. Solo se informa.
+- **M6-BS** (motor de otro compañero, no se modificó) termina de inmediato por
+  `STATE_MEMORY_LIMIT` en todas las cargas con planchas de 2140×3300. Más tiempo
+  no lo resuelve. Queda como límite conocido; su corrección es una tarea aparte.
+- **L-03 = 300 no garantiza un resultado.** Un cálculo admitido de 300 unidades
+  grandes termina con `TIME_BUDGET_EXCEEDED` en todos los motores. La aplicación
+  lo informa como fallo explícito, no como «sin solución».
+- En Linux con `RLIMIT_AS` de 256 MiB (producción y CI) los tiempos y los fallos
+  de memoria pueden ser distintos; esta medición es en Windows y sin ese límite.
+
+## 6. Cómo reproducir
+
+En PowerShell, desde `backend\` y con el venv activo:
+
+```powershell
+python -m scripts.benchmark_load_engines 46 100 150 200 300
+```
+
+- No necesita `.env`, base de datos ni PostgreSQL de pruebas, y no modifica el inventario.
+- En el peor caso, cada motor tarda ~150 s (30 s de arranque + 120 s de cálculo).
+  Con los cinco tamaños, en esta medición la ejecución completa tomó unos 40 min;
+  el máximo teórico es ~75 min.
+- En Linux el mismo comando aplica `RLIMIT_AS` de 256 MiB, igual que el worker de
+  producción. La primera línea de la salida indica si está activo.
+
+Pruebas automáticas relacionadas (backend, en Windows):
+
+```powershell
+python -m pytest -q --ignore=tests/unit/optimization/test_comparison_runner.py --ignore=tests/unit/optimization/test_sequential_runner.py
+```

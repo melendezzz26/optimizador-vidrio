@@ -182,7 +182,18 @@ def trace_policy(result):
             def key(c):
                 score = c.remaining_free_cells_after_placement
                 return ((-score if result.method == 'WF' else score), c.stock_rank, c.orientation_rank, c.row, c.column)
-            winner = (candidates[0] if result.method == 'FF' else min(candidates, key=key)) if candidates else None
+            def tie(c):
+                return c.stock_rank, c.orientation_rank, c.row, c.column
+            if not candidates:
+                winner = None
+            elif result.method == 'FF':
+                winner = candidates[0]
+            elif result.method == 'WF':
+                # SPEC-TA-019 v2: best source already in use; otherwise lowest-rank unused one.
+                in_use = [c for c in candidates if any(c.layout.occupied)]
+                winner = min(in_use, key=key) if in_use else min(candidates, key=tie)
+            else:
+                winner = min(candidates, key=key)
             placement = actual.get(unit.identity)
             assert (winner is None) == (placement is None)
             if winner:

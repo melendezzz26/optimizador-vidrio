@@ -20,9 +20,26 @@ from .test_runs import prepared  # noqa: F401
 
 @pytest.fixture
 def completed(session_factory, comparison_setup):
-    # FF llena 6; BF llena las dos unidades de 5; WF usa una de 5 y una de 6.
+    # FF llena 6; BF llena las dos unidades de 5; WF (SPEC-TA-019 v2) también llena 6.
     with session_factory() as s:
         s.add(Plancha(id_plancha=6, ancho_mm=8, alto_mm=2, espesor_mm=6, cantidad=1, estado=True,
+            fecha_registro=datetime.now(timezone.utc), id_tipo_vidrio=7))
+        s.commit()
+    current = accept(comparison_setup)
+    _, _, uow = comparison_setup
+    for method in ENGINES:
+        current = save(uow, current, method)
+    return finish(uow, current)
+
+
+@pytest.fixture
+def completed_split(session_factory, comparison_setup):
+    # Escenario propio para rollback y concurrencia: la confirmación de WF debe consumir
+    # más de una fuente y crear un retazo. Cuatro piezas 2x2; plancha 6 de 6x2 (más
+    # reciente, se ofrece primero) y plancha 5 de 4x2 x2. WF v2 llena la 6 con tres
+    # piezas y abre la 5 (unidad 1) para la cuarta: queda libre 2x2 en la 5 -> un retazo.
+    with session_factory() as s:
+        s.add(Plancha(id_plancha=6, ancho_mm=6, alto_mm=2, espesor_mm=6, cantidad=1, estado=True,
             fecha_registro=datetime.now(timezone.utc), id_tipo_vidrio=7))
         s.commit()
     current = accept(comparison_setup)
@@ -43,7 +60,7 @@ def confirm(uow, current, actor, key="confirm-comparison-key"):
                                          current.version, key, actor)
 
 
-@pytest.mark.parametrize("method,remaining,rows", [("FF", (2, 0), 1), ("BF", (0, 1), 1), ("WF", (1, 0), 2)])
+@pytest.mark.parametrize("method,remaining,rows", [("FF", (2, 0), 1), ("BF", (0, 1), 1), ("WF", (2, 0), 1)])
 def test_confirmation_consumes_only_the_selected_engine(session_factory, comparison_setup, completed, method, remaining, rows):
     actor, ids, uow = comparison_setup
     current = choose(uow, completed, method)
@@ -63,7 +80,7 @@ def test_confirmation_consumes_only_the_selected_engine(session_factory, compari
         remnants = s.scalars(select(Retazo)).all()
         assert all(r.id_ejecucion_origen == current.selected_execution_id and r.codigo.startswith(method + "-") for r in remnants)
         if method == "WF":
-            assert len(remnants) == 2
+            assert len(remnants) == 0  # la plancha 8x2 queda llena: no hay retazo
     with pytest.raises(RunError), uow() as tx:
         tx.comparisons.release(loaded.comparison_id, loaded.version, actor)
     with pytest.raises(RunError), uow() as tx:
@@ -107,9 +124,9 @@ def test_stock_conflict_can_release_without_destroying_history(session_factory, 
         assert s.scalar(select(func.count()).select_from(MovimientoInventario)) == 0
 
 
-def test_failure_creating_residual_rolls_back_all_consumption(session_factory, comparison_setup, completed):
+def test_failure_creating_residual_rolls_back_all_consumption(session_factory, comparison_setup, completed_split):
     actor, ids, uow = comparison_setup
-    current = choose(uow, completed, "WF")
+    current = choose(uow, completed_split, "WF")
     def fail(session, flush_context, instances):
         if any(isinstance(o, Retazo) for o in session.new):
             raise RuntimeError("synthetic remnant write failure")
@@ -128,9 +145,9 @@ def test_failure_creating_residual_rolls_back_all_consumption(session_factory, c
         assert s.scalar(select(func.count()).select_from(MovimientoInventario)) == 0
 
 
-def test_concurrent_repeated_confirmation_returns_same_receipt_once(session_factory, comparison_setup, completed):
+def test_concurrent_repeated_confirmation_returns_same_receipt_once(session_factory, comparison_setup, completed_split):
     actor, _, uow = comparison_setup
-    current = choose(uow, completed, "WF")
+    current = choose(uow, completed_split, "WF")
     gate = Barrier(2)
     def submitted():
         gate.wait(timeout=5)
@@ -140,8 +157,10 @@ def test_concurrent_repeated_confirmation_returns_same_receipt_once(session_fact
         left, right = [f.result(timeout=15) for f in jobs]
     assert left == right
     with session_factory() as s:
+        # Consumo una sola vez: una unidad de la 6 y una de la 5 (un movimiento por plancha).
+        assert (s.get(Plancha, 5).cantidad, s.get(Plancha, 6).cantidad) == (1, 0)
         assert s.scalar(select(func.count()).select_from(MovimientoInventario)) == 2
-        assert s.scalar(select(func.count()).select_from(Retazo)) == 2
+        assert s.scalar(select(func.count()).select_from(Retazo)) == 1
 
 
 @pytest.mark.parametrize("competing", ["selection", "release"])

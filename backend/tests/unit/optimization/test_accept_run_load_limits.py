@@ -53,7 +53,7 @@ def test_l01_is_rejected_before_opening_the_transaction():
 
 
 @pytest.mark.parametrize("rows,name", [
-    ([row(quantity=151)], "units_per_run"),
+    ([row(quantity=301)], "units_per_run"),
     ([row(quantity=2147483647)], "units_per_run"),
     ([row(geometry=polygon(129))], "vertices_per_piece"),
     ([row(identifier=i + 1, width=1300, height=1000 + i) for i in range(3)], "raster_memory"),
@@ -79,12 +79,12 @@ def test_p4_stock_rejection_never_expands_or_writes(no_expansion):
 
 def test_exact_limits_are_accepted_with_the_same_problem_as_before():
     """RN-03: dentro del presupuesto, el problema preparado es idéntico al de antes de TA-037."""
-    rows = [row(identifier=1, quantity=100), row(identifier=2, quantity=50, geometry=polygon(128))]
+    rows = [row(identifier=1, quantity=200), row(identifier=2, quantity=100, geometry=polygon(128))]
     uow, counter = unit_of_work(rows), Counter(50)
     AcceptRun(lambda: uow, counter).execute([1], 1)
     accepted = uow.runs.create.call_args.args[0]
     assert accepted == prepare_persisted_problem((1,), rows, CONFIG)
-    assert len(accepted.units) == 150
+    assert len(accepted.units) == 300  # L-03 exacto (150 → 300, 04/11/2026)
     assert counter.calls == [(1, rows[0]["espesor_mm"])]
     uow.orders.transition.assert_called_once()
 
