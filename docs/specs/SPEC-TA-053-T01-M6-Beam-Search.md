@@ -9,7 +9,7 @@
 | Revisor humano esperado | Andro Joseph Quispe Cesias; el PR #91 no registra una review aprobatoria al 2026-11-02 |
 | Dependencia | SP-006 |
 | Heuristica | M6 - Beam Search acotada (BS-k) |
-| Estado | Implementada y validada; TA-053 T02 completada en `test/TA-053-m6-beam-search` |
+| Estado | **Verified** (v1.3): PR #106 fusionado en `integration-02`, desplegado en Heroku y probado en vivo el 07/11/2026. TA-053 T02 completada en `test/TA-053-m6-beam-search` |
 | Rama | `feature/TA-053-m6-beam-search-integrated` |
 | Base | `origin/integration/sprint-01` |
 
@@ -253,3 +253,4 @@ integracion publica de M6 y TA-043 siguen fuera de alcance.
 | 2026-11-07 | 1.1 | Implemented | S2-M6 F1 (Fabricio Aguilar, rama `fix/S2-m6-rendimiento`): respaldo First Fit al detenerse por un limite (`complete_on_stop`), contadores `fallback_*` y etiqueta en la UI. Se versionaron RF-01, CA-5, CA-7 y "Limites". Asignado por el equipo tras la revision del 04/11/2026: M6 no colocaba piezas con planchas reales. Carga 6/46/100: de 0/6 (`TIME_LIMIT`) y 0/46, 0/100 (`STATE_MEMORY_LIMIT`) a 6/6, 46/46 y 100/100. |
 | 2026-11-07 | 1.2 | Implemented | S2-M6 F2: layout vacio compartido por material, `initial_bound` por material distinto, medicion incremental de memoria (siempre >= `graph_bytes`), puntaje reutilizado sobre layouts vacios compartidos, tope de 128 MiB de `pack()` en el respaldo. Con 46 y 100 piezas desaparece `STATE_MEMORY_LIMIT`; el perfil paso de 63 % del tiempo en `graph_bytes` a 95 % en `largest_rectangle` (0,38 s por llamada). |
 | 2026-11-07 | 1.3 | Implemented | S2-M6 F4b: `metrics.largest_rectangle` por tramos de columnas, con resultado identico. 0,38 s a 0,24 s por llamada; en 30 s M6 pasa de 75 puntajes calculados (perfil F4a) a 117 sucesores evaluados y decide 1 de 6 unidades (antes 0). M5 con 46 piezas: 96,9 s a 38,4 s, con el mismo resultado. Limite conocido y mejora futura documentados. |
+| 2026-11-07 | 1.3 | Verified | PR #106 (`fix/S2-m6-rendimiento`) fusionado en `integration-02`; tras el merge, el workflow de Pages (que ejecuta el CI completo: backend, frontend y E2E) termino en success para `b275f6a`. Desplegado en Heroku y probado en vivo: comparacion #55 con 6 de 6 metodos completos. El limite conocido documentado en v1.3 se conserva. Registrado en `fix/S2-cierre-observaciones`. |

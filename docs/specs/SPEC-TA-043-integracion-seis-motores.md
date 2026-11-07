@@ -294,7 +294,7 @@ por redactar o probar solo contratos.
 | CA-17 | RF-17 | BS-2 integrado conserva ancho, traza, placements y métricas respecto de M6 directo/SP-006 en fixtures equivalentes sin corte temporal. |
 | CA-18 | RF-18 | Callbacks no producen TypeError ni alteran resultado; rama provisional no se acumula como placement definitivo; al persistir, API/2D/3D coinciden con la frontera ganadora. |
 | CA-19 | RF-19 | Recarga, expiración visual y reinicio recuperan resultados/elección/recibo sin optimizar otra vez; permisos e identidades impiden cruces de ejecuciones. |
-| CA-20 | RF-20 | Si HU-018 se integra, pedido importado mixto ejecuta seis motores a 5° dentro de 150 unidades; geometría/cantidades se conservan. Antes se registra condicionado, sin falso PASS. |
+| CA-20 | RF-20 | Si HU-018 se integra, pedido importado mixto ejecuta seis motores a 5° dentro de 150 unidades; geometría/cantidades se conservan. Antes se registra condicionado, sin falso PASS. **Cubierto (07/11/2026):** HU-018 está integrada; `tests/integration/optimization/test_hu018_imported_order.py::test_ca20_imported_mixed_order_completes_with_each_of_the_six_engines_at_five_degrees` procesa el pedido importado mixto con FF, BF, WF, HF, M5 y M6-BS por `EngineExecutionAdapter` a 5°, dentro del presupuesto de carga vigente (L-03 = 300, TA-037 v1.4), y verifica que complete y conserve geometría y cantidades. |
 | CA-N01 | RNF-01 | Fallo/mutación del estado privado de un worker no altera entrada ni resultados ajenos; referencias de máscaras cruzadas se rechazan. |
 | CA-N02 | RNF-02 | Solo se inicia la concurrencia configurada y medida; límites por motor/global/IPC/retención se verifican realmente sin ampliarlos para pasar pruebas. |
 | CA-N03 | RNF-03 | Evidencia temporal demuestra join de hijos/lectores/monitor y fin del supervisor antes de admisión libre; muerte, timeout y fallo DB no dejan procesos propios vivos. |
@@ -479,6 +479,12 @@ no almacenar secretos. El cierre exige CA-N06 y CA-S01–CA-S10, smoke increment
 e integral reales, regresión y revisión humana; documentar una prueba no la ejecuta.
 
 ## Historial de estado
+
+- 07/11/2026 — **Draft**: CA-20 pasa a cubierto con la prueba automática
+  `test_ca20_imported_mixed_order_completes_with_each_of_the_six_engines_at_five_degrees`
+  (pedido importado de HU-018, seis motores a 5°, 7 passed). Sin cambios de requisitos,
+  contratos, catálogo ni límites. Cambio de Fabricio Aguilar en `fix/S2-cierre-observaciones`;
+  se avisa al responsable en el PR.
 
 - 06/11/2026 — **Draft**: observación del profesor (revisión del 04/11/2026).
   Presupuesto global 180 → 900 s (6 × (30 s + 120 s)); arranque y cálculo por
