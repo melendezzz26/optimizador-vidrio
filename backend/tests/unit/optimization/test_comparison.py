@@ -84,9 +84,11 @@ def test_single_method_output_is_frozen_and_input_geometry_is_deeply_immutable()
 
 
 def test_policies_remain_distinct_and_zero_or_partial_placement_is_a_valid_result():
-    ff, wf = compare(next(representative_cases()))
-    assert ff.result.placements[0].stock.material_id == 1
-    assert wf.result.placements[0].stock.material_id == 2
+    # SPEC-TA-019 v2: WF differs from FF only between sources already in use.
+    ff, wf = compare(problem([piece(1, width=4, height=3), piece(2, width=3, height=3), piece(3, width=1, height=1)],
+                             [stock(1, width=4, height=4), stock(2, width=4, height=4)]))
+    assert ff.result.placements[-1].stock.material_id == 1
+    assert wf.result.placements[-1].stock.material_id == 2
     for prepared in (problem(candidates=[]), problem([piece(width=99, height=99)])):
         entries = compare(prepared)
         assert len(entries) == 2

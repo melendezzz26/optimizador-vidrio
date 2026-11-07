@@ -20,7 +20,7 @@ from .test_runs import prepared  # noqa: F401
 
 @pytest.fixture
 def completed(session_factory, comparison_setup):
-    # FF llena 6; BF llena las dos unidades de 5; WF usa una de 5 y una de 6.
+    # FF llena 6; BF llena las dos unidades de 5; WF (SPEC-TA-019 v2) también llena 6.
     with session_factory() as s:
         s.add(Plancha(id_plancha=6, ancho_mm=8, alto_mm=2, espesor_mm=6, cantidad=1, estado=True,
             fecha_registro=datetime.now(timezone.utc), id_tipo_vidrio=7))
@@ -43,7 +43,7 @@ def confirm(uow, current, actor, key="confirm-comparison-key"):
                                          current.version, key, actor)
 
 
-@pytest.mark.parametrize("method,remaining,rows", [("FF", (2, 0), 1), ("BF", (0, 1), 1), ("WF", (1, 0), 2)])
+@pytest.mark.parametrize("method,remaining,rows", [("FF", (2, 0), 1), ("BF", (0, 1), 1), ("WF", (2, 0), 1)])
 def test_confirmation_consumes_only_the_selected_engine(session_factory, comparison_setup, completed, method, remaining, rows):
     actor, ids, uow = comparison_setup
     current = choose(uow, completed, method)
@@ -63,7 +63,7 @@ def test_confirmation_consumes_only_the_selected_engine(session_factory, compari
         remnants = s.scalars(select(Retazo)).all()
         assert all(r.id_ejecucion_origen == current.selected_execution_id and r.codigo.startswith(method + "-") for r in remnants)
         if method == "WF":
-            assert len(remnants) == 2
+            assert len(remnants) == 0  # la plancha 8x2 queda llena: no hay retazo
     with pytest.raises(RunError), uow() as tx:
         tx.comparisons.release(loaded.comparison_id, loaded.version, actor)
     with pytest.raises(RunError), uow() as tx:

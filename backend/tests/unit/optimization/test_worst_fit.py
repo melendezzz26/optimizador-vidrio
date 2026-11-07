@@ -28,24 +28,73 @@ def optimize(rows=None, candidates=None, cfg=None, callback=None):
     return WorstFitOptimizer().optimize(problem(rows, candidates, cfg), callback)
 
 
-def candidate(source=None, cfg=None, row=0, column=0, **ranks):
+def candidate(source=None, cfg=None, row=0, column=0, used_at=None, **ranks):
     source, cfg = source or stock(), cfg or config()
     unit = problem([piece(width=1, height=1)], [source], cfg).units[0]
     cache = RasterCache()
+    orientation = cache.orientations(unit, cfg.resolution_mm, cfg.angular_step_deg)[0].orientation
+    layout = _empty_layout(cache.material(source, cfg.resolution_mm), cfg)
+    if used_at is not None:
+        # A real earlier 1x1 placement makes the source "in use" (SPEC-TA-019 v2).
+        layout = layout.place(orientation.mask, *used_at)
     return FeasibleCandidate(
-        stock=source, layout=_empty_layout(cache.material(source, cfg.resolution_mm), cfg),
-        orientation=cache.orientations(unit, cfg.resolution_mm, cfg.angular_step_deg)[0].orientation,
+        stock=source, layout=layout, orientation=orientation,
         row=row, column=column, stock_rank=ranks.get("stock_rank", 0),
         orientation_rank=ranks.get("orientation_rank", 0),
     )
 
 
-def test_clearly_worst_source_and_domain_method_identity():
+def test_first_piece_opens_lowest_rank_unused_source_and_domain_method_identity():
+    # v2: with no source in use, WF opens the lowest stock_rank, as FF (before: the 6x4).
     result = optimize([piece(width=2, height=2)],
                       [stock(1, width=4, height=4), stock(2, width=6, height=4), stock(3, width=3, height=3)])
     assert isinstance(result, OptimizationResult) and result.method == "WF"
-    assert result.complete and result.placements[0].stock.material_id == 2
+    assert result.complete and result.placements[0].stock.material_id == 1
     assert (result.placements[0].x_mm, result.placements[0].y_mm) == (0, 0)
+
+
+def test_regression_two_pieces_that_fit_one_sheet_use_one_sheet():
+    # Defect reported in the 04/11/2026 review: WF opened a new sheet per piece.
+    # Before: sheet 2 (12 free cells) beat sheet 1 in use (8) -> [1, 2].
+    result = optimize([piece(width=2, height=2, quantity=2)],
+                      [stock(1, width=4, height=4), stock(2, width=4, height=4)])
+    assert result.complete
+    assert [p.stock.material_id for p in result.placements] == [1, 1]
+    assert [(p.x_mm, p.y_mm) for p in result.placements] == [(0, 0), (2, 0)]
+    assert len(result.materials_used) == 1
+
+
+def test_piece_that_fits_no_source_in_use_opens_lowest_rank_unused_source():
+    # 3x3 cannot share a 4x4; the next source is the unused one with the lowest
+    # stock_rank (exact 3x3), not the one with most free space (6x6).
+    result = optimize([piece(width=3, height=3, quantity=2)],
+                      [stock(1, width=4, height=4), stock(2, width=3, height=3), stock(3, width=6, height=6)])
+    assert result.complete
+    assert [p.stock.material_id for p in result.placements] == [1, 2]
+
+
+def test_remnant_level_still_first_even_with_a_sheet_in_use():
+    remnant_source = stock(8, width=3, height=3, source=MaterialSource.REMNANT)
+    big_sheet = stock(1, width=10, height=10)
+    # The 5x5 only fits the sheet; the 2x2 must go to the unused remnant, not
+    # to the sheet already in use with much more free space.
+    result = optimize([piece(1, width=5, height=5), piece(2, width=2, height=2)], [big_sheet, remnant_source])
+    assert result.complete
+    assert [p.stock for p in result.placements] == [big_sheet, remnant_source]
+
+
+@pytest.mark.parametrize("source", [MaterialSource.SHEET, MaterialSource.REMNANT])
+def test_among_sources_in_use_wf_picks_most_post_placement_free_cells(source):
+    # 4x3 fills source 1 (4 free); 3x3 does not fit there and opens source 2 (7 free).
+    # The 1x1 goes where it leaves more free cells: source 2 (6) over source 1 (3).
+    rows = [piece(1, width=4, height=3), piece(2, width=3, height=3), piece(3, width=1, height=1)]
+    sources = [stock(1, width=4, height=4, source=source), stock(2, width=4, height=4, source=source)]
+    result = optimize(rows, sources)
+    assert result.complete
+    assert [p.stock.material_id for p in result.placements] == [1, 2, 2]
+    assert (result.placements[2].x_mm, result.placements[2].y_mm) == (3, 0)
+    ff = FirstFitOptimizer().optimize(problem(rows, sources))
+    assert [p.stock.material_id for p in ff.placements] == [1, 2, 1]
 
 
 def test_tie_preserves_upstream_stock_rank_not_id_order():
@@ -54,34 +103,43 @@ def test_tie_preserves_upstream_stock_rank_not_id_order():
     assert optimize(candidates=[second, first]).placements[0].stock == second
 
 
+@pytest.mark.parametrize("used_at", [None, (3, 5)], ids=["unused", "in-use"])
 @pytest.mark.parametrize("field", ["stock_rank", "orientation_rank", "row", "column"])
-def test_selector_uses_all_approved_tiebreaks(field):
-    earlier = candidate()
+def test_selector_uses_all_approved_tiebreaks(field, used_at):
+    earlier = candidate(used_at=used_at)
     later = replace(earlier, **{field: 1})
     assert WorstFitSelector().select(iter([later, earlier])) is earlier
     assert WorstFitSelector().select(iter([earlier, later])) is earlier
 
 
+def test_selector_prefers_any_source_in_use_over_an_unused_one():
+    unused = candidate(stock(1, width=10, height=10))
+    used = candidate(stock(2), used_at=(3, 5), stock_rank=1)
+    assert WorstFitSelector().select(iter([unused, used])) is used
+
+
 def test_score_uses_real_post_placement_separation_and_does_not_mutate_layout():
-    square = candidate(stock(1, width=4, height=4), config(separation_mm=D(1)))
-    narrow = candidate(stock(2, width=1, height=15), config(separation_mm=D(1)), stock_rank=1)
+    cfg = config(separation_mm=D(1))
+    # Both sources are in use: an earlier 1x1 sits at the far end of each one.
+    square = candidate(stock(1, width=5, height=5), cfg, used_at=(4, 4))
+    narrow = candidate(stock(2, width=1, height=22), cfg, used_at=(21, 0), stock_rank=1)
     before = (square.layout, narrow.layout)
     # Prior capacity would select the square, but its 2x2 halo leaves less room.
-    assert (square.free_cells_before, narrow.free_cells_before) == (16, 15)
-    assert (square.remaining_free_cells_after_placement, narrow.remaining_free_cells_after_placement) == (12, 13)
+    assert (square.free_cells_before, narrow.free_cells_before) == (21, 20)
+    assert (square.remaining_free_cells_after_placement, narrow.remaining_free_cells_after_placement) == (17, 18)
     assert WorstFitSelector().select(iter([square, narrow])) is narrow
     assert (square.layout, narrow.layout) == before
-    assert all(not any(layout.occupied) and not any(layout.blocked) for layout in before)
+    # Scoring never commits the trial: each real layout keeps only its earlier piece.
+    assert [sum(bits.bit_count() for bits in layout.occupied) for layout in before] == [1, 1]
     assert square.layout_after is square.layout_after  # one immutable trial per candidate
-    result = optimize([piece(width=1, height=1)], [square.stock, narrow.stock], config(separation_mm=D(1)))
-    assert result.placements[0].stock == narrow.stock
 
 
-def test_multiple_pieces_change_source_and_losing_trials_are_not_applied():
+def test_multiple_pieces_fill_source_in_use_and_losing_trials_are_not_applied():
+    # v2: the in-use sheet keeps receiving pieces while they fit (before: [1, 2, 1]).
     result = optimize([piece(width=2, height=2, quantity=3)],
                       [stock(1, width=4, height=4), stock(2, width=4, height=4)])
-    assert [p.stock.material_id for p in result.placements] == [1, 2, 1]
-    assert [(p.x_mm, p.y_mm) for p in result.placements] == [(0, 0), (0, 0), (2, 0)]
+    assert [p.stock.material_id for p in result.placements] == [1, 1, 1]
+    assert [(p.x_mm, p.y_mm) for p in result.placements] == [(0, 0), (2, 0), (0, 2)]
 
 
 def test_rotation_uses_common_component_and_first_feasible_angle():
@@ -125,14 +183,16 @@ def test_remnant_priority_prevents_even_evaluating_sheets():
 def test_worst_fit_between_remnants():
     small = stock(1, width=3, height=3, source=MaterialSource.REMNANT)
     large = stock(2, width=4, height=4, source=MaterialSource.REMNANT)
-    assert optimize([piece(width=2, height=2)], [small, stock(3), large]).placements[0].stock == large
+    # v2: no remnant in use yet, so the lowest stock_rank opens (before: large).
+    assert optimize([piece(width=2, height=2)], [small, stock(3), large]).placements[0].stock == small
 
 
 def test_sheet_fallback_only_when_no_remnant_is_feasible():
     remnants = [stock(i, width=1, height=1, source=MaterialSource.REMNANT) for i in (1, 2)]
-    larger_sheet = stock(4, width=5, height=4)
-    result = optimize([piece(width=2, height=2)], remnants + [stock(3, width=3, height=3), larger_sheet])
-    assert result.placements[0].stock == larger_sheet
+    first_sheet = stock(3, width=3, height=3)
+    result = optimize([piece(width=2, height=2)], remnants + [first_sheet, stock(4, width=5, height=4)])
+    # v2: lowest-rank unused sheet (before: the larger 5x4).
+    assert result.placements[0].stock == first_sheet
 
 
 def test_physical_units_have_independent_layouts_and_no_new_stock_is_invented():
@@ -149,7 +209,8 @@ def test_margin_changes_score_and_is_respected_at_canonical_position():
     assert (square.free_cells_before, narrow.free_cells_before) == (16, 15)
     assert (square.remaining_free_cells_after_placement, narrow.remaining_free_cells_after_placement) == (12, 13)
     result = optimize([piece(width=1, height=1)], [square.stock, narrow.stock], cfg)
-    assert result.placements[0].stock == narrow.stock
+    # v2: both unused, so the lowest stock_rank opens (before: narrow); margin is kept.
+    assert result.placements[0].stock == square.stock
     assert (result.placements[0].x_mm, result.placements[0].y_mm) == (1, 1)
     assert not optimize([piece(width=2, height=2)], [narrow.stock], cfg).complete
 
@@ -168,7 +229,8 @@ def test_irregular_material_score_counts_interior_not_bbox():
     # Triangle bbox area is 16 but its interior raster has only 6 usable cells.
     a, b = candidate(triangle), candidate(rectangle)
     assert (a.remaining_free_cells_after_placement, b.remaining_free_cells_after_placement) == (5, 8)
-    assert optimize([piece(width=1, height=1)], [triangle, rectangle]).placements[0].stock == rectangle
+    # v2: both unused, so the lowest stock_rank opens (before: rectangle).
+    assert optimize([piece(width=1, height=1)], [triangle, rectangle]).placements[0].stock == triangle
     assert not optimize([piece(width=3, height=3)], [triangle]).complete
 
 
@@ -223,12 +285,12 @@ def test_selector_empty_input():
 
 
 def test_candidate_selection_is_incremental_and_releases_discarded_layouts(monkeypatch):
-    """Ten times more feasible sources must not retain ten times more trials."""
+    """Ten times more sources in use must not retain ten times more trials."""
     original_init, original_place = FeasibleCandidate.__init__, SheetLayout.place
 
     def measure(source_count):
         candidate_refs, layout_refs = [], []
-        counts = {"generated": 0, "scored": 0}
+        counts = {"in_use": 0, "scored": 0}
         peaks = {"candidates": 0, "layouts_after": 0}
 
         def sample():
@@ -236,29 +298,34 @@ def test_candidate_selection_is_incremental_and_releases_discarded_layouts(monke
             peaks["layouts_after"] = max(peaks["layouts_after"], sum(ref() is not None for ref in layout_refs))
 
         def track_candidate(self, *args, **kwargs):
+            original_init(self, *args, **kwargs)
+            if not any(self.layout.occupied):
+                return  # SPEC-TA-019 v2: unused sources are never scored.
             # An eager list/tuple would generate another candidate before scoring
             # the previous one. Plain functions avoid Mock retaining arguments.
-            assert counts["generated"] == counts["scored"], "Candidates were generated ahead of scoring"
-            original_init(self, *args, **kwargs)
-            counts["generated"] += 1
+            assert counts["in_use"] == counts["scored"], "Candidates were generated ahead of scoring"
+            counts["in_use"] += 1
             candidate_refs.append(weakref.ref(self))
             sample()
 
         def track_place(self, *args, **kwargs):
             after = original_place(self, *args, **kwargs)
-            counts["scored"] += 1
-            layout_refs.append(weakref.ref(after))
-            sample()
+            if any(self.occupied):  # trial placement on a source already in use
+                counts["scored"] += 1
+                layout_refs.append(weakref.ref(after))
+                sample()
             return after
 
         with monkeypatch.context() as instrumentation:
             instrumentation.setattr(FeasibleCandidate, "__init__", track_candidate)
             instrumentation.setattr(SheetLayout, "place", track_place)
-            result = optimize([piece(width=1, height=1, quantity=2)],
+            # One 3x3 per 4x4 puts every source in use; the final 1x1 fits in all of them.
+            result = optimize([piece(1, width=3, height=3, quantity=source_count), piece(2, width=1, height=1)],
                               [stock(i, width=4, height=4) for i in range(1, source_count + 1)])
 
-        assert result.complete and [p.stock.material_id for p in result.placements] == [1, 2]
-        assert counts["generated"] == counts["scored"] == source_count * 2
+        assert result.complete
+        assert [p.stock.material_id for p in result.placements] == [*range(1, source_count + 1), 1]
+        assert counts["in_use"] == counts["scored"] == source_count
         # Discarded trials must disappear while selection is still in progress,
         # rather than merely being released together when the optimizer returns.
         assert peaks["candidates"] < source_count

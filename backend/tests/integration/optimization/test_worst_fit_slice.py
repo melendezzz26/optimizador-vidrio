@@ -90,17 +90,18 @@ def test_real_multiorder_multimaterial_stock_to_wf_without_any_database_writes(s
     assert result.total_units == result.placed_units == 4
     assert {p.piece.order_id for p in result.placements} == set(ids)
     assert all(p.piece.material_key == p.stock.material_key for p in result.placements)
+    # SPEC-TA-019 v2: the second glass-8 piece stays in sheet 6 unit 1, already in use.
     assert [(p.stock.source, p.stock.material_id, p.stock.physical_unit_index) for p in result.placements] == [
         (MaterialSource.REMNANT, 9, 1), (MaterialSource.SHEET, 5, 1),
-        (MaterialSource.SHEET, 6, 1), (MaterialSource.SHEET, 6, 2),
+        (MaterialSource.SHEET, 6, 1), (MaterialSource.SHEET, 6, 1),
     ]
-    assert [(p.x_mm, p.y_mm) for p in result.placements] == [(0, 0)] * 4
+    assert [(p.x_mm, p.y_mm) for p in result.placements] == [(0, 0)] * 3 + [(2, 0)]
     assert [e.placed_units for e in events if e.kind == "piece_placed"] == [1, 2, 3, 4]
     assert result == WorstFitOptimizer().optimize(with_compatible_stock(prepared, provider))
     measured, residuals = calculate_metrics(result, D(1), D(1))
-    assert measured.method == "WF" and measured.metrics.new_sheets_used == 3
-    assert measured.metrics.material_area_mm2 == 57 and measured.metrics.placed_piece_area_mm2 == 16
-    assert len(residuals) == 4
+    assert measured.method == "WF" and measured.metrics.new_sheets_used == 2
+    assert measured.metrics.material_area_mm2 == 41 and measured.metrics.placed_piece_area_mm2 == 16
+    assert len(residuals) == 3
     assert database_snapshot(factory) == before
     with factory() as session:
         assert all(session.get(Pedido, i).estado == "PENDIENTE" for i in ids)

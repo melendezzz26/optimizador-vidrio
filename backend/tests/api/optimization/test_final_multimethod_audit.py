@@ -132,7 +132,8 @@ def test_real_persisted_policies_geometry_metrics_and_determinism(api, session_f
         assert details[0]['decisions'][0]['candidates'][1]['score'] == 110000
     if case_id.startswith('WF-'):
         assert results['FF'].metrics.new_sheets_used == results['BF'].metrics.new_sheets_used == 1
-        assert results['WF'].metrics.new_sheets_used == (9 if '15-units' in case_id else 10)
+        # SPEC-TA-019 v2: WF keeps filling the sheet in use (before: 9/10 sheets).
+        assert results['WF'].metrics.new_sheets_used == 1
         assert len({p.stock.identity for p in results['WF'].placements}) == results['WF'].metrics.new_sheets_used
     assert inventory(session_factory) == before
     assert runtime.job.runner.last_report['all_workers_stopped']

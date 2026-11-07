@@ -92,7 +92,7 @@ def test_sixteen_pieces_persist_all_engines_with_bounded_connections(api, sessio
             results[execution.method] = result
         assert results["FF"]["metrics"]["planchas_nuevas_usadas"] == 1
         assert results["BF"]["metrics"]["planchas_nuevas_usadas"] == 1
-        assert results["WF"]["metrics"]["planchas_nuevas_usadas"] == 10
+        assert results["WF"]["metrics"]["planchas_nuevas_usadas"] == 1  # SPEC-TA-019 v2 (antes 10)
         with session_factory() as session:
             assert session.get(Plancha, 5).cantidad == 10
             assert session.scalar(select(func.count()).select_from(MovimientoInventario)) == 0
