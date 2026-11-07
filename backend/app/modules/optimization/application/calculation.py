@@ -38,6 +38,10 @@ class CalculateRun:
         result, residuals = calculate_metrics(result, minimum_width, minimum_height)
         duration = max(0, (self.clock() - started - paused) // 1_000_000)
         result = replace(result, computation_time_ms=duration)
+        # The final geometry probe/metrics can outlive the last engine milestone,
+        # including NO_FIT with no placement event. Check before any result SQL.
+        if checkpoint is not None:
+            checkpoint()
         try:
             with self.unit_of_work() as uow:
                 return uow.runs.save_result(optimization_id, result, residuals)

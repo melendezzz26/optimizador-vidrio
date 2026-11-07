@@ -1,0 +1,49 @@
+{
+  "task": "TA-045 global E2E",
+  "tested_sha": "04fa083822f1b9e297092a9fa3507f9c8bbe3d08",
+  "source_branch": "fix/S2-TA045-precision-geometrica",
+  "source_initial_status": "",
+  "checkout": "/tmp/newglass-ta045-global-ds_p1d1y/checkout",
+  "private_tmp": "/tmp/newglass-ta045-global-ds_p1d1y/service-tmp",
+  "tree": "c36b20b07259e55325e5ac3d71bafdcb39a3a50f",
+  "source_sha256": {
+    "frontend/scripts/run-e2e-phases.js": "d9a509ff0e98cf8323df314be4e4ef8095a8bdad4f56886ef1a86e0f34f665cb",
+    "frontend/tests/e2e/e2ePhases.js": "0e1fb33c91c0ec04d24ab457952255bf05dee716152116fdf687180942f50b4b",
+    "frontend/tests/e2e/e2eGateReporter.js": "1b0f99b60f063dae24b57190150a35931da8bab22a85272d4263981cae20d4e7",
+    "frontend/tests/e2e/criticalSpecs.js": "0e1402be7d68420aa42ebff9af56f4bfb9c225bb20ddf5d886c47ad68bb6f6c6",
+    "frontend/playwright.config.js": "7a88941ac1ff0e7f80712b658d1dced47e0e481feaab85d1bbf9a7b16b0b38af",
+    "frontend/tests/e2e/globalTeardown.js": "87efb70200a76b720778c5809c578181c1fe833bf58019e266c945e769c9e7e7",
+    "frontend/package-lock.json": "ebbdac7bfffa91c4a2b90f7a6cab8d5c56ad3fc2d50e2b99d6e9abd5ef43e438",
+    "backend/tests/e2e_server.py": "84670a22a02c3b09782a7a696ff388e48a4ef02ca50a5e8a87fb54f8b6b1e05b",
+    "backend/tests/integration/postgres_support.py": "01b0d801126d4be14ec81cefa3f0bd044062f97017df3fe24155d066b95bdf0d",
+    "backend/tests/optimization_b02_upgrade.py": "bdf45be8458cd789a6cde468d3a74392a119b0b587486e6607b6d3d95e564d66",
+    "backend/app/modules/optimization/domain/placement.py": "253f4d0894419b45406cea550b59111d5f6e1ef09895080a1ab42c7c8ad9f564",
+    "backend/app/modules/optimization/domain/packing.py": "2accdb2a382597421102d652e5b4c5e298d74516541a026e2b81b278b7931b7b"
+  },
+  "command": [
+    "node",
+    "scripts/run-e2e-phases.js"
+  ],
+  "environment": {
+    "CI": "true",
+    "GITHUB_SHA": "04fa083822f1b9e297092a9fa3507f9c8bbe3d08",
+    "PLAYWRIGHT_CHANNEL": "chromium",
+    "PYTHON_DOTENV_DISABLED": "1",
+    "NEWGLASS_REQUIRE_POSTGRES": "1",
+    "NEWGLASS_TEST_PG_BIN": "/usr/lib/postgresql/18/bin",
+    "NEWGLASS_E2E_GATE": "1"
+  },
+  "versions": {
+    "node": "v22.23.2",
+    "python": "Python 3.11.9",
+    "postgres": "postgres (PostgreSQL) 18.6 (Ubuntu 18.6-0ubuntu0.26.04.1)",
+    "playwright": "1.63.0",
+    "chromium": "153.0.8010.12",
+    "vite": "8.3.1"
+  },
+  "orchestrator_exit": 0,
+  "cleanup_exit": 0,
+  "source_status_after": "",
+  "source_hashes_unchanged": true,
+  "protocol_run_directory": "run-CQKTdX"
+}

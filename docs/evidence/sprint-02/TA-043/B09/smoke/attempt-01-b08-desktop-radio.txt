@@ -1,0 +1,8 @@
+ST-INT attempt 01
+Command: tests.optimization_b01_smoke --block B09 --runtime-root /home/fabri/.cache/newglass-validation.SXhCMM
+Result: 3/4 passed; B07 desktop/mobile and B08 mobile passed.
+Failed scenario: chromium-desktop / TA-043 B08 smoke
+Failure: locator.check on radio "Elegir Best Residual Fit" completed the click but
+the radio state did not change. No confirmation request or inventory write was
+reached.
+Follow-up: B08 isolated passed, then the complete B09 rerun passed 4/4.

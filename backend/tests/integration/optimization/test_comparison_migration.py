@@ -8,7 +8,7 @@ import sqlalchemy as sa
 
 from tests.integration.postgres_support import new_database, upgrade
 from tests.integration.test_s1_rbac_migration import downgrade
-from tests.model_contracts import current_metadata, historical_metadata
+from tests.model_contracts import historical_metadata
 from app.modules.optimization.application.runs import AcceptRun
 from app.modules.optimization.application.comparisons import AcceptComparison
 from app.modules.optimization.infrastructure.comparison_uow import SqlComparisonUnitOfWork
@@ -23,7 +23,7 @@ def test_schema_matches_orm_empty_downgrade_and_reupgrade(isolated_postgres):
         assert upgrade(engine, REVISION).returncode == 0
         with engine.connect() as c:
             context = MigrationContext.configure(c, opts={"compare_type": True, "compare_server_default": True})
-            assert compare_metadata(context, current_metadata()) == []
+            assert compare_metadata(context, historical_metadata(REVISION)) == []
         assert downgrade(engine, PREVIOUS).returncode == 0
         with engine.connect() as c:
             context = MigrationContext.configure(c, opts={"compare_type": True, "compare_server_default": True})
@@ -48,9 +48,11 @@ def test_comparative_history_blocks_downgrade_before_any_ddl(session_factory, pr
     factory = partial(SqlComparisonUnitOfWork, session_factory)
     original = AcceptComparison(factory).execute(ids, actor, "migration-test-key")
     engine = session_factory.kw["bind"]
+    with engine.connect() as c:
+        original_revision = c.scalar(sa.text("SELECT version_num FROM alembic_version"))
     result = downgrade(engine, PREVIOUS)
     assert result.returncode != 0 and "Downgrade perdería snapshots comparativos" in result.stderr
     with engine.connect() as c:
-        assert c.scalar(sa.text("SELECT version_num FROM alembic_version")) == REVISION
+        assert c.scalar(sa.text("SELECT version_num FROM alembic_version")) == original_revision
     with factory() as tx:
         assert tx.comparisons.get(original.comparison_id) == original

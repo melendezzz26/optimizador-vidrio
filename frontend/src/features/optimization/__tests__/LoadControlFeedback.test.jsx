@@ -81,6 +81,8 @@ test('TIME_BUDGET_EXCEEDED en el stream muestra el aviso de tiempo máximo', asy
   const notice = document.querySelector('[data-error-kind="time_budget"]');
   expect(notice).toHaveTextContent('El cálculo superó el tiempo máximo');
   expect(notice).toHaveTextContent('No se consumió inventario');
+  expect(notice).toHaveTextContent('actualiza los pedidos pendientes para recalcular');
+  expect(notice).toHaveTextContent('Si siguen en optimización, solicita revisión');
   expect(notice).toHaveFocus();
 });
 

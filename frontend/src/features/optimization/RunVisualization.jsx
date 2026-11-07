@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { RunMaskInspection } from './RunMaskInspection';
 
-export function RunVisualization({ state, adapter, onSessionExpired }) {
+export function RunVisualization({ state, adapter, onSessionExpired, showControls = true }) {
   const [hidden, setHidden] = useState(false);
   const [paused, setPaused] = useState(null);
   const visual = paused ?? state.visual;
@@ -24,10 +24,10 @@ export function RunVisualization({ state, adapter, onSessionExpired }) {
       {current.evaluation_index && <div><dt>Ordinal de la evaluación</dt><dd>{current.evaluation_index}</dd></div>}
       {current.score !== null && current.score !== undefined && <div><dt>Capacidad libre posterior</dt><dd>{current.score} celdas</dd></div>}
     </dl></details>}
-    <div className="optimization-actions">
+    {showControls && <div className="optimization-actions">
       <button type="button" className="ng-button" aria-pressed={paused !== null} onClick={() => setPaused(value => value ? null : state.visual)}>{paused ? 'Reanudar vista' : 'Pausar vista'}</button>
       <button type="button" className="ng-button" aria-expanded={!hidden} onClick={() => setHidden(value => !value)}>{hidden ? 'Mostrar detalle visual' : 'Ocultar detalle visual'}</button>
-    </div>
+    </div>}
     {paused && <p role="status">Vista pausada; el cálculo y su recepción continúan.</p>}
     {!hidden && <RunMaskInspection runId={state.optimizationId} adapter={adapter} visual={visual}
       preferredPlacement={state.placements?.at(-1)} onSessionExpired={onSessionExpired} />}

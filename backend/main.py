@@ -17,9 +17,14 @@ from app.modules.optimization.presentation.router import router as optimization_
 
 @asynccontextmanager
 async def lifespan(app):
-    yield
-    from app.modules.optimization.presentation.comparison_routes import get_comparison_runtime
-    await asyncio.to_thread(get_comparison_runtime().shutdown)
+    from app.modules.optimization.presentation.comparison_supervision_v2 import get_comparison_v2_coordinator
+    await asyncio.to_thread(get_comparison_v2_coordinator().recover_pending)
+    try:
+        yield
+    finally:
+        await asyncio.to_thread(get_comparison_v2_coordinator().shutdown)
+        from app.modules.optimization.presentation.comparison_routes import get_comparison_runtime
+        await asyncio.to_thread(get_comparison_runtime().shutdown)
 
 
 app = FastAPI(
@@ -37,7 +42,7 @@ app.add_middleware(
     allow_credentials=False,
     allow_methods=["GET", "POST", "PATCH", "DELETE", "PUT"],
     allow_headers=["Authorization", "Content-Type", "Idempotency-Key"],
-    expose_headers=["Location"],
+    expose_headers=["Location", "X-Comparison-Recovery"],
 )
 
 # Rutas de autenticaciÃ³n (HU-001)

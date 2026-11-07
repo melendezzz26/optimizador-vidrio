@@ -158,7 +158,9 @@ for (const [key, role] of Object.entries(roles)) {
       await expect(page.getByRole('button', { name: 'Revisar vidrios y piezas', exact: true })).toHaveCount(0);
       await expect(page.getByRole('button', { name: 'Calcular distribución', exact: true })).toHaveCount(0);
       await expect(page.getByRole('button', { name: 'Confirmar corte', exact: true })).toHaveCount(0);
-      await expect(page.getByRole('button', { name: 'Consultar', exact: true })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Ver comparaciones anteriores', exact: true })).toBeVisible();
+      await page.getByRole('button', { name: 'Ver comparaciones anteriores', exact: true }).click();
+      await expect(page.getByRole('region', { name: 'Comparaciones anteriores' })).toBeVisible();
       await expect(page.getByRole('button', { name: 'Comparar con los tres motores', exact: true })).toHaveCount(0);
     }
     await capture(page, `dashboard-${screenshotName}-optimizacion.png`);

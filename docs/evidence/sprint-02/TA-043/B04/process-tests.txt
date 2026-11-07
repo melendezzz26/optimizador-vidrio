@@ -1,0 +1,21 @@
+...............F.                                                        [100%]
+=================================== FAILURES ===================================
+__________ test_m6_native_resource_reason_survives_process_transport ___________
+tests/unit/optimization/test_sequential_runner.py:193: in test_m6_native_resource_reason_survives_process_transport
+    (dict(seconds=.000000001),'TIME_LIMIT')])
+E   AssertionError: assert (None is not None)
+E    +  where None = ExecutionPayloadV2(method='M6-BS', result=None, diagnostic=ExecutionDiagnostic(origin='SUPERVISOR', termination_reason='EXECUTION_FAILED', statistics=mappingproxy({}))).result
+E    +    where ExecutionPayloadV2(method='M6-BS', result=None, diagnostic=ExecutionDiagnostic(origin='SUPERVISOR', termination_reason='EXECUTION_FAILED', statistics=mappingproxy({}))) = ProcessExecution(scope=ExecutionScope(comparison_id=43, execution_id=4306, method='M6-BS'), payload=ExecutionPayloadV2...mination_reason='EXECUTION_FAILED', statistics=mappingproxy({}))), residuals=(), dispatched=True, engine_started=False).payload
+----------------------------- Captured stderr call -----------------------------
+Process comparison-v2-M6-BS:
+Traceback (most recent call last):
+  File "/mnt/c/Users/fabri/Documents/TALLER INTEGRADOR I/optimizador-vidrio/backend/.venv/python/cpython-3.11.9-linux-x86_64-gnu/lib/python3.11/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/mnt/c/Users/fabri/Documents/TALLER INTEGRADOR I/optimizador-vidrio/backend/.venv/python/cpython-3.11.9-linux-x86_64-gnu/lib/python3.11/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/mnt/c/Users/fabri/Documents/TALLER INTEGRADOR I/optimizador-vidrio/backend/tests/unit/optimization/test_sequential_runner.py", line 72, in limited_beam
+    calculation_worker_v2(*args)
+TypeError: calculation_worker_v2() missing 1 required positional argument: 'observed'
+=========================== short test summary info ============================
+FAILED tests/unit/optimization/test_sequential_runner.py::test_m6_native_resource_reason_survives_process_transport
+1 failed, 16 passed in 70.83s (0:01:10)

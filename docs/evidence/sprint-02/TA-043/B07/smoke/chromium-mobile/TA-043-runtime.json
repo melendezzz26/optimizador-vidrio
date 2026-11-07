@@ -1,0 +1,8 @@
+{
+  "database": "owned loopback PostgreSQL",
+  "dialect": "postgresql",
+  "version": "18.6 (Ubuntu 18.6-0ubuntu0.26.04.1)",
+  "alembic_heads": [
+    "s2cmp02d4e6f8"
+  ]
+}

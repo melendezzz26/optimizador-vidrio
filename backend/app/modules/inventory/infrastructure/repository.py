@@ -288,6 +288,15 @@ class SqlAlchemyInventoryRepository:
             Plancha.fecha_registro.desc(), Plancha.id_plancha.desc(),
         ).all()]
 
+    def list_planchas_compatibles(self, id_tipo_vidrio: int, espesor_mm: Decimal) -> list[PlanchaData]:
+        rows = self._require_session().execute(
+            select(Plancha).where(Plancha.id_tipo_vidrio == id_tipo_vidrio,
+                                  Plancha.espesor_mm == espesor_mm,
+                                  Plancha.estado.is_(True), Plancha.cantidad > 0)
+            .order_by(Plancha.fecha_registro.desc(), Plancha.id_plancha.desc())
+        ).scalars().all()
+        return [self._to_plancha(row) for row in rows]
+
     def list_plancha_movements(self, id_plancha: int) -> list[MovimientoInventarioData] | None:
         """Lista del más antiguo al más reciente; el ID ordena fechas iguales."""
         session = self._require_session()
@@ -379,6 +388,14 @@ class SqlAlchemyInventoryRepository:
         return [self._to_retazo(row) for row in session.query(Retazo).order_by(
             Retazo.estado.desc(), Retazo.fecha_registro.desc(), Retazo.id_retazo.desc(),
         ).all()]
+
+    def list_retazos_compatibles(self, id_tipo_vidrio: int, espesor_mm: Decimal) -> list[RetazoData]:
+        rows = self._require_session().execute(
+            select(Retazo).where(Retazo.id_tipo_vidrio == id_tipo_vidrio,
+                                 Retazo.espesor_mm == espesor_mm, Retazo.estado.is_(True))
+            .order_by(Retazo.fecha_registro.desc(), Retazo.id_retazo.desc())
+        ).scalars().all()
+        return [self._to_retazo(row) for row in rows]
 
     def get_retazo_origin(self, id_retazo: int) -> dict | None:
         from app.models import EjecucionOptimizacion, OptimizacionPedido

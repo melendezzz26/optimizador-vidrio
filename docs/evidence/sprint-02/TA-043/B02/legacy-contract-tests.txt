@@ -1,0 +1,21 @@
+........................................................................ [ 93%]
+.....                                                                    [100%]
+=============================== warnings summary ===============================
+tests/api/optimization/test_comparisons_api.py::test_full_http_three_engines_masks_order_selection_confirmation_and_reload
+  /mnt/c/Users/fabri/Documents/TALLER INTEGRADOR I/optimizador-vidrio/backend/.venv/wsl/lib/python3.11/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/api/optimization/test_comparisons_api.py::test_full_http_three_engines_masks_order_selection_confirmation_and_reload
+  tests/api/optimization/test_comparisons_api.py:62: PytestWarning: record_property is incompatible with junit_family 'xunit2' (use 'legacy' or 'xunit1')
+    def test_full_http_three_engines_masks_order_selection_confirmation_and_reload(api, session_factory, record_property):
+
+tests/api/optimization/test_comparisons_api.py::test_real_comparison_preserves_entire_inventory_and_returns_three_owned_results
+  tests/api/optimization/test_comparisons_api.py:249: PytestWarning: record_property is incompatible with junit_family 'xunit2' (use 'legacy' or 'xunit1')
+    def test_real_comparison_preserves_entire_inventory_and_returns_three_owned_results(api, session_factory, run_admission, record_property):
+
+tests/api/optimization/test_comparisons_api.py::test_publishing_angular_version_unblocks_three_engines_without_inventory_changes
+  tests/api/optimization/test_comparisons_api.py:299: PytestWarning: record_property is incompatible with junit_family 'xunit2' (use 'legacy' or 'xunit1')
+    def test_publishing_angular_version_unblocks_three_engines_without_inventory_changes(api, session_factory, run_admission, record_property):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+77 passed, 4 warnings in 20.59s

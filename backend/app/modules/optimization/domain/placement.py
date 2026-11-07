@@ -7,14 +7,12 @@ del material (límites) y ninguna toca una celda ya ocupada (superposición).
 Con margen y separación (T02), además debe quedar a esa distancia del borde
 del material y de las demás piezas. Todo se comprueba fila por fila con bits.
 """
-import math
+from decimal import Decimal
 from functools import lru_cache
 from dataclasses import dataclass
 from enum import Enum
 
 from .raster_mask import RasterMask, is_real_number
-
-_EPSILON = 1e-9
 
 
 class PlacementError(ValueError):
@@ -38,10 +36,14 @@ VALID = PlacementCheck(True)
 
 
 def distance_in_cells(distance_mm, resolution_mm: float, label: str) -> int:
-    """Celdas que cubren una distancia, redondeando hacia arriba (nunca menos de lo pedido)."""
+    """Techo exacto sobre los valores decimales aceptados, sin reducir distancias."""
     if not is_real_number(distance_mm) or distance_mm < 0:
         raise PlacementError(f"{label} debe ser un número mayor o igual a cero.")
-    return math.ceil(distance_mm / resolution_mm - _EPSILON) if distance_mm > 0 else 0
+    if not is_real_number(resolution_mm) or resolution_mm <= 0:
+        raise PlacementError("La resolución debe ser un número positivo.")
+    dn, dd = Decimal(str(distance_mm)).as_integer_ratio()
+    rn, rd = Decimal(str(resolution_mm)).as_integer_ratio()
+    return (dn * rd + dd * rn - 1) // (dd * rn)
 
 
 def _erode(rows: tuple[int, ...], columns: int, cells: int) -> tuple[int, ...]:
@@ -107,6 +109,11 @@ class SheetLayout:
         resolution = material.resolution_mm
         margin_cells = distance_in_cells(margin_mm, resolution, "El margen")
         separation_cells = distance_in_cells(separation_mm, resolution, "La separación")
+        return cls._from_cells(material, margin_cells, separation_cells)
+
+    @classmethod
+    def _from_cells(cls, material: RasterMask, margin_cells: int, separation_cells: int) -> "SheetLayout":
+        """Construye desde conteos internos ya validados, sin reconvertir a floats."""
         empty_rows = tuple(0 for _ in material.rows)
         return cls(
             material=material,
@@ -144,6 +151,13 @@ class SheetLayout:
         return VALID
 
     def first_position(self, piece: RasterMask):
+        return self._position(piece)
+
+    def last_position(self, piece: RasterMask, *, checkpoint=None, on_scan=None):
+        """Exact reverse row/column order; charge every logically scanned origin."""
+        return self._position(piece, reverse=True, checkpoint=checkpoint, on_scan=on_scan)
+
+    def _position(self, piece: RasterMask, *, reverse=False, checkpoint=None, on_scan=None):
         """Exact row/column First Fit, testing candidate columns in parallel bits.
 
         Intersect usable, unblocked origins for every occupied piece-row run.
@@ -183,15 +197,50 @@ class SheetLayout:
                 offset += length
             return candidates
 
-        occupied_rows = tuple((offset, bits) for offset, bits in enumerate(piece.rows) if bits)
-        for row in range(rows):
+        # Intersections commute: test the densest constraints first, while the
+        # candidate origins still follow the exact row/leftmost-column order.
+        # For equal free material rows, masks already tested imply every subset
+        # of their union. Avoid repeating those constraints (notably circles and
+        # polygons over long rectangular free strips). Retain only one such
+        # union, local to this candidate row; no layout/global cache is added.
+        occupied_rows = [(offset, bits) for offset, bits in enumerate(piece.rows) if bits]
+        first = occupied_rows[0] if occupied_rows else None
+        occupied_rows.sort(key=lambda item: item[1].bit_count(), reverse=True)
+        row_order = range(rows - 1, -1, -1) if reverse else range(rows)
+        for row in row_order:
+            if checkpoint is not None:
+                checkpoint()
             candidates = all_origins
-            for offset, bits in occupied_rows:
-                candidates &= origins(free[row + offset], bits)
+            previous_free, covered_shape = None, 0
+            if first is not None:
+                # Keep the cheap original top-row rejection before dense rows.
+                offset, covered_shape = first
+                previous_free = free[row + offset]
+                candidates &= origins(previous_free, covered_shape)
+                if not candidates:
+                    if on_scan is not None:
+                        on_scan(columns)
+                    continue
+            for constraint_index, (offset, bits) in enumerate(occupied_rows):
+                if checkpoint is not None and constraint_index % 64 == 0:
+                    checkpoint()
+                available = free[row + offset]
+                if available != previous_free:
+                    previous_free, covered_shape = available, 0
+                if bits & ~covered_shape == 0:
+                    continue
+                covered_shape |= bits
+                candidates &= origins(available, bits)
                 if not candidates:
                     break
             if candidates:
-                return row, (candidates & -candidates).bit_length() - 1
+                column = (candidates.bit_length() - 1 if reverse else
+                          (candidates & -candidates).bit_length() - 1)
+                if on_scan is not None:
+                    on_scan(columns - column)
+                return row, column
+            if on_scan is not None:
+                on_scan(columns)
         return None
 
     def place(self, piece: RasterMask, row: int, column: int) -> "SheetLayout":

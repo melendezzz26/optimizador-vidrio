@@ -1,0 +1,240 @@
+{
+  "config": {
+    "argv": [
+      "/home/fabri/.cache/newglass-validation.SXhCMM/node-v22.23.2-linux-x64/bin/node",
+      "/tmp/newglass-ta043-b02-i4_hmvqw/frontend/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config=playwright.b01.config.mjs",
+      "--grep",
+      "TA-043 B02"
+    ],
+    "configFile": "/tmp/newglass-ta043-b02-i4_hmvqw/frontend/playwright.b01.config.mjs",
+    "rootDir": "/tmp/newglass-ta043-b02-i4_hmvqw/frontend/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": "/tmp/newglass-ta043-b02-i4_hmvqw/frontend/tests/e2e/globalTeardown.js",
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/tmp/newglass-ta043-b02-i4_hmvqw/frontend/test-results/b01",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium-desktop",
+        "name": "chromium-desktop",
+        "testDir": "/tmp/newglass-ta043-b02-i4_hmvqw/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "optimization-comparison.spec.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/tmp/newglass-ta043-b02-i4_hmvqw/frontend/test-results/b01",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium-mobile",
+        "name": "chromium-mobile",
+        "testDir": "/tmp/newglass-ta043-b02-i4_hmvqw/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "optimization-comparison.spec.js"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "./test-results/b01-report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "optimization-comparison.spec.js",
+      "file": "optimization-comparison.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium-desktop",
+              "projectName": "chromium-desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 897,
+                  "error": {
+                    "message": "Error: Command failed: python -m tests.optimization_b02_upgrade --prepare\nTraceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/tests/optimization_b02_upgrade.py\", line 13, in <module>\n    from tests.integration.optimization.test_comparison_v2_migration import history_bytes, revision\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/tests/integration/optimization/test_comparison_v2_migration.py\", line 11, in <module>\n    from app.models import EjecucionOptimizacion, Optimizacion\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/models.py\", line 27, in <module>\n    from app.shared.database import Base\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/database/__init__.py\", line 1, in <module>\n    from .session import Base, SessionLocal, engine, get_db\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/database/session.py\", line 8, in <module>\n    DATABASE_URL = database_url()\n                   ^^^^^^^^^^^^^^\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/config/__init__.py\", line 78, in database_url\n    value = required_value(\"DATABASE_URL\")\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/config/__init__.py\", line 17, in required_value\n    raise RuntimeError(f\"Configura {name} en el entorno o en backend/.env.\")\nRuntimeError: Configura DATABASE_URL en el entorno o en backend/.env.\n",
+                    "stack": "Error: Command failed: python -m tests.optimization_b02_upgrade --prepare\nTraceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/tests/optimization_b02_upgrade.py\", line 13, in <module>\n    from tests.integration.optimization.test_comparison_v2_migration import history_bytes, revision\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/tests/integration/optimization/test_comparison_v2_migration.py\", line 11, in <module>\n    from app.models import EjecucionOptimizacion, Optimizacion\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/models.py\", line 27, in <module>\n    from app.shared.database import Base\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/database/__init__.py\", line 1, in <module>\n    from .session import Base, SessionLocal, engine, get_db\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/database/session.py\", line 8, in <module>\n    DATABASE_URL = database_url()\n                   ^^^^^^^^^^^^^^\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/config/__init__.py\", line 78, in database_url\n    value = required_value(\"DATABASE_URL\")\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/config/__init__.py\", line 17, in required_value\n    raise RuntimeError(f\"Configura {name} en el entorno o en backend/.env.\")\nRuntimeError: Configura DATABASE_URL en el entorno o en backend/.env.\n\n    at migrate (/tmp/newglass-ta043-b02-i4_hmvqw/frontend/tests/e2e/optimization-comparison.spec.js:9:43)\n    at /tmp/newglass-ta043-b02-i4_hmvqw/frontend/tests/e2e/optimization-comparison.spec.js:11:10",
+                    "location": {
+                      "file": "/tmp/newglass-ta043-b02-i4_hmvqw/frontend/tests/e2e/optimization-comparison.spec.js",
+                      "column": 43,
+                      "line": 9
+                    },
+                    "snippet": "   7 | test('TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL', async ({ page }, info) => {\n   8 |   const backend = fileURLToPath(new URL('../../../backend/', import.meta.url));\n>  9 |   const migrate = (...args) => JSON.parse(execFileSync('python', ['-m', 'tests.optimization_b02_upgrade', ...args],\n     |                                           ^\n  10 |     { cwd: backend, encoding: 'utf8' }));\n  11 |   expect(migrate('--prepare').prepared_revision).toBe('s2cmp01a1b2c');\n  12 |   const errors = []; page.on('pageerror', error => errors.push(error.message));"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/tmp/newglass-ta043-b02-i4_hmvqw/frontend/tests/e2e/optimization-comparison.spec.js",
+                        "column": 43,
+                        "line": 9
+                      },
+                      "message": "Error: Command failed: python -m tests.optimization_b02_upgrade --prepare\nTraceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/tests/optimization_b02_upgrade.py\", line 13, in <module>\n    from tests.integration.optimization.test_comparison_v2_migration import history_bytes, revision\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/tests/integration/optimization/test_comparison_v2_migration.py\", line 11, in <module>\n    from app.models import EjecucionOptimizacion, Optimizacion\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/models.py\", line 27, in <module>\n    from app.shared.database import Base\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/database/__init__.py\", line 1, in <module>\n    from .session import Base, SessionLocal, engine, get_db\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/database/session.py\", line 8, in <module>\n    DATABASE_URL = database_url()\n                   ^^^^^^^^^^^^^^\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/config/__init__.py\", line 78, in database_url\n    value = required_value(\"DATABASE_URL\")\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/config/__init__.py\", line 17, in required_value\n    raise RuntimeError(f\"Configura {name} en el entorno o en backend/.env.\")\nRuntimeError: Configura DATABASE_URL en el entorno o en backend/.env.\n\n\n   7 | test('TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL', async ({ page }, info) => {\n   8 |   const backend = fileURLToPath(new URL('../../../backend/', import.meta.url));\n>  9 |   const migrate = (...args) => JSON.parse(execFileSync('python', ['-m', 'tests.optimization_b02_upgrade', ...args],\n     |                                           ^\n  10 |     { cwd: backend, encoding: 'utf8' }));\n  11 |   expect(migrate('--prepare').prepared_revision).toBe('s2cmp01a1b2c');\n  12 |   const errors = []; page.on('pageerror', error => errors.push(error.message));\n    at migrate (/tmp/newglass-ta043-b02-i4_hmvqw/frontend/tests/e2e/optimization-comparison.spec.js:9:43)\n    at /tmp/newglass-ta043-b02-i4_hmvqw/frontend/tests/e2e/optimization-comparison.spec.js:11:10"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/tests/optimization_b02_upgrade.py\", line 13, in <module>\n    from tests.integration.optimization.test_comparison_v2_migration import history_bytes, revision\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/tests/integration/optimization/test_comparison_v2_migration.py\", line 11, in <module>\n    from app.models import EjecucionOptimizacion, Optimizacion\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/models.py\", line 27, in <module>\n    from app.shared.database import Base\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/database/__init__.py\", line 1, in <module>\n    from .session import Base, SessionLocal, engine, get_db\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/database/session.py\", line 8, in <module>\n    DATABASE_URL = database_url()\n                   ^^^^^^^^^^^^^^\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/config/__init__.py\", line 78, in database_url\n    value = required_value(\"DATABASE_URL\")\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/config/__init__.py\", line 17, in required_value\n    raise RuntimeError(f\"Configura {name} en el entorno o en backend/.env.\")\nRuntimeError: Configura DATABASE_URL en el entorno o en backend/.env.\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-04T01:19:50.010Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/tmp/newglass-ta043-b02-i4_hmvqw/frontend/test-results/b01/optimization-comparison-TA-e1e14-pués-del-upgrade-PostgreSQL-chromium-desktop/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/tmp/newglass-ta043-b02-i4_hmvqw/frontend/tests/e2e/optimization-comparison.spec.js",
+                    "column": 43,
+                    "line": 9
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "5a81a45ccfe4ff4d1220-36e00b98d3158ad803d4",
+          "file": "optimization-comparison.spec.js",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "title": "TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium-mobile",
+              "projectName": "chromium-mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 677,
+                  "error": {
+                    "message": "Error: Command failed: python -m tests.optimization_b02_upgrade --prepare\nTraceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/tests/optimization_b02_upgrade.py\", line 13, in <module>\n    from tests.integration.optimization.test_comparison_v2_migration import history_bytes, revision\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/tests/integration/optimization/test_comparison_v2_migration.py\", line 11, in <module>\n    from app.models import EjecucionOptimizacion, Optimizacion\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/models.py\", line 27, in <module>\n    from app.shared.database import Base\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/database/__init__.py\", line 1, in <module>\n    from .session import Base, SessionLocal, engine, get_db\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/database/session.py\", line 8, in <module>\n    DATABASE_URL = database_url()\n                   ^^^^^^^^^^^^^^\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/config/__init__.py\", line 78, in database_url\n    value = required_value(\"DATABASE_URL\")\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/config/__init__.py\", line 17, in required_value\n    raise RuntimeError(f\"Configura {name} en el entorno o en backend/.env.\")\nRuntimeError: Configura DATABASE_URL en el entorno o en backend/.env.\n",
+                    "stack": "Error: Command failed: python -m tests.optimization_b02_upgrade --prepare\nTraceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/tests/optimization_b02_upgrade.py\", line 13, in <module>\n    from tests.integration.optimization.test_comparison_v2_migration import history_bytes, revision\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/tests/integration/optimization/test_comparison_v2_migration.py\", line 11, in <module>\n    from app.models import EjecucionOptimizacion, Optimizacion\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/models.py\", line 27, in <module>\n    from app.shared.database import Base\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/database/__init__.py\", line 1, in <module>\n    from .session import Base, SessionLocal, engine, get_db\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/database/session.py\", line 8, in <module>\n    DATABASE_URL = database_url()\n                   ^^^^^^^^^^^^^^\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/config/__init__.py\", line 78, in database_url\n    value = required_value(\"DATABASE_URL\")\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/config/__init__.py\", line 17, in required_value\n    raise RuntimeError(f\"Configura {name} en el entorno o en backend/.env.\")\nRuntimeError: Configura DATABASE_URL en el entorno o en backend/.env.\n\n    at migrate (/tmp/newglass-ta043-b02-i4_hmvqw/frontend/tests/e2e/optimization-comparison.spec.js:9:43)\n    at /tmp/newglass-ta043-b02-i4_hmvqw/frontend/tests/e2e/optimization-comparison.spec.js:11:10",
+                    "location": {
+                      "file": "/tmp/newglass-ta043-b02-i4_hmvqw/frontend/tests/e2e/optimization-comparison.spec.js",
+                      "column": 43,
+                      "line": 9
+                    },
+                    "snippet": "   7 | test('TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL', async ({ page }, info) => {\n   8 |   const backend = fileURLToPath(new URL('../../../backend/', import.meta.url));\n>  9 |   const migrate = (...args) => JSON.parse(execFileSync('python', ['-m', 'tests.optimization_b02_upgrade', ...args],\n     |                                           ^\n  10 |     { cwd: backend, encoding: 'utf8' }));\n  11 |   expect(migrate('--prepare').prepared_revision).toBe('s2cmp01a1b2c');\n  12 |   const errors = []; page.on('pageerror', error => errors.push(error.message));"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/tmp/newglass-ta043-b02-i4_hmvqw/frontend/tests/e2e/optimization-comparison.spec.js",
+                        "column": 43,
+                        "line": 9
+                      },
+                      "message": "Error: Command failed: python -m tests.optimization_b02_upgrade --prepare\nTraceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/tests/optimization_b02_upgrade.py\", line 13, in <module>\n    from tests.integration.optimization.test_comparison_v2_migration import history_bytes, revision\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/tests/integration/optimization/test_comparison_v2_migration.py\", line 11, in <module>\n    from app.models import EjecucionOptimizacion, Optimizacion\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/models.py\", line 27, in <module>\n    from app.shared.database import Base\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/database/__init__.py\", line 1, in <module>\n    from .session import Base, SessionLocal, engine, get_db\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/database/session.py\", line 8, in <module>\n    DATABASE_URL = database_url()\n                   ^^^^^^^^^^^^^^\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/config/__init__.py\", line 78, in database_url\n    value = required_value(\"DATABASE_URL\")\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/config/__init__.py\", line 17, in required_value\n    raise RuntimeError(f\"Configura {name} en el entorno o en backend/.env.\")\nRuntimeError: Configura DATABASE_URL en el entorno o en backend/.env.\n\n\n   7 | test('TA-043 B02 smoke: historia v1 y FF intacta después del upgrade PostgreSQL', async ({ page }, info) => {\n   8 |   const backend = fileURLToPath(new URL('../../../backend/', import.meta.url));\n>  9 |   const migrate = (...args) => JSON.parse(execFileSync('python', ['-m', 'tests.optimization_b02_upgrade', ...args],\n     |                                           ^\n  10 |     { cwd: backend, encoding: 'utf8' }));\n  11 |   expect(migrate('--prepare').prepared_revision).toBe('s2cmp01a1b2c');\n  12 |   const errors = []; page.on('pageerror', error => errors.push(error.message));\n    at migrate (/tmp/newglass-ta043-b02-i4_hmvqw/frontend/tests/e2e/optimization-comparison.spec.js:9:43)\n    at /tmp/newglass-ta043-b02-i4_hmvqw/frontend/tests/e2e/optimization-comparison.spec.js:11:10"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "text": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/tests/optimization_b02_upgrade.py\", line 13, in <module>\n    from tests.integration.optimization.test_comparison_v2_migration import history_bytes, revision\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/tests/integration/optimization/test_comparison_v2_migration.py\", line 11, in <module>\n    from app.models import EjecucionOptimizacion, Optimizacion\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/models.py\", line 27, in <module>\n    from app.shared.database import Base\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/database/__init__.py\", line 1, in <module>\n    from .session import Base, SessionLocal, engine, get_db\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/database/session.py\", line 8, in <module>\n    DATABASE_URL = database_url()\n                   ^^^^^^^^^^^^^^\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/config/__init__.py\", line 78, in database_url\n    value = required_value(\"DATABASE_URL\")\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/newglass-ta043-b02-i4_hmvqw/backend/app/shared/config/__init__.py\", line 17, in required_value\n    raise RuntimeError(f\"Configura {name} en el entorno o en backend/.env.\")\nRuntimeError: Configura DATABASE_URL en el entorno o en backend/.env.\n"
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-04T01:19:51.856Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/tmp/newglass-ta043-b02-i4_hmvqw/frontend/test-results/b01/optimization-comparison-TA-e1e14-pués-del-upgrade-PostgreSQL-chromium-mobile/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/tmp/newglass-ta043-b02-i4_hmvqw/frontend/tests/e2e/optimization-comparison.spec.js",
+                    "column": 43,
+                    "line": 9
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "5a81a45ccfe4ff4d1220-ef41d36e66aeee07639d",
+          "file": "optimization-comparison.spec.js",
+          "line": 7,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-04T01:19:43.601Z",
+    "duration": 9632.603000000001,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

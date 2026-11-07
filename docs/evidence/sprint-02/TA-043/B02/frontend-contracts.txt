@@ -1,0 +1,12 @@
+
+> frontend@0.0.0 test:component
+> vitest run src/features/optimization/__tests__/ComparisonV2Contract.test.jsx src/features/optimization/__tests__/ComparisonContract.test.jsx src/features/optimization/__tests__/RunContract.test.jsx src/features/optimization/__tests__/VisualContract.test.jsx
+
+
+ RUN  v5.0.3 C:/Users/fabri/Documents/TALLER INTEGRADOR I/optimizador-vidrio/frontend
+
+
+ Test Files  3 passed (3)
+      Tests  27 passed (27)
+   Start at  20:24:44
+   Duration  4.94s (environment 76%, setup 19%, transform 4%, import 1%)

@@ -1,0 +1,7 @@
+
+Running 2 tests using 1 worker
+
+  ✓  1 [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:8:1 › TA-043 B06 smoke: API publica seis motores, recuperacion y compatibilidad real (9.6s)
+  ✓  2 [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:8:1 › TA-043 B06 smoke: API publica seis motores, recuperacion y compatibilidad real (9.1s)
+
+  2 passed (27.0s)

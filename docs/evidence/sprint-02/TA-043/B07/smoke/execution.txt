@@ -1,0 +1,7 @@
+
+Running 2 tests using 1 worker
+
+  ✓  1 [chromium-desktop] › tests/e2e/optimization-comparison.spec.js:194:1 › TA-043 B07 smoke: interfaz v2, seis distribuciones y recuperacion visual real (15.6s)
+  ✓  2 [chromium-mobile] › tests/e2e/optimization-comparison.spec.js:194:1 › TA-043 B07 smoke: interfaz v2, seis distribuciones y recuperacion visual real (13.4s)
+
+  2 passed (37.1s)

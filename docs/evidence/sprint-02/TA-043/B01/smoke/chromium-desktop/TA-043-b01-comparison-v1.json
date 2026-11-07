@@ -1,0 +1,111 @@
+{
+  "profile": "comparison-v1",
+  "schema_version": 1,
+  "comparison_id": 1,
+  "version": 6,
+  "status": "COMPLETADA",
+  "input_sha256": "ce5a45bc1382c470edab349745dcedf8869636ed061f2b45aa9dfdc0dfdf9d93",
+  "order_ids": [
+    1
+  ],
+  "configuration": {
+    "resolucion_raster_mm": "1.000",
+    "margen_mm": "0.00",
+    "separacion_mm": "0.00",
+    "paso_angular_grados": "5.00"
+  },
+  "configuration_id": 1,
+  "configuration_version": 1,
+  "requested_pieces": [
+    {
+      "area_mm2": "2500.00",
+      "cantidad": 1,
+      "id_pieza": 1,
+      "geometria": {
+        "type": "RECTANGULO",
+        "width_mm": 50,
+        "height_mm": 50
+      },
+      "id_pedido": 1,
+      "espesor_mm": "6.0",
+      "tipo_forma": "RECTANGULO",
+      "dimensiones": {
+        "type": "RECTANGULO",
+        "width_mm": 50,
+        "height_mm": 50
+      },
+      "id_tipo_vidrio": 8,
+      "material_nombre": "E2E-single-a5122fcc64-0"
+    }
+  ],
+  "executions": [
+    {
+      "execution_id": 1,
+      "method": "FF",
+      "status": "COMPLETADA",
+      "complete": true,
+      "eligible": true,
+      "placed_units": 1,
+      "total_units": 1,
+      "metrics": {
+        "aprovechamiento_pct": "50.000",
+        "merma_mm2": "0.000000",
+        "planchas_nuevas_usadas": 1,
+        "retazo_recuperable_mm2": "2500.000000",
+        "area_material_total_mm2": "5000.0000",
+        "area_piezas_colocadas_mm2": "2500.00",
+        "tiempo_computacional_ms": 2
+      },
+      "computation_time_ms": 2,
+      "failure_code": null
+    },
+    {
+      "execution_id": 2,
+      "method": "BF",
+      "status": "COMPLETADA",
+      "complete": true,
+      "eligible": true,
+      "placed_units": 1,
+      "total_units": 1,
+      "metrics": {
+        "aprovechamiento_pct": "50.000",
+        "merma_mm2": "0.000000",
+        "planchas_nuevas_usadas": 1,
+        "retazo_recuperable_mm2": "2500.000000",
+        "area_material_total_mm2": "5000.0000",
+        "area_piezas_colocadas_mm2": "2500.00",
+        "tiempo_computacional_ms": 2
+      },
+      "computation_time_ms": 2,
+      "failure_code": null
+    },
+    {
+      "execution_id": 3,
+      "method": "WF",
+      "status": "COMPLETADA",
+      "complete": true,
+      "eligible": true,
+      "placed_units": 1,
+      "total_units": 1,
+      "metrics": {
+        "aprovechamiento_pct": "50.000",
+        "merma_mm2": "0.000000",
+        "planchas_nuevas_usadas": 1,
+        "retazo_recuperable_mm2": "2500.000000",
+        "area_material_total_mm2": "5000.0000",
+        "area_piezas_colocadas_mm2": "2500.00",
+        "tiempo_computacional_ms": 2
+      },
+      "computation_time_ms": 2,
+      "failure_code": null
+    }
+  ],
+  "selected_execution_id": null,
+  "terminal": true,
+  "incomplete": false,
+  "released": false,
+  "confirmed": false,
+  "selection_allowed": true,
+  "confirmable": false,
+  "confirmation": null
+}

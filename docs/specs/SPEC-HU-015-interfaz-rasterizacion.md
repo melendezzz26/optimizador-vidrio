@@ -228,7 +228,7 @@ La RN-07 de SPEC-TA-005/006 recomienda una resolución que no supere la dimensi�
 
 `SheetLayout.empty(material, margin_mm=0, separation_mm=0)` prepara estado inmutable; `check(piece, row, column)` devuelve `PlacementCheck(is_valid, issue)`; `place` devuelve un nuevo estado o lanza `PlacementError`. Pieza y material requieren la misma resolución. Se comprueban límites de rejilla/material, margen, superposición y separación, en ese orden: `FUERA_DE_LIMITE`, `MARGEN_INSUFICIENTE`, `SUPERPOSICION`, `SEPARACION_INSUFICIENTE`.
 
-Margen y separación son finitos no negativos; se elevan a celdas enteras con tolerancia mediante `distance_in_cells`. Erosión del material y dilatación de ocupación usan vecindad cuadrada, conservadora también en diagonal. No equivalen a distancias euclidianas exactas.
+Margen y separación son finitos no negativos; se elevan a celdas enteras mediante el techo exacto de su cociente decimal con la resolución (`distance_in_cells`, TA-045), sin restar tolerancias. Erosión del material y dilatación de ocupación usan vecindad cuadrada, conservadora también en diagonal. No equivalen a distancias euclidianas exactas.
 
 TA-007 se conserva como dependencia de futuras colocaciones. No se muestran controles de margen/separación en una llamada que solo usa `rasterize_geometry`, porque no tendrían efecto.
 

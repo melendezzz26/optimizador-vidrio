@@ -1,0 +1,600 @@
+
+> frontend@0.0.0 test:component
+> vitest run
+
+
+ RUN  v5.0.3 /home/fabri/.cache/newglass-ta047.Z4eUVh/frontend
+
+ ❯ src/features/optimization/__tests__/OriginalMeasures.test.jsx (3 tests | 1 failed) 7323ms
+   ✓ la tabla conserva decimales originales de rectángulos y círculos 1445ms
+   ✓ la tabla describe forma, cantidad, vidrio y medidas en mm, incluidos los lados del polígono 694ms
+   × CA-06: el resultado de cada motor y la comparación muestran las medidas sin desplegar nada 5174ms
+ ✓ src/features/users/__tests__/RolePermissions.test.jsx (12 tests) 11010ms
+   ✓ Administración — pestañas y permisos por rol (S1-RBAC) (9)
+     ✓ muestra Administración con las pestañas Usuarios y Roles y permisos (CA-10) 3451ms
+     ✓ las flechas del teclado cambian de pestaña 814ms
+     ✓ carga roles y catálogo, y marca los permisos del rol elegido 1888ms
+     ✓ guarda el conjunto completo marcado y muestra confirmación 1120ms
+     ✓ Descartar vuelve a los permisos guardados sin llamar a la API 536ms
+     ✓ roles.view y roles.manage aparecen bloqueados para el Administrador (RN-05) 305ms
+     ✓ un 409 del backend se muestra sin perder lo marcado 792ms
+     ✓ al cambiar los permisos del propio rol se vuelve a pedir la sesión 488ms
+   ✓ Administración — lo que se ve depende de los permisos de la sesión (3)
+     ✓ con solo roles.view: solo la pestaña de roles, en modo consulta y sin pedir usuarios 353ms
+     ✓ con users.view sin users.manage: lista de usuarios sin acciones ni alta 435ms
+     ✓ con los permisos iniciales del Administrador se puede gestionar todo 605ms
+ ❯ src/features/inventory/__tests__/RegistrarRetazoGeometry.test.jsx (4 tests | 1 failed) 12318ms
+   ❯ TA-036: retazo con editor compartido (4)
+     × usa el mismo editor corregido: lados independientes y ángulo fijo con payload canónico 6418ms
+     ✓ reutiliza dibujo, escala y ángulos; envía vertices_mm sin otro editor de coordenadas 2999ms
+     ✓ reiniciar después de una figura válida invalida el payload anterior 2370ms
+     ✓ edición carga y guarda la forma existente usando el editor compartido 520ms
+ ❯ src/features/inventory/__tests__/InventoryPage.test.jsx (7 tests | 1 failed) 12130ms
+   ❯ TA-011 — errores HTTP de Inventario (5)
+     × 403 al editar conserva sesión y borrador sin refrescar ni cambiar el inventario 5067ms
+     ✓ cancelar la revisión de baja parcial no envía POST y restaura el foco sin cambiar saldo 3986ms
+     ✓ editar cantidad usa PATCH y refresca el saldo visible manteniendo historial y baja 1320ms
+     ✓ 422 muestra validación junto al formulario y conserva los datos sin refrescar 1092ms
+     ✓ solo ofrece historial, edición y baja, sin toggles de estado 346ms
+   ✓ TA-011 — estados de carga de Inventario (2)
+     ✓ muestra loading y después inventario vacío en ambas pestañas 256ms
+     ✓ un fallo de red muestra error de carga sin presentarlo como inventario vacío 55ms
+ ❯ src/features/orders/__tests__/KeyboardFocus.test.jsx (5 tests | 1 failed) 13228ms
+   × K-01: Enter en un campo guarda el pedido válido una sola vez y no envía uno inválido 5116ms
+   ✓ K-02 y K-03: al agregar una pieza o un vidrio, el foco va a su primer campo 1978ms
+   ✓ K-04: al eliminar una pieza o un vidrio, el foco queda en el formulario y no se pierde 2314ms
+   ✓ K-05: Enter en una fila corregida de la importación revalida 2539ms
+   ✓ K-06: un polígono se crea y se mide solo con teclado 1277ms
+ ❯ src/features/optimization/__tests__/GroupRasterInspection.test.jsx (6 tests | 1 failed) 10709ms
+   × selection previews groups immediately and preparation exposes all masks before any result 5573ms
+   ✓ result modes isolate groups, keep snapshot and allow zoom/grid inspection and empty remnant 2559ms
+   ✓ rendering rejects incompatible imported placements and hides result modes for unplaced group 223ms
+   ✓ missing raster is explicit, never fabricated from geometry 123ms
+   ✓ execution waits for complete raster preparation instead of silently running with missing masks 923ms
+   ✓ prepared masks and groups stay fixed when live order details change during execution 1303ms
+ ✓ src/features/optimization/__tests__/ContractRunUI.test.jsx (18 tests) 10600ms
+   ✓ el resultado individual muestra geometría original sin alterar los placements orientados 3284ms
+   ✓ view-only capability grants navigation and result consultation without execution 549ms
+   ✓ execute and confirm are separate capabilities, independent of role names 445ms
+   ✓ failed result never offers confirmation 392ms
+   ✓ physical sheet units isolate 2D/3D placements; oriented 90-degree geometry is never rotated twice 1181ms
+   ✓ merma is shown in square millimeters using T1 metric names 445ms
+   ✓ confirmation interface gets only the run ID and can represent HTTP 409 without stock writes 470ms
+   ✓ selection crosses adapter boundary exclusively as order_ids 822ms
+   ✓ view-only user can query a durable run and retry a failed GET without execution 359ms
+   ✓ successful confirmation refreshes canonical flags and inventory-dependent metrics through GET 368ms
+   ✓ a 409 disables repeat confirmation and never restarts the algorithm 302ms
+   ✓ STATE_CONFLICT distinguishes a changed run/order state from a stock conflict 698ms
+ ✓ src/features/dashboard/__tests__/DashboardPage.test.jsx (18 tests) 15767ms
+   ✓ presenta unidades/registros reales de inventario y totales paginados con etiquetas precisas 4146ms
+   ✓ Administrador recibe únicamente resúmenes y accesos permitidos 2094ms
+   ✓ Almacenero recibe únicamente resúmenes y accesos permitidos 784ms
+   ✓ Operario recibe únicamente resúmenes y accesos permitidos 454ms
+   ✓ listado conserva orden backend, estado textual, cliente y fecha reales sin afirmar recenticidad global 773ms
+   ✓ loading muestra feedback por fuente y ningún número provisional 598ms
+   ✓ una fuente lenta no bloquea datos recibidos ni accesos rápidos 984ms
+   ✓ respuestas vacías muestran textos específicos y no errores ni contadores de fallback 718ms
+   ✓ cero activos con registros reales se muestra como dato válido, sin inventar un vacío del endpoint 1004ms
+   ✓ error total informa y conserva navegación sin presentar datos ni vacío ficticio 450ms
+   ✓ fallo parcial de planchas identifica el bloque y conserva las fuentes válidas 502ms
+   ✓ fallo parcial de recentOrders identifica el bloque y conserva las fuentes válidas 617ms
+   ✓ retry reutiliza el hook, no duplica solicitudes y reemplaza el error por datos 969ms
+   ✓ 403 de clientes conserva resúmenes autorizados sin mostrar cifras del bloque rechazado 306ms
+   ✓ accesos rápidos usan botones, Tab, Enter y Space con IDs existentes 512ms
+   ✓ no ofrece accesos sin navegación disponible o hacia vistas no montadas 680ms
+ ❯ src/features/orders/__tests__/MaterialGroups.test.jsx (7 tests | 1 failed) 16397ms
+   × la pieza inicial permanece bloqueada hasta completar material y espesor 6965ms
+   ✓ distintas formas y cantidades comparten material; un segundo grupo persiste otra combinación 3192ms
+   ✓ cambiar material limpia espesor y bloquea todas las piezas sin perder sus medidas 1613ms
+   ✓ impide repetir una combinación y libera su espesor al eliminar el grupo 2449ms
+   ✓ rerender y cambio de cliente conservan el borrador sin recargar el catálogo 1022ms
+   ✓ un catálogo fallido se recupera conservando cliente y creando la pieza inicial bloqueada 489ms
+   ✓ un pedido optimizado permite inspeccionar el polígono sin editarlo 648ms
+ ✓ src/features/dashboard/__tests__/DashboardNavigation.test.jsx (12 tests) 13325ms
+   ✓ sin sesión no monta Dashboard ni consulta datos protegidos 970ms
+   ✓ login real de componentes dirige a Administrador a Inicio y respeta fuentes 3996ms
+   ✓ login real de componentes dirige a Almacenero a Inicio y respeta fuentes 1299ms
+   ✓ login real de componentes dirige a Operario a Inicio y respeta fuentes 971ms
+   ✓ restaura sesión con me antes de consultar Dashboard y utiliza el rol vigente 399ms
+   ✓ Inicio navega por teclado y conserva subpath; logout/relogin vuelve a Inicio desde otro módulo 2352ms
+   ✓ 401 de datos usa logout global y retira el Dashboard 424ms
+   ✓ acceso rápido Gestión de inventario navega al módulo real desde App 725ms
+   ✓ acceso rápido Registro de pedidos navega al módulo real desde App 605ms
+   ✓ acceso rápido Optimización navega al módulo real desde App 979ms
+   ✓ acceso rápido Administración navega al módulo real desde App 527ms
+ ✓ src/features/orders/__tests__/GestionPedidos.test.jsx (23 tests) 19152ms
+   ✓ GestionPedidos — listado y filtros (12)
+     ✓ carga el listado inicial con los parámetros predeterminados 2109ms
+     ✓ renderiza pedidos, fecha, cliente y estado 550ms
+     ✓ aplica el filtro por cliente al enviar el formulario y no al teclear 1282ms
+     ✓ aplica el filtro por estado 3402ms
+     ✓ aplica el filtro por fecha 1010ms
+     ✓ reinicia a la primera página al aplicar los filtros 728ms
+     ✓ pagina atrás y adelante y deshabilita los extremos 909ms
+     ✓ una respuesta anterior no reemplaza los resultados de una búsqueda más reciente 565ms
+   ✓ GestionPedidos — acciones y modal (11)
+     ✓ abre el modal de creación con nombre accesible y foco inicial 862ms
+     ✓ abre edición de un pendiente y detalle de un pedido no pendiente 1175ms
+     ✓ Escape cierra el modal y devuelve el foco al botón que lo abrió 703ms
+     ✓ atrapa Tab y Shift+Tab dentro del modal 708ms
+     ✓ no permite cerrar el modal durante el guardado 598ms
+     ✓ abre la confirmación para cancelar un pedido pendiente 533ms
+     ✓ Cancelar en ConfirmDialog cierra sin llamar la API 808ms
+     ✓ confirma cancelación, informa éxito y refresca el listado 928ms
+     ✓ muestra error si falla la cancelación 373ms
+     ✓ bloquea cancelaciones duplicadas mientras la solicitud está pendiente 527ms
+     ✓ al guardar el formulario activo cierra, muestra éxito y refresca 576ms
+ ❯ src/features/orders/__tests__/BulkImportAddToOrder.test.jsx (7 tests | 1 failed) 20509ms
+   × CA-07: con una fila observada no se puede agregar, aunque haya material, y se dice cuántas faltan 5439ms
+   ✓ CA-11: la fila corregida se revalida sin volver a subir el archivo y sin perder las demás 3987ms
+   ✓ CA-12: las piezas pasan al grupo del material y el pedido se registra una sola vez con un doble clic 2274ms
+   ✓ el polígono importado se abre en el editor de figuras 2813ms
+   ✓ una importación observada bloquea guardar un pedido válido hasta revalidar 2090ms
+   ✓ cerrar una importación observada descarta el bloqueo del pedido 2440ms
+   ✓ una importación válida abierta no bloquea guardar un pedido válido 1450ms
+ ❯ src/features/optimization/__tests__/ComparisonWorkspace.test.jsx (8 tests | 1 failed) 17413ms
+   × default workspace has four stable tabs, real phases and no automatic choice 5518ms
+   ✓ manual BF selection, original measures and confirmation use the same work 4986ms
+   ✓ reload recovers the saved comparison without starting another calculation 998ms
+   ✓ configuration rejection retains selected orders and does not invent an execution 400ms
+   ✓ failed engine has no fake zero metrics and successful results stay eligible 1053ms
+   ✓ no compatible stock identifies every affected material group and never offers confirmation 1360ms
+   ✓ FF failure does not prevent confirming BF and returning to a clean pending selector 2370ms
+   ✓ ambiguous acceptance is recovered by request key without submitting another calculation 706ms
+ ✓ src/features/orders/__tests__/ConstrainedPieceEditor.test.jsx (10 tests) 21693ms
+   ✓ actualiza medidas parciales, conserva el boceto y nunca publica una geometría estimada 2816ms
+   ✓ 50/70/65: los tres lados son independientes, los ángulos derivados y el payload canónico 1897ms
+   ✓ 10/10/30: cierre imposible bloquea guardado, explica desigualdad y permite corregir 763ms
+   ✓ 120/73/91/108: cambiar ángulo V2 conserva lados, cambia vértices y persiste la configuración para editar 2696ms
+   ✓ 80/115/63/92/71: configura pentágono cíclico explícito y guarda los cinco lados 1506ms
+   ✓ reabrir un cuadrilátero conserva restricción angular y geometría sin inferir otra forma 2041ms
+   ✓ 4 lados: fijar/liberar por teclado, límite n-3 y longitudes independientes 2678ms
+   ✓ 5 lados: fijar/liberar por teclado, límite n-3 y longitudes independientes 2878ms
+   ✓ 6 lados: fijar/liberar por teclado, límite n-3 y longitudes independientes 2627ms
+   ✓ restricción inválida retira payload y preview, conserva inputs y se puede liberar 1787ms
+ ✓ src/features/users/__tests__/UsersPageFilters.test.jsx (5 tests) 3585ms
+   ✓ UsersPage — búsqueda y filtros (HU-003 T04) (5)
+     ✓ muestra los controles y el total de usuarios 1983ms
+     ✓ busca por nombre sin importar tildes 470ms
+     ✓ combina rol y estado 357ms
+     ✓ sin coincidencias muestra el estado vacío y Limpiar filtros recupera el listado 640ms
+ ❯ src/features/optimization/__tests__/OptimizationPage.test.jsx (15 tests | 1 failed) 18688ms
+   × single, multiple, all and deselection; no manual refresh or dropzone 5906ms
+   ✓ live add, state change, removal, error and reconnection reconcile selection 421ms
+   ✓ groups, progressive placements, arbitrary rotations, metrics and honest confirmation 4058ms
+   ✓ snapshot stays fixed after new pending order and removal during run 1363ms
+   ✓ rerun clears placements, discard cancels queued events 1034ms
+   ✓ failed stream can retry 512ms
+   ✓ accepted Location ID remains recoverable after a stream failure without reexecuting First Fit 710ms
+   ✓ empty and permission prevent execution and reads 159ms
+   ✓ loading, 401, no mutation and unmount cleanup 171ms
+   ✓ real adapter prepares persisted pieces without starting a run or inventing stock 394ms
+   ✓ inventory dimensions override all commercial assumptions 6ms
+   ✓ polling batches pages atomically, retries errors and cancels on dispose 41ms
+   ✓ polling restart ignores late response from disposed StrictMode lifecycle 6ms
+   ✓ public-only stream preserves progress and confirmation without inventing preparation or orientation evidence 1321ms
+   ✓ 3D toggles preserve the run, live snapshot and metrics; rerun and discard clear the previous scene 2555ms
+ ✓ src/features/orders/__tests__/FormularioPedido.test.jsx (4 tests) 4348ms
+   ✓ FormularioPedido canónico (4)
+     ✓ espesor persistido 6.0 coincide con opción de catálogo 6 y conserva 6 al guardar 1272ms
+     ✓ acepta medidas decimales positivas y anuncia errores de campo asociados 1345ms
+     ✓ edita un polígono existente y conserva geometría válida en el PUT 1484ms
+ ✓ src/features/orders/__tests__/BulkImportPanel.test.jsx (4 tests) 3891ms
+   ✓ CA-05: el archivo se previsualiza con su resumen y sus filas, y después se elige el material 2217ms
+   ✓ un error del archivo completo se muestra con el mensaje del servidor y sin tabla 501ms
+   ✓ un archivo de más de 1 MB muestra el límite 388ms
+   ✓ cerrar la importación descarta la vista previa y devuelve el foco al botón 782ms
+ ✓ src/features/orders/__tests__/NuevoPedidoFeedback.test.jsx (5 tests) 4977ms
+   ✓ FormularioPedido — feedback compartido (TA-034) (5)
+     ✓ muestra la carga del catálogo y luego el estado vacío 532ms
+     ✓ muestra el error del catálogo como alerta 907ms
+     ✓ confirma antes de limpiar el pedido y no borra si se cancela 1889ms
+     ✓ muestra el éxito sin ventanas del navegador 768ms
+     ✓ no muestra al usuario el detalle técnico de validación del backend 872ms
+ ✓ src/features/orders/__tests__/OrderClientSelector.test.jsx (8 tests) 4766ms
+   ✓ busca explícitamente por query y selecciona por teclado 2241ms
+   ✓ busca explícitamente por document y selecciona por teclado 820ms
+   ✓ muestra carga, vacío, fallo controlado y permite reintentar 374ms
+   ✓ alta 422 conserva datos y oculta detalles técnicos 364ms
+   ✓ alta 500 conserva datos y oculta detalles técnicos 340ms
+ ✓ src/shared/__tests__/sidebarNavigation.test.jsx (5 tests) 4083ms
+   ✓ módulos accesibles solo desde sidebar; header conserva identidad, rol y cierre de sesión 2578ms
+   ✓ Administrador navega a Optimization por teclado sin cambiar subpath 398ms
+   ✓ Operario navega a Optimization por teclado sin cambiar subpath 374ms
+   ✓ optimization.view permite consultar Optimization sin permiso de ejecución 492ms
+ ✓ src/features/orders/__tests__/NuevoPedidoT03.test.jsx (13 tests) 24697ms
+   ✓ HU-012 T03 con HU-006 multimaterial y HU-007 real (13)
+     ✓ guarda las tres formas y cantidades con cliente; excluye rawState 10380ms
+     ✓ permite la pareja 7/6 en otro grupo sin POST anticipado 1971ms
+     ✓ permite la pareja 8/4 en otro grupo sin POST anticipado 1522ms
+     ✓ bloquea cantidades decimales y medidas no positivas 687ms
+     ✓ catálogo activo y geometría válida requeridos; conserva la pieza mínima 1925ms
+     ✓ bloquea doble envío y edición mientras guarda 1330ms
+     ✓ fallo 401 conserva cliente y piezas; reintento idéntico 1188ms
+     ✓ fallo 403 conserva cliente y piezas; reintento idéntico 1297ms
+     ✓ fallo 422 conserva cliente y piezas; reintento idéntico 1033ms
+     ✓ fallo 500 conserva cliente y piezas; reintento idéntico 819ms
+     ✓ fallo network conserva cliente y piezas; reintento idéntico 958ms
+     ✓ error de catálogo permite reintentar sin valores estáticos 617ms
+     ✓ no guarda sin cliente, permite cambiarlo conservando las piezas 964ms
+ ✓ src/features/optimization/__tests__/LoadControlFeedback.test.jsx (7 tests) 5522ms
+   ✓ 422 LOAD_LIMIT_EXCEEDED: aviso de "divide el lote", selección conservada, foco en el aviso y sin progreso falso 2708ms
+   ✓ 503 OPTIMIZER_BUSY: aviso de "intenta más tarde", no se presenta como un cálculo fallido 713ms
+   ✓ después de 503 se puede reintentar y el aviso desaparece al iniciar la nueva ejecución 778ms
+   ✓ TIME_BUDGET_EXCEEDED en el stream muestra el aviso de tiempo máximo 718ms
+   ✓ otros errores conservan la presentación genérica de siempre 554ms
+ ✓ src/features/optimization/__tests__/PlacementScene3D.test.jsx (7 tests) 4343ms
+   ✓ piece dimensions stay visible in mm for rectangles, polygons and circles without changing coordinates 1627ms
+   ✓ camera elevation, pan, zoom and presets change only the projection, never placements 848ms
+   ✓ switching view keeps material, yaw and immutable placements; each piece is identified 828ms
+   ✓ legend colors are stable across progressive updates and expose received rotations 388ms
+ ✓ src/features/optimization/__tests__/UnifiedOptimization.test.jsx (6 tests) 3335ms
+   ✓ one main flow reviews multiple orders without starting or rasterizing a run 1730ms
+   ✓ changing reviewed selection removes the previous inspection and does not start computation 548ms
+   ✓ complete never certifies preparation or rotations absent from V1 311ms
+   ✓ view-only result inspection remains in the same flow without execution controls 320ms
+ ✓ src/features/optimization/__tests__/CuttingWork.test.jsx (5 tests) 2780ms
+   ✓ configuration rejection retains reviewed orders, stops progress and allows an explicit retry without order writes 2098ms
+ ❯ src/features/orders/__tests__/NuevoPedido.test.jsx (14 tests | 2 failed) 26258ms
+   ❯ FIX-003/005: composición y accesibilidad de Orders (4)
+     × conserva el formulario actual y no muestra navegación lateral inerte ni lista de pedidos 5841ms
+     ✓ asocia labels de material, espesor, forma, cantidad y medidas a sus controles 1095ms
+     ✓ mantiene identidad, keys e IDs de controles únicos al agregar piezas en el mismo milisegundo 1613ms
+     ✓ el editor poligonal se identifica como diálogo, soporta Escape y devuelve el foco 1803ms
+   ❯ HU-006: contrato de piezas agrupadas por material y espesor (2)
+     × registra rectángulo, circunferencia y polígono con material, espesor y cantidad propios 5146ms
+     ✓ no permite guardar cantidad cero ni medidas no positivas 1866ms
+   ✓ HU-007 T04: persistencia de piezas (8)
+     ✓ el polígono requiere geometría válida antes de aceptar el dibujo 2485ms
+     ✓ envía un único POST mientras guarda y limpia solo al confirmar éxito 1459ms
+     ✓ ante error 401 conserva el borrador y permite reintentar 1009ms
+     ✓ ante error 403 conserva el borrador y permite reintentar 924ms
+     ✓ ante error 422 conserva el borrador y permite reintentar 793ms
+     ✓ ante error 500 conserva el borrador y permite reintentar 1136ms
+     ✓ ante error network conserva el borrador y permite reintentar 946ms
+     ✓ muestra el error de catálogo y permite reintentar sin inventar materiales 129ms
+ ✓ src/features/users/__tests__/UsersPageManagement.test.jsx (5 tests) 4088ms
+   ✓ UsersPage — listado primero y formulario bajo acción (HU-003 T05) (5)
+     ✓ al entrar muestra el listado y no el formulario 1476ms
+     ✓ Nuevo usuario abre el formulario en lugar del listado y Cancelar vuelve sin perder los filtros 787ms
+     ✓ al registrar vuelve al listado con el mensaje de éxito 711ms
+     ✓ un usuario duplicado mantiene el formulario abierto con el error junto al DNI 631ms
+     ✓ Editar abre el formulario con los datos actuales y al guardar vuelve al listado 480ms
+ ✓ src/features/optimization/__tests__/OptimizationVisualizations.test.jsx (8 tests) 722ms
+   ✓ geometría original RECTANGULO tiene nombre accesible y conserva sus medidas 454ms
+ ✓ src/features/dashboard/__tests__/useDashboard.test.jsx (9 tests) 672ms
+ ✓ src/shared/components/__tests__/ConfirmDialog.test.jsx (6 tests) 1032ms
+   ✓ ConfirmDialog (6)
+     ✓ se anuncia con su pregunta y su consecuencia, y empieza en Cancelar 472ms
+ ✓ src/features/inventory/__tests__/RemnantOrigin.test.jsx (8 tests) 1353ms
+   ✓ manual/historical geometry {"type":"RECTANGULO","width_mm":50,"height_mm":20} has a responsive preview and no invented run 758ms
+ ✓ src/features/optimization/__tests__/RunVisualization.test.jsx (6 tests) 2385ms
+   ✓ loads the authoritative mask with its run, orientation and exact window 1255ms
+   ✓ pausing and hiding leave processing live and never restart a run 515ms
+ ✓ src/features/inventory/__tests__/inventoryApi.test.jsx (30 tests) 699ms
+   ✓ inventoryApi HU-014 (30)
+     ✓ baja plancha: usa URL VITE_API_URL, método y autorización comunes 497ms
+ ✓ src/features/users/__tests__/UsersPage.test.jsx (5 tests) 2573ms
+   ✓ UsersPage — feedback compartido (TA-034) (5)
+     ✓ muestra la carga y luego el listado 898ms
+     ✓ pide confirmación antes de desactivar y no cambia nada si se cancela 907ms
+     ✓ desactiva solo después de confirmar y muestra el resultado 543ms
+ ✓ src/features/optimization/__tests__/ComparisonLifecycle.test.jsx (10 tests) 154ms
+ ✓ src/features/optimization/__tests__/runApi.test.jsx (12 tests) 113ms
+ ✓ src/shared/components/__tests__/LoadingAndEmptyState.test.jsx (4 tests) 645ms
+   ✓ LoadingState (2)
+     ✓ anuncia la espera con un texto visible 518ms
+ ✓ src/features/optimization/__tests__/ComparisonV2Contract.test.jsx (21 tests) 125ms
+ ✓ src/features/optimization/__tests__/VisualContract.test.jsx (4 tests) 89ms
+ ✓ src/shared/components/__tests__/FieldError.test.jsx (2 tests) 669ms
+   ✓ FieldError (2)
+     ✓ queda asociado al campo como su descripción accesible 638ms
+ ✓ src/features/optimization/__tests__/optimizationApi.test.jsx (25 tests) 109ms
+ ✓ src/shared/__tests__/stagingNavigation.test.jsx (1 test) 3134ms
+   ✓ Pages abre el editor dentro de pedidos sin abandonar el subpath 3132ms
+ ✓ src/shared/components/__tests__/FeedbackMessage.test.jsx (5 tests) 646ms
+   ✓ FeedbackMessage (5)
+     ✓ anuncia un error de inmediato y lo identifica con texto 544ms
+ ✓ src/features/optimization/__tests__/ComparisonApiV2.test.jsx (4 tests) 41ms
+ ✓ src/features/optimization/__tests__/VisualState.test.jsx (7 tests) 33ms
+ ✓ src/shared/hooks/__tests__/useManagementView.test.jsx (6 tests) 67ms
+ ✓ src/features/authentication/__tests__/permissions.test.jsx (11 tests) 21ms
+ ✓ src/features/users/__tests__/userFilters.test.jsx (8 tests) 18ms
+ ✓ src/features/dashboard/__tests__/dashboardModel.test.jsx (24 tests) 32ms
+ ✓ src/features/dashboard/__tests__/dashboardApi.test.jsx (12 tests) 37ms
+ ✓ src/features/optimization/__tests__/ComparisonContract.test.jsx (2 tests) 22ms
+ ✓ src/features/optimization/__tests__/Hu015Rasterization.test.jsx (39 tests) 27416ms
+   ✓ loading inicial, filtro backend PENDIENTE y start bloqueado sin selección 4356ms
+   ✓ estado vacío y actualización explícita recupera nuevos pendientes 1346ms
+   ✓ selecciona pedido, consulta detalle y muestra una fila por pieza persistida y materiales por pieza 794ms
+   ✓ start loading impide doble envío y no anticipa En preparación 573ms
+   ✓ 200 prepara localmente y conserva PENDIENTE, selección y disponibilidad 678ms
+   ✓ 409 informa conflicto, refresca pendientes y no concede un inicio local 569ms
+   ✓ resolución inválida  impide submit 888ms
+   ✓ resolución inválida 0 impide submit 880ms
+   ✓ resolución inválida -1 impide submit 549ms
+   ✓ resolución inválida Infinity impide submit 817ms
+   ✓ resolución inválida NaN impide submit 634ms
+   ✓ raster loading evita doble envío y success muestra resumen técnico con cantidad 5 861ms
+   ✓ 422 recursos permite cambiar resolución y reintentar sin repetir start 1364ms
+   ✓ cambiar piece limpia resultado previo 811ms
+   ✓ cambiar resolution limpia resultado previo 1352ms
+   ✓ cambiar order limpia resultado previo 948ms
+   ✓ una respuesta raster tardía no reaparece después de cambiar pieza 486ms
+   ✓ ignora detalle tardío al seleccionar otro pedido 490ms
+   ✓ recupera explícitamente EN_OPTIMIZACION por filtro y detalle sin POST start 355ms
+   ✓ inicio incierto consulta GET y reconcilia EN_OPTIMIZACION sin repetir POST 348ms
+   ✓ inicio incierto consulta GET y reconcilia PENDIENTE sin repetir POST 354ms
+   ✓ inicio incierto consulta GET y reconcilia CANCELADO sin repetir POST 371ms
+   ✓ si POST incierto y GET falla, oculta estado obsoleto, no afirma éxito y permite reconciliar explícitamente 704ms
+   ✓ si falla detalle después de start confirmado reintenta GET, nunca POST 824ms
+   ✓ fallo de catálogo conserva IDs y no bloquea el inicio 375ms
+   ✓ start maneja 401 sin transición falsa y 401 usa cierre global 373ms
+   ✓ start maneja 403 sin transición falsa y 401 usa cierre global 425ms
+   ✓ start maneja 404 sin transición falsa y 401 usa cierre global 304ms
+   ✓ start maneja 422 sin transición falsa y 401 usa cierre global 418ms
+   ✓ raster maneja 401 sin resultado obsoleto 547ms
+   ✓ raster maneja 403 sin resultado obsoleto 811ms
+   ✓ raster maneja 404 sin resultado obsoleto 729ms
+   ✓ raster maneja 409 sin resultado obsoleto 471ms
+   ✓ raster maneja 500 sin resultado obsoleto 592ms
+   ✓ volver a la vista pierde la preparación local y permite preparar el mismo pendiente 398ms
+ ✓ src/features/optimization/__tests__/PendingOrdersSource.test.jsx (2 tests) 10ms
+ ✓ src/features/orders/__tests__/CustomPieceEditor.test.jsx (26 tests) 31671ms
+   ✓ HU-007 T01 — dibujo y controles (caja negra) (7)
+     ✓ T01-C01: editor inicial visible, accesible y sin dimensiones 1720ms
+     ✓ T01-C02: clics crean vértices ordenados y segmentos; cerrar exige tres 2151ms
+     ✓ T01-C03: cerrar bloquea clics adicionales sin cambiar el contorno 842ms
+     ✓ T01-C04: deshacer abierto elimina el último punto hasta volver al inicio 979ms
+     ✓ T01-C05: cerrado protege el contorno; reiniciar permite dibujar otra figura 2201ms
+     ✓ T01-C06: reiniciar limpia el dibujo (cerrado=false) 756ms
+     ✓ T01-C06: reiniciar limpia el dibujo (cerrado=true) 795ms
+   ✓ TA-036: regresiones vigentes del editor (10)
+     ✓ cierre identifica todos los campos requeridos sin escala física ni geometría guardable 1131ms
+     ✓ selección y hover conservan arista y etiqueta sincronizadas en el lienzo único sin alterar medidas 3559ms
+     ✓ longitud 0.001 válida produce vértices pequeños y conserva ángulos y validación 1171ms
+     ✓ reiniciar una figura dimensionada invalida el resultado y recerrar crea campos vacíos 2377ms
+     ✓ reiniciar después de medir elimina escala y selección antes del siguiente dibujo 1198ms
+     ✓ borrar todas las medidas retira escala, ángulos y resultado válido anterior 1532ms
+     ✓ geometría completa no autoriza guardar sin material de pedido válido 985ms
+     ✓ vértices consecutivos repetidos muestran error de dibujo sin guardar geometría degenerada 480ms
+     ✓ selección por foco directo se refleja en líneas y etiquetas del lienzo único 1505ms
+     ✓ invalidar y corregir una dimensión retira y recalcula la validación sin geometría obsoleta 1768ms
+   ✓ TA-036: vértices canónicos, escala y ángulos (9)
+     ✓ longitudes explícitas compatibles conservan forma y ángulos del boceto 894ms
+     ✓ editar otro lado conserva los demás campos y recalcula una geometría distinta 837ms
+     ✓ medida 0 inválida bloquea guardar y anuncia error accesible 609ms
+     ✓ medida -1 inválida bloquea guardar y anuncia error accesible 579ms
+     ✓ borrar una longitud invalida el guardado hasta corregirla; reiniciar borra la escala 1718ms
+     ✓ contorno cóncavo sigue rechazado después de cambiar escala 921ms
+     ✓ contorno autointersección sigue rechazado después de cambiar escala 435ms
+ ✓ src/features/inventory/__tests__/Hu014Inventory.test.jsx (32 tests) 32232ms
+   ✓ HU-014: permisos y apertura (4)
+     ✓ gestor ve baja e historial; operario consulta historial pero no gestiona bajas 2965ms
+     ✓ abre el diálogo identificado para plancha, con nombre accesible y foco inicial 351ms
+     ✓ abre el diálogo identificado para retazo, con nombre accesible y foco inicial 679ms
+   ✓ HU-014: formulario y confirmación de baja (8)
+     ✓ selector manual contiene solo los cuatro eventos admitidos 536ms
+     ✓ motivo obligatorio bloquea el avance si está vacío o solo contiene espacios 2905ms
+     ✓ primer clic abre revisión sin POST; muestra material, evento, motivo y efecto 1700ms
+     ✓ observación es opcional y el payload conserva los campos permitidos 2089ms
+     ✓ confirmación dispara un POST, muestra feedback, refresca y conserva el recurso inactivo 1856ms
+     ✓ la baja de retazo usa su endpoint y mantiene la fila con estado inactivo 1457ms
+     ✓ segunda activación durante el envío no duplica POST, bloquea cierre y muestra procesamiento 2103ms
+   ✓ HU-014: errores y sesión (7)
+     ✓ 409 muestra conflicto sin reintento automático ni pérdida del borrador 1644ms
+     ✓ 422 conserva evento, motivo y observación para corregir y reintentar 2254ms
+     ✓ 500 informa que la baja no fue confirmada y conserva el borrador 1724ms
+     ✓ red informa que la baja no fue confirmada y conserva el borrador 1905ms
+     ✓ HTTP 401 respeta el manejo de Inventory/session 1141ms
+     ✓ HTTP 403 respeta el manejo de Inventory/session 1066ms
+     ✓ HTTP 404 respeta el manejo de Inventory/session 1119ms
+   ✓ HU-014: historial (6)
+     ✓ abre historial de plancha, muestra loading y usa el endpoint correcto 343ms
+     ✓ abre historial de retazo, muestra loading y usa el endpoint correcto 309ms
+     ✓ error de historial permite reintentar sin cerrar el diálogo 442ms
+     ✓ respuesta antigua no reemplaza el historial de la solicitud más reciente 583ms
+   ✓ HU-014: accesibilidad (2)
+     ✓ controles del formulario tienen nombres y el cierre es disabled durante el envío 513ms
+   ✓ TA-036: baja parcial y cantidades (5)
+     ✓ actualiza saldo confirmado aunque falle refresco, conserva historial y disponibilidad 364ms
+     ✓ retazo no solicita cantidad editable y queda detrás del disponible tras baja 345ms
+ ❯ src/features/optimization/__tests__/ComparisonWorkspaceV2.test.jsx (17 tests | 3 failed) 32423ms
+   × comparison-v2 reuses seven dynamic tabs and requires a manual choice before confirmation 5923ms
+   × manual v2 confirmation keeps history after reload, lost response=false 5588ms
+   × manual v2 confirmation keeps history after reload, lost response=true 5821ms
+   ✓ a pending FF selection keeps its native radio checked and focused until the durable response arrives 1295ms
+   ✓ a pending BF selection keeps its native radio checked and focused until the durable response arrives 1365ms
+   ✓ a pending WF selection keeps its native radio checked and focused until the durable response arrives 1790ms
+   ✓ a pending HF selection keeps its native radio checked and focused until the durable response arrives 1772ms
+   ✓ a pending M5 selection keeps its native radio checked and focused until the durable response arrives 1374ms
+   ✓ a pending M6-BS selection keeps its native radio checked and focused until the durable response arrives 1837ms
+   ✓ failed selection status 0 restores the last durable choice and never confirms 1035ms
+   ✓ failed selection status 409 restores the last durable choice and never confirms 665ms
+   ✓ v2 conflict refreshes durable state and preserves the manual selection 901ms
+   ✓ a network failure before commit retains the same idempotent operation on retry 1593ms
+   ✓ v2 confirmation requires the confirmation permission 356ms
+   ✓ partial M6 and failed HF remain independent and retain their actual diagnostics 584ms
+   ✓ reloading a v2 comparison consults its durable ID without starting another comparison 150ms
+   ✓ explicit idempotency-key recovery uses the v2 profile without starting a second comparison 368ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 14 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/inventory/__tests__/InventoryPage.test.jsx > TA-011 — errores HTTP de Inventario > 403 al editar conserva sesión y borrador sin refrescar ni cambiar el inventario
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/features/inventory/__tests__/InventoryPage.test.jsx:84:3
+     82|
+     83| describe('TA-011 — errores HTTP de Inventario', () => {
+     84|   test('403 al editar conserva sesión y borrador sin refrescar ni camb…
+       |   ^
+     85|     const { user, onSessionExpired } = await renderInventory()
+     86|     await user.click(screen.getByRole('button', { name: 'Editar' }))
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/14]⎯
+
+ FAIL  src/features/inventory/__tests__/RegistrarRetazoGeometry.test.jsx > TA-036: retazo con editor compartido > usa el mismo editor corregido: lados independientes y ángulo fijo con payload canónico
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/features/inventory/__tests__/RegistrarRetazoGeometry.test.jsx:32:3
+     30|
+     31| describe('TA-036: retazo con editor compartido', () => {
+     32|   test('usa el mismo editor corregido: lados independientes y ángulo f…
+       |   ^
+     33|     const { user, onSubmit } = await setup()
+     34|     for (const [x, y] of [[100,100],[400,100],[400,300],[100,300]]) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/14]⎯
+
+ FAIL  src/features/optimization/__tests__/ComparisonWorkspace.test.jsx > default workspace has four stable tabs, real phases and no automatic choice
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/features/optimization/__tests__/ComparisonWorkspace.test.jsx:79:1
+     77| }
+     78|
+     79| test('default workspace has four stable tabs, real phases and no autom…
+       | ^
+     80|   const { api } = setup();
+     81|   await execute();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/14]⎯
+
+ FAIL  src/features/optimization/__tests__/ComparisonWorkspaceV2.test.jsx > comparison-v2 reuses seven dynamic tabs and requires a manual choice before confirmation
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/features/optimization/__tests__/ComparisonWorkspaceV2.test.jsx:62:1
+     60| }
+     61|
+     62| test('comparison-v2 reuses seven dynamic tabs and requires a manual ch…
+       | ^
+     63|   const { apiV2, v1 } = setupV2(); await startV2();
+     64|   const expectedTabs = ['Comparación', 'FF', 'BF', 'WF', 'HF', 'BRF', …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/14]⎯
+
+ FAIL  src/features/optimization/__tests__/ComparisonWorkspaceV2.test.jsx > manual v2 confirmation keeps history after reload, lost response=false
+ FAIL  src/features/optimization/__tests__/ComparisonWorkspaceV2.test.jsx > manual v2 confirmation keeps history after reload, lost response=true
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/features/optimization/__tests__/ComparisonWorkspaceV2.test.jsx:82:25
+     80| });
+     81|
+     82| test.each([false, true])('manual v2 confirmation keeps history after r…
+       |                         ^
+     83|   const { apiV2, v1, view } = setupV2({ lostResponse }); await startV2…
+     84|   fireEvent.click(screen.getByRole('tab', { name: 'Comparación' }));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/14]⎯
+
+ FAIL  src/features/optimization/__tests__/GroupRasterInspection.test.jsx > selection previews groups immediately and preparation exposes all masks before any result
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/features/optimization/__tests__/GroupRasterInspection.test.jsx:13:1
+     11| afterEach(() => { vi.useRealTimers(); vi.restoreAllMocks(); });
+     12| const click = (name, scope = screen) => fireEvent.click(scope.getByRol…
+     13| test('selection previews groups immediately and preparation exposes al…
+       | ^
+     14|   const source = createFixturePendingOrdersSource(fixtureOrders);
+     15|   render(<OptimizationPage user={withPermissions({ rol: 'Operario' })}…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/14]⎯
+
+ FAIL  src/features/optimization/__tests__/OptimizationPage.test.jsx > single, multiple, all and deselection; no manual refresh or dropzone
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/features/optimization/__tests__/OptimizationPage.test.jsx:27:1
+     25| async function complete() { click('Calcular distribución'); await act(…
+     26|
+     27| test('single, multiple, all and deselection; no manual refresh or drop…
+       | ^
+     28|   mount();
+     29|   expect(screen.queryByRole('button', { name: 'Actualizar pedidos' }))…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/14]⎯
+
+ FAIL  src/features/optimization/__tests__/OriginalMeasures.test.jsx > CA-06: el resultado de cada motor y la comparación muestran las medidas sin desplegar nada
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/features/optimization/__tests__/OriginalMeasures.test.jsx:39:1
+     37| });
+     38|
+     39| test('CA-06: el resultado de cada motor y la comparación muestran las …
+       | ^
+     40|   const current = structuredClone(fixture.completed);
+     41|   const api = {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/14]⎯
+
+ FAIL  src/features/orders/__tests__/BulkImportAddToOrder.test.jsx > CA-07: con una fila observada no se puede agregar, aunque haya material, y se dice cuántas faltan
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/features/orders/__tests__/BulkImportAddToOrder.test.jsx:59:1
+     57| const addButton = () => screen.getByRole('button', { name: 'Agregar al…
+     58|
+     59| test('CA-07: con una fila observada no se puede agregar, aunque haya m…
+       | ^
+     60|   const user = await setup();
+     61|   expect(addButton()).toBeDisabled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/14]⎯
+
+ FAIL  src/features/orders/__tests__/KeyboardFocus.test.jsx > K-01: Enter en un campo guarda el pedido válido una sola vez y no envía uno inválido
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/features/orders/__tests__/KeyboardFocus.test.jsx:38:1
+     36| }
+     37|
+     38| test('K-01: Enter en un campo guarda el pedido válido una sola vez y n…
+       | ^
+     39|   const user = await setup();
+     40|   await user.type(screen.getByLabelText('Ancho (mm)'), '100');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/14]⎯
+
+ FAIL  src/features/orders/__tests__/MaterialGroups.test.jsx > la pieza inicial permanece bloqueada hasta completar material y espesor
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/features/orders/__tests__/MaterialGroups.test.jsx:50:1
+     48| }
+     49|
+     50| test('la pieza inicial permanece bloqueada hasta completar material y …
+       | ^
+     51|   await setup();
+     52|   expect(groups()).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/14]⎯
+
+ FAIL  src/features/orders/__tests__/NuevoPedido.test.jsx > FIX-003/005: composición y accesibilidad de Orders > conserva el formulario actual y no muestra navegación lateral inerte ni lista de pedidos
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/features/orders/__tests__/NuevoPedido.test.jsx:82:3
+     80|
+     81| describe('FIX-003/005: composición y accesibilidad de Orders', () => {
+     82|   test('conserva el formulario actual y no muestra navegación lateral …
+       |   ^
+     83|     const user = await setup()
+     84|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/14]⎯
+
+ FAIL  src/features/orders/__tests__/NuevoPedido.test.jsx > HU-006: contrato de piezas agrupadas por material y espesor > registra rectángulo, circunferencia y polígono con material, espesor y cantidad propios
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/features/orders/__tests__/NuevoPedido.test.jsx:168:3
+    166|
+    167| describe('HU-006: contrato de piezas agrupadas por material y espesor'…
+    168|   test('registra rectángulo, circunferencia y polígono con material, e…
+       |   ^
+    169|     const user = await setup()
+    170|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/14]⎯
+
+
+ Test Files  11 failed | 46 passed (57)
+      Tests  14 failed | 575 passed (589)
+   Start at  16:13:04
+   Duration  44.99s (tests 57%, environment 22%, transform 11%, import 6%, setup 4%)
+
+    Isolate  57 workers spawned · ~3.59s startup each (spawn + environment, per file)
+             at least ~6.15s faster with isolate: false — reuses workers across files instead of one per file

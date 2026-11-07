@@ -6,7 +6,7 @@ from types import MappingProxyType
 from .problem import OptimizationConfig, OptimizationProblem, PieceUnit, StockCandidate
 from .raster_mask import RasterMask
 from .rasterizer import COORDINATE_DECIMALS
-from .rotation import Orientation, RasterCache, discrete_angles, oriented_geometry, raster_number
+from .rotation import Orientation, RasterCache, discrete_angles, raster_number
 from .visual_events import VisualEvent
 
 
@@ -62,8 +62,7 @@ def prepare_run_geometry(problem: OptimizationProblem, *, cache=None, checkpoint
     emit('preparation_started')
     for item in (*pieces.values(), *stocks.values()):
         checkpoint()
-        cache.check_geometry(item.geometry, resolution)
-        cache.check_geometry(oriented_geometry(item.geometry, 0), resolution)
+        cache.check_base_geometry(item.geometry, resolution)
     piece_bases, material_bases = {}, {}
     for key, unit in pieces.items():
         checkpoint()

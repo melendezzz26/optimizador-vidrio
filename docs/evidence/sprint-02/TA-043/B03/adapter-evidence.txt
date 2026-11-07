@@ -1,0 +1,1 @@
+PASS: six direct/adapted results, checkpoints and four actual M6 terminations; /mnt/c/Users/fabri/Documents/TALLER INTEGRADOR I/optimizador-vidrio/docs/evidence/sprint-02/TA-043/B03/adapter-validation.json

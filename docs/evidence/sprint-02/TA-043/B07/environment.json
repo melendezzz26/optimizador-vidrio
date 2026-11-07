@@ -1,0 +1,39 @@
+{
+    "block":  "TA-043/B07",
+    "smoke":  "ST-INC-07",
+    "status":  "PASS",
+    "date":  "2026-11-04",
+    "required_environment":  "E0: Linux/WSL2, PostgreSQL isolated, FastAPI, Vite, Chromium",
+    "checks":  [
+                   {
+                       "runtime":  "WSL2",
+                       "command":  "wsl.exe -e bash -lc \u0027\u003cruntime preflight\u003e\u0027",
+                       "result":  "DENIED",
+                       "detail":  "Wsl/Service/CreateInstance/E_ACCESSDENIED"
+                   },
+                   {
+                       "runtime":  "Docker",
+                       "command":  "docker info",
+                       "result":  "UNAVAILABLE",
+                       "detail":  "Docker engine named pipe is not present; no daemon connection"
+                   },
+                   {
+                       "runtime":  "WSL2 outside sandbox",
+                       "command":  "wsl.exe -e bash -lc whoami/uname; existing isolated smoke harness",
+                       "result":  "PASS",
+                       "detail":  "Authorized escalation worked; no system changes"
+                   }
+               ],
+    "windows_postgresql":  "Detected but not used; does not satisfy E0 process-control environment",
+    "services_started":  [
+                             "isolated PostgreSQL",
+                             "FastAPI",
+                             "Vite",
+                             "Chromium"
+                         ],
+    "test_data_created":  true,
+    "cleanup":  "PASS: processes_after=[], temporary_copy_removed=true; see smoke/cleanup.json",
+    "playwright_execution":  "PASS: desktop and mobile",
+    "playwright_discovery":  "Two B07 tests listed: chromium-desktop and chromium-mobile",
+    "screenshots":  "smoke/chromium-desktop and smoke/chromium-mobile"
+}

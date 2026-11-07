@@ -1,0 +1,548 @@
+{
+  "comparison_id": 1,
+  "input_sha256": "70b02389fcee9ab7c2564d89127dbec832ed6324bd39a5db421dc42bf9e379e1",
+  "problem": {
+    "input_version": 1,
+    "problem": {
+      "config": {
+        "angular_step_deg": "5.00",
+        "margin_mm": "0.00",
+        "resolution_mm": "1.000",
+        "separation_mm": "0.00"
+      },
+      "groups": [
+        {
+          "glass_type_id": 7,
+          "stock_candidates": [
+            {
+              "area_mm2": "8.0000",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 4
+              },
+              "glass_type_id": 7,
+              "material_id": 5,
+              "physical_unit_index": 1,
+              "source": "PLANCHA",
+              "thickness_mm": "6.0"
+            },
+            {
+              "area_mm2": "8.0000",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 4
+              },
+              "glass_type_id": 7,
+              "material_id": 5,
+              "physical_unit_index": 2,
+              "source": "PLANCHA",
+              "thickness_mm": "6.0"
+            }
+          ],
+          "thickness_mm": "6.0",
+          "units": [
+            {
+              "area_mm2": "4.00",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 2
+              },
+              "glass_type_id": 7,
+              "order_id": 1,
+              "piece_id": 1,
+              "thickness_mm": "6.0",
+              "unit_index": 1
+            },
+            {
+              "area_mm2": "4.00",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 2
+              },
+              "glass_type_id": 7,
+              "order_id": 1,
+              "piece_id": 1,
+              "thickness_mm": "6.0",
+              "unit_index": 2
+            },
+            {
+              "area_mm2": "4.00",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 2
+              },
+              "glass_type_id": 7,
+              "order_id": 2,
+              "piece_id": 2,
+              "thickness_mm": "6.0",
+              "unit_index": 1
+            },
+            {
+              "area_mm2": "4.00",
+              "geometry": {
+                "height_mm": 2,
+                "type": "RECTANGULO",
+                "width_mm": 2
+              },
+              "glass_type_id": 7,
+              "order_id": 2,
+              "piece_id": 2,
+              "thickness_mm": "6.0",
+              "unit_index": 2
+            }
+          ]
+        }
+      ],
+      "order_ids": [
+        1,
+        2
+      ]
+    }
+  },
+  "methods": [
+    "FF",
+    "BF",
+    "WF",
+    "HF",
+    "M5",
+    "M6-BS"
+  ],
+  "configuration_id": 1,
+  "configuration_version": 1,
+  "angular_step_deg": "5.00",
+  "states": [
+    {
+      "execution_id": 1,
+      "method": "FF",
+      "status": "FALLIDA",
+      "dispatch": "TERMINATED",
+      "complete": false,
+      "diagnostic": {
+        "origin": "SUPERVISOR",
+        "termination_reason": "PROCESS_START_FAILED",
+        "statistics": {
+          "runtime_dispatched": 0,
+          "runtime_engine_started": 0
+        }
+      },
+      "placed_units": null
+    },
+    {
+      "execution_id": 2,
+      "method": "BF",
+      "status": "COMPLETADA",
+      "dispatch": "TERMINATED",
+      "complete": true,
+      "diagnostic": {
+        "origin": "ENGINE",
+        "termination_reason": "COMPLETED",
+        "statistics": {
+          "runtime_dispatched": 1,
+          "runtime_engine_started": 1
+        }
+      },
+      "placed_units": 4
+    },
+    {
+      "execution_id": 3,
+      "method": "WF",
+      "status": "COMPLETADA",
+      "dispatch": "TERMINATED",
+      "complete": true,
+      "diagnostic": {
+        "origin": "ENGINE",
+        "termination_reason": "COMPLETED",
+        "statistics": {
+          "runtime_dispatched": 1,
+          "runtime_engine_started": 1
+        }
+      },
+      "placed_units": 4
+    },
+    {
+      "execution_id": 4,
+      "method": "HF",
+      "status": "COMPLETADA",
+      "dispatch": "TERMINATED",
+      "complete": true,
+      "diagnostic": {
+        "origin": "ENGINE",
+        "termination_reason": "COMPLETED",
+        "statistics": {
+          "accepted_pocket": 0,
+          "activation_attempts": 2,
+          "anchors_checked": 0,
+          "boundary_rows": 0,
+          "budget_exhausted": 0,
+          "check_rows": 0,
+          "coverage_fallback": 0,
+          "fallback_used": 4,
+          "max_region_anchors_observed": 0,
+          "max_region_checks_observed": 0,
+          "orientations_inspected": 4,
+          "placement_checks": 0,
+          "pocket_candidates": 0,
+          "runtime_dispatched": 1,
+          "runtime_engine_started": 1,
+          "seed_probes": 0,
+          "sheet_fallback": 0
+        }
+      },
+      "placed_units": 4
+    },
+    {
+      "execution_id": 5,
+      "method": "M5",
+      "status": "COMPLETADA",
+      "dispatch": "TERMINATED",
+      "complete": true,
+      "diagnostic": {
+        "origin": "ENGINE",
+        "termination_reason": "COMPLETED",
+        "statistics": {
+          "runtime_dispatched": 1,
+          "runtime_engine_started": 1
+        }
+      },
+      "placed_units": 4
+    },
+    {
+      "execution_id": 6,
+      "method": "M6-BS",
+      "status": "COMPLETADA",
+      "dispatch": "TERMINATED",
+      "complete": true,
+      "diagnostic": {
+        "origin": "ENGINE",
+        "termination_reason": "COMPLETED",
+        "statistics": {
+          "alternatives_pruned": 0,
+          "completed_levels": 4,
+          "expansions": 16,
+          "geometry_probes": 52,
+          "max_frontier": 2,
+          "parents": 7,
+          "runtime_dispatched": 1,
+          "runtime_engine_started": 1,
+          "state_bytes_bound": 143808
+        }
+      },
+      "placed_units": 4
+    }
+  ],
+  "timeline": [
+    {
+      "kind": "supervisor_started",
+      "monotonic": 114.174416243,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "execution_failed",
+      "monotonic": 114.199087586,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "result_persisted",
+      "monotonic": 115.026447934,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "result_persisted",
+      "monotonic": 115.934193538,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "result_persisted",
+      "monotonic": 116.801693969,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "result_persisted",
+      "monotonic": 117.720791681,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "result_persisted",
+      "monotonic": 118.515059784,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "supervisor_returning",
+      "monotonic": 118.515607492,
+      "thread": "comparison-v2-supervisor-1"
+    },
+    {
+      "kind": "supervisor_joined",
+      "monotonic": 118.515731773,
+      "thread": "comparison-v2-owner-1"
+    },
+    {
+      "kind": "processes_verified",
+      "monotonic": 118.520770492,
+      "thread": "comparison-v2-owner-1"
+    },
+    {
+      "kind": "safe_close_committed",
+      "monotonic": 118.540113195,
+      "thread": "comparison-v2-owner-1"
+    },
+    {
+      "kind": "admission_released",
+      "monotonic": 118.540122183,
+      "thread": "comparison-v2-owner-1"
+    }
+  ],
+  "processes": {
+    "maximum_active_workers": 1,
+    "maximum_queued_packets": 1,
+    "maximum_packet_bytes": 4109,
+    "maximum_aggregate_rss": 152838144,
+    "supervisor_peak_rss": 111587328,
+    "maximum_worker_virtual": 40222720,
+    "samples": 158,
+    "maximum_sample_gap_ms": 27.876978999998414,
+    "budget": {
+      "aggregate_rss_bytes": 1073741824,
+      "worker_address_bytes": 268435456,
+      "supervisor_rss_bytes": 251658240,
+      "helper_reserve_bytes": 16777216,
+      "packet_bytes": 12582912,
+      "visual_packet_bytes": 4194304,
+      "queued_packets_per_worker": 1,
+      "retained_visual_bytes": 33554432,
+      "retained_event_bytes": 8388608,
+      "startup_seconds": 30,
+      "calculation_seconds": 120,
+      "global_seconds": 180
+    },
+    "all_workers_stopped": true,
+    "global_reason": null,
+    "executions": {
+      "FF": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 1,
+          "method": "FF"
+        },
+        "state": "TERMINATED",
+        "dispatched": false,
+        "engine_started": false,
+        "identity": null,
+        "launched_monotonic": 114.178094964,
+        "queue_ms": 0.946650999992471,
+        "error_type": "OSError",
+        "cleanup_ms": 0.03799000000981323,
+        "elapsed_ms": 0.07841400000074827,
+        "execution_external_wall_ms": null,
+        "stopped_monotonic": 114.1915003,
+        "reason": "PROCESS_START_FAILED"
+      },
+      "BF": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 2,
+          "method": "BF"
+        },
+        "state": "TERMINATED",
+        "dispatched": true,
+        "engine_started": true,
+        "identity": {
+          "pid": 747,
+          "start_ticks": "11421"
+        },
+        "launched_monotonic": 114.200290542,
+        "queue_ms": 23.14222900000118,
+        "descendants": [],
+        "peak_rss": 24444928,
+        "peak_virtual": 40222720,
+        "startup_ms": 751.5265950000014,
+        "worker_report": {
+          "address_limit_bytes": 268435456,
+          "ended_monotonic": 114.978102402,
+          "engine_stop_reason": null,
+          "error_type": null,
+          "maxrss_bytes": 109936640,
+          "observation_bytes": 15323,
+          "observations": 26,
+          "observer_error_type": null
+        },
+        "identity_after": null,
+        "exitcode": 0,
+        "descendants_after": [],
+        "cleanup_ms": 0.4336490000014237,
+        "elapsed_ms": 803.3579650000036,
+        "execution_external_wall_ms": 46.95175499999493,
+        "stopped_monotonic": 115.015953184,
+        "reason": "COMPLETED"
+      },
+      "WF": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 3,
+          "method": "WF"
+        },
+        "state": "TERMINATED",
+        "dispatched": true,
+        "engine_started": true,
+        "identity": {
+          "pid": 750,
+          "start_ticks": "11504"
+        },
+        "launched_monotonic": 115.027562059,
+        "queue_ms": 850.413746000001,
+        "descendants": [],
+        "peak_rss": 24440832,
+        "peak_virtual": 40222720,
+        "startup_ms": 821.416947000003,
+        "worker_report": {
+          "address_limit_bytes": 268435456,
+          "ended_monotonic": 115.87817616,
+          "engine_stop_reason": null,
+          "error_type": null,
+          "maxrss_bytes": 109936640,
+          "observation_bytes": 15323,
+          "observations": 26,
+          "observer_error_type": null
+        },
+        "identity_after": null,
+        "exitcode": 0,
+        "descendants_after": [],
+        "cleanup_ms": 0.4177790000028381,
+        "elapsed_ms": 878.9695470000112,
+        "execution_external_wall_ms": 51.841662000001065,
+        "stopped_monotonic": 115.921806006,
+        "reason": "COMPLETED"
+      },
+      "HF": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 4,
+          "method": "HF"
+        },
+        "state": "TERMINATED",
+        "dispatched": true,
+        "engine_started": true,
+        "identity": {
+          "pid": 753,
+          "start_ticks": "11595"
+        },
+        "launched_monotonic": 115.935228749,
+        "queue_ms": 1758.0804360000002,
+        "descendants": [],
+        "peak_rss": 24457216,
+        "peak_virtual": 40222720,
+        "startup_ms": 768.9102669999954,
+        "worker_report": {
+          "address_limit_bytes": 268435456,
+          "ended_monotonic": 116.742090145,
+          "engine_stop_reason": null,
+          "error_type": null,
+          "maxrss_bytes": 110116864,
+          "observation_bytes": 15511,
+          "observations": 26,
+          "observer_error_type": null
+        },
+        "identity_after": null,
+        "exitcode": 0,
+        "descendants_after": [],
+        "cleanup_ms": 0.40921200000809677,
+        "elapsed_ms": 839.1576190000052,
+        "execution_external_wall_ms": 65.03989200000149,
+        "stopped_monotonic": 116.789701939,
+        "reason": "COMPLETED"
+      },
+      "M5": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 5,
+          "method": "M5"
+        },
+        "state": "TERMINATED",
+        "dispatched": true,
+        "engine_started": true,
+        "identity": {
+          "pid": 756,
+          "start_ticks": "11687"
+        },
+        "launched_monotonic": 116.802830721,
+        "queue_ms": 2625.682408000003,
+        "descendants": [],
+        "peak_rss": 24174592,
+        "peak_virtual": 40222720,
+        "startup_ms": 760.2113429999946,
+        "worker_report": {
+          "address_limit_bytes": 268435456,
+          "ended_monotonic": 117.653467746,
+          "engine_stop_reason": null,
+          "error_type": null,
+          "maxrss_bytes": 110116864,
+          "observation_bytes": 15323,
+          "observations": 26,
+          "observer_error_type": null
+        },
+        "identity_after": null,
+        "exitcode": 0,
+        "descendants_after": [],
+        "cleanup_ms": 0.5020810000075926,
+        "elapsed_ms": 828.600128000005,
+        "execution_external_wall_ms": 62.39515800000106,
+        "stopped_monotonic": 117.706268253,
+        "reason": "COMPLETED"
+      },
+      "M6-BS": {
+        "scope": {
+          "comparison_id": 1,
+          "execution_id": 6,
+          "method": "M6-BS"
+        },
+        "state": "TERMINATED",
+        "dispatched": true,
+        "engine_started": true,
+        "identity": {
+          "pid": 759,
+          "start_ticks": "11774"
+        },
+        "launched_monotonic": 117.721963077,
+        "queue_ms": 3544.8147639999943,
+        "descendants": [],
+        "peak_rss": 24473600,
+        "peak_virtual": 40222720,
+        "startup_ms": 723.3375220000084,
+        "worker_report": {
+          "address_limit_bytes": 268435456,
+          "ended_monotonic": 118.484928164,
+          "engine_stop_reason": null,
+          "error_type": null,
+          "maxrss_bytes": 110116864,
+          "observation_bytes": 1336,
+          "observations": 5,
+          "observer_error_type": null
+        },
+        "identity_after": null,
+        "exitcode": 0,
+        "descendants_after": [],
+        "cleanup_ms": 5.686463000003528,
+        "elapsed_ms": 752.6155120000055,
+        "execution_external_wall_ms": 16.606722000005902,
+        "stopped_monotonic": 118.496298985,
+        "reason": "COMPLETED"
+      }
+    },
+    "elapsed_ms": 4337.9570459999995,
+    "retained_bytes": {
+      "visual": 0,
+      "event": 0
+    },
+    "evicted_observations": {
+      "visual": 0,
+      "event": 0
+    }
+  },
+  "retained_event_bytes": 65103,
+  "retained_visual_bytes": 73220
+}

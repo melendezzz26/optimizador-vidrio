@@ -1,0 +1,705 @@
+{
+  "budget": {
+    "aggregate_rss_bytes": 1073741824,
+    "worker_address_bytes": 268435456,
+    "supervisor_rss_bytes": 251658240,
+    "helper_reserve_bytes": 16777216,
+    "packet_bytes": 12582912,
+    "visual_packet_bytes": 4194304,
+    "queued_packets_per_worker": 1,
+    "retained_visual_bytes": 33554432,
+    "retained_event_bytes": 8388608,
+    "startup_seconds": 30,
+    "calculation_seconds": 120,
+    "global_seconds": 180
+  },
+  "fixture": {
+    "input_version": 1,
+    "problem": {
+      "config": {
+        "angular_step_deg": "5",
+        "margin_mm": "0",
+        "resolution_mm": "1",
+        "separation_mm": "0"
+      },
+      "groups": [
+        {
+          "glass_type_id": 1,
+          "stock_candidates": [
+            {
+              "area_mm2": "48",
+              "geometry": {
+                "height_mm": 6,
+                "type": "RECTANGULO",
+                "width_mm": 8
+              },
+              "glass_type_id": 1,
+              "material_id": 1,
+              "physical_unit_index": 1,
+              "source": "PLANCHA",
+              "thickness_mm": "6"
+            }
+          ],
+          "thickness_mm": "6",
+          "units": [
+            {
+              "area_mm2": "3.14",
+              "geometry": {
+                "radius_mm": 1,
+                "type": "CIRCUNFERENCIA"
+              },
+              "glass_type_id": 1,
+              "order_id": 1,
+              "piece_id": 1,
+              "thickness_mm": "6",
+              "unit_index": 1
+            },
+            {
+              "area_mm2": "3.0",
+              "geometry": {
+                "type": "POLIGONO_CONVEXO",
+                "vertices_mm": [
+                  [
+                    0,
+                    0
+                  ],
+                  [
+                    3,
+                    0
+                  ],
+                  [
+                    0,
+                    2
+                  ]
+                ]
+              },
+              "glass_type_id": 1,
+              "order_id": 1,
+              "piece_id": 2,
+              "thickness_mm": "6",
+              "unit_index": 1
+            },
+            {
+              "area_mm2": "2",
+              "geometry": {
+                "height_mm": 1,
+                "type": "RECTANGULO",
+                "width_mm": 2
+              },
+              "glass_type_id": 1,
+              "order_id": 1,
+              "piece_id": 3,
+              "thickness_mm": "6",
+              "unit_index": 1
+            }
+          ]
+        }
+      ],
+      "order_ids": [
+        1
+      ]
+    }
+  },
+  "sequences": [
+    {
+      "observed": false,
+      "records": [
+        {
+          "kind": "result",
+          "method": "FF",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 436,
+            "start_ticks": "5282"
+          },
+          "decode_ms": 0.885888,
+          "execution_wall_ms": 1.523715,
+          "preparation_exclusive_ms": 0.768249,
+          "engine_body_exclusive_ms": 0.327266,
+          "timings_ms": {
+            "preparation": 0.768249,
+            "preparation_observer": 0.0,
+            "engine": 1.095515,
+            "observation": 0.0,
+            "metrics": 0.344592,
+            "observation_serialization": 0.0,
+            "result_serialization": 0.356984,
+            "engine_observation": 0.0
+          },
+          "events": 0,
+          "observation_bytes": 0,
+          "result_bytes": 2579,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 23609344,
+            "virtual": 39989248
+          },
+          "maxrss_bytes": 23367680,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 831.3078069999947,
+          "spawn_to_result_ms": 833.4708949999979,
+          "cleanup_ms": 10.511186000002226,
+          "exitcode": 0,
+          "identity_after": null
+        },
+        {
+          "kind": "result",
+          "method": "BF",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 437,
+            "start_ticks": "5364"
+          },
+          "decode_ms": 0.423246,
+          "execution_wall_ms": 1.419052,
+          "preparation_exclusive_ms": 0.459699,
+          "engine_body_exclusive_ms": 0.489471,
+          "timings_ms": {
+            "preparation": 0.459699,
+            "preparation_observer": 0.0,
+            "engine": 0.94917,
+            "observation": 0.0,
+            "metrics": 0.379381,
+            "observation_serialization": 0.0,
+            "result_serialization": 0.36677,
+            "engine_observation": 0.0
+          },
+          "events": 0,
+          "observation_bytes": 0,
+          "result_bytes": 2579,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 23654400,
+            "virtual": 39989248
+          },
+          "maxrss_bytes": 23064576,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 837.0606969999983,
+          "spawn_to_result_ms": 839.1064999999998,
+          "cleanup_ms": 10.10333699999677,
+          "exitcode": 0,
+          "identity_after": null
+        },
+        {
+          "kind": "result",
+          "method": "WF",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 442,
+            "start_ticks": "5449"
+          },
+          "decode_ms": 0.397541,
+          "execution_wall_ms": 1.163437,
+          "preparation_exclusive_ms": 0.414636,
+          "engine_body_exclusive_ms": 0.345875,
+          "timings_ms": {
+            "preparation": 0.414636,
+            "preparation_observer": 0.0,
+            "engine": 0.760511,
+            "observation": 0.0,
+            "metrics": 0.326797,
+            "observation_serialization": 0.0,
+            "result_serialization": 0.319273,
+            "engine_observation": 0.0
+          },
+          "events": 0,
+          "observation_bytes": 0,
+          "result_bytes": 2579,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 23748608,
+            "virtual": 39989248
+          },
+          "maxrss_bytes": 23408640,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 911.6013749999966,
+          "spawn_to_result_ms": 913.320739999996,
+          "cleanup_ms": 8.879786999997918,
+          "exitcode": 0,
+          "identity_after": null
+        },
+        {
+          "kind": "result",
+          "method": "HF",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 443,
+            "start_ticks": "5542"
+          },
+          "decode_ms": 0.355786,
+          "execution_wall_ms": 1.811415,
+          "preparation_exclusive_ms": 0.413766,
+          "engine_body_exclusive_ms": 0.94629,
+          "timings_ms": {
+            "preparation": 0.413766,
+            "preparation_observer": 0.0,
+            "engine": 1.360056,
+            "observation": 0.0,
+            "metrics": 0.320548,
+            "observation_serialization": 0.0,
+            "result_serialization": 0.397711,
+            "engine_observation": 0.0
+          },
+          "events": 0,
+          "observation_bytes": 0,
+          "result_bytes": 2911,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {
+              "activation_attempts": 2,
+              "orientations_inspected": 5,
+              "boundary_rows": 15,
+              "seed_probes": 18,
+              "pocket_candidates": 2,
+              "max_region_checks_observed": 10,
+              "max_region_anchors_observed": 13,
+              "anchors_checked": 42,
+              "placement_checks": 42,
+              "check_rows": 65,
+              "accepted_pocket": 0,
+              "budget_exhausted": 0,
+              "fallback_used": 3,
+              "coverage_fallback": 0,
+              "sheet_fallback": 0
+            }
+          },
+          "complete": true,
+          "memory": {
+            "rss": 23736320,
+            "virtual": 39989248
+          },
+          "maxrss_bytes": 23404544,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 861.3831950000019,
+          "spawn_to_result_ms": 863.7927219999995,
+          "cleanup_ms": 9.309245000004296,
+          "exitcode": 0,
+          "identity_after": null
+        },
+        {
+          "kind": "result",
+          "method": "M5",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 444,
+            "start_ticks": "5629"
+          },
+          "decode_ms": 0.342839,
+          "execution_wall_ms": 1.27019,
+          "preparation_exclusive_ms": 0.402747,
+          "engine_body_exclusive_ms": 0.338174,
+          "timings_ms": {
+            "preparation": 0.402747,
+            "preparation_observer": 0.0,
+            "engine": 0.740921,
+            "observation": 0.0,
+            "metrics": 0.460312,
+            "observation_serialization": 0.0,
+            "result_serialization": 0.364959,
+            "engine_observation": 0.0
+          },
+          "events": 0,
+          "observation_bytes": 0,
+          "result_bytes": 2579,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 23748608,
+            "virtual": 39989248
+          },
+          "maxrss_bytes": 23654400,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 792.0519890000008,
+          "spawn_to_result_ms": 793.9159810000049,
+          "cleanup_ms": 8.566287000000727,
+          "exitcode": 0,
+          "identity_after": null
+        },
+        {
+          "kind": "result",
+          "method": "M6-BS",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 445,
+            "start_ticks": "5709"
+          },
+          "decode_ms": 0.337317,
+          "execution_wall_ms": 20.277155,
+          "preparation_exclusive_ms": 0.391226,
+          "engine_body_exclusive_ms": 19.474157,
+          "timings_ms": {
+            "preparation": 0.391226,
+            "preparation_observer": 0.0,
+            "engine": 19.865383,
+            "observation": 0.0,
+            "metrics": 0.326212,
+            "observation_serialization": 0.0,
+            "result_serialization": 0.357005,
+            "engine_observation": 0.0
+          },
+          "events": 0,
+          "observation_bytes": 0,
+          "result_bytes": 2725,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {
+              "expansions": 178,
+              "geometry_probes": 249,
+              "parents": 5,
+              "alternatives_pruned": 128,
+              "max_frontier": 2,
+              "completed_levels": 3,
+              "state_bytes_bound": 129696
+            }
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24154112,
+            "virtual": 39989248
+          },
+          "maxrss_bytes": 23990272,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 756.4185589999965,
+          "spawn_to_result_ms": 777.3886089999991,
+          "cleanup_ms": 9.276917000001106,
+          "exitcode": 0,
+          "identity_after": null
+        }
+      ],
+      "maximum_active_workers": 1,
+      "sampled_maximum_aggregate_rss": 64118784,
+      "sample_interval_ms": 5,
+      "result": "PASS",
+      "total_ms": 5143.733354000005,
+      "all_workers_stopped": true
+    },
+    {
+      "observed": true,
+      "records": [
+        {
+          "kind": "result",
+          "method": "FF",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 446,
+            "start_ticks": "5788"
+          },
+          "decode_ms": 0.390213,
+          "execution_wall_ms": 2.647287,
+          "preparation_exclusive_ms": 0.49336,
+          "engine_body_exclusive_ms": 0.378546,
+          "timings_ms": {
+            "preparation": 0.862062,
+            "preparation_observer": 0.368702,
+            "engine": 2.023375,
+            "observation": 1.344229,
+            "metrics": 0.35051,
+            "observation_serialization": 1.344229,
+            "result_serialization": 0.280158,
+            "engine_observation": 1.151469
+          },
+          "events": 24,
+          "observation_bytes": 15158,
+          "result_bytes": 2579,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 23584768,
+            "virtual": 39989248
+          },
+          "maxrss_bytes": 23457792,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 798.5972260000053,
+          "spawn_to_result_ms": 801.7605719999992,
+          "cleanup_ms": 9.246449999999129,
+          "exitcode": 0,
+          "identity_after": null
+        },
+        {
+          "kind": "result",
+          "method": "BF",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 448,
+            "start_ticks": "5869"
+          },
+          "decode_ms": 0.451326,
+          "execution_wall_ms": 3.985484,
+          "preparation_exclusive_ms": 0.996367,
+          "engine_body_exclusive_ms": 0.59382,
+          "timings_ms": {
+            "preparation": 1.714174,
+            "preparation_observer": 0.717807,
+            "engine": 3.207056,
+            "observation": 1.850739,
+            "metrics": 0.396112,
+            "observation_serialization": 1.850739,
+            "result_serialization": 0.264803,
+            "engine_observation": 1.616869
+          },
+          "events": 24,
+          "observation_bytes": 15152,
+          "result_bytes": 2579,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 23576576,
+            "virtual": 39989248
+          },
+          "maxrss_bytes": 22757376,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 844.6924750000022,
+          "spawn_to_result_ms": 849.2481850000004,
+          "cleanup_ms": 9.148901999999737,
+          "exitcode": 0,
+          "identity_after": null
+        },
+        {
+          "kind": "result",
+          "method": "WF",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 451,
+            "start_ticks": "5955"
+          },
+          "decode_ms": 0.367397,
+          "execution_wall_ms": 2.886071,
+          "preparation_exclusive_ms": 0.52795,
+          "engine_body_exclusive_ms": 0.423857,
+          "timings_ms": {
+            "preparation": 1.075339,
+            "preparation_observer": 0.547389,
+            "engine": 2.232156,
+            "observation": 1.498144,
+            "metrics": 0.353652,
+            "observation_serialization": 1.498144,
+            "result_serialization": 0.268822,
+            "engine_observation": 1.280349
+          },
+          "events": 24,
+          "observation_bytes": 15152,
+          "result_bytes": 2579,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 23658496,
+            "virtual": 39989248
+          },
+          "maxrss_bytes": 22986752,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 766.9089689999993,
+          "spawn_to_result_ms": 770.375553000001,
+          "cleanup_ms": 9.110667999998157,
+          "exitcode": 0,
+          "identity_after": null
+        },
+        {
+          "kind": "result",
+          "method": "HF",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 452,
+            "start_ticks": "6033"
+          },
+          "decode_ms": 0.48478,
+          "execution_wall_ms": 3.898284,
+          "preparation_exclusive_ms": 0.766723,
+          "engine_body_exclusive_ms": 1.280358,
+          "timings_ms": {
+            "preparation": 1.140095,
+            "preparation_observer": 0.373372,
+            "engine": 3.205421,
+            "observation": 1.35952,
+            "metrics": 0.362197,
+            "observation_serialization": 1.35952,
+            "result_serialization": 0.304616,
+            "engine_observation": 1.15834
+          },
+          "events": 24,
+          "observation_bytes": 15250,
+          "result_bytes": 2911,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {
+              "activation_attempts": 2,
+              "orientations_inspected": 5,
+              "boundary_rows": 15,
+              "seed_probes": 18,
+              "pocket_candidates": 2,
+              "max_region_checks_observed": 10,
+              "max_region_anchors_observed": 13,
+              "anchors_checked": 42,
+              "placement_checks": 42,
+              "check_rows": 65,
+              "accepted_pocket": 0,
+              "budget_exhausted": 0,
+              "fallback_used": 3,
+              "coverage_fallback": 0,
+              "sheet_fallback": 0
+            }
+          },
+          "complete": true,
+          "memory": {
+            "rss": 23769088,
+            "virtual": 39989248
+          },
+          "maxrss_bytes": 23162880,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 795.6321229999971,
+          "spawn_to_result_ms": 800.1460959999988,
+          "cleanup_ms": 9.793801999997243,
+          "exitcode": 0,
+          "identity_after": null
+        },
+        {
+          "kind": "result",
+          "method": "M5",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 453,
+            "start_ticks": "6114"
+          },
+          "decode_ms": 0.360971,
+          "execution_wall_ms": 3.085093,
+          "preparation_exclusive_ms": 0.616347,
+          "engine_body_exclusive_ms": 0.50847,
+          "timings_ms": {
+            "preparation": 1.087458,
+            "preparation_observer": 0.471111,
+            "engine": 2.435278,
+            "observation": 1.513347,
+            "metrics": 0.354234,
+            "observation_serialization": 1.513347,
+            "result_serialization": 0.27692,
+            "engine_observation": 1.310461
+          },
+          "events": 24,
+          "observation_bytes": 15152,
+          "result_bytes": 2579,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 23674880,
+            "virtual": 39989248
+          },
+          "maxrss_bytes": 23199744,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 778.5945840000039,
+          "spawn_to_result_ms": 782.3790939999994,
+          "cleanup_ms": 9.295027000000289,
+          "exitcode": 0,
+          "identity_after": null
+        },
+        {
+          "kind": "result",
+          "method": "M6-BS",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 454,
+            "start_ticks": "6193"
+          },
+          "decode_ms": 0.361436,
+          "execution_wall_ms": 22.652806,
+          "preparation_exclusive_ms": 0.394249,
+          "engine_body_exclusive_ms": 21.491695,
+          "timings_ms": {
+            "preparation": 0.394249,
+            "preparation_observer": 0.0,
+            "engine": 22.019885,
+            "observation": 0.337839,
+            "metrics": 0.334713,
+            "observation_serialization": 0.337839,
+            "result_serialization": 0.298619,
+            "engine_observation": 0.133941
+          },
+          "events": 5,
+          "observation_bytes": 3522,
+          "result_bytes": 2725,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {
+              "expansions": 178,
+              "geometry_probes": 249,
+              "parents": 5,
+              "alternatives_pruned": 128,
+              "max_frontier": 2,
+              "completed_levels": 3,
+              "state_bytes_bound": 129696
+            }
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24158208,
+            "virtual": 39989248
+          },
+          "maxrss_bytes": 23621632,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 749.8758310000042,
+          "spawn_to_result_ms": 773.1338910000005,
+          "cleanup_ms": 8.148261999998851,
+          "exitcode": 0,
+          "identity_after": null
+        }
+      ],
+      "maximum_active_workers": 1,
+      "sampled_maximum_aggregate_rss": 64229376,
+      "sample_interval_ms": 5,
+      "result": "PASS",
+      "total_ms": 4832.951702999999,
+      "all_workers_stopped": true
+    }
+  ],
+  "decision": "VIABLE",
+  "scope": "bounded preliminary spawn diagnosis, not the B05 coordinator"
+}

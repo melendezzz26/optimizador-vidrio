@@ -40,11 +40,48 @@ jobs:
           test -x "$pg_bin/initdb"
           test -x "$pg_bin/pg_ctl"
           echo "NEWGLASS_TEST_PG_BIN=$pg_bin" >> "$GITHUB_ENV"
-      - name: Run tests
-        # A fresh pytest process keeps the supervisor's own RSS budget real.
-        # Run both groups; do not relax limits or skip the process tests.
+      - name: Record backend resource baseline
         run: |
-          python -m pytest tests --ignore=tests/unit/optimization/test_comparison_runner.py -q -ra
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          import resource
+
+          def statm_rss(pid):
+              page = os.sysconf("SC_PAGE_SIZE")
+              return int(Path(f"/proc/{pid}/statm").read_text().split()[1]) * page
+
+          meminfo = dict(
+              line.split(":", 1)
+              for line in Path("/proc/meminfo").read_text().splitlines()
+          )
+          cgroup = Path("/sys/fs/cgroup")
+          print(f"pytest_pid={os.getpid()}")
+          print(f"pytest_rss_bytes={statm_rss(os.getpid())}")
+          print(f"mem_available_bytes={int(meminfo['MemAvailable'].split()[0]) * 1024}")
+          for name in ("memory.max", "memory.current"):
+              path = cgroup / name
+              if path.exists():
+                  print(f"{name.replace('.', '_')}={path.read_text().strip()}")
+          print(f"rlimit_as={resource.getrlimit(resource.RLIMIT_AS)}")
+          print("aggregate_rss_budget_bytes=1073741824")
+          print("supervisor_rss_budget_bytes=251658240")
+          print("worker_address_budget_bytes=268435456")
+          PY
+      - name: Run tests
+        # Keep the resource-sensitive suites in fresh pytest processes. The
+        # production preflight must remain enabled and every command is
+        # fail-fast; these are isolation boundaries, not skipped tests.
+        run: |
+          python -m pytest tests \
+            --ignore=tests/unit/optimization/test_comparison_runner.py \
+            --ignore=tests/integration/optimization/test_comparison_calculation.py \
+            --ignore=tests/integration/optimization/test_comparison_supervision_v2.py \
+            --ignore=tests/unit/optimization/test_sequential_runner.py \
+            -q -ra
+          python -m pytest tests/integration/optimization/test_comparison_calculation.py -q -ra
+          python -m pytest tests/integration/optimization/test_comparison_supervision_v2.py -q -ra
+          python -m pytest tests/unit/optimization/test_sequential_runner.py -q -ra
           python -m pytest tests/unit/optimization/test_comparison_runner.py -q -ra
 
   frontend:
@@ -117,4 +154,17 @@ jobs:
       - name: Install managed Chromium
         run: npx playwright install --with-deps chromium
       - name: E2E desktop and mobile
-        run: npm run test:e2e
+        # The B02 migration smoke must start with an empty isolated database:
+        # its --prepare downgrade intentionally rejects existing v2 rows.
+        # Run it once in a fresh Playwright server, then run every other
+        # critical E2E test in a second fresh server.
+        run: node scripts/run-e2e-phases.js
+      - name: Preserve E2E phase reports and diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-phases-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            frontend/test-results/e2e-phases/
+            frontend/playwright-report/e2e-phases/
+          if-no-files-found: error

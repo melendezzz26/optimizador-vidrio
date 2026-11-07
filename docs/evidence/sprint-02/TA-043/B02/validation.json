@@ -1,0 +1,33 @@
+{
+  "result": "PASS",
+  "baseline": "f65292f",
+  "branch": "feature/TA-043-integracion-seis-motores",
+  "requirements": 36,
+  "acceptance_criteria": 36,
+  "traceability_rows": 36,
+  "unchanged_development_blocks": 11,
+  "normative_tables_unchanged": true,
+  "links": "PASS",
+  "compile": "PASS",
+  "diff_check": "PASS",
+  "smoke_source_hashes_match": true,
+  "smoke_private_roots_remaining": [],
+  "ports_free": [
+    8017,
+    5188
+  ],
+  "pytest_temp_root_exists": false,
+  "source_sha256": {
+    "backend/app/models.py": "f818c7ed4b188518f267b087bafe081f581883f594c0c8e4a3384428cef8f14e",
+    "backend/app/modules/optimization/infrastructure/comparison_uow.py": "82ab3e232d6a0fdb360792cb3eb492e6133351b9c001c2db0a796ae8b7d2652b",
+    "backend/alembic/versions/s2cmp02d4e6f8_six_method_catalog.py": "f13e3a2c486facee04df1bcc385f2824674d53aa58a2083bae5ad85d16982a18",
+    "backend/app/modules/optimization/application/comparison_persistence_contracts.py": "d14932fa757ac6d83eb49a8ebdc692deb3233e6f6aa30182d1f0315c3ed64ca2",
+    "backend/app/modules/optimization/infrastructure/comparison_v2_uow.py": "1d9d491ac917380e9a6c3989984b253e98bd220959624a0c7a7634338f093a2e",
+    "backend/tests/comparison_history.py": "dfe89f381799f84c625638e0ac645935ad9ded9a47b969688126d24a2b2953a7",
+    "backend/tests/optimization_b02_upgrade.py": "bdf45be8458cd789a6cde468d3a74392a119b0b587486e6607b6d3d95e564d66",
+    "backend/tests/optimization_b01_smoke.py": "fb1de963cc7bc5b0c0ca488b6f5683877cdadc4154f4b0aa323dd1b74bae2569",
+    "backend/tests/e2e_server.py": "84670a22a02c3b09782a7a696ff388e48a4ef02ca50a5e8a87fb54f8b6b1e05b",
+    "backend/tests/integration/optimization/test_comparison_v2_migration.py": "b413306d985f05832a72e2d299c1550b1f282c701908dfeb52c47876f7397c41",
+    "backend/tests/integration/optimization/test_comparison_v2_persistence.py": "6fcba09da320db38b1dd36341e3b888f25956d6481be550a044070f7916c8c19"
+  }
+}

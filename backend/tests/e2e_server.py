@@ -48,7 +48,10 @@ def main():
         STATE.write_text(json.dumps({"root": str(root), "database_url": os.environ["DATABASE_URL"]}), encoding="utf-8")
         os.environ["SECRET_KEY"] = secrets.token_urlsafe(48)
         os.environ["TOKEN_MINUTOS"] = "480"
-        result = upgrade(engine, "head")
+        schema_revision = os.environ.get("NEWGLASS_E2E_SCHEMA_REVISION", "head")
+        if schema_revision not in ("head", "s2cmp01a1b2c"):
+            raise ValueError("Unsupported isolated E2E schema revision")
+        result = upgrade(engine, schema_revision)
         if result.returncode:
             raise RuntimeError(result.stderr)
 

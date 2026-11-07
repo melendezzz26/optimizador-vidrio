@@ -1,0 +1,660 @@
+{
+  "measurement": "B10 observed Linux spawn measurements",
+  "source_fixture": "B03 adapter-validation.json",
+  "budget": {
+    "aggregate_rss_bytes": 1073741824,
+    "worker_address_bytes": 268435456,
+    "supervisor_rss_bytes": 251658240,
+    "helper_reserve_bytes": 16777216,
+    "packet_bytes": 12582912,
+    "visual_packet_bytes": 4194304,
+    "queued_packets_per_worker": 1,
+    "retained_visual_bytes": 33554432,
+    "retained_event_bytes": 8388608,
+    "startup_seconds": 30,
+    "calculation_seconds": 120,
+    "global_seconds": 180
+  },
+  "cases": [
+    {
+      "case": "small-b09-reference",
+      "input_sha256_payload": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+      "engine_input_sha256s": [
+        "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2"
+      ],
+      "units": 3,
+      "stock_candidates": 1,
+      "geometry_types": [
+        "CIRCUNFERENCIA",
+        "POLIGONO_CONVEXO",
+        "RECTANGULO"
+      ],
+      "config": {
+        "angular_step_deg": "5",
+        "margin_mm": "0",
+        "resolution_mm": "1",
+        "separation_mm": "0"
+      },
+      "angular_step_deg": "5",
+      "methods": [
+        "FF",
+        "BF",
+        "WF",
+        "HF",
+        "M5",
+        "M6-BS"
+      ],
+      "records": [
+        {
+          "kind": "result",
+          "method": "FF",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 455,
+            "start_ticks": "10483"
+          },
+          "decode_ms": 0.373259,
+          "execution_wall_ms": 3.053554,
+          "preparation_exclusive_ms": 0.582921,
+          "engine_body_exclusive_ms": 0.393059,
+          "timings_ms": {
+            "preparation": 0.992338,
+            "preparation_observer": 0.409417,
+            "engine": 2.154095,
+            "observation": 1.456089,
+            "metrics": 0.540654,
+            "observation_serialization": 1.456089,
+            "result_serialization": 0.28373,
+            "engine_observation": 1.178115
+          },
+          "events": 24,
+          "observation_bytes": 15158,
+          "result_bytes": 2579,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24707072,
+            "virtual": 40169472
+          },
+          "maxrss_bytes": 24190976,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 458.9804420000121,
+          "spawn_to_result_ms": 471.9942950000018,
+          "cleanup_ms": 9.453198000002772,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "BF",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 456,
+            "start_ticks": "10530"
+          },
+          "decode_ms": 0.288473,
+          "execution_wall_ms": 2.748907,
+          "preparation_exclusive_ms": 0.483591,
+          "engine_body_exclusive_ms": 0.422875,
+          "timings_ms": {
+            "preparation": 0.869086,
+            "preparation_observer": 0.385495,
+            "engine": 2.113375,
+            "observation": 1.416248,
+            "metrics": 0.348916,
+            "observation_serialization": 1.416248,
+            "result_serialization": 0.362958,
+            "engine_observation": 1.206909
+          },
+          "events": 24,
+          "observation_bytes": 15152,
+          "result_bytes": 2579,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24702976,
+            "virtual": 40169472
+          },
+          "maxrss_bytes": 24485888,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 435.840345999992,
+          "spawn_to_result_ms": 448.3716149999992,
+          "cleanup_ms": 8.94166800000562,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "WF",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 457,
+            "start_ticks": "10575"
+          },
+          "decode_ms": 0.301042,
+          "execution_wall_ms": 2.646779,
+          "preparation_exclusive_ms": 0.501851,
+          "engine_body_exclusive_ms": 0.403889,
+          "timings_ms": {
+            "preparation": 0.884357,
+            "preparation_observer": 0.382506,
+            "engine": 2.05432,
+            "observation": 1.330988,
+            "metrics": 0.334815,
+            "observation_serialization": 1.330988,
+            "result_serialization": 0.284457,
+            "engine_observation": 1.14858
+          },
+          "events": 24,
+          "observation_bytes": 15152,
+          "result_bytes": 2579,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24768512,
+            "virtual": 40169472
+          },
+          "maxrss_bytes": 24125440,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 401.6569099999998,
+          "spawn_to_result_ms": 413.33435999999324,
+          "cleanup_ms": 8.536383999995678,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "HF",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 458,
+            "start_ticks": "10616"
+          },
+          "decode_ms": 0.299101,
+          "execution_wall_ms": 4.281513,
+          "preparation_exclusive_ms": 0.749276,
+          "engine_body_exclusive_ms": 1.475716,
+          "timings_ms": {
+            "preparation": 1.135502,
+            "preparation_observer": 0.386226,
+            "engine": 3.564077,
+            "observation": 1.55201,
+            "metrics": 0.377152,
+            "observation_serialization": 1.55201,
+            "result_serialization": 0.381811,
+            "engine_observation": 1.339085
+          },
+          "events": 24,
+          "observation_bytes": 15250,
+          "result_bytes": 2911,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {
+              "activation_attempts": 2,
+              "orientations_inspected": 5,
+              "boundary_rows": 15,
+              "seed_probes": 18,
+              "pocket_candidates": 2,
+              "max_region_checks_observed": 10,
+              "max_region_anchors_observed": 13,
+              "anchors_checked": 42,
+              "placement_checks": 42,
+              "check_rows": 65,
+              "accepted_pocket": 0,
+              "budget_exhausted": 0,
+              "fallback_used": 3,
+              "coverage_fallback": 0,
+              "sheet_fallback": 0
+            }
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24727552,
+            "virtual": 40169472
+          },
+          "maxrss_bytes": 24305664,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 407.1054350000054,
+          "spawn_to_result_ms": 420.03074800000206,
+          "cleanup_ms": 7.792434999998932,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "M5",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 459,
+            "start_ticks": "10658"
+          },
+          "decode_ms": 0.279173,
+          "execution_wall_ms": 2.646574,
+          "preparation_exclusive_ms": 0.486951,
+          "engine_body_exclusive_ms": 0.444689,
+          "timings_ms": {
+            "preparation": 0.859914,
+            "preparation_observer": 0.372963,
+            "engine": 2.040516,
+            "observation": 1.305156,
+            "metrics": 0.339814,
+            "observation_serialization": 1.305156,
+            "result_serialization": 0.335332,
+            "engine_observation": 1.108876
+          },
+          "events": 24,
+          "observation_bytes": 15152,
+          "result_bytes": 2579,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24707072,
+            "virtual": 40169472
+          },
+          "maxrss_bytes": 24305664,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 386.36252099999524,
+          "spawn_to_result_ms": 399.17379899999617,
+          "cleanup_ms": 9.416970999993168,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "M6-BS",
+          "input_sha256": "1fbb532c7bd0d92f7651cecf424ccfed2bbdda515d0e807e4822607ffba1baf2",
+          "identity": {
+            "pid": 460,
+            "start_ticks": "10698"
+          },
+          "decode_ms": 0.364263,
+          "execution_wall_ms": 20.14359,
+          "preparation_exclusive_ms": 0.435099,
+          "engine_body_exclusive_ms": 18.874854,
+          "timings_ms": {
+            "preparation": 0.435099,
+            "preparation_observer": 0.0,
+            "engine": 19.451382,
+            "observation": 0.358893,
+            "metrics": 0.368576,
+            "observation_serialization": 0.358893,
+            "result_serialization": 0.297893,
+            "engine_observation": 0.141429
+          },
+          "events": 5,
+          "observation_bytes": 3522,
+          "result_bytes": 2725,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {
+              "expansions": 178,
+              "geometry_probes": 249,
+              "parents": 5,
+              "alternatives_pruned": 128,
+              "max_frontier": 2,
+              "completed_levels": 3,
+              "state_bytes_bound": 129696
+            }
+          },
+          "complete": true,
+          "memory": {
+            "rss": 25128960,
+            "virtual": 40169472
+          },
+          "maxrss_bytes": 24846336,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 456.09679199999675,
+          "spawn_to_result_ms": 485.0910419999934,
+          "cleanup_ms": 8.072386000009146,
+          "exitcode": 0
+        }
+      ],
+      "maximum_aggregate_rss_bytes": 64339968,
+      "maximum_worker_virtual_bytes": 40169472,
+      "maximum_packet_bytes_observed": 1200,
+      "maximum_active_workers": 1,
+      "total_ms": 2652.34602000001,
+      "all_workers_stopped": true,
+      "inventory_consumed": false
+    },
+    {
+      "case": "representative-12-units",
+      "input_sha256_payload": "111d9b8a2b440a7776f6b6aca8ee3f0fed7bf70b54dc8964ea752e21fb8ada23",
+      "engine_input_sha256s": [
+        "111d9b8a2b440a7776f6b6aca8ee3f0fed7bf70b54dc8964ea752e21fb8ada23"
+      ],
+      "units": 12,
+      "stock_candidates": 4,
+      "geometry_types": [
+        "CIRCUNFERENCIA",
+        "POLIGONO_CONVEXO",
+        "RECTANGULO"
+      ],
+      "config": {
+        "angular_step_deg": "5",
+        "margin_mm": "0",
+        "resolution_mm": "1",
+        "separation_mm": "0"
+      },
+      "angular_step_deg": "5",
+      "methods": [
+        "FF",
+        "BF",
+        "WF",
+        "HF",
+        "M5",
+        "M6-BS"
+      ],
+      "records": [
+        {
+          "kind": "result",
+          "method": "FF",
+          "input_sha256": "111d9b8a2b440a7776f6b6aca8ee3f0fed7bf70b54dc8964ea752e21fb8ada23",
+          "identity": {
+            "pid": 465,
+            "start_ticks": "10747"
+          },
+          "decode_ms": 0.572419,
+          "execution_wall_ms": 7.510363,
+          "preparation_exclusive_ms": 0.990054,
+          "engine_body_exclusive_ms": 1.133528,
+          "timings_ms": {
+            "preparation": 2.31239,
+            "preparation_observer": 1.322336,
+            "engine": 6.191701,
+            "observation": 4.739449,
+            "metrics": 0.557611,
+            "observation_serialization": 4.739449,
+            "result_serialization": 0.848456,
+            "engine_observation": 4.068119
+          },
+          "events": 78,
+          "observation_bytes": 53855,
+          "result_bytes": 8655,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24870912,
+            "virtual": 40165376
+          },
+          "maxrss_bytes": 24469504,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 462.7339460000002,
+          "spawn_to_result_ms": 480.46699800001136,
+          "cleanup_ms": 8.939253999997732,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "BF",
+          "input_sha256": "111d9b8a2b440a7776f6b6aca8ee3f0fed7bf70b54dc8964ea752e21fb8ada23",
+          "identity": {
+            "pid": 466,
+            "start_ticks": "10795"
+          },
+          "decode_ms": 0.58069,
+          "execution_wall_ms": 11.044417,
+          "preparation_exclusive_ms": 1.07311,
+          "engine_body_exclusive_ms": 2.557598,
+          "timings_ms": {
+            "preparation": 2.41825,
+            "preparation_observer": 1.34514,
+            "engine": 9.665576,
+            "observation": 6.693461,
+            "metrics": 0.627063,
+            "observation_serialization": 6.693461,
+            "result_serialization": 0.930036,
+            "engine_observation": 6.034868
+          },
+          "events": 114,
+          "observation_bytes": 74045,
+          "result_bytes": 8655,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24911872,
+            "virtual": 40165376
+          },
+          "maxrss_bytes": 24563712,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 543.7727649999999,
+          "spawn_to_result_ms": 566.7786070000034,
+          "cleanup_ms": 10.681825999995453,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "WF",
+          "input_sha256": "111d9b8a2b440a7776f6b6aca8ee3f0fed7bf70b54dc8964ea752e21fb8ada23",
+          "identity": {
+            "pid": 467,
+            "start_ticks": "10851"
+          },
+          "decode_ms": 0.530722,
+          "execution_wall_ms": 10.191642,
+          "preparation_exclusive_ms": 0.949916,
+          "engine_body_exclusive_ms": 2.197231,
+          "timings_ms": {
+            "preparation": 2.016344,
+            "preparation_observer": 1.066428,
+            "engine": 8.638117,
+            "observation": 6.180427,
+            "metrics": 0.766302,
+            "observation_serialization": 6.180427,
+            "result_serialization": 0.88783,
+            "engine_observation": 5.49097
+          },
+          "events": 114,
+          "observation_bytes": 74051,
+          "result_bytes": 8658,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24965120,
+            "virtual": 40165376
+          },
+          "maxrss_bytes": 24485888,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 432.198102000001,
+          "spawn_to_result_ms": 453.3146790000018,
+          "cleanup_ms": 9.617480000002843,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "HF",
+          "input_sha256": "111d9b8a2b440a7776f6b6aca8ee3f0fed7bf70b54dc8964ea752e21fb8ada23",
+          "identity": {
+            "pid": 468,
+            "start_ticks": "10897"
+          },
+          "decode_ms": 0.491418,
+          "execution_wall_ms": 9.987912,
+          "preparation_exclusive_ms": 1.530086,
+          "engine_body_exclusive_ms": 3.331093,
+          "timings_ms": {
+            "preparation": 2.670598,
+            "preparation_observer": 1.140512,
+            "engine": 8.632081,
+            "observation": 4.394069,
+            "metrics": 0.581307,
+            "observation_serialization": 4.394069,
+            "result_serialization": 0.967585,
+            "engine_observation": 3.770902
+          },
+          "events": 78,
+          "observation_bytes": 54163,
+          "result_bytes": 8992,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {
+              "activation_attempts": 11,
+              "orientations_inspected": 19,
+              "boundary_rows": 55,
+              "seed_probes": 116,
+              "pocket_candidates": 8,
+              "max_region_checks_observed": 4,
+              "max_region_anchors_observed": 7,
+              "anchors_checked": 151,
+              "placement_checks": 151,
+              "check_rows": 271,
+              "accepted_pocket": 0,
+              "budget_exhausted": 1,
+              "fallback_used": 12,
+              "coverage_fallback": 0,
+              "sheet_fallback": 0
+            }
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24891392,
+            "virtual": 40165376
+          },
+          "maxrss_bytes": 24612864,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 402.8817370000013,
+          "spawn_to_result_ms": 423.9695450000056,
+          "cleanup_ms": 9.509347000005164,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "M5",
+          "input_sha256": "111d9b8a2b440a7776f6b6aca8ee3f0fed7bf70b54dc8964ea752e21fb8ada23",
+          "identity": {
+            "pid": 469,
+            "start_ticks": "10939"
+          },
+          "decode_ms": 0.467226,
+          "execution_wall_ms": 10.491888,
+          "preparation_exclusive_ms": 0.874578,
+          "engine_body_exclusive_ms": 2.597911,
+          "timings_ms": {
+            "preparation": 1.944601,
+            "preparation_observer": 1.070023,
+            "engine": 9.128203,
+            "observation": 6.254881,
+            "metrics": 0.670329,
+            "observation_serialization": 6.254881,
+            "result_serialization": 0.867543,
+            "engine_observation": 5.655714
+          },
+          "events": 114,
+          "observation_bytes": 74051,
+          "result_bytes": 8658,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {}
+          },
+          "complete": true,
+          "memory": {
+            "rss": 24899584,
+            "virtual": 40165376
+          },
+          "maxrss_bytes": 24477696,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 434.06266300000595,
+          "spawn_to_result_ms": 455.2709350000015,
+          "cleanup_ms": 9.410952000010298,
+          "exitcode": 0
+        },
+        {
+          "kind": "result",
+          "method": "M6-BS",
+          "input_sha256": "111d9b8a2b440a7776f6b6aca8ee3f0fed7bf70b54dc8964ea752e21fb8ada23",
+          "identity": {
+            "pid": 470,
+            "start_ticks": "10985"
+          },
+          "decode_ms": 0.491361,
+          "execution_wall_ms": 154.748863,
+          "preparation_exclusive_ms": 0.85859,
+          "engine_body_exclusive_ms": 151.913002,
+          "timings_ms": {
+            "preparation": 0.85859,
+            "preparation_observer": 0.0,
+            "engine": 153.248421,
+            "observation": 1.067668,
+            "metrics": 0.797162,
+            "observation_serialization": 1.067668,
+            "result_serialization": 0.877937,
+            "engine_observation": 0.476829
+          },
+          "events": 14,
+          "observation_bytes": 11828,
+          "result_bytes": 8811,
+          "termination": {
+            "origin": "ENGINE",
+            "termination_reason": "COMPLETED",
+            "statistics": {
+              "expansions": 2659,
+              "geometry_probes": 3325,
+              "parents": 23,
+              "alternatives_pruned": 2411,
+              "max_frontier": 2,
+              "completed_levels": 12,
+              "state_bytes_bound": 389760
+            }
+          },
+          "complete": true,
+          "memory": {
+            "rss": 25542656,
+            "virtual": 40165376
+          },
+          "maxrss_bytes": 25206784,
+          "observer_error_type": null,
+          "error_type": null,
+          "startup_ms": 430.61115899999436,
+          "spawn_to_result_ms": 596.6674959999949,
+          "cleanup_ms": 9.80205199999773,
+          "exitcode": 0
+        }
+      ],
+      "maximum_aggregate_rss_bytes": 64880640,
+      "maximum_worker_virtual_bytes": 40165376,
+      "maximum_packet_bytes_observed": 1207,
+      "maximum_active_workers": 1,
+      "total_ms": 2977.9328770000006,
+      "all_workers_stopped": true,
+      "inventory_consumed": false
+    }
+  ]
+}

@@ -94,7 +94,7 @@ def test_timeout_during_geometric_work_is_failed_not_no_fit(
     final = client.get(response.headers['location'], headers=headers).json()
     assert final['estado'] == 'FALLIDA' and final['placed_units'] == 0 and not final['confirmable']
     with session_factory() as session:
-        assert [session.get(Pedido, identifier).estado for identifier in ids] == ['EN_OPTIMIZACION'] * 2
+        assert [session.get(Pedido, identifier).estado for identifier in ids] == ['PENDIENTE'] * 2
         assert session.get(Plancha, 5).cantidad == 2
         assert session.scalar(select(func.count()).select_from(MovimientoInventario)) == 0
 
@@ -112,7 +112,7 @@ def test_base_memory_failure_is_durable_technical_failure_without_inventory_chan
     assert final['estado'] == 'FALLIDA' and final['placed_units'] == 0
     assert not final['confirmable']
     with session_factory() as session:
-        assert [session.get(Pedido, identifier).estado for identifier in ids] == ['EN_OPTIMIZACION'] * 2
+        assert [session.get(Pedido, identifier).estado for identifier in ids] == ['PENDIENTE'] * 2
         assert session.get(Plancha, 5).cantidad == 2
         assert session.scalar(select(func.count()).select_from(MovimientoInventario)) == 0
 
@@ -164,6 +164,6 @@ def test_disconnect_during_first_base_stops_before_search_and_saves_failure(
         result = transaction.runs.get(accepted.optimization_id)
     assert result.status.value == 'FALLIDA' and result.result.placed_units == 0
     with session_factory() as session:
-        assert [session.get(Pedido, identifier).estado for identifier in ids] == ['EN_OPTIMIZACION'] * 2
+        assert [session.get(Pedido, identifier).estado for identifier in ids] == ['PENDIENTE'] * 2
         assert session.get(Plancha, 5).cantidad == 2
         assert session.scalar(select(func.count()).select_from(MovimientoInventario)) == 0

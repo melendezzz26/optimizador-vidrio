@@ -5,6 +5,7 @@ from functools import cached_property
 from time import perf_counter
 from typing import Callable
 
+from .beam_memory import BeamStateMemory, StateMemoryLimit, initial_bound, successor_reserve
 from .metrics import largest_rectangle
 from .packing import FirstFitEvent, _coordinate, _empty_layout
 from .preparation import prepare_group_units
@@ -45,30 +46,33 @@ class BeamSearchResult(OptimizationResult):
         return "M6-BS"
 
 
+def _layout_score(layout, checkpoint=None):
+    if not any(layout.occupied):
+        return 0, 0
+    free = tuple(usable & ~blocked for usable, blocked in zip(layout.usable, layout.blocked))
+    rectangle = largest_rectangle(free, layout.material.columns, checkpoint=checkpoint)
+    recovered = rectangle[2] * rectangle[3] if rectangle else 0
+    cells = [(row, bits) for row, bits in enumerate(layout.occupied) if bits]
+    left = min((bits & -bits).bit_length() - 1 for _, bits in cells)
+    right = max(bits.bit_length() for _, bits in cells)
+    return recovered, (cells[-1][0] - cells[0][0] + 1) * (right - left)
+
+
 @dataclass(frozen=True)
 class BeamNode:
     layouts: tuple
     placements: tuple = ()
     trace: tuple = ()
     processed: int = 0
+    layout_scores: tuple = ()
 
     @cached_property
     def score(self):
         used = {placement.stock.identity: placement.stock for placement in self.placements}
         area = sum((placement.piece.area_mm2 for placement in self.placements), Decimal(0))
-        recovered_cells = envelope_cells = 0
-        for layout in self.layouts:
-            if not any(layout.occupied):
-                continue
-            free = tuple(usable & ~blocked for usable, blocked in
-                         zip(layout.usable, layout.blocked))
-            rectangle = largest_rectangle(free, layout.material.columns)
-            if rectangle:
-                recovered_cells += rectangle[2] * rectangle[3]
-            cells = [(row, bits) for row, bits in enumerate(layout.occupied) if bits]
-            left = min((bits & -bits).bit_length() - 1 for _, bits in cells)
-            right = max(bits.bit_length() for _, bits in cells)
-            envelope_cells += (cells[-1][0] - cells[0][0] + 1) * (right - left)
+        scores = self.layout_scores or tuple(_layout_score(layout) for layout in self.layouts)
+        recovered_cells = sum(score[0] for score in scores)
+        envelope_cells = sum(score[1] for score in scores)
         return (
             self.processed - len(self.placements),
             -area,
@@ -89,6 +93,17 @@ class BeamSearchOutcome:
     trace: tuple
 
 
+@dataclass(frozen=True)
+class BeamSearchProgress:
+    """Counters of the retained frontier; no provisional placements escape here."""
+    completed_levels: int
+    processed_units: int
+    total_units: int
+    expansions: int
+    geometry_probes: int
+    frontier_size: int
+
+
 class BeamSearchOptimizer:
     def __init__(self, limits: BeamSearchLimits | None = None):
         self.limits = limits or BeamSearchLimits()
@@ -100,7 +115,7 @@ class BeamSearchOptimizer:
 
     def run(self, problem: OptimizationProblem,
             on_event: Callable[[FirstFitEvent], None] | None = None,
-            *, checkpoint=None) -> BeamSearchOutcome:
+            *, checkpoint=None, on_progress: Callable[[BeamSearchProgress], None] | None = None) -> BeamSearchOutcome:
         limits = self.limits
         external_check = checkpoint or (lambda: None)
         started = perf_counter()
@@ -112,11 +127,12 @@ class BeamSearchOptimizer:
             if perf_counter() - started >= limits.seconds:
                 raise BeamSearchStopped("TIME_LIMIT")
 
-        def probe():
+        def probe(count=1):
             check()
-            if stats["geometry_probes"] >= limits.max_geometry_probes:
+            if stats["geometry_probes"] + count > limits.max_geometry_probes:
+                stats["geometry_probes"] = limits.max_geometry_probes
                 raise BeamSearchStopped("GEOMETRY_PROBE_LIMIT")
-            stats["geometry_probes"] += 1
+            stats["geometry_probes"] += count
 
         groups = tuple(
             replace(group, units=prepare_group_units(group.units),
@@ -128,38 +144,43 @@ class BeamSearchOptimizer:
         )
         problem = replace(problem, order_ids=tuple(sorted(problem.order_ids)), groups=groups)
         stocks = tuple(stock for group in groups for stock in group.stock_candidates)
-        ranks = {stock.identity: index for index, stock in enumerate(stocks)}
-
-        from .preparation import bbox_dimensions
-        per_node = 2048 + len(problem.units) * 1024
-        for stock in stocks:
-            width, height = bbox_dimensions(stock.geometry)
-            columns, rows = (
-                int((value / problem.config.resolution_mm).to_integral_value(
-                    rounding="ROUND_CEILING"
-                ))
-                for value in (width, height)
-            )
-            per_node += rows * (40 + 4 * ((columns + 29) // 30)) * 4
-        retained_bound = 3 * limits.width + limits.children_per_parent + 3
-        estimated = per_node * retained_bound
-        if estimated > limits.max_state_bytes:
-            result = BeamSearchResult(problem=problem, placements=())
-            return BeamSearchOutcome(result, 0, "STATE_MEMORY_LIMIT",
-                                     dict(stats, state_bytes_bound=estimated), ())
-
+        memory = BeamStateMemory(limits.max_state_bytes, checkpoint=check)
         try:
+            memory.reserve(initial_bound(stocks, problem.config))
+            ranks = {stock.identity: index for index, stock in enumerate(stocks)}
             prepared = prepare_run_geometry(problem, checkpoint=check)
-        except BeamSearchStopped as error:
+            initial = []
+            for stock in stocks:
+                check()
+                material = prepared.material(stock)
+                # Erosion and empty rows coexist with previously built layouts.
+                memory.check((problem, stocks, ranks, initial, material),
+                             successor_reserve(material, 0))
+                initial.append(_empty_layout(material, problem.config))
+            initial = tuple(initial)
+            beam = [BeamNode(initial, layout_scores=((0, 0),) * len(initial))]
+            memory.check((problem, stocks, ranks, initial, beam))
+        except (BeamSearchStopped, StateMemoryLimit) as error:
             result = BeamSearchResult(problem=problem, placements=())
-            return BeamSearchOutcome(
-                result, 0, str(error),
-                dict(stats, state_bytes_bound=estimated), (),
-            )
-        initial = tuple(_empty_layout(prepared.material(stock), problem.config)
-                        for stock in stocks)
-        beam = [BeamNode(initial)]
+            return BeamSearchOutcome(result, 0, str(error),
+                                     dict(stats, **memory.statistics()), ())
         stop_reason = None
+        # Prepared geometry has validated the <=10000-angle contract. Reserve
+        # Decimal angles, iterator dedup signatures and oriented-unit wrappers;
+        # raster allocations themselves retain their independent 64 MiB guard.
+        orientation_scratch = 65536 + 1024 * int((Decimal(360) /
+            problem.config.angular_step_deg).to_integral_value(rounding="ROUND_CEILING"))
+
+        def progress():
+            if on_progress is not None:
+                on_progress(BeamSearchProgress(
+                    completed_levels=stats["completed_levels"],
+                    processed_units=beam[0].processed,
+                    total_units=len(problem.units), expansions=stats["expansions"],
+                    geometry_probes=stats["geometry_probes"], frontier_size=len(beam),
+                ))
+
+        progress()
 
         def emit(kind, group, unit=None, placement=None, placed_units=0):
             if on_event is not None:
@@ -179,13 +200,19 @@ class BeamSearchOptimizer:
             return None
 
         def successors(node, group, unit):
+            memory.check((problem, stocks, ranks, initial, beam, pool, children),
+                         orientation_scratch + max((successor_reserve(node.layouts[ranks[s.identity]].material,
+                                                len(problem.units))
+                              for s in group.stock_candidates), default=65536))
             orientations = tuple(prepared.orientations(unit))
             tier = []
             for source in (MaterialSource.REMNANT, MaterialSource.SHEET):
                 tier = []
                 for stock in group.stock_candidates:
-                    if stock.source is source and first_feasible(node, stock, orientations):
-                        tier.append(stock)
+                    if stock.source is source:
+                        found = first_feasible(node, stock, orientations)
+                        if found is not None:
+                            tier.append((stock, found))
                 if tier:
                     break
             if not tier:
@@ -194,28 +221,22 @@ class BeamSearchOptimizer:
                     trace=node.trace + ((1, -1, -1, -1, -1),),
                 )
                 return
-            for stock in tier:
+            for stock, found in tier:
                 rank = ranks[stock.identity]
                 layout = node.layouts[rank]
                 for orientation_index, oriented in enumerate(orientations):
+                    memory.check((problem, stocks, ranks, initial, beam, pool, children),
+                                 orientation_scratch + successor_reserve(layout.material, len(problem.units)))
                     mask = oriented.orientation.mask
                     probe()
-                    first = layout.first_position(mask)
+                    # Reuse the eligibility scan, retaining its logical probes.
+                    first = (None if orientation_index < found[0] else found[2]
+                             if orientation_index == found[0] else layout.first_position(mask))
                     if first is None:
                         continue
                     positions = [first]
                     if limits.positions_per_orientation == 2:
-                        last = None
-                        for row in range(layout.material.row_count - mask.row_count,
-                                         -1, -1):
-                            for column in range(layout.material.columns - mask.columns,
-                                                 -1, -1):
-                                probe()
-                                if layout.check(mask, row, column).is_valid:
-                                    last = row, column
-                                    break
-                            if last is not None:
-                                break
+                        last = layout.last_position(mask, checkpoint=check, on_scan=probe)
                         if last is not None and last != first:
                             positions.append(last)
                     for row, column in positions:
@@ -223,6 +244,8 @@ class BeamSearchOptimizer:
                         if stats["expansions"] >= limits.max_expansions:
                             raise BeamSearchStopped("EXPANSION_LIMIT")
                         stats["expansions"] += 1
+                        memory.check((problem, stocks, ranks, initial, beam, pool, children),
+                                     orientation_scratch + successor_reserve(layout.material, len(problem.units)))
                         placement = Placement(
                             piece=unit, stock=stock,
                             x_mm=_coordinate(column, problem.config.resolution_mm),
@@ -232,11 +255,14 @@ class BeamSearchOptimizer:
                         )
                         layouts = list(node.layouts)
                         layouts[rank] = layout.place(mask, row, column)
+                        layout_scores = list(node.layout_scores)
+                        layout_scores[rank] = _layout_score(layouts[rank], checkpoint=check)
                         yield BeamNode(
                             tuple(layouts),
                             node.placements + (placement,),
                             node.trace + ((0, rank, orientation_index, row, column),),
                             node.processed + 1,
+                            tuple(layout_scores),
                         )
 
         try:
@@ -261,16 +287,17 @@ class BeamSearchOptimizer:
                     beam = pool
                     stats["completed_levels"] += 1
                     stats["max_frontier"] = max(stats["max_frontier"], len(beam))
+                    progress()
                     if beam and beam[0].placements and beam[0].placements[-1].piece.identity == unit.identity:
                         emit("piece_placed", group, unit,
                              beam[0].placements[-1], len(beam[0].placements))
                 emit("group_completed", group)
-        except BeamSearchStopped as error:
+        except (BeamSearchStopped, StateMemoryLimit) as error:
             stop_reason = str(error)
 
         winner = min(beam, key=lambda node: node.score) if beam else BeamNode(())
         result = BeamSearchResult(problem=problem, placements=winner.placements)
         return BeamSearchOutcome(
             result, winner.processed, stop_reason,
-            dict(stats, state_bytes_bound=estimated), winner.trace,
+            dict(stats, **memory.statistics()), winner.trace,
         )

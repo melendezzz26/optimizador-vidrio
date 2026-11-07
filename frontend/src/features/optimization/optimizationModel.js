@@ -57,7 +57,7 @@ export function runErrorFeedback({ error, errorKind, retryAfter }) {
     hint: `Los pedidos siguen pendientes. Vuelve a presionar «Calcular distribución» en ${retryAfter ?? 15} segundos.` };
   if (errorKind === 'time_budget') return { kind: errorKind, variant: 'error', message: error,
     title: 'El cálculo superó el tiempo máximo',
-    hint: 'No se consumió inventario. Consulta el resultado; los pedidos de este trabajo requieren revisión antes de volver a calcularse.' };
+    hint: 'No se consumió inventario. Consulta el resultado y actualiza los pedidos pendientes para recalcular en lotes más pequeños. Si siguen en optimización, solicita revisión.' };
   return { kind: null, variant: 'error', message: error, title: undefined, hint: null };
 }
 function reduce(state, action) {

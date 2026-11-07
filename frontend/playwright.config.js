@@ -1,5 +1,9 @@
 import { defineConfig } from '@playwright/test'
 import process from 'node:process'
+import path from 'node:path'
+import { phaseSettings } from './tests/e2e/e2ePhases.js'
+
+const phase = phaseSettings()
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -10,7 +14,10 @@ export default defineConfig({
   // Un servidor compartido admite una comparación exclusiva con tres motores.
   workers: 1,
   // TA-040: el gate convierte en fallo las omisiones no aprobadas y los specs críticos sin ejecutar.
-  reporter: [['list'], ['html', { open: 'never' }], ['./tests/e2e/e2eGateReporter.js']],
+  reporter: [['list'], ['html', { open: 'never', ...(phase && {
+    outputFolder: path.join('playwright-report', 'e2e-phases', path.basename(phase.directory), phase.phase),
+  }) }], ['./tests/e2e/e2eGateReporter.js']],
+  ...(phase && { outputDir: path.join(phase.directory, phase.phase) }),
   use: {
     baseURL: 'http://127.0.0.1:5173',
     browserName: 'chromium',

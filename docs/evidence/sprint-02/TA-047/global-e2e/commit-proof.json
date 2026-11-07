@@ -1,0 +1,15 @@
+{
+    "branch":  "fix/S2-TA047-preflight-v2",
+    "implementation_commit":  "232a85839cf0107e0dedfe8de0070878d1a1f9b0",
+    "implementation_tree":  "a4dbcae3aef780f347e2b74d3b5aadf60534a0df",
+    "tested_tree":  "a4dbcae3aef780f347e2b74d3b5aadf60534a0df",
+    "parent_commit":  "678ab92f3a32d37509b67779f99359acacedde2f",
+    "original_e2e_report_sha":  "678ab92f3a32d37509b67779f99359acacedde2f",
+    "run_id":  "78da438b-f3ad-43d0-ab66-592872589ea8",
+    "full_tree_equality":  true,
+    "source_sha256_verified_files":  715,
+    "local_base":  "678ab92f3a32d37509b67779f99359acacedde2f",
+    "locally_known_remote_base":  "678ab92f3a32d37509b67779f99359acacedde2f",
+    "local_fast_forward_possible":  true,
+    "note":  "Implementation committed only after all final suites and global TA-040 passed. Original E2E SHA fields are unchanged. A subsequent commit contains evidence only."
+}

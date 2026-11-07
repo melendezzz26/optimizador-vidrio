@@ -17,6 +17,7 @@ import { MaterialGroupsPanel } from './MaterialGroupsPanel';
 import { groupRasterReady } from './rasterInspectionModel';
 import { parseConfirmation } from './runContract.js';
 import { Hu015Rasterization } from './Hu015Rasterization';
+import { OriginalMeasuresTable } from './OriginalMeasuresTable';
 
 import { useGlassCatalog, glassGroups } from './useGlassCatalog';
 import { calculationState } from './workLabels';
@@ -129,6 +130,9 @@ function OptimizationWorkspace({ source, adapter, onSessionExpired, user, result
       {state.estado && !(state.status === 'failed' && state.estado === 'EN_EJECUCION')
         && <p role="status">Estado del trabajo: {calculationState(state.estado)}</p>}
       {state.confirmed && <p role="status">Corte ya confirmado.</p>}
+      {['completed', 'no_solution'].includes(state.status) && <OriginalMeasuresTable pieces={state.snapshot.orders.flatMap(
+        order => (order.piezas ?? []).map(piece => ({ ...piece, id_pedido: order.id_pedido }))
+      )} />}
       {['completed', 'no_solution'].includes(state.status) && !state.metrics_available && <p>El resumen del corte no está disponible.</p>}
       {state.metrics_available && state.metrics && <section aria-labelledby="result-title"><h2 id="result-title">Resultado del corte</h2>
         <dl className="optimization-facts">{[
@@ -186,7 +190,7 @@ export function OptimizationPage({ user, toolbar, initialMode = 'first-fit', ...
     {canViewResults(user) ? <>
       <div className="ng-ui optimization-workspace">
         <PageHeader title="Optimización de corte" context="Trabajo de vidriería" icon={ScanLine}
-          description={legacy ? 'Selecciona pedidos → revisa vidrios y piezas → calcula la distribución → confirma el corte.' : 'Ejecuta tres motores → compara sus resultados → elige y confirma una distribución.'} />
+          description={legacy ? 'Selecciona pedidos → revisa vidrios y piezas → calcula la distribución → confirma el corte.' : 'Compara distribuciones → revisa los materiales → elige y confirma un corte.'} />
       </div>
       {legacyOrigin && <div className="ng-ui"><button type="button" className="ng-button" onClick={() => setLegacyOrigin(false)}>Volver a comparación de motores</button></div>}
       {initialMode !== 'hu015' ? legacy ? <OptimizationContent {...props} initialRunId={typeof legacyOrigin === 'number' ? legacyOrigin : props.initialRunId} user={user} />

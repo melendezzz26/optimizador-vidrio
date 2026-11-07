@@ -22,7 +22,7 @@ from tests.model_contracts import current_metadata, historical_metadata
 
 PREVIOUS = "d6e7f8a9b0c1"
 REVISION = "ef6564220e70"
-HEAD = "s2cmp01a1b2c"
+HEAD = "s2cmp02d4e6f8"
 
 
 def downgrade(engine):

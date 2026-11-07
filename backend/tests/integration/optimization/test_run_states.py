@@ -92,7 +92,7 @@ def test_failure_after_sql_flush_rolls_back_every_final_write(session_factory,pr
 
 
 @pytest.mark.parametrize('n',[1,2])
-def test_unexpected_failed_keeps_entire_batch_for_reconciliation(session_factory,prepared,n):
+def test_stopped_failed_releases_entire_batch_atomically(session_factory,prepared,n):
     actor,ids,uow=prepared
     ids=ids[:n]
     accepted=AcceptRun(uow).execute(ids,actor)
@@ -103,7 +103,7 @@ def test_unexpected_failed_keeps_entire_batch_for_reconciliation(session_factory
     with uow() as tx:
         assert tx.runs.get(accepted.optimization_id)==failed
     with session_factory() as s:
-        assert [s.get(Pedido,i).estado for i in ids]==['EN_OPTIMIZACION']*n
+        assert [s.get(Pedido,i).estado for i in ids]==['PENDIENTE']*n
         assert s.scalar(select(EjecucionOptimizacion)).estado=='FALLIDA'
     assert inventory(session_factory)==before
 

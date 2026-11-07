@@ -1,0 +1,115 @@
+{
+  "root": "/tmp/newglass-ta045-validation-qqet9z1n",
+  "full_global_e2e": false,
+  "source_sha256": {
+    "backend/app/modules/optimization/domain/placement.py": "253f4d0894419b45406cea550b59111d5f6e1ef09895080a1ab42c7c8ad9f564",
+    "backend/app/modules/optimization/domain/packing.py": "2accdb2a382597421102d652e5b4c5e298d74516541a026e2b81b278b7931b7b",
+    "backend/tests/optimization/test_placement.py": "01648f53eb364a0c9751ee444959739ddf7eb9dab9e266877124bb1004db7247",
+    "backend/tests/unit/optimization/test_ta045_separation.py": "87cd22e4abeac2b1f2d8754d718091596ebc2486058115ab436e7c3f4b832d59"
+  },
+  "executions": {
+    "backend-main": {
+      "exit_code": 0,
+      "command": [
+        "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/bin/python",
+        "-u",
+        "-m",
+        "pytest",
+        "tests",
+        "--ignore=tests/integration/optimization/test_comparison_calculation.py",
+        "--ignore=tests/integration/optimization/test_comparison_supervision_v2.py",
+        "--ignore=tests/unit/optimization/test_sequential_runner.py",
+        "--ignore=tests/unit/optimization/test_comparison_runner.py",
+        "-q",
+        "-ra",
+        "-x",
+        "--tb=short"
+      ]
+    },
+    "comparison-calculation": {
+      "exit_code": 0,
+      "command": [
+        "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/bin/python",
+        "-u",
+        "-m",
+        "pytest",
+        "tests/integration/optimization/test_comparison_calculation.py",
+        "-q",
+        "-ra",
+        "-x",
+        "--tb=short"
+      ]
+    },
+    "comparison-supervision-v2": {
+      "exit_code": 0,
+      "command": [
+        "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/bin/python",
+        "-u",
+        "-m",
+        "pytest",
+        "tests/integration/optimization/test_comparison_supervision_v2.py",
+        "-q",
+        "-ra",
+        "-x",
+        "--tb=short"
+      ]
+    },
+    "sequential-runner": {
+      "exit_code": 0,
+      "command": [
+        "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/bin/python",
+        "-u",
+        "-m",
+        "pytest",
+        "tests/unit/optimization/test_sequential_runner.py",
+        "-q",
+        "-ra",
+        "-x",
+        "--tb=short"
+      ]
+    },
+    "comparison-runner": {
+      "exit_code": 0,
+      "command": [
+        "/home/fabri/.cache/newglass-validation.SXhCMM/backend/.venv/wsl/bin/python",
+        "-u",
+        "-m",
+        "pytest",
+        "tests/unit/optimization/test_comparison_runner.py",
+        "-q",
+        "-ra",
+        "-x",
+        "--tb=short"
+      ]
+    },
+    "frontend-lint": {
+      "exit_code": 0,
+      "command": [
+        "/home/fabri/.cache/newglass-validation.SXhCMM/node-v22.23.2-linux-x64/bin/node",
+        "node_modules/eslint/bin/eslint.js",
+        "."
+      ]
+    },
+    "e2e": {
+      "exit_code": 0,
+      "command": [
+        "/home/fabri/.cache/newglass-validation.SXhCMM/node-v22.23.2-linux-x64/bin/node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "--config=playwright.ta045.config.mjs",
+        "optimization-comparison.spec.js",
+        "--grep-invert",
+        "TA-043 B02 smoke"
+      ]
+    }
+  },
+  "e2e_stats": {
+    "startTime": "2026-11-05T13:24:06.250Z",
+    "duration": 127541.407,
+    "expected": 16,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "e2e_cleanup_exit": 0
+}

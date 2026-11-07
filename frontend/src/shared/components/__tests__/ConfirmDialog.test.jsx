@@ -19,6 +19,17 @@ function renderDialog(props = {}) {
 }
 
 describe('ConfirmDialog', () => {
+  it('incluye una región de revisión desplazable en el ciclo de teclado', () => {
+    render(<ConfirmDialog open title="Confirmar corte" confirmLabel="Confirmar" onConfirm={() => {}} onCancel={() => {}}>
+      <section role="region" aria-label="Materiales" tabIndex={0}>Lista de fuentes físicas</section>
+    </ConfirmDialog>);
+    const region = screen.getByRole('region', { name: 'Materiales' });
+    screen.getByRole('button', { name: 'Confirmar', exact: true }).focus();
+    fireEvent.keyDown(screen.getByRole('alertdialog'), { key: 'Tab' });
+    expect(region).toHaveFocus();
+    fireEvent.keyDown(region, { key: 'Tab', shiftKey: true });
+    expect(screen.getByRole('button', { name: 'Confirmar', exact: true })).toHaveFocus();
+  });
   it('no dibuja nada mientras está cerrado', () => {
     const { container } = renderDialog({ open: false });
     expect(container).toBeEmptyDOMElement();

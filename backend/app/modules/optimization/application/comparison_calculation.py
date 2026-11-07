@@ -17,7 +17,7 @@ class CalculateComparison:
     def __init__(self, unit_of_work, runner):
         self.unit_of_work, self.runner = unit_of_work, runner
 
-    def execute(self, comparison_id, on_event=None, *, lease=None, cancel=None):
+    def execute(self, comparison_id, on_event=None, *, lease=None, cancel=None, defer_finish=False):
         safe_to_release, claimed = True, False
         current, stream, observer_failed = None, None, False
         def emit(execution, kind, payload):
@@ -75,8 +75,9 @@ class CalculateComparison:
                 for execution in current.executions:
                     if execution.status == "EN_EJECUCION":
                         tx.comparisons.fail_execution(comparison_id, execution.execution_id, "WORKER_STOPPED")
-                current = tx.comparisons.finish_after_workers_stopped(comparison_id)
-            emit(None, "comparison_finished", current)
+                current = tx.comparisons.get(comparison_id) if defer_finish else tx.comparisons.finish_after_workers_stopped(comparison_id)
+            if not defer_finish:
+                emit(None, "comparison_finished", current)
             return current
         except WorkersNotStopped:
             safe_to_release = False
@@ -89,8 +90,9 @@ class CalculateComparison:
                     for execution in current.executions:
                         if execution.status == "EN_EJECUCION":
                             tx.comparisons.fail_execution(comparison_id, execution.execution_id, code)
-                    current = tx.comparisons.finish_after_workers_stopped(comparison_id)
-                emit(None, "comparison_finished", current)
+                    current = tx.comparisons.get(comparison_id) if defer_finish else tx.comparisons.finish_after_workers_stopped(comparison_id)
+                if not defer_finish:
+                    emit(None, "comparison_finished", current)
                 return current
             raise
         finally:

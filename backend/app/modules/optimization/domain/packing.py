@@ -8,7 +8,7 @@ from typing import Literal
 from .placement import SheetLayout
 from .preparation import prepare_group_units
 from .problem import MaterialSource, OptimizationProblem, OptimizationResult, PieceUnit, Placement, StockCandidate
-from .rotation import Orientation, RasterPreparationError, raster_number
+from .rotation import Orientation, RasterPreparationError
 from .run_geometry import prepare_run_geometry
 from .visual_events import VisualEvent
 
@@ -40,10 +40,8 @@ def _empty_layout(material, config):
     if 2 * margin >= min(material.row_count, material.columns):
         empty = (0,) * material.row_count
         return SheetLayout(material, empty, empty, empty, separation)
-    resolution = raster_number(config.resolution_mm)
-    # Pass exact cell counts through TA-007's public factory; never round distance down.
-    return SheetLayout.empty(material, margin_mm=margin * resolution,
-                             separation_mm=separation * resolution)
+    # Preserve exact counts without a millimetre float round trip.
+    return SheetLayout._from_cells(material, margin, separation)
 
 
 def _coordinate(index, resolution):
