@@ -92,11 +92,11 @@ def test_ci_covers_backend_frontend_e2e_without_staging_secrets():
 def test_pages_waits_for_ci_same_commit_and_restricts_source():
     pages = workflow("deploy-pages.yml")
     assert set(pages["on"]) == {"push", "workflow_dispatch"}
-    assert pages["on"]["push"]["branches"] == ["integration/sprint-01"]
+    assert pages["on"]["push"]["branches"] == ["integration-02"]
     checks, deploy = pages["jobs"]["checks"], pages["jobs"]["pages"]
     assert checks["uses"] == "./.github/workflows/ci.yml"
     assert deploy["needs"] == "checks"
-    assert checks["if"] == deploy["if"] == "github.ref == 'refs/heads/integration/sprint-01'"
+    assert checks["if"] == deploy["if"] == "github.ref == 'refs/heads/integration-02'"
     assert deploy["permissions"] == {"contents": "read", "pages": "write", "id-token": "write"}
     assert deploy["environment"]["name"] == "github-pages"
     assert deploy["env"]["VITE_API_URL"] == "${{ vars.VITE_API_URL }}"

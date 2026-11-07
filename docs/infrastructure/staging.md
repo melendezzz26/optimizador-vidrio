@@ -32,11 +32,19 @@ remotos ni autoriza por sí solo migraciones, bootstrap o publicación.
 > de prueba. Los procedimientos siguientes se conservan como referencia para
 > futuras operaciones autorizadas, no como acciones pendientes de este cierre.
 
+> **Despliegue Sprint 2 confirmado por el usuario, 07/11/2026:** Manual Deploy
+> en Heroku Staging desde `integration-02`, SHA **`b5731002`**. Se aplicó
+> `alembic upgrade head` en Staging; la revisión quedó en **`s2cmp02d4e6f8`**.
+> `check_comparison_environment` reportó `available=true` para `comparison-v1`
+> y `comparison-v2`, con `global_seconds` 900. Desde esta fecha el backend se
+> despliega desde `integration-02`; las menciones a `integration/sprint-01` en
+> los cierres anteriores son históricas.
+
 ## Configuración y destino
 
 Aplicación: `newglass-api-staging`, GitHub conectado, deploy backend manual,
 automatic deploy desactivado. Seleccionar un SHA integrado/aprobado de
-`integration/sprint-01`, con los checks de release aprobados. Mantener un
+`integration-02`, con los checks de release aprobados. Mantener un
 proceso web; no se requieren Redis, workers, scheduler o Heroku Postgres.
 
 Config Vars externas: `DATABASE_URL`, `SECRET_KEY`, `TOKEN_MINUTOS`,
@@ -157,10 +165,17 @@ Chromium administrado por Playwright y ejecuta desktop/mobile con backend y BD
 sintéticos. La prueba de baja única de inventario conserva su exclusión móvil
 explícita; no es una omisión por falta de infraestructura.
 
+> **Cambio de rama de Pages, 07/11/2026:** a pedido del equipo, para desplegar
+> la revisión del Sprint 2, `deploy-pages.yml` publica desde **`integration-02`**
+> (antes `integration/sprint-01`, que ya no recibe trabajo nuevo). Las menciones
+> a `integration/sprint-01` en los cierres anteriores son históricas. El
+> environment `github-pages` debe permitir `integration-02` en sus reglas de
+> rama de despliegue; si no, el job `pages` es rechazado por GitHub.
+
 Antes de integrar/publicar, configurar humanamente protección de rama con los
 checks backend, frontend y e2e requeridos. Confirmar sus nombres en un run real.
 Seleccionar Pages **GitHub Actions**, restringir el environment `github-pages`
-a `integration/sprint-01` y configurar aprobación humana del deployment antes
+a `integration-02` y configurar aprobación humana del deployment antes
 del primer push integrado que pueda dispararlo. El workflow también permite
 ejecución manual, exclusivamente sobre esa rama, y serializa publicaciones.
 Configurar `VITE_API_URL` como variable GitHub del environment o repositorio:
