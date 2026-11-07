@@ -89,6 +89,20 @@ def test_ci_covers_backend_frontend_e2e_without_staging_secrets():
     assert "continue-on-error" not in raw
 
 
+def test_procfile_runs_a_single_uvicorn_worker():
+    """GAP-03 (SPEC-TA-037): la admisión y el supervisor de comparison-v2 viven en memoria.
+
+    Heroku define WEB_CONCURRENCY y uvicorn lo toma como --workers si el Procfile no lo fija.
+    """
+    lines = (ROOT / "Procfile").read_text(encoding="utf-8").splitlines()
+    web = [line for line in lines if line.startswith("web:")]
+    assert len(web) == 1
+    uvicorn = web[0].split("&&")[-1].split()
+    assert uvicorn[:3] == ["python", "-m", "uvicorn"]
+    assert [arg for arg in uvicorn if arg.startswith("--workers")] == ["--workers"]
+    assert uvicorn[uvicorn.index("--workers") + 1] == "1"
+
+
 def test_pages_waits_for_ci_same_commit_and_restricts_source():
     pages = workflow("deploy-pages.yml")
     assert set(pages["on"]) == {"push", "workflow_dispatch"}

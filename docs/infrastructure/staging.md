@@ -40,6 +40,24 @@ remotos ni autoriza por sí solo migraciones, bootstrap o publicación.
 > despliega desde `integration-02`; las menciones a `integration/sprint-01` en
 > los cierres anteriores son históricas.
 
+> **Un solo proceso web, 07/11/2026 (`fix/S2-single-web-process`):**
+> - **Causa:** Heroku define `WEB_CONCURRENCY` en el dyno y uvicorn lo usa como
+>   valor de `--workers` cuando el Procfile no lo fija. En Staging había dos
+>   procesos uvicorn. La admisión (`InProcessRunAdmission`) y el supervisor de
+>   `comparison-v2` guardan su estado en memoria del proceso y solo son válidos
+>   con un proceso (SPEC-TA-037, GAP-03).
+> - **Síntomas:** `RECOVERY_BLOCKED` (503) durante el cálculo cuando la consulta
+>   llegaba al otro proceso, que no conoce la ejecución en curso; después,
+>   `OPTIMIZER_BUSY` alternando con 409 según el proceso que atendía.
+> - **Evidencia:** en el dyno web de Staging, `WEB_CONCURRENCY=2` y 512 MiB de
+>   memoria, verificado por el usuario en Heroku.
+> - **Corrección:** el Procfile inicia uvicorn con `--workers 1`, que tiene
+>   prioridad sobre `WEB_CONCURRENCY`. Una prueba de contrato
+>   (`backend/tests/unit/test_ci_contract.py`) lo exige. No cambian la admisión,
+>   el supervisor ni los límites. Tras el merge se redespliega manualmente.
+> - **Varios procesos o dynos:** requieren antes un ADR de admisión compartida
+>   (por ejemplo, estado en PostgreSQL); no basta con subir `--workers`.
+
 ## Configuración y destino
 
 Aplicación: `newglass-api-staging`, GitHub conectado, deploy backend manual,
