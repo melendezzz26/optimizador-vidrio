@@ -5,13 +5,14 @@ Datos sintéticos autorizados; no es una reproducción exacta del pedido #69.
 
 ## Diagnóstico y cambio
 
-Los seis procesos son secuenciales y comparten **180 s globales**. Cada proceso
+Los seis procesos son secuenciales y comparten **900 s globales** (antes 180 s;
+cambio de la revisión del 04/11/2026, ver SPEC-TA-037 v1.4 y SPEC-TA-043). Cada proceso
 tiene además 30 s de arranque y 120 s de cálculo; el plazo global incluye
 preparación, IPC, espera del consumidor y persistencia entre motores. Las fechas
 de inicio se crean juntas: los tiempos de finalización son acumulativos, no CPU.
 Tras agotarse el plazo, los motores aún en cola reciben `GLOBAL_TIME_LIMIT` sin arrancar
 (`runtime_dispatched=0`, `runtime_engine_started=0`). Persistir esos fallos y cerrar
-la supervisión puede terminar después del segundo 180. Es el contrato vigente.
+la supervisión puede terminar después del segundo 900. Es el contrato vigente.
 No se dispone de una traza histórica para atribuir tiempos internos al trabajo #20.
 
 El cuello demostrado está en `SheetLayout.first_position`: restricciones de filas
@@ -117,7 +118,8 @@ métodos en procesos nuevos de 256 MiB de espacio virtual. JSON por stdout inclu
 pared con métricas, cobertura, fuentes, aprovechamiento, merma, origen, causa,
 contadores y RSS del proceso (incluye intérprete/caché; no es memoria de estados).
 WSL/Python 3.11.9, una corrida por caso, sin suites simultáneas. Estas mediciones
-directas no ejercitan el plazo compartido de 180 s del comparador.
+directas no ejercitan el plazo compartido del comparador (180 s al medir; hoy 900 s,
+ver SPEC-TA-037 v1.4 y SPEC-TA-043).
 
 | Caso M6 | Colocadas | Pared con métricas (s) | Causa | Reserva pico (MiB) |
 |---|---:|---:|---|---:|

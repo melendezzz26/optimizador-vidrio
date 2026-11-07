@@ -157,7 +157,8 @@ interceptar la API para inventar resultados.
 Para E2E con las esperas originales, guardar código e intérprete en el sistema
 de archivos Linux (por ejemplo, bajo `~/newglass-validacion`); el acceso a muchos
 archivos desde `/mnt/c` puede demorar el arranque de los workers. Esto no cambia
-los límites operativos de 30/120/180 s. La evidencia de esta corrección registra
+los límites operativos de 30/120/900 s (el global era 180 s; ver SPEC-TA-037 v1.4
+y SPEC-TA-043). La evidencia de esta corrección registra
 también el intento inicial que excedió la espera de UI de 5 s sobre `/mnt/c`.
 
 ## Diagnóstico de otros rechazos y consultas de pedidos
@@ -171,7 +172,8 @@ muerte del worker o persistencia; no equivalen a “sin encaje”.
 
 Se conservan 256 MiB de espacio virtual por worker, 1 GiB RSS acumulado,
 240 MiB del supervisor, 16 MiB de reserva auxiliar, 30 s de arranque, 120 s
-de cálculo por motor y 180 s globales. El RSS es un umbral muestreado cada
+de cálculo por motor y 900 s globales (antes 180 s; ver SPEC-TA-037 v1.4 y
+SPEC-TA-043). El RSS es un umbral muestreado cada
 25 ms; el límite duro por worker es de espacio virtual. La admisión se libera
 solo después de detener/join los hijos y lectores.
 
