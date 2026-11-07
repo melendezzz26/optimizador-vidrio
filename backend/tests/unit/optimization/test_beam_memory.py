@@ -49,7 +49,15 @@ def test_genuinely_oversized_initial_sources_stop_before_raster_allocation(monke
     def forbidden(*args, **kwargs):
         pytest.fail("oversized state must be rejected before preparing rasters")
     monkeypatch.setattr("app.modules.optimization.domain.beam_search.prepare_run_geometry", forbidden)
-    outcome = BeamSearchOptimizer(BeamSearchLimits(complete_on_stop=False)).run(large_problem(50))
+    # S2-M6: identical sources share one empty layout, so the 50 sources need
+    # 50 distinct rasters to remain genuinely oversized.
+    problem = large_problem(50)
+    group = problem.groups[0]
+    distinct = tuple(replace(stock, geometry=dict(type="RECTANGULO", width_mm=2140 - i, height_mm=3300),
+                             area_mm2=(2140 - i) * 3300)
+                     for i, stock in enumerate(group.stock_candidates))
+    problem = replace(problem, groups=(replace(group, stock_candidates=distinct),))
+    outcome = BeamSearchOptimizer(BeamSearchLimits(complete_on_stop=False)).run(problem)
     assert outcome.stop_reason == "STATE_MEMORY_LIMIT"
     assert outcome.processed == outcome.result.placed_units == 0
     assert outcome.statistics["state_bytes_bound"] > 32 * 1024 * 1024
@@ -60,13 +68,14 @@ def test_memory_limit_does_not_replace_last_completed_frontier(monkeypatch):
     problem = large_problem(count=2)
     # One orientation keeps this focused on reservation, rather than timing.
     problem = replace(problem, config=replace(problem.config, angular_step_deg=360))
-    original = BeamStateMemory.check
+    # S2-M6: search-time checks use check_search; both paths end in reserve().
+    original = BeamStateMemory.reserve
     completed = []
-    def stop_after_first_level(self, roots, scratch=0):
+    def stop_after_first_level(self, amount):
         if completed:
             raise StateMemoryLimit()
-        return original(self, roots, scratch)
-    monkeypatch.setattr(BeamStateMemory, "check", stop_after_first_level)
+        return original(self, amount)
+    monkeypatch.setattr(BeamStateMemory, "reserve", stop_after_first_level)
     outcome = BeamSearchOptimizer(BeamSearchLimits(complete_on_stop=False)).run(problem, on_progress=lambda p:
         completed.append(p.completed_levels) if p.completed_levels == 1 else None)
     assert outcome.stop_reason == "STATE_MEMORY_LIMIT"

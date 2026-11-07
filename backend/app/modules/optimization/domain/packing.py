@@ -82,6 +82,17 @@ class FeasibleCandidate:
                    for usable, blocked in zip(self.layout_after.usable, self.layout_after.blocked))
 
 
+RETAINED_LAYOUT_BYTES = 128 * 1024 * 1024
+
+
+def _retain_layout(retained_bytes, material):
+    """Charge one more USED layout to First Fit's retained-layout budget."""
+    estimate = material.row_count * (40 + 4 * ((material.columns + 29) // 30)) * 4
+    if retained_bytes + estimate > RETAINED_LAYOUT_BYTES:
+        raise RasterPreparationError('Internal cutting layouts exceed their 128 MiB budget.')
+    return retained_bytes + estimate
+
+
 def _feasible_candidates(group, source, orientations, prepared, layouts, config, checkpoint, observe=None):
     # Preserve upstream stock order. Source priority is eligibility, not a score.
     for stock_rank, stock in enumerate(group.stock_candidates):
@@ -163,10 +174,7 @@ def pack(problem: OptimizationProblem, on_event: Callable[[FirstFitEvent], None]
                 stock, layout = winner.stock, winner.layout
                 if stock.identity not in layouts:
                     # Only USED layouts are retained, with the existing FF budget.
-                    estimate = layout.material.row_count * (40 + 4 * ((layout.material.columns + 29) // 30)) * 4
-                    if layout_bytes + estimate > 128 * 1024 * 1024:
-                        raise RasterPreparationError('Internal cutting layouts exceed their 128 MiB budget.')
-                    layout_bytes += estimate
+                    layout_bytes = _retain_layout(layout_bytes, layout.material)
                 layouts[stock.identity] = winner.layout_after
                 accepted = Placement(
                     piece=unit, stock=stock, x_mm=_coordinate(winner.column, problem.config.resolution_mm),

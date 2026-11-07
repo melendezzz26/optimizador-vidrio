@@ -7,7 +7,7 @@ from typing import Callable
 
 from .beam_memory import BeamStateMemory, StateMemoryLimit, initial_bound, successor_reserve
 from .metrics import largest_rectangle
-from .packing import FirstFitEvent, _coordinate, _empty_layout, _feasible_candidates
+from .packing import FirstFitEvent, _coordinate, _empty_layout, _feasible_candidates, _retain_layout
 from .preparation import prepare_group_units
 from .problem import MaterialSource, OptimizationProblem, OptimizationResult, Placement
 from .run_geometry import prepare_run_geometry
@@ -96,10 +96,16 @@ def _first_fit_completion(problem, winner, stocks, prepared, checkpoint):
     ``_feasible_candidates`` + ``next()`` is exactly First Fit's decision in
     ``packing.pack`` (remnants before sheets, upstream stock order, first
     orientation with a position); it is reused, not reimplemented. Units the
-    beam already decided, placed or NO_FIT, are kept as they are.
+    beam already decided, placed or NO_FIT, are kept as they are. Used layouts
+    are charged to First Fit's own retained-layout budget, as in ``pack``.
     """
     layouts = {stock.identity: layout for stock, layout in zip(stocks, winner.layouts)}
     placements = list(winner.placements)
+    used, retained = set(), 0
+    for placement in placements:
+        if placement.stock.identity not in used:
+            used.add(placement.stock.identity)
+            retained = _retain_layout(retained, prepared.material(placement.stock))
     pending = [(group, unit) for group in problem.groups for unit in group.units][winner.processed:]
     for group, unit in pending:
         checkpoint()
@@ -109,6 +115,9 @@ def _first_fit_completion(problem, winner, stocks, prepared, checkpoint):
                                                problem.config, checkpoint), None)
             if chosen is None:
                 continue
+            if chosen.stock.identity not in used:
+                used.add(chosen.stock.identity)
+                retained = _retain_layout(retained, chosen.layout.material)
             layouts[chosen.stock.identity] = chosen.layout_after
             placements.append(Placement(
                 piece=unit, stock=chosen.stock,
@@ -187,15 +196,24 @@ class BeamSearchOptimizer:
             memory.reserve(initial_bound(stocks, problem.config))
             ranks = {stock.identity: index for index, stock in enumerate(stocks)}
             prepared = prepare_run_geometry(problem, checkpoint=check)
-            initial = []
+            initial, empty = [], {}
             for stock in stocks:
                 check()
                 material = prepared.material(stock)
                 # Erosion and empty rows coexist with previously built layouts.
                 memory.check((problem, stocks, ranks, initial, material),
                              successor_reserve(material, 0))
-                initial.append(_empty_layout(material, problem.config))
+                # S2-M6: RasterCache returns one material object per distinct
+                # raster, so identical sources share one immutable empty layout
+                # (same content as building it per source; nothing mutates it).
+                if id(material) not in empty:
+                    empty[id(material)] = _empty_layout(material, problem.config)
+                initial.append(empty[id(material)])
             initial = tuple(initial)
+            # Placing the same mask at the same origin of the same shared empty
+            # layout always yields the same score: compute it once per level.
+            shared_empty = frozenset(empty)
+            empty_scores = {}
             beam = [BeamNode(initial, layout_scores=((0, 0),) * len(initial))]
             memory.check((problem, stocks, ranks, initial, beam))
         except (BeamSearchStopped, StateMemoryLimit) as error:
@@ -236,9 +254,15 @@ class BeamSearchOptimizer:
                     return orientation_index, oriented.orientation, position
             return None
 
+        def check_state(scratch):
+            # Same roots as graph_bytes((problem, stocks, ranks, initial, beam, pool,
+            # children)); only `children` changes within one parent's expansion.
+            # The per-level score cache is charged as scratch.
+            memory.check_search((problem, stocks, ranks, initial, beam, pool), children,
+                                scratch + 512 * len(empty_scores))
+
         def successors(node, group, unit):
-            memory.check((problem, stocks, ranks, initial, beam, pool, children),
-                         orientation_scratch + max((successor_reserve(node.layouts[ranks[s.identity]].material,
+            check_state(orientation_scratch + max((successor_reserve(node.layouts[ranks[s.identity]].material,
                                                 len(problem.units))
                               for s in group.stock_candidates), default=65536))
             orientations = tuple(prepared.orientations(unit))
@@ -262,8 +286,7 @@ class BeamSearchOptimizer:
                 rank = ranks[stock.identity]
                 layout = node.layouts[rank]
                 for orientation_index, oriented in enumerate(orientations):
-                    memory.check((problem, stocks, ranks, initial, beam, pool, children),
-                                 orientation_scratch + successor_reserve(layout.material, len(problem.units)))
+                    check_state(orientation_scratch + successor_reserve(layout.material, len(problem.units)))
                     mask = oriented.orientation.mask
                     probe()
                     # Reuse the eligibility scan, retaining its logical probes.
@@ -281,8 +304,7 @@ class BeamSearchOptimizer:
                         if stats["expansions"] >= limits.max_expansions:
                             raise BeamSearchStopped("EXPANSION_LIMIT")
                         stats["expansions"] += 1
-                        memory.check((problem, stocks, ranks, initial, beam, pool, children),
-                                     orientation_scratch + successor_reserve(layout.material, len(problem.units)))
+                        check_state(orientation_scratch + successor_reserve(layout.material, len(problem.units)))
                         placement = Placement(
                             piece=unit, stock=stock,
                             x_mm=_coordinate(column, problem.config.resolution_mm),
@@ -293,7 +315,15 @@ class BeamSearchOptimizer:
                         layouts = list(node.layouts)
                         layouts[rank] = layout.place(mask, row, column)
                         layout_scores = list(node.layout_scores)
-                        layout_scores[rank] = _layout_score(layouts[rank], checkpoint=check)
+                        # Unchanged layouts keep their scores; only the placed one is new.
+                        key = ((id(layout), orientation_index, row, column)
+                               if id(layout) in shared_empty else None)
+                        score = empty_scores.get(key) if key is not None else None
+                        if score is None:
+                            score = _layout_score(layouts[rank], checkpoint=check)
+                            if key is not None:
+                                empty_scores[key] = score
+                        layout_scores[rank] = score
                         yield BeamNode(
                             tuple(layouts),
                             node.placements + (placement,),
@@ -308,6 +338,8 @@ class BeamSearchOptimizer:
                 for unit in group.units:
                     check()
                     emit("piece_started", group, unit)
+                    # Orientation indexes in the score cache belong to this unit.
+                    empty_scores.clear()
                     pool = []
                     for node in beam:
                         check()
