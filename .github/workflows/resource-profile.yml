@@ -3,6 +3,7 @@ name: Resource profile HTTP 600-800
 on:
   push:
     branches: [test/resource-profile-800]
+    paths: ['backend/app/**', 'backend/scripts/profile_comparison_http.py', '.github/workflows/resource-profile.yml']
   workflow_dispatch:
 
 permissions:
