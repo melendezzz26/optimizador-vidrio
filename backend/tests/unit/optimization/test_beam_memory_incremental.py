@@ -72,7 +72,7 @@ def test_incremental_measure_is_a_tight_upper_bound_of_graph_bytes(case, monkeyp
         return value
     monkeypatch.setattr(BeamStateMemory, "search_bytes", spy)
     if case == "REAL":
-        BeamSearchOptimizer(BeamSearchLimits(max_expansions=12, complete_on_stop=False)).run(real_sizes())
+        BeamSearchOptimizer(BeamSearchLimits(max_expansions=12)).run(real_sizes())
     else:
         BeamSearchOptimizer().run(loader.load_problem(f"EXP-{case}-001"))
 
@@ -105,7 +105,7 @@ def test_identical_sheets_no_longer_exhaust_the_initial_bound():
     distinct = with_distinct_sheets(large_problem(23), 23).groups[0].stock_candidates
     assert initial_bound(distinct, large_problem().config) > 32 * MIB
 
-    outcome = BeamSearchOptimizer(BeamSearchLimits(max_expansions=1, complete_on_stop=False)).run(
+    outcome = BeamSearchOptimizer(BeamSearchLimits(max_expansions=1)).run(
         large_problem(23))
     # The beam really searches: it stops on its expansion limit, not on memory.
     assert outcome.stop_reason == "EXPANSION_LIMIT"
@@ -122,7 +122,7 @@ def test_initial_bound_still_covers_the_initial_layouts(sources, monkeypatch):
         bases.append(tuple(base))
         return original(self, base, children, scratch)
     monkeypatch.setattr(BeamStateMemory, "check_search", capture)
-    BeamSearchOptimizer(BeamSearchLimits(max_expansions=1, complete_on_stop=False)).run(p)
+    BeamSearchOptimizer(BeamSearchLimits(max_expansions=1)).run(p)
 
     stocks, initial = bases[0][1], bases[0][3]
     assert len({id(layout) for layout in initial}) == (1 if sources == "identical" else 3)
@@ -136,10 +136,12 @@ def test_initial_bound_still_covers_the_initial_layouts(sources, monkeypatch):
     assert owned.total <= initial_bound(stocks, p.config) - scratch
 
 
-def test_fallback_applies_the_first_fit_retained_layout_budget(monkeypatch):
-    p = problem([piece(width=2, height=2)], [stock(width=5, height=4)], config())
+def test_native_beam_uses_its_own_state_budget(monkeypatch):
+    p = problem([piece(quantity=2, width=2, height=2)], [stock(width=5, height=4)], config())
     monkeypatch.setattr(packing, "RETAINED_LAYOUT_BYTES", 1)
     with pytest.raises(RasterPreparationError, match="128 MiB"):
         FirstFitOptimizer().optimize(p)
-    with pytest.raises(RasterPreparationError, match="128 MiB"):
-        BeamSearchOptimizer(BeamSearchLimits(max_expansions=1)).run(p)
+    outcome = BeamSearchOptimizer(BeamSearchLimits(max_expansions=1)).run(p)
+    assert outcome.stop_reason == "EXPANSION_LIMIT"
+    assert outcome.processed == 1
+    assert not any(key.startswith("fallback_") for key in outcome.statistics)

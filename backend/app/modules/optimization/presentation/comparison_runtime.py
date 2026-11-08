@@ -15,7 +15,7 @@ from ..application.admission import OptimizerBusy
 from ..application.comparison_calculation import CalculateComparison
 from ..application.comparison_contracts import ComparisonSignal
 from ..application.errors import RunError, WorkersNotStopped
-from ..application.visual import MAX_EVENT_BYTES
+from ..application.visual import MAX_COMPARISON_EVENT_BYTES as MAX_EVENT_BYTES
 from ..domain.problem import Placement
 from ..infrastructure.visual_store import InMemoryVisualStore
 from ..infrastructure.comparison_runner import ComparisonProcessRunner

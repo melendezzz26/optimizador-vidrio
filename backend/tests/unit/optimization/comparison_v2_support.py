@@ -29,7 +29,7 @@ FIXTURE = Path(__file__).resolve().parents[4] / "docs/contracts/optimization/com
 
 def calculated(definition, problem, *, partial=False):
     started = perf_counter_ns()
-    optimizer = (BeamSearchOptimizer(BeamSearchLimits(max_expansions=1, complete_on_stop=False))
+    optimizer = (BeamSearchOptimizer(BeamSearchLimits(max_expansions=1))
                  if partial else definition.optimizer_type())
     if definition.code == "M6-BS":
         outcome = optimizer.run(problem)

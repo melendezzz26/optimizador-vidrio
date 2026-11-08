@@ -147,14 +147,14 @@ export function createComparisonV2Api({ token, fetchImpl = globalThis.fetch } = 
             let newline;
             while ((newline = buffer.indexOf('\n')) >= 0) {
               const line = buffer.slice(0, newline); buffer = buffer.slice(newline + 1);
-              check(encoder.encode(line + '\n').length <= 65536);
+              check(encoder.encode(line + '\n').length <= 131072);
               const event = parseComparisonEventV2(JSON.parse(line), comparison);
               if (event.event === 'heartbeat') continue;
               if (event.event !== 'snapshot_required') check(event.sequence === cursor + 1);
               cursor = event.sequence;
               onEvent(event);
             }
-            check(encoder.encode(buffer).length <= 65536);
+            check(encoder.encode(buffer).length <= 131072);
           }
         }
         check((buffer + decoder.decode()).trim() === '');

@@ -29,7 +29,17 @@ El catálogo de aplicación asocia clases de optimizador y resultado reales sin
 ejecutarlas ni conectarlas al runner público. Las seis identidades son únicas,
 exactas y sensibles a mayúsculas. `BRF` y `BS-2` son etiquetas, no aliases de wire.
 M6-BS identifica ancho 2; otros anchos se rechazan en el snapshot de este perfil.
-No hay fallback a FF ni selección automática de ganador.
+No hay selección automática de ganador ni sustitución de resultados entre
+las seis ejecuciones. M6 no completa con FF/BF al agotar recursos. HF conserva
+su estrategia híbrida existente de búsqueda local y su protección de cobertura.
+
+Revisión académica 08/11/2026: [SPEC-ACADEMIC-800](../../specs/SPEC-ACADEMIC-800-metodos-independientes.md).
+La admisión y `ordering_ready` aceptan hasta 800 unidades; los eventos de
+comparación admiten hasta 128 KiB. M6 aplica por defecto búsqueda de ancho 2,
+hasta 12 candidatos por padre, primera posición por orientación y puntuación
+por cobertura/material/envolvente. Los diagnósticos registran
+`bounded_candidates`, `candidate_limit` y `positions_per_orientation`.
+El modo exhaustivo histórico es explícito y no completa con otro motor.
 
 `methods` contiene el catálogo en este orden. `executions` admite cualquier orden
 pero exige los seis códigos y seis IDs distintos. Consumidores deben unir por

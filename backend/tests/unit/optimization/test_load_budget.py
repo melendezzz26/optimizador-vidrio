@@ -37,7 +37,7 @@ def limit_of(error):
 
 def test_approved_v1_1_values():
     assert (BUDGET.max_orders, BUDGET.max_units, BUDGET.max_vertices, BUDGET.max_stock_units_per_material,
-            BUDGET.max_raster_bytes) == (20, 300, 128, 50, 64 * 1024 * 1024)  # L-03: 150 → 300 (04/11/2026)
+            BUDGET.max_raster_bytes) == (20, 800, 128, 50, 64 * 1024 * 1024)  # ACADEMIC-800
 
 
 # --- Fronteras exactas: el máximo se acepta y máximo + 1 se rechaza (RN-08) ---
@@ -49,18 +49,18 @@ def test_l01_orders_per_run_exact_and_plus_one():
     assert limit_of(error) == dict(name="orders_per_run", maximum=20, actual=21, scope=None)
 
 
-@pytest.mark.parametrize("quantities", [[300], [200, 100], [1] * 300])
+@pytest.mark.parametrize("quantities", [[600], [700], [800], [600, 200], [1] * 800])
 def test_l03_units_exact_limit_is_accepted(quantities):
     rows = [row(identifier=i + 1, quantity=q) for i, q in enumerate(quantities)]
-    assert check_pieces(rows, CONFIG) == {(1, D(6)): 300}
+    assert check_pieces(rows, CONFIG) == {(1, D(6)): sum(quantities)}
 
 
-@pytest.mark.parametrize("quantities", [[301], [200, 101], [1] * 301])
+@pytest.mark.parametrize("quantities", [[801], [600, 201], [1] * 801])
 def test_l03_units_plus_one_is_rejected_across_rows(quantities):
     rows = [row(identifier=i + 1, quantity=q) for i, q in enumerate(quantities)]
     with pytest.raises(LoadLimitExceeded) as error:
         check_pieces(rows, CONFIG)
-    assert limit_of(error) == dict(name="units_per_run", maximum=300, actual=301, scope=None)
+    assert limit_of(error) == dict(name="units_per_run", maximum=800, actual=801, scope=None)
 
 
 def test_l03_maximum_persisted_quantity_is_rejected_without_proportional_work():
@@ -115,14 +115,14 @@ def test_l13_repeated_shape_is_counted_once_like_the_engine():
 # --- Orden, determinismo y frontera con la validación de negocio ---------
 
 def test_only_the_first_violation_is_reported_in_spec_order():
-    rows = [row(identifier=1, quantity=301, geometry=polygon(200))]
+    rows = [row(identifier=1, quantity=801, geometry=polygon(200))]
     with pytest.raises(LoadLimitExceeded) as error:
         check_pieces(rows, CONFIG)
     assert limit_of(error)["name"] == "units_per_run"
 
 
 def test_same_request_is_rejected_by_the_same_limit_and_values():
-    rows = [row(quantity=301)]
+    rows = [row(quantity=801)]
     results = []
     for _ in range(2):
         with pytest.raises(LoadLimitExceeded) as error:

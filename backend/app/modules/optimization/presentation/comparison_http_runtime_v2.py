@@ -6,7 +6,7 @@ from threading import Condition
 import time
 
 from ..application.errors import RunError
-from ..application.visual import MAX_EVENT_BYTES
+from ..application.visual import MAX_COMPARISON_EVENT_BYTES as MAX_EVENT_BYTES
 from ..domain.problem import Placement
 from ..infrastructure.comparison_transport import unpack_visual
 from .comparison_supervision_v2 import SupervisedJob

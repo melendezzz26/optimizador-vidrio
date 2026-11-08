@@ -153,7 +153,7 @@ def test_real_layouts_from_sp005_and_sp006_fixtures(case_id, monkeypatch):
     problem = loader.load_problem(case_id)
     calculate_metrics(FirstFitOptimizer().optimize(problem), 1, 1)
     BestResidualFitOptimizer().optimize(problem)  # SP-005 (M5) scoring
-    BeamSearchOptimizer(BeamSearchLimits(max_expansions=40, complete_on_stop=False)).run(problem)  # SP-006 (M6)
+    BeamSearchOptimizer(BeamSearchLimits(max_expansions=40)).run(problem)  # SP-006 (M6)
     assert recorded
     for rows, columns in recorded:
         assert_same(rows, columns)
@@ -163,7 +163,7 @@ def test_real_2140_by_3300_sheets_from_the_load_script(monkeypatch):
     recorded = _record_real_inputs(monkeypatch)
     problem = build_problem(6)
     calculate_metrics(FirstFitOptimizer().optimize(problem), 1, 1)
-    BeamSearchOptimizer(BeamSearchLimits(max_expansions=4, complete_on_stop=False)).run(problem)
+    BeamSearchOptimizer(BeamSearchLimits(max_expansions=4)).run(problem)
     assert any(columns == 2140 for _, columns in recorded)
     for rows, columns in recorded:
         assert_same(rows, columns)

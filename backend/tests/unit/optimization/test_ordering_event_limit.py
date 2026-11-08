@@ -1,11 +1,11 @@
-"""S2 load review (04/11/2026): ordering_ready follows L-03 = 300 units in v1 and v2."""
+"""S2 load review (08/11/2026): ordering_ready follows L-03 = 800 units in v1 and v2."""
 from datetime import datetime, timezone
 
 import pytest
 from pydantic import ValidationError
 
 from app.modules.optimization.application.load_budget import DEFAULT_RUN_LOAD_BUDGET
-from app.modules.optimization.application.visual import MAX_EVENT_BYTES
+from app.modules.optimization.application.visual import MAX_COMPARISON_EVENT_BYTES as MAX_EVENT_BYTES
 from app.modules.optimization.presentation.comparison_schemas import ComparisonEvent
 from app.modules.optimization.presentation.comparison_v2_schemas import ComparisonEventV2
 
@@ -29,18 +29,18 @@ def v2_event(count):
 
 
 def test_ordering_limit_matches_l03():
-    assert DEFAULT_RUN_LOAD_BUDGET.max_units == 300
+    assert DEFAULT_RUN_LOAD_BUDGET.max_units == 800
 
 
 @pytest.mark.parametrize("schema,build", [(ComparisonEvent, v1_event), (ComparisonEventV2, v2_event)],
                          ids=["v1", "v2"])
-def test_ordering_ready_accepts_300_units_and_rejects_301(schema, build):
-    event = schema.model_validate(build(300))
-    assert len(event.data["units"]) == 300
+def test_ordering_ready_accepts_800_units_and_rejects_801(schema, build):
+    event = schema.model_validate(build(800))
+    assert len(event.data["units"]) == 800
     with pytest.raises(ValidationError):
-        schema.model_validate(build(301))
+        schema.model_validate(build(801))
 
 
-def test_300_unit_ordering_event_stays_below_the_event_byte_budget():
-    raw = ComparisonEventV2.model_validate(v2_event(300)).model_dump_json().encode() + b"\n"
+def test_800_unit_ordering_event_stays_below_the_event_byte_budget():
+    raw = ComparisonEventV2.model_validate(v2_event(800)).model_dump_json().encode() + b"\n"
     assert len(raw) < MAX_EVENT_BYTES

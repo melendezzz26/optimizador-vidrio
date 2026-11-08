@@ -7,6 +7,8 @@ from ..domain.problem import PieceUnit, StockCandidate
 from ..domain.rotation import Orientation
 
 MAX_EVENT_BYTES = 64 * 1024
+# A full ordering_ready with 800 worst-case references remains bounded.
+MAX_COMPARISON_EVENT_BYTES = 128 * 1024
 MAX_RESPONSE_BYTES = 256 * 1024
 
 

@@ -11,7 +11,7 @@ from ..application.comparison_acceptance_v2 import AcceptComparisonV2
 from ..application.comparison_calculation_v2 import CalculateComparisonV2, fail_pending
 from ..application.comparison_persistence_contracts import VisualReferenceV2
 from ..application.errors import RunError, WorkersNotStopped
-from ..application.visual import MAX_EVENT_BYTES
+from ..application.visual import MAX_COMPARISON_EVENT_BYTES as MAX_EVENT_BYTES
 from ..infrastructure.comparison_snapshot import canonical_json
 from ..infrastructure.comparison_transport import unpack_visual
 from ..infrastructure.process_lifecycle import process_identity

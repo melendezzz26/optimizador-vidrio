@@ -183,7 +183,7 @@ export function parseComparisonEventV2(data, comparison) {
         && (data.event !== 'execution_failed' || d.outcome === 'FAILED'));
     }
     if (data.event === 'ordering_ready') check(d.criterion === 'area_desc_max_side_desc_order_piece_unit_asc'
-      && Array.isArray(d.units) && d.units.length > 0 && d.units.length <= 300
+      && Array.isArray(d.units) && d.units.length > 0 && d.units.length <= 800
       && d.units.every(u => id(u.id_pedido) && id(u.id_pieza) && id(u.unit_index) && id(u.id_tipo_vidrio) && typeof u.espesor_mm === 'string'));
   }
   if (['engine_ready', 'engine_started', 'heartbeat'].includes(data.event)) keys(d, []);

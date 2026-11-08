@@ -206,10 +206,10 @@ def test_observer_cannot_release_admission_while_supervisor_alive(setup,mode):
 
 
 @pytest.mark.parametrize('reason,limits',[
-    ('EXPANSION_LIMIT',BeamSearchLimits(max_expansions=1,complete_on_stop=False)),
-    ('GEOMETRY_PROBE_LIMIT',BeamSearchLimits(max_geometry_probes=1,complete_on_stop=False)),
-    ('STATE_MEMORY_LIMIT',BeamSearchLimits(max_state_bytes=1,complete_on_stop=False)),
-    ('TIME_LIMIT',BeamSearchLimits(seconds=0.000001,complete_on_stop=False)),
+    ('EXPANSION_LIMIT',BeamSearchLimits(max_expansions=1)),
+    ('GEOMETRY_PROBE_LIMIT',BeamSearchLimits(max_geometry_probes=1)),
+    ('STATE_MEMORY_LIMIT',BeamSearchLimits(max_state_bytes=1)),
+    ('TIME_LIMIT',BeamSearchLimits(seconds=0.000001)),
 ])
 def test_native_m6_diagnostic_survives_process_and_database(setup,reason,limits):
     actor,ids,uow=setup

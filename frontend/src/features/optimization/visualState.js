@@ -34,7 +34,7 @@ export function applyVisualFact(state, raw) {
   if (event.event === 'preparation_completed') visual.preparation = 'complete';
   if (event.event === 'piece_rasterizing') visual.current = { ...data, kind: event.event };
   if (event.event === 'piece_started') {
-    if (current.order.some(unit => unitKey(unit) === unitKey(data)) || current.order.length >= 300) throw new Error('Orden de piezas duplicado o fuera del presupuesto.');
+    if (current.order.some(unit => unitKey(unit) === unitKey(data)) || current.order.length >= 800) throw new Error('Orden de piezas duplicado o fuera del presupuesto.');
     visual.order = [...current.order, { id_pedido: data.id_pedido, id_pieza: data.id_pieza, unit_index: data.unit_index }];
     visual.current = { ...data, kind: event.event };
   }
