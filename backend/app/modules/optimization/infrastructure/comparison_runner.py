@@ -42,11 +42,9 @@ def resident_bytes(pid):
 def available_memory():
     fields = dict(line.split(":", 1) for line in Path("/proc/meminfo").read_text().splitlines())
     available = int(fields["MemAvailable"].split()[0]) * 1024
-    root = Path("/sys/fs/cgroup")
-    if (root / "memory.max").is_file():
-        limit = (root / "memory.max").read_text().strip()
-        if limit != "max":
-            available = min(available, int(limit) - int((root / "memory.current").read_text()))
+    from .resource_runtime import cgroup_memory
+    for limit, usage in cgroup_memory():
+        available = min(available, max(0, limit-usage))
     return available
 
 

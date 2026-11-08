@@ -27,6 +27,7 @@ const methodLabel = (method, profile) => profile === 'comparison-v2'
   ? CATALOG_V2.find(item => item.code === method)?.label ?? method : METHOD_NAMES[method] ?? method;
 const executionStatus = execution => {
   const reason = execution.diagnostic?.termination_reason;
+  if (execution.diagnostic?.statistics?.runtime_not_started_global === 1) return 'No ejecutado por interrupción global';
   if (reason === 'GLOBAL_TIME_LIMIT' && execution.diagnostic?.statistics?.runtime_engine_started === 0) return 'No comenzó';
   if (execution.status === 'FALLIDA' || execution.outcome === 'FAILED') return ['GLOBAL_TIME_LIMIT', 'TIME_BUDGET_EXCEEDED', 'MEMORY_BUDGET_EXCEEDED'].includes(reason) ? 'Interrumpido por recursos' : 'Error técnico';
   if (execution.dispatch_state === 'QUEUED') return 'En espera';

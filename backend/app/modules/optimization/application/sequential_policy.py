@@ -11,14 +11,19 @@ class SequentialPolicy:
     budget: ComparisonBudget = DEFAULT_COMPARISON_BUDGET
     max_active_workers: int = 1
     methods: tuple[str, ...] = METHODS_V2
+    memory_ceiling: ComparisonBudget = DEFAULT_COMPARISON_BUDGET
 
     def __post_init__(self):
         if type(self.max_active_workers) is not int or self.max_active_workers != 1 or self.methods != METHODS_V2:
             raise ValueError("Initial v2 policy requires one worker and the frozen ordered six-method catalog")
-        if not isinstance(self.budget, ComparisonBudget) or any(
-            getattr(self.budget, name) > value for name, value in vars(DEFAULT_COMPARISON_BUDGET).items()
+        if not isinstance(self.budget, ComparisonBudget) or not isinstance(self.memory_ceiling, ComparisonBudget):
+            raise ValueError('Comparison budgets must be typed')
+        memory_names = {'supervisor_rss_bytes', 'worker_address_bytes', 'aggregate_rss_bytes'}
+        if any(
+            getattr(self.budget, name) > (getattr(self.memory_ceiling, name) if name in memory_names else value)
+            for name, value in vars(DEFAULT_COMPARISON_BUDGET).items()
         ):
-            raise ValueError("B04 cannot increase approved budgets")
+            raise ValueError("Cannot increase budgets without an explicit memory ceiling")
 
     def expired(self, now, began, launched, engine_started):
         deadlines = [(began + self.budget.global_seconds, "GLOBAL_TIME_LIMIT")]

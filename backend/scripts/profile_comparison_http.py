@@ -40,6 +40,7 @@ def seed(engine, count):
         db.add(Cliente(id_cliente=41, nombre_razon_social='Cliente sintetico', estado=True, fecha_registro=now))
         db.flush()
         db.add_all([TipoVidrioEspesor(id_tipo_vidrio=i, espesor_mm=6) for i in (7, 9)])
+        db.flush()
         db.add(Configuracion(version=1, separacion_mm=0, margen_mm=0, resolucion_raster_mm=1,
             paso_angular_grados=5, ancho_min_retazo_mm=10, alto_min_retazo_mm=10, vigente=True,
             id_usuario_creacion=actor.id_usuario, fecha_creacion=now))
@@ -77,6 +78,15 @@ def server(args):
             from app.shared.security import create_access_token
             from app.modules.optimization.presentation.comparison_supervision_v2 import get_comparison_v2_coordinator
             from main import app
+            from sqlalchemy import select, func
+            from sqlalchemy.orm import Session
+            from app.models import Plancha, Retazo, MovimientoInventario
+            def inventory():
+                with Session(engine) as db:
+                    return dict(sheets=[list(row) for row in db.execute(select(Plancha.id_plancha,Plancha.cantidad).order_by(Plancha.id_plancha))],
+                        remnants=db.scalar(select(func.count()).select_from(Retazo)),
+                        movements=db.scalar(select(func.count()).select_from(MovimientoInventario)))
+            before = inventory()
             # Fixture-only loopback readiness information; never placed in the output report.
             Path(args.ready).write_text(json.dumps(dict(order_id=order,
                 token=create_access_token(actor, 'A73000001', 'Administrador'))))
@@ -85,7 +95,8 @@ def server(args):
                 uvicorn.run(app, host='127.0.0.1', port=args.port, log_level='warning')
             finally:
                 job = get_comparison_v2_coordinator().job
-                report = job.runner.last_report if job is not None else None
+                report = dict(runner=job.runner.last_report if job is not None else None,
+                    inventory_before=before, inventory_after=inventory())
                 Path(args.ready+'.resources').write_text(json.dumps(report, default=str))
 
 
@@ -169,7 +180,7 @@ def profile(args):
             report.update(http_wall_s=round(time.monotonic()-started,3),
                 web_peak_rss_bytes=max(samples,default=0), sample_count=len(samples))
             resources=Path(ready+'.resources')
-            if resources.exists(): report['runner']=json.loads(resources.read_text())
+            if resources.exists(): report.update(json.loads(resources.read_text()))
             # Keep only structured, synthetic memory diagnostics; no tokens/DSNs/general logs.
             report['resource_log_lines']=[line for line in logs.read_text().splitlines()
                 if 'comparison_resource_' in line]

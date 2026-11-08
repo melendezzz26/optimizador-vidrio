@@ -9,9 +9,14 @@ import { withPermissions } from '../../authentication/__tests__/permissionFixtur
 const user = withPermissions({ id_usuario: 1, usuario: 'Operario', rol: 'Operario' });
 beforeEach(() => localStorage.clear());
 
-function setupV2({ partial = false, lostResponse = false, conflict = false, actingUser = user, beamStatistics = null } = {}) {
+function setupV2({ partial = false, lostResponse = false, conflict = false, actingUser = user, beamStatistics = null, notStarted = false } = {}) {
   const current = structuredClone(partial ? comparisonV2.mixed : comparisonV2.completed);
   if (beamStatistics) Object.assign(current.executions.find(e => e.method === 'M6-BS').diagnostic.statistics, beamStatistics);
+  if (notStarted) {
+    const execution = current.executions.find(e => e.method === 'HF');
+    execution.diagnostic.termination_reason = 'MEMORY_BUDGET_EXCEEDED';
+    Object.assign(execution.diagnostic.statistics, { runtime_engine_started: 0, runtime_dispatched: 0, runtime_not_started_global: 1 });
+  }
   current.requested_pieces = structuredClone(comparisonV1.completed.requested_pieces).map(piece => ({ ...piece, cantidad: 2 }));
   const source = createFixturePendingOrdersSource([{ id_pedido: 1, cliente: 'Cliente de prueba',
     piezas: current.requested_pieces }]);
@@ -194,6 +199,14 @@ test('partial M6 and failed HF remain independent and retain their actual diagno
   expect(screen.getByRole('radio', { name: /Hole Filling/ })).toBeDisabled();
   expect(screen.getByRole('radio', { name: /Beam Search/ })).toBeDisabled();
   expect(screen.getByRole('button', { name: 'Confirmar distribución elegida' })).toBeDisabled();
+});
+
+test('a method cancelled before dispatch does not appear to have exhausted its own memory', async () => {
+  setupV2({ partial: true, notStarted: true }); await startV2();
+  fireEvent.click(screen.getByRole('tab', { name: 'Comparación' }));
+  const row = within(await screen.findByRole('table')).getByRole('row', { name: /Hole Filling/ });
+  expect(row).toHaveTextContent('No ejecutado por interrupción global');
+  expect(row).not.toHaveTextContent('Interrumpido por recursos');
 });
 
 test('M6 completed by the First Fit fallback says so in the method details', async () => {

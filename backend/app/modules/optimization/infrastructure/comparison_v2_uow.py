@@ -407,12 +407,31 @@ class SqlComparisonV2Repository:
         self.session.flush()
 
     def get_visual_reference(self, comparison_id, execution_id, mask_ref):
-        current = self.get(comparison_id)
-        execution = next((e for e in current.executions if e.execution_id == execution_id), None)
-        reference = next((r for r in execution.visual_references if r.mask_ref == mask_ref), None) if execution else None
+        pair = self.session.execute(select(EjecucionOptimizacion.metodo,
+            EjecucionOptimizacion.patron_resultado['visual_references']).where(
+                EjecucionOptimizacion.id_optimizacion == comparison_id,
+                EjecucionOptimizacion.id_ejecucion == execution_id)).first()
+        references = self._references(pair[1], comparison_id, execution_id, pair[0]) if pair else ()
+        reference = next((r for r in references if r.mask_ref == mask_ref), None)
         if reference is None:
             raise RunError("NOT_FOUND", "La referencia visual no pertenece a esta ejecución.")
         return reference
+
+    def visual_scope_owned(self, comparison_id, actor_id, execution_id=None):
+        """Authorize visual reads without selecting any execution result JSON."""
+        row = self.session.execute(select(Optimizacion.fecha_fin,
+            Optimizacion.comparison_snapshot['runtime']['supervisor_stopped_at']).where(
+                Optimizacion.id_optimizacion == comparison_id,
+                Optimizacion.id_usuario_ejecutor == actor_id,
+                Optimizacion.criterio_seleccion_version == 'CMP-v2')).first()
+        if row is None:
+            raise RunError('NOT_FOUND', 'No se encontró la comparación v2.')
+        if execution_id is not None:
+            own = self.session.scalar(select(EjecucionOptimizacion.id_ejecucion).where(
+                EjecucionOptimizacion.id_optimizacion == comparison_id,
+                EjecucionOptimizacion.id_ejecucion == execution_id))
+            if own is None: raise RunError('NOT_FOUND', 'La ejecución no pertenece a esta comparación.')
+        return row[0] is not None and row[1] is not None
 
     def record_supervisor_stopped(self, comparison_id, stopped_at, expected_version):
         """Persist an internally observed fact; obtaining process proof belongs to B05."""

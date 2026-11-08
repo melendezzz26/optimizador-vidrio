@@ -97,7 +97,10 @@ def signal_owned(identities, sig):
 
 
 class SequentialProcessRunner:
-    def __init__(self, policy=SequentialPolicy(), *, worker_target=calculation_worker_v2):
+    def __init__(self, policy=None, *, worker_target=calculation_worker_v2):
+        if policy is None:
+            from .resource_runtime import configured_policy
+            policy = configured_policy()
         self.policy, self.worker_target = policy, worker_target
         self.last_report = None
         self.retention = None
