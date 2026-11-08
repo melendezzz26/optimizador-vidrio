@@ -37,10 +37,10 @@ def test_six_adapters_persist_owned_results_without_inventory_effects(session_fa
         assert session.scalar(select(func.count()).select_from(MovimientoInventario)) == 0
 
 
-@pytest.mark.parametrize("limits,reason", [(BeamSearchLimits(max_expansions=1, complete_on_stop=False), "EXPANSION_LIMIT"),
-    (BeamSearchLimits(max_geometry_probes=1, complete_on_stop=False), "GEOMETRY_PROBE_LIMIT"),
-    (BeamSearchLimits(max_state_bytes=1, complete_on_stop=False), "STATE_MEMORY_LIMIT"),
-    (BeamSearchLimits(seconds=0.000000001, complete_on_stop=False), "TIME_LIMIT")])
+@pytest.mark.parametrize("limits,reason", [(BeamSearchLimits(max_expansions=1), "EXPANSION_LIMIT"),
+    (BeamSearchLimits(max_geometry_probes=1), "GEOMETRY_PROBE_LIMIT"),
+    (BeamSearchLimits(max_state_bytes=1), "STATE_MEMORY_LIMIT"),
+    (BeamSearchLimits(seconds=0.000000001), "TIME_LIMIT")])
 def test_actual_m6_exhaustion_is_durable_and_distinct_from_no_fit(setup_v2, limits, reason):
     current = create(setup_v2, "b03-beam-partial")
     execution = current.executions[-1]

@@ -141,12 +141,11 @@ Las ventanas admiten `row_start`, `column_start`, `row_count` hasta 256 y
 | Memoria | 1 GiB RSS agregado muestreado; 240 MiB supervisor; 256 MiB de espacio virtual duro por worker; reserva auxiliar de 16 MiB |
 | Tiempo | Arranque 30 s; cálculo por motor 120 s; global 900 s (antes 180 s; ver SPEC-TA-037 v1.4 y SPEC-TA-043) |
 | IPC | Cola de un paquete por worker; paquete máximo 12 MiB, visual 4 MiB |
-| Observación | Dos observadores; lotes de hasta 16 eventos, de hasta 64 KiB cada uno |
+| Observación | Dos observadores; lotes de hasta 16 eventos, de hasta 128 KiB cada uno (ACADEMIC-800) |
 | Retención | 32 MiB visuales compartidos entre los tres; 8 MiB y hasta 4096 eventos |
 | Vigencia visual | Hasta 300 s tras terminar, o hasta que una nueva comparación sustituya la retenida |
 
-Los máximos de entrada son 20 pedidos, 300 unidades (antes 150; ver SPEC-TA-037 v1.4
-y SPEC-TA-043), 128 vértices y
+Los máximos de entrada son 20 pedidos, 800 unidades (ver SPEC-ACADEMIC-800), 128 vértices y
 50 unidades físicas de stock por grupo/material. No garantizan que cualquier
 combinación de sus máximos quepa en memoria/tiempo. Superar el presupuesto
 produce un fallo explícito; no es «sin solución». RSS es muestreado y cuenta

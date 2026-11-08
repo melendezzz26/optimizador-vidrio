@@ -201,10 +201,10 @@ def test_other_actor_cannot_read_events_masks_or_release(api,create_user):
 
 
 @pytest.mark.parametrize('reason,limits',[
-    ('EXPANSION_LIMIT',BeamSearchLimits(max_expansions=1,complete_on_stop=False)),
-    ('GEOMETRY_PROBE_LIMIT',BeamSearchLimits(max_geometry_probes=1,complete_on_stop=False)),
-    ('STATE_MEMORY_LIMIT',BeamSearchLimits(max_state_bytes=1,complete_on_stop=False)),
-    ('TIME_LIMIT',BeamSearchLimits(seconds=.000001,complete_on_stop=False))])
+    ('EXPANSION_LIMIT',BeamSearchLimits(max_expansions=1)),
+    ('GEOMETRY_PROBE_LIMIT',BeamSearchLimits(max_geometry_probes=1)),
+    ('STATE_MEMORY_LIMIT',BeamSearchLimits(max_state_bytes=1)),
+    ('TIME_LIMIT',BeamSearchLimits(seconds=.000001))])
 def test_native_m6_partial_diagnostic_http_roundtrip(api,reason,limits):
     client,_,_,headers,coordinator,_=api
     coordinator.runner_factory=partial(SequentialProcessRunner,worker_target=partial(limited_beam,limits=limits))

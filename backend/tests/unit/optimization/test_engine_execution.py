@@ -164,10 +164,10 @@ def test_checkpoint_failure_without_observer_returns_no_invented_partial(method,
 
 
 @pytest.mark.parametrize("limits,reason", [
-    (BeamSearchLimits(max_expansions=1, complete_on_stop=False), "EXPANSION_LIMIT"),
-    (BeamSearchLimits(max_geometry_probes=1, complete_on_stop=False), "GEOMETRY_PROBE_LIMIT"),
-    (BeamSearchLimits(max_state_bytes=1, complete_on_stop=False), "STATE_MEMORY_LIMIT"),
-    (BeamSearchLimits(seconds=0.000000001, complete_on_stop=False), "TIME_LIMIT"),
+    (BeamSearchLimits(max_expansions=1), "EXPANSION_LIMIT"),
+    (BeamSearchLimits(max_geometry_probes=1), "GEOMETRY_PROBE_LIMIT"),
+    (BeamSearchLimits(max_state_bytes=1), "STATE_MEMORY_LIMIT"),
+    (BeamSearchLimits(seconds=0.000000001), "TIME_LIMIT"),
 ])
 @pytest.mark.parametrize("observed", [False, True])
 def test_original_m6_resource_outcome_and_empty_partial_survive(limits, reason, observed):
@@ -189,7 +189,7 @@ def test_m6_partial_nonempty_is_last_completed_frontier_and_no_search_replay(mon
     p = problem([piece(quantity=3, width=2, height=2)], [stock(width=5, height=4)], config(angular_step_deg=5))
     progress = []
     BeamSearchOptimizer().run(p, on_progress=progress.append)
-    limits = BeamSearchLimits(max_expansions=progress[1].expansions + 1, complete_on_stop=False)
+    limits = BeamSearchLimits(max_expansions=progress[1].expansions + 1)
     original = BeamSearchOptimizer(limits).run(p)
     assert 0 < original.result.placed_units < original.result.total_units
     native, calls = BeamSearchOptimizer.run, []

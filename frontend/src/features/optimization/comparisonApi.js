@@ -58,7 +58,7 @@ export function parseComparisonEvent(data, comparison) {
       sequence: data.sequence, occurred_at: data.timestamp, event: data.event, data: data.data }, { methods: METHODS });
     if (data.event === 'result_persisted') check(data.data.execution_id === execution.execution_id && data.data.method === execution.method);
     if (data.event === 'ordering_ready') check(data.data.criterion === 'area_desc_max_side_desc_order_piece_unit_asc'
-      && Array.isArray(data.data.units) && data.data.units.length <= 300 && data.data.units.every(u => id(u.id_pedido) && id(u.id_pieza) && id(u.unit_index)));
+      && Array.isArray(data.data.units) && data.data.units.length <= 800 && data.data.units.every(u => id(u.id_pedido) && id(u.id_pieza) && id(u.unit_index)));
   }
   return data;
 }
@@ -158,14 +158,14 @@ export function createComparisonApi({ token, fetchImpl = globalThis.fetch } = {}
             let newline;
             while ((newline = buffer.indexOf('\n')) >= 0) {
               const line = buffer.slice(0, newline); buffer = buffer.slice(newline + 1);
-              check(encoder.encode(line + '\n').length <= 65536);
+              check(encoder.encode(line + '\n').length <= 131072);
               const event = parseComparisonEvent(JSON.parse(line), comparison);
               if (event.event === 'heartbeat') continue;
               if (event.event !== 'snapshot_required') check(event.sequence === cursor + 1);
               cursor = event.sequence;
               onEvent(event);
             }
-            check(encoder.encode(buffer).length <= 65536);
+            check(encoder.encode(buffer).length <= 131072);
           }
         }
         check((buffer + decoder.decode()).trim() === '');

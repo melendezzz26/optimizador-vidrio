@@ -59,10 +59,10 @@ def main():
             beam_trace=adapted.beam_outcome.trace if adapted.beam_outcome else None,
             result="PASS"))
     reasons = []
-    for limits in (BeamSearchLimits(max_expansions=1, complete_on_stop=False),
-                   BeamSearchLimits(max_geometry_probes=1, complete_on_stop=False),
-                   BeamSearchLimits(max_state_bytes=1, complete_on_stop=False),
-                   BeamSearchLimits(seconds=0.000000001, complete_on_stop=False)):
+    for limits in (BeamSearchLimits(max_expansions=1),
+                   BeamSearchLimits(max_geometry_probes=1),
+                   BeamSearchLimits(max_state_bytes=1),
+                   BeamSearchLimits(seconds=0.000000001)):
         scope = ExecutionScope(comparison_id=44, execution_id=4406, method="M6-BS")
         adapted = EngineExecutionAdapter("M6-BS", beam_limits=limits).execute(scope, problem, minimum_width_mm=1, minimum_height_mm=1)
         assert adapted.payload.result is not None and not adapted.payload.result.complete and adapted.error_type is None

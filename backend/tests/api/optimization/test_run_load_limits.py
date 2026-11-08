@@ -38,12 +38,12 @@ def assert_load_limit(response, name, maximum, actual):
 def test_units_over_limit_answer_422_and_change_nothing(run_api, session_factory):
     client, ids, headers, *_ = run_api
     with session_factory() as s:
-        s.scalar(select(Pieza).where(Pieza.id_pedido == ids[0])).cantidad = 299  # 299 + 2 = 301
+        s.scalar(select(Pieza).where(Pieza.id_pedido == ids[0])).cantidad = 799  # 799 + 2 = 801
         s.commit()
     before = snapshot(session_factory, ids)
     response = client.post(BASE, json={"order_ids": ids}, headers=headers)
-    detail = assert_load_limit(response, "units_per_run", 300, 301)
-    assert detail.message.startswith("Los pedidos seleccionados suman 301 unidades")
+    detail = assert_load_limit(response, "units_per_run", 800, 801)
+    assert detail.message.startswith("Los pedidos seleccionados suman 801 unidades")
     assert snapshot(session_factory, ids) == before
     assert before["orders"] == ["PENDIENTE", "PENDIENTE"] and before["runs"] == [0, 0, 0]
 
