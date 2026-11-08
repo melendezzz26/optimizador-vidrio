@@ -101,12 +101,13 @@ presupuestos internos con esa carga; no acreditan todavía la ejecución en Hero
 ## Despliegue y vuelta atrás
 
 Publicar manualmente `test/resource-profile-800` en la aplicación staging
-existente y establecer únicamente esas cuatro variables. No cambiar plan, base,
+existente. El `Procfile` de esta rama fija únicamente esas cuatro variables
+públicas en el proceso web; no requiere revelar ni modificar Config Vars. No cambiar plan, base,
 secretos, número de dynos ni automatic deploy. Pages admite temporalmente esta
 rama y publica solo después de backend, frontend y E2E del workflow de despliegue.
 No ejecutar confirmación de corte durante las pruebas de capacidad.
 
-Para volver al comportamiento previo: desplegar `integration-02` y retirar los
-cuatro overrides. No se requieren migraciones ni restauración de inventario.
+Para volver al comportamiento previo: desplegar `integration-02`, cuyo `Procfile`
+no contiene esos overrides. No se requieren migraciones ni restauración de inventario.
 Revisar antes los resultados de prueba retenidos y que no quede una comparación
 con supervisor activo.
