@@ -68,17 +68,59 @@ def pack_visual(fact):
     return json_value(data)
 
 
-def unpack_visual(data, problem):
-    units = {(u.order_id, u.piece_id, u.unit_index): u for u in problem.units}
-    stocks = {(s.source.value, s.material_id, s.physical_unit_index): s
+class VisualEncoder:
+    """One material mask cache per disposable worker; no growing mask dictionary."""
+    def __init__(self):
+        self.key, self.mask = None, None
+
+    def pack(self, fact):
+        # Do not build spans for a repeated material only to throw them away.
+        from dataclasses import replace
+        key = stock_ref(fact.stock)[:2] if fact.stock is not None else None
+        repeated = fact.material_mask is not None and key == self.key and fact.material_mask is self.mask
+        value = pack_visual(replace(fact, material_mask=None) if repeated else fact)
+        if fact.material_mask is not None:
+            value['material_mask_ref'] = key
+            self.key, self.mask = key, fact.material_mask
+        return value
+
+
+class VisualDecoder:
+    """Validated indices and one material mask, scoped to exactly one execution."""
+    def __init__(self, problem):
+        self.problem = problem
+        self.units = {(u.order_id, u.piece_id, u.unit_index): u for u in problem.units}
+        self.stocks = {(s.source.value, s.material_id, s.physical_unit_index): s
+            for group in problem.groups for s in group.stock_candidates}
+        self.key, self.mask = None, None
+        self.config = json_value(problem.config)
+
+    def unpack(self, data):
+        return unpack_visual(data, self.problem, decoder=self)
+
+
+def unpack_visual(data, problem, *, decoder=None):
+    units = decoder.units if decoder else {(u.order_id, u.piece_id, u.unit_index): u for u in problem.units}
+    stocks = decoder.stocks if decoder else {(s.source.value, s.material_id, s.physical_unit_index): s
               for group in problem.groups for s in group.stock_candidates}
     value = dict(data)
     unit = units[tuple(value["unit"])] if value["unit"] is not None else None
     stock = stocks[tuple(value["stock"])] if value["stock"] is not None else None
+    reference = value.pop('material_mask_ref', None)
+    if reference is not None:
+        if decoder is None or stock is None or reference != stock_ref(stock)[:2]:
+            raise ValueError('Material mask reference belongs to another source')
+        if value['material_mask'] is not None:
+            decoder.key, decoder.mask = reference, unpack_mask(value['material_mask'])
+        elif decoder.key != reference or decoder.mask is None:
+            raise ValueError('Material mask reference was not declared by this execution')
+        material_mask = decoder.mask
+    else:
+        material_mask = unpack_mask(value['material_mask'])
     value.update(unit=unit, stock=stock, ordered_units=tuple(units[tuple(u)] for u in value["ordered_units"]),
-                 material_mask=unpack_mask(value["material_mask"]))
+                 material_mask=material_mask)
     if value["config"] is not None:
-        if value["config"] != json_value(problem.config):
+        if value["config"] != (decoder.config if decoder else json_value(problem.config)):
             raise ValueError("Configuration differs from common input")
         value["config"] = problem.config
     if value["orientation"] is not None:

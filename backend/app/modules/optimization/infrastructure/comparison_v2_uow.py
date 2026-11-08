@@ -384,6 +384,28 @@ class SqlComparisonV2Repository:
         self.session.flush()
         return self.get(comparison_id)
 
+    def save_supervised_visual_references(self, comparison_id, execution_id, references, token):
+        """Hot visual path: lock ownership/version, never decode six result graphs."""
+        row = self._lock(comparison_id)
+        stored = row.comparison_snapshot or {}
+        runtime = stored.get('runtime', {})
+        if (row.criterio_seleccion_version != 'CMP-v2' or row.fecha_fin is not None
+                or runtime.get('supervisor_stopped_at') is not None
+                or runtime.get('supervisor', {}).get('token') != token):
+            raise RunError('STATE_CONFLICT', 'La comparación ya no pertenece al supervisor activo.')
+        execution = self._execution(comparison_id, execution_id)
+        if execution.estado != 'EN_EJECUCION':
+            raise RunError('STATE_CONFLICT', 'La ejecución ya terminó.')
+        try:
+            refs = self._references(references, comparison_id, execution_id, execution.metodo)
+        except (TypeError, ValueError) as error:
+            raise RunError('STATE_CONFLICT', 'La referencia visual no pertenece a esta ejecución.') from error
+        data = {**execution.patron_resultado, 'visual_references': [r.record() for r in refs]}
+        canonical_json(data)
+        execution.patron_resultado = data
+        row.comparison_version += 1
+        self.session.flush()
+
     def get_visual_reference(self, comparison_id, execution_id, mask_ref):
         current = self.get(comparison_id)
         execution = next((e for e in current.executions if e.execution_id == execution_id), None)

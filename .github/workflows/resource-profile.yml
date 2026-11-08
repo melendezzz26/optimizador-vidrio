@@ -1,0 +1,66 @@
+name: Resource profile HTTP 600-800
+
+on:
+  push:
+    branches: [test/resource-profile-800]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: resource-profile-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  profile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [baseline, candidate]
+        units: [600, 700, 800]
+    env:
+      NEWGLASS_REQUIRE_POSTGRES: '1'
+      PYTHON_DOTENV_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+      - name: Install test dependencies
+        run: |
+          python -m pip install -r backend/requirements.txt
+          sudo apt-get update
+          sudo apt-get install -y postgresql libpq-dev
+          echo "NEWGLASS_TEST_PG_BIN=$(pg_config --bindir)" >> "$GITHUB_ENV"
+      - name: Prepare audited baseline
+        if: matrix.variant == 'baseline'
+        run: |
+          git worktree add --detach /tmp/newglass-baseline b964b2bca3fb67739a6f7fe05d2a0dd69ce2766b
+          cp backend/scripts/profile_comparison_http.py /tmp/newglass-baseline/backend/scripts/profile_comparison_http.py
+      - name: Run real HTTP comparison
+        env:
+          PROFILE_VARIANT: ${{ matrix.variant }}
+          PROFILE_UNITS: ${{ matrix.units }}
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/profile-results"
+          if [ "$PROFILE_VARIANT" = baseline ]; then
+            cd /tmp/newglass-baseline/backend
+          else
+            cd "$GITHUB_WORKSPACE/backend"
+          fi
+          python -B -m scripts.profile_comparison_http --units "$PROFILE_UNITS" --label "$PROFILE_VARIANT" --output "$GITHUB_WORKSPACE/profile-results/$PROFILE_VARIANT-$PROFILE_UNITS.json"
+      - name: Preserve resource evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: http-profile-${{ matrix.variant }}-${{ matrix.units }}-${{ github.sha }}
+          path: profile-results/
+          if-no-files-found: error

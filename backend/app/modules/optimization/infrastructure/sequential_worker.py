@@ -8,7 +8,7 @@ import time
 from ..application.engine_execution import EngineExecutionAdapter, ExecutionScope
 from ..application.visual import OrientationSampler
 from .comparison_snapshot import canonical_json, decode_problem, problem_fingerprint
-from .comparison_transport import pack_visual
+from .comparison_transport import VisualEncoder
 from .comparison_v2_snapshot import encode_result_v3
 from .run_snapshot import json_value
 from .process_lifecycle import process_identity, protect_against_parent_exit
@@ -33,6 +33,7 @@ def calculation_worker_v2(scope_values, payload, minimums, connection, gate, sta
         started_clock.value = time.monotonic()
         send("started", dict(monotonic=started_clock.value))
         sampler = OrientationSampler()
+        encoder = VisualEncoder()
         observations, observation_bytes = 0, 0
         def observe(fact):
             nonlocal observations, observation_bytes
@@ -41,7 +42,7 @@ def calculation_worker_v2(scope_values, payload, minimums, connection, gate, sta
                 return
             if fact.kind == "visual" and fact.fact.kind == "orientation_testing" and not sampler.accept(fact.fact.unit):
                 return
-            value = pack_visual(fact.fact) if fact.kind == "visual" else json_value(fact.fact)
+            value = encoder.pack(fact.fact) if fact.kind == "visual" else json_value(fact.fact)
             data = dict(kind=fact.kind, presentation=fact.presentation, fact=value)
             raw = canonical_json(dict(scope=asdict(scope), kind="observation", data=data),
                                  maximum_bytes=budget.visual_packet_bytes).encode()

@@ -57,11 +57,14 @@ class SupervisedJob:
 
     def accept(self, signal):
         data = signal.payload
+        visual_fact = None
         with self.lock:
             if signal.kind == "observation":
                 data = {**data,"fact":dict(data["fact"])}
                 if data["kind"] == "visual":
-                    fact = unpack_visual(data["fact"],self.comparison.problem)
+                    fact = data.pop('decoded_visual', None)
+                    if fact is None: fact = unpack_visual(data["fact"],self.comparison.problem)
+                    visual_fact = fact
                     session = self.sessions[signal.execution_id]
                     previous = session.revision
                     piece = session.register("PIECE",fact.unit,fact.orientation) if fact.orientation is not None else None
@@ -70,8 +73,8 @@ class SupervisedJob:
                         references = tuple(VisualReferenceV2(comparison_id=signal.comparison_id,
                             execution_id=signal.execution_id,method=signal.method,mask_ref=ref) for ref in session.records)
                         with self.uow() as tx:
-                            _, fresh = tx.comparisons_v2.require_supervisor(signal.comparison_id,self.token)
-                            tx.comparisons_v2.save_visual_references(signal.comparison_id,signal.execution_id,references,fresh.version)
+                            tx.comparisons_v2.save_supervised_visual_references(
+                                signal.comparison_id,signal.execution_id,references,self.token)
                     if data["fact"].get("orientation") is not None:
                         data["fact"]["orientation"] = dict(rotation_deg=str(fact.orientation.rotation_deg),
                             geometry=json_value(fact.orientation.geometry),mask_ref=piece.reference if piece else None)
@@ -80,7 +83,8 @@ class SupervisedJob:
                 self.mark(signal.kind)
                 data = dict(status=data.status,complete=bool(data.result and data.result.complete),
                     diagnostic=data.diagnostic.public())
-            self.record(signal, data)
+            if visual_fact is not None: self.record_visual(signal, data, visual_fact)
+            else: self.record(signal, data)
         if self.sink is not None: self.sink(signal)
 
     def record(self, signal, data):
@@ -90,6 +94,9 @@ class SupervisedJob:
         self.events.append(raw); self.event_bytes += len(raw)
         while self.event_bytes > self.event_limit or len(self.events)>4096:
             self.event_bytes -= len(self.events.popleft())
+
+    def record_visual(self, signal, data, fact):
+        self.record(signal, data)
 
     def dispose(self):
         with self.lock:
