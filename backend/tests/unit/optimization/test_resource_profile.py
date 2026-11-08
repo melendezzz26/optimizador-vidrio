@@ -11,6 +11,7 @@ from app.modules.optimization.domain.raster_mask import RasterMask
 from app.modules.optimization.domain.visual_events import VisualEvent
 from app.modules.optimization.infrastructure.comparison_transport import VisualEncoder, VisualDecoder
 from app.modules.optimization.infrastructure import resource_runtime
+from app.modules.optimization.infrastructure import comparison_runner
 from app.modules.optimization.infrastructure.sequential_runner import failed, with_resources
 from tests.unit.optimization.test_sequential_runner import inputs
 
@@ -92,3 +93,13 @@ def test_memory_overrides_are_explicit_and_leave_dyno_headroom(monkeypatch):
                     {**values,'NEWGLASS_COMPARISON_AGGREGATE_MIB':'128'},
                     {**values,'NEWGLASS_DYNO_MEMORY_MIB':'512'}):
         with pytest.raises(RunError): resource_runtime.configured_policy(changed)
+
+
+def test_sequential_preflight_does_not_reserve_the_live_supervisor_twice(monkeypatch):
+    budget=replace(ComparisonBudget(),aggregate_rss_bytes=448*MIB,supervisor_rss_bytes=280*MIB)
+    monkeypatch.setattr(comparison_runner,'resident_bytes',lambda pid:100*MIB)
+    monkeypatch.setattr(comparison_runner,'available_memory',lambda:400*MIB)
+    comparison_runner.check_environment(budget,inclusive_supervisor=True)
+    with pytest.raises(RunError): comparison_runner.check_environment(budget)
+    monkeypatch.setattr(comparison_runner,'available_memory',lambda:300*MIB)
+    with pytest.raises(RunError): comparison_runner.check_environment(budget,inclusive_supervisor=True)

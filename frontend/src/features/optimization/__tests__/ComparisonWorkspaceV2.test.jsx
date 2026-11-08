@@ -204,7 +204,7 @@ test('partial M6 and failed HF remain independent and retain their actual diagno
 test('a method cancelled before dispatch does not appear to have exhausted its own memory', async () => {
   setupV2({ partial: true, notStarted: true }); await startV2();
   fireEvent.click(screen.getByRole('tab', { name: 'Comparación' }));
-  const row = within(await screen.findByRole('table')).getByRole('row', { name: /Hole Filling/ });
+  const row = within(await screen.findByRole('table', { name: 'Métricas de 6 motores' })).getByRole('row', { name: /Hole Filling/ });
   expect(row).toHaveTextContent('No ejecutado por interrupción global');
   expect(row).not.toHaveTextContent('Interrumpido por recursos');
 });

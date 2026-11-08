@@ -48,14 +48,18 @@ def available_memory():
     return available
 
 
-def check_environment(budget=DEFAULT_COMPARISON_BUDGET):
+def check_environment(budget=DEFAULT_COMPARISON_BUDGET, *, inclusive_supervisor=False):
     try:
         if sys.platform != "linux" or not resident_bytes(os.getpid()):
             raise ValueError("Linux procfs required")
         import resource
         if not hasattr(resource, "RLIMIT_AS"):
             raise ValueError("Address-space limit unavailable")
-        if available_memory() < budget.aggregate_rss_bytes or resident_bytes(os.getpid()) > budget.supervisor_rss_bytes:
+        parent_rss = resident_bytes(os.getpid())
+        # The sequential aggregate already counts this live web process. Requiring
+        # the full aggregate again as free RAM double-counts its resident memory.
+        required = max(0, budget.aggregate_rss_bytes-parent_rss) if inclusive_supervisor else budget.aggregate_rss_bytes
+        if available_memory() < required or parent_rss > budget.supervisor_rss_bytes:
             raise RunError("RESOURCE_UNAVAILABLE", "El servidor no dispone de memoria para los tres motores. Intenta más tarde.")
     except (OSError, ValueError, KeyError, ImportError) as error:
         message = "La plataforma no permite ejecutar los tres motores con supervisión de recursos."

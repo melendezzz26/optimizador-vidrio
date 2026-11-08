@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: [baseline, candidate]
+        variant: [basic-512]
         units: [600, 700, 800]
     env:
       NEWGLASS_REQUIRE_POSTGRES: '1'
@@ -49,6 +49,10 @@ jobs:
         env:
           PROFILE_VARIANT: ${{ matrix.variant }}
           PROFILE_UNITS: ${{ matrix.units }}
+          NEWGLASS_COMPARISON_SUPERVISOR_MIB: '280'
+          NEWGLASS_COMPARISON_WORKER_MIB: '128'
+          NEWGLASS_COMPARISON_AGGREGATE_MIB: '448'
+          NEWGLASS_DYNO_MEMORY_MIB: '512'
         run: |
           mkdir -p "$GITHUB_WORKSPACE/profile-results"
           if [ "$PROFILE_VARIANT" = baseline ]; then
@@ -56,7 +60,7 @@ jobs:
           else
             cd "$GITHUB_WORKSPACE/backend"
           fi
-          python -B -m scripts.profile_comparison_http --units "$PROFILE_UNITS" --label "$PROFILE_VARIANT" --output "$GITHUB_WORKSPACE/profile-results/$PROFILE_VARIANT-$PROFILE_UNITS.json"
+          python -B -m scripts.profile_comparison_http --units "$PROFILE_UNITS" --label "$PROFILE_VARIANT" --require-complete --output "$GITHUB_WORKSPACE/profile-results/$PROFILE_VARIANT-$PROFILE_UNITS.json"
       - name: Preserve resource evidence
         if: always()
         uses: actions/upload-artifact@v4

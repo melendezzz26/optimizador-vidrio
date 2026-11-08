@@ -107,7 +107,7 @@ class SequentialProcessRunner:
         self._active = Lock()
 
     def preflight(self):
-        check_environment(self.policy.budget)
+        check_environment(self.policy.budget, inclusive_supervisor=True)
 
     def calculate(self, scopes, problem, minimums, **kwargs):
         stream = self.events(scopes, problem, minimums, **kwargs)

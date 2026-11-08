@@ -391,7 +391,7 @@ class SqlComparisonV2Repository:
         runtime = stored.get('runtime', {})
         if (row.criterio_seleccion_version != 'CMP-v2' or row.fecha_fin is not None
                 or runtime.get('supervisor_stopped_at') is not None
-                or runtime.get('supervisor', {}).get('token') != token):
+                or (runtime.get('supervisor') or {}).get('token') != token):
             raise RunError('STATE_CONFLICT', 'La comparación ya no pertenece al supervisor activo.')
         execution = self._execution(comparison_id, execution_id)
         if execution.estado != 'EN_EJECUCION':

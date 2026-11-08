@@ -91,8 +91,13 @@ def server(args):
             Path(args.ready).write_text(json.dumps(dict(order_id=order,
                 token=create_access_token(actor, 'A73000001', 'Administrador'))))
             import uvicorn
+            server = uvicorn.Server(uvicorn.Config(app, host='127.0.0.1', port=args.port, log_level='warning'))
+            @app.post('/__profile__/shutdown', include_in_schema=False)
+            def shutdown_owned_fixture():
+                server.should_exit = True
+                return {'stopping':True}
             try:
-                uvicorn.run(app, host='127.0.0.1', port=args.port, log_level='warning')
+                server.run()
             finally:
                 job = get_comparison_v2_coordinator().job
                 report = dict(runner=job.runner.last_report if job is not None else None,
@@ -165,14 +170,24 @@ def profile(args):
                 for execution in summary['executions']:
                     response=client.get(f"{path}/executions/{execution['execution_id']}",headers=headers)
                     response.raise_for_status()
+                    result=response.json()['result']
+                    placements=result['placements'] if result else []
+                    identities={(p['id_pedido'],p['id_pieza'],p['unit_index']) for p in placements}
                     details.append(dict(method=execution['method'],bytes=len(response.content),
-                        result_available=response.json()['result'] is not None))
+                        result_available=result is not None,placements=len(placements),
+                        unique_placements=len(identities)))
                 report['persisted_results_read']=details
                 release=client.post(path+'/release',json={'expected_version':summary['version']},headers=headers)
                 release.raise_for_status()
                 report['released_without_confirmation']=release.json()['released']
         finally:
-            process.terminate()
+            # SIGTERM is replayed by uvicorn before the caller's finally block;
+            # ask the fixture-only loopback server to exit normally so its owned
+            # PostgreSQL cluster and resource report are closed deterministically.
+            try:
+                httpx.post(base+'/__profile__/shutdown',timeout=3)
+            except httpx.HTTPError:
+                process.terminate()
             try: process.wait(30)
             except subprocess.TimeoutExpired:
                 process.kill(); process.wait(5)
@@ -181,6 +196,15 @@ def profile(args):
                 web_peak_rss_bytes=max(samples,default=0), sample_count=len(samples))
             resources=Path(ready+'.resources')
             if resources.exists(): report.update(json.loads(resources.read_text()))
+            report['inventory_unchanged'] = ('inventory_before' in report
+                and report['inventory_before']==report['inventory_after'])
+            runner=report.get('runner') or {}
+            report['complete_and_stopped'] = (bool(report.get('terminal')) and report.get('supervisor_stopped') is True
+                and len(report.get('executions',[]))==6 and all(e['complete'] and e['placed_units']==args.units
+                    and e['diagnostic']['statistics'].get('runtime_engine_started')==1
+                    for e in report.get('executions',[])) and runner.get('all_workers_stopped') is True
+                and report['inventory_unchanged'] and all(e['placements']==e['unique_placements']==args.units
+                    for e in report.get('persisted_results_read',[])))
             # Keep only structured, synthetic memory diagnostics; no tokens/DSNs/general logs.
             report['resource_log_lines']=[line for line in logs.read_text().splitlines()
                 if 'comparison_resource_' in line]
@@ -194,9 +218,14 @@ if __name__=='__main__':
     parser.add_argument('--units',type=int,choices=(600,700,800),required=True)
     parser.add_argument('--output')
     parser.add_argument('--label',default='working-tree')
+    parser.add_argument('--require-complete',action='store_true')
     parser.add_argument('--server',action='store_true')
     parser.add_argument('--ready')
     parser.add_argument('--port',type=int)
     options=parser.parse_args()
     if options.server: server(options)
-    else: print(json.dumps(profile(options),indent=2))
+    else:
+        result=profile(options)
+        print(json.dumps(result,indent=2))
+        if options.require_complete and not result['complete_and_stopped']:
+            raise SystemExit('Profile did not complete six native results with unchanged inventory and joined workers')
