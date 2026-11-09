@@ -3,7 +3,7 @@ import random
 
 import pytest
 
-from app.modules.optimization.domain.placement import SheetLayout
+from app.modules.optimization.domain.placement import LayoutQueryMemo, SheetLayout
 from app.modules.optimization.domain.raster_mask import RasterMask
 
 
@@ -52,3 +52,21 @@ def test_empty_piece_rows_retain_grid_bounds_and_original_first_origin():
     piece = RasterMask(1, 3, (0, 0))
     assert layout.first_position(piece) == exhaustive(layout, piece) == (0, 0)
     assert layout.first_position(RasterMask(1, 6, (0,))) is None
+
+
+def test_constant_shape_crosses_material_bands_at_first_legal_origin():
+    material = RasterMask(1, 12, (0b11110000,) * 5 + (0b11111100,) * 6 + (0b1111,) * 4)
+    layout = SheetLayout.empty(material)
+    piece = RasterMask(1, 5, (0b11111,) * 5)
+    assert layout.first_position(piece) == exhaustive(layout, piece) == (5, 2)
+
+
+def test_exact_memo_does_not_reuse_the_position_after_placement():
+    material = RasterMask(1, 8, (255,) * 6)
+    layout = SheetLayout.empty(material)
+    piece = RasterMask(1, 4, (15,) * 3)
+    memo = LayoutQueryMemo()
+    assert memo.find(layout, piece) == (0, 0)
+    changed = layout.place(piece, 0, 0)
+    assert memo.find(changed, piece) == exhaustive(changed, piece) == (0, 4)
+    assert memo.find(layout, piece) == (0, 0)

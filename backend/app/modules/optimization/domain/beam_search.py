@@ -8,6 +8,7 @@ from typing import Callable
 from .beam_memory import BeamStateMemory, StateMemoryLimit, initial_bound, successor_reserve
 from .metrics import largest_rectangle
 from .packing import FirstFitEvent, _coordinate, _empty_layout
+from .placement import LayoutQueryMemo
 from .preparation import prepare_group_units
 from .problem import MaterialSource, OptimizationProblem, OptimizationResult, Placement
 from .run_geometry import prepare_run_geometry
@@ -35,8 +36,8 @@ class BeamSearchLimits:
                 raise ValueError(f"{name} must be a positive integer.")
         if self.positions_per_orientation not in (1, 2):
             raise ValueError("positions_per_orientation must be 1 or 2.")
-        if not 0 < self.seconds <= 120:
-            raise ValueError("seconds must be between zero and 120.")
+        if not 0 < self.seconds <= 900:
+            raise ValueError("seconds must be between zero and 900.")
         if self.candidate_limit is not None and (
             type(self.candidate_limit) is not int or not 1 <= self.candidate_limit <= 128
         ):
@@ -202,6 +203,7 @@ class BeamSearchOptimizer:
                 ))
 
         progress()
+        positions_memo = LayoutQueryMemo()
 
         def emit(kind, group, unit=None, placement=None, placed_units=0):
             if on_event is not None:
@@ -215,7 +217,7 @@ class BeamSearchOptimizer:
             layout = node.layouts[ranks[stock.identity]]
             for orientation_index, oriented in enumerate(orientations):
                 probe()
-                position = layout.first_position(oriented.orientation.mask)
+                position = positions_memo.find(layout, oriented.orientation.mask)
                 if position is not None:
                     return orientation_index, oriented.orientation, position
             return None
@@ -225,7 +227,7 @@ class BeamSearchOptimizer:
             # children)); only `children` changes within one parent's expansion.
             # The per-level score cache is charged as scratch.
             memory.check_search((problem, stocks, ranks, initial, beam, pool), children,
-                                scratch + 512 * len(empty_scores))
+                                scratch + 512 * len(empty_scores) + positions_memo.bytes_bound)
 
         def successors(node, group, unit):
             check_state(orientation_scratch + max((successor_reserve(node.layouts[ranks[s.identity]].material,
@@ -279,7 +281,7 @@ class BeamSearchOptimizer:
                 probe()
                 # Reuse the eligibility scan, retaining its logical probes.
                 first = (None if orientation_index < found[0] else found[2]
-                         if orientation_index == found[0] else layout.first_position(mask))
+                         if orientation_index == found[0] else positions_memo.find(layout, mask))
                 if first is None:
                     continue
                 positions = [first]

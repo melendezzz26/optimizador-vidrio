@@ -98,7 +98,7 @@ visual reportó errores. Una muestra por tamaño:
 El pico virtual del trabajador fue 41.3–43.2 MiB. Estos resultados validan los
 presupuestos internos con esa carga; no acreditan todavía la ejecución en Heroku.
 
-## Geometrías grandes a 1 mm
+## Geometrías grandes a 1 mm, primera revisión
 
 La revisión de [TA-016](specs/SPEC-TA-016-rotacion-compartida.md) y
 [TA-037](specs/SPEC-TA-037-control-carga-optimizador.md) limita las bases en
@@ -116,11 +116,47 @@ La medición es del adaptador local, sin HTTP ni PostgreSQL. El segundo caso
 comprueba la admisión y distingue los límites restantes de búsqueda. El
 criterio de completar 800 unidades grandes en staging sigue pendiente.
 
+## Geometrías grandes a 1 mm, segunda revisión
+
+Con las mejoras exactas de búsqueda y memoria, M5 completó las 247 unidades
+del #61 reconstruido en 94.37 s y M6 en 51.03 s con el plazo anterior.
+Diez casos pequeños por los seis motores conservaron huellas idénticas de
+colocaciones, contornos, fuentes, giros, métricas y retazos frente a `e77d6f9`.
+
+Prueba de capacidad local con las primeras 800 unidades válidas del CSV,
+40 planchas compatibles (25 de 2440 × 3300 mm y 15 de 3300 × 2140 mm) y dos
+retazos (2440 × 373 mm y 440 × 904 mm). Resolución 1 mm, paso 5°, margen y
+separación 0 mm. Cada adaptador se ejecutó en un proceso con un límite duro
+de espacio virtual de 128 MiB y tiempo ampliado. Las métricas revalidaron
+cada colocación contra el raster; se verificaron las 800 identidades únicas
+por resultado.
+
+| Motor | Colocadas | Pared s | Pico RSS MiB | Planchas |
+|---|---:|---:|---:|---:|
+| FF | 800 | 183.42 | 83.68 | 29 |
+| BF | 800 | 280.17 | 83.32 | 30 |
+| WF | 800 | 261.59 | 82.34 | 29 |
+| HF | 800 | 181.64 | 83.66 | 29 |
+| M5 | 800 | 460.97 | 84.36 | 29 |
+| M6-BS | 800 | 303.75 | 88.17 | 31 |
+
+Las huellas distinguen cinco distribuciones. HF usó su comportamiento de
+respaldo por pieza y coincidió con FF. M6 completó de forma nativa con 494 667
+sondeos, un pico de estado de 30 097 084 bytes y ancho de haz 2. Estos tiempos
+suman cerca de 28 min para la secuencia. Excluyen HTTP, observación visual,
+PostgreSQL y variaciones de CPU de Heroku.
+
+Para la prueba desplegada, el perfil v2 de la rama permite 600 s por método
+a partir de 200 unidades. Los pedidos pequeños conservan el plazo habitual.
+El watchdog y el proceso usan el mismo presupuesto congelado para la
+comparación. La medición de memoria no cambia el tamaño de las piezas ni las
+existencias que exige la solución.
+
 ## Despliegue y vuelta atrás
 
 Publicar manualmente `test/resource-profile-800` en la aplicación staging
-existente. El `Procfile` de esta rama fija únicamente esas cuatro variables
-públicas en el proceso web; no requiere revelar ni modificar Config Vars. No cambiar plan, base,
+existente. El `Procfile` de esta rama fija el perfil de memoria y de tiempo
+en el proceso web sin modificar Config Vars. No cambiar plan, base,
 secretos, número de dynos ni automatic deploy. Pages admite temporalmente esta
 rama y publica solo después de backend, frontend y E2E del workflow de despliegue.
 No ejecutar confirmación de corte durante las pruebas de capacidad.

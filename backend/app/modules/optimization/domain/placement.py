@@ -11,6 +11,8 @@ from decimal import Decimal
 from functools import lru_cache
 from dataclasses import dataclass
 from enum import Enum
+from itertools import groupby
+from weakref import ref
 
 from .raster_mask import RasterMask, is_real_number
 
@@ -33,6 +35,53 @@ class PlacementCheck:
 
 
 VALID = PlacementCheck(True)
+
+
+class LayoutQueryMemo:
+    """Reuse exact queries without retaining old layouts or masks."""
+
+    def __init__(self):
+        self._entries = {}
+
+    @property
+    def bytes_bound(self):
+        # Entries hold identity integers, weak references and coordinates.
+        return 512 * (len(self._entries) + 1)
+
+    def find(self, layout, mask, *, empty=False):
+        # Within one run every empty layout of the same material has the same
+        # margin and separation. Occupied layouts require object identity.
+        source = layout.material if empty else layout
+        return self.get(source, mask, lambda: self._search(source, layout, mask))
+
+    def _search(self, source, layout, mask):
+        if mask.resolution_mm != layout.material.resolution_mm:
+            return layout.first_position(mask)
+        if mask.columns > layout.material.columns or mask.row_count > layout.material.row_count:
+            return None
+        free = self.get(source, source,
+                        lambda: sum((usable & ~blocked).bit_count()
+                                    for usable, blocked in zip(layout.usable, layout.blocked)),
+                        parameters=('free_cells',))
+        # A translation preserves the number of occupied cells. Use the
+        # bounding box as a cheap shortcut before counting the piece bits.
+        if free < mask.columns * mask.row_count:
+            occupied = self.get(mask, mask, lambda: mask.occupied_cells,
+                                parameters=('occupied_cells',))
+            if free < occupied:
+                return None
+        return layout.first_position(mask)
+
+    def get(self, source, mask, calculate, *, parameters=()):
+        key = (id(source), id(mask), parameters)
+        cached = self._entries.get(key)
+        if cached is not None and cached[0]() is source and cached[1]() is mask:
+            return cached[2]
+        value = calculate()
+        if len(self._entries) >= 2048:
+            self._entries.clear()
+        self._entries[key] = (ref(source), ref(mask), value)
+        return value
 
 
 def distance_in_cells(distance_mm, resolution_mm: float, label: str) -> int:
@@ -197,29 +246,55 @@ class SheetLayout:
                 offset += length
             return candidates
 
+        band_ends = []
+        if not reverse and on_scan is None:
+            end = 0
+            for _, band in groupby(free):
+                height = sum(1 for _ in band)
+                end += height
+                band_ends.extend([end] * height)
+
+        shape = piece.rows[0]
+        if band_ends and checkpoint is None and piece.rows.count(shape) == piece.row_count:
+            # For a constant piece row, every free band touched by the
+            # vertical window remains a constraint until the top band leaves.
+            row = 0
+            while row < rows:
+                candidates, target = all_origins, row
+                while candidates and target < row + piece.row_count:
+                    candidates &= origins(free[target], shape)
+                    target = band_ends[target]
+                if candidates:
+                    return row, (candidates & -candidates).bit_length() - 1
+                row = band_ends[row]
+            return None
+
         # Intersections commute: test the densest constraints first, while the
         # candidate origins still follow the exact row/leftmost-column order.
         # For equal free material rows, masks already tested imply every subset
-        # of their union. Avoid repeating those constraints (notably circles and
-        # polygons over long rectangular free strips). Retain only one such
-        # union, local to this candidate row; no layout/global cache is added.
+        # of their union. Retain only one union, local to this candidate row.
         occupied_rows = [(offset, bits) for offset, bits in enumerate(piece.rows) if bits]
         first = occupied_rows[0] if occupied_rows else None
         occupied_rows.sort(key=lambda item: item[1].bit_count(), reverse=True)
-        row_order = range(rows - 1, -1, -1) if reverse else range(rows)
-        for row in row_order:
+        direction = -1 if reverse else 1
+        row = rows - 1 if reverse else 0
+        while 0 <= row < rows:
             if checkpoint is not None:
                 checkpoint()
             candidates = all_origins
+            next_row = rows if band_ends else row + direction
             previous_free, covered_shape = None, 0
             if first is not None:
                 # Keep the cheap original top-row rejection before dense rows.
                 offset, covered_shape = first
                 previous_free = free[row + offset]
                 candidates &= origins(previous_free, covered_shape)
+                if band_ends:
+                    next_row = band_ends[row + offset] - offset
                 if not candidates:
                     if on_scan is not None:
                         on_scan(columns)
+                    row = next_row
                     continue
             for constraint_index, (offset, bits) in enumerate(occupied_rows):
                 if checkpoint is not None and constraint_index % 64 == 0:
@@ -231,6 +306,8 @@ class SheetLayout:
                     continue
                 covered_shape |= bits
                 candidates &= origins(available, bits)
+                if band_ends:
+                    next_row = min(next_row, band_ends[row + offset] - offset)
                 if not candidates:
                     break
             if candidates:
@@ -241,6 +318,9 @@ class SheetLayout:
                 return row, column
             if on_scan is not None:
                 on_scan(columns)
+            # The failed intersection stays empty while every tested constraint
+            # reads the same free bits. Resume at the first possible change.
+            row = next_row
         return None
 
     def place(self, piece: RasterMask, row: int, column: int) -> "SheetLayout":
@@ -250,8 +330,13 @@ class SheetLayout:
             raise PlacementError(f"No se puede colocar la pieza: {result.issue.value}.")
 
         occupied = list(self.occupied)
+        previous_shape = previous_occupied = -1
         for offset, bits in enumerate(piece.rows):
-            occupied[row + offset] |= bits << column
+            current = occupied[row + offset]
+            if bits != previous_shape or current != previous_occupied:
+                combined = current | (bits << column)
+                previous_shape, previous_occupied = bits, current
+            occupied[row + offset] = combined
         occupied = tuple(occupied)
         return SheetLayout(
             material=self.material,

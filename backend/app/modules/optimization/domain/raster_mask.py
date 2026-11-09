@@ -51,11 +51,14 @@ class RasterMask:
     def from_spans(cls, resolution_mm, columns, spans):
         """Crea la máscara a partir de un tramo [inicio, fin) de columnas por fila."""
         rows = []
+        previous_start = previous_end = -1
         for start, end in spans:
             if not 0 <= start <= end <= columns:
                 raise RasterizationError("Un tramo de columnas está fuera de la máscara.")
-            # (1 << n) - 1 deja n bits en 1; el desplazamiento los mueve a la columna inicial.
-            rows.append(((1 << (end - start)) - 1) << start)
+            if start != previous_start or end != previous_end:
+                bits = ((1 << (end - start)) - 1) << start
+                previous_start, previous_end = start, end
+            rows.append(bits)
         return cls(resolution_mm, columns, tuple(rows))
 
     @property

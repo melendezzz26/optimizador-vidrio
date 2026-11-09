@@ -55,9 +55,14 @@ def configured_policy(environment=None):
         worker_address_bytes='NEWGLASS_COMPARISON_WORKER_MIB',
         aggregate_rss_bytes='NEWGLASS_COMPARISON_AGGREGATE_MIB')
     supplied = [name for name in names.values() if name in values]
-    if not supplied:
-        return SequentialPolicy()
     try:
+        large_seconds = values.get('NEWGLASS_COMPARISON_LARGE_SECONDS')
+        if large_seconds is not None:
+            if not isinstance(large_seconds, str) or not large_seconds.isascii() or not large_seconds.isdigit():
+                raise ValueError('Large-order deadline must be integer seconds')
+            large_seconds = int(large_seconds)
+        if not supplied:
+            return SequentialPolicy(large_calculation_seconds=large_seconds)
         if len(supplied) != len(names):
             raise ValueError('Provide all three memory limits together')
         updates = {}
@@ -81,6 +86,6 @@ def configured_policy(environment=None):
         capacity = min(capacities)
         if budget.aggregate_rss_bytes + max(64*MIB, capacity//10) > capacity:
             raise ValueError('Comparison budget leaves insufficient container headroom')
-        return SequentialPolicy(budget=budget, memory_ceiling=budget)
+        return SequentialPolicy(budget=budget, memory_ceiling=budget, large_calculation_seconds=large_seconds)
     except (TypeError, ValueError) as error:
-        raise RunError('RESOURCE_UNAVAILABLE', 'Los presupuestos de memoria configurados no son válidos para este servidor.') from error
+        raise RunError('RESOURCE_UNAVAILABLE', 'Los presupuestos de optimización configurados no son válidos para este servidor.') from error

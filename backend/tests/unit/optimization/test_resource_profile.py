@@ -95,6 +95,27 @@ def test_memory_overrides_are_explicit_and_leave_dyno_headroom(monkeypatch):
         with pytest.raises(RunError): resource_runtime.configured_policy(changed)
 
 
+def test_extended_time_is_explicit_and_only_applies_to_large_comparisons():
+    from types import SimpleNamespace
+
+    small = SimpleNamespace(units=range(199))
+    large = SimpleNamespace(units=range(200))
+    baseline = resource_runtime.configured_policy({})
+    profile = resource_runtime.configured_policy({'NEWGLASS_COMPARISON_LARGE_SECONDS':'900'})
+    assert baseline.for_problem(large) == ComparisonBudget()
+    assert profile.for_problem(small) == ComparisonBudget()
+    extended = profile.for_problem(large)
+    assert extended == replace(ComparisonBudget(),calculation_seconds=900,global_seconds=5610)
+    assert profile.expired(121,0,0,1) == 'TIME_BUDGET_EXCEEDED'
+    assert profile.expired(121,0,0,1,budget=extended) is None
+    assert profile.expired(901,0,0,1,budget=extended) == 'TIME_BUDGET_EXCEEDED'
+    assert profile.expired(30,0,0,0,budget=extended) == 'PROCESS_START_FAILED'
+    assert profile.expired(5610,0,5609,0,budget=extended) == 'GLOBAL_TIME_LIMIT'
+    for invalid in ('120','901','500.5','enabled'):
+        with pytest.raises(RunError):
+            resource_runtime.configured_policy({'NEWGLASS_COMPARISON_LARGE_SECONDS':invalid})
+
+
 def test_sequential_preflight_does_not_reserve_the_live_supervisor_twice(monkeypatch):
     budget=replace(ComparisonBudget(),aggregate_rss_bytes=448*MIB,supervisor_rss_bytes=280*MIB)
     monkeypatch.setattr(comparison_runner,'resident_bytes',lambda pid:100*MIB)

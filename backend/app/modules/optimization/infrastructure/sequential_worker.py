@@ -5,8 +5,10 @@ import json
 import os
 import time
 
+from ..application.comparison_limits import DEFAULT_COMPARISON_BUDGET
 from ..application.engine_execution import EngineExecutionAdapter, ExecutionScope
 from ..application.visual import OrientationSampler
+from ..domain.beam_search import BeamSearchLimits
 from .comparison_snapshot import canonical_json, decode_problem, problem_fingerprint
 from .comparison_transport import VisualEncoder
 from .comparison_v2_snapshot import encode_result_v3
@@ -55,7 +57,11 @@ def calculation_worker_v2(scope_values, payload, minimums, connection, gate, sta
             from ..application.errors import ExecutionInterrupted, TimeBudgetExceeded
             if checkpoint_cancel.is_set(): raise ExecutionInterrupted()
             if time.monotonic()-started_clock.value >= budget.calculation_seconds: raise TimeBudgetExceeded()
-        adapted = EngineExecutionAdapter(scope.method).execute(scope, problem,
+        beam_limits = None
+        if scope.method == "M6-BS" and budget.calculation_seconds > DEFAULT_COMPARISON_BUDGET.calculation_seconds:
+            # Leave time for exact final metrics and sending the persisted result.
+            beam_limits = BeamSearchLimits(seconds=max(BeamSearchLimits.seconds, budget.calculation_seconds * 0.9))
+        adapted = EngineExecutionAdapter(scope.method, beam_limits=beam_limits).execute(scope, problem,
             minimum_width_mm=Decimal(minimums[0]), minimum_height_mm=Decimal(minimums[1]),
             checkpoint=checkpoint, on_observation=observe if observed else None)
         send("result", dict(snapshot=encode_result_v3(adapted.payload), residuals=json_value(adapted.residuals),

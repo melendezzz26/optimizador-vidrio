@@ -13,6 +13,7 @@ from typing import Callable, Literal
 
 from .metrics import largest_rectangle
 from .packing import FeasibleCandidate, FirstFitEvent, pack
+from .placement import LayoutQueryMemo
 from .problem import OptimizationProblem, OptimizationResult
 
 
@@ -40,14 +41,39 @@ class BestResidualFitSelector:
     def __init__(self, min_width_cells: int = 1, min_height_cells: int = 1):
         self.min_width_cells = min_width_cells
         self.min_height_cells = min_height_cells
+        self._scores = LayoutQueryMemo()
 
     def _score(self, candidate: FeasibleCandidate):
-        layout = candidate.layout_after
+        score = self._scores.get(candidate.layout, candidate.orientation.mask,
+                                 lambda: self._residual_score(candidate),
+                                 parameters=(candidate.row, candidate.column,
+                                             self.min_width_cells, self.min_height_cells))
+        return (*score, *_tie_key(candidate))
+
+    @staticmethod
+    def _scan(layout):
         free_rows = tuple(
             usable & ~blocked
             for usable, blocked in zip(layout.usable, layout.blocked)
         )
-        rectangle = largest_rectangle(free_rows, layout.material.columns)
+        return largest_rectangle(free_rows, layout.material.columns)
+
+    def _largest_after(self, candidate):
+        before, after = candidate.layout, candidate.layout_after
+        rectangle = self._scores.get(before, before, lambda: self._scan(before))
+        if rectangle is None:
+            return None
+        row, column, width, height = rectangle
+        span = ((1 << width) - 1) << column
+        # Placement can only remove free cells. If the previous winner
+        # survives, no new rectangle or better tie can have appeared.
+        if not any(bits & span for bits in after.blocked[row:row + height]):
+            return rectangle
+        return self._scan(after)
+
+    def _residual_score(self, candidate):
+        layout = candidate.layout_after
+        rectangle = self._scores.get(layout, layout, lambda: self._largest_after(candidate))
         if (
             rectangle is not None
             and rectangle[2] >= self.min_width_cells
@@ -57,7 +83,7 @@ class BestResidualFitSelector:
         else:
             remnant_cells = 0
         fragmented_cells = candidate.remaining_free_cells_after_placement - remnant_cells
-        return (-remnant_cells, fragmented_cells, *_tie_key(candidate))
+        return -remnant_cells, fragmented_cells
 
     def select(self, candidates: Iterable[FeasibleCandidate]) -> FeasibleCandidate | None:
         # One lazy pass that retains only two candidates: the best source in use
@@ -65,8 +91,15 @@ class BestResidualFitSelector:
         best_in_use, best_key, first_unused = None, None, None
         for candidate in candidates:
             if _in_use(candidate):
+                if best_in_use is None:
+                    best_in_use = candidate
+                    continue
+                # A score cannot affect selection when there is one feasible
+                # source in use. Compute it only once a second one competes.
+                if best_key is None:
+                    best_key = self._score(best_in_use)
                 key = self._score(candidate)
-                if best_key is None or key < best_key:
+                if key < best_key:
                     best_in_use, best_key = candidate, key
             elif first_unused is None or _tie_key(candidate) < _tie_key(first_unused):
                 first_unused = candidate

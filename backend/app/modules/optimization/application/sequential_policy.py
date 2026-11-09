@@ -1,9 +1,12 @@
 """TA-043/B04 resource policy. No admission, database or aggregate orchestration."""
 from collections import deque
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from .comparison_catalog import METHODS_V2
-from .comparison_limits import ComparisonBudget, DEFAULT_COMPARISON_BUDGET
+from .comparison_limits import (
+    ComparisonBudget, DEFAULT_COMPARISON_BUDGET, LARGE_COMPARISON_MIN_UNITS,
+    MAX_LARGE_CALCULATION_SECONDS,
+)
 
 
 @dataclass(frozen=True)
@@ -12,12 +15,19 @@ class SequentialPolicy:
     max_active_workers: int = 1
     methods: tuple[str, ...] = METHODS_V2
     memory_ceiling: ComparisonBudget = DEFAULT_COMPARISON_BUDGET
+    large_calculation_seconds: int | None = None
 
     def __post_init__(self):
         if type(self.max_active_workers) is not int or self.max_active_workers != 1 or self.methods != METHODS_V2:
             raise ValueError("Initial v2 policy requires one worker and the frozen ordered six-method catalog")
         if not isinstance(self.budget, ComparisonBudget) or not isinstance(self.memory_ceiling, ComparisonBudget):
             raise ValueError('Comparison budgets must be typed')
+        if self.large_calculation_seconds is not None and (
+            type(self.large_calculation_seconds) is not int
+            or not DEFAULT_COMPARISON_BUDGET.calculation_seconds < self.large_calculation_seconds
+            <= MAX_LARGE_CALCULATION_SECONDS
+        ):
+            raise ValueError("Invalid large-order deadline")
         memory_names = {'supervisor_rss_bytes', 'worker_address_bytes', 'aggregate_rss_bytes'}
         if any(
             getattr(self.budget, name) > (getattr(self.memory_ceiling, name) if name in memory_names else value)
@@ -25,10 +35,19 @@ class SequentialPolicy:
         ):
             raise ValueError("Cannot increase budgets without an explicit memory ceiling")
 
-    def expired(self, now, began, launched, engine_started):
-        deadlines = [(began + self.budget.global_seconds, "GLOBAL_TIME_LIMIT")]
-        deadlines.append((engine_started + self.budget.calculation_seconds, "TIME_BUDGET_EXCEEDED")
-                         if engine_started else (launched + self.budget.startup_seconds, "PROCESS_START_FAILED"))
+    def for_problem(self, problem):
+        if self.large_calculation_seconds is None or len(problem.units) < LARGE_COMPARISON_MIN_UNITS:
+            return self.budget
+        seconds = self.large_calculation_seconds
+        # Budget each engine's startup, calculation and bounded process cleanup.
+        return replace(self.budget, calculation_seconds=seconds,
+                       global_seconds=len(self.methods) * (self.budget.startup_seconds + seconds + 5))
+
+    def expired(self, now, began, launched, engine_started, *, budget=None):
+        budget = self.budget if budget is None else budget
+        deadlines = [(began + budget.global_seconds, "GLOBAL_TIME_LIMIT")]
+        deadlines.append((engine_started + budget.calculation_seconds, "TIME_BUDGET_EXCEEDED")
+                         if engine_started else (launched + budget.startup_seconds, "PROCESS_START_FAILED"))
         reached = [(deadline, code) for deadline, code in deadlines if now >= deadline]
         return min(reached)[1] if reached else None
 

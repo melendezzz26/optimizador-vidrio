@@ -137,7 +137,7 @@ class SequentialProcessRunner:
         if type(observed) is not bool or type(retain_observations) is not bool or type(lifecycle) is not bool:
             raise ValueError("Observation flag must be explicit boolean")
         self.preflight()
-        budget, context = self.policy.budget, mp.get_context("spawn")
+        budget, context = self.policy.for_problem(problem), mp.get_context("spawn")
         began = time.monotonic()
         payload = canonical_json(encode_problem(problem), maximum_bytes=budget.packet_bytes)
         expected_hash = problem_fingerprint(problem)
@@ -186,7 +186,7 @@ class SequentialProcessRunner:
                         now = time.monotonic()
                         report["maximum_sample_gap_ms"] = max(report["maximum_sample_gap_ms"],(now-last)*1000)
                         last = now
-                        code = self.policy.expired(now, began, launched, started_clock.value)
+                        code = self.policy.expired(now, began, launched, started_clock.value, budget=budget)
                         global_stop = code == "GLOBAL_TIME_LIMIT"
                         if cancel is not None and cancel.is_set(): code, global_stop = "CANCELLED", True
                         try:

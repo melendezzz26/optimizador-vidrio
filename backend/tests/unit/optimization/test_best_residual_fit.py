@@ -141,6 +141,13 @@ def test_tie_break_minimizes_fragmentation_when_remnant_areas_are_equal():
     assert BestResidualFitSelector().select(iter([fragmented, clean])) is clean
 
 
+@pytest.mark.parametrize("row,column", [(0, 2), (3, 1)])
+def test_reused_residual_matches_exact_scan_after_a_new_placement(row, column):
+    item = candidate(stock(width=4, height=4), used_at=(3, 0), row=row, column=column)
+    selector = BestResidualFitSelector()
+    assert selector._largest_after(item) == selector._scan(item.layout_after)
+
+
 def test_first_position_is_preserved_and_only_winning_layout_is_committed():
     # v2: the third 2x2 still fits sheet 1 in use, so sheet 2 is never opened
     # (before: [1, 1, 2] with the third piece at (0, 0) of sheet 2).
