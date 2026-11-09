@@ -8,6 +8,7 @@ PHASES = ('general', 'comparison-calculation', 'comparison-supervision', 'sequen
 SAFE_NAME = re.compile(r'^[A-Za-z0-9_./:\[\]-]{1,200}$')
 EXCEPTION = re.compile(r'\b(AssertionError|TimeoutError|RuntimeError|ValueError|TypeError|KeyError|ImportError|ModuleNotFoundError|OperationalError|IntegrityError|ProgrammingError|WorkersNotStopped|Failed|Error)\b')
 LOCATION = re.compile(r'\b(tests/[A-Za-z0-9_./-]+\.py):(\d+)')
+HTTP_ASSERTION = re.compile(r'\bassert (\d{3}) == (\d{3})\b')
 
 
 def build_report(directory):
@@ -35,7 +36,9 @@ def build_report(directory):
                 text = (failure.get('message') or '') + '\n' + (failure.text or '')
                 kind = EXCEPTION.search(text)
                 locations = list(dict.fromkeys(f'{m.group(1)}:{m.group(2)}' for m in LOCATION.finditer(text)))[:5]
-                lines.append(f"  - {name}: {kind.group(1) if kind else 'fallo sin tipo reconocido'}; ubicaciones: {', '.join(locations) if locations else 'no disponibles'}.")
+                comparison = HTTP_ASSERTION.search(text)
+                safe_assertion = f'; HTTP observado {comparison.group(1)}, esperado {comparison.group(2)}' if comparison else ''
+                lines.append(f"  - {name}: {kind.group(1) if kind else 'fallo sin tipo reconocido'}; ubicaciones: {', '.join(locations) if locations else 'no disponibles'}{safe_assertion}.")
         except (ElementTree.ParseError, OSError, ValueError):
             lines.append(f'- {phase}: informe ilegible.')
     return '\n'.join(lines) + '\n'
