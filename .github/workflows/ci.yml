@@ -73,16 +73,29 @@ jobs:
         # production preflight must remain enabled and every command is
         # fail-fast; these are isolation boundaries, not skipped tests.
         run: |
+          mkdir -p "$RUNNER_TEMP/newglass-backend-junit"
           python -m pytest tests \
             --ignore=tests/unit/optimization/test_comparison_runner.py \
             --ignore=tests/integration/optimization/test_comparison_calculation.py \
             --ignore=tests/integration/optimization/test_comparison_supervision_v2.py \
             --ignore=tests/unit/optimization/test_sequential_runner.py \
-            -q -ra
-          python -m pytest tests/integration/optimization/test_comparison_calculation.py -q -ra
-          python -m pytest tests/integration/optimization/test_comparison_supervision_v2.py -q -ra
-          python -m pytest tests/unit/optimization/test_sequential_runner.py -q -ra
-          python -m pytest tests/unit/optimization/test_comparison_runner.py -q -ra
+            -q -ra --junitxml="$RUNNER_TEMP/newglass-backend-junit/general.xml"
+          python -m pytest tests/integration/optimization/test_comparison_calculation.py -q -ra --junitxml="$RUNNER_TEMP/newglass-backend-junit/comparison-calculation.xml"
+          python -m pytest tests/integration/optimization/test_comparison_supervision_v2.py -q -ra --junitxml="$RUNNER_TEMP/newglass-backend-junit/comparison-supervision.xml"
+          python -m pytest tests/unit/optimization/test_sequential_runner.py -q -ra --junitxml="$RUNNER_TEMP/newglass-backend-junit/sequential-runner.xml"
+          python -m pytest tests/unit/optimization/test_comparison_runner.py -q -ra --junitxml="$RUNNER_TEMP/newglass-backend-junit/comparison-runner.xml"
+      - name: Summarize backend failures safely
+        if: always()
+        run: |
+          python ../.github/scripts/backend_failure_summary.py "$RUNNER_TEMP/newglass-backend-junit" "$RUNNER_TEMP/newglass-backend-summary.md"
+          cat "$RUNNER_TEMP/newglass-backend-summary.md" >> "$GITHUB_STEP_SUMMARY"
+      - name: Preserve sanitized backend summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-failure-summary-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/newglass-backend-summary.md
+          if-no-files-found: warn
 
   frontend:
     runs-on: ubuntu-24.04
