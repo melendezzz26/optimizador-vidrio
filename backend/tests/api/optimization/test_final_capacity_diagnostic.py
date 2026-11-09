@@ -24,9 +24,11 @@ def test_capacity_rejections_and_order_lifecycle_are_explicit(api, session_facto
             session.add(Plancha(id_plancha=6,ancho_mm=4001,alto_mm=1,cantidad=1,estado=True,
                 fecha_registro=datetime.now(timezone.utc),id_tipo_vidrio=7,espesor_mm=6))
         if scenario=='raster-estimate':
-            for i in range(12):
+            # Distinct pinned bases must exceed the live-cache 64 MiB budget.
+            # Rotations are now cached lazily, so the old 12 small bases fit.
+            for i in range(35):
                 session.add(Pieza(id_pedido=ids[0],id_tipo_vidrio=7,espesor_mm=6,tipo_forma='RECTANGULO',cantidad=1,
-                    geometria=dict(type='RECTANGULO',width_mm=2000+i,height_mm=2000),area_mm2=(2000+i)*2000))
+                    geometria=dict(type='RECTANGULO',width_mm=3900+i,height_mm=3900),area_mm2=(3900+i)*3900))
         before_stock = [(p.id_plancha,p.cantidad,p.estado) for p in session.scalars(select(Plancha).order_by(Plancha.id_plancha))]
         session.commit()
     response = client.post('/api/optimization/comparisons',headers={**headers,'Idempotency-Key':'capacity-'+scenario},json={'order_ids':ids})
@@ -35,6 +37,9 @@ def test_capacity_rejections_and_order_lifecycle_are_explicit(api, session_facto
         assert response.status_code == 422, response.text
         detail = response.json()['detail']
         assert detail['code'] == ('INVALID_INPUT' if scenario=='oversized-piece' else 'LOAD_LIMIT_EXCEEDED')
+        if scenario == 'raster-estimate':
+            assert detail['limit']['name'] == 'raster_memory'
+            assert detail['limit']['actual'] > detail['limit']['maximum'] == 64 * 1024 * 1024
         assert runtime.job is None
     else:
         assert response.status_code == 201, response.text
