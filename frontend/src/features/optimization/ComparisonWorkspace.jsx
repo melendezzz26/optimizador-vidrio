@@ -247,6 +247,13 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
       <p>{current?.profile === 'comparison-v2' ? 'Revisa y compara los resultados independientes de las seis heurísticas.' : 'Revisa el proceso de cada motor, compara sus métricas y elige una distribución.'}</p></div>
       {current && <div className="comparison-job">Trabajo <strong>#{current.comparison_id}</strong><small>{current.confirmed ? 'Corte confirmado' : current.released ? 'Pedidos liberados' : current.terminal ? 'Comparación finalizada' : 'Comparación en curso'}</small>{selected && <small>Elegido: {methodName(selected.method)}</small>}</div>}</header>
     {state.error && <FeedbackMessage variant="error">{state.error}</FeedbackMessage>}
+    {import.meta.env.MODE === 'staging' && state.error && state.admissionDiagnostic && <section aria-label="Diagnóstico técnico de admisión">
+      <h3>Diagnóstico técnico</h3>
+      <p>Código: {state.admissionDiagnostic.code}</p>
+      <p>Límite: {state.admissionDiagnostic.name}</p>
+      <p>Activos: {state.admissionDiagnostic.actual}</p>
+      <p>Máximo: {state.admissionDiagnostic.maximum}</p>
+    </section>}
     {state.success && <FeedbackMessage variant="success">{state.success}</FeedbackMessage>}
     <div className="comparison-toolbar">
       <label>Métodos<select className="ng-control" value={state.profile} disabled={state.pendingRequest || !!current && !current.released && !current.confirmed}

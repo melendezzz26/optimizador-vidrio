@@ -1,6 +1,6 @@
 // Autor: Fabricio Melendez Quezada. Revisor asignado: Andro Quispe.
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { beforeEach, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import fixture from '../../../../../docs/contracts/optimization/comparison-v1.json';
 import { OptimizationPage } from '../OptimizationPage';
 import { createFixturePendingOrdersSource } from '../pendingOrdersSource';
@@ -11,6 +11,7 @@ beforeEach(() => {
   localStorage.clear();
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({ fillRect: vi.fn(), setTransform: vi.fn() });
 });
+afterEach(() => vi.unstubAllEnvs());
 function setup({ failStart = false, partial = false, partialFF = false, ambiguous = false, noStock = false, multiGroup = false } = {}) {
   let current = structuredClone(fixture.completed);
   if (noStock) {
@@ -140,6 +141,7 @@ test('reload recovers the saved comparison without starting another calculation'
 });
 
 test('configuration rejection retains selected orders and does not invent an execution', async () => {
+  vi.stubEnv('MODE', 'staging');
   const { api } = setup({ failStart: true });
   fireEvent.click(await screen.findByRole('checkbox', { name: /Pedido #1/ }));
   await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Comparar con los tres motores' })));
@@ -147,6 +149,31 @@ test('configuration rejection retains selected orders and does not invent an exe
   expect(screen.getByRole('checkbox', { name: /Pedido #1/ })).toBeChecked();
   expect(screen.queryByRole('tab')).not.toBeInTheDocument();
   expect(api.observe).not.toHaveBeenCalled();
+  expect(screen.queryByRole('region', { name: 'Diagnóstico técnico de admisión' })).not.toBeInTheDocument();
+});
+
+test('staging muestra únicamente el diagnóstico público de capacidad', async () => {
+  vi.stubEnv('MODE', 'staging');
+  const { api } = setup();
+  api.start.mockRejectedValueOnce(Object.assign(new Error('El optimizador está atendiendo otros cálculos. Intenta nuevamente en unos segundos.'), {
+    status: 503, code: 'OPTIMIZER_BUSY', admissionDiagnostic: { code: 'OPTIMIZER_BUSY', name: 'active_runs', actual: 1, maximum: 1 },
+  }));
+  fireEvent.click(await screen.findByRole('checkbox', { name: /Pedido #1/ }));
+  fireEvent.click(screen.getByRole('button', { name: 'Comparar con los tres motores' }));
+  expect(await screen.findByText('El optimizador está atendiendo otros cálculos. Intenta nuevamente en unos segundos.')).toBeVisible();
+  const diagnostic = screen.getByRole('region', { name: 'Diagnóstico técnico de admisión' });
+  for (const text of ['Código: OPTIMIZER_BUSY', 'Límite: active_runs', 'Activos: 1', 'Máximo: 1']) expect(within(diagnostic).getByText(text)).toBeVisible();
+});
+
+test('fuera de staging no muestra diagnóstico de admisión', async () => {
+  vi.stubEnv('MODE', 'production');
+  const { api } = setup();
+  api.start.mockRejectedValueOnce(Object.assign(new Error('Ocupado'), { status: 503, code: 'OPTIMIZER_BUSY',
+    admissionDiagnostic: { code: 'OPTIMIZER_BUSY', name: 'active_runs', actual: 1, maximum: 1 } }));
+  fireEvent.click(await screen.findByRole('checkbox', { name: /Pedido #1/ }));
+  fireEvent.click(screen.getByRole('button', { name: 'Comparar con los tres motores' }));
+  expect(await screen.findByText('Ocupado')).toBeVisible();
+  expect(screen.queryByRole('region', { name: 'Diagnóstico técnico de admisión' })).not.toBeInTheDocument();
 });
 
 test('failed engine has no fake zero metrics and successful results stay eligible', async () => {

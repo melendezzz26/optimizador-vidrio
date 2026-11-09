@@ -20,7 +20,8 @@ export function createComparisonController({ api, apiV2, source, storageKey, ini
     requestKey, operation, attemptOrders, profile: state.profile })); } catch { /* Almacenamiento opcional. */ } };
   const client = profile => profile === 'comparison-v2' ? apiV2 : api;
   const valid = g => active && g === generation;
-  const fail = error => { if (error.status === 401) onExpired?.(); set({ error: error.message, loading: false }); };
+  const fail = error => { if (error.status === 401) onExpired?.(); set({ error: error.message,
+    admissionDiagnostic: error.admissionDiagnostic ?? null, loading: false }); };
   function clearWork(success = '') {
     prepare(); actionSequence++; requestKey = null; operation = null; attemptOrders = null;
     try { localStorage.removeItem(storageKey); } catch { /* Almacenamiento opcional. */ }
