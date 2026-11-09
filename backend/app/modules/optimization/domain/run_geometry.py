@@ -14,7 +14,7 @@ from .visual_events import VisualEvent
 class PreparedRunGeometry:
     """Bases reference the immutable problem/config, never live Orders or UI state.
 
-    Only the private, run-local cache grows on demand within its original budget.
+    The private, run-local cache loads and replaces orientations on demand.
     No mutable cache/layout is shared between methods or invocations. External
     mask descriptors and their retention are a separate visual-stream contract.
     """

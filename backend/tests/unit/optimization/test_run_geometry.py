@@ -1,10 +1,12 @@
 """HU-017 T02: a base barrier and restartable lazy search, shared by FF/BF/WF."""
-from dataclasses import FrozenInstanceError
+from dataclasses import FrozenInstanceError, replace
 from decimal import Decimal as D
 from unittest.mock import patch
 
 import pytest
 
+from app.modules.optimization.application.comparison_catalog import METHODS_V2
+from app.modules.optimization.application.engine_execution import EngineExecutionAdapter, ExecutionScope
 from app.modules.optimization.domain.best_fit import BestFitOptimizer
 from app.modules.optimization.domain.first_fit import FirstFitOptimizer
 from app.modules.optimization.domain.placement import SheetLayout
@@ -189,3 +191,40 @@ def test_configuration_is_frozen_while_lazy_rotations_use_same_resolution():
     assert prepared.config == value.config
     assert prepared.config.resolution_mm == D('0.5')
     assert {entry.orientation.mask.resolution_mm for entry in prepared.orientations(value.units[0])} == {0.5}
+
+
+@pytest.mark.parametrize('method', METHODS_V2)
+def test_rotating_under_cache_pressure_preserves_each_native_result(method, monkeypatch):
+    value = problem([piece(i, width=w, height=h, quantity=2)
+                     for i, (w, h) in enumerate(((13, 8), (12, 7), (11, 6)), 1)],
+                    [stock(1, width=1, height=1, source=MaterialSource.REMNANT),
+                     stock(2, width=30, height=24)],
+                    config(angular_step_deg=D(5)))
+    scope = ExecutionScope(comparison_id=1, execution_id=1, method=method)
+    adapter = EngineExecutionAdapter(method)
+    baseline = adapter.execute(scope, value, minimum_width_mm=D(1), minimum_height_mm=D(1))
+    assert baseline.payload.result.complete
+    old_init, old_raster = RasterCache.__init__, RasterCache._raster
+    evicted = False
+
+    def bounded_init(self):
+        old_init(self, max_cache_bytes=480 * 1024)
+
+    def raster(self, geometry, resolution, *, material=False):
+        nonlocal evicted
+        entries = len(self._pieces)
+        result = old_raster(self, geometry, resolution, material=material)
+        evicted |= len(self._pieces) < entries
+        return result
+
+    monkeypatch.setattr(RasterCache, '__init__', bounded_init)
+    monkeypatch.setattr(RasterCache, '_raster', raster)
+    bounded = adapter.execute(scope, value, minimum_width_mm=D(1), minimum_height_mm=D(1))
+    assert evicted
+    assert bounded.payload.diagnostic.termination_reason == 'COMPLETED'
+    for key, count in baseline.payload.diagnostic.statistics.items():
+        if not key.startswith('state_bytes_'):
+            assert bounded.payload.diagnostic.statistics[key] == count
+    assert replace(bounded.payload.result, computation_time_ms=0) == replace(
+        baseline.payload.result, computation_time_ms=0)
+    assert bounded.residuals == baseline.residuals

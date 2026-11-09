@@ -5,10 +5,12 @@ snapshots are retained unchanged; placement contours are the oriented, normalize
 coordinates actually rasterized. Quarter turns are exact before RN-04 rounding.
 """
 import math
+from collections import OrderedDict
+from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass
 from decimal import Decimal, localcontext
 from types import MappingProxyType
-from collections.abc import Callable, Iterable, Iterator
+from weakref import WeakValueDictionary, finalize, ref
 
 from .preparation import bbox_dimensions
 from .problem import PieceUnit, decimal_value, geometry_snapshot
@@ -143,9 +145,8 @@ class _OrientationView:
                 # This angle cannot fit ANY supported stock, as in TA-016.
                 continue
             self.checkpoint()
-            signature = (prepared.mask.columns, prepared.mask.rows)
-            if signature not in masks_seen:
-                masks_seen.add(signature)
+            if prepared.mask not in masks_seen:
+                masks_seen.add(prepared.mask)
                 yield OrientedUnit(self.unit, prepared)
 
     def next_angles(self, angle: Decimal, count: int) -> Iterator[OrientedUnit]:
@@ -162,14 +163,15 @@ class _OrientationView:
 
 
 class RasterCache:
-    """One instance per calculation. Immutable masks may be shared across units."""
+    """Run-local LRU for piece orientations, charging masks while they are alive."""
     # Internal bit rows, independent of HU-015's JSON preview budget. A maximum
     # 4000x4000 mask occupies ~2.3 MB, not 16 million Python cell objects.
     def __init__(self, *, max_cells=INTERNAL_MAX_CELLS, max_axis=INTERNAL_MAX_AXIS, max_vertices=128,
                  max_cache_bytes=INTERNAL_CACHE_BYTES):
         self.max_cells, self.max_axis, self.max_vertices = max_cells, max_axis, max_vertices
         self.max_cache_bytes, self._cache_bytes = max_cache_bytes, 0
-        self._pieces = {}
+        self._pieces = OrderedDict()
+        self._live_pieces = WeakValueDictionary()
         self._materials = {}
 
     def check_geometry(self, geometry, resolution):
@@ -189,27 +191,54 @@ class RasterCache:
         self.check_geometry(geometry, resolution)
         self.check_geometry(oriented_geometry(geometry, 0), resolution)
 
-    def _raster(self, geometry, resolution, *, material=False):
+    def _mask_bytes(self, geometry, resolution):
         columns, rows = self.check_geometry(geometry, resolution)
         # Conservative CPython int-row allocation bound, including tuple slots.
-        # Check BEFORE allocating and bound all retained orientations/materials.
-        estimated = rows * (32 + 4 * ((columns + 29) // 30) + 8) + 4096 + len(geometry.get('vertices_mm', ())) * 512
+        return rows * (32 + 4 * ((columns + 29) // 30) + 8) + 4096 + len(geometry.get('vertices_mm', ())) * 512
+
+    def base_bytes(self, geometries, resolution, *, material=False):
+        """Account for distinct pinned bases without creating a mask."""
+        seen = set()
+        total = 0
+        for geometry in geometries:
+            key = _fingerprint(geometry)
+            if key not in seen:
+                seen.add(key)
+                base = geometry if material else oriented_geometry(geometry, 0)
+                total += self._mask_bytes(base, resolution)
+        return total
+
+    @staticmethod
+    def _release_mask(cache_ref, size):
+        cache = cache_ref()
+        if cache is not None:
+            cache._cache_bytes -= size
+
+    def _raster(self, geometry, resolution, *, material=False):
+        estimated = self._mask_bytes(geometry, resolution)
+        while self._pieces and self._cache_bytes + estimated > self.max_cache_bytes:
+            self._pieces.popitem(last=False)
         if self._cache_bytes + estimated > self.max_cache_bytes:
             raise RasterPreparationError("Internal cutting raster cache exceeds its 64 MiB budget.")
         try:
             mask = (rasterize_material if material else rasterize_geometry)(dict(geometry), raster_number(resolution))
-            self._cache_bytes += estimated
-            return mask
         except (RasterizationError, OverflowError) as error:
             raise RasterPreparationError("Geometry cannot be safely rasterized by TA-005/006.") from error
+        self._cache_bytes += estimated
+        # A base, deduplication set, candidate or observer can outlive its LRU entry.
+        finalize(mask, self._release_mask, ref(self), estimated)
+        return mask
 
     def _orientation(self, unit: PieceUnit, resolution, angle) -> Orientation:
         key = (_fingerprint(unit.geometry), resolution, angle)
-        if key not in self._pieces:
+        orientation = self._live_pieces.get(key)
+        if orientation is None:
             geometry = oriented_geometry(unit.geometry, angle)
-            self.check_geometry(geometry, resolution)
-            self._pieces[key] = Orientation(angle, geometry, self._raster(geometry, resolution))
-        return self._pieces[key]
+            orientation = Orientation(angle, geometry, self._raster(geometry, resolution))
+            self._live_pieces[key] = orientation
+        self._pieces[key] = orientation
+        self._pieces.move_to_end(key)
+        return orientation
 
     def base(self, unit: PieceUnit, resolution) -> Orientation:
         """Normalized zero-degree base, shared with the subsequent TA-016 search."""

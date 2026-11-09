@@ -98,6 +98,24 @@ visual reportó errores. Una muestra por tamaño:
 El pico virtual del trabajador fue 41.3–43.2 MiB. Estos resultados validan los
 presupuestos internos con esa carga; no acreditan todavía la ejecución en Heroku.
 
+## Geometrías grandes a 1 mm
+
+La revisión de [TA-016](specs/SPEC-TA-016-rotacion-compartida.md) y
+[TA-037](specs/SPEC-TA-037-control-carga-optimizador.md) limita las bases en
+admisión y reemplaza orientaciones durante la búsqueda. En local, ambos casos
+pasaron la nueva admisión a 1 mm y 5°, con margen y separación de 0 mm.
+Cada motor se ejecutó mediante su adaptador en un proceso local independiente.
+
+| Caso | Motores completos | Causa de los resultados pendientes |
+|---|---|---|
+| #61 reconstruido, 247 unidades | FF, BF, WF y HF | M5 llegó a 120 s. M6-BS llegó a su límite de tiempo con 237 colocadas. |
+| Primeras 800 unidades del CSV de auditoría, 40 planchas y 2 retazos sintéticos compatibles | 0 de 6 | FF, BF, WF, HF y M5 llegaron a 120 s. M6-BS alcanzó el límite de estado de 32 MiB con 99 colocadas. |
+
+La contabilidad raster se mantuvo dentro de 64 MiB en esas ejecuciones.
+La medición es del adaptador local, sin HTTP ni PostgreSQL. El segundo caso
+comprueba la admisión y distingue los límites restantes de búsqueda. El
+criterio de completar 800 unidades grandes en staging sigue pendiente.
+
 ## Despliegue y vuelta atrás
 
 Publicar manualmente `test/resource-profile-800` en la aplicación staging

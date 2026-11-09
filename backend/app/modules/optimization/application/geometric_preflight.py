@@ -3,9 +3,10 @@ from app.modules.inventory.domain.geometry import calculate_area_mm2
 
 from ..domain.problem import MaterialSource
 from ..domain.rotation import RasterCache, discrete_angles, raster_number
+from .load_budget import DEFAULT_RUN_LOAD_BUDGET, check_raster_bases
 
 
-def validate_comparison_geometry(problem):
+def validate_comparison_geometry(problem, budget=DEFAULT_RUN_LOAD_BUDGET):
     """Reuse preparation/Inventory rules without masks, positions or fit decisions.
 
     Orders already validates requested contours in prepare_persisted_problem.
@@ -25,3 +26,5 @@ def validate_comparison_geometry(problem):
     for stock in stocks.values():
         if stock.source is MaterialSource.REMNANT:
             calculate_area_mm2(stock.geometry)
+    check_raster_bases((piece.geometry for piece in pieces.values()), problem.config, budget,
+                       stock=(stock.geometry for stock in stocks.values()))

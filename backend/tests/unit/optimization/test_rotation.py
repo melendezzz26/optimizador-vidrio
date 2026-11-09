@@ -114,6 +114,39 @@ def test_material_is_interior_mask_and_cache_does_not_fill_irregular_bbox():
     assert mask.occupied_cells < mask.columns * mask.row_count
 
 
+def test_cache_replaces_least_recently_used_orientations_and_regenerates_exactly():
+    pieces = [unit(dict(type="RECTANGULO", width_mm=width, height_mm=2)) for width in (3, 4, 5)]
+    size = RasterCache().base_bytes([pieces[0].geometry], D(1))
+    cache = RasterCache(max_cache_bytes=2 * size)
+    with patch("app.modules.optimization.domain.rotation.rasterize_geometry", wraps=rasterize_geometry) as raster:
+        cache.base(pieces[0], D(1))
+        cache.base(pieces[1], D(1))
+        cache.base(pieces[0], D(1))
+        cache.base(pieces[2], D(1))
+        assert cache._cache_bytes == 2 * size
+        cache.base(pieces[0], D(1))
+        assert raster.call_count == 3
+        regenerated = cache.base(pieces[1], D(1))
+        assert raster.call_count == 4
+        assert regenerated.mask == rasterize_geometry(dict(pieces[1].geometry), 1)
+        assert cache._cache_bytes == 2 * size
+
+
+def test_eviction_keeps_a_mask_charged_until_the_consumer_releases_it():
+    first = unit()
+    second = unit(dict(type="RECTANGULO", width_mm=5, height_mm=2))
+    size = RasterCache().base_bytes([first.geometry], D(1))
+    cache = RasterCache(max_cache_bytes=size)
+    active_mask = cache.base(first, D(1)).mask
+    with pytest.raises(RasterPreparationError, match="64 MiB"):
+        cache.base(second, D(1))
+    assert cache._cache_bytes == size
+    del active_mask
+    assert cache._cache_bytes == 0
+    assert cache.base(second, D(1)).mask.columns == 5
+    assert cache._cache_bytes == size
+
+
 def test_explicit_decimal_bridge_and_safe_budget_failures():
     assert raster_number(D("0.1")) == 0.1
     with pytest.raises(RasterPreparationError):
