@@ -239,7 +239,7 @@ export function createComparisonController({ api, apiV2, source, storageKey, ini
       catch (error) {
         // A rejected input never became an accepted work. Network errors and
         // conflicts remain recoverable with the original key and frozen orders.
-        if ([400, 422].includes(error.status)) {
+        if ([400, 422].includes(error.status) || error.requestAccepted === false) {
           requestKey = null; attemptOrders = null; set({ pendingRequest: false }); remember(true);
         }
         throw error;

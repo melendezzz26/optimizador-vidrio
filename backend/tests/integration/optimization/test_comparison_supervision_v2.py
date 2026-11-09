@@ -18,6 +18,7 @@ from app.modules.optimization.application.admission import OptimizerBusy
 from app.modules.optimization.application.comparison_acceptance_v2 import AcceptComparisonV2
 from app.modules.optimization.application.comparison_catalog import METHODS_V2
 from app.modules.optimization.application.comparison_limits import ComparisonBudget
+from app.modules.optimization.application.comparison_v2_contracts import ExecutionDiagnostic, ExecutionPayloadV2
 from app.modules.optimization.application.errors import RunError
 from app.modules.optimization.application.sequential_policy import SequentialPolicy
 from app.modules.optimization.domain.beam_search import BeamSearchLimits
@@ -262,15 +263,44 @@ def test_failed_closure_commit_keeps_lease_until_successful_retry(session_factor
         with uow() as tx:
             current=tx.comparisons_v2.get(accepted.comparison_id)
             assert not current.supervisor_stopped and all(e.eligible for e in current.executions)
+        with pytest.raises(RunError) as blocked:
+            coordinator.start(ids,actor,'b05-close-retry-0001')
+        assert blocked.value.code == "RECOVERY_BLOCKED"
     finally: event.remove(session_factory.class_,'before_flush',fail)
     try:
-        assert coordinator._close(coordinator.job)
+        def reject_after_recovery():
+            raise RunError("RESOURCE_UNAVAILABLE", "Controlled preflight failure")
+        coordinator.runner_factory = reject_after_recovery
+        with pytest.raises(RunError) as resumed:
+            coordinator.start(ids,actor,'b05-close-retry-0001')
+        assert resumed.value.code == "RESOURCE_UNAVAILABLE"
         current=wait_closed(coordinator)
     finally: coordinator.shutdown()
     evidence('closure-retry',coordinator,current)
 
 
-@pytest.mark.parametrize('owner_state',['dead','live','reused_pid','unknown','spawn_intent','dead_worker'])
+def test_startup_recovery_ignores_standalone_ff_and_keeps_invalid_comparison_reserved(session_factory,setup):
+    from app.modules.optimization.application.runs import AcceptRun
+    from app.modules.optimization.infrastructure.run_uow import SqlRunUnitOfWork
+
+    actor,ids,uow=setup
+    run=AcceptRun(partial(SqlRunUnitOfWork,session_factory)).execute(ids[:1],actor)
+    coordinator=ComparisonV2Coordinator(uow,InProcessRunAdmission())
+    assert coordinator.recover_pending()
+    assert coordinator.admission.active() == 0
+    with uow() as tx:
+        row=tx.session.get(Optimizacion,run.optimization_id)
+        assert row.estado == "EN_EJECUCION"
+        assert tx.session.get(Pedido,ids[0]).estado == "EN_OPTIMIZACION"
+        row.criterio_seleccion_version = "CMP-v2"
+    assert not coordinator.recover_pending()
+    assert coordinator.admission.active() == 1
+    assert run.optimization_id in coordinator.recovery_errors
+
+
+@pytest.mark.parametrize('owner_state',[
+    'dead','live','reused_pid','unknown','spawn_intent','dead_worker','joined_worker',
+])
 def test_recovery_requires_process_identity_proof_without_recalculation(session_factory,setup,owner_state):
     actor,ids,uow=setup
     accepted=AcceptComparisonV2(uow,authorize_actor).execute(ids,actor,'b05-recovery-0001')
@@ -284,15 +314,26 @@ def test_recovery_requires_process_identity_proof_without_recalculation(session_
         else:
             assert tx.comparisons_v2.claim_supervisor(accepted.comparison_id,token,expected)
             if owner_state=='spawn_intent': tx.comparisons_v2.record_worker(accepted.comparison_id,accepted.executions[0].execution_id,token,None)
-            if owner_state=='dead_worker': tx.comparisons_v2.record_worker(accepted.comparison_id,accepted.executions[0].execution_id,token,absent)
+            if owner_state in ('dead_worker','joined_worker'):
+                first = accepted.executions[0]
+                current = tx.comparisons_v2.record_worker(accepted.comparison_id,first.execution_id,token,absent)
+                if owner_state == 'joined_worker':
+                    tx.comparisons_v2.save_execution(accepted.comparison_id,first.execution_id,
+                        ExecutionPayloadV2(method=first.method,result=None,diagnostic=ExecutionDiagnostic(
+                            origin="SUPERVISOR",termination_reason="TIME_BUDGET_EXCEEDED",
+                            statistics={"runtime_dispatched":1,"runtime_engine_started":1})),
+                        (),current.version)
     coordinator=ComparisonV2Coordinator(uow,InProcessRunAdmission())
-    proven=owner_state in ('dead','reused_pid')
+    proven=owner_state in ('dead','reused_pid','joined_worker')
     assert coordinator.recover_pending()==proven
     assert coordinator.admission.active()==(0 if proven else 1)
     with uow() as tx:
         current=tx.comparisons_v2.get(accepted.comparison_id)
         assert current.terminal==proven
         assert all(e.result is None for e in current.executions)
+        if owner_state == 'joined_worker':
+            assert current.executions[0].diagnostic.termination_reason == "TIME_BUDGET_EXCEEDED"
+            assert all(tx.session.get(Pedido,i).estado == "PENDIENTE" for i in ids)
     assert process_identity(own['pid'])==own  # No killing a reused PID or another session.
 
 

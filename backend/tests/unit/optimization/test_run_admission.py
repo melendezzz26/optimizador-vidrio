@@ -1,10 +1,14 @@
 """TA-037 T03: admisión acotada en proceso (L-10, L-11), sin base de datos (CA-08, CA-09)."""
-from threading import Barrier, Thread
+from contextlib import nullcontext
+from threading import Barrier, Event, Thread
+from types import SimpleNamespace
 
 import pytest
 
 from app.modules.optimization.application.admission import OptimizerBusy
+from app.modules.optimization.application.errors import RunError
 from app.modules.optimization.infrastructure.in_process_admission import InProcessRunAdmission
+from app.modules.optimization.presentation.comparison_supervision_v2 import ComparisonV2Coordinator
 from app.modules.optimization.presentation.run_stream import LiveRunStream
 
 
@@ -142,4 +146,45 @@ def test_legacy_and_comparison_requests_never_overlap():
     comparison = admission.acquire_comparison(2)
     assert admission.active() == 1
     comparison.release()
+    assert admission.active() == 0
+
+
+@pytest.mark.parametrize("owner", ["local", "startup"])
+def test_new_request_retries_safe_recovery_before_reserving_capacity(monkeypatch, owner):
+    tx = SimpleNamespace(comparisons_v2=SimpleNamespace(find_by_key=lambda *_: None))
+    admission = InProcessRunAdmission()
+    lease = admission.acquire_comparison(1)
+    coordinator = ComparisonV2Coordinator(lambda: nullcontext(tx), admission, authorize=lambda *_: None)
+    if owner == "local":
+        coordinator.job = SimpleNamespace(closed=Event(), thread=None)
+        monkeypatch.setattr(coordinator, "_close", lambda job: False)
+    else:
+        coordinator.recovery_lease = lease
+        monkeypatch.setattr(coordinator, "recover_pending", lambda: False)
+
+    with pytest.raises(RunError) as blocked:
+        coordinator.start([2], 1, "retry-recovery")
+    assert blocked.value.code == "RECOVERY_BLOCKED"
+    assert blocked.value.details == {"request_accepted": False}
+    assert admission.active() == 1
+
+    def recovered(*_):
+        lease.release()
+        if owner == "local":
+            coordinator.job.closed.set()
+        else:
+            coordinator.recovery_lease = None
+        return True
+
+    def reached_preflight():
+        assert admission.active() == 1  # The new request owns the reservation.
+        raise RunError("RESOURCE_UNAVAILABLE", "Controlled preflight failure")
+
+    monkeypatch.setattr(coordinator, "_close" if owner == "local" else "recover_pending", recovered)
+    if coordinator.job is not None:
+        coordinator.job.lease = lease
+    coordinator.runner_factory = lambda: SimpleNamespace(preflight=reached_preflight)
+    with pytest.raises(RunError) as resumed:
+        coordinator.start([2], 1, "retry-recovery")
+    assert resumed.value.code == "RESOURCE_UNAVAILABLE"
     assert admission.active() == 0

@@ -126,7 +126,12 @@ class ComparisonV2Coordinator:
                 if not previous.terminal and (self.job is None or self.job.comparison.comparison_id != previous.comparison_id):
                     self.recover_pending()
                 return previous
-            lease = self.admission.acquire_comparison(actor_id)
+            try:
+                self._retry_recovery()
+                lease = self.admission.acquire_comparison(actor_id)
+            except RunError as error:
+                error.details = {**(error.details or {}), "request_accepted": False}
+                raise
             accepted = None
             try:
                 runner = self.runner_factory(); runner.preflight()
@@ -172,6 +177,14 @@ class ComparisonV2Coordinator:
                     self.recovery_lease = lease
                     self.recovery_errors = {accepted.comparison_id: "UnclaimedAcceptedComparison"}
                 raise
+
+    def _retry_recovery(self):
+        job = self.job
+        if (job is not None and not job.closed.is_set()
+            and (job.thread is None or not job.thread.is_alive()) and not self._close(job)):
+            raise RunError("RECOVERY_BLOCKED", "El cierre seguro de la comparación sigue pendiente.")
+        if self.recovery_lease is not None and not self.recover_pending():
+            raise RunError("RECOVERY_BLOCKED", "El cierre seguro de la comparación sigue pendiente.")
 
     def _reap(self, job):
         job.thread.join()
@@ -267,9 +280,13 @@ class ComparisonV2Coordinator:
                     for worker in current.runtime['workers'].values():
                         if worker is None or process_identity(worker['pid'])==dict(worker):
                             raise WorkersNotStopped("Worker identity is alive or ambiguous")
-                    if current.runtime['workers']:
-                        # The previous process' join report is gone. Dead root PIDs
-                        # cannot exclude unregistered/orphaned descendants after a crash.
+                    # The runner emits a terminal result only after joining the
+                    # worker and verifying its observed descendants stopped.
+                    # Recovery-generated failures have no runtime_dispatched marker.
+                    verified = {str(e.execution_id) for e in current.executions
+                                if e.dispatch_state == "TERMINATED" and e.diagnostic is not None
+                                and e.diagnostic.statistics.get("runtime_dispatched") == 1}
+                    if not current.runtime['workers'].keys() <= verified:
                         raise WorkersNotStopped("Restart requires external descendant-closure evidence")
                     fail_pending(self.uow,identifier,owner['token'],"WORKER_STOPPED")
                     with self.uow() as tx:

@@ -49,7 +49,8 @@ export function createComparisonV2Api({ token, fetchImpl = globalThis.fetch } = 
       const detail = (await json().catch(() => null))?.detail;
       throw Object.assign(new Error(detail?.message ?? (response.status === 401 ? 'Tu sesión venció.' : 'No se pudo completar la operación.')),
         { status: response.status, code: detail?.code, latestSequence: detail?.latest_sequence,
-          admissionDiagnostic: response.status === 503 ? admissionDiagnostic(detail) : null });
+          admissionDiagnostic: response.status === 503 ? admissionDiagnostic(detail) : null,
+          requestAccepted: detail?.request_accepted });
     }
     return stream ? response : json();
   }

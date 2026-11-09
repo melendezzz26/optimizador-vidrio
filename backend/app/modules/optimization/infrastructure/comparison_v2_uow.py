@@ -2,9 +2,10 @@
 from datetime import datetime, timezone
 from decimal import Decimal
 import hashlib
+import logging
 import re
 
-from sqlalchemy import select, text
+from sqlalchemy import JSON, or_, select, text
 from sqlalchemy.exc import DBAPIError
 
 from app.models import (Configuracion, EjecucionOptimizacion, MaterialUtilizado,
@@ -23,6 +24,8 @@ from .comparison_uow import SqlComparisonRepository, SqlComparisonUnitOfWork, no
 from .comparison_v2_snapshot import (encode_comparison_input_v2, decode_comparison_input_v2,
                                      encode_result_v3, decode_result_v3)
 from .run_snapshot import json_value
+
+logger = logging.getLogger(__name__)
 
 
 def _utc(value):
@@ -220,6 +223,7 @@ class SqlComparisonV2Repository:
                 executions=executions, selected_execution_id=row.id_ejecucion_seleccionada, workers_stopped=stopped,
                 runtime=runtime, released=released, confirmation=confirmation)
         except (KeyError, TypeError, ValueError, ArithmeticError, OverflowError) as error:
+            logger.warning("Invalid persisted v2 trace for comparison %s: %s", identifier, error)
             raise RunError("INTERNAL_ERROR", "La trazabilidad persistida v2 requiere revisión.") from error
 
     def get_owned(self, identifier, actor_id):
@@ -511,8 +515,13 @@ class SqlComparisonPersistenceUnitOfWork(SqlComparisonUnitOfWork):
         return c.id_configuracion, c.version, config, c.ancho_min_retazo_mm, c.alto_min_retazo_mm
 
     def unfinished(self):
+        # Standalone FF has a separate recovery procedure and no comparison
+        # supervisor to reconcile. Keep malformed comparisons in this scan.
         return list(self.session.scalars(select(Optimizacion.id_optimizacion).where(
-            Optimizacion.estado == "EN_EJECUCION").order_by(Optimizacion.id_optimizacion)))
+            Optimizacion.estado == "EN_EJECUCION",
+            or_(Optimizacion.comparison_snapshot != JSON.NULL,
+                Optimizacion.criterio_seleccion_version.in_(("CMP-v1", "CMP-v2"))))
+            .order_by(Optimizacion.id_optimizacion)))
 
     def recover_historical(self, comparison_id):
         row = self.session.get(Optimizacion, comparison_id)

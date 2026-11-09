@@ -266,7 +266,7 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
       <h3>Comparaciones anteriores</h3>
       {!state.savedComparisons.length && <p>No hay comparaciones guardadas.</p>}
       <ul>{state.savedComparisons.map(item => <li key={item.comparison_id}>
-        <span>Pedidos {item.order_ids.map(id => `#${id}`).join(', ')} · {new Intl.DateTimeFormat('es-PE', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Lima' }).format(new Date(item.started_at))}
+        <span>{item.order_ids.length ? `Pedidos ${item.order_ids.map(id => `#${id}`).join(', ')}` : 'Sin pedidos vinculados'} · {new Intl.DateTimeFormat('es-PE', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Lima' }).format(new Date(item.started_at))}
           {' '}· {item.confirmed ? 'Corte confirmado' : item.released ? 'Pedidos liberados' : item.status === 'EN_EJECUCION' ? 'En ejecución' : 'Finalizada: revisa la cobertura'}</span>
         <button className="ng-button" disabled={state.busy || state.pendingRequest} onClick={() => flow.load(item.comparison_id, { profile: item.profile })}>Ver comparación #{item.comparison_id}</button>
       </li>)}</ul>

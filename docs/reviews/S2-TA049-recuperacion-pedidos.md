@@ -86,3 +86,31 @@ Backend usó los comandos del CI con las cuatro suites en procesos separados
 y `-x -q -ra --tb=short`. Las comprobaciones de hashes antes/después no detectaron
 cambios de fuentes. `recovery/sprint-02` está limpio en la base y permite
 fast-forward local al commit de esta rama; no se ejecutó esa integración.
+
+## Seguimiento en staging, PR #109
+
+En la versión v26 (`41a92008`), el dyno web Basic respondió y el historial de
+NewGlass mostró doce pedidos en optimización. La comparación #84 abrió sus seis
+resultados. La #85 figuró finalizada sin vínculos de pedido y su GET devolvió
+500 de trazabilidad. Ese estado terminal no participa en la recuperación de
+trabajos en ejecución. La actividad del dyno por sí sola no identifica al
+supervisor ni a sus procesos hijos.
+
+Una solicitud nueva vuelve a intentar el cierre local o la recuperación
+pendiente antes de reservar admisión. Un rechazo verificado antes de aceptar
+el pedido permite cambiar de selección en el navegador. Una respuesta ambigua
+conserva la clave de idempotencia y el lote original.
+
+La recuperación al iniciar consulta comparaciones. Las corridas FF autónomas
+siguen su procedimiento administrativo. Para v2, el resultado terminal
+persistido por el runner después de verificar la parada del proceso y sus
+descendientes acredita el cierre de ese worker. La recuperación exige además
+que el supervisor previo y los workers identificados ya no estén activos.
+Una intención de lanzamiento sin identidad o una ejecución sin prueba de
+parada conserva la reserva.
+
+Para diagnosticar pedidos históricos, ejecutar primero `python -m
+scripts.reconcile_stuck_orders --report -` desde `backend` con acceso autorizado.
+Revisar cada vínculo y el consumo antes de aplicar el plan. Para #85, contrastar
+el lote congelado y las filas de `optimizacion_pedidos` con el registro original.
+El API registra el ID y la validación fallida para facilitar ese diagnóstico.
