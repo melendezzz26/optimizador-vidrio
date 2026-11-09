@@ -89,6 +89,7 @@ jobs:
         run: |
           python ../.github/scripts/backend_failure_summary.py "$RUNNER_TEMP/newglass-backend-junit" "$RUNNER_TEMP/newglass-backend-summary.md"
           cat "$RUNNER_TEMP/newglass-backend-summary.md" >> "$GITHUB_STEP_SUMMARY"
+          while IFS= read -r line; do printf '::notice::%s\n' "$line"; done < "$RUNNER_TEMP/newglass-backend-summary.md"
       - name: Preserve sanitized backend summary
         if: always()
         uses: actions/upload-artifact@v4
