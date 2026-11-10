@@ -81,9 +81,3 @@
 | **OBS-04** | Móvil | Baja | Los botones de acción en filas de tablas tienen un área táctil de 36 × 36 px en pantallas ultra compactas. | Fijar un área mínima de contacto táctil de 44 × 44 px (`min-width: 44px; min-height: 44px`) cumpliendo holgadamente el criterio WCAG 2.1 - 2.5.5. |
 
 ---
-
-## 6. Documentación para Notion y Entregables
-- **Documento Word compilado**: [`Evidencia_Notion_TA-QA-005.docx`](../../../../Notion/TA-QA-005/Evidencia_Notion_TA-QA-005.docx)
-- **Galería de capturas PNG**: `Notion/TA-QA-005/img/` (14 capturas de alta resolución cubriendo desde la creación de rama hasta la auditoría móvil a 375 px).
-- **Métricas en bruto**: `Notion/TA-QA-005/metrics_summary.json`
-- **Script de prueba automatizado**: `frontend/scripts/run_ta_qa_005_real.mjs`
