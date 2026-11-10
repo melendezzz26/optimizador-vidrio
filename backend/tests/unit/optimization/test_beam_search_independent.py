@@ -36,7 +36,15 @@ def test_bounded_policy_closes_every_level_and_revalidates_geometry():
     p = sample()
     first = BeamSearchOptimizer().run(p)
     second = BeamSearchOptimizer().run(p)
-    assert first == second
+    # Memory diagnostics measure live Python objects and can vary with allocator
+    # state; determinism applies to the solution, trace and search decisions.
+    assert (first.result, first.processed, first.stop_reason, first.trace) == (
+        second.result, second.processed, second.stop_reason, second.trace)
+    memory_fields = {'state_bytes_bound', 'state_bytes_peak'}
+    assert {k: v for k, v in first.statistics.items() if k not in memory_fields} == {
+        k: v for k, v in second.statistics.items() if k not in memory_fields}
+    for outcome in (first, second):
+        assert 0 < outcome.statistics['state_bytes_peak'] <= outcome.statistics['state_bytes_bound'] <= BeamSearchLimits().max_state_bytes
     assert first.result.complete and first.processed == 6
     assert first.statistics['expansions'] <= first.statistics['parents'] * 12
     assert first.statistics['max_frontier'] == 2
