@@ -7,7 +7,7 @@
 | SPEC | [SPEC-EN-REPO-001](SPEC-EN-REPO-001-separacion-repositorios.md) |
 | ADR | [ADR-003](../adr/ADR-003-repositorios-independientes-frontend-backend.md) |
 | Fuente | `integration-02`; SHA observado `f46d96db9f5ca6071445bae5f884908aed734ff4` **referencia histórica, no corte autorizado** |
-| Responsable / revisor | Por asignar |
+| Responsable / revisor | Fabricio Melendez Quezada / Revisor pendiente |
 | Despliegues | Prohibidos durante definición y extracción sin aprobación |
 
 ## Precondiciones comunes
