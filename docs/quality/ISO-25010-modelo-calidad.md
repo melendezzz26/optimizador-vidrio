@@ -4,8 +4,8 @@
 |---|---|
 | Tarea | EN-QA-001 |
 | SPEC | [SPEC-EN-QA-001](../specs/SPEC-EN-QA-001-modelo-calidad-iso25010.md) |
-| Versión | 1.3 (V-19 de TA-QA-006 y V-20 del sprint 2; ver historial) |
-| Estado | Pendiente de revisión de Andro Joseph Quispe Cesias |
+| Versión | 1.4 (ver historial) |
+| Estado | Verificado en el PR de cierre (aprobación del reviewer requerida antes del merge). Reviewer: `FabricioMQ-sys`, distinto del autor. Los PR #114 y #117 se integraron sin revisión. |
 | Responsable | Fabricio Danniel Aguilar Chavez (`fabrilar1`) |
 | Base auditada | `integration-02` en `f46d96d` |
 | Fecha | 10/11/2026 |
@@ -286,3 +286,4 @@ Las medidas propias del proyecto deben declararse como tales y no atribuirse a l
 | 10/11/2026 | 1.1 | EN-QA-001 | V-17 corregido en SPEC-TA-037 (L-03 = 800 unidades). |
 | 10/11/2026 | 1.2 | TA-QA-006 | Nuevo vacío V-19 (login sin límite de intentos, resistencia), desde el hallazgo H-01 de [SPEC-TA-QA-006](../specs/SPEC-TA-QA-006-seguridad-permisos.md). Ningún otro cambio en el modelo. |
 | 10/11/2026 | 1.3 | Sprint 2 | Nuevo vacío V-20 (sin revisión periódica de dependencias), detectado durante el sprint 2 (10/11/2026). Ningún otro cambio en el modelo. |
+| 10/11/2026 | 1.4 | PR de cierre | Estado: "Pendiente de revisión de Andro" pasa a verificado en el PR de cierre (aprobación del reviewer requerida antes del merge), con `FabricioMQ-sys` como reviewer. Los PR #114 y #117 se integraron sin revisión. Sin cambios en el contenido del modelo. |

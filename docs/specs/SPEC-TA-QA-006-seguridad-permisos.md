@@ -9,10 +9,10 @@
 | Tipo | Tarea de calidad (pruebas y documentación, sin cambios de comportamiento) |
 | Sprint | Sprint 2 |
 | Prioridad / estimación | Alta / 1 SP |
-| Versión | 1.1 |
-| Estado | **Implemented**: pruebas, evidencia y documentos entregados en este PR; pasa a Verified después de la revisión, el CI verde (pruebas con PostgreSQL) y el merge |
+| Versión | 1.2 |
+| Estado | **Verified**: verificado en el PR de cierre (aprobación del reviewer requerida antes del merge). El PR #117 se integró sin revisión. |
 | Responsable | Fabricio Danniel Aguilar Chavez (`fabrilar1`) |
-| Reviewer | Andro Joseph Quispe Cesias (distinto del autor) |
+| Reviewer | `FabricioMQ-sys`, en el PR de cierre (distinto del autor) |
 | Rama | `test/S2-TA-QA-006-seguridad-permisos` |
 | Base | `integration-02` en `137f2cc` (después del PR #114) |
 | Fecha | 10/11/2026 |
@@ -316,3 +316,4 @@ Regresión: suite completa del backend con los comandos del CI (`0 failed`).
 |---|---|---|---|
 | 10/11/2026 | 1.0 | Draft | Creación con la auditoría F0, matriz de las 59 rutas protegidas, métricas MSEG-01 a MSEG-06, hallazgo H-01 con propuesta de V-19, decisiones D-01 a D-09 y criterios de aceptación. |
 | 10/11/2026 | 1.1 | Implemented | Pruebas entregadas: 306 en Windows (298 de la matriz, incluida RN-07, y 8 de tokens) y 3 con PostgreSQL para el CI. RN-07, D-10, D-11 y hallazgos O-01, H-01 y H-02. V-19 agregado al modelo de calidad, `matriz_permisos.md` actualizada y evidencia. Pendiente: CI del PR, revisión y merge para Verified. |
+| 10/11/2026 | 1.2 | Verified | PR #117 integrado en `integration-02` sin revisión. CI en verde ([run 42844873577](https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42844873577)): el job `backend`, con `NEWGLASS_REQUIRE_POSTGRES=1`, ejecutó las 3 pruebas de PostgreSQL; CA-03 cumplido. Verificado en el PR de cierre (aprobación del reviewer requerida antes del merge), con `FabricioMQ-sys` como reviewer distinto del autor. |
