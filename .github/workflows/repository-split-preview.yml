@@ -1,0 +1,98 @@
+name: EN-REPO-001 - Preview de separación
+
+on:
+  push:
+    branches: [feature/EN-REPO-001-extraccion]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: en-repo-001-preview
+  cancel-in-progress: true
+
+jobs:
+  split:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - name: Checkout de scripts solamente
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Configurar Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+
+      - name: Herramientas de extracción y validación
+        run: |
+          python -m pip install --disable-pip-version-check git-filter-repo PyYAML
+          git filter-repo --version
+
+      - name: Preparar repos locales desde SHA congelado
+        run: |
+          python scripts/repository-split/prepare.py --output "$RUNNER_TEMP/newglass-split"
+
+      - name: Validar estructura, Python y YAML de ambos repos
+        env:
+          SPLIT_OUTPUT: ${{ runner.temp }}/newglass-split
+        run: |
+          python - <<'PY'
+          import ast
+          import json
+          import os
+          from pathlib import Path
+          import yaml
+
+          out = Path(os.environ["SPLIT_OUTPUT"])
+          manifest = json.loads((out / "split-manifest.json").read_text(encoding="utf-8"))
+          assert manifest["source_sha"] == "137f2ccd7a542c73e99fd40a792287595cdcd9c8"
+          assert manifest["deployment_performed"] is False
+          assert manifest["repository_created_on_github"] is False
+          assert set(manifest["repositories"]) == {"frontend", "backend"}
+          for part in ("frontend", "backend"):
+              folder = out / part
+              assert (folder / ".git").is_dir()
+              assert (folder / ".github/workflows/ci.yml").is_file()
+              assert (out / f"{part}-commit-map.txt").stat().st_size > 100
+              parsed = yaml.load((folder / ".github/workflows/ci.yml").read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+              assert "jobs" in parsed and "pull_request" in parsed["on"]
+          frontend = out / "frontend"
+          backend = out / "backend"
+          pages = yaml.load((frontend / ".github/workflows/deploy-pages.yml").read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+          assert set(pages["on"]) == {"workflow_dispatch"}
+          assert "/newglass-frontend/" in (frontend / "config/staging.js").read_text(encoding="utf-8")
+          assert "--workers 1" in (backend / "Procfile").read_text(encoding="utf-8")
+          assert "cd backend" not in (backend / "Procfile").read_text(encoding="utf-8")
+          assert (backend / ".github/scripts/backend_failure_summary.py").is_file()
+          for py in [
+              Path("scripts/repository-split/prepare.py"),
+              backend / "tests/unit/test_ci_contract.py",
+          ]:
+              ast.parse(py.read_text(encoding="utf-8"), filename=str(py))
+          print("OK: historial extraído, rutas verificadas, workflows válidos y scripts Python parseados.")
+          PY
+
+      - name: Comprimir los repos locales con sus historiales
+        run: |
+          tar -czf "$RUNNER_TEMP/newglass-frontend.tar.gz" -C "$RUNNER_TEMP/newglass-split" frontend
+          tar -czf "$RUNNER_TEMP/newglass-backend.tar.gz" -C "$RUNNER_TEMP/newglass-split" backend
+          ls -lh "$RUNNER_TEMP"/newglass-{frontend,backend}.tar.gz
+
+      - name: Conservar paquetes de extracción y trazabilidad
+        uses: actions/upload-artifact@v4
+        with:
+          name: en-repo-001-preview-${{ github.sha }}-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/newglass-frontend.tar.gz
+            ${{ runner.temp }}/newglass-backend.tar.gz
+            ${{ runner.temp }}/newglass-split/split-manifest.json
+            ${{ runner.temp }}/newglass-split/frontend-commit-map.txt
+            ${{ runner.temp }}/newglass-split/backend-commit-map.txt
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
