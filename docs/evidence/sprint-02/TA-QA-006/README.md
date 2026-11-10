@@ -21,8 +21,7 @@
   `backend/tests/api/optimization/test_security_rejections_postgres.py` (3 pruebas,
   4 casos, solo en el CI).
 - [`docs/seguridad/matriz_permisos.md`](../../../seguridad/matriz_permisos.md) actualizada.
-- Vacíos **V-19** (login sin límite de intentos) y **V-20** (sin revisión periódica de
-  dependencias) agregados al modelo de calidad.
+- Vacío **V-19** (login sin límite de intentos) agregado al modelo de calidad.
 
 Sin cambios en `backend/app/`, `frontend/`, migraciones, contrato de la API ni workflows.
 
@@ -92,7 +91,7 @@ matriz. En la versión anterior faltaban `users.view`, `roles.view`, `roles.mana
 | CA-01 | Matriz de pruebas por Administrador / Almacenero / Operario | `test_security_role_matrix.py`: 59 rutas × 3 roles más el permiso declarado, el 401 sin token y la verificación RN-07; tabla de resultados arriba. | Cumple |
 | CA-02 | Accesos denegados correctamente | 401 sin token (59), 403 por rol (44), 401 por token vencido, firma inválida o cuenta desactivada en los dos caminos (6), cuerpos exactos y sin información interna. | Cumple |
 | CA-03 | Sin confirmación ni consumo no autorizado | Espías sin uso en los 109 rechazos (local). Stock, movimientos y pedidos sin cambios con PostgreSQL, con control positivo. | Cumple en local; **la parte de PostgreSQL queda pendiente del CI** |
-| CA-04 | Resultados registrados | Esta evidencia, `matriz_permisos.md` actualizada, V-19 y V-20 en el modelo de calidad y SPEC en Implemented. | Cumple |
+| CA-04 | Resultados registrados | Esta evidencia, `matriz_permisos.md` actualizada, V-19 en el modelo de calidad y SPEC en Implemented. | Cumple |
 
 ## Salidas de comandos
 
@@ -127,35 +126,6 @@ python -m pytest -q --ignore=tests/unit/optimization/test_comparison_runner.py -
 - 1 warning: StarletteDeprecationWarning de fastapi/testclient (preexistente)
 ```
 
-### Frontend
-
-```powershell
-# Desde frontend\
-npm ci
-npm run lint
-npm run build
-```
-
-```text
-npm ci         OK (informa 7 vulnerabilidades: 4 moderadas y 3 altas; ver H-03)
-npm run lint   sin errores
-npm run build  OK (aviso de chunk mayor a 500 kB, preexistente)
-```
-
-Esta tarea no cambia el frontend. Las pruebas unitarias, de componentes y E2E del
-frontend las corre el CI del PR.
-
-### Auditoría de dependencias de producción (frontend)
-
-```powershell
-# Desde frontend\
-npm audit --omit=dev
-```
-
-```text
-found 0 vulnerabilities
-```
-
 ### CI del PR
 
 En el CI, `NEWGLASS_REQUIRE_POSTGRES=1` hace que una prueba de PostgreSQL **falle en
@@ -166,8 +136,6 @@ Por eso, un job `backend` en verde demuestra que las 3 pruebas de
 ```text
 Run de GitHub Actions: (pendiente: enlace al run del PR)
 Job backend:           (pendiente: resultado)
-Job frontend:          (pendiente: resultado)
-Job e2e:               (pendiente: resultado)
 Resumen de pytest:     (pendiente: línea final del paso "Run tests")
 ```
 
@@ -179,16 +147,12 @@ Resumen de pytest:     (pendiente: línea final del paso "Run tests")
 | O-01 | El servicio de inventario se construye antes de responder 403, sin invocar métodos. | No es defecto. Las pruebas con espía comprueban que no se invoca ningún método. |
 | H-01 | `POST /api/auth/login` no limita los intentos fallidos (resistencia). | Fuera de alcance. Registrado como **V-19** en el modelo de calidad. |
 | H-02 | Desde FastAPI 0.141.1, `app.routes` contiene `_IncludedRouter` en lugar de las rutas incluidas. | Resuelto en la prueba recorriendo los routers incluidos. No afecta a la aplicación. |
-| H-03 | `npm ci` en `frontend/` reporta 7 vulnerabilidades (4 moderadas, 3 altas). `npm audit --omit=dev` devuelve **found 0 vulnerabilities**: todas están en **dependencias de desarrollo**. Riesgo en producción: **sin riesgo detectado**. Riesgo en desarrollo y CI: **bajo a moderado**, porque esas herramientas corren en las máquinas del equipo y en los runners, pero no se despliegan. | Fuera de alcance: sin cambios en `package.json` ni `package-lock.json`. Registrado como **V-20** en el modelo de calidad. |
 
 ## Limitaciones
 
 - **Login sin límite de intentos** (H-01 / V-19): no se implementa en esta tarea.
 - **Configurar optimizador**: no tiene endpoint ni permiso; no hay nada que probar
   (SPEC D-04).
-- **Vulnerabilidades de dependencias de desarrollo del frontend** (H-03 / V-20): no se
-  corrigen en esta tarea y no se registró el detalle por paquete. No hay una auditoría
-  equivalente del backend.
 - En la matriz de Windows, "pasa" significa que la autorización deja pasar la petición:
   los dobles no tienen datos. El éxito con datos reales se demuestra en los controles
   positivos con PostgreSQL y en las pruebas funcionales existentes.
