@@ -54,6 +54,14 @@ def execution_in(current,identifier):
     return execution
 
 
+def load_visual_owner(identifier, actor_id, uow, coordinator, execution_id=None):
+    with uow() as tx:
+        terminal = tx.comparisons_v2.visual_scope_owned(identifier, actor_id, execution_id)
+    if not terminal and not coordinator.reconcile(identifier):
+        raise RunError('RECOVERY_BLOCKED', 'No se puede acreditar el cierre seguro; el trabajo sigue bloqueado.',
+            details={'comparison_id':identifier})
+
+
 def retained_job(coordinator,identifier):
     with coordinator.lock:
         job=coordinator.job
@@ -138,7 +146,7 @@ def confirm(comparison_id: Id, request: ComparisonSelectionV2, key: Key,
 def events(comparison_id:Id,after_sequence:Annotated[int,Query(ge=0)]=0,
            user=Depends(run_permission('optimization.view')),
            uow=Depends(get_comparison_v2_uow),coordinator=Depends(get_comparison_v2_coordinator)):
-    load(comparison_id,user.user_id,uow,coordinator)
+    load_visual_owner(comparison_id,user.user_id,uow,coordinator)
     job=retained_job(coordinator,comparison_id)
     job.check_cursor(after_sequence)
     observer=job.observe()
@@ -149,8 +157,7 @@ def events(comparison_id:Id,after_sequence:Annotated[int,Query(ge=0)]=0,
 def manifest(comparison_id:Id,execution_id:Id,offset:Annotated[int,Query(ge=0,le=1024)]=0,
              user=Depends(run_permission('optimization.view')),
              uow=Depends(get_comparison_v2_uow),coordinator=Depends(get_comparison_v2_coordinator)):
-    current=load(comparison_id,user.user_id,uow,coordinator)
-    execution_in(current,execution_id)
+    load_visual_owner(comparison_id,user.user_id,uow,coordinator,execution_id)
     data=json.dumps(retained_job(coordinator,comparison_id).manifest(execution_id,offset),
         separators=(',',':'),allow_nan=False)
     if len(data.encode())>MAX_RESPONSE_BYTES: raise RunError('INTERNAL_ERROR','El manifiesto excede su presupuesto.')
@@ -163,8 +170,7 @@ def mask(comparison_id:Id,execution_id:Id,mask_ref:Annotated[str,Path(pattern=r'
          row_count:Annotated[int|None,Query(gt=0,le=256)]=None,column_count:Annotated[int|None,Query(gt=0,le=1024)]=None,
          user=Depends(run_permission('optimization.view')),
          uow=Depends(get_comparison_v2_uow),coordinator=Depends(get_comparison_v2_coordinator)):
-    current=load(comparison_id,user.user_id,uow,coordinator)
-    execution_in(current,execution_id)
+    load_visual_owner(comparison_id,user.user_id,uow,coordinator,execution_id)
     with uow() as tx: tx.comparisons_v2.get_visual_reference(comparison_id,execution_id,mask_ref)
     job=retained_job(coordinator,comparison_id)
     with job.condition:

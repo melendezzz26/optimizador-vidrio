@@ -49,6 +49,23 @@ test('an ambiguous start keeps its key and order set across reload and retry', a
   } finally { restored.dispose(); }
 });
 
+test.each(['OPTIMIZER_BUSY', 'RECOVERY_BLOCKED'])('a confirmed %s rejection allows selecting another order', async code => {
+  const { flow, api, current } = setup();
+  try {
+    flow.select([1]);
+    api.start.mockRejectedValueOnce(Object.assign(new Error('Inicio rechazado'), {
+      status: 503, code, requestAccepted: false,
+    }));
+    await flow.start();
+    expect(flow.getSnapshot()).toMatchObject({ pendingRequest: false, error: 'Inicio rechazado' });
+    flow.select([99]);
+    api.start.mockResolvedValue(current);
+    await flow.start();
+    expect(api.start.mock.calls[1][0]).toEqual([99]);
+    expect(api.start.mock.calls[1][1]).not.toBe(api.start.mock.calls[0][1]);
+  } finally { flow.dispose(); }
+});
+
 test('acknowledged confirmation clears transient state and storage once, preserving only success and pending orders', async () => {
   const { flow, api, source } = setup();
   try {

@@ -157,7 +157,7 @@ debajo de L-12.
 | L-10 | Ejecuciones activas por proceso | **2** | 2 | ejecuciones | Sin cambio. A 5° cada ejecución es más larga, así que el límite importa más. |
 | L-11 | Ejecuciones activas por usuario | **1** | 1 | ejecuciones | Sin cambio. |
 | L-12 | Tiempo máximo de cálculo | **120 s** | 120 s | s | Pasa de respaldo a protección **principal** del peor caso de stock (reemplaza a L-08). Se verifica en los hitos del motor (T03). |
-| L-13 | Memoria raster estimada por ejecución | **64 MiB** (existente) | — | bytes estimados | **Nuevo.** Convierte el fallo tardío H-10 en un rechazo temprano, con la misma fórmula que usa el motor (§5.1). |
+| L-13 | Memoria de las bases raster residentes | **64 MiB** | — | bytes contabilizados | Comparte la fórmula con la caché del motor. Las orientaciones se limitan en ejecución (§5.1). |
 
 ### 5.1 Reglas de cálculo
 
@@ -166,19 +166,14 @@ debajo de L-12.
   las mismas reglas de compatibilidad de `InventoryStockAdapter`: activas, con
   `cantidad > 0` y del mismo material. Se cuentan filas y se suman cantidades sin
   crear `StockCandidate`.
-- **L-13:** para cada **geometría distinta** de las piezas seleccionadas (la misma
-  huella con la que `RasterCache` comparte máscaras), se recorren los ángulos de
-  `discrete_angles(paso)` (solo 0° para circunferencias). Para cada ángulo se calcula
-  el ancho y alto de la figura rotada, sin rasterizar, y su rejilla **redondeada hacia
-  abajo** (`floor` en vez de `ceil`); los ángulos que podrían exceder la extensión
-  interna aportan 0. La estimación por orientación es la misma fórmula de
-  `RasterCache._raster`: `filas × (32 + 4 × ceil(columnas / 30) + 8) + 4096 + 512 × vértices`.
-  Si la suma supera 64 MiB, se rechaza. Es una **cota inferior**: no incluye el stock
-  y redondea hacia abajo, así que solo rechaza lo que el motor seguro rechazaría. Una
-  prueba la compara con la caché real del motor (queda entre el 90 % y el 100 %). Se
-  usa el cálculo en coma flotante porque el exacto (`oriented_geometry`) tardaría hasta
-  ~108 ms por pieza distinta de 128 vértices con los pedidos bloqueados. Se verificó
-  con el caso de H-10: 2 piezas distintas (~48,8 MiB) pasan y 3 (~73 MiB) fallan.
+- **L-13:** se suma el costo de las bases a 0° de las piezas distintas, con
+  la misma normalización, huella y fórmula de `RasterCache` y sin crear máscaras.
+  El comparador de seis métodos suma también las bases distintas del stock
+  capturado. Se conserva el rechazo 422 cuando las bases exceden 64 MiB. La
+  caché acotada de TA-016 reutiliza y libera los giros bajo demanda durante
+  el cálculo. Cuando las referencias activas impiden liberar espacio
+  suficiente, se informa un fallo técnico. La estimación es independiente del
+  área comercial disponible y del encaje de las piezas.
 - **L-10 y L-11:** cuentan ejecuciones con hilo de cálculo vivo **en este
   proceso**. La plaza se libera cuando termina el hilo, no cuando se cierra la
   conexión del cliente. La regla es válida mientras haya un solo proceso
@@ -317,7 +312,7 @@ los pedidos lo define TA-038. La presentación específica en pantalla correspon
 | `orders_per_run` | Seleccionaste {actual} pedidos y el máximo por cálculo es {maximum}. Quita algunos e inténtalo de nuevo. |
 | `units_per_run` | Los pedidos seleccionados suman {actual} unidades y el máximo por cálculo es {maximum}. Divide la selección en lotes más pequeños. |
 | `vertices_per_piece` | La pieza {id_pieza} tiene {actual} vértices y el máximo admitido es {maximum}. Edita la pieza en su pedido. |
-| `raster_memory` | Las piezas seleccionadas tienen demasiadas formas grandes distintas para un solo cálculo. Divide la selección en lotes más pequeños. |
+| `raster_memory` | Las máscaras base de las piezas y los materiales superan el límite de un solo cálculo. Divide la selección en lotes más pequeños. |
 | `stock_units_per_material` | Hay {actual} unidades de stock compatibles para un mismo material y un cálculo admite {maximum}. Solicita al almacenero revisar el inventario activo. |
 
 El backend construye el mensaje y el frontend lo muestra tal cual. T04 agrega la
@@ -366,7 +361,7 @@ recibe el foco. El resto de errores conserva la presentación genérica de siemp
 | CA-04 | T02 | Tras un rechazo, los pedidos siguen `PENDIENTE`, no hay filas nuevas de optimización y el inventario queda igual (PostgreSQL real). |
 | CA-05 | T02 | Las suites existentes de First Fit, Best Fit, Worst Fit, el corte comercial (8 de 8 piezas a 1 mm) y la confirmación pasan sin cambios en sus aserciones. |
 | CA-06 | T02 | Una pieza con cantidad 2 147 483 647 se rechaza sin asignar memoria proporcional. |
-| CA-07 | T02 | El caso de H-10 (3 piezas distintas de ~1300 × 1000) se rechaza con 422 `raster_memory` antes de crear la ejecución; 2 piezas siguen aceptándose. |
+| CA-07 | T02 | Se admiten las 3 piezas distintas de H-10 si caben sus bases. Un conjunto de bases que excede el límite se rechaza con 422 `raster_memory` antes de crear la ejecución. |
 | CA-08 | T03 | Con 2 ejecuciones activas, una tercera recibe 503 `OPTIMIZER_BUSY` con `Retry-After`, incluso tras 300 s de entrega lenta; al terminar una, se admite la siguiente. El límite por usuario también se mantiene. |
 | CA-09 | T03 | La plaza se libera cuando termina el trabajador tras éxito, desconexión, fallo o L-12; el cierre de la conexión o de su espera de limpieza no la libera antes. Si el trabajador no arranca, se libera la reserva. No quedan plazas tomadas tras 100 ciclos de admisión y rechazo. |
 | CA-10 | T03 | El contrato distingue ejecución admitida (201), rechazada (422 o 503) y cancelada (`EXECUTION_INTERRUPTED` o `TIME_BUDGET_EXCEEDED`), y la confirmación sigue igual. |
@@ -402,18 +397,18 @@ recibe el foco. El resto de errores conserva la presentación genérica de siemp
 - **GAP-04 — Fallos tardíos residuales.** El presupuesto de layouts del motor
   (128 MiB, antes L-09) solo se conoce al calcular, y la cota de L-13 no garantiza
   éxito. Ambos casos terminan como `CALCULATION_FAILED` y se recuperan según TA-038.
-- **GAP-05 — Capacidad real a 5° (nuevo en v1.1).** Con la caché raster de 64 MiB y
-  72 orientaciones, un pedido comercial con 3 formas grandes distintas no se puede
-  calcular en un solo lote. L-13 lo convierte en un rechazo claro, pero no lo
-  resuelve. La solución (generar orientaciones bajo demanda, revisar el presupuesto
-  de la caché o el paso angular) corresponde a TA-016 / HU-017 T02 y se informa a sus
-  responsables.
+- **GAP-05 — Capacidad real a 5°.** La v1.1 rechazaba el costo acumulado de los
+  72 giros posibles. La política revisada limita las bases residentes en
+  admisión y los giros en ejecución. Los casos de verificación son el #61 y
+  una selección de 800 unidades del CSV de auditoría con stock de prueba
+  suficiente. Se miden por separado memoria, cobertura y tiempo a 1 mm.
+  El máximo de unidades sigue siendo 800.
 
 ## 12. Pruebas previstas
 
 | Nivel | Qué | Dónde |
 |---|---|---|
-| Unitarias | `RunLoadBudget`: exacto y + 1 de cada límite; orden de evaluación; mensajes; desbordamiento de la suma; estimación de L-13 igual a la del motor. | `backend/tests/unit/optimization/test_load_budget.py` |
+| Unitarias | `RunLoadBudget`: exacto y + 1 de cada límite; orden de evaluación; mensajes; desbordamiento de la suma; costo de bases L-13 igual a la contabilidad del motor. | `backend/tests/unit/optimization/test_load_budget.py` |
 | Aplicación | `AcceptRun` rechaza sin expandir, con UoW en memoria y preparación espía. | `backend/tests/unit/optimization/test_accept_run_load_limits.py` |
 | API | Contrato 422 y 503, sin stream y con permisos. | `backend/tests/api/optimization/test_run_load_limits.py` |
 | Integración | Sin mutación en PostgreSQL; stock voluminoso por conteo. | `backend/tests/integration/optimization/test_run_load_limits_pg.py` |

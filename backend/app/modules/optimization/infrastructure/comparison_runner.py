@@ -42,22 +42,24 @@ def resident_bytes(pid):
 def available_memory():
     fields = dict(line.split(":", 1) for line in Path("/proc/meminfo").read_text().splitlines())
     available = int(fields["MemAvailable"].split()[0]) * 1024
-    root = Path("/sys/fs/cgroup")
-    if (root / "memory.max").is_file():
-        limit = (root / "memory.max").read_text().strip()
-        if limit != "max":
-            available = min(available, int(limit) - int((root / "memory.current").read_text()))
+    from .resource_runtime import cgroup_memory
+    for limit, usage in cgroup_memory():
+        available = min(available, max(0, limit-usage))
     return available
 
 
-def check_environment(budget=DEFAULT_COMPARISON_BUDGET):
+def check_environment(budget=DEFAULT_COMPARISON_BUDGET, *, inclusive_supervisor=False):
     try:
         if sys.platform != "linux" or not resident_bytes(os.getpid()):
             raise ValueError("Linux procfs required")
         import resource
         if not hasattr(resource, "RLIMIT_AS"):
             raise ValueError("Address-space limit unavailable")
-        if available_memory() < budget.aggregate_rss_bytes or resident_bytes(os.getpid()) > budget.supervisor_rss_bytes:
+        parent_rss = resident_bytes(os.getpid())
+        # The sequential aggregate already counts this live web process. Requiring
+        # the full aggregate again as free RAM double-counts its resident memory.
+        required = max(0, budget.aggregate_rss_bytes-parent_rss) if inclusive_supervisor else budget.aggregate_rss_bytes
+        if available_memory() < required or parent_rss > budget.supervisor_rss_bytes:
             raise RunError("RESOURCE_UNAVAILABLE", "El servidor no dispone de memoria para los tres motores. Intenta más tarde.")
     except (OSError, ValueError, KeyError, ImportError) as error:
         message = "La plataforma no permite ejecutar los tres motores con supervisión de recursos."

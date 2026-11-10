@@ -5,7 +5,8 @@ from decimal import Decimal, localcontext
 from functools import cached_property
 from typing import Literal
 
-from .placement import SheetLayout
+from .beam_memory import row_bytes
+from .placement import LayoutQueryMemo, SheetLayout
 from .preparation import prepare_group_units
 from .problem import MaterialSource, OptimizationProblem, OptimizationResult, PieceUnit, Placement, StockCandidate
 from .rotation import Orientation, RasterPreparationError
@@ -85,22 +86,28 @@ class FeasibleCandidate:
 RETAINED_LAYOUT_BYTES = 128 * 1024 * 1024
 
 
-def _retain_layout(retained_bytes, material):
+def _retain_layout(retained_bytes, layout):
     """Charge one more USED layout to First Fit's retained-layout budget."""
-    estimate = material.row_count * (40 + 4 * ((material.columns + 29) // 30)) * 4
+    material = layout.material
+    # RasterCache already charges material.rows. Without margin usable shares
+    # it, and without separation the final blocked tuple aliases occupied.
+    buffers = 1 + (layout.usable is not material.rows) + (layout.separation_cells > 0)
+    estimate = material.row_count * row_bytes(material.columns) * buffers + 4096
     if retained_bytes + estimate > RETAINED_LAYOUT_BYTES:
         raise RasterPreparationError('Internal cutting layouts exceed their 128 MiB budget.')
     return retained_bytes + estimate
 
 
-def _feasible_candidates(group, source, orientations, prepared, layouts, config, checkpoint, observe=None):
+def _feasible_candidates(group, source, orientations, prepared, layouts, config, checkpoint, observe=None,
+                         *, positions=None):
     # Preserve upstream stock order. Source priority is eligibility, not a score.
     for stock_rank, stock in enumerate(group.stock_candidates):
         if stock.source is not source:
             continue
         checkpoint()
         layout = layouts.get(stock.identity)
-        if layout is None:
+        empty = layout is None
+        if empty:
             layout = _empty_layout(prepared.material(stock), config)
         for orientation_rank, oriented in enumerate(orientations):
             checkpoint()
@@ -110,7 +117,8 @@ def _feasible_candidates(group, source, orientations, prepared, layouts, config,
             # Negative bbox prefilter only; acceptance uses real material bits.
             if layout.material.row_count < mask.row_count or layout.material.columns < mask.columns:
                 continue
-            position = layout.first_position(mask)
+            position = (layout.first_position(mask) if positions is None
+                        else positions.find(layout, mask, empty=empty))
             checkpoint()
             if position is not None:
                 row, column = position
@@ -138,6 +146,7 @@ def pack(problem: OptimizationProblem, on_event: Callable[[FirstFitEvent], None]
         # de las máscaras sin ejecutar otro ordenamiento ni alterar la búsqueda.
         on_visual(VisualEvent(kind='ordering_ready', ordered_units=problem.units, total_units=len(problem.units)))
     layouts, placements = {}, []
+    positions = LayoutQueryMemo()
     layout_bytes = 0
     total = len(problem.units)
     processed = 0
@@ -166,7 +175,7 @@ def pack(problem: OptimizationProblem, on_event: Callable[[FirstFitEvent], None]
                        evaluation_index=evaluation_index)
             for source in (MaterialSource.REMNANT, MaterialSource.SHEET):
                 candidates = _feasible_candidates(group, source, orientations, prepared, layouts, problem.config,
-                    checkpoint, observe if on_visual is not None else None)
+                    checkpoint, observe if on_visual is not None else None, positions=positions)
                 # next() preserves FF's early exit, without examining later stock.
                 winner = next(candidates, None) if select is None else select(candidates)
                 if winner is None:
@@ -174,7 +183,7 @@ def pack(problem: OptimizationProblem, on_event: Callable[[FirstFitEvent], None]
                 stock, layout = winner.stock, winner.layout
                 if stock.identity not in layouts:
                     # Only USED layouts are retained, with the existing FF budget.
-                    layout_bytes = _retain_layout(layout_bytes, layout.material)
+                    layout_bytes = _retain_layout(layout_bytes, layout)
                 layouts[stock.identity] = winner.layout_after
                 accepted = Placement(
                     piece=unit, stock=stock, x_mm=_coordinate(winner.column, problem.config.resolution_mm),

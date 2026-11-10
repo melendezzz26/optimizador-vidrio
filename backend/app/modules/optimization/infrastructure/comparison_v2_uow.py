@@ -2,9 +2,10 @@
 from datetime import datetime, timezone
 from decimal import Decimal
 import hashlib
+import logging
 import re
 
-from sqlalchemy import select, text
+from sqlalchemy import JSON, or_, select, text
 from sqlalchemy.exc import DBAPIError
 
 from app.models import (Configuracion, EjecucionOptimizacion, MaterialUtilizado,
@@ -23,6 +24,8 @@ from .comparison_uow import SqlComparisonRepository, SqlComparisonUnitOfWork, no
 from .comparison_v2_snapshot import (encode_comparison_input_v2, decode_comparison_input_v2,
                                      encode_result_v3, decode_result_v3)
 from .run_snapshot import json_value
+
+logger = logging.getLogger(__name__)
 
 
 def _utc(value):
@@ -220,6 +223,7 @@ class SqlComparisonV2Repository:
                 executions=executions, selected_execution_id=row.id_ejecucion_seleccionada, workers_stopped=stopped,
                 runtime=runtime, released=released, confirmation=confirmation)
         except (KeyError, TypeError, ValueError, ArithmeticError, OverflowError) as error:
+            logger.warning("Invalid persisted v2 trace for comparison %s: %s", identifier, error)
             raise RunError("INTERNAL_ERROR", "La trazabilidad persistida v2 requiere revisión.") from error
 
     def get_owned(self, identifier, actor_id):
@@ -384,13 +388,54 @@ class SqlComparisonV2Repository:
         self.session.flush()
         return self.get(comparison_id)
 
+    def save_supervised_visual_references(self, comparison_id, execution_id, references, token):
+        """Hot visual path: lock ownership/version, never decode six result graphs."""
+        row = self._lock(comparison_id)
+        stored = row.comparison_snapshot or {}
+        runtime = stored.get('runtime', {})
+        if (row.criterio_seleccion_version != 'CMP-v2' or row.fecha_fin is not None
+                or runtime.get('supervisor_stopped_at') is not None
+                or (runtime.get('supervisor') or {}).get('token') != token):
+            raise RunError('STATE_CONFLICT', 'La comparación ya no pertenece al supervisor activo.')
+        execution = self._execution(comparison_id, execution_id)
+        if execution.estado != 'EN_EJECUCION':
+            raise RunError('STATE_CONFLICT', 'La ejecución ya terminó.')
+        try:
+            refs = self._references(references, comparison_id, execution_id, execution.metodo)
+        except (TypeError, ValueError) as error:
+            raise RunError('STATE_CONFLICT', 'La referencia visual no pertenece a esta ejecución.') from error
+        data = {**execution.patron_resultado, 'visual_references': [r.record() for r in refs]}
+        canonical_json(data)
+        execution.patron_resultado = data
+        row.comparison_version += 1
+        self.session.flush()
+
     def get_visual_reference(self, comparison_id, execution_id, mask_ref):
-        current = self.get(comparison_id)
-        execution = next((e for e in current.executions if e.execution_id == execution_id), None)
-        reference = next((r for r in execution.visual_references if r.mask_ref == mask_ref), None) if execution else None
+        pair = self.session.execute(select(EjecucionOptimizacion.metodo,
+            EjecucionOptimizacion.patron_resultado['visual_references']).where(
+                EjecucionOptimizacion.id_optimizacion == comparison_id,
+                EjecucionOptimizacion.id_ejecucion == execution_id)).first()
+        references = self._references(pair[1], comparison_id, execution_id, pair[0]) if pair else ()
+        reference = next((r for r in references if r.mask_ref == mask_ref), None)
         if reference is None:
             raise RunError("NOT_FOUND", "La referencia visual no pertenece a esta ejecución.")
         return reference
+
+    def visual_scope_owned(self, comparison_id, actor_id, execution_id=None):
+        """Authorize visual reads without selecting any execution result JSON."""
+        row = self.session.execute(select(Optimizacion.fecha_fin,
+            Optimizacion.comparison_snapshot['runtime']['supervisor_stopped_at']).where(
+                Optimizacion.id_optimizacion == comparison_id,
+                Optimizacion.id_usuario_ejecutor == actor_id,
+                Optimizacion.criterio_seleccion_version == 'CMP-v2')).first()
+        if row is None:
+            raise RunError('NOT_FOUND', 'No se encontró la comparación v2.')
+        if execution_id is not None:
+            own = self.session.scalar(select(EjecucionOptimizacion.id_ejecucion).where(
+                EjecucionOptimizacion.id_optimizacion == comparison_id,
+                EjecucionOptimizacion.id_ejecucion == execution_id))
+            if own is None: raise RunError('NOT_FOUND', 'La ejecución no pertenece a esta comparación.')
+        return row[0] is not None and row[1] is not None
 
     def record_supervisor_stopped(self, comparison_id, stopped_at, expected_version):
         """Persist an internally observed fact; obtaining process proof belongs to B05."""
@@ -470,8 +515,13 @@ class SqlComparisonPersistenceUnitOfWork(SqlComparisonUnitOfWork):
         return c.id_configuracion, c.version, config, c.ancho_min_retazo_mm, c.alto_min_retazo_mm
 
     def unfinished(self):
+        # Standalone FF has a separate recovery procedure and no comparison
+        # supervisor to reconcile. Keep malformed comparisons in this scan.
         return list(self.session.scalars(select(Optimizacion.id_optimizacion).where(
-            Optimizacion.estado == "EN_EJECUCION").order_by(Optimizacion.id_optimizacion)))
+            Optimizacion.estado == "EN_EJECUCION",
+            or_(Optimizacion.comparison_snapshot != JSON.NULL,
+                Optimizacion.criterio_seleccion_version.in_(("CMP-v1", "CMP-v2"))))
+            .order_by(Optimizacion.id_optimizacion)))
 
     def recover_historical(self, comparison_id):
         row = self.session.get(Optimizacion, comparison_id)

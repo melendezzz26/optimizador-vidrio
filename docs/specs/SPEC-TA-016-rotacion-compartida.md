@@ -25,3 +25,21 @@ rotación exclusiva de BF. Se preservan normalización y pipeline raster.
 OptimizationConfig y seed nuevos usan 5° por defecto. AcceptRun exige vigente
 de 5°; los pasos explícitos alternativos siguen disponibles para spikes y
 reproducción histórica. Ver docs/reviews/S2-angular-configuration.md.
+
+## Caché acotada para pedidos con geometrías distintas
+
+- Se conserva la cuadrícula del snapshot, incluida la operación a 1 mm. La
+  regeneración usa el mismo ángulo, contorno normalizado y rasterizador.
+- Cada cálculo tiene su propia caché. Al alcanzar 64 MiB contabilizados, libera
+  referencias a orientaciones de pieza por orden de uso, comenzando por la menos
+  reciente. Una máscara sigue consumiendo presupuesto mientras una base, un
+  iterador, un candidato o un observador mantenga una referencia a ella.
+- El stock y las bases de HU-017 siguen disponibles durante la ejecución. Los
+  layouts y la frontera de M6 conservan su estado y sus límites independientes.
+  El recambio de máscaras puede ocurrir entre dos colocaciones o durante la
+  evaluación de una pieza, con el mismo orden, deduplicación exacta y desempates.
+- Un conjunto activo que excede el límite produce un fallo técnico. L-13 valida
+  las bases residentes y el límite en ejecución cubre los giros solicitados.
+- La verificación compara geometrías, colocaciones y métricas con la caché
+  anterior cuando ambas completan. Los casos grandes registran cobertura y
+  causa de término para cada motor, con memoria y tiempo medidos por separado.

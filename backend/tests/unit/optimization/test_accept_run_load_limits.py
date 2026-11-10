@@ -56,7 +56,7 @@ def test_l01_is_rejected_before_opening_the_transaction():
     ([row(quantity=801)], "units_per_run"),
     ([row(quantity=2147483647)], "units_per_run"),
     ([row(geometry=polygon(129))], "vertices_per_piece"),
-    ([row(identifier=i + 1, width=1300, height=1000 + i) for i in range(3)], "raster_memory"),
+    ([row(identifier=i + 1, width=4000 - i, height=4000) for i in range(32)], "raster_memory"),
 ])
 def test_p3_rejections_never_expand_or_write(no_expansion, rows, name):
     uow, counter = unit_of_work(rows), Counter(1)
@@ -89,8 +89,8 @@ def test_exact_limits_are_accepted_with_the_same_problem_as_before():
     uow.orders.transition.assert_called_once()
 
 
-def test_two_large_distinct_shapes_are_still_accepted():
-    rows = [row(identifier=i + 1, width=1300, height=1000 + i) for i in range(2)]
+def test_three_large_distinct_shapes_are_accepted():
+    rows = [row(identifier=i + 1, width=1300, height=1000 + i) for i in range(3)]
     uow = unit_of_work(rows)
     AcceptRun(lambda: uow, Counter(2)).execute([1], 1)
     uow.runs.create.assert_called_once()

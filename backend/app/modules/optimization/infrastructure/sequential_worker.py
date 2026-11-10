@@ -5,10 +5,12 @@ import json
 import os
 import time
 
+from ..application.comparison_limits import DEFAULT_COMPARISON_BUDGET
 from ..application.engine_execution import EngineExecutionAdapter, ExecutionScope
 from ..application.visual import OrientationSampler
+from ..domain.beam_search import BeamSearchLimits
 from .comparison_snapshot import canonical_json, decode_problem, problem_fingerprint
-from .comparison_transport import pack_visual
+from .comparison_transport import VisualEncoder
 from .comparison_v2_snapshot import encode_result_v3
 from .run_snapshot import json_value
 from .process_lifecycle import process_identity, protect_against_parent_exit
@@ -33,6 +35,7 @@ def calculation_worker_v2(scope_values, payload, minimums, connection, gate, sta
         started_clock.value = time.monotonic()
         send("started", dict(monotonic=started_clock.value))
         sampler = OrientationSampler()
+        encoder = VisualEncoder()
         observations, observation_bytes = 0, 0
         def observe(fact):
             nonlocal observations, observation_bytes
@@ -41,7 +44,7 @@ def calculation_worker_v2(scope_values, payload, minimums, connection, gate, sta
                 return
             if fact.kind == "visual" and fact.fact.kind == "orientation_testing" and not sampler.accept(fact.fact.unit):
                 return
-            value = pack_visual(fact.fact) if fact.kind == "visual" else json_value(fact.fact)
+            value = encoder.pack(fact.fact) if fact.kind == "visual" else json_value(fact.fact)
             data = dict(kind=fact.kind, presentation=fact.presentation, fact=value)
             raw = canonical_json(dict(scope=asdict(scope), kind="observation", data=data),
                                  maximum_bytes=budget.visual_packet_bytes).encode()
@@ -54,7 +57,11 @@ def calculation_worker_v2(scope_values, payload, minimums, connection, gate, sta
             from ..application.errors import ExecutionInterrupted, TimeBudgetExceeded
             if checkpoint_cancel.is_set(): raise ExecutionInterrupted()
             if time.monotonic()-started_clock.value >= budget.calculation_seconds: raise TimeBudgetExceeded()
-        adapted = EngineExecutionAdapter(scope.method).execute(scope, problem,
+        beam_limits = None
+        if scope.method == "M6-BS" and budget.calculation_seconds > DEFAULT_COMPARISON_BUDGET.calculation_seconds:
+            # Leave time for exact final metrics and sending the persisted result.
+            beam_limits = BeamSearchLimits(seconds=max(BeamSearchLimits.seconds, budget.calculation_seconds * 0.9))
+        adapted = EngineExecutionAdapter(scope.method, beam_limits=beam_limits).execute(scope, problem,
             minimum_width_mm=Decimal(minimums[0]), minimum_height_mm=Decimal(minimums[1]),
             checkpoint=checkpoint, on_observation=observe if observed else None)
         send("result", dict(snapshot=encode_result_v3(adapted.payload), residuals=json_value(adapted.residuals),

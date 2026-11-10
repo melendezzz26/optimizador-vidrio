@@ -4,9 +4,10 @@
     watchdog enforces wall deadlines/RSS even while the consumer is stalled. B05
     must certify its own supervisor termination before releasing shared admission.
 """
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from decimal import Decimal
 import json
+import logging
 import multiprocessing as mp
 import os
 import signal
@@ -23,10 +24,33 @@ from ..application.sequential_policy import SequentialPolicy, ObservationRetenti
 from ..domain.metrics import ResidualRectangle
 from .comparison_runner import check_environment, resident_bytes, _reader
 from .comparison_snapshot import canonical_json, encode_problem, problem_fingerprint
-from .comparison_transport import unpack_visual
+from .comparison_transport import VisualDecoder
 from .comparison_v2_snapshot import decode_result_v3
 from .process_lifecycle import process_identity
 from .sequential_worker import calculation_worker_v2
+
+logger = logging.getLogger(__name__)
+
+
+def resource_statistics(report, state, budget):
+    """Small, durable counters. Never include input geometry, credentials or PIDs."""
+    return dict(runtime_supervisor_peak_rss_bytes=report['supervisor_peak_rss'],
+        runtime_worker_peak_rss_bytes=state.get('peak_rss', 0),
+        runtime_worker_peak_virtual_bytes=state.get('peak_virtual', 0),
+        runtime_aggregate_peak_rss_bytes=report['maximum_aggregate_rss'],
+        runtime_supervisor_limit_bytes=budget.supervisor_rss_bytes,
+        runtime_worker_address_limit_bytes=budget.worker_address_bytes,
+        runtime_aggregate_limit_bytes=budget.aggregate_rss_bytes,
+        runtime_limit_supervisor_rss=int(report.get('limit_supervisor_rss', False)),
+        runtime_limit_aggregate_rss=int(report.get('limit_aggregate_rss', False)),
+        runtime_worker_allocation_failed=int(state.get('allocation_failed', False)),
+        runtime_not_started_global=int(bool(report.get('global_reason')) and not state.get('engine_started', False)))
+
+
+def with_resources(terminal, report, state, budget):
+    statistics = {**terminal.payload.diagnostic.statistics, **resource_statistics(report, state, budget)}
+    return replace(terminal, payload=replace(terminal.payload, diagnostic=replace(
+        terminal.payload.diagnostic, statistics=statistics)))
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -73,14 +97,17 @@ def signal_owned(identities, sig):
 
 
 class SequentialProcessRunner:
-    def __init__(self, policy=SequentialPolicy(), *, worker_target=calculation_worker_v2):
+    def __init__(self, policy=None, *, worker_target=calculation_worker_v2):
+        if policy is None:
+            from .resource_runtime import configured_policy
+            policy = configured_policy()
         self.policy, self.worker_target = policy, worker_target
         self.last_report = None
         self.retention = None
         self._active = Lock()
 
     def preflight(self):
-        check_environment(self.policy.budget)
+        check_environment(self.policy.budget, inclusive_supervisor=True)
 
     def calculate(self, scopes, problem, minimums, **kwargs):
         stream = self.events(scopes, problem, minimums, **kwargs)
@@ -110,7 +137,7 @@ class SequentialProcessRunner:
         if type(observed) is not bool or type(retain_observations) is not bool or type(lifecycle) is not bool:
             raise ValueError("Observation flag must be explicit boolean")
         self.preflight()
-        budget, context = self.policy.budget, mp.get_context("spawn")
+        budget, context = self.policy.for_problem(problem), mp.get_context("spawn")
         began = time.monotonic()
         payload = canonical_json(encode_problem(problem), maximum_bytes=budget.packet_bytes)
         expected_hash = problem_fingerprint(problem)
@@ -135,7 +162,7 @@ class SequentialProcessRunner:
                 if abort:
                     report["global_reason"] = abort
                     state.update(state="TERMINATED", reason=abort)
-                    yield dict(scope=scope, kind="result", data=failed(scope, abort))
+                    yield dict(scope=scope, kind="result", data=with_resources(failed(scope, abort), report, state, budget))
                     continue
                 receiving, sending = context.Pipe(duplex=False)
                 gate, started_clock = context.Event(), context.Value('d', 0)
@@ -151,6 +178,7 @@ class SequentialProcessRunner:
                 finished = None
                 reader = monitor = None
                 ready, terminal = False, None
+                visual_decoder = VisualDecoder(problem)
                 cleanup_verified = False
                 def enforce():
                     last = time.monotonic()
@@ -158,7 +186,7 @@ class SequentialProcessRunner:
                         now = time.monotonic()
                         report["maximum_sample_gap_ms"] = max(report["maximum_sample_gap_ms"],(now-last)*1000)
                         last = now
-                        code = self.policy.expired(now, began, launched, started_clock.value)
+                        code = self.policy.expired(now, began, launched, started_clock.value, budget=budget)
                         global_stop = code == "GLOBAL_TIME_LIMIT"
                         if cancel is not None and cancel.is_set(): code, global_stop = "CANCELLED", True
                         try:
@@ -177,7 +205,12 @@ class SequentialProcessRunner:
                             report["maximum_queued_packets"] = max(report["maximum_queued_packets"],channel.qsize())
                             report["samples"] += 1
                             if total > budget.aggregate_rss_bytes or parent_rss > budget.supervisor_rss_bytes:
-                                if code is None: code, global_stop = "MEMORY_BUDGET_EXCEEDED", True
+                                if code is None:
+                                    report['limit_supervisor_rss'] = parent_rss > budget.supervisor_rss_bytes
+                                    report['limit_aggregate_rss'] = total > budget.aggregate_rss_bytes
+                                    report['memory_at_stop'] = dict(supervisor_rss_bytes=parent_rss,
+                                        worker_rss_bytes=worker_rss, worker_virtual_bytes=virtual, aggregate_rss_bytes=total)
+                                    code, global_stop = "MEMORY_BUDGET_EXCEEDED", True
                         except (FileNotFoundError, ProcessLookupError):
                             pass
                         except (OSError, ValueError):
@@ -233,6 +266,7 @@ class SequentialProcessRunner:
                                 yield dict(scope=scope,kind=kind,data=data)
                                 if lifecycle: gate.set()  # B05 committed identity/hash before engine start.
                             elif kind == "failed":
+                                state['allocation_failed'] = data.get('code') == 'MEMORY_BUDGET_EXCEEDED'
                                 terminal = failed(scope,data["code"],dispatched=True,engine_started=bool(started_clock.value))
                             elif not ready:
                                 raise ValueError("Worker not ready")
@@ -244,7 +278,8 @@ class SequentialProcessRunner:
                             elif kind == "observation":
                                 if not started_clock.value or len(raw)>budget.visual_packet_bytes:
                                     raise ValueError("Invalid visual packet")
-                                if data["kind"] == "visual": unpack_visual(data["fact"],problem)
+                                if data["kind"] == "visual":
+                                    data = {**data, 'decoded_visual': visual_decoder.unpack(data['fact'])}
                                 elif data["kind"] not in ("milestone","search_progress"):
                                     raise ValueError("Invalid observation type")
                                 if scope.method == "M6-BS" and (data["kind"] != "search_progress" or data["presentation"] != "PROVISIONAL"):
@@ -261,6 +296,7 @@ class SequentialProcessRunner:
                                     "x_mm","y_mm","width_mm","height_mm","area_mm2") else v
                                     for k,v in item.items()}) for item in data["residuals"])
                                 state["worker_report"] = {k:v for k,v in data.items() if k not in ("snapshot","residuals")}
+                                state['allocation_failed'] = data.get('error_type') == 'MemoryError'
                                 terminal = ProcessExecution(scope=scope,payload=value,residuals=residuals,
                                     dispatched=True,engine_started=True)
                             else: raise ValueError("Unknown worker packet")
@@ -306,6 +342,12 @@ class SequentialProcessRunner:
                     cleanup_verified = True
                 state.update(state="TERMINATED",reason=terminal.payload.diagnostic.termination_reason,
                              engine_started=terminal.engine_started)
+                terminal = with_resources(terminal, report, state, budget)
+                logger.warning('comparison_resource_execution %s', json.dumps(dict(
+                    comparison_id=scope.comparison_id, method=scope.method,
+                    reason=terminal.payload.diagnostic.termination_reason,
+                    dispatched=terminal.dispatched, engine_started=terminal.engine_started,
+                    wall_ms=round(state['elapsed_ms']), statistics=dict(terminal.payload.diagnostic.statistics))))
                 yield dict(scope=scope,kind="result",data=terminal)
         finally:
             report["elapsed_ms"] = (time.monotonic()-began)*1000
@@ -315,3 +357,8 @@ class SequentialProcessRunner:
                     state.update(state="TERMINATED",reason="CANCELLED")
             report["retained_bytes"] = dict(self.retention.bytes)
             report["evicted_observations"] = dict(self.retention.evicted)
+            logger.warning('comparison_resource_summary %s', json.dumps(dict(
+                comparison_id=scopes[0].comparison_id, supervisor_peak_rss_bytes=report['supervisor_peak_rss'],
+                aggregate_peak_rss_bytes=report['maximum_aggregate_rss'], budget=asdict(budget),
+                global_reason=report['global_reason'], memory_at_stop=report.get('memory_at_stop'),
+                all_workers_stopped=report['all_workers_stopped'])))

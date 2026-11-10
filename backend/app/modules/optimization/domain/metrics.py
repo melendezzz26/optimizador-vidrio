@@ -55,35 +55,48 @@ def largest_rectangle(free_rows, columns, *, checkpoint=None):
     # yields the very same popped rectangles, in the same order, hence the same
     # result and tie order; widths still come from real column positions.
     starts, full = _column_segments(rows, columns)
-    offsets = [columns - 1 - start for start in starts]  # index of bit `start` in MSB-first text
     positions = starts + [columns]
+    indexes = {column: index for index, column in enumerate(positions)}
     heights = [0] * len(starts)
+    last_seen = [-1] * len(starts)
     best, best_key = None, None
     row = -1
     for bits, repeated in groupby(rows):
         if checkpoint is not None:
             checkpoint()
         count = sum(1 for _ in repeated)
+        previous_row = row
         row += count
         # Within identical consecutive bit rows every possible rectangle only
         # grows vertically. Its maximum occurs at the last row of the run.
         # This preserves the exact area/top/left/width/height tie order.
-        digits = format(bits & full, f"0{columns}b") if starts else ""
-        heights = [height + count if digits[offset] == "1" else 0
-                   for height, offset in zip(heights, offsets)]
-        stack = []
-        for index, column in enumerate(positions):
-            height = heights[index] if index < len(heights) else 0
-            start = column
-            while stack and stack[-1][1] > height:
-                left, h = stack.pop()
-                width, top = column - left, row - h + 1
-                key = (-width * h, top, left, -width, -h)
-                if best_key is None or key < best_key:
-                    best_key, best = key, (top, left, width, h)
-                start = left
-            if height and (not stack or stack[-1][1] < height):
-                stack.append((start, height))
+        bits &= full
+        while bits:
+            leftmost = (bits & -bits).bit_length() - 1
+            shifted = bits >> leftmost
+            width = (shifted ^ (shifted + 1)).bit_length() - 1
+            rightmost = leftmost + width
+            stop = indexes[rightmost]
+            stack = []
+            # Every blocked span resets its columns' heights and flushes the
+            # stack. The timestamp performs that reset on the next free row.
+            for index in range(indexes[leftmost], stop + 1):
+                column = start = positions[index]
+                height = 0
+                if index < stop:
+                    height = count + (heights[index] if last_seen[index] == previous_row else 0)
+                    heights[index] = height
+                    last_seen[index] = row
+                while stack and stack[-1][1] > height:
+                    left, h = stack.pop()
+                    width, top = column - left, row - h + 1
+                    key = (-width * h, top, left, -width, -h)
+                    if best_key is None or key < best_key:
+                        best_key, best = key, (top, left, width, h)
+                    start = left
+                if height and (not stack or stack[-1][1] < height):
+                    stack.append((start, height))
+            bits &= ~((1 << rightmost) - 1)
     return best
 
 

@@ -57,11 +57,14 @@ class SupervisedJob:
 
     def accept(self, signal):
         data = signal.payload
+        visual_fact = None
         with self.lock:
             if signal.kind == "observation":
                 data = {**data,"fact":dict(data["fact"])}
                 if data["kind"] == "visual":
-                    fact = unpack_visual(data["fact"],self.comparison.problem)
+                    fact = data.pop('decoded_visual', None)
+                    if fact is None: fact = unpack_visual(data["fact"],self.comparison.problem)
+                    visual_fact = fact
                     session = self.sessions[signal.execution_id]
                     previous = session.revision
                     piece = session.register("PIECE",fact.unit,fact.orientation) if fact.orientation is not None else None
@@ -70,8 +73,8 @@ class SupervisedJob:
                         references = tuple(VisualReferenceV2(comparison_id=signal.comparison_id,
                             execution_id=signal.execution_id,method=signal.method,mask_ref=ref) for ref in session.records)
                         with self.uow() as tx:
-                            _, fresh = tx.comparisons_v2.require_supervisor(signal.comparison_id,self.token)
-                            tx.comparisons_v2.save_visual_references(signal.comparison_id,signal.execution_id,references,fresh.version)
+                            tx.comparisons_v2.save_supervised_visual_references(
+                                signal.comparison_id,signal.execution_id,references,self.token)
                     if data["fact"].get("orientation") is not None:
                         data["fact"]["orientation"] = dict(rotation_deg=str(fact.orientation.rotation_deg),
                             geometry=json_value(fact.orientation.geometry),mask_ref=piece.reference if piece else None)
@@ -80,7 +83,8 @@ class SupervisedJob:
                 self.mark(signal.kind)
                 data = dict(status=data.status,complete=bool(data.result and data.result.complete),
                     diagnostic=data.diagnostic.public())
-            self.record(signal, data)
+            if visual_fact is not None: self.record_visual(signal, data, visual_fact)
+            else: self.record(signal, data)
         if self.sink is not None: self.sink(signal)
 
     def record(self, signal, data):
@@ -90,6 +94,9 @@ class SupervisedJob:
         self.events.append(raw); self.event_bytes += len(raw)
         while self.event_bytes > self.event_limit or len(self.events)>4096:
             self.event_bytes -= len(self.events.popleft())
+
+    def record_visual(self, signal, data, fact):
+        self.record(signal, data)
 
     def dispose(self):
         with self.lock:
@@ -119,7 +126,12 @@ class ComparisonV2Coordinator:
                 if not previous.terminal and (self.job is None or self.job.comparison.comparison_id != previous.comparison_id):
                     self.recover_pending()
                 return previous
-            lease = self.admission.acquire_comparison(actor_id)
+            try:
+                self._retry_recovery()
+                lease = self.admission.acquire_comparison(actor_id)
+            except RunError as error:
+                error.details = {**(error.details or {}), "request_accepted": False}
+                raise
             accepted = None
             try:
                 runner = self.runner_factory(); runner.preflight()
@@ -165,6 +177,14 @@ class ComparisonV2Coordinator:
                     self.recovery_lease = lease
                     self.recovery_errors = {accepted.comparison_id: "UnclaimedAcceptedComparison"}
                 raise
+
+    def _retry_recovery(self):
+        job = self.job
+        if (job is not None and not job.closed.is_set()
+            and (job.thread is None or not job.thread.is_alive()) and not self._close(job)):
+            raise RunError("RECOVERY_BLOCKED", "El cierre seguro de la comparación sigue pendiente.")
+        if self.recovery_lease is not None and not self.recover_pending():
+            raise RunError("RECOVERY_BLOCKED", "El cierre seguro de la comparación sigue pendiente.")
 
     def _reap(self, job):
         job.thread.join()
@@ -260,9 +280,13 @@ class ComparisonV2Coordinator:
                     for worker in current.runtime['workers'].values():
                         if worker is None or process_identity(worker['pid'])==dict(worker):
                             raise WorkersNotStopped("Worker identity is alive or ambiguous")
-                    if current.runtime['workers']:
-                        # The previous process' join report is gone. Dead root PIDs
-                        # cannot exclude unregistered/orphaned descendants after a crash.
+                    # The runner emits a terminal result only after joining the
+                    # worker and verifying its observed descendants stopped.
+                    # Recovery-generated failures have no runtime_dispatched marker.
+                    verified = {str(e.execution_id) for e in current.executions
+                                if e.dispatch_state == "TERMINATED" and e.diagnostic is not None
+                                and e.diagnostic.statistics.get("runtime_dispatched") == 1}
+                    if not current.runtime['workers'].keys() <= verified:
                         raise WorkersNotStopped("Restart requires external descendant-closure evidence")
                     fail_pending(self.uow,identifier,owner['token'],"WORKER_STOPPED")
                     with self.uow() as tx:

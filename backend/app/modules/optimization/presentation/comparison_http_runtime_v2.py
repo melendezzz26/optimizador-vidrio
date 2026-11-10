@@ -8,7 +8,6 @@ import time
 from ..application.errors import RunError
 from ..application.visual import MAX_COMPARISON_EVENT_BYTES as MAX_EVENT_BYTES
 from ..domain.problem import Placement
-from ..infrastructure.comparison_transport import unpack_visual
 from .comparison_supervision_v2 import SupervisedJob
 from .comparison_v2_schemas import ComparisonEventV2, ComparisonMaskV2
 from .comparison_v2_serialization import execution_summary_v2
@@ -86,14 +85,6 @@ class HttpComparisonJob(SupervisedJob):
             if data['kind']=='search_progress':
                 self.phases[method]='CALCULATING'
                 self.emit(method,'search_progress',data['fact'])
-            elif data['kind']=='visual':
-                fact=unpack_visual(data['fact'],self.comparison.problem)
-                if fact.kind=='ordering_ready':
-                    self.orders[method]=[unit_reference(u) for u in fact.ordered_units]
-                    self.phases[method]='ORDERING'
-                    self.emit(method,'ordering_ready',dict(criterion='area_desc_max_side_desc_order_piece_unit_asc',
-                        units=self.orders[method]))
-                else: self.projections[method](fact)
             elif data['kind']=='milestone': self.milestone(method,data['fact'])
             return
         self.presentation[method]='OBSERVED'
@@ -107,6 +98,16 @@ class HttpComparisonJob(SupervisedJob):
         elif kind in ('result_persisted','execution_failed'):
             self.phases[method]='RESULT' if kind=='result_persisted' else 'FAILED'
             self.emit(method,kind,summary)
+
+    def record_visual(self, signal, data, fact):
+        method = signal.method
+        self.presentation[method] = data['presentation']
+        if fact.kind=='ordering_ready':
+            self.orders[method]=[unit_reference(u) for u in fact.ordered_units]
+            self.phases[method]='ORDERING'
+            self.emit(method,'ordering_ready',dict(criterion='area_desc_max_side_desc_order_piece_unit_asc',
+                units=self.orders[method]))
+        else: self.projections[method](fact)
 
     def milestone(self,method,data):
         kind=data['kind']; key=(data['group_key'][0],Decimal(data['group_key'][1]))

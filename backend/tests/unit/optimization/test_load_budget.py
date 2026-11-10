@@ -1,17 +1,18 @@
 """TA-037 T02: presupuesto previo a la expansión (SPEC-TA-037 §5-§7), sin base de datos."""
 import math
 import time
+from dataclasses import replace
 from decimal import Decimal as D
 
 import pytest
 
 from app.modules.optimization.application.errors import RunError
 from app.modules.optimization.application.load_budget import (
-    DEFAULT_RUN_LOAD_BUDGET as BUDGET, LoadLimitExceeded, _fingerprint, check_pieces, check_selection,
-    check_stock, estimate_raster_bytes,
+    DEFAULT_RUN_LOAD_BUDGET as BUDGET, LoadLimitExceeded, check_pieces, check_raster_bases,
+    check_selection, check_stock,
 )
 from app.modules.optimization.domain.problem import OptimizationConfig, PieceUnit, geometry_snapshot
-from app.modules.optimization.domain.rotation import RasterCache, _fingerprint as engine_fingerprint
+from app.modules.optimization.domain.rotation import RasterCache
 from tests.unit.optimization.test_preparation import piece
 
 CONFIG = OptimizationConfig(resolution_mm=1, margin_mm=0, separation_mm=0)  # 5°, operativo
@@ -95,16 +96,15 @@ def test_l07_stock_exact_and_plus_one_with_material_scope():
                                    scope={"id_tipo_vidrio": 7, "espesor_mm": "6.00"})
 
 
-def test_l13_two_large_distinct_shapes_fit_and_three_are_rejected():
-    """Caso H-10 a 5°: el motor falla con 3 formas de ~1300 x 1000 y acepta 2."""
+def test_l13_admits_large_distinct_shapes_when_resident_bases_fit():
     sizes = [(1300, 1000), (1300, 1001), (1300, 1002)]
     rows = [row(identifier=i + 1, width=w, height=h) for i, (w, h) in enumerate(sizes)]
-    check_pieces(rows[:2], CONFIG)
+    check_pieces(rows, CONFIG)
+    size = RasterCache().base_bytes([r['geometria'] for r in rows], CONFIG.resolution_mm)
+    check_pieces(rows, CONFIG, replace(BUDGET, max_raster_bytes=size))
     with pytest.raises(LoadLimitExceeded) as error:
-        check_pieces(rows, CONFIG)
-    limit = limit_of(error)
-    assert limit["name"] == "raster_memory" and limit["maximum"] == 64 * 1024 * 1024
-    assert limit["actual"] > limit["maximum"]
+        check_pieces(rows, CONFIG, replace(BUDGET, max_raster_bytes=size - 1))
+    assert limit_of(error) == dict(name="raster_memory", maximum=size - 1, actual=size, scope=None)
 
 
 def test_l13_repeated_shape_is_counted_once_like_the_engine():
@@ -155,20 +155,19 @@ def test_messages_are_spanish_and_expose_no_internals():
     assert errors[1].message.startswith("Los pedidos seleccionados suman 180 unidades")
 
 
-# --- L-13 es una cota inferior fiel de la caché del motor --------------------
+# --- L-13 comparte la contabilidad de las bases de la caché ------------------
 
 SHAPES = [dict(type="RECTANGULO", width_mm=1300, height_mm=1000), dict(type="RECTANGULO", width_mm=300, height_mm=200),
           dict(type="CIRCUNFERENCIA", radius_mm=150), polygon(8), polygon(128), polygon(5, radius=600)]
 
 
 @pytest.mark.parametrize("geometry", SHAPES)
-def test_l13_estimate_is_a_tight_lower_bound_of_the_real_cache(geometry):
+def test_l13_estimate_matches_the_resident_base_cost(geometry):
     unit = PieceUnit(order_id=1, piece_id=1, unit_index=1, glass_type_id=1, thickness_mm=D(6),
                      geometry=geometry, area_mm2=D(1))
     cache = RasterCache()
-    cache.orientations(unit, CONFIG.resolution_mm, CONFIG.angular_step_deg)
-    estimate = estimate_raster_bytes([geometry_snapshot(geometry)], CONFIG)
-    assert 0.9 * cache._cache_bytes <= estimate <= cache._cache_bytes
+    cache.base(unit, CONFIG.resolution_mm)
+    assert cache.base_bytes([geometry_snapshot(geometry)], CONFIG.resolution_mm) == cache._cache_bytes
 
 
 @pytest.mark.parametrize("pair", [
@@ -177,7 +176,23 @@ def test_l13_estimate_is_a_tight_lower_bound_of_the_real_cache(geometry):
      dict(type="POLIGONO_CONVEXO", vertices_mm=[[0, 0], [2, 0], [2, 3], [0, 3]])),
     (dict(type="CIRCUNFERENCIA", radius_mm=2), dict(type="CIRCUNFERENCIA", radius_mm=2.0)),
 ])
-def test_fingerprint_matches_the_engine(pair):
+def test_l13_deduplicates_the_same_bases_as_the_engine(pair):
     snapshots = [geometry_snapshot(g) for g in pair]
-    assert [_fingerprint(s) for s in snapshots] == [engine_fingerprint(s) for s in snapshots]
-    assert _fingerprint(snapshots[0]) == _fingerprint(snapshots[1])
+    cache = RasterCache()
+    for i, geometry in enumerate(snapshots, 1):
+        unit = PieceUnit(order_id=1, piece_id=i, unit_index=1, glass_type_id=1, thickness_mm=D(6),
+                         geometry=geometry, area_mm2=D(1))
+        cache.base(unit, CONFIG.resolution_mm)
+    assert cache.base_bytes(snapshots, CONFIG.resolution_mm) == cache._cache_bytes
+    assert cache._cache_bytes == cache.base_bytes(snapshots[:1], CONFIG.resolution_mm)
+
+
+def test_l13_charges_distinct_stock_bases_separately_from_piece_bases():
+    geometry = dict(type="RECTANGULO", width_mm=1300, height_mm=1000)
+    size = RasterCache().base_bytes([geometry], CONFIG.resolution_mm)
+    check_raster_bases([geometry], CONFIG, replace(BUDGET, max_raster_bytes=size * 2),
+                       stock=[geometry, geometry])
+    with pytest.raises(LoadLimitExceeded) as error:
+        check_raster_bases([geometry], CONFIG, replace(BUDGET, max_raster_bytes=size * 2 - 1),
+                           stock=[geometry, geometry])
+    assert limit_of(error)["actual"] == size * 2

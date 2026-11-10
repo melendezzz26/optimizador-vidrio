@@ -227,10 +227,9 @@ class HoleFillingSelector:
             except StopIteration:
                 break
             mask = orientation.mask
-            signature = (mask.columns, mask.rows)
-            if signature in seen:
+            if mask in seen:
                 continue
-            seen.add(signature)
+            seen.add(mask)
             stats.orientations_inspected += 1
             if (mask.row_count * mask.columns * limits.max_bbox_fraction_denominator
                     > layout.material.row_count * layout.material.columns):

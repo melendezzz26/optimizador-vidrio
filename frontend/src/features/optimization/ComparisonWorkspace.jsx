@@ -27,6 +27,7 @@ const methodLabel = (method, profile) => profile === 'comparison-v2'
   ? CATALOG_V2.find(item => item.code === method)?.label ?? method : METHOD_NAMES[method] ?? method;
 const executionStatus = execution => {
   const reason = execution.diagnostic?.termination_reason;
+  if (execution.diagnostic?.statistics?.runtime_not_started_global === 1) return 'No ejecutado por interrupción global';
   if (reason === 'GLOBAL_TIME_LIMIT' && execution.diagnostic?.statistics?.runtime_engine_started === 0) return 'No comenzó';
   if (execution.status === 'FALLIDA' || execution.outcome === 'FAILED') return ['GLOBAL_TIME_LIMIT', 'TIME_BUDGET_EXCEEDED', 'MEMORY_BUDGET_EXCEEDED'].includes(reason) ? 'Interrumpido por recursos' : 'Error técnico';
   if (execution.dispatch_state === 'QUEUED') return 'En espera';
@@ -246,6 +247,13 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
       <p>{current?.profile === 'comparison-v2' ? 'Revisa y compara los resultados independientes de las seis heurísticas.' : 'Revisa el proceso de cada motor, compara sus métricas y elige una distribución.'}</p></div>
       {current && <div className="comparison-job">Trabajo <strong>#{current.comparison_id}</strong><small>{current.confirmed ? 'Corte confirmado' : current.released ? 'Pedidos liberados' : current.terminal ? 'Comparación finalizada' : 'Comparación en curso'}</small>{selected && <small>Elegido: {methodName(selected.method)}</small>}</div>}</header>
     {state.error && <FeedbackMessage variant="error">{state.error}</FeedbackMessage>}
+    {import.meta.env.MODE === 'staging' && state.error && state.admissionDiagnostic && <section aria-label="Diagnóstico técnico de admisión">
+      <h3>Diagnóstico técnico</h3>
+      <p>Código: {state.admissionDiagnostic.code}</p>
+      <p>Límite: {state.admissionDiagnostic.name}</p>
+      <p>Activos: {state.admissionDiagnostic.actual}</p>
+      <p>Máximo: {state.admissionDiagnostic.maximum}</p>
+    </section>}
     {state.success && <FeedbackMessage variant="success">{state.success}</FeedbackMessage>}
     <div className="comparison-toolbar">
       <label>Métodos<select className="ng-control" value={state.profile} disabled={state.pendingRequest || !!current && !current.released && !current.confirmed}
@@ -258,7 +266,7 @@ function ComparisonView({ state, flow, api, apiV2, execute, canConfirm, onSessio
       <h3>Comparaciones anteriores</h3>
       {!state.savedComparisons.length && <p>No hay comparaciones guardadas.</p>}
       <ul>{state.savedComparisons.map(item => <li key={item.comparison_id}>
-        <span>Pedidos {item.order_ids.map(id => `#${id}`).join(', ')} · {new Intl.DateTimeFormat('es-PE', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Lima' }).format(new Date(item.started_at))}
+        <span>{item.order_ids.length ? `Pedidos ${item.order_ids.map(id => `#${id}`).join(', ')}` : 'Sin pedidos vinculados'} · {new Intl.DateTimeFormat('es-PE', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Lima' }).format(new Date(item.started_at))}
           {' '}· {item.confirmed ? 'Corte confirmado' : item.released ? 'Pedidos liberados' : item.status === 'EN_EJECUCION' ? 'En ejecución' : 'Finalizada: revisa la cobertura'}</span>
         <button className="ng-button" disabled={state.busy || state.pendingRequest} onClick={() => flow.load(item.comparison_id, { profile: item.profile })}>Ver comparación #{item.comparison_id}</button>
       </li>)}</ul>

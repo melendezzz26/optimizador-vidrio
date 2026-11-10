@@ -37,6 +37,46 @@ de material/espesor, rasterización, giros, márgenes y separación.
   visual individual conserva su cota de 64 KiB.
 - No se modifican datos remotos, inventario, roles ni configuraciones de corte.
 
+## Capacidad con geometrías comerciales a 1 mm
+
+- El recorrido exacto de posiciones puede saltar filas descartadas únicamente
+  mientras las restricciones que prueban la imposibilidad sigan idénticas.
+  La primera fila y columna factibles, el orden de giros y fuentes y los
+  desempates siguen siendo los de cada método.
+- Un cálculo puede reutilizar una consulta exacta para la misma máscara y el
+  mismo layout inmutable. La memoria de consultas es acotada y sus referencias
+  son débiles. M6 conserva el conteo lógico de sondeos y M5 calcula los scores
+  de retazo cuando hay al menos dos fuentes en uso que compiten. El conteo
+  exacto de celdas puede descartar una máscara que exceda el espacio libre.
+- El cálculo de retazo máximo recorre los tramos libres de cada fila y conserva
+  el histograma y los desempates de área, posición, ancho y alto.
+- Los layouts inmutables pueden compartir enteros de filas con contenido
+  idéntico. La separación, el margen y los bits ocupados se conservan.
+  El recorrido compartido reserva filas ocupadas, filas de separación si
+  se crean y filas de margen si no comparten la máscara del material. Las
+  máscaras de material se contabilizan en la caché raster de TA-016.
+  M6 contabiliza el grafo real por identidad y conserva sus dos alternativas
+  y sus límites de estado, sondeos y tiempo.
+- Comparar colocaciones, contornos, fuentes, giros, métricas y retazos en casos
+  pequeños antes y después de cada ajuste. Medir también el pedido #61 y las
+  800 unidades del CSV de auditoría con stock suficiente a 1 mm y 5°.
+
+### Presupuesto de cálculo para pedidos grandes
+
+- El runner v2 puede activar un plazo explícito con
+  `NEWGLASS_COMPARISON_LARGE_SECONDS` para comparaciones de 200 unidades o más.
+  Se usa el mismo plazo por método y un único trabajador secuencial. El umbral
+  incluye la carga comercial reducida a 247 unidades. Los pedidos menores y
+  los despliegues sin la variable conservan 120 s por método y 900 s globales.
+- El plazo configurado se limita a 900 s por método. El total reserva además
+  el arranque y la parada por motor. M6 usa el 90% del plazo para su búsqueda,
+  con un mínimo de 110 s, y conserva su millón de sondeos y la cota de estado
+  de 32 MiB. El resto del plazo permite calcular métricas y enviar el resultado.
+- Se conservan la cuadrícula, el paso angular, los criterios de cada motor,
+  el orden de desempate y los límites de memoria del perfil. El watchdog
+  aplica el presupuesto elegido a partir de la entrada congelada. La
+  persistencia y el cierre verificado siguen usando el flujo existente.
+
 ## Criterios de aceptación y evidencia
 
 1. Pruebas de límites: 600/700/800 aceptadas; 801 rechazada en backend y UI.

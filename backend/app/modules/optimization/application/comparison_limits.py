@@ -8,6 +8,8 @@ from dataclasses import dataclass
 import math
 
 MIB = 1024 * 1024
+LARGE_COMPARISON_MIN_UNITS = 200
+MAX_LARGE_CALCULATION_SECONDS = 900
 
 
 @dataclass(frozen=True)
