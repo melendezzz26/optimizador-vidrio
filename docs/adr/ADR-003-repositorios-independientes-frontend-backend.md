@@ -1,6 +1,6 @@
 # ADR-003 — Separación física de repositorios de frontend y backend
 
-- **Estado:** Proposed
+- **Estado:** Accepted
 - **Fecha:** 2026-11-10
 - **PBI:** [EN-REPO-001 — Notion](https://app.notion.com/p/414e0c471a44812297f7ee150e15781b)
 - **SPEC:** [SPEC-EN-REPO-001](../specs/SPEC-EN-REPO-001-separacion-repositorios.md)
@@ -15,7 +15,7 @@ Por instrucción del ingeniero, el equipo debe organizar el **frontend y backend
 
 La línea base documental observada en GitHub es `integration-02@f46d96db9f5ca6071445bae5f884908aed734ff4` el 2026-11-10. Ese valor no se congela como corte definitivo hasta revisar PR abiertos y aprobarlo.
 
-## Decisión propuesta (pendiente de aprobación)
+## Decisión aceptada
 
 1. Adoptar dos repositorios GitHub independientes: uno de frontend React/Vite y otro de backend FastAPI, conservando una API HTTP/HTTPS explícita como frontera.
 2. Preservar backend como **un solo despliegue lógico de monolito modular**, con sus reglas Clean Architecture y acceso exclusivo a PostgreSQL/Supabase. El frontend permanece SPA organizada por features.
@@ -50,7 +50,7 @@ Descartado: no se necesita para la separación de repositorios y agrega riesgos 
 
 **Costos y riesgos:** commits nuevos con hashes distintos tras filtrado; PR/issues/tags/protecciones no viajan automáticamente; dependencias `../backend`, workflows compartidos y documentos transversales requieren adaptación; riesgos temporales de incompatibilidad de versiones y dos publicaciones Pages.
 
-## Decisiones abiertas antes de pasar a Accepted
+## Decisiones operativas pendientes antes del corte
 
 - Nombres y visibilidad de ambos repos, miembros/roles y rama de integración de cada uno.
 - SHA de corte, política para PR #113/#114 u otros PR pendientes y respaldo verificable.
@@ -64,4 +64,4 @@ Este ADR **complementa** ADR-001 cambiando únicamente la organización física 
 
 ## Estado
 
-2026-11-10: Proposed. Requiere revisión y aceptación documentada. Esta decisión no autoriza despliegue, migración de datos, creación de repositorios ni cambios en producción.
+2026-11-10: Accepted por aprobación expresa del responsable del proyecto. Se autoriza preparar la implementación y las extracciones reproducibles; la aprobación de ADR no autoriza cambios de despliegue ni migraciones de datos sin los gates del PLAN.
