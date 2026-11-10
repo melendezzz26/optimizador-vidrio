@@ -4,7 +4,7 @@
 |---|---|
 | Tarea | EN-QA-001 |
 | SPEC | [SPEC-EN-QA-001](../specs/SPEC-EN-QA-001-modelo-calidad-iso25010.md) |
-| Versión | 1.1 (V-17 corregido en este PR) |
+| Versión | 1.3 (V-19 de TA-QA-006 y V-20 del sprint 2; ver historial) |
 | Estado | Pendiente de revisión de Andro Joseph Quispe Cesias |
 | Responsable | Fabricio Danniel Aguilar Chavez (`fabrilar1`) |
 | Base auditada | `integration-02` en `f46d96d` |
@@ -229,6 +229,8 @@ tarea QA que debe cubrirlos.
 | V-16 | Falla segura y advertencia de peligro sin métrica. | TA-QA-009 |
 | V-17 | Desfase de L-03: SPEC-TA-037 decía 300 unidades frente a 800 en ACADEMIC-800 (PR #108). **Corregido en este PR** ([SPEC-TA-037](../specs/SPEC-TA-037-control-carga-optimizador.md) v1.5). | EN-QA-001 |
 | V-18 | Desfases de evidencia pendientes: SPEC-TA-049 ausente en `integration-02`; respaldo de M6 descrito en S2-WF-CARGA y SPEC-TA-053. | TA-QA-004 (TA-049); TA-QA-002 / TA-QA-003 (M6) |
+| V-19 | Resistencia sin control: `POST /api/auth/login` no limita los intentos fallidos por cuenta ni por origen (hallazgo H-01 de TA-QA-006). Mitigaciones actuales: mensaje único, bcrypt y validación de formato. Falta decidir la regla (umbral, ventana y bloqueo temporal) y su métrica. | Por asignar (nueva tarea del backlog; fuera de TA-QA-006) |
+| V-20 | Sin revisión periódica de dependencias: ningún workflow ni rutina ejecuta `npm audit` (frontend) o una auditoría equivalente del backend, ni registra su resultado. Al 10/11/2026, `npm ci` reporta 7 vulnerabilidades (4 moderadas y 3 altas), todas en dependencias de desarrollo: `npm audit --omit=dev` no encuentra ninguna (detectado durante el sprint 2, 10/11/2026). Falta definir la frecuencia, la herramienta para backend y frontend, el criterio de aceptación (por ejemplo, 0 vulnerabilidades altas en producción) y su métrica. | Por asignar (nueva tarea del backlog; fuera de TA-QA-006) |
 
 Todas las métricas siguen en estado **DEFINIDA**; el informe TA-QA-010 debe distinguir
 lo definido de lo medido.
@@ -275,3 +277,12 @@ Las medidas propias del proyecto deben declararse como tales y no atribuirse a l
 - [SPEC-TA-QA-003](../specs/SPEC-TA-QA-003-adecuacion-funcional.md)
 - [Convenciones de pruebas](../testing/README.md)
 - [Convenciones de evidencia](../evidence/README.md)
+
+## 9. Historial
+
+| Fecha | Versión | Origen | Cambio |
+|---|---|---|---|
+| 10/11/2026 | 1.0 | EN-QA-001 | Creación del modelo: nueve características, validación de TA-QA-001 (V-01 a V-18), prioridades y nota 25023/25010. |
+| 10/11/2026 | 1.1 | EN-QA-001 | V-17 corregido en SPEC-TA-037 (L-03 = 800 unidades). |
+| 10/11/2026 | 1.2 | TA-QA-006 | Nuevo vacío V-19 (login sin límite de intentos, resistencia), desde el hallazgo H-01 de [SPEC-TA-QA-006](../specs/SPEC-TA-QA-006-seguridad-permisos.md). Ningún otro cambio en el modelo. |
+| 10/11/2026 | 1.3 | Sprint 2 | Nuevo vacío V-20 (sin revisión periódica de dependencias), detectado durante el sprint 2 (10/11/2026). Ningún otro cambio en el modelo. |
