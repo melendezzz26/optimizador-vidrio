@@ -4,8 +4,8 @@
 |---|---|
 | Tarea | EN-QA-001 |
 | SPEC | [SPEC-EN-QA-001](../specs/SPEC-EN-QA-001-modelo-calidad-iso25010.md) |
-| Versión | 1.0 |
-| Estado | Draft, pendiente de revisión de Andro Joseph Quispe Cesias |
+| Versión | 1.1 (V-17 corregido en este PR) |
+| Estado | Pendiente de revisión de Andro Joseph Quispe Cesias |
 | Responsable | Fabricio Danniel Aguilar Chavez (`fabrilar1`) |
 | Base auditada | `integration-02` en `f46d96d` |
 | Fecha | 10/11/2026 |
@@ -88,7 +88,7 @@ TA-QA-001 (Andro) define las métricas que usan las demás tareas.
 | Evaluación | **Medición**: latencia, p50/p95, pico de RSS, ejecuciones completas y capacidad observada por escala, con protocolo P de TA-QA-001 en Linux aislado. **Prueba**: límites de admisión y presupuestos (`test_load_budget.py`, `test_run_load_limits*.py`). |
 | Tarea QA | TA-QA-002 (Luis / Melendez). Métricas MP-01 a MP-04 y MP-06. |
 | Evidencia existente | [comparison-performance.md](../comparison-performance.md). [resource-profile-800.md](../resource-profile-800.md). [S2-WF-CARGA](../evidence/sprint-02/S2-WF-CARGA/README.md). [ACADEMIC-800](../evidence/sprint-02/ACADEMIC-800/README.md). [TA-037](../evidence/sprint-02/TA-037/README.md). [SPEC-TA-037](../specs/SPEC-TA-037-control-carga-optimizador.md). Scripts: `backend/scripts/benchmark_load_engines.py`, `benchmark_academic_800.py`, `profile_comparison_http.py`. Workflow `.github/workflows/resource-profile.yml`. Pruebas: `backend/tests/unit/optimization/test_resource_profile.py`, `test_load_budget.py`, `test_beam_memory*.py`; `backend/tests/api/optimization/test_run_load_stress.py`, `test_resource_profile_api.py`. |
-| Vacíos y desfases | Mediciones de una sola corrida, sin p95 con 100 repeticiones (MP-03), tomadas en Linux/WSL y no en Heroku. **S2-WF-CARGA y SPEC-TA-053 describen el respaldo First Fit de M6 que el PR #108 eliminó** (M6 vuelve a ser nativo): su actualización corresponde a TA-QA-002 / TA-QA-003. SPEC-TA-037 v1.4 fija L-03 = 300 unidades, mientras ACADEMIC-800 admite 800: alinear en TA-QA-002. |
+| Vacíos y desfases | Mediciones de una sola corrida, sin p95 con 100 repeticiones (MP-03), tomadas en Linux/WSL y no en Heroku. **S2-WF-CARGA y SPEC-TA-053 describen el respaldo First Fit de M6 que el PR #108 eliminó** (M6 vuelve a ser nativo): su actualización corresponde a TA-QA-002 / TA-QA-003. SPEC-TA-037 v1.4 fijaba L-03 = 300 unidades, mientras ACADEMIC-800 admite 800: **corregido en este PR** (SPEC-TA-037 v1.5, V-17). |
 
 ### 4.3 Compatibilidad (*compatibility*)
 
@@ -227,7 +227,8 @@ tarea QA que debe cubrirlos.
 | V-14 | Escalabilidad, instalabilidad y reemplazabilidad sin métrica. | TA-QA-008 (instalación reproducible) y TA-QA-002 (escalabilidad) |
 | V-15 | Completitud funcional frente al backlog de Notion sin métrica. | TA-QA-003 |
 | V-16 | Falla segura y advertencia de peligro sin métrica. | TA-QA-009 |
-| V-17 | Desfases de evidencia: SPEC-TA-049 ausente en `integration-02`; respaldo de M6 descrito en S2-WF-CARGA y SPEC-TA-053; L-03 = 300 en SPEC-TA-037 frente a 800 en ACADEMIC-800. | TA-QA-004 (TA-049); TA-QA-002 / TA-QA-003 (M6 y L-03) |
+| V-17 | Desfase de L-03: SPEC-TA-037 decía 300 unidades frente a 800 en ACADEMIC-800 (PR #108). **Corregido en este PR** ([SPEC-TA-037](../specs/SPEC-TA-037-control-carga-optimizador.md) v1.5). | EN-QA-001 |
+| V-18 | Desfases de evidencia pendientes: SPEC-TA-049 ausente en `integration-02`; respaldo de M6 descrito en S2-WF-CARGA y SPEC-TA-053. | TA-QA-004 (TA-049); TA-QA-002 / TA-QA-003 (M6) |
 
 Todas las métricas siguen en estado **DEFINIDA**; el informe TA-QA-010 debe distinguir
 lo definido de lo medido.
