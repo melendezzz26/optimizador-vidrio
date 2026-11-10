@@ -4,9 +4,9 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Draft |
+| Estado | Reviewed (aprobada) |
 | PBI relacionado | EN-REPO-001 — [Backlog Notion](https://app.notion.com/p/414e0c471a44812297f7ee150e15781b) |
-| Responsable | Por asignar |
+| Responsable | Fabricio Melendez Quezada |
 | Reviewer | Por asignar |
 | Tipo | Enabler de arquitectura e infraestructura |
 | Rama documental | `docs/EN-REPO-001-separacion-repositorios` |
@@ -18,7 +18,7 @@
 
 Cumplir la decisión del ingeniero: sustituir el monorepo de trabajo por **dos repositorios GitHub independientes** para frontend React/Vite y backend FastAPI, sin modificar la arquitectura lógica, las funcionalidades ni la semántica de los contratos existentes. La separación requiere trazabilidad verificable del historial, pipelines independientes, prueba integrada y una transición segura de los despliegues.
 
-Esta SPEC es **documentación para revisión**, no autorización para crear nuevos repositorios, modificar el entorno de Staging, hacer merge, ejecutar migraciones ni desplegar.
+Esta SPEC ha sido **aprobada en su alcance** por Fabricio Melendez Quezada el 2026-11-10 y sirve como base para preparar la migración. La aprobación documental **no autoriza por sí sola** crear los repositorios de destino, modificar Staging, hacer merge, ejecutar migraciones ni desplegar; se conserva el gate del PLAN y la ADR-003 continúa Proposed.
 
 ## 2. Contexto y normas vigentes
 
@@ -129,4 +129,5 @@ La API se mantiene en FastAPI, el frontend solo consume endpoints HTTP/HTTPS (in
 ## 10. Historial de estado
 
 - 2026-11-10: **Draft**, especificación documental propuesta para revisión. No se han creado repositorios nuevos ni ejecutado la separación.
-- Flujo futuro: Draft → Reviewed → Implemented → Verified, mediante evidencia real y PR.
+- 2026-11-10: **Reviewed**, aprobación de la SPEC confirmada por Fabricio Melendez Quezada en la conversación. Implementación a su cargo; ADR-003 y PR documental mantienen su revisión independiente pendiente.
+- Próximos estados: Implemented → Verified únicamente tras código, pruebas, evidencias y PR correspondientes.
