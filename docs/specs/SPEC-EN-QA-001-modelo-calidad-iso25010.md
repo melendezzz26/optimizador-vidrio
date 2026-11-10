@@ -9,8 +9,8 @@
 | Tipo | Enabler (solo documentación, sin código) |
 | Sprint | Sprint 2 |
 | Prioridad / estimación | Alta / 1 SP |
-| Versión | 1.0 |
-| Estado | **Draft** |
+| Versión | 1.1 |
+| Estado | **Implemented**: modelo entregado en este PR; pasa a Verified después de la revisión de Andro (CA-04) y del merge |
 | Responsable | Fabricio Danniel Aguilar Chavez (`fabrilar1`) |
 | Reviewer | Andro Joseph Quispe Cesias (distinto del autor, CA-04) |
 | Rama | `enabler/S2-ENQA001-modelo-calidad-iso25010` |
@@ -18,6 +18,7 @@
 | Fecha | 10/11/2026 |
 | Tareas relacionadas | TA-QA-001 a TA-QA-010 |
 | Entregable | [docs/quality/ISO-25010-modelo-calidad.md](../quality/ISO-25010-modelo-calidad.md) |
+| Evidencia | [docs/evidence/sprint-02/EN-QA-001](../evidence/sprint-02/EN-QA-001/README.md) |
 | Referencias | [Matriz TA-QA-001](../quality/TA-QA-001-matriz-metricas-iso25023.md) · [SPEC-TA-QA-001](SPEC-TA-QA-001-metricas-calidad-iso25023.md) · [SPEC-TA-QA-003](SPEC-TA-QA-003-adecuacion-funcional.md) · [Convenciones de pruebas](../testing/README.md) |
 
 ## 1. Objetivo
@@ -46,6 +47,8 @@ que su validación final depende de este modelo.
   cubrir cada vacío.
 - Prioridades de calidad para NewGlass.
 - Nota de alineación entre ISO/IEC 25023:2016 y las ediciones de ISO/IEC 25010.
+- Corrección del desfase de L-03 en SPEC-TA-037 (300 → 800 unidades, según
+  SPEC-ACADEMIC-800 / PR #108), detectado durante la auditoría (V-17 del modelo).
 
 ### Fuera de alcance
 
@@ -54,7 +57,8 @@ que su validación final depende de este modelo.
 - Ejecutar mediciones o fijar umbrales numéricos: corresponde a cada TA-QA.
 - Certificación, auditoría oficial o declaración de conformidad con la norma.
 - Actualizar evidencias de otras tareas (S2-WF-CARGA, SPEC-TA-053, SPEC-TA-049);
-  solo se registra el desfase y la tarea que lo corrige.
+  solo se registra el desfase y la tarea que lo corrige (V-18 del modelo).
+- Cualquier otro cambio en SPEC-TA-037 distinto de la fila L-03 y su historial.
 
 ## 3. Situación actual (auditoría F0)
 
@@ -104,6 +108,7 @@ optimization, results, configuration`; frontend agrega `dashboard`.
 | D-03 | No se edita la matriz de TA-QA-001; su validación va en una sección del modelo. | Es el entregable de otro integrante; se respeta la regla del equipo. |
 | D-04 | Trazabilidad de material no es una característica ISO independiente; se relaciona con adecuación funcional y seguridad (rendición de cuentas). | Coherente con la matriz de TA-QA-001. |
 | D-05 | Los desfases de evidencia (TA-049, M6) se registran y se asignan a su tarea; no se corrigen aquí. | Fuera del alcance de un enabler documental. |
+| D-06 | El desfase de L-03 en SPEC-TA-037 sí se corrige en este PR, con commit propio: solo la fila L-03 y una línea de historial (v1.5). | Decisión del responsable (10/11/2026): el valor ya está integrado por el PR #108 y la SPEC es de su autoría original (saneamiento de Fabricio Melendez). |
 
 ### Preguntas abiertas
 
@@ -119,6 +124,8 @@ optimization, results, configuration`; frontend agrega `dashboard`.
 |---|---|
 | `docs/specs/SPEC-EN-QA-001-modelo-calidad-iso25010.md` | Nuevo: esta SPEC. |
 | `docs/quality/ISO-25010-modelo-calidad.md` | Nuevo: matriz de las nueve características, validación de TA-QA-001, prioridades y nota 25023/25010. |
+| `docs/specs/SPEC-TA-037-control-carga-optimizador.md` | Fila L-03 a 800 unidades (referencia a SPEC-ACADEMIC-800 / PR #108) y línea de historial v1.5. |
+| `docs/evidence/sprint-02/EN-QA-001/README.md` | Nuevo: evidencia de entrega y verificación de CA-01 a CA-04. |
 
 Sin cambios en `backend/`, `frontend/`, migraciones ni workflows.
 
@@ -151,3 +158,4 @@ Verificaciones previstas:
 | Fecha | Versión | Estado | Cambio |
 |---|---|---|---|
 | 10/11/2026 | 1.0 | Draft | Creación con la auditoría F0, reglas, decisiones y criterios de aceptación. |
+| 10/11/2026 | 1.1 | Implemented | Modelo de calidad entregado (CA-01 a CA-03). Corrección de L-03 en SPEC-TA-037 (D-06). Evidencia agregada. Pendiente: revisión de Andro (CA-04) y merge para Verified. |
