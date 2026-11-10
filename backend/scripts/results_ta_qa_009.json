@@ -1,0 +1,74 @@
+{
+  "suite": "TA-QA-009 Seguridad Operacional del Corte",
+  "real_database": "Supabase Cloud PostgreSQL",
+  "cases": [
+    {
+      "id": "CP-SEC-01",
+      "riesgo": "R-01 Colisión de cuchilla / doble rayado",
+      "codigo_rechazo": "SUPERPOSICION",
+      "detalle": "No se puede colocar la pieza: SUPERPOSICION.",
+      "rechazado": true
+    },
+    {
+      "id": "CP-SEC-02",
+      "riesgo": "R-02 Desportillamiento perimetral por tensión",
+      "codigo_rechazo": "MARGEN_INSUFICIENTE",
+      "detalle": "No se puede colocar la pieza: MARGEN_INSUFICIENTE.",
+      "rechazado": true
+    },
+    {
+      "id": "CP-SEC-03",
+      "riesgo": "R-03 Colapso de puente intermedio y astillamiento",
+      "codigo_rechazo": "SEPARACION_INSUFICIENTE",
+      "detalle": "No se puede colocar la pieza: SEPARACION_INSUFICIENTE.",
+      "rechazado": true
+    },
+    {
+      "id": "CP-SEC-04",
+      "riesgo": "R-04 Corte al vacío e impacto contra mesa CNC",
+      "codigo_rechazo": "FUERA_DE_LIMITE",
+      "detalle": "No se puede colocar la pieza: FUERA_DE_LIMITE.",
+      "rechazado": true
+    },
+    {
+      "id": "CP-SEC-05",
+      "riesgo": "R-05 Estallido incontrolado en vértices cóncavos",
+      "codigo_rechazo": "HTTP 422 Unprocessable Entity",
+      "detalle": "Cóncavo: El polígono no es convexo. | Autointersección: HTTP 422",
+      "rechazado": true
+    },
+    {
+      "id": "CP-SEC-06",
+      "riesgo": "R-06 Corte incompleto / mezcla de espesor incompatible",
+      "codigo_rechazo": "NOT_CONFIRMABLE / MATERIAL_MISMATCH",
+      "detalle": "Confirmation requires every requested unit placed. | A placement cannot mix incompatible materials.",
+      "rechazado": true
+    },
+    {
+      "id": "CP-SEC-07",
+      "riesgo": "R-07 Doble corte sobre retazo único agotado",
+      "codigo_rechazo": "REMNANT_COLLISION / ValueError",
+      "detalle": "A remnant represents exactly one physical unit.",
+      "rechazado": true
+    },
+    {
+      "id": "CP-SEC-08",
+      "riesgo": "R-09 Agotamiento de memoria / congelamiento en turno",
+      "codigo_rechazo": "RasterBudgetExceeded / HTTP 422",
+      "detalle": "La rejilla excede el límite seguro de rasterización. Aumenta la resolución en mm/celda.",
+      "rechazado": true
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "rejected_safely": 8,
+    "escapes": 0,
+    "rejection_rate_pct": 100.0
+  },
+  "real_plancha_used": {
+    "id_plancha": 8,
+    "ancho_mm": 2240.0,
+    "alto_mm": 3300.0,
+    "espesor_mm": 5.5
+  }
+}
