@@ -9,8 +9,8 @@
 | Tipo | Tarea de calidad (pruebas y documentación, sin cambios de comportamiento) |
 | Sprint | Sprint 2 |
 | Prioridad / estimación | Alta / 1 SP |
-| Versión | 1.0 |
-| Estado | **Draft** |
+| Versión | 1.1 |
+| Estado | **Implemented**: pruebas, evidencia y documentos entregados en este PR; pasa a Verified después de la revisión, el CI verde (pruebas con PostgreSQL) y el merge |
 | Responsable | Fabricio Danniel Aguilar Chavez (`fabrilar1`) |
 | Reviewer | Andro Joseph Quispe Cesias (distinto del autor) |
 | Rama | `test/S2-TA-QA-006-seguridad-permisos` |
@@ -38,6 +38,8 @@ tiene (vacío V-01 del modelo de calidad), sin editar esa matriz.
 - Matriz automatizada **rol × ruta protegida** sobre las **59 rutas protegidas**
   (§5.2): permiso declarado, 401 sin token, 403 para el rol sin permiso y paso de la
   autorización para el rol con permiso.
+- Verificación automática de que la aplicación tiene **exactamente** las 59 rutas
+  protegidas de la matriz, recorriendo sus routers (RN-07).
 - Prueba con dobles espía de que, ante un rechazo, **no se invoca** ninguna operación
   de servicio o repositorio (inventario, pedidos, clientes, usuarios, roles,
   optimización, confirmación, selección y liberación). Corre en Windows.
@@ -52,8 +54,8 @@ tiene (vacío V-01 del modelo de calidad), sin editar esa matriz.
 - Métricas de seguridad MSEG-01 a MSEG-06 (§5.3), medidas en la evidencia.
 - Actualización de `docs/seguridad/matriz_permisos.md`, que la auditoría F0
   comprobó desactualizada (§4.3).
-- Registro del hallazgo H-01 (login sin límite de intentos) y propuesta del vacío
-  V-19 para el modelo de calidad (§4.4).
+- Registro del hallazgo H-01 (login sin límite de intentos) y alta del vacío V-19 en
+  el modelo de calidad, con línea de historial (§4.4, D-10).
 
 ### Fuera de alcance
 
@@ -61,9 +63,9 @@ tiene (vacío V-01 del modelo de calidad), sin editar esa matriz.
 - **Configurar optimizador**: no existe endpoint ni permiso; los límites del
   optimizador son constantes del código. No se crean permisos (D-04).
 - **Limitar intentos de login (resistencia)**: solo se registra como hallazgo H-01 y
-  se propone el vacío V-19; no se implementa nada (D-09).
-- Editar `docs/quality/ISO-25010-modelo-calidad.md`: V-19 queda como propuesta de
-  texto en esta SPEC.
+  como vacío V-19; no se implementa nada (D-09).
+- Cualquier otro cambio en `docs/quality/ISO-25010-modelo-calidad.md` distinto de V-19
+  y su historial.
 - Rendición de cuentas y no repudio de la confirmación, secretos en el repositorio y
   source maps: se citan como evidencia existente, sin pruebas nuevas.
 - Editar la matriz de TA-QA-001 (entregable de Andro) o las pruebas de S1-RBAC.
@@ -131,10 +133,9 @@ asignación inicial de un RBAC configurable.
 | Evidencia | `backend/app/modules/authentication/presentation/router.py:25-58` (sin contador ni bloqueo). Búsqueda de `rate`, `limit`, `attempt`, `intento`, `throttl`, `lockout` y `bloque` en `backend/app/modules/authentication/`: sin coincidencias relacionadas. |
 | Mitigaciones actuales | Mensaje único ante credenciales incorrectas (no revela si la cuenta existe), bcrypt con costo deliberado y validación de formato del usuario antes de consultar la base. |
 | Subcaracterística ISO 25010 | Resistencia (*resistance*). |
-| Tratamiento | Fuera de alcance de TA-QA-006 (D-09): no se implementa nada. Se propone el vacío V-19 para el modelo de calidad. |
+| Tratamiento | Fuera de alcance de TA-QA-006 (D-09): no se implementa nada. Se registra como vacío V-19 en el modelo de calidad (D-10). |
 
-**Texto propuesto para `docs/quality/ISO-25010-modelo-calidad.md`, §5.2** (no se
-edita en esta tarea):
+**Texto agregado a `docs/quality/ISO-25010-modelo-calidad.md`, §5.2:**
 
 ```markdown
 | V-19 | Resistencia sin control: `POST /api/auth/login` no limita los intentos fallidos por cuenta ni por origen (hallazgo H-01 de TA-QA-006). Mitigaciones actuales: mensaje único, bcrypt y validación de formato. Falta decidir la regla (umbral, ventana y bloqueo temporal) y su métrica. | Por asignar (nueva tarea del backlog; fuera de TA-QA-006) |
@@ -158,6 +159,9 @@ edita en esta tarea):
   autorización: sin stack trace, SQL ni el código del permiso.
 - RN-06: El permiso declarado en cada ruta protegida coincide con la matriz §5.2;
   `GET /api/auth/me` solo exige sesión.
+- RN-07: La aplicación tiene exactamente 59 rutas protegidas (que exigen un permiso o
+  una sesión) y son las de la matriz §5.2. Una ruta protegida nueva o eliminada hace
+  fallar la prueba hasta que se actualicen la matriz y esta SPEC.
 
 ### 5.2 Rutas protegidas y resultado esperado por rol
 
@@ -200,12 +204,14 @@ hacen sobre rutas críticas.
 
 | Concepto | Casos |
 |---|---|
+| Coherencia: totales de la matriz y resultado esperado frente a `ASIGNACION_INICIAL` | 2 |
+| Rutas protegidas de la aplicación = rutas de la matriz (RN-07) | 1 |
 | Permiso declarado (RN-06) | 59 |
 | Sin token → 401 | 59 |
 | Rol × ruta | 177 (59 × 3) |
 | · Rechazos esperados (403) | **44**: Almacenero 29, Operario 15, Administrador 0 |
 | · Pasos esperados | **133**: Administrador 59, Almacenero 30, Operario 44 |
-| **Total** | **295** |
+| **Total** | **298** |
 
 En 23 rutas los tres roles pasan (`/api/auth/me`, inventario de lectura y
 resultados de lectura). En ellas el control de acceso se verifica con el permiso
@@ -220,12 +226,12 @@ vacío V-01 sin editar la matriz de TA-QA-001.
 
 | ID | Métrica | Subcaracterística | Fórmula | Meta | Fuente de medición |
 |---|---|---|---|---|---|
-| MSEG-01 | Cobertura de control de acceso en rutas protegidas | Confidencialidad / integridad | rutas protegidas con control verificado ÷ 59 × 100. Una ruta cuenta como verificada si su permiso declarado coincide con §5.2, responde 401 sin token y los tres roles obtienen el resultado esperado (403 o paso) | 100 % | Matriz automatizada §5.2 |
+| MSEG-01 | Cobertura de control de acceso en rutas protegidas | Confidencialidad / integridad | rutas protegidas con control verificado ÷ 59 × 100. Una ruta cuenta como verificada si su permiso declarado coincide con §5.2, responde 401 sin token y los tres roles obtienen el resultado esperado (403 o paso). El denominador se comprueba con RN-07: la aplicación tiene exactamente esas 59 rutas protegidas | 100 % | Matriz automatizada §5.2 y verificación RN-07 |
 | MSEG-02 | Tasa de rechazo de accesos no autorizados | Confidencialidad / integridad | intentos no autorizados respondidos con 401/403 ÷ intentos no autorizados ejecutados × 100 | 100 % | 109 intentos: 59 sin token + 44 por rol + 6 de token o cuenta |
 | MSEG-03 | Escrituras no autorizadas ejecutadas | Integridad | rechazos con una operación de servicio o repositorio invocada (espía) + rechazos con stock, movimientos o pedidos cambiados (PostgreSQL) | 0 | 109 rechazos con espía y 4 casos con PostgreSQL |
 | MSEG-04 | Respuestas de error con información interna | Confidencialidad | respuestas 401/403 con texto distinto de los mensajes fijos, stack trace, SQL o código de permiso | 0 | Las 109 respuestas 401/403 de Windows y los 403 de PostgreSQL |
 | MSEG-05 | Autenticidad del token en rutas de negocio | Autenticidad | casos (vencido, firma inválida, cuenta desactivada) × caminos (`require_permission`, `run_permission`) rechazados con 401 y el formato de §5.1 ÷ 6 × 100 | 100 % | Pruebas de token |
-| MSEG-06 | Conformidad de la matriz documentada | Integridad (revisión) | filas de `matriz_permisos.md` que coinciden con `ASIGNACION_INICIAL` ÷ filas × 100, y permisos del catálogo representados ÷ 13 × 100 | 100 % y 100 % | Revisión documental |
+| MSEG-06 | Conformidad de la matriz documentada | Integridad (prueba + revisión) | filas de `matriz_permisos.md` que coinciden con `ASIGNACION_INICIAL` ÷ filas × 100, y permisos del catálogo representados ÷ 13 × 100 | 100 % y 100 % | Revisión documental, apoyada en dos pruebas: la matriz de las pruebas coincide con `ASIGNACION_INICIAL` y con las rutas reales de la aplicación (RN-07) |
 
 ## 6. Decisiones y preguntas abiertas
 
@@ -241,21 +247,33 @@ vacío V-01 sin editar la matriz de TA-QA-001.
 | D-06 | Las pruebas van en archivos nuevos con nombre único; no se editan `test_endpoint_permissions.py` ni otras pruebas de S1-RBAC. | Regla del equipo sobre archivos de otros integrantes. |
 | D-07 | `matriz_permisos.md` se actualiza indicando fuente (`ASIGNACION_INICIAL`) y fecha, y aclarando que es la asignación inicial de un RBAC configurable. | La auditoría F0 la comprobó desactualizada (§4.3). |
 | D-08 | La matriz cubre las 59 rutas protegidas: las 28 críticas, las 18 sin prueba de 403 en Windows y las 13 restantes. El resultado esperado se deriva de `ASIGNACION_INICIAL`. MSEG-01 se mide sobre las 59. | Decisión del responsable (cierre de P-02 de F1, 10/11/2026): incluir las 18 y medir MSEG-01 sobre las rutas protegidas. Las 13 restantes se agregan para que la meta del 100 % se mida con un solo criterio. |
-| D-09 | La limitación de intentos de login queda fuera de alcance. Se registra como hallazgo H-01 y se propone el vacío V-19 (§4.4) sin editar el modelo de calidad. | Decisión del responsable (cierre de P-01 de F1, 10/11/2026). Implementarla cambiaría el comportamiento y el contrato del login. |
+| D-09 | La limitación de intentos de login queda fuera de alcance. Se registra como hallazgo H-01 y se propone el vacío V-19 (§4.4). | Decisión del responsable (cierre de P-01 de F1, 10/11/2026). Implementarla cambiaría el comportamiento y el contrato del login. |
+| D-10 | V-19 se agrega al modelo de calidad en este PR, con una línea de historial que indica que viene de TA-QA-006. | Decisión del responsable (F3, 10/11/2026). El modelo es entregable de EN-QA-001, del mismo responsable. |
+| D-11 | Las rutas se buscan recorriendo los routers incluidos: desde FastAPI 0.141.1, `app.routes` contiene `_IncludedRouter` (con `original_router` e `include_context.prefix`) en lugar de las `APIRoute`. El path resuelto es la concatenación de prefijos más `route.path`, como hace FastAPI. | Hallazgo de F2: la primera versión fallaba con `AttributeError` en las 59 pruebas de permiso declarado. Se revisó `fastapi/routing.py` de la versión instalada. |
 
 ### Preguntas abiertas
 
 Ninguna. P-01 se cerró con D-09 y P-02 con D-08.
+
+### Hallazgos
+
+| ID | Hallazgo | Tratamiento |
+|---|---|---|
+| O-01 | El servicio de inventario se construye antes del 403, sin invocar métodos (§4.1). | No es defecto; las pruebas con espía comprueban que no se invoca ningún método. |
+| H-01 | Login sin límite de intentos (§4.4). | Fuera de alcance; registrado como V-19 en el modelo de calidad. |
+| H-02 | Desde FastAPI 0.141.1 las rutas incluidas no aparecen directamente en `app.routes` (D-11). | Resuelto en la prueba; no afecta a la aplicación. |
+| — | No se encontró ningún defecto de autorización. | — |
 
 ## 7. Diseño técnico
 
 | Archivo | Capa | Cambio |
 |---|---|---|
 | `docs/specs/SPEC-TA-QA-006-seguridad-permisos.md` | Documentación | Nuevo: esta SPEC. |
-| `backend/tests/api/authorization/test_security_role_matrix.py` | Pruebas API (Windows) | Nuevo. Matriz §5.2 de 59 rutas parametrizada: permiso declarado en la ruta (introspección de `app.routes`), 401 sin token, 403 por rol y paso del autorizado. Dobles espía para todas las dependencias de servicio y repositorio de esas rutas (inventario, casos de uso de pedidos, clientes, usuarios, roles, inicio y rasterizado, UoW de runs, UoW y runtime de comparisons v1, coordinador de comparisons-v2). Ante 401 o 403, ningún método del espía se invoca. Verifica RN-05 en cada 401/403. |
+| `backend/tests/api/authorization/test_security_role_matrix.py` | Pruebas API (Windows) | Nuevo. Matriz §5.2 de 59 rutas parametrizada: coherencia con la SPEC y con `ASIGNACION_INICIAL`, rutas protegidas de la aplicación = matriz (RN-07, recorriendo los routers incluidos según D-11), permiso declarado en la ruta, 401 sin token, 403 por rol y paso del autorizado. Dobles espía para todas las dependencias de servicio y repositorio de esas rutas (inventario, casos de uso de pedidos, clientes, usuarios, roles, inicio y rasterizado, UoW de runs, UoW y runtime de comparisons v1, coordinador de comparisons-v2). Ante 401 o 403, ningún método del espía se invoca. Verifica RN-05 en cada 401/403. |
 | `backend/tests/api/authorization/test_security_token_paths.py` | Pruebas API (Windows) | Nuevo. Token vencido, firma inválida y cuenta desactivada en `POST /api/inventory/planchas` y `POST /api/optimization/comparisons-v2`, con el formato de cada camino (RN-04) y sin invocar la escritura. |
 | `backend/tests/api/optimization/test_security_rejections_postgres.py` | Pruebas API (PostgreSQL, CI) | Nuevo. Almacenero confirma run → 403, foto de stock, movimientos y pedidos sin cambios; Operario confirma → 200 (control). Igual para la confirmación de comparisons-v2. Operario da de baja plancha y retazo → 403 sin cambios; Almacenero → 201 (control). Reutiliza las fixtures de `test_runs_api`, `test_comparisons_v2_api` y `snapshot`. |
 | `docs/seguridad/matriz_permisos.md` | Documentación | Actualizada según D-07. |
+| `docs/quality/ISO-25010-modelo-calidad.md` | Documentación | Vacío V-19 en §5.2 y sección de historial con la línea de TA-QA-006 (D-10). |
 | `docs/evidence/sprint-02/TA-QA-006/README.md` | Evidencia | Nuevo: matriz de resultados, métricas medidas, hallazgos (O-01, H-01) y limitaciones. |
 
 Sin cambios en `backend/app/`, `frontend/`, migraciones, contrato de la API ni workflows.
@@ -264,18 +282,20 @@ Sin cambios en `backend/app/`, `frontend/`, migraciones, contrato de la API ni w
 
 | ID | Criterio (Notion) | Cómo se verifica |
 |---|---|---|
-| CA-01 | Matriz de pruebas por Administrador / Almacenero / Operario. | `test_security_role_matrix.py` con las 59 rutas × 3 roles de §5.2 en verde (295 casos); tabla de resultados en la evidencia (MSEG-01). |
+| CA-01 | Matriz de pruebas por Administrador / Almacenero / Operario. | `test_security_role_matrix.py` con las 59 rutas × 3 roles de §5.2 en verde (298 casos, incluida RN-07); tabla de resultados en la evidencia (MSEG-01). |
 | CA-02 | Accesos denegados correctamente. | 401 sin token, 403 por rol, 401 por token vencido, firma inválida o cuenta desactivada en ambos caminos y con su formato; cuerpos sin información interna (MSEG-02, MSEG-04, MSEG-05). |
 | CA-03 | Sin confirmación ni consumo no autorizado. | Espías sin invocación ante 401/403 (Windows) y stock, movimientos y pedidos sin cambios con PostgreSQL, con control positivo (MSEG-03 = 0). |
-| CA-04 | Resultados registrados. | Evidencia con matriz de resultados, métricas medidas, hallazgos y limitaciones; `matriz_permisos.md` actualizada (MSEG-06); H-01 y propuesta de V-19 registrados. |
+| CA-04 | Resultados registrados. | Evidencia con matriz de resultados, métricas medidas, hallazgos y limitaciones; `matriz_permisos.md` actualizada (MSEG-06); H-01 registrado y V-19 agregado al modelo de calidad. |
 
 ## 9. Pruebas previstas
 
 | Archivo | Casos | Dónde corre |
 |---|---|---|
-| `test_security_role_matrix.py` | 59 permisos declarados + 59 sin token + 177 rol × ruta = **295**; no invocación en los 103 rechazos (59 sin token + 44 por rol) | Windows y CI |
-| `test_security_token_paths.py` | 3 casos × 2 caminos = **6**, más no invocación | Windows y CI |
-| `test_security_rejections_postgres.py` | confirmación de runs, confirmación de comparisons-v2, baja de plancha y baja de retazo, cada una con control positivo (**4**) | Solo CI (en Windows se omite) |
+| `test_security_role_matrix.py` | 2 de coherencia + 1 de rutas protegidas (RN-07) + 59 permisos declarados + 59 sin token + 177 rol × ruta = **298**; no invocación en los 103 rechazos (59 sin token + 44 por rol) | Windows y CI |
+| `test_security_token_paths.py` | 3 casos × 2 caminos = 6, más 2 controles positivos = **8** | Windows y CI |
+| `test_security_rejections_postgres.py` | 3 pruebas con **4** casos: confirmación de runs, confirmación de comparisons-v2, baja de plancha y baja de retazo, cada uno con control positivo | Solo CI (en Windows se omite) |
+
+Total en Windows: 306 pruebas y 3 omitidas.
 
 Regresión: suite completa del backend con los comandos del CI (`0 failed`).
 
@@ -284,7 +304,7 @@ Regresión: suite completa del backend con los comandos del CI (`0 failed`).
 - Salida de pytest de los dos archivos de Windows y de la suite completa.
 - Resultado del job de CI con el archivo de PostgreSQL.
 - `docs/evidence/sprint-02/TA-QA-006/README.md` con la matriz de resultados, el valor
-  medido de MSEG-01 a MSEG-06, los hallazgos (O-01, H-01 con la propuesta de V-19) y
+  medido de MSEG-01 a MSEG-06, los hallazgos (O-01, H-01 y V-19, H-02) y
   las limitaciones (login sin límite de intentos, configuración sin endpoint, éxito
   con datos reales solo en los casos de PostgreSQL).
 - Capturas de PowerShell que guarda el responsable en esa carpeta.
@@ -294,3 +314,4 @@ Regresión: suite completa del backend con los comandos del CI (`0 failed`).
 | Fecha | Versión | Estado | Cambio |
 |---|---|---|---|
 | 10/11/2026 | 1.0 | Draft | Creación con la auditoría F0, matriz de las 59 rutas protegidas, métricas MSEG-01 a MSEG-06, hallazgo H-01 con propuesta de V-19, decisiones D-01 a D-09 y criterios de aceptación. |
+| 10/11/2026 | 1.1 | Implemented | Pruebas entregadas: 306 en Windows (298 de la matriz, incluida RN-07, y 8 de tokens) y 3 con PostgreSQL para el CI. RN-07, D-10, D-11 y hallazgos. V-19 agregado al modelo de calidad, `matriz_permisos.md` actualizada y evidencia. Pendiente: CI del PR, revisión y merge para Verified. |
