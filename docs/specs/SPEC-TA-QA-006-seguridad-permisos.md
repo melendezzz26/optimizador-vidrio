@@ -64,8 +64,11 @@ tiene (vacío V-01 del modelo de calidad), sin editar esa matriz.
   optimizador son constantes del código. No se crean permisos (D-04).
 - **Limitar intentos de login (resistencia)**: solo se registra como hallazgo H-01 y
   como vacío V-19; no se implementa nada (D-09).
-- Cualquier otro cambio en `docs/quality/ISO-25010-modelo-calidad.md` distinto de V-19
-  y su historial.
+- Cualquier otro cambio en `docs/quality/ISO-25010-modelo-calidad.md` distinto de V-19,
+  V-20 y su historial.
+- **Corregir vulnerabilidades de dependencias del frontend** (hallazgo H-03): sin
+  cambios en `frontend/package.json` ni `frontend/package-lock.json`. Se registra como
+  vacío V-20.
 - Rendición de cuentas y no repudio de la confirmación, secretos en el repositorio y
   source maps: se citan como evidencia existente, sin pruebas nuevas.
 - Editar la matriz de TA-QA-001 (entregable de Andro) o las pruebas de S1-RBAC.
@@ -139,6 +142,23 @@ asignación inicial de un RBAC configurable.
 
 ```markdown
 | V-19 | Resistencia sin control: `POST /api/auth/login` no limita los intentos fallidos por cuenta ni por origen (hallazgo H-01 de TA-QA-006). Mitigaciones actuales: mensaje único, bcrypt y validación de formato. Falta decidir la regla (umbral, ventana y bloqueo temporal) y su métrica. | Por asignar (nueva tarea del backlog; fuera de TA-QA-006) |
+```
+
+### 4.5 Hallazgo H-03: vulnerabilidades en dependencias de desarrollo del frontend
+
+| Campo | Contenido |
+|---|---|
+| Hallazgo | `npm ci` en `frontend/` reporta **7 vulnerabilidades (4 moderadas y 3 altas)**. |
+| Evidencia | `npm audit --omit=dev` en `frontend/` (10/11/2026, ejecutado por el responsable): **found 0 vulnerabilities**. Ningún workflow de `.github/` ejecuta una auditoría de dependencias y no hay configuración de Dependabot. |
+| Alcance | **Solo dependencias de desarrollo**: al excluirlas, la auditoría no encuentra ninguna vulnerabilidad. Las dependencias de producción, que son las que forman parte del bundle publicado en GitHub Pages, no están afectadas. No se registró el detalle por paquete. |
+| Clasificación del riesgo | **Producción: sin riesgo detectado** (0 vulnerabilidades). **Desarrollo y CI: riesgo bajo a moderado**: las herramientas de compilación y pruebas se ejecutan en las máquinas del equipo y en los runners del CI, pero no se despliegan. Hay 3 altas que conviene revisar. |
+| Subcaracterística ISO 25010 | Resistencia y confidencialidad (cadena de suministro de software). |
+| Tratamiento | Fuera de alcance de TA-QA-006 (D-12): sin cambios en `package.json` ni `package-lock.json`. Se registra como vacío V-20 en el modelo de calidad. |
+
+**Texto agregado a `docs/quality/ISO-25010-modelo-calidad.md`, §5.2:**
+
+```markdown
+| V-20 | Sin revisión periódica de dependencias: ningún workflow ni rutina ejecuta `npm audit` (frontend) o una auditoría equivalente del backend, ni registra su resultado. Al 10/11/2026, `npm ci` reporta 7 vulnerabilidades (4 moderadas y 3 altas), todas en dependencias de desarrollo: `npm audit --omit=dev` no encuentra ninguna (hallazgo H-03 de TA-QA-006). Falta definir la frecuencia, la herramienta para backend y frontend, el criterio de aceptación (por ejemplo, 0 vulnerabilidades altas en producción) y su métrica. | Por asignar (nueva tarea del backlog; fuera de TA-QA-006) |
 ```
 
 ## 5. Reglas y contrato verificado
@@ -250,6 +270,7 @@ vacío V-01 sin editar la matriz de TA-QA-001.
 | D-09 | La limitación de intentos de login queda fuera de alcance. Se registra como hallazgo H-01 y se propone el vacío V-19 (§4.4). | Decisión del responsable (cierre de P-01 de F1, 10/11/2026). Implementarla cambiaría el comportamiento y el contrato del login. |
 | D-10 | V-19 se agrega al modelo de calidad en este PR, con una línea de historial que indica que viene de TA-QA-006. | Decisión del responsable (F3, 10/11/2026). El modelo es entregable de EN-QA-001, del mismo responsable. |
 | D-11 | Las rutas se buscan recorriendo los routers incluidos: desde FastAPI 0.141.1, `app.routes` contiene `_IncludedRouter` (con `original_router` e `include_context.prefix`) en lugar de las `APIRoute`. El path resuelto es la concatenación de prefijos más `route.path`, como hace FastAPI. | Hallazgo de F2: la primera versión fallaba con `AttributeError` en las 59 pruebas de permiso declarado. Se revisó `fastapi/routing.py` de la versión instalada. |
+| D-12 | Las vulnerabilidades de dependencias de desarrollo del frontend quedan fuera de alcance, sin cambios en `package.json` ni `package-lock.json`. Se registran como hallazgo H-03 y como vacío V-20 en el modelo de calidad, con su línea de historial. | Decisión del responsable (F3, 10/11/2026). Actualizar dependencias puede romper la compilación y las pruebas del frontend y no es parte de una tarea de permisos. |
 
 ### Preguntas abiertas
 
@@ -262,6 +283,7 @@ Ninguna. P-01 se cerró con D-09 y P-02 con D-08.
 | O-01 | El servicio de inventario se construye antes del 403, sin invocar métodos (§4.1). | No es defecto; las pruebas con espía comprueban que no se invoca ningún método. |
 | H-01 | Login sin límite de intentos (§4.4). | Fuera de alcance; registrado como V-19 en el modelo de calidad. |
 | H-02 | Desde FastAPI 0.141.1 las rutas incluidas no aparecen directamente en `app.routes` (D-11). | Resuelto en la prueba; no afecta a la aplicación. |
+| H-03 | `npm ci` reporta 7 vulnerabilidades en el frontend (4 moderadas, 3 altas), todas en dependencias de desarrollo; producción: 0 (§4.5). | Fuera de alcance (D-12); registrado como V-20 en el modelo de calidad. |
 | — | No se encontró ningún defecto de autorización. | — |
 
 ## 7. Diseño técnico
@@ -273,7 +295,7 @@ Ninguna. P-01 se cerró con D-09 y P-02 con D-08.
 | `backend/tests/api/authorization/test_security_token_paths.py` | Pruebas API (Windows) | Nuevo. Token vencido, firma inválida y cuenta desactivada en `POST /api/inventory/planchas` y `POST /api/optimization/comparisons-v2`, con el formato de cada camino (RN-04) y sin invocar la escritura. |
 | `backend/tests/api/optimization/test_security_rejections_postgres.py` | Pruebas API (PostgreSQL, CI) | Nuevo. Almacenero confirma run → 403, foto de stock, movimientos y pedidos sin cambios; Operario confirma → 200 (control). Igual para la confirmación de comparisons-v2. Operario da de baja plancha y retazo → 403 sin cambios; Almacenero → 201 (control). Reutiliza las fixtures de `test_runs_api`, `test_comparisons_v2_api` y `snapshot`. |
 | `docs/seguridad/matriz_permisos.md` | Documentación | Actualizada según D-07. |
-| `docs/quality/ISO-25010-modelo-calidad.md` | Documentación | Vacío V-19 en §5.2 y sección de historial con la línea de TA-QA-006 (D-10). |
+| `docs/quality/ISO-25010-modelo-calidad.md` | Documentación | Vacíos V-19 y V-20 en §5.2 y sección de historial con las líneas de TA-QA-006 (D-10, D-12). |
 | `docs/evidence/sprint-02/TA-QA-006/README.md` | Evidencia | Nuevo: matriz de resultados, métricas medidas, hallazgos (O-01, H-01) y limitaciones. |
 
 Sin cambios en `backend/app/`, `frontend/`, migraciones, contrato de la API ni workflows.
@@ -285,7 +307,7 @@ Sin cambios en `backend/app/`, `frontend/`, migraciones, contrato de la API ni w
 | CA-01 | Matriz de pruebas por Administrador / Almacenero / Operario. | `test_security_role_matrix.py` con las 59 rutas × 3 roles de §5.2 en verde (298 casos, incluida RN-07); tabla de resultados en la evidencia (MSEG-01). |
 | CA-02 | Accesos denegados correctamente. | 401 sin token, 403 por rol, 401 por token vencido, firma inválida o cuenta desactivada en ambos caminos y con su formato; cuerpos sin información interna (MSEG-02, MSEG-04, MSEG-05). |
 | CA-03 | Sin confirmación ni consumo no autorizado. | Espías sin invocación ante 401/403 (Windows) y stock, movimientos y pedidos sin cambios con PostgreSQL, con control positivo (MSEG-03 = 0). |
-| CA-04 | Resultados registrados. | Evidencia con matriz de resultados, métricas medidas, hallazgos y limitaciones; `matriz_permisos.md` actualizada (MSEG-06); H-01 registrado y V-19 agregado al modelo de calidad. |
+| CA-04 | Resultados registrados. | Evidencia con matriz de resultados, métricas medidas, hallazgos y limitaciones; `matriz_permisos.md` actualizada (MSEG-06); H-01 y H-03 registrados y V-19 y V-20 agregados al modelo de calidad. |
 
 ## 9. Pruebas previstas
 
@@ -304,7 +326,7 @@ Regresión: suite completa del backend con los comandos del CI (`0 failed`).
 - Salida de pytest de los dos archivos de Windows y de la suite completa.
 - Resultado del job de CI con el archivo de PostgreSQL.
 - `docs/evidence/sprint-02/TA-QA-006/README.md` con la matriz de resultados, el valor
-  medido de MSEG-01 a MSEG-06, los hallazgos (O-01, H-01 y V-19, H-02) y
+  medido de MSEG-01 a MSEG-06, los hallazgos (O-01, H-01 y V-19, H-02, H-03 y V-20) y
   las limitaciones (login sin límite de intentos, configuración sin endpoint, éxito
   con datos reales solo en los casos de PostgreSQL).
 - Capturas de PowerShell que guarda el responsable en esa carpeta.
@@ -314,4 +336,4 @@ Regresión: suite completa del backend con los comandos del CI (`0 failed`).
 | Fecha | Versión | Estado | Cambio |
 |---|---|---|---|
 | 10/11/2026 | 1.0 | Draft | Creación con la auditoría F0, matriz de las 59 rutas protegidas, métricas MSEG-01 a MSEG-06, hallazgo H-01 con propuesta de V-19, decisiones D-01 a D-09 y criterios de aceptación. |
-| 10/11/2026 | 1.1 | Implemented | Pruebas entregadas: 306 en Windows (298 de la matriz, incluida RN-07, y 8 de tokens) y 3 con PostgreSQL para el CI. RN-07, D-10, D-11 y hallazgos. V-19 agregado al modelo de calidad, `matriz_permisos.md` actualizada y evidencia. Pendiente: CI del PR, revisión y merge para Verified. |
+| 10/11/2026 | 1.1 | Implemented | Pruebas entregadas: 306 en Windows (298 de la matriz, incluida RN-07, y 8 de tokens) y 3 con PostgreSQL para el CI. RN-07, D-10 a D-12 y hallazgos O-01 y H-01 a H-03. V-19 y V-20 agregados al modelo de calidad, `matriz_permisos.md` actualizada y evidencia. Pendiente: CI del PR, revisión y merge para Verified. |
