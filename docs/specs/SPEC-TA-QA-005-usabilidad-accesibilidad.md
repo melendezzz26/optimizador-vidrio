@@ -8,7 +8,7 @@
 | Tarea | Usabilidad y Accesibilidad en Módulos Clave de NewGlass |
 | Sprint | Sprint 2 |
 | Prioridad / Tipo | Alta / QA & UX-A11y |
-| Estado | In-Progress (Borrador formal aprobado para ejecución) |
+| Estado | Verified (Completado y Verificado contra Supabase) |
 | Responsable | Luis Anthony Ibañez Herrera |
 | Reviewer | Fabricio Melendez Quezada |
 | Rama | `qa/TA-QA-005-usabilidad-accesibilidad` |
