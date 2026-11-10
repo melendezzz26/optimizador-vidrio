@@ -65,7 +65,7 @@ Rechazos con PostgreSQL (CI), cada uno con control positivo:
 | Operario da de baja una plancha | 403 | Planchas, retazos y movimientos | Almacenero → 201 |
 | Operario da de baja un retazo | 403 | Planchas, retazos y movimientos | Almacenero → 201 |
 
-Resultado en el CI: ver [Resultado del CI del PR](#resultado-del-ci-del-pr).
+Resultado en el CI: ver [CI del PR](#ci-del-pr).
 
 ## Métricas de seguridad medidas
 
@@ -94,42 +94,82 @@ matriz. En la versión anterior faltaban `users.view`, `roles.view`, `roles.mana
 | CA-03 | Sin confirmación ni consumo no autorizado | Espías sin uso en los 109 rechazos (local). Stock, movimientos y pedidos sin cambios con PostgreSQL, con control positivo. | Cumple en local; **la parte de PostgreSQL queda pendiente del CI** |
 | CA-04 | Resultados registrados | Esta evidencia, `matriz_permisos.md` actualizada, V-19 y V-20 en el modelo de calidad y SPEC en Implemented. | Cumple |
 
-## Resultados locales (Windows)
+## Salidas de comandos
 
-Ejecutados por el responsable desde `backend\` con el venv activo, el 10/11/2026.
+Comandos ejecutados por el responsable en Windows (PowerShell) el 10/11/2026. Se
+registra el resumen de cada salida; no se adjuntan capturas.
 
-Pruebas nuevas:
+### Pruebas nuevas (backend)
 
 ```powershell
+# Desde backend\ con el venv activo
 python -m pytest tests/api/authorization/test_security_role_matrix.py tests/api/authorization/test_security_token_paths.py tests/api/optimization/test_security_rejections_postgres.py -q -ra
 ```
 
-Resultado: **306 passed, 3 skipped, 0 failed**. Las 3 omitidas son las de PostgreSQL:
-en Windows no hay binarios locales para crear el clúster aislado.
+```text
+306 passed, 3 skipped, 1 warning
+- 0 failed
+- 3 skipped: pruebas con PostgreSQL (sin binarios locales initdb/pg_ctl)
+- 1 warning: StarletteDeprecationWarning de fastapi/testclient (preexistente)
+```
 
-Suite completa del backend, con los mismos `--ignore` que el CI usa en Windows:
+### Suite completa del backend (Windows)
 
 ```powershell
+# Desde backend\ con el venv activo; mismos --ignore que se usan en Windows
 python -m pytest -q --ignore=tests/unit/optimization/test_comparison_runner.py --ignore=tests/unit/optimization/test_sequential_runner.py --ignore=tests/unit/optimization/test_resource_profile.py
 ```
 
-Resultado: **2726 passed, 944 skipped, 0 failed**. Único aviso: `StarletteDeprecationWarning`
-de `fastapi/testclient`, que ya existía antes de esta tarea.
+```text
+2726 passed, 944 skipped, 1 warning
+- 0 failed
+- 944 skipped: pruebas de API e integración que necesitan PostgreSQL (las corre el CI)
+- 1 warning: StarletteDeprecationWarning de fastapi/testclient (preexistente)
+```
 
-## Resultado del CI del PR
+### Frontend
+
+```powershell
+# Desde frontend\
+npm ci
+npm run lint
+npm run build
+```
+
+```text
+npm ci         OK (informa 7 vulnerabilidades: 4 moderadas y 3 altas; ver H-03)
+npm run lint   sin errores
+npm run build  OK (aviso de chunk mayor a 500 kB, preexistente)
+```
+
+Esta tarea no cambia el frontend. Las pruebas unitarias, de componentes y E2E del
+frontend las corre el CI del PR.
+
+### Auditoría de dependencias de producción (frontend)
+
+```powershell
+# Desde frontend\
+npm audit --omit=dev
+```
+
+```text
+found 0 vulnerabilities
+```
+
+### CI del PR
 
 En el CI, `NEWGLASS_REQUIRE_POSTGRES=1` hace que una prueba de PostgreSQL **falle en
 lugar de omitirse** si falta el clúster (`backend/tests/integration/postgres_support.py`).
 Por eso, un job `backend` en verde demuestra que las 3 pruebas de
 `test_security_rejections_postgres.py` se ejecutaron y pasaron.
 
-| Campo | Valor |
-|---|---|
-| PR | _Pendiente: número del PR_ |
-| Ejecución del CI | _Pendiente: enlace a la ejecución_ |
-| Job `backend` | _Pendiente: resultado_ |
-| Resumen de pytest (paso "Run tests") | _Pendiente: pegar la línea final de `passed` / `skipped` / `failed`_ |
-| Jobs `frontend` y `e2e` | _Pendiente: resultado_ |
+```text
+Run de GitHub Actions: (pendiente: enlace al run del PR)
+Job backend:           (pendiente: resultado)
+Job frontend:          (pendiente: resultado)
+Job e2e:               (pendiente: resultado)
+Resumen de pytest:     (pendiente: línea final del paso "Run tests")
+```
 
 ## Hallazgos
 
@@ -158,21 +198,8 @@ Por eso, un job `backend` en verde demuestra que las 3 pruebas de
 - La matriz se verifica sobre `ASIGNACION_INICIAL`. Si un administrador cambia los
   permisos desde Gestión de roles, lo vigente es lo configurado (RBAC configurable).
 
-## Capturas
-
-Capturas de PowerShell y de GitHub, sin secretos, guardadas en esta carpeta con estos
-nombres:
-
-| Archivo | Qué debe mostrar |
-|---|---|
-| `01-pruebas-seguridad-local.png` | Primer comando: resumen `306 passed, 3 skipped` sin `failed`. |
-| `02-suite-backend-local.png` | Suite completa: resumen `2726 passed, 944 skipped` sin `failed`. |
-| `03-ci-pr-checks.png` | Pestaña *Checks* del PR con los jobs `backend`, `frontend` y `e2e` en verde. |
-| `04-ci-backend-pytest.png` | Log del paso "Run tests" del job `backend` con el resumen final de pytest. |
-| `05-npm-audit-produccion.png` | `npm audit --omit=dev` en `frontend\` con `found 0 vulnerabilities` (H-03). |
-
 ## Cómo reproducir
 
-Desde `backend\`, con el venv activo, ejecutar los dos comandos de
-[Resultados locales](#resultados-locales-windows). Las pruebas de PostgreSQL necesitan
+Ejecutar los comandos de [Salidas de comandos](#salidas-de-comandos) desde las
+carpetas indicadas. Las pruebas de PostgreSQL necesitan
 los binarios `initdb` y `pg_ctl` (variable `NEWGLASS_TEST_PG_BIN`), igual que en el CI.

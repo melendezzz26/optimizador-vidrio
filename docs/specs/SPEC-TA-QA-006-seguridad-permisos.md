@@ -329,7 +329,8 @@ Regresión: suite completa del backend con los comandos del CI (`0 failed`).
   medido de MSEG-01 a MSEG-06, los hallazgos (O-01, H-01 y V-19, H-02, H-03 y V-20) y
   las limitaciones (login sin límite de intentos, configuración sin endpoint, éxito
   con datos reales solo en los casos de PostgreSQL).
-- Capturas de PowerShell que guarda el responsable en esa carpeta.
+- Las salidas de los comandos quedan registradas en texto en la sección "Salidas de
+  comandos" de la evidencia; no se adjuntan capturas.
 
 ## Historial de estado
 
