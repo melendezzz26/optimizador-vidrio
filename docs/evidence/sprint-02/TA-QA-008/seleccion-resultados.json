@@ -1,0 +1,45 @@
+{
+  "fecha_utc": "2026-11-10T05:42:52.811Z",
+  "pruebas": [
+    {
+      "proyecto": "chrome-desktop",
+      "caso": "CF-04 y CF-05 comparacion real",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-laptop",
+      "caso": "CF-04 y CF-05 comparacion real",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-tablet",
+      "caso": "CF-04 y CF-05 comparacion real",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-mobile",
+      "caso": "CF-04 y CF-05 comparacion real",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-desktop",
+      "caso": "CF-04 y CF-05 comparacion real",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-laptop",
+      "caso": "CF-04 y CF-05 comparacion real",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-tablet",
+      "caso": "CF-04 y CF-05 comparacion real",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-mobile",
+      "caso": "CF-04 y CF-05 comparacion real",
+      "resultado": "passed"
+    }
+  ]
+}

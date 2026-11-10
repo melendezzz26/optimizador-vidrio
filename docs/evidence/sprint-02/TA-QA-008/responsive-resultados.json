@@ -1,0 +1,45 @@
+{
+  "fecha_utc": "2026-11-10T05:40:58.123Z",
+  "pruebas": [
+    {
+      "proyecto": "chrome-desktop",
+      "caso": "CF-07 reflujo y controles criticos",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-laptop",
+      "caso": "CF-07 reflujo y controles criticos",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-tablet",
+      "caso": "CF-07 reflujo y controles criticos",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-mobile",
+      "caso": "CF-07 reflujo y controles criticos",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-desktop",
+      "caso": "CF-07 reflujo y controles criticos",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-laptop",
+      "caso": "CF-07 reflujo y controles criticos",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-tablet",
+      "caso": "CF-07 reflujo y controles criticos",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-mobile",
+      "caso": "CF-07 reflujo y controles criticos",
+      "resultado": "passed"
+    }
+  ]
+}

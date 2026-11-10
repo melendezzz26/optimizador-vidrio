@@ -1,0 +1,297 @@
+{
+  "fecha_utc": "2026-11-10T05:07:15.836Z",
+  "duracion_ms": 305027.662,
+  "esperados": 56,
+  "omitidos": 0,
+  "fallidos": 0,
+  "tests": [
+    {
+      "proyecto": "chrome-desktop",
+      "caso": "CF-01 login real y navegacion",
+      "resultado": "passed",
+      "version": "157.0.8103.39"
+    },
+    {
+      "proyecto": "chrome-desktop",
+      "caso": "CF-02 pedidos, formulario e importacion",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-desktop",
+      "caso": "CF-03 inventario y formulario de plancha",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-desktop",
+      "caso": "CF-06 rutas y controles principales",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-desktop",
+      "caso": "CF-04 y CF-05 comparacion real",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-desktop",
+      "caso": "CF-02 importacion real de CSV",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-desktop",
+      "caso": "CF-03 edicion y formulario de retazo",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-laptop",
+      "caso": "CF-01 login real y navegacion",
+      "resultado": "passed",
+      "version": "157.0.8103.39"
+    },
+    {
+      "proyecto": "chrome-laptop",
+      "caso": "CF-02 pedidos, formulario e importacion",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-laptop",
+      "caso": "CF-03 inventario y formulario de plancha",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-laptop",
+      "caso": "CF-06 rutas y controles principales",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-laptop",
+      "caso": "CF-04 y CF-05 comparacion real",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-laptop",
+      "caso": "CF-02 importacion real de CSV",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-laptop",
+      "caso": "CF-03 edicion y formulario de retazo",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-tablet",
+      "caso": "CF-01 login real y navegacion",
+      "resultado": "passed",
+      "version": "157.0.8103.39"
+    },
+    {
+      "proyecto": "chrome-tablet",
+      "caso": "CF-02 pedidos, formulario e importacion",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-tablet",
+      "caso": "CF-03 inventario y formulario de plancha",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-tablet",
+      "caso": "CF-06 rutas y controles principales",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-tablet",
+      "caso": "CF-04 y CF-05 comparacion real",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-tablet",
+      "caso": "CF-02 importacion real de CSV",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-tablet",
+      "caso": "CF-03 edicion y formulario de retazo",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-mobile",
+      "caso": "CF-01 login real y navegacion",
+      "resultado": "passed",
+      "version": "157.0.8103.39"
+    },
+    {
+      "proyecto": "chrome-mobile",
+      "caso": "CF-02 pedidos, formulario e importacion",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-mobile",
+      "caso": "CF-03 inventario y formulario de plancha",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-mobile",
+      "caso": "CF-06 rutas y controles principales",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-mobile",
+      "caso": "CF-04 y CF-05 comparacion real",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-mobile",
+      "caso": "CF-02 importacion real de CSV",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "chrome-mobile",
+      "caso": "CF-03 edicion y formulario de retazo",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-desktop",
+      "caso": "CF-01 login real y navegacion",
+      "resultado": "passed",
+      "version": "157.0.4341.42"
+    },
+    {
+      "proyecto": "msedge-desktop",
+      "caso": "CF-02 pedidos, formulario e importacion",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-desktop",
+      "caso": "CF-03 inventario y formulario de plancha",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-desktop",
+      "caso": "CF-06 rutas y controles principales",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-desktop",
+      "caso": "CF-04 y CF-05 comparacion real",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-desktop",
+      "caso": "CF-02 importacion real de CSV",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-desktop",
+      "caso": "CF-03 edicion y formulario de retazo",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-laptop",
+      "caso": "CF-01 login real y navegacion",
+      "resultado": "passed",
+      "version": "157.0.4341.42"
+    },
+    {
+      "proyecto": "msedge-laptop",
+      "caso": "CF-02 pedidos, formulario e importacion",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-laptop",
+      "caso": "CF-03 inventario y formulario de plancha",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-laptop",
+      "caso": "CF-06 rutas y controles principales",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-laptop",
+      "caso": "CF-04 y CF-05 comparacion real",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-laptop",
+      "caso": "CF-02 importacion real de CSV",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-laptop",
+      "caso": "CF-03 edicion y formulario de retazo",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-tablet",
+      "caso": "CF-01 login real y navegacion",
+      "resultado": "passed",
+      "version": "157.0.4341.42"
+    },
+    {
+      "proyecto": "msedge-tablet",
+      "caso": "CF-02 pedidos, formulario e importacion",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-tablet",
+      "caso": "CF-03 inventario y formulario de plancha",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-tablet",
+      "caso": "CF-06 rutas y controles principales",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-tablet",
+      "caso": "CF-04 y CF-05 comparacion real",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-tablet",
+      "caso": "CF-02 importacion real de CSV",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-tablet",
+      "caso": "CF-03 edicion y formulario de retazo",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-mobile",
+      "caso": "CF-01 login real y navegacion",
+      "resultado": "passed",
+      "version": "157.0.4341.42"
+    },
+    {
+      "proyecto": "msedge-mobile",
+      "caso": "CF-02 pedidos, formulario e importacion",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-mobile",
+      "caso": "CF-03 inventario y formulario de plancha",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-mobile",
+      "caso": "CF-06 rutas y controles principales",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-mobile",
+      "caso": "CF-04 y CF-05 comparacion real",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-mobile",
+      "caso": "CF-02 importacion real de CSV",
+      "resultado": "passed"
+    },
+    {
+      "proyecto": "msedge-mobile",
+      "caso": "CF-03 edicion y formulario de retazo",
+      "resultado": "passed"
+    }
+  ]
+}
