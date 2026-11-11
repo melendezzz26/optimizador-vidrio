@@ -9,7 +9,7 @@
 | Tareas | T01 — Medir escenarios de fallo |
 | Tipo | Tarea de calidad (auditoría, documentación y medición; sin cambios de código, de BD ni de despliegue) |
 | Sprint | Sprint 2 |
-| Versión | 1.3 |
+| Versión | 1.4 |
 | Estado | **Draft** |
 | Responsable | Fabricio Danniel Aguilar Chavez (`fabrilar1`) |
 | Reviewer | Andro Joseph Quispe Cesias (distinto del autor) |
@@ -18,7 +18,7 @@
 | Código auditado | `newglass-backend`, rama `main` en `7a99663` (repo independiente desde EN-REPO-001; su raíz es el antiguo `backend/`) |
 | Fecha | 10/11/2026 |
 | Característica ISO/IEC 25010 | Fiabilidad (§4.5 del modelo de calidad); cubre en parte el vacío **V-02** y la parte de TA-049 del vacío **V-18** |
-| Evidencia | `docs/evidence/sprint-02/TA-QA-004/README.md` (se crea en F2) |
+| Evidencia | [docs/evidence/sprint-02/TA-QA-004](../evidence/sprint-02/TA-QA-004/README.md) |
 | Referencias | [Modelo de calidad ISO 25010](../quality/ISO-25010-modelo-calidad.md) · [Matriz TA-QA-001](../quality/TA-QA-001-matriz-metricas-iso25023.md) · [SPEC-TA-049 (histórica)](SPEC-TA-049-presupuesto-tiempo.md) · [S2-TA049-recuperacion-pedidos.md](../reviews/S2-TA049-recuperacion-pedidos.md) · [TA-037 admission-lifecycle.md](../evidence/sprint-02/TA-037/admission-lifecycle.md) · [SPEC-TA-QA-006](SPEC-TA-QA-006-seguridad-permisos.md) |
 
 ## 1. Objetivo
@@ -255,8 +255,8 @@ resultado: ningún caso falló.
 | D-13 | Se agrega MR-05 "Tiempo de recuperación (ms)", medido como cota superior, con meta menor que el `Retry-After` de 15 s. La fuente inicial (JUnit del CI) se reemplazó por la de D-15. | Decisión del responsable (F1, 10/11/2026), para cubrir "tiempo de recuperación" de CA-03. |
 | D-14 | MR-01 mide corridas y comparaciones (incluye `test_comparison_recovery.py`) y deja fuera `test_run_concurrency.py::test_time_budget_stops_the_run_as_failed_and_frees_the_slot`. | Corrección de F1: esa prueba verifica `FALLIDA`, que no hubo consumo y que se liberó la plaza, pero no el estado de los pedidos que exige RN-03. Sigue en la matriz §4.2 (M4) y en CA-01. |
 | D-15 | MR-05 se mide con `pytest --durations=0 --durations-min=0`, tomando solo la fase `call`, en un entorno Linux con PostgreSQL; el entorno y el comando quedan registrados en §5.3. Agregar `--durations` al CI de `newglass-backend` queda como **mejora recomendada** a Fabricio Melendez, no como requisito de esta tarea. | Decisión del responsable (cierre de P-02 con la opción c, 10/11/2026). El CI no publica tiempos por caso (§4.3), y la fase `call` excluye la preparación de la BD, que distorsionaba la cota. |
-
 | D-16 | El caso `test_comparison_supervision_v2.py::test_fastapi_lifespan_recovers_and_shuts_down_real_v2_without_routes` se mantiene en MR-05 y se mide en la misma ejecución de §5.3, seleccionado por su id de nodo. Esa ejecución única reemplaza la medición anterior. | Decisión del responsable (cierre de P-03 con la opción a, 11/11/2026). Así los 17 casos de MR-05 tienen tiempo medido en una sola corrida reproducible. |
+| D-17 | La suite local de Windows y el `collect-only` se ejecutan en `newglass-backend`, rama `test/TA-QA-006-port-security-tests` (`main` en `7a99663` más 3 archivos de prueba de seguridad, sin cambios en `app/`). La ejecución de CI que se enlaza es la del PR de traslado de esas pruebas a `main`. | Decisión del responsable (F2, 11/11/2026). El código de la aplicación y las pruebas de fiabilidad son idénticos a `main`; solo se suman 3 archivos de prueba que no tocan los mecanismos M1 a M6. |
 
 ### Preguntas abiertas
 
@@ -284,7 +284,7 @@ Criterios de Notion para TA-QA-004, T01 — Medir escenarios de fallo (D-12).
 | CA-01 | Fallos simulados en etapas críticas. | M1 a M5 | Admisión y arranque: `test_run_admission.py`, `test_run_concurrency.py` (rechazo, fallo del cálculo, desconexión, plazo, fallo al iniciar el hilo). Cálculo, desconexión y guardado: `api/test_run_recovery.py`, `integration/test_run_recovery.py` (incluye salida abrupta real), `test_comparison_recovery.py`. Procesos de la comparación: `test_comparison_supervision_v2.py` (caída de un motor, fallo de escritura, fallo de arranque de un proceso). Reinicio: `test_comparison_v2_http_restart.py`. Confirmación: `test_confirmation_rollback.py`. | MR-01, MR-02, MR-04 | Tabla en la evidencia: etapa → fallo simulado → mecanismo → prueba → entorno (Windows, PostgreSQL en el CI, solo Linux) → resultado. |
 | CA-02 | Sin descuento duplicado ni pedidos inconsistentes. | M4, M5, M6 | `test_confirmation_concurrency.py` (misma optimización dos veces, carrera por el último retazo o plancha); `test_confirmation_rollback.py`; `integration/test_run_recovery.py` (lote inconsistente sin reinicio parcial, dos fallos que nunca liberan a otro dueño, aviso tardío); `test_stuck_order_reconciliation_unit.py` y `test_stuck_order_reconciliation_pg.py` (solo A y B cambian). | MR-02, MR-03 | MR-02 = 100 % y MR-03 = 100 % en el CI; casos de lote inconsistente y de reconciliación en verde. |
 | CA-03 | Tiempo de recuperación y tasa de éxito. | M1 a M4 | Las de MR-01, MR-04 y MR-05 (§5.2). | MR-01, MR-04 (tasa de éxito); MR-05 (tiempo) | MR-01 y MR-04 medidas con su denominador y el resumen del CI. MR-05 medida con `pytest --durations`, fase `call`, en sus 17 casos (D-15, D-16, §5.3): máximo 5 480 ms < 15 000 ms. |
-| CA-04 | Evidencia trazable. | — | Suite local de Windows y `Backend CI` de `newglass-backend` | Todas | `docs/evidence/sprint-02/TA-QA-004/README.md` con: commit de `newglass-backend` medido, enlace a la ejecución del CI (id y fecha), suite local con `0 failed` y omisiones explicadas, denominadores de `--collect-only`, cada resultado ligado a `archivo::prueba`, y las salidas de los comandos en texto (D-10). |
+| CA-04 | Evidencia trazable. | — | Suite local de Windows y `Backend CI` de `newglass-backend` | Todas | `docs/evidence/sprint-02/TA-QA-004/README.md` con: commit de `newglass-backend` medido, enlace a la ejecución del CI del PR de traslado a `main` (id y fecha; D-17), suite local con `0 failed` y omisiones explicadas, denominadores de `--collect-only` (`collect-only.txt`), cada resultado ligado a `archivo::prueba`, y las salidas de los comandos en texto (D-10). |
 
 ## 9. Entregables complementarios
 
@@ -359,7 +359,7 @@ No se crean pruebas: se ejecutan y miden las existentes.
 | Suite completa con el comando del CI para Windows (§3) | Windows, raíz de `newglass-backend` | `0 failed`; pruebas de PostgreSQL omitidas por falta de binarios locales |
 | Archivos de §4.2 que corren en Windows, con `-ra` | Windows | Unitarios en verde; los de PostgreSQL omitidos con su motivo |
 | `pytest --collect-only -q` sobre las pruebas de MR-01 a MR-05 | Windows | Denominadores de cada métrica |
-| `Backend CI` (suite general con PostgreSQL y los cuatro procesos aislados) | GitHub Actions de `newglass-backend` | Ejecución verde en `main` con 0 fallidas, 0 errores y 0 omitidas por fase; base para MR-01 a MR-04 |
+| `Backend CI` (suite general con PostgreSQL y los cuatro procesos aislados) | GitHub Actions de `newglass-backend`, PR de traslado a `main` (D-17) | Ejecución verde con 0 fallidas, 0 errores y 0 omitidas por fase; base para MR-01 a MR-04 |
 | Comando de §5.3 con `--durations=0 --durations-min=0` | Entorno Linux con PostgreSQL | 0 failed; tiempos `call` para MR-05 (D-15) |
 
 ## 11. Evidencia requerida
@@ -381,3 +381,4 @@ No se crean pruebas: se ejecutan y miden las existentes.
 | 10/11/2026 | 1.1 | Draft | Criterios reemplazados por los cuatro de Notion (T01), con mecanismos, pruebas y métricas (D-12). Nueva sección "Entregables complementarios" (SPEC-TA-049 histórica, riesgos, procedimiento, modelo de calidad). Nueva MR-05 "Tiempo de recuperación (ms)" con sus 11 casos (D-13). MR-01 corregida (D-14). Auditoría de lo que publica el CI (§4.3), riesgo R-07 y pregunta abierta P-02. P-01 cerrada. |
 | 10/11/2026 | 1.2 | Draft | P-02 cerrada con D-15: MR-05 se mide con `pytest --durations`, fase `call`, en un entorno Linux con PostgreSQL; `--durations` en el CI queda como mejora recomendada. Nueva §5.3 con entorno, comando y resultado (máximo 5 070 ms < 15 000 ms, cumple). Tabla de MR-05 con el tiempo de cada caso y conteos corregidos (6 y 4 casos parametrizados; 17 casos, 16 medidos). Conteo 27/31 por conciliar en F2. Nueva pregunta abierta P-03 (caso `lifespan` sin tiempo). |
 | 11/11/2026 | 1.3 | Draft | Nueva medición única de MR-05 que reemplaza la anterior (28 passed, 0 failed; PostgreSQL 16.15, Python 3.13.18), con el caso `lifespan` incluido: P-03 cerrada con D-16. Tabla de MR-05 con el tiempo `call` de cada uno de los 17 casos; máximo 5 480 ms < 15 000 ms. Conteo conciliado (27 + 1 = 28; el 31 anterior sumaba dos corridas). Salida guardada en `docs/evidence/sprint-02/TA-QA-004/medicion-MR05.txt`. |
+| 11/11/2026 | 1.4 | Draft | Evidencia F2 creada (README, `collect-only.txt`). D-17: suite local y `collect-only` en `test/TA-QA-006-port-security-tests` (sin cambios en `app/`) y CI del PR de traslado a `main`. Denominadores confirmados: MR-01 = 26, MR-02 = 9, MR-03 = 4, MR-04 = 12, MR-05 = 17. Corrección de formato: D-16 vuelve a la tabla de decisiones (una línea en blanco la separaba). Pendiente: enlace y resumen del CI. |
