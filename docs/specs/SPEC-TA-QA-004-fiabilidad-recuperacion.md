@@ -9,7 +9,7 @@
 | Tareas | T01 — Medir escenarios de fallo |
 | Tipo | Tarea de calidad (auditoría, documentación y medición; sin cambios de código, de BD ni de despliegue) |
 | Sprint | Sprint 2 |
-| Versión | 1.2 |
+| Versión | 1.3 |
 | Estado | **Draft** |
 | Responsable | Fabricio Danniel Aguilar Chavez (`fabrilar1`) |
 | Reviewer | Andro Joseph Quispe Cesias (distinto del autor) |
@@ -164,25 +164,31 @@ sus casos se aprobaron.
 | MR-04 | Recuperación coherente tras reinicio o pérdida del supervisor | Recuperabilidad | casos aprobados ÷ casos ejecutados × 100. Cada caso verifica RN-02: cierre sin recalcular solo con prueba de parada, o bloqueo con admisión reservada | 100 % | `tests/integration/optimization/test_comparison_v2_http_restart.py`; de `test_comparison_supervision_v2.py`: `test_startup_recovery_ignores_standalone_ff_and_keeps_invalid_comparison_reserved`, `test_recovery_requires_process_identity_proof_without_recalculation`, `test_fastapi_lifespan_recovers_and_shuts_down_real_v2_without_routes`, `test_failed_closure_commit_keeps_lease_until_successful_retry`, `test_recovery_on_unsupported_platform_keeps_block_without_pid_inference` | CI: suite general (`http_restart`) y proceso aislado de supervisión (solo Linux) |
 | MR-05 | Tiempo de recuperación | Recuperabilidad | tiempo desde el fallo inyectado hasta que los pedidos vuelven a `PENDIENTE` (o la comparación queda cerrada tras el reinicio), medido como **cota superior** con el tiempo de la fase `call` de cada caso según `pytest --durations=0 --durations-min=0` (excluye `setup` y `teardown`). Se informa el máximo de cada grupo y el máximo global, en ms | máximo < 15 000 ms (`Retry-After` de la admisión) | Ver lista de MR-05 abajo | `pytest --durations`, fase `call`, en un entorno Linux con PostgreSQL (D-15, §5.3) |
 
-**Pruebas de MR-05** (17 casos; 16 medidos en la ejecución de §5.3):
+**Pruebas de MR-05** (17 casos, todos medidos en la ejecución de §5.3):
 
-| Grupo | Prueba | Casos | Fin de la recuperación que verifica | Tiempo `call` medido |
+| Grupo | Prueba | Caso | Fin de la recuperación que verifica | Tiempo `call` |
 |---|---|---|---|---|
-| Corrida First Fit | `tests/api/optimization/test_run_recovery.py::test_stopped_engine_releases_entire_batch_and_can_retry` | 6 (3 errores × `after_last_piece`) | `assert_released`: corrida `FALLIDA` y pedidos en `PENDIENTE` | 120–190 ms |
-| | `…::test_failed_result_flush_rolls_back_then_releases_in_separate_transaction` | 1 | Ídem (`RESULT_SAVE_FAILED`) | 30–100 ms (rango del grupo) |
-| | `…::test_deadline_after_last_engine_checkpoint_cannot_commit_no_solution` | 1 | Ídem (`TIME_BUDGET_EXCEEDED`) | 30–100 ms (rango del grupo) |
-| | `…::test_worker_start_failure_recovers_accepted_orders` | 1 | Ídem (`EXECUTION_INTERRUPTED`) | 30–100 ms (rango del grupo) |
-| | `…::test_error_constructing_stream_after_acceptance_is_propagated_and_recovers` | 1 | Ídem (`EXECUTION_INTERRUPTED`) | 30–100 ms (rango del grupo) |
-| | `…::test_disconnect_before_body_iterator_starts_recovers_accepted_batch` | 1 | Ídem (`EXECUTION_INTERRUPTED`) | 30–100 ms (rango del grupo) |
-| Comparación por plazo | `tests/api/optimization/test_comparison_recovery.py::test_comparison_deadline_releases_only_after_stop_and_allows_new_work` | 4 (`v1`/`v2` × `calculation`/`global`) | Pedidos en `PENDIENTE` después de la parada | v1-global 640 ms · v1-calculation 890 ms · v2-global 1 830 ms · v2-calculation 2 980 ms |
-| Reinicio del proceso | `tests/integration/optimization/test_comparison_v2_http_restart.py::test_real_http_disconnect_then_backend_restart_never_recalculates` | 1 | Comparación cerrada tras reiniciar Uvicorn | 5 070 ms |
-| | `test_comparison_supervision_v2.py::test_fastapi_lifespan_recovers_and_shuts_down_real_v2_without_routes` | 1 | Comparación cerrada (`terminal`) por el `lifespan` | No medido: el archivo no está en el comando de §5.3 (P-03) |
+| Corrida First Fit | `tests/api/optimization/test_run_recovery.py::test_stopped_engine_releases_entire_batch_and_can_retry` | `[False-TimeBudgetExceeded-TIME_BUDGET_EXCEEDED]` | `assert_released`: corrida `FALLIDA` y pedidos en `PENDIENTE` | 190 ms |
+| | | `[True-ExecutionInterrupted-EXECUTION_INTERRUPTED]` | Ídem | 170 ms |
+| | | `[True-RuntimeError-CALCULATION_FAILED]` | Ídem | 160 ms |
+| | | `[True-TimeBudgetExceeded-TIME_BUDGET_EXCEEDED]` | Ídem | 140 ms |
+| | | `[False-RuntimeError-CALCULATION_FAILED]` | Ídem | 130 ms |
+| | | `[False-ExecutionInterrupted-EXECUTION_INTERRUPTED]` | Ídem | 110 ms |
+| | `…::test_failed_result_flush_rolls_back_then_releases_in_separate_transaction` | — | Ídem (`RESULT_SAVE_FAILED`) | 90 ms |
+| | `…::test_deadline_after_last_engine_checkpoint_cannot_commit_no_solution` | — | Ídem (`TIME_BUDGET_EXCEEDED`) | 60 ms |
+| | `…::test_worker_start_failure_recovers_accepted_orders` | — | Ídem (`EXECUTION_INTERRUPTED`) | 40 ms |
+| | `…::test_error_constructing_stream_after_acceptance_is_propagated_and_recovers` | — | Ídem (`EXECUTION_INTERRUPTED`) | 40 ms |
+| | `…::test_disconnect_before_body_iterator_starts_recovers_accepted_batch` | — | Ídem (`EXECUTION_INTERRUPTED`) | 30 ms |
+| Comparación por plazo | `tests/api/optimization/test_comparison_recovery.py::test_comparison_deadline_releases_only_after_stop_and_allows_new_work` | `[v2-calculation]` | Pedidos en `PENDIENTE` después de la parada | 3 310 ms |
+| | | `[v2-global]` | Ídem | 2 010 ms |
+| | | `[v1-calculation]` | Ídem | 830 ms |
+| | | `[v1-global]` | Ídem | 660 ms |
+| Reinicio del proceso | `tests/integration/optimization/test_comparison_v2_http_restart.py::test_real_http_disconnect_then_backend_restart_never_recalculates` | — | Comparación cerrada tras reiniciar Uvicorn | **5 480 ms** |
+| | `tests/integration/optimization/test_comparison_supervision_v2.py::test_fastapi_lifespan_recovers_and_shuts_down_real_v2_without_routes` | — | Comparación cerrada (`terminal`) por el `lifespan` | 700 ms |
 
-"Rango del grupo": la medición registró un solo rango, 30–100 ms, para los casos de
-`tests/api/optimization/test_run_recovery.py` distintos de
-`test_stopped_engine_releases_entire_batch_and_can_retry`. Ese rango también incluye
-`test_failure_of_recovery_commit_is_visible_and_requires_reconciliation`, que no forma parte
-de MR-05.
+Los tiempos se toman de las filas `call` de
+[medicion-MR05.txt](../evidence/sprint-02/TA-QA-004/medicion-MR05.txt), que `pytest`
+informa con resolución de 10 ms.
 
 No se incluye `test_failure_of_recovery_commit_is_visible_and_requires_reconciliation`: sus
 pedidos solo vuelven a `PENDIENTE` después de una reconciliación explícita, que no es una
@@ -202,26 +208,31 @@ TA-QA-002 y no se mide aquí (D-05).
 | Campo | Valor |
 |---|---|
 | Código medido | `newglass-backend`, `main` en `7a99663` |
-| Entorno | Entorno de verificación Linux con PostgreSQL 16 y Python 3.13. **No es el CI**, que usa Python 3.11 (ubuntu-24.04). |
+| Entorno | Entorno de verificación Linux (Ubuntu 24.04) con PostgreSQL 16.15 y Python 3.13.18. **No es el CI**, que usa Python 3.11 (ubuntu-24.04). |
 | Directorio | Raíz de `newglass-backend` |
-| Comando | `NEWGLASS_REQUIRE_POSTGRES=1 python -m pytest tests/api/optimization/test_run_recovery.py tests/integration/optimization/test_run_recovery.py tests/api/optimization/test_comparison_recovery.py tests/integration/optimization/test_comparison_v2_http_restart.py -q --durations=0 --durations-min=0` |
-| Resultado reportado | 31 passed, 0 failed |
+| Comando | `NEWGLASS_REQUIRE_POSTGRES=1 python -m pytest tests/api/optimization/test_run_recovery.py tests/integration/optimization/test_run_recovery.py tests/api/optimization/test_comparison_recovery.py tests/integration/optimization/test_comparison_v2_http_restart.py "tests/integration/optimization/test_comparison_supervision_v2.py::test_fastapi_lifespan_recovers_and_shuts_down_real_v2_without_routes" -q --durations=0 --durations-min=0` |
+| Resultado | **28 passed, 0 failed**, 1 warning, en 27,14 s: los 27 casos de los cuatro archivos (12 + 10 + 4 + 1) más el caso `lifespan`. Coincide con el conteo de los casos en el código. |
 | Fase usada | `call` de la tabla de `--durations` (se descartan las filas `setup` y `teardown`) |
+| Salida completa | [docs/evidence/sprint-02/TA-QA-004/medicion-MR05.txt](../evidence/sprint-02/TA-QA-004/medicion-MR05.txt) |
 
-| Grupo | Máximo `call` |
-|---|---|
-| Corrida First Fit (`test_stopped_engine…` y los otros cinco casos de MR-05) | 190 ms |
-| Comparación por plazo | 2 980 ms (v2-calculation) |
-| Reinicio del proceso (`http_restart`) | 5 070 ms |
-| **Máximo global de MR-05** | **5 070 ms < 15 000 ms → cumple** |
+Esta ejecución única reemplaza la medición anterior, que sumaba dos corridas superpuestas
+(31 casos).
 
-Tiempos medidos fuera de MR-05, solo informativos: `tests/integration/optimization/test_run_recovery.py`,
-20–80 ms; `test_abrupt_process_exit_requires_explicit_offline_reconciliation`, 570 ms (su
-recuperación requiere `recover_stopped_run`, no es automática).
+| Grupo | Casos | Máximo `call` |
+|---|---|---|
+| Corrida First Fit | 11 | 190 ms |
+| Comparación por plazo | 4 | 3 310 ms (`v2-calculation`) |
+| Reinicio del proceso | 2 | 5 480 ms (`http_restart`) |
+| **Máximo global de MR-05** | **17** | **5 480 ms < 15 000 ms → cumple** |
 
-**Conteo por conciliar.** El conteo estático de los cuatro archivos del comando da 27 casos
-(12 + 10 + 4 + 1), y el resultado reportado es 31 passed. La diferencia se concilia en F2
-con la salida completa del comando, que se registra en "Salidas de comandos" de la evidencia.
+Tiempos medidos fuera de MR-05, solo informativos:
+`tests/integration/optimization/test_run_recovery.py`, 20–80 ms por caso, salvo
+`test_abrupt_process_exit_requires_explicit_offline_reconciliation`, 550 ms (su recuperación
+requiere `recover_stopped_run`, no es automática);
+`test_failure_of_recovery_commit_is_visible_and_requires_reconciliation`, 80 ms.
+
+El resumen de advertencias de la salida no detalla la advertencia (1 warning). No afecta al
+resultado: ningún caso falló.
 
 ## 6. Decisiones y preguntas abiertas
 
@@ -245,13 +256,12 @@ con la salida completa del comando, que se registra en "Salidas de comandos" de 
 | D-14 | MR-01 mide corridas y comparaciones (incluye `test_comparison_recovery.py`) y deja fuera `test_run_concurrency.py::test_time_budget_stops_the_run_as_failed_and_frees_the_slot`. | Corrección de F1: esa prueba verifica `FALLIDA`, que no hubo consumo y que se liberó la plaza, pero no el estado de los pedidos que exige RN-03. Sigue en la matriz §4.2 (M4) y en CA-01. |
 | D-15 | MR-05 se mide con `pytest --durations=0 --durations-min=0`, tomando solo la fase `call`, en un entorno Linux con PostgreSQL; el entorno y el comando quedan registrados en §5.3. Agregar `--durations` al CI de `newglass-backend` queda como **mejora recomendada** a Fabricio Melendez, no como requisito de esta tarea. | Decisión del responsable (cierre de P-02 con la opción c, 10/11/2026). El CI no publica tiempos por caso (§4.3), y la fase `call` excluye la preparación de la BD, que distorsionaba la cota. |
 
+| D-16 | El caso `test_comparison_supervision_v2.py::test_fastapi_lifespan_recovers_and_shuts_down_real_v2_without_routes` se mantiene en MR-05 y se mide en la misma ejecución de §5.3, seleccionado por su id de nodo. Esa ejecución única reemplaza la medición anterior. | Decisión del responsable (cierre de P-03 con la opción a, 11/11/2026). Así los 17 casos de MR-05 tienen tiempo medido en una sola corrida reproducible. |
+
 ### Preguntas abiertas
 
-| ID | Pregunta | Opciones |
-|---|---|---|
-| P-03 | `test_comparison_supervision_v2.py::test_fastapi_lifespan_recovers_and_shuts_down_real_v2_without_routes` es uno de los casos de MR-05, pero su archivo no está en el comando de §5.3, así que no tiene tiempo medido. | (a) Repetir la medición agregando ese archivo (en el CI corre en un proceso aparte; aquí basta un segundo comando con `--durations`). (b) Sacarlo de MR-05 y dejarlo solo en MR-04 (tasa de éxito). |
-
-P-01 (criterios de Notion) se cerró con D-12 y P-02 (fuente de MR-05) con D-15.
+Ninguna. P-01 (criterios de Notion) se cerró con D-12, P-02 (fuente de MR-05) con D-15 y
+P-03 (caso `lifespan`) con D-16.
 
 ## 7. Diseño técnico
 
@@ -273,7 +283,7 @@ Criterios de Notion para TA-QA-004, T01 — Medir escenarios de fallo (D-12).
 |---|---|---|---|---|---|
 | CA-01 | Fallos simulados en etapas críticas. | M1 a M5 | Admisión y arranque: `test_run_admission.py`, `test_run_concurrency.py` (rechazo, fallo del cálculo, desconexión, plazo, fallo al iniciar el hilo). Cálculo, desconexión y guardado: `api/test_run_recovery.py`, `integration/test_run_recovery.py` (incluye salida abrupta real), `test_comparison_recovery.py`. Procesos de la comparación: `test_comparison_supervision_v2.py` (caída de un motor, fallo de escritura, fallo de arranque de un proceso). Reinicio: `test_comparison_v2_http_restart.py`. Confirmación: `test_confirmation_rollback.py`. | MR-01, MR-02, MR-04 | Tabla en la evidencia: etapa → fallo simulado → mecanismo → prueba → entorno (Windows, PostgreSQL en el CI, solo Linux) → resultado. |
 | CA-02 | Sin descuento duplicado ni pedidos inconsistentes. | M4, M5, M6 | `test_confirmation_concurrency.py` (misma optimización dos veces, carrera por el último retazo o plancha); `test_confirmation_rollback.py`; `integration/test_run_recovery.py` (lote inconsistente sin reinicio parcial, dos fallos que nunca liberan a otro dueño, aviso tardío); `test_stuck_order_reconciliation_unit.py` y `test_stuck_order_reconciliation_pg.py` (solo A y B cambian). | MR-02, MR-03 | MR-02 = 100 % y MR-03 = 100 % en el CI; casos de lote inconsistente y de reconciliación en verde. |
-| CA-03 | Tiempo de recuperación y tasa de éxito. | M1 a M4 | Las de MR-01, MR-04 y MR-05 (§5.2). | MR-01, MR-04 (tasa de éxito); MR-05 (tiempo) | MR-01 y MR-04 medidas con su denominador y el resumen del CI. MR-05 medida con `pytest --durations`, fase `call` (D-15, §5.3): máximo 5 070 ms < 15 000 ms. |
+| CA-03 | Tiempo de recuperación y tasa de éxito. | M1 a M4 | Las de MR-01, MR-04 y MR-05 (§5.2). | MR-01, MR-04 (tasa de éxito); MR-05 (tiempo) | MR-01 y MR-04 medidas con su denominador y el resumen del CI. MR-05 medida con `pytest --durations`, fase `call`, en sus 17 casos (D-15, D-16, §5.3): máximo 5 480 ms < 15 000 ms. |
 | CA-04 | Evidencia trazable. | — | Suite local de Windows y `Backend CI` de `newglass-backend` | Todas | `docs/evidence/sprint-02/TA-QA-004/README.md` con: commit de `newglass-backend` medido, enlace a la ejecución del CI (id y fecha), suite local con `0 failed` y omisiones explicadas, denominadores de `--collect-only`, cada resultado ligado a `archivo::prueba`, y las salidas de los comandos en texto (D-10). |
 
 ## 9. Entregables complementarios
@@ -357,8 +367,8 @@ No se crean pruebas: se ejecutan y miden las existentes.
 - `docs/evidence/sprint-02/TA-QA-004/README.md` con:
   - la tabla de fallos simulados por etapa (CA-01);
   - los resultados de no duplicación e inconsistencia, MR-02 y MR-03 (CA-02);
-  - MR-01, MR-04 y MR-05 con su denominador, valor y fuente (CA-03), incluida la salida
-    completa del comando de §5.3 con la tabla de `--durations`;
+  - MR-01, MR-04 y MR-05 con su denominador, valor y fuente (CA-03), con enlace a
+    `medicion-MR05.txt` (salida completa del comando de §5.3 con la tabla de `--durations`);
   - la trazabilidad: commit medido, ejecución del CI, suite local y salidas de los
     comandos en texto, sin capturas (CA-04, D-10);
   - los entregables complementarios de §9.2 y §9.3, este último marcado como no ejecutado.
@@ -370,3 +380,4 @@ No se crean pruebas: se ejecutan y miden las existentes.
 | 10/11/2026 | 1.0 | Draft | Creación con la auditoría F0 (M1 a M6 y pruebas por entorno), recorte de alcance, métricas MR-01 a MR-04, riesgos R-01 a R-06, hallazgo H-01, procedimiento de reconciliación no ejecutado, decisiones D-01 a D-12 y criterios CA-01 a CA-06. |
 | 10/11/2026 | 1.1 | Draft | Criterios reemplazados por los cuatro de Notion (T01), con mecanismos, pruebas y métricas (D-12). Nueva sección "Entregables complementarios" (SPEC-TA-049 histórica, riesgos, procedimiento, modelo de calidad). Nueva MR-05 "Tiempo de recuperación (ms)" con sus 11 casos (D-13). MR-01 corregida (D-14). Auditoría de lo que publica el CI (§4.3), riesgo R-07 y pregunta abierta P-02. P-01 cerrada. |
 | 10/11/2026 | 1.2 | Draft | P-02 cerrada con D-15: MR-05 se mide con `pytest --durations`, fase `call`, en un entorno Linux con PostgreSQL; `--durations` en el CI queda como mejora recomendada. Nueva §5.3 con entorno, comando y resultado (máximo 5 070 ms < 15 000 ms, cumple). Tabla de MR-05 con el tiempo de cada caso y conteos corregidos (6 y 4 casos parametrizados; 17 casos, 16 medidos). Conteo 27/31 por conciliar en F2. Nueva pregunta abierta P-03 (caso `lifespan` sin tiempo). |
+| 11/11/2026 | 1.3 | Draft | Nueva medición única de MR-05 que reemplaza la anterior (28 passed, 0 failed; PostgreSQL 16.15, Python 3.13.18), con el caso `lifespan` incluido: P-03 cerrada con D-16. Tabla de MR-05 con el tiempo `call` de cada uno de los 17 casos; máximo 5 480 ms < 15 000 ms. Conteo conciliado (27 + 1 = 28; el 31 anterior sumaba dos corridas). Salida guardada en `docs/evidence/sprint-02/TA-QA-004/medicion-MR05.txt`. |
