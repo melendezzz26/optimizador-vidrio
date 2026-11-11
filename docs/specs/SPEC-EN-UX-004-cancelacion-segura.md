@@ -107,6 +107,13 @@ En la barra de contexto de una comparación **v2 cancelable**, botón visible `C
 
 ## 9. Addendum de aceptación posterior al merge (2026-11-11)
 
+> **Runbook staging desplegado:** [EN-UX-004 — Runbook de aceptación en staging](../qa/EN-UX-004-staging-acceptance.md).
+> Preparado para una ejecución futura autorizada; **no significa staging ejecutado**.
+> El detalle adicional de encabezado genérico `Operación completada` está
+> aislado en frontend [PR #15](https://github.com/melendezzz26/newglass-frontend/pull/15),
+> apilado sobre [PR #14](https://github.com/melendezzz26/newglass-frontend/pull/14),
+> pendiente de checks y aprobación independiente al crear este addendum.
+
 ### Integración trazable
 
 | Artefacto | Referencia |
