@@ -1,0 +1,7 @@
+EVIDENCIAS DE FABRICIO - SEMANAS 10 Y 11
+
+Contenido: dos informes PDF, sus textos y capturas PNG organizadas por semana.
+Abre Semana_10_Fabricio.pdf y Semana_11_Fabricio.pdf.
+Las carpetas semana-10 y semana-11 contienen las capturas para copiarlas a tu informe.
+Esta versión no incluye scripts, archivos HTML ni ejecutables.
+Las capturas fueron obtenidas el 11/11/2026 sobre las revisiones indicadas; las limitaciones y autoría se describen en los informes.

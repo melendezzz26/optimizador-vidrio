@@ -1,26 +1,29 @@
 # Evidencias de Fabricio — semanas 10 y 11
 
-[Descargar el ZIP](Evidencias_Fabricio_Semanas_10_y_11.zip?raw=true)
+## Ver las evidencias sin descargar un ZIP
 
-Si GitHub muestra la vista del archivo, utiliza **Download raw file** (icono de descarga).
+- [Semana 10: texto y capturas en GitHub](SEMANA-10.md)
+- [Semana 11: texto y capturas en GitHub](SEMANA-11.md)
 
-1. Descarga y descomprime `Evidencias_Fabricio_Semanas_10_y_11.zip`.
-2. Abre `Evidencias_Fabricio/index.html` en tu navegador.
-3. Usa `SEMANA-10.md` y `SEMANA-11.md` para copiar o importar los textos con sus imágenes; conserva las carpetas de capturas.
+## Informes PDF
 
-El paquete contiene capturas de terminal, código e interfaz, inventarios de commits, resultados de validación y dos informes con estructura persona → actividad → tarea.
+- [Abrir PDF de semana 10](documentos/Semana_10_Fabricio.pdf) · [Descargar PDF de semana 10](documentos/Semana_10_Fabricio.pdf?raw=true)
+- [Abrir PDF de semana 11](documentos/Semana_11_Fabricio.pdf) · [Descargar PDF de semana 11](documentos/Semana_11_Fabricio.pdf?raw=true)
 
-- **Semana 10:** 28/10 al 07/11/2026, exclusivamente optimizador-vidrio, integration-02 y otras ramas remotas.
-- **Semana 11:** 08/11 al 11/11/2026, monorepo y repositorios frontend/backend separados.
-- Autoría filtrada según indicación del usuario: Fabricio Melendez / MQ y Wilder Fabricio. Los cambios de otros integrantes no se atribuyen como implementación propia.
-- Las capturas se obtuvieron el 11/11/2026 al reproducir las versiones indicadas. El gráfico histórico SP-006 está identificado como tal.
-- Los títulos T01/T02/T03 de semana 11 son una agrupación propuesta de los commits; no confirman IDs de Notion.
-- `LEEME.md` y los informes describen el alcance de las pruebas y las limitaciones detectadas.
+Los PDF generados no contienen JavaScript, formularios ni archivos incrustados, según las comprobaciones de estructura con pdfinfo y pdfdetach.
 
-## Integridad
+## Capturas y documentos
 
-Archivo: `Evidencias_Fabricio_Semanas_10_y_11.zip`  
-Tamaño: 18372145 bytes  
-SHA-256: `ddd57e0bbc45c1030d1d23f36a144fd0dac162c047c38b9f62e3f287b8624661`
+[Descargar paquete de documentos e imágenes](documentos/Evidencias_documentos_e_imagenes.zip?raw=true)
 
-Esta rama de entrega parte de `integration-02` en `02bc2ef97411eaf00e56104cc9f82cd983b18fb4`. El commit de publicación incorpora únicamente este README y el ZIP.
+Esta versión contiene únicamente 92 PNG, dos PDF y tres archivos de texto. No incluye scripts ni HTML. Las capturas también se encuentran en las carpetas semana-10 y semana-11 de esta rama, y pueden abrirse desde los informes Markdown de arriba.
+
+El paquete original incluía los scripts usados para preparar las evidencias y fue sustituido en esta entrega. No se ha confirmado la causa de la alerta que mostró el navegador. Estas comprobaciones de formato no equivalen a un análisis antivirus.
+
+- Semana 10: 28/10–07/11/2026, exclusivamente optimizador-vidrio, integration-02 y otras ramas remotas.
+- Semana 11: 08/11–11/11/2026, monorepo y repositorios separados.
+- Autoría filtrada: Fabricio Melendez / MQ y Wilder Fabricio, según confirmación del usuario.
+- Capturas obtenidas el 11/11/2026 sobre las revisiones documentadas, con datos sintéticos locales. El gráfico histórico SP-006 está identificado como tal.
+- Los títulos T01/T02/T03 de semana 11 son una agrupación propuesta; no confirman IDs de Notion.
+
+Los informes conservan los resultados de validación, el alcance de cada prueba y las limitaciones detectadas.
