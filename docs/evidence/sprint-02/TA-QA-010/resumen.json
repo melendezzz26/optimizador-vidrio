@@ -1,0 +1,11 @@
+{
+  "definidas": 26,
+  "con_resultado": 20,
+  "estados": {
+    "CUMPLE META": 6,
+    "PENDIENTE DE BASELINE": 2,
+    "RESULTADO PARCIAL": 12,
+    "NO MEDIDA": 6
+  },
+  "pr_draft": true
+}

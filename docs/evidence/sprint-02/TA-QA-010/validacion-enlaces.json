@@ -1,0 +1,78 @@
+[
+  {
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/f3ac2616754f05cab8fa2e6e194f9e39156dea30/docs/quality/TA-QA-001-matriz-metricas-iso25023.md",
+    "status": 200
+  },
+  {
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/02bc2ef97411eaf00e56104cc9f82cd983b18fb4/docs/evidence/sprint-02/TA-QA-003/README.md",
+    "status": 200
+  },
+  {
+    "url": "https://github.com/melendezzz26/newglass-frontend/blob/1868759b733a5798cf47307d6c1dffbd730e43a0/docs/evidence/sprint-02/TA-QA-008/resultados-newglass-frontend.json",
+    "status": 200
+  },
+  {
+    "url": "https://github.com/melendezzz26/newglass-frontend/blob/1868759b733a5798cf47307d6c1dffbd730e43a0/docs/evidence/sprint-02/TA-QA-008/README.md",
+    "status": 200
+  },
+  {
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/820779c4377012a849e0402f1f92a638710705a5/docs/evidence/sprint-02/TA-QA-002/raw_results.json",
+    "status": 200
+  },
+  {
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/3bf682056cb4bfe56214d545dd05faf866370cf7/docs/evidence/sprint-02/TA-QA-005/README.md",
+    "status": 200
+  },
+  {
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/06d2df49e0b24c44073d56f79ca6e6d442bcbbfc/backend/scripts/results_ta_qa_009.json",
+    "status": 200
+  },
+  {
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/02bc2ef97411eaf00e56104cc9f82cd983b18fb4/docs/quality/ISO-25010-modelo-calidad.md",
+    "status": 200
+  },
+  {
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/02bc2ef97411eaf00e56104cc9f82cd983b18fb4/docs/evidence/sprint-02/TA-QA-006/README.md",
+    "status": 200
+  },
+  {
+    "url": "https://github.com/melendezzz26/newglass-frontend/blob/1868759b733a5798cf47307d6c1dffbd730e43a0/docs/evidence/TA-045/README.md",
+    "status": 200
+  },
+  {
+    "url": "https://github.com/melendezzz26/newglass-backend/blob/2afa9d72cecee74d4c61187ff15c74564e7dde3f/docs/evidence/TA-047/README.md",
+    "status": 200
+  },
+  {
+    "url": "https://github.com/melendezzz26/newglass-frontend/blob/1868759b733a5798cf47307d6c1dffbd730e43a0/docs/evidence/HU-MAT-001/README.md",
+    "status": 200
+  },
+  {
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/02bc2ef97411eaf00e56104cc9f82cd983b18fb4/docs/evidence/sprint-02/ACADEMIC-800/README.md",
+    "status": 200
+  },
+  {
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/53b5e66ff2436f6d6d7f6f1a624660717e25bfcf/docs/evidence/sprint-02/TA-QA-003/post-merge.md",
+    "status": 200
+  },
+  {
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/b8b55ad831c229dfefc321747003da686d8a1a60/docs/specs/PLAN-EN-REPO-001-separacion-repositorios.md",
+    "status": 200
+  },
+  {
+    "url": "https://github.com/melendezzz26/newglass-frontend/blob/1868759b733a5798cf47307d6c1dffbd730e43a0/docs/MIGRATION.md",
+    "status": 200
+  },
+  {
+    "url": "https://github.com/melendezzz26/newglass-backend/blob/2afa9d72cecee74d4c61187ff15c74564e7dde3f/docs/MIGRATION.md",
+    "status": 200
+  },
+  {
+    "url": "https://www.iso.org/standard/78176.html",
+    "error": "HTTP Error 403: Forbidden"
+  },
+  {
+    "url": "https://www.iso.org/standard/35747.html",
+    "error": "HTTP Error 403: Forbidden"
+  }
+]

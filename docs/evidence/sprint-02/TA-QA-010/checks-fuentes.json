@@ -1,0 +1,280 @@
+{
+  "optimizador-vidrio#108": {
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/pull/108",
+    "author": "melendezzz26",
+    "head": "2cb11202d3869b865cf96ce0830421895cec9542",
+    "merged_at": "2026-11-08T16:57:47Z",
+    "checks": [
+      {
+        "name": "e2e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42501226297/job/128794202663"
+      },
+      {
+        "name": "backend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42501226297/job/128794202650"
+      },
+      {
+        "name": "frontend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42501226297/job/128794202450"
+      }
+    ]
+  },
+  "optimizador-vidrio#111": {
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/pull/111",
+    "author": "AndroJQC",
+    "head": "58a6ac6d91be64467b8d59c551e7286626f44d4c",
+    "merged_at": "2026-11-10T03:51:45Z",
+    "checks": [
+      {
+        "name": "frontend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42749827327/job/129610569544"
+      },
+      {
+        "name": "e2e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42749827327/job/129610569442"
+      },
+      {
+        "name": "backend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42749827327/job/129610569100"
+      }
+    ]
+  },
+  "optimizador-vidrio#112": {
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/pull/112",
+    "author": "AndroJQC",
+    "head": "558c8c39999263b26ce541a8e90553a25dc23d7b",
+    "merged_at": "2026-11-10T04:31:12Z",
+    "checks": [
+      {
+        "name": "frontend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42754305448/job/129624985243"
+      },
+      {
+        "name": "e2e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42754305448/job/129624985219"
+      },
+      {
+        "name": "backend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42754305448/job/129624984987"
+      }
+    ]
+  },
+  "optimizador-vidrio#114": {
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/pull/114",
+    "author": "fabrilar1",
+    "head": "b231010fc405113c21176380437c087f40d7a325",
+    "merged_at": "2026-11-10T13:26:55Z",
+    "checks": [
+      {
+        "name": "e2e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42766664502/job/129664648616"
+      },
+      {
+        "name": "frontend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42766664502/job/129664648434"
+      },
+      {
+        "name": "backend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42766664502/job/129664648159"
+      }
+    ]
+  },
+  "optimizador-vidrio#117": {
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/pull/117",
+    "author": "fabrilar1",
+    "head": "45578f65fea8665854c09d84245ba1c8ddc320cd",
+    "merged_at": "2026-11-10T15:55:00Z",
+    "checks": [
+      {
+        "name": "e2e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42844873577/job/129929566728"
+      },
+      {
+        "name": "frontend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42844873577/job/129929566509"
+      },
+      {
+        "name": "backend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42844873577/job/129929565971"
+      }
+    ]
+  },
+  "optimizador-vidrio#120": {
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/pull/120",
+    "author": "AndroJQC",
+    "head": "f3ac2616754f05cab8fa2e6e194f9e39156dea30",
+    "merged_at": null,
+    "checks": [
+      {
+        "name": "backend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42887405533/job/130079277137"
+      },
+      {
+        "name": "e2e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42887405533/job/130079277072"
+      },
+      {
+        "name": "frontend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42887405533/job/130079276562"
+      }
+    ]
+  },
+  "newglass-frontend#4": {
+    "url": "https://github.com/melendezzz26/newglass-frontend/pull/4",
+    "author": "AndroJQC",
+    "head": "54b852d49840983c724490e56d5b6ade00a807d6",
+    "merged_at": "2026-11-11T04:09:19Z",
+    "checks": [
+      {
+        "name": "frontend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/newglass-frontend/actions/runs/42884621064/job/130069543238"
+      },
+      {
+        "name": "e2e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/newglass-frontend/actions/runs/42884621064/job/130069542737"
+      }
+    ]
+  },
+  "newglass-frontend#5": {
+    "url": "https://github.com/melendezzz26/newglass-frontend/pull/5",
+    "author": "AndroJQC",
+    "head": "b2004785717e44dfc2785d53c3bade190800bd4e",
+    "merged_at": "2026-11-11T05:11:05Z",
+    "checks": [
+      {
+        "name": "e2e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/newglass-frontend/actions/runs/42960852712/job/130326768845"
+      },
+      {
+        "name": "frontend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/newglass-frontend/actions/runs/42960852712/job/130326768604"
+      }
+    ]
+  },
+  "newglass-frontend#6": {
+    "url": "https://github.com/melendezzz26/newglass-frontend/pull/6",
+    "author": "AndroJQC",
+    "head": "22d6ec8229479717a980136cdf6aa6ffa78a14fd",
+    "merged_at": "2026-11-11T05:12:07Z",
+    "checks": [
+      {
+        "name": "frontend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/newglass-frontend/actions/runs/42899930802/job/130122880331"
+      },
+      {
+        "name": "e2e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/newglass-frontend/actions/runs/42899930802/job/130122879819"
+      }
+    ]
+  },
+  "newglass-frontend#11": {
+    "url": "https://github.com/melendezzz26/newglass-frontend/pull/11",
+    "author": "AndroJQC",
+    "head": "f1f4311d4df430779dbe34c930f034870a2521da",
+    "merged_at": "2026-11-11T13:38:15Z",
+    "checks": [
+      {
+        "name": "e2e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/newglass-frontend/actions/runs/43028755450/job/130550036063"
+      },
+      {
+        "name": "frontend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/newglass-frontend/actions/runs/43028755450/job/130550035582"
+      }
+    ]
+  },
+  "newglass-backend#2": {
+    "url": "https://github.com/melendezzz26/newglass-backend/pull/2",
+    "author": "AndroJQC",
+    "head": "77f18e1c600922427a760e2756ae0db2423c704d",
+    "merged_at": "2026-11-11T04:27:22Z",
+    "checks": [
+      {
+        "name": "backend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/newglass-backend/actions/runs/42901509152/job/130128378029"
+      }
+    ]
+  },
+  "newglass-backend#4": {
+    "url": "https://github.com/melendezzz26/newglass-backend/pull/4",
+    "author": "fabrilar1",
+    "head": "8d3e558b01b7d08530bd3cbe0014a00745c4c6c1",
+    "merged_at": "2026-11-11T04:26:46Z",
+    "checks": [
+      {
+        "name": "backend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/newglass-backend/actions/runs/42956439041/job/130312560269"
+      }
+    ]
+  },
+  "newglass-backend#5": {
+    "url": "https://github.com/melendezzz26/newglass-backend/pull/5",
+    "author": "AndroJQC",
+    "head": "e5138a7aa9305021fb12746fe2fffc7324ff0042",
+    "merged_at": "2026-11-11T07:45:07Z",
+    "checks": [
+      {
+        "name": "backend",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/melendezzz26/newglass-backend/actions/runs/42967332465/job/130347477929"
+      }
+    ]
+  }
+}
