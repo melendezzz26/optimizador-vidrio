@@ -1,0 +1,70 @@
+{
+  "E01": {
+    "title": "Matriz corregida; PR #120 abierto",
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/f3ac2616754f05cab8fa2e6e194f9e39156dea30/docs/quality/TA-QA-001-matriz-metricas-iso25023.md"
+  },
+  "E02": {
+    "title": "TA-QA-003: resultados y JUnit; PR #112 integrado",
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/02bc2ef97411eaf00e56104cc9f82cd983b18fb4/docs/evidence/sprint-02/TA-QA-003/README.md"
+  },
+  "E03": {
+    "title": "TA-QA-008: JSON del frontend independiente; PR #4 integrado",
+    "url": "https://github.com/melendezzz26/newglass-frontend/blob/1868759b733a5798cf47307d6c1dffbd730e43a0/docs/evidence/sprint-02/TA-QA-008/resultados-newglass-frontend.json"
+  },
+  "E04": {
+    "title": "TA-QA-008: protocolo, métricas y E2E",
+    "url": "https://github.com/melendezzz26/newglass-frontend/blob/1868759b733a5798cf47307d6c1dffbd730e43a0/docs/evidence/sprint-02/TA-QA-008/README.md"
+  },
+  "E05": {
+    "title": "TA-QA-002: datos crudos de Luis en rama remota sin PR localizado",
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/820779c4377012a849e0402f1f92a638710705a5/docs/evidence/sprint-02/TA-QA-002/raw_results.json"
+  },
+  "E06": {
+    "title": "TA-QA-005: reporte de Luis; requiere corroboración del arnés",
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/3bf682056cb4bfe56214d545dd05faf866370cf7/docs/evidence/sprint-02/TA-QA-005/README.md"
+  },
+  "E07": {
+    "title": "TA-QA-009: ocho grupos de rechazos; rama sin PR localizado",
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/06d2df49e0b24c44073d56f79ca6e6d442bcbbfc/backend/scripts/results_ta_qa_009.json"
+  },
+  "E08": {
+    "title": "EN-QA-001: modelo de Aguilar; PR #114 integrado",
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/02bc2ef97411eaf00e56104cc9f82cd983b18fb4/docs/quality/ISO-25010-modelo-calidad.md"
+  },
+  "E09": {
+    "title": "TA-QA-006: seguridad de acceso de Aguilar; PR #117 integrado y port backend #4",
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/02bc2ef97411eaf00e56104cc9f82cd983b18fb4/docs/evidence/sprint-02/TA-QA-006/README.md"
+  },
+  "E10": {
+    "title": "TA-045: separación aplicada; PR frontend #5 integrado",
+    "url": "https://github.com/melendezzz26/newglass-frontend/blob/1868759b733a5798cf47307d6c1dffbd730e43a0/docs/evidence/TA-045/README.md"
+  },
+  "E11": {
+    "title": "TA-047: preflight; PR backend #2 integrado",
+    "url": "https://github.com/melendezzz26/newglass-backend/blob/2afa9d72cecee74d4c61187ff15c74564e7dde3f/docs/evidence/TA-047/README.md"
+  },
+  "E12": {
+    "title": "HU-MAT-001: seis smoke y trazabilidad; PR frontend #11/backend #5 integrados",
+    "url": "https://github.com/melendezzz26/newglass-frontend/blob/1868759b733a5798cf47307d6c1dffbd730e43a0/docs/evidence/HU-MAT-001/README.md"
+  },
+  "E13": {
+    "title": "Melendez: M6 nativo y ACADEMIC-800; PR #108 integrado",
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/02bc2ef97411eaf00e56104cc9f82cd983b18fb4/docs/evidence/sprint-02/ACADEMIC-800/README.md"
+  },
+  "E14": {
+    "title": "Regresión post-merge 564: documento en rama histórica cerrada sin merge",
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/53b5e66ff2436f6d6d7f6f1a624660717e25bfcf/docs/evidence/sprint-02/TA-QA-003/post-merge.md"
+  },
+  "E15": {
+    "title": "EN-REPO-001: estrategia compartida pendiente",
+    "url": "https://github.com/melendezzz26/optimizador-vidrio/blob/b8b55ad831c229dfefc321747003da686d8a1a60/docs/specs/PLAN-EN-REPO-001-separacion-repositorios.md"
+  },
+  "E16": {
+    "title": "Procedencia documental frontend",
+    "url": "https://github.com/melendezzz26/newglass-frontend/blob/1868759b733a5798cf47307d6c1dffbd730e43a0/docs/MIGRATION.md"
+  },
+  "E17": {
+    "title": "Procedencia documental backend",
+    "url": "https://github.com/melendezzz26/newglass-backend/blob/2afa9d72cecee74d4c61187ff15c74564e7dde3f/docs/MIGRATION.md"
+  }
+}

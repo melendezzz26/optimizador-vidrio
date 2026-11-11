@@ -1,0 +1,12 @@
+{
+  "fecha": "2026-11-11",
+  "validacion_documental": "PASS",
+  "metricas": 26,
+  "resultados_carga": 108,
+  "graficos": 7,
+  "imagenes_word": 13,
+  "enlaces_relativos": 21,
+  "pruebas_producto_ejecutadas": false,
+  "capturas_nuevas": false,
+  "secrets_en_archivos_nuevos": false
+}

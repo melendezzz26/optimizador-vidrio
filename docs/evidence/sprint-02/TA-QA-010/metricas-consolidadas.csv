@@ -1,0 +1,27 @@
+id,caracteristica,metrica,formula,meta,resultado,estado,evidencia,responsable,resultado_disponible
+MF-01,Funcional,Casos correctos,PASS / ejecutados * 100,100% criticos,50/50 = 100% en batería dirigida,CUMPLE META,E02,Andro / Melendez,True
+MF-02,Funcional,Validez geometrica,patrones validos / generados * 100,100% criticos,26/26 = 100% patrones seleccionados,CUMPLE META,E02,Andro / Melendez,True
+MF-03,Funcional,Politica de FF BF WF M4 M5 M6,casos de politica correctos / evaluados * 100,100% controlados,6/6 = 100% políticas con caso controlado; M6 no exhaustivo,CUMPLE META,E02,Andro / Melendez,True
+MP-01,Desempeno,Latencia,fin menos inicio,Baseline,"108 duraciones; 36 combinaciones; ver CSV. Windows, baseline Linux pendiente",PENDIENTE DE BASELINE,E05,Luis / Melendez,True
+MP-02,Desempeno,p50,"valor ordenado en posicion ceil(0,50 * n)",Baseline,"36 p50 recalculados por rango más cercano, n=3; coinciden a 0,001 s",PENDIENTE DE BASELINE,E05,Luis / Melendez,True
+MP-03,Desempeno,p95,"valor ordenado en posicion ceil(0,95 * n), n >= 100",Baseline,n=3 por combinación; n>=100 requerido. p95 publicado no aceptado,RESULTADO PARCIAL,E05,Luis / Melendez,True
+MP-04,Desempeno,Pico RSS,maximo de sumas de RSS sincronizadas de proceso y descendientes,Baseline,Picos RSS de proceso por combinación en CSV; no suma sincronizada con descendientes,RESULTADO PARCIAL,E05,Luis / Melendez,True
+MP-05,Fiabilidad,Ejecuciones completas,completas validas / iniciadas * 100,Baseline,81/108 = 75% reportadas completas; falta oráculo de validez para la fórmula,RESULTADO PARCIAL,E05,Luis / Melendez,True
+MP-06,Desempeno,Capacidad observada,mayor escala con todas las repeticiones completas y validas,Baseline,Mayor carga con 3/3 completas: FF/BF/WF/HF 150; M5 100; M6 50; validez pendiente,RESULTADO PARCIAL,E05,Luis / Melendez,True
+MU-01,Interaccion,Tareas completadas,completadas / intentadas * 100,Baseline,Reporte 9/9; arnés marca completado aun sin ejecutar algunos pasos; no validar 100%,RESULTADO PARCIAL,E06,Luis,True
+MU-02,Interaccion,Tiempo por tarea,fin menos inicio por intento,Baseline,"Nueve tiempos reportados 0,00–4,85 s; automatización, no estudio con participantes",RESULTADO PARCIAL,E06,Luis,True
+MU-03,Interaccion,Tasa de errores,intentos con error / intentos * 100,Baseline,Reporte 0/9 errores; varios valores fijados en cero; falta catálogo y captura fiable,RESULTADO PARCIAL,E06,Luis,True
+MU-04,Interaccion,Navegacion por teclado,pasos accesibles / pasos evaluados * 100,100% criticos,PASS declarado sin denominadores ni aserciones suficientes de teclado/foco,NO MEDIDA,E06,Luis,False
+MU-05,Interaccion,Foco correcto,transiciones correctas / transiciones evaluadas * 100,100% criticas,PASS declarado sin denominadores ni aserciones suficientes de teclado/foco,NO MEDIDA,E06,Luis,False
+MC-01,Compatibilidad,Navegadores,combinaciones exitosas / evaluadas * 100,100% acordadas,8/8 = 100% combinaciones Chrome/Edge y viewport,CUMPLE META,E03 E04,Andro,True
+MC-02,Flexibilidad,Responsive,pantallas sin perdida / pantallas evaluadas * 100,100% criticas,56/56 = 100% observaciones de controles seleccionados,CUMPLE META,E03 E04,Andro,True
+MC-03,Flexibilidad,Flujos por viewport,flujos exitosos / flujos evaluados * 100,100% criticos,48/48 = 100% flujos; CF-04/05 comparten prueba,CUMPLE META,E03 E04,Andro,True
+MM-01,Mantenibilidad,Cobertura,lineas ejecutadas / lineas medibles * 100,Baseline,Sin medición verificable,NO MEDIDA,E08,Melendez,False
+MM-02,Mantenibilidad,Duplicacion,lineas duplicadas / lineas analizadas * 100,Baseline,Sin medición verificable,NO MEDIDA,E08,Melendez,False
+MM-03,Mantenibilidad,Complejidad,complejidad ciclomatica por funcion,Baseline,Sin medición verificable,NO MEDIDA,E08,Melendez,False
+MM-04,Mantenibilidad,CI,ejecuciones exitosas / terminadas * 100,Baseline,Sin medición verificable,NO MEDIDA,E08,Melendez,False
+MS-01,Seguridad operacional,Rechazo de invalidos,invalidos rechazados / invalidos evaluados * 100,100%,8/8 grupos rechazados; mezcla verificaciones de dominio y HTTP; denominador atómico pendiente,RESULTADO PARCIAL,E07,Luis / Melendez,True
+MS-02,Seguridad operacional,Falsa aceptacion,invalidos aceptados / invalidos evaluados * 100,0%,0/8 grupos con aceptación observada; no demuestra cero fugas en confirmación E2E,RESULTADO PARCIAL,E07,Luis / Melendez,True
+MS-03,Seguridad operacional,Margen y separacion,patrones que cumplen ambos / evaluados * 100,100%,Casos de margen/separación rechazados y 26 patrones válidos; falta conjunto MS específico,RESULTADO PARCIAL,E07 E02 E10,Luis / Melendez,True
+MT-01,Operativa,Material identificable,materiales con codigo visible / utilizados * 100,100%,"6 smoke desktop/mobile y seis motores; plancha por ID, sin denominador de materiales",RESULTADO PARCIAL,E12,Andro / Melendez,True
+MT-02,Operativa,Origen pieza sobrante,relaciones trazables / evaluadas * 100,100%,Relación fuente-pieza-sobrante persistida en caso de dos fuentes; sin denominador de relaciones,RESULTADO PARCIAL,E12,Andro / Melendez,True
