@@ -9,7 +9,7 @@
 | Tareas | T01 — Medir escenarios de fallo |
 | Tipo | Tarea de calidad (auditoría, documentación y medición; sin cambios de código, de BD ni de despliegue) |
 | Sprint | Sprint 2 |
-| Versión | 1.4 |
+| Versión | 1.5 |
 | Estado | **Draft** |
 | Responsable | Fabricio Danniel Aguilar Chavez (`fabrilar1`) |
 | Reviewer | Andro Joseph Quispe Cesias (distinto del autor) |
@@ -382,3 +382,4 @@ No se crean pruebas: se ejecutan y miden las existentes.
 | 10/11/2026 | 1.2 | Draft | P-02 cerrada con D-15: MR-05 se mide con `pytest --durations`, fase `call`, en un entorno Linux con PostgreSQL; `--durations` en el CI queda como mejora recomendada. Nueva §5.3 con entorno, comando y resultado (máximo 5 070 ms < 15 000 ms, cumple). Tabla de MR-05 con el tiempo de cada caso y conteos corregidos (6 y 4 casos parametrizados; 17 casos, 16 medidos). Conteo 27/31 por conciliar en F2. Nueva pregunta abierta P-03 (caso `lifespan` sin tiempo). |
 | 11/11/2026 | 1.3 | Draft | Nueva medición única de MR-05 que reemplaza la anterior (28 passed, 0 failed; PostgreSQL 16.15, Python 3.13.18), con el caso `lifespan` incluido: P-03 cerrada con D-16. Tabla de MR-05 con el tiempo `call` de cada uno de los 17 casos; máximo 5 480 ms < 15 000 ms. Conteo conciliado (27 + 1 = 28; el 31 anterior sumaba dos corridas). Salida guardada en `docs/evidence/sprint-02/TA-QA-004/medicion-MR05.txt`. |
 | 11/11/2026 | 1.4 | Draft | Evidencia F2 creada (README, `collect-only.txt`). D-17: suite local y `collect-only` en `test/TA-QA-006-port-security-tests` (sin cambios en `app/`) y CI del PR de traslado a `main`. Denominadores confirmados: MR-01 = 26, MR-02 = 9, MR-03 = 4, MR-04 = 12, MR-05 = 17. Corrección de formato: D-16 vuelve a la tabla de decisiones (una línea en blanco la separaba). Pendiente: enlace y resumen del CI. |
+| 11/11/2026 | 1.5 | Draft | F3: modelo de calidad v1.4 actualizado según §9.4 y D-11 (§4.5, V-02 en parte, parte de TA-049 de V-18; la parte de M6 sigue abierta). Comando de `collect-only` de la evidencia corregido (`-p no:warnings`). Pendiente: enlace y resumen del CI. |

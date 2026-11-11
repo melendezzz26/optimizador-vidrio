@@ -117,7 +117,7 @@ Resumen de la matriz de la SPEC §4.2 con lo medido hasta ahora.
 | SPEC-TA-049 histórica | [SPEC-TA-049-presupuesto-tiempo.md](../../../specs/SPEC-TA-049-presupuesto-tiempo.md) | Recuperada desde `6798f60`, en Draft, con nota de que la reemplazan `ec46a7a` y [S2-TA049-recuperacion-pedidos.md](../../../reviews/S2-TA049-recuperacion-pedidos.md) |
 | Riesgos residuales R-01 a R-07 y hallazgo H-01 | SPEC §9.2 | Documentados |
 | Procedimiento de reconciliación en Staging | SPEC §9.3 | **Documentado, no ejecutado** (SPEC D-09) |
-| Modelo de calidad (V-02 y V-18) | `docs/quality/ISO-25010-modelo-calidad.md` | Pendiente (F3) |
+| Modelo de calidad (V-02 y V-18) | [ISO-25010-modelo-calidad.md](../../../quality/ISO-25010-modelo-calidad.md) v1.4 | §4.5 actualizada; V-02 cubierto en parte (disponibilidad abierta); V-18: parte de TA-049 resuelta, parte de M6 abierta |
 
 ## Salidas de comandos
 
@@ -142,7 +142,7 @@ python -m pytest tests -q --ignore=tests/unit/optimization/test_comparison_runne
 
 ```powershell
 # Desde la raíz de newglass-backend, rama test/TA-QA-006-port-security-tests, con el venv activo
-python -m pytest tests/api/optimization/test_run_recovery.py tests/integration/optimization/test_run_recovery.py tests/integration/optimization/test_confirmation_rollback.py tests/integration/optimization/test_confirmation_concurrency.py tests/api/optimization/test_comparison_recovery.py tests/integration/optimization/test_comparison_v2_http_restart.py tests/integration/optimization/test_comparison_supervision_v2.py --collect-only -q
+python -m pytest tests/api/optimization/test_run_recovery.py tests/integration/optimization/test_run_recovery.py tests/integration/optimization/test_confirmation_rollback.py tests/integration/optimization/test_confirmation_concurrency.py tests/api/optimization/test_comparison_recovery.py tests/integration/optimization/test_comparison_v2_http_restart.py tests/integration/optimization/test_comparison_supervision_v2.py --collect-only -q -p no:warnings
 ```
 
 ```text

@@ -4,7 +4,7 @@
 |---|---|
 | Tarea | EN-QA-001 |
 | SPEC | [SPEC-EN-QA-001](../specs/SPEC-EN-QA-001-modelo-calidad-iso25010.md) |
-| Versión | 1.3 (V-19 de TA-QA-006 y V-20 del sprint 2; ver historial) |
+| Versión | 1.4 (V-19 de TA-QA-006, V-20 del sprint 2 y V-02/V-18 de TA-QA-004; ver historial) |
 | Estado | Pendiente de revisión de Andro Joseph Quispe Cesias |
 | Responsable | Fabricio Danniel Aguilar Chavez (`fabrilar1`) |
 | Base auditada | `integration-02` en `f46d96d` |
@@ -127,9 +127,9 @@ En la edición 2011 esta característica se llamaba *usabilidad*.
 | Módulos | optimization (supervisor, trabajadores, admisión, recuperación), orders (estados del pedido), inventory (confirmación transaccional), results. |
 | Riesgos | Un pedido queda retenido en optimización tras la caída del proceso. Dos confirmaciones concurrentes descuentan stock dos veces. Un reinicio del contenedor a mitad de una comparación deja la corrida sin cerrar. Un fallo de persistencia guarda `SIN_SOLUCION` en lugar de `FALLIDA`. Tras un merge no se redespliega y la demo muestra una versión anterior. |
 | Evaluación | **Prueba**: recuperación, rollback, concurrencia y reinicio HTTP con PostgreSQL de pruebas (corren en el CI). **Medición**: ejecuciones completas sobre iniciadas (MP-05) y disponibilidad del endpoint de salud en una ventana fijada. **Revisión**: procedimiento de recuperación manual (`recover_stopped_run`, `reconcile_stuck_orders`). |
-| Tarea QA | TA-QA-004 (Aguilar). Métrica existente: MP-05 (asignada a TA-QA-002). |
-| Evidencia existente | TA-049: [S2-TA049-recuperacion-pedidos.md](../reviews/S2-TA049-recuperacion-pedidos.md). TA-037: [admission-lifecycle.md](../evidence/sprint-02/TA-037/admission-lifecycle.md). Scripts: `backend/scripts/recover_stopped_run.py`, `reconcile_stuck_orders.py`. Pruebas: `backend/tests/api/optimization/test_run_recovery.py`, `test_comparison_recovery.py`, `test_comparison_connection_lifecycle.py`; `backend/tests/integration/optimization/test_run_recovery.py`, `test_comparison_v2_http_restart.py`, `test_confirmation_rollback.py`, `test_confirmation_concurrency.py`, `test_start_concurrency.py`, `test_comparison_supervision_v2.py`, `test_stuck_order_reconciliation_pg.py`, `test_run_states.py`; `backend/tests/unit/optimization/test_supervision_contracts.py`, `test_stuck_order_reconciliation_unit.py`; salud: `backend/tests/api/test_health_api.py`, `backend/tests/integration/test_health_database.py`. |
-| Vacíos y desfases | **La SPEC-TA-049 no está en `integration-02`**; solo está su review. Se recuperará en TA-QA-004. Una sola métrica de fiabilidad (MP-05). Sin métricas de disponibilidad, tolerancia a fallos ni recuperabilidad. Varias pruebas solo corren en Linux o con PostgreSQL y en Windows se omiten. |
+| Tarea QA | TA-QA-004 (Aguilar): métricas MR-01 a MR-05 en [SPEC-TA-QA-004](../specs/SPEC-TA-QA-004-fiabilidad-recuperacion.md) §5.2, fuera de la matriz de TA-QA-001. Métrica existente: MP-05 (asignada a TA-QA-002). |
+| Evidencia existente | TA-QA-004: [evidencia de fiabilidad y recuperación](../evidence/sprint-02/TA-QA-004/README.md) (escenarios de fallo, MR-01 a MR-05; el código vive ahora en `newglass-backend`). TA-049: [SPEC-TA-049](../specs/SPEC-TA-049-presupuesto-tiempo.md) (histórica) y [S2-TA049-recuperacion-pedidos.md](../reviews/S2-TA049-recuperacion-pedidos.md). TA-037: [admission-lifecycle.md](../evidence/sprint-02/TA-037/admission-lifecycle.md). Scripts: `backend/scripts/recover_stopped_run.py`, `reconcile_stuck_orders.py`. Pruebas: `backend/tests/api/optimization/test_run_recovery.py`, `test_comparison_recovery.py`, `test_comparison_connection_lifecycle.py`; `backend/tests/integration/optimization/test_run_recovery.py`, `test_comparison_v2_http_restart.py`, `test_confirmation_rollback.py`, `test_confirmation_concurrency.py`, `test_start_concurrency.py`, `test_comparison_supervision_v2.py`, `test_stuck_order_reconciliation_pg.py`, `test_run_states.py`; `backend/tests/unit/optimization/test_supervision_contracts.py`, `test_stuck_order_reconciliation_unit.py`; salud: `backend/tests/api/test_health_api.py`, `backend/tests/integration/test_health_database.py`. |
+| Vacíos y desfases | La SPEC-TA-049 se recuperó en TA-QA-004 como documento histórico (Draft); la reemplazan `ec46a7a` y su review. Recuperabilidad, tolerancia a fallos y ausencia de fallos tienen métricas MR-01 a MR-05 (TA-QA-004); **disponibilidad sigue sin métrica** (V-02). Varias pruebas solo corren en Linux o con PostgreSQL y en Windows se omiten. |
 
 ### 4.6 Seguridad (*security*)
 
@@ -212,7 +212,7 @@ tarea QA que debe cubrirlos.
 | ID | Vacío | Tarea QA |
 |---|---|---|
 | V-01 | Sin métricas de seguridad: permisos por rol y endpoint, tokens, secretos, sanitización, resistencia. | TA-QA-006 |
-| V-02 | Una sola métrica de fiabilidad (MP-05, asignada a TA-QA-002); faltan disponibilidad, tolerancia a fallos y recuperabilidad. | TA-QA-004 (MP-05 se mantiene en TA-QA-002) |
+| V-02 | Una sola métrica de fiabilidad (MP-05, asignada a TA-QA-002); faltan disponibilidad, tolerancia a fallos y recuperabilidad. **Cubierto en parte por TA-QA-004**: MR-01 a MR-05 ([SPEC-TA-QA-004](../specs/SPEC-TA-QA-004-fiabilidad-recuperacion.md) §5.2) miden recuperabilidad, tolerancia a fallos y ausencia de fallos. Sigue abierto: **disponibilidad**, que TA-QA-004 dejó fuera de alcance (D-06). | TA-QA-004 (MP-05 se mantiene en TA-QA-002); disponibilidad, por asignar |
 | V-03 | MF-01 a MF-03 en estado DEFINIDA, sin medir. | TA-QA-003 |
 | V-04 | MP-01 a MP-06 en estado DEFINIDA, sin medir. | TA-QA-002 |
 | V-05 | MC-01 a MC-03 en estado DEFINIDA, sin medir. | TA-QA-008 |
@@ -228,7 +228,7 @@ tarea QA que debe cubrirlos.
 | V-15 | Completitud funcional frente al backlog de Notion sin métrica. | TA-QA-003 |
 | V-16 | Falla segura y advertencia de peligro sin métrica. | TA-QA-009 |
 | V-17 | Desfase de L-03: SPEC-TA-037 decía 300 unidades frente a 800 en ACADEMIC-800 (PR #108). **Corregido en este PR** ([SPEC-TA-037](../specs/SPEC-TA-037-control-carga-optimizador.md) v1.5). | EN-QA-001 |
-| V-18 | Desfases de evidencia pendientes: SPEC-TA-049 ausente en `integration-02`; respaldo de M6 descrito en S2-WF-CARGA y SPEC-TA-053. | TA-QA-004 (TA-049); TA-QA-002 / TA-QA-003 (M6) |
+| V-18 | Desfases de evidencia pendientes: SPEC-TA-049 ausente en `integration-02`; respaldo de M6 descrito en S2-WF-CARGA y SPEC-TA-053. **Parte de TA-049 resuelta por TA-QA-004**: [SPEC-TA-049](../specs/SPEC-TA-049-presupuesto-tiempo.md) recuperada como histórica desde `6798f60`. La parte de M6 sigue abierta. | TA-QA-004 (TA-049, resuelta); TA-QA-002 / TA-QA-003 (M6, abierta) |
 | V-19 | Resistencia sin control: `POST /api/auth/login` no limita los intentos fallidos por cuenta ni por origen (hallazgo H-01 de TA-QA-006). Mitigaciones actuales: mensaje único, bcrypt y validación de formato. Falta decidir la regla (umbral, ventana y bloqueo temporal) y su métrica. | Por asignar (nueva tarea del backlog; fuera de TA-QA-006) |
 | V-20 | Sin revisión periódica de dependencias: ningún workflow ni rutina ejecuta `npm audit` (frontend) o una auditoría equivalente del backend, ni registra su resultado. Al 10/11/2026, `npm ci` reporta 7 vulnerabilidades (4 moderadas y 3 altas), todas en dependencias de desarrollo: `npm audit --omit=dev` no encuentra ninguna (detectado durante el sprint 2, 10/11/2026). Falta definir la frecuencia, la herramienta para backend y frontend, el criterio de aceptación (por ejemplo, 0 vulnerabilidades altas en producción) y su métrica. | Por asignar (nueva tarea del backlog; fuera de TA-QA-006) |
 
@@ -286,3 +286,4 @@ Las medidas propias del proyecto deben declararse como tales y no atribuirse a l
 | 10/11/2026 | 1.1 | EN-QA-001 | V-17 corregido en SPEC-TA-037 (L-03 = 800 unidades). |
 | 10/11/2026 | 1.2 | TA-QA-006 | Nuevo vacío V-19 (login sin límite de intentos, resistencia), desde el hallazgo H-01 de [SPEC-TA-QA-006](../specs/SPEC-TA-QA-006-seguridad-permisos.md). Ningún otro cambio en el modelo. |
 | 10/11/2026 | 1.3 | Sprint 2 | Nuevo vacío V-20 (sin revisión periódica de dependencias), detectado durante el sprint 2 (10/11/2026). Ningún otro cambio en el modelo. |
+| 11/11/2026 | 1.4 | TA-QA-004 | §4.5 con las métricas MR-01 a MR-05 y la evidencia de [SPEC-TA-QA-004](../specs/SPEC-TA-QA-004-fiabilidad-recuperacion.md). V-02 cubierto en parte (disponibilidad sigue abierta). V-18: parte de TA-049 resuelta con la SPEC-TA-049 histórica; la parte de M6 sigue abierta. Ningún otro cambio en el modelo. |
