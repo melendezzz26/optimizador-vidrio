@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | **Draft — contrato propuesto, sin endpoint ni implementación aprobada** |
+| Estado | **Implementado en `main` frontend/backend — CI de integración aprobado; revisión final de UX y despliegue pendientes** |
 | Incremento | EN-UX-004 / P1 |
 | Dependencias | EN-UX-001, EN-UX-002, supervisor B04/B05, comparison-v2 |
 | Revisión | Humana y de seguridad obligatoria antes de merge |
@@ -18,7 +18,7 @@ Permitir a un usuario autorizado interrumpir una comparación de seis motores **
 
 La acción NO equivale a «Pausar vista» ni a «Liberar pedidos sin confirmar». No se altera la implementación matemática FF, BF, WF, HF, M5 o M6-BS.
 
-## 2. Situación verificada sobre backend/main
+## 2. Diagnóstico inicial previo a la implementación
 
 - `presentation/comparison_v2_routes.py` expone creación, consulta, historial, selección, confirmación y liberación, pero **no POST /cancel**.
 - `ComparisonV2Coordinator` posee un `job.cancel` (threading.Event), un único trabajo activo, supervisión con identidad de proceso y `_close` con comprobación de workers y lease.
@@ -27,7 +27,7 @@ La acción NO equivale a «Pausar vista» ni a «Liberar pedidos sin confirmar»
 - `parseComparisonV2` y el modelo Pydantic son estrictos; **ampliar estados de respuesta exige versionar y probar el contrato simultáneamente en backend y frontend**.
 - El reinicio con supervisor no verificable conserva admisión bloqueada. No se debe resolver esa situación matando un PID no identificado.
 
-## 3. Contrato de operación propuesto (pendiente de implementación)
+## 3. Contrato de operación implementado (`comparison-v2`, `schema_version=2`)
 
 ### API
 
@@ -35,8 +35,8 @@ La acción NO equivale a «Pausar vista» ni a «Liberar pedidos sin confirmar»
 
 Requiere permiso `optimization.execute`, propietario del trabajo y encabezado `Idempotency-Key` válido. Cuerpo JSON `{ "expected_version": <int> }`. La clave se vincula al actor y comparación; reutilizarla con otro recurso/actor debe fallar sin actuar.
 
-- **202 Accepted** cuando se registró durablemente la solicitud y la detención aún no se acreditó. Respuesta incluye `comparison_id`, `cancel_state: "REQUESTED" | "STOPPING"`, y `version`; no declara `terminal=true` por el simple envío.
-- **200 OK** solo si se verificó cierre, terminalidad y consistencia; la respuesta distingue `cancel_state: "CANCELLED"` del término natural `"COMPLETED"`.
+- **202 Accepted** con `cancel_state="REQUESTED"`, `terminal=false` y `supervisor_stopped=false` mientras la solicitud durable no acredita cierre. Incluye `profile`, `schema_version=2`, `comparison_id` y `version`; `STOPPING` **no** es un estado público implementado.
+- **200 OK** cuando la solicitud idempotente ya está terminal tras cierre seguro: `cancel_state="CANCELLED"` o `"COMPLETED_BEFORE_CANCEL"` cuando todos los motores terminaron naturalmente antes de la parada. La respuesta distingue esas situaciones, sin inventar cancelación.
 - **409 Conflict** cuando la comparación se confirmó/liberó o el mismo identificador tiene otra clave incompatible. La llegada durante cierre natural no debe reescribir una comparación completada.
 - **404/403** según política vigente para recursos inexistentes o no autorizados; no filtrar identidades entre usuarios.
 - **503 RECOVERY_BLOCKED** si la supervivencia de workers es incierta; sin fingir cancelación.
@@ -48,9 +48,8 @@ Un GET posterior de la comparación debe exponer un estado de cancelación durab
 
 El snapshot de comparación podrá incorporar un bloque `cancellation` con `requested_at`, `requested_by`, `request_key`, `status` y `verified_at`; solo se persisten metadatos y nunca PIDs no verificados como prueba. Se definen transiciones atómicas con `comparison_version` y bloqueo SQL, aprovechando el JSON versionado actual o una migración Alembic reproducible **solo si las invariantes lo requieren**. No modificar Supabase manualmente.
 
-Estados permitidos:
-`NONE -> REQUESTED -> STOPPING -> CANCELLED`; en carrera con fin natural,
-`REQUESTED/STOPPING -> COMPLETED_BEFORE_CANCEL` si el resultado terminal se cerró antes de acreditar la cancelación. `RECOVERY_BLOCKED` representa imposibilidad de acreditar cierre, no finalización. Nunca `CANCELLED` mientras el supervisor o un descendiente siga vivo.
+Estados públicos implementados:
+`NONE -> REQUESTED -> CANCELLED` o `NONE -> REQUESTED -> COMPLETED_BEFORE_CANCEL`. La parada física intermedia se gestiona internamente bajo `REQUESTED`. `RECOVERY_BLOCKED` es condición de rechazo/bloqueo, no estado terminal del DTO. Nunca `CANCELLED` mientras la parada de workers/descendientes no haya sido acreditada.
 
 ### Ciclo del supervisor
 
@@ -79,7 +78,7 @@ En la barra de contexto de una comparación **v2 cancelable**, botón visible `C
 | ID | Escenario / propiedad |
 |---|---|
 | CA-01 | Cancelar durante FF; comprobar señal, cierre de todos los hijos, cero movimientos y terminal durable |
-| CA-02 | Cancelar durante HF/M5/BS-2; no iniciar motores pendientes |
+| CA-02 | Cancelar durante otro motor (caso BF verificado); no iniciar motores pendientes. Casos específicos HF/M5/M6-BS aún requieren ejecución diferenciada. |
 | CA-03 | Cancelar entre motores, conservar los resultados completos y motivos de cancelación exactos |
 | CA-04 | Carrera cancelación/finalización: un único estado terminal coherente sin sobrescribir resultados |
 | CA-05 | Dos POST iguales o concurrentes: idempotencia, misma intención, sin efectos extra |
@@ -100,8 +99,40 @@ En la barra de contexto de una comparación **v2 cancelable**, botón visible `C
 
 ## 8. Estado y bloqueos
 
-**Solo SPEC de diseño. No hay endpoint implementado ni validación funcional de cancelación.** Cualquier cambio posterior debe comenzar por ejecutar pruebas con PostgreSQL de loopback y workers controlados, revisar permisos y asegurar el protocolo de persistencia. No se ha intervenido producción ni se han modificado heurísticas.
+**Implementación funcional integrada:** backend PR #6 fusionado en `main` (`2afa9d72cecee74d4c61187ff15c74564e7dde3f`), frontend PR #13 fusionado (`7ac91f811e0aca82378d8ca4d862b3ebd080d290`). Ambos CI post-merge `SUCCESS` en SHA exacto. Ejecución E2E aislada con PostgreSQL local, FastAPI y Chromium desktop/móvil: 150/150. No se ha intervenido producción ni se han modificado heurísticas. **Definition of Done del despliegue aún condicionada a hallazgo UX PR #14 y pruebas de staging desplegado específicas.**
 
 ## Historial de estado
 
 - Draft: propuesta de contrato tras inspección del supervisor real, sin aprobación de integración.
+
+## 9. Addendum de aceptación posterior al merge (2026-11-11)
+
+### Integración trazable
+
+| Artefacto | Referencia |
+|---|---|
+| Backend `main` | `2afa9d72cecee74d4c61187ff15c74564e7dde3f` |
+| Frontend `main` | `7ac91f811e0aca82378d8ca4d862b3ebd080d290` |
+| Contrato fuente | `newglass-backend/docs/contracts/optimization/comparison-v2.md`, esquemas Pydantic, validador JS y fixture JSON |
+| CI backend | https://github.com/melendezzz26/newglass-backend/actions/runs/43016873960 — 3.670 tests de suite general, sin fallos |
+| CI frontend + E2E | https://github.com/melendezzz26/newglass-frontend/actions/runs/43018881023 — 217 unitarias, 640 componentes, 150/150 E2E con backend pinneado al SHA de `main` |
+| Evidencia multimedia | Artefacto GitHub Actions `e2e-phases-7ac91f811e0aca82378d8ca4d862b3ebd080d290-43018881023-1`; captura de diálogo y estado terminal para desktop y móvil |
+
+### Escenarios con evidencia de ejecución
+
+- Cancelación en FF: Playwright usa worker real controlado, servidor FastAPI loopback y PostgreSQL temporal; valida solicitud, cierre de supervisor, estado de seis motores y pedido/stock intactos.
+- Cancelación en BF: test de integración `test_user_cancel_during_bf_preserves_ff_result_and_prevents_later_dispatch`, conserva el resultado FF y comprueba que WF/HF/M5/M6-BS no arrancan.
+- Carrera con finalización natural: `test_cancel_racing_natural_completion_keeps_completed_result` mantiene los resultados y registra `COMPLETED_BEFORE_CANCEL`.
+- Identidad, idempotencia, autorización y stock: `test_user_cancellation_proves_worker_closure_restores_orders_and_survives_read`, E2E de desktop/móvil y validación del contrato.
+- Recuperación tras recarga: probada en Playwright; lectura de intención durable tras simulación de reinicio supervisado con identidad verificada: cubierta por test de integración.
+- Operación normal FF, BF, WF, HF, M5 y M6-BS: smoke de comparación real y suites generales de regresión aprobadas.
+
+### Hallazgos abiertos y límites de evidencia
+
+1. En capturas móviles sobre el `main` fusionado, el panel de un motor `CANCELLED` tenía etiqueta visual **Error**, mostraba **Cálculo terminado** y ofrecía **Pausar vista**. Corrección únicamente de interfaz, con nuevas pruebas de componente y E2E, en frontend PR #14 (Draft). **No hacer merge ni deploy sin nueva aprobación.**
+2. No se ejecutó una interrupción de red real durante un POST de cancelación en un navegador staging desplegado; hay pruebas de contrato y recuperación, y una regresión RTL específica en PR #14.
+3. La recuperación de supervisor se validó con identidades de proceso controladas y recuperación persistida; no se provocó un reinicio físico de un servidor staging desplegado con worker aún activo.
+4. El build staging se validó sin publicar. No existe evidencia de pruebas en una URL staging desplegada y aislada adicional al CI efímero.
+5. Casos específicos de cancelación durante HF/M5/M6-BS no fueron ejecutados separadamente; la comprobación de motor posterior se hizo en BF. Conservar como riesgo residual hasta ampliar cobertura si el proceso de aprobación lo exige.
+
+**Estado documental:** se actualiza el contrato real y la evidencia; el PR documental sigue en Draft, pendiente de revisión/aprobación independiente. No se considerará completa la DoD de despliegue mientras existan controles pendientes.
