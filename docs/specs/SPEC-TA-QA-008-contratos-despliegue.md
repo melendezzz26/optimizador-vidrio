@@ -8,7 +8,7 @@
 | Nombre | Contratos front/back/BD, despliegue reproducible y límites de adaptación y carga |
 | Tipo | Tarea de calidad (auditoría, documentación y medición con comandos; sin cambios de código, de BD ni de despliegue, y sin pruebas nuevas) |
 | Sprint | Sprint 2 |
-| Versión | 1.3 |
+| Versión | 1.4 |
 | Estado | **Draft** |
 | Responsable | Fabricio Danniel Aguilar Chavez (`fabrilar1`) |
 | Reviewer | Andro Joseph Quispe Cesias (distinto del autor) |
@@ -233,7 +233,7 @@ origen de Pages → publicación de Pages → verificación de extremo a extremo
 | D-08 | No se corrige documentación de otros integrantes: se registra como hallazgo (§9.1) y se avisa a Fabricio Melendez en el PR. | Decisión del responsable (P-08 de F0). |
 | D-09 | Los criterios de aceptación son exactamente los cuatro de Notion para TA-QA-008 (§8). Lo demás pasa a "Entregables complementarios" (§9). | Decisión del responsable (F1, 11/11/2026), igual que en TA-QA-004. |
 | D-10 | CA-02 ("Casos escritorio/móvil documentados") se acredita con la evidencia de Andro (§4.1), sin repetir su medición; esta SPEC verifica que esté documentada y enlazable. | La medición MC-01 a MC-03 es la parte de Andro de TA-QA-008. |
-| D-11 | La actualización de V-13 y V-14 en el modelo de calidad se hace en la última fase, después de saber si TA-QA-004 se integró. | Las dos tareas editan el mismo archivo y su historial desde ramas distintas. |
+| D-11 | La actualización de V-13 y V-14 en el modelo de calidad **queda pendiente** y se hace después de integrar, en este orden: cierre de TA-QA-006 (rama `docs/S2-QA-verify-enqa001-taqa006`) → TA-QA-004 (`docs/S2-TA-QA-004-fiabilidad`) → TA-QA-008 (esta rama). Esta rama no edita `docs/quality/ISO-25010-modelo-calidad.md` hasta entonces. | Decisión del responsable (11/11/2026). Las tres ramas editan la cabecera, las secciones de vacíos y el historial del mismo archivo; integrarlas en orden evita conflictos. |
 | D-12 | La auditoría usa `newglass-backend` `main` en `2a9653a`, que ya integra el traslado de TA-QA-006 (PR #4) y la corrección de TA-047 (PR #2). | Es el `main` vigente al 11/11/2026; el análisis de F0 se hizo sobre `7a99663` y se actualizó. |
 | D-13 | La instalación limpia del backend se repite desde cero: clon nuevo de `newglass-backend` `main` (`2a9653a`) en una carpeta aparte, venv nuevo con Python 3.11, `pip install -r requirements.txt` y la suite con `pytest tests` y los tres `--ignore`. El resultado anterior (2725 passed) no se usa: venía de `7a99663` más 3 pruebas, con el venv del monorepo. | Decisión del responsable (cierre de P-01, 11/11/2026). Un venv reutilizado no demuestra que la instalación sea reproducible. |
 | D-14 | Las salidas de los comandos se registran como texto en la evidencia; no se adjuntan capturas. | Decisión del responsable (cierre de P-02), igual que en TA-QA-004 y TA-QA-006. |
@@ -249,7 +249,7 @@ Ninguna. P-01 se cerró con D-13, P-02 con D-14 y P-03 con D-15.
 |---|---|---|---|
 | `docs/specs/SPEC-TA-QA-008-contratos-despliegue.md` | `optimizador-vidrio` / Documentación | Nuevo: esta SPEC. | F1 |
 | `docs/evidence/sprint-02/TA-QA-008-contratos-despliegue/README.md` | `optimizador-vidrio` / Evidencia | Nuevo: resultados por criterio, MI-01 a MI-04, MD-01 y MD-02, instalación limpia, procedimiento de §5.4 y "Salidas de comandos". | F2 |
-| `docs/quality/ISO-25010-modelo-calidad.md` | `optimizador-vidrio` / Documentación | §4.3 y §4.8, V-13 y V-14 (parte de instalación reproducible), línea de historial (D-11). | Última fase |
+| `docs/quality/ISO-25010-modelo-calidad.md` | `optimizador-vidrio` / Documentación | §4.3 y §4.8, V-13 y V-14 (parte de instalación reproducible), línea de historial (D-11). | **Pendiente**: después de integrar el cierre de TA-QA-006 y TA-QA-004 (D-11) |
 
 Sin cambios en `newglass-backend`, `newglass-frontend`, migraciones, contrato de la API,
 workflows, Heroku, Supabase ni Pages. La carpeta de evidencia lleva el sufijo
@@ -301,8 +301,10 @@ La decisión sobre su contenido es de Andro y del equipo (D-03).
 
 ### 9.4 Modelo de calidad
 
-En la última fase: §4.3 y §4.8 con MI-01 a MI-04, MD-01 y MD-02; V-13 y la parte de
-instalación reproducible de V-14, con su línea de historial (D-11).
+**Pendiente (D-11).** Se hace después de integrar, en orden, el cierre de TA-QA-006 y
+TA-QA-004, porque las tres ramas editan el mismo archivo. Contenido previsto: §4.3 y §4.8 con
+MI-01 a MI-04, MD-01 y MD-02; V-13 y la parte de instalación reproducible de V-14, con su
+línea de historial. Mientras tanto, los resultados están en la evidencia de esta tarea.
 
 ## 10. Pruebas previstas
 
@@ -336,3 +338,4 @@ No se crean pruebas: se ejecutan comandos y pruebas existentes.
 | 11/11/2026 | 1.1 | Draft | P-01 a P-03 cerradas con D-13 (instalación limpia del backend repetida desde cero en `2a9653a`, con venv nuevo), D-14 (evidencia en texto) y D-15 (unitarias y componentes en el clon limpio del frontend). §5.3 con nueve pasos. MI-03 definida por recurso de API; `/api/roles` y `/api/permissions` agregados a §4.2. |
 | 11/11/2026 | 1.2 | Draft | Evidencia F2: MI-01 = 4/4, MI-02 = 10 archivos (no cumple, R-02), MI-03 = 2/12 (línea base), MI-04 = 0 diferencias y 1 head (CI de `main` en `2a9653a`, run 42959351368), MD-02 = 12/13 en backend y 1/1 en frontend. Instalación limpia: suite del backend 2736 passed, 0 failed; `test:component` 626 passed; build correcto. Pendientes: commits de los clones, versiones de Python y Node, `npm ci`, `test:unit` y `lint`. |
 | 11/11/2026 | 1.3 | Draft | MD-01 cerrada en 9/9 = 100 %: clones en `2a9653a` y `d8ec96e`, Python 3.11.9, Node v22.20.0 y npm 10.9.3, `npm ci` sin errores, `test:unit` 215 pass, lint sin errores. CA-03 con todos sus resultados (MD-02 = 12/13 en backend por H-03). |
+| 11/11/2026 | 1.4 | Draft | D-11 actualizada: la actualización de V-13 y V-14 en el modelo de calidad queda pendiente hasta integrar, en orden, el cierre de TA-QA-006, TA-QA-004 y TA-QA-008, para evitar conflictos en el mismo archivo. |

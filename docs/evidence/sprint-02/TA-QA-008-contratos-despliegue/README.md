@@ -131,7 +131,7 @@ La capacidad observada bajo carga es de TA-QA-002 (MP-06).
 | Hallazgos de documentación H-01 a H-03 y observación O-01 | SPEC §9.1 | Registrados; se avisa a Fabricio Melendez en el PR |
 | Observación de review del PR #113 | SPEC §9.2 | Para Andro; no se resuelve en esta tarea |
 | Riesgos R-01 a R-06 | SPEC §9.3 | Registrados; R-02 confirmado por MI-02 |
-| Modelo de calidad (V-13 y V-14) | `docs/quality/ISO-25010-modelo-calidad.md` | Pendiente (última fase, SPEC D-11) |
+| Modelo de calidad (V-13 y V-14) | `docs/quality/ISO-25010-modelo-calidad.md` | Pendiente: después de integrar el cierre de TA-QA-006 y TA-QA-004, en ese orden (SPEC D-11) |
 
 ## Salidas de comandos
 
