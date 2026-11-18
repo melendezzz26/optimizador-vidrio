@@ -8,7 +8,7 @@
 | Rama de la evidencia | `docs/S2-TA-QA-004-fiabilidad` (repo `optimizador-vidrio`) |
 | Código medido | `newglass-backend` `main` en `7a99663`. La suite local y `collect-only` se corrieron en `test/TA-QA-006-port-security-tests`, que es `main` más 3 archivos de prueba de seguridad, sin cambios en `app/` (SPEC D-17). |
 | Fecha | 11/11/2026 |
-| Estado | CA-01, CA-02 y CA-03 con resultados de Windows y del entorno de verificación Linux; **pendiente el enlace al CI** (MR-02, MR-03 y MR-04 completas, y CA-04). |
+| Estado | CA-01 a CA-04 cerrados con Windows, el entorno de verificación Linux y el `Backend CI` run #17 de `newglass-backend` (PR #4, Success, 0 fallidas, 0 errores y 0 omitidas en las cinco fases). |
 
 ## Qué se entregó
 
@@ -27,45 +27,45 @@ No se modificó código, base de datos, Heroku ni Supabase (SPEC D-01).
 |---|---|---|
 | **Win** | Suite local en Windows: 2725 passed, 944 skipped, 0 failed (ver "Salidas de comandos") | Pruebas unitarias. Las de PostgreSQL se omiten. |
 | **Lnx** | Entorno de verificación Linux con PostgreSQL 16.15 y Python 3.13.18: 28 passed, 0 failed ([medicion-MR05.txt](medicion-MR05.txt)) | Los 26 casos de MR-01, `http_restart` y `lifespan`. No es el CI. |
-| **CI** | `Backend CI` de `newglass-backend` (pendiente) | Todas las pruebas, incluidas PostgreSQL y solo Linux, con Python 3.11. |
+| **CI** | `Backend CI` de `newglass-backend`, [run #17](https://github.com/melendezzz26/newglass-backend/actions/runs/42956439041) (PR #4, commit `8d3e558`, 11/11/2026): Success | Todas las pruebas, incluidas PostgreSQL y solo Linux, con Python 3.11. |
 
 ## CA-01 — Fallos simulados en etapas críticas
 
 | Etapa | Fallo simulado | Mecanismo | Prueba | Entorno | Resultado |
 |---|---|---|---|---|---|
 | Admisión | Capacidad o usuario ocupados; liberaciones repetidas; 100 ciclos sin fugas | M1 | `tests/unit/optimization/test_run_admission.py` | Windows | ✅ Win |
-| Admisión | Tercera corrida concurrente → 503 sin efectos | M1 | `tests/api/optimization/test_run_concurrency.py::test_third_concurrent_run_gets_503_without_side_effects_and_is_admitted_later` | PostgreSQL | CI: pendiente |
-| Arranque del cálculo | El hilo de cálculo no arranca | M1, M4 | `tests/api/optimization/test_run_recovery.py::test_worker_start_failure_recovers_accepted_orders`; `test_run_concurrency.py::test_worker_start_failure_releases_reserved_slot` | PostgreSQL | ✅ Lnx (1.ª); CI: pendiente (2.ª) |
+| Admisión | Tercera corrida concurrente → 503 sin efectos | M1 | `tests/api/optimization/test_run_concurrency.py::test_third_concurrent_run_gets_503_without_side_effects_and_is_admitted_later` | PostgreSQL | ✅ CI |
+| Arranque del cálculo | El hilo de cálculo no arranca | M1, M4 | `tests/api/optimization/test_run_recovery.py::test_worker_start_failure_recovers_accepted_orders`; `test_run_concurrency.py::test_worker_start_failure_releases_reserved_slot` | PostgreSQL | ✅ Lnx (1.ª); ✅ CI (ambas) |
 | Cálculo | Error del motor, interrupción o plazo vencido (6 combinaciones) | M4 | `tests/api/optimization/test_run_recovery.py::test_stopped_engine_releases_entire_batch_and_can_retry` | PostgreSQL | ✅ Lnx (6/6) |
 | Cálculo | Plazo vencido después del último hito del motor | M4 | `…::test_deadline_after_last_engine_checkpoint_cannot_commit_no_solution` | PostgreSQL | ✅ Lnx |
-| Cálculo | Plazo de la corrida (`TIME_BUDGET_EXCEEDED`) | M1, M4 | `test_run_concurrency.py::test_time_budget_stops_the_run_as_failed_and_frees_the_slot` | PostgreSQL | CI: pendiente |
+| Cálculo | Plazo de la corrida (`TIME_BUDGET_EXCEEDED`) | M1, M4 | `test_run_concurrency.py::test_time_budget_stops_the_run_as_failed_and_frees_the_slot` | PostgreSQL | ✅ CI |
 | Cálculo | Plazo de cálculo o global de una comparación v1/v2 | M2 | `tests/api/optimization/test_comparison_recovery.py` (4 casos) | PostgreSQL | ✅ Lnx (4/4) |
-| Cálculo | Caída de un motor o mensaje IPC sobredimensionado en la comparación | M2 | `tests/integration/optimization/test_comparison_supervision_v2.py::test_local_process_and_ipc_failure_preserve_other_five` (2 casos) | Solo Linux | CI: pendiente |
+| Cálculo | Caída de un motor o mensaje IPC sobredimensionado en la comparación | M2 | `tests/integration/optimization/test_comparison_supervision_v2.py::test_local_process_and_ipc_failure_preserve_other_five` (2 casos) | Solo Linux | ✅ CI |
 | Desconexión | El cliente se desconecta antes de iniciar el cuerpo de la respuesta | M4 | `…/test_run_recovery.py::test_disconnect_before_body_iterator_starts_recovers_accepted_batch` | PostgreSQL | ✅ Lnx |
-| Desconexión | Desconexión con el motor todavía calculando | M1 | `test_run_concurrency.py::test_client_disconnect_frees_the_slot_when_the_worker_stops` | PostgreSQL | CI: pendiente |
+| Desconexión | Desconexión con el motor todavía calculando | M1 | `test_run_concurrency.py::test_client_disconnect_frees_the_slot_when_the_worker_stops` | PostgreSQL | ✅ CI |
 | Guardado del resultado | Falla el guardado del resultado | M4 | `…/test_run_recovery.py::test_failed_result_flush_rolls_back_then_releases_in_separate_transaction` | PostgreSQL | ✅ Lnx |
 | Guardado del resultado | Falla el commit de la propia recuperación | M4 | `…/test_run_recovery.py::test_failure_of_recovery_commit_is_visible_and_requires_reconciliation` | PostgreSQL | ✅ Lnx |
-| Guardado del resultado | Falla la escritura en la BD durante una comparación | M2 | `test_comparison_supervision_v2.py::test_database_write_failure_does_not_emit_false_persistence` | Solo Linux | CI: pendiente |
+| Guardado del resultado | Falla la escritura en la BD durante una comparación | M2 | `test_comparison_supervision_v2.py::test_database_write_failure_does_not_emit_false_persistence` | Solo Linux | ✅ CI |
 | Caída del proceso | Salida abrupta real del proceso durante una corrida | M4 | `tests/integration/optimization/test_run_recovery.py::test_abrupt_process_exit_requires_explicit_offline_reconciliation` | PostgreSQL | ✅ Lnx |
-| Caída del proceso | Falla el lanzamiento de un proceso de la comparación | M2 | `test_comparison_supervision_v2.py::test_spawn_failure_keeps_other_engines_and_closes_spawn_intent` | Solo Linux | CI: pendiente |
+| Caída del proceso | Falla el lanzamiento de un proceso de la comparación | M2 | `test_comparison_supervision_v2.py::test_spawn_failure_keeps_other_engines_and_closes_spawn_intent` | Solo Linux | ✅ CI |
 | Reinicio | Desconexión HTTP real y reinicio de Uvicorn | M3 | `tests/integration/optimization/test_comparison_v2_http_restart.py` | PostgreSQL + `/proc` | ✅ Lnx |
 | Reinicio | `lifespan` de FastAPI recupera y apaga v2 | M3 | `test_comparison_supervision_v2.py::test_fastapi_lifespan_recovers_and_shuts_down_real_v2_without_routes` | Solo Linux | ✅ Lnx |
-| Reinicio | Identidad del dueño muerta, viva, PID reutilizado, desconocida o con lanzamiento a medias (7 casos) | M2, M3 | `test_comparison_supervision_v2.py::test_recovery_requires_process_identity_proof_without_recalculation` | Solo Linux | CI: pendiente |
-| Confirmación | Error SQL real en cada escritura de la confirmación (9 casos) | M5 | `tests/integration/optimization/test_confirmation_rollback.py` | PostgreSQL | CI: pendiente |
+| Reinicio | Identidad del dueño muerta, viva, PID reutilizado, desconocida o con lanzamiento a medias (7 casos) | M2, M3 | `test_comparison_supervision_v2.py::test_recovery_requires_process_identity_proof_without_recalculation` | Solo Linux | ✅ CI |
+| Confirmación | Error SQL real en cada escritura de la confirmación (9 casos) | M5 | `tests/integration/optimization/test_confirmation_rollback.py` | PostgreSQL | ✅ CI |
 | Confirmación | Reglas de confirmabilidad | M5 | `tests/unit/optimization/test_confirmation.py` | Windows | ✅ Win |
 
 ## CA-02 — Sin descuento duplicado ni pedidos inconsistentes
 
 | Riesgo | Prueba | Casos | Resultado |
 |---|---|---|---|
-| Doble consumo por confirmaciones concurrentes | `tests/integration/optimization/test_confirmation_concurrency.py` (misma optimización dos veces, carrera por el mismo retazo, por la última plancha, bloqueo de inventario) | 4 | CI: pendiente (MR-03) |
-| Escrituras parciales de la confirmación | `tests/integration/optimization/test_confirmation_rollback.py` | 9 | CI: pendiente (MR-02) |
+| Doble consumo por confirmaciones concurrentes | `tests/integration/optimization/test_confirmation_concurrency.py` (misma optimización dos veces, carrera por el mismo retazo, por la última plancha, bloqueo de inventario) | 4 | ✅ CI (MR-03) |
+| Escrituras parciales de la confirmación | `tests/integration/optimization/test_confirmation_rollback.py` | 9 | ✅ CI (MR-02) |
 | Reinicio parcial de un lote inconsistente (pedidos mezclados o con consumo) | `tests/integration/optimization/test_run_recovery.py::test_inconsistent_batch_blocks_failure_without_partial_reset` | 2 | ✅ Lnx |
 | Liberar pedidos que ya pertenecen a otra ejecución | `…::test_two_failures_and_new_acceptance_never_release_another_owner` | 1 | ✅ Lnx |
 | Un aviso tardío sobrescribe un resultado terminal | `…::test_late_failure_refreshes_previously_loaded_terminal_state`; `…::test_reconciliation_and_late_failure_preserve_terminal_outcomes` | 1 + 3 | ✅ Lnx |
 | Fallo y liberación de pedidos en commits separados | `…::test_failure_and_order_release_have_one_commit_or_total_rollback` | 1 | ✅ Lnx |
 | La reconciliación toca casos C, D o E | `tests/unit/optimization/test_stuck_order_reconciliation_unit.py` | 5 | ✅ Win |
-| Ídem, contra PostgreSQL real | `tests/integration/optimization/test_stuck_order_reconciliation_pg.py` | 2 | CI: pendiente |
+| Ídem, contra PostgreSQL real | `tests/integration/optimization/test_stuck_order_reconciliation_pg.py` | 2 | ✅ CI |
 
 ## CA-03 — Tiempo de recuperación y tasa de éxito
 
@@ -74,10 +74,10 @@ parametrizados cuentan por separado).
 
 | ID | Métrica | Denominador | Valor medido | Meta | Estado |
 |---|---|---|---|---|---|
-| MR-01 | Recuperación de pedidos tras un fallo controlado | 26 (12 + 10 + 4) | **CI: pendiente.** Dato complementario Lnx: 26/26 = 100 % | 100 % | Pendiente del CI; sin fallos en Lnx |
-| MR-02 | Atomicidad de la confirmación ante errores | 9 | CI: pendiente | 100 % | Pendiente |
-| MR-03 | Consumo único ante confirmaciones concurrentes | 4 | CI: pendiente | 100 % | Pendiente |
-| MR-04 | Recuperación coherente tras reinicio o pérdida del supervisor | 12 (1 + 11) | **CI: pendiente.** Dato complementario Lnx: 2/2 casos medidos (`http_restart`, `lifespan`) | 100 % | Pendiente del CI |
+| MR-01 | Recuperación de pedidos tras un fallo controlado | 26 (12 + 10 + 4) | **26/26 = 100 %** (CI, fase general). Dato complementario Lnx: 26/26 | 100 % | ✅ Cumple |
+| MR-02 | Atomicidad de la confirmación ante errores | 9 | **9/9 = 100 %** (CI, fase general) | 100 % | ✅ Cumple |
+| MR-03 | Consumo único ante confirmaciones concurrentes | 4 | **4/4 = 100 %** (CI, fase general) | 100 % | ✅ Cumple |
+| MR-04 | Recuperación coherente tras reinicio o pérdida del supervisor | 12 (1 + 11) | **12/12 = 100 %** (CI: `http_restart` en la fase general; 11 en `comparison-supervision`). Dato complementario Lnx: 2/2 | 100 % | ✅ Cumple |
 | MR-05 | Tiempo de recuperación (fase `call`, cota superior) | 17 | 17/17 medidos; **máximo 5 480 ms** (`http_restart`); comparación 3 310 ms; First Fit 190 ms | < 15 000 ms | ✅ Cumple (SPEC §5.3) |
 
 Regla de medición del CI (SPEC §5.2): si la fase que contiene las pruebas termina con 0
@@ -93,22 +93,22 @@ proceso aislado `comparison-supervision`.
 | Suite local en Windows | "Salidas de comandos" → Suite completa |
 | Denominadores | [collect-only.txt](collect-only.txt) |
 | Tiempos de MR-05 | [medicion-MR05.txt](medicion-MR05.txt) (tabla de `--durations`, filas `call`) |
-| Ejecución del CI | "Salidas de comandos" → CI (**pendiente**) |
+| Ejecución del CI | [Backend CI run #17](https://github.com/melendezzz26/newglass-backend/actions/runs/42956439041) (id 42956439041, 11/11/2026); resumen en "Salidas de comandos" → CI |
 | Resultado por prueba | Tablas CA-01 a CA-03, con `archivo::prueba` |
 | Decisiones y alcance | SPEC §6 (D-01 a D-17) |
 
 ## Resultados por mecanismo y entorno
 
-Resumen de la matriz de la SPEC §4.2 con lo medido hasta ahora.
+Resumen de la matriz de la SPEC §4.2 con lo medido.
 
 | Mecanismo | Windows | PostgreSQL | Solo Linux |
 |---|---|---|---|
-| M1 Admisión | ✅ Win | CI: pendiente | CI: pendiente |
-| M2 Supervisor | ✅ Win (`test_supervision_contracts.py`) | ✅ Lnx (`test_comparison_recovery.py`); resto CI: pendiente | CI: pendiente |
-| M3 Reinicio | — | — | ✅ Lnx (`http_restart`, `lifespan`); resto CI: pendiente |
-| M4 Fallo First Fit | — | ✅ Lnx (22 casos de `test_run_recovery.py`); resto CI: pendiente | — |
-| M5 Confirmación | ✅ Win | CI: pendiente | — |
-| M6 Reconciliación | ✅ Win | CI: pendiente | — |
+| M1 Admisión | ✅ Win | ✅ CI | ✅ CI |
+| M2 Supervisor | ✅ Win (`test_supervision_contracts.py`) | ✅ Lnx (`test_comparison_recovery.py`); resto ✅ CI | ✅ CI |
+| M3 Reinicio | — | — | ✅ Lnx (`http_restart`, `lifespan`); resto ✅ CI |
+| M4 Fallo First Fit | — | ✅ Lnx (22 casos de `test_run_recovery.py`); resto ✅ CI | — |
+| M5 Confirmación | ✅ Win | ✅ CI | — |
+| M6 Reconciliación | ✅ Win | ✅ CI | — |
 
 ## Entregables complementarios
 
@@ -179,10 +179,21 @@ de omitirse** si falta el clúster (`tests/integration/postgres_support.py`). Po
 ejecutaron y pasaron.
 
 ```text
-Run de GitHub Actions: (pendiente: enlace al run del PR de traslado de TA-QA-006 a main)
-Job backend:           (pendiente: resultado)
-Resumen por fase:      (pendiente: "Diagnóstico seguro de backend" del resumen del job)
+Run de GitHub Actions: Backend CI #17, https://github.com/melendezzz26/newglass-backend/actions/runs/42956439041
+                       (pull_request del PR #4, rama test/TA-QA-006-port-security-tests, commit 8d3e558,
+                       base main 7a99663 + 3 archivos de prueba de seguridad; 11/11/2026)
+Job backend:           Success
+Resumen por fase:      general                 3640 passed, 0 failed, 0 errors, 0 skipped
+                       comparison-calculation     8 passed, 0 failed, 0 errors, 0 skipped
+                       comparison-supervision    28 passed, 0 failed, 0 errors, 0 skipped
+                       sequential-runner         26 passed, 0 failed, 0 errors, 0 skipped
+                       comparison-runner         14 passed, 0 failed, 0 errors, 0 skipped
 ```
+
+Aplicando la regla de CA-03: MR-01 (26), MR-02 (9), MR-03 (4) y `http_restart` están en la
+fase general y las 11 pruebas de supervisión de MR-04 en `comparison-supervision`; ambas
+fases terminan con 0 fallidas, 0 errores y 0 omitidas, así que cada numerador es igual a su
+denominador.
 
 ## Hallazgos
 
@@ -203,6 +214,10 @@ Resumen por fase:      (pendiente: "Diagnóstico seguro de backend" del resumen 
   recuperación automática (R-01), admisión válida con un solo proceso (R-02), sin alerta de
   pedidos atascados (R-03) y caso D sin herramienta (R-04).
 - La reconciliación en Staging **no se ejecutó** (SPEC D-09).
+- **TA-047 cambió la admisión (M1) después de la medición** (SPEC R-08): el commit medido
+  es `7a99663`; TA-047 (`e130867`, integrado en `main` con el PR #2) agrega una comprobación
+  de plazas de solo lectura y un preflight geométrico antes de reservar la plaza. Los
+  resultados de M1 corresponden al código anterior a ese cambio.
 
 ## Cómo reproducir
 

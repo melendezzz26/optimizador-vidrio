@@ -9,8 +9,8 @@
 | Tareas | T01 — Medir escenarios de fallo |
 | Tipo | Tarea de calidad (auditoría, documentación y medición; sin cambios de código, de BD ni de despliegue) |
 | Sprint | Sprint 2 |
-| Versión | 1.5 |
-| Estado | **Draft** |
+| Versión | 1.6 |
+| Estado | **Implemented**: SPEC, evidencia y modelo de calidad entregados en este PR, con el CI cerrado (`Backend CI` run #17 de `newglass-backend`). Pasa a Verified después de la revisión y el merge |
 | Responsable | Fabricio Danniel Aguilar Chavez (`fabrilar1`) |
 | Reviewer | Andro Joseph Quispe Cesias (distinto del autor) |
 | Rama | `docs/S2-TA-QA-004-fiabilidad` (repo `optimizador-vidrio`) |
@@ -313,6 +313,7 @@ salvo la nota inicial, la línea de historial y la limpieza de `<>` (D-02).
 | R-05 | El despliegue es manual en un solo dyno: tras un merge la demo puede mostrar una versión anterior, y sin medición de disponibilidad no hay dato de caídas. | Redespliegue manual. | Disponibilidad fuera de alcance (D-06); V-02 queda abierto en esa parte. |
 | R-06 | En Windows casi todas las pruebas de fiabilidad se omiten. | El CI las corre como obligatorias. | Evidencia de CI (D-07). |
 | R-07 | El CI no publica los JUnit ni los tiempos por caso (§4.3): MR-05 no se puede medir en cada PR. | Resumen por fase en el job; MR-05 medida fuera del CI (D-15). | Mejora recomendada a Fabricio Melendez: agregar `--durations` al CI. |
+| R-08 | TA-047 cambió la admisión (M1) después de la medición: el código medido es `main` en `7a99663`, y TA-047 (`e130867`, integrado con el PR #2 de `newglass-backend`) agrega `check_available` (comprobación de plazas de solo lectura) y un preflight geométrico (`preflight_only`) antes de `acquire` en `run_routes.py` y `comparison_routes.py`. Los resultados de M1 de esta evidencia corresponden al código anterior. | Las pruebas de admisión siguen en el CI de `newglass-backend`; TA-047 agregó las suyas (`test_run_admission.py`, `test_ta047_feasibility_red.py`). | Se documenta. Una nueva medición de M1 sobre `main` actual sería otra tarea. |
 
 | ID | Hallazgo | Tratamiento |
 |---|---|---|
@@ -383,3 +384,4 @@ No se crean pruebas: se ejecutan y miden las existentes.
 | 11/11/2026 | 1.3 | Draft | Nueva medición única de MR-05 que reemplaza la anterior (28 passed, 0 failed; PostgreSQL 16.15, Python 3.13.18), con el caso `lifespan` incluido: P-03 cerrada con D-16. Tabla de MR-05 con el tiempo `call` de cada uno de los 17 casos; máximo 5 480 ms < 15 000 ms. Conteo conciliado (27 + 1 = 28; el 31 anterior sumaba dos corridas). Salida guardada en `docs/evidence/sprint-02/TA-QA-004/medicion-MR05.txt`. |
 | 11/11/2026 | 1.4 | Draft | Evidencia F2 creada (README, `collect-only.txt`). D-17: suite local y `collect-only` en `test/TA-QA-006-port-security-tests` (sin cambios en `app/`) y CI del PR de traslado a `main`. Denominadores confirmados: MR-01 = 26, MR-02 = 9, MR-03 = 4, MR-04 = 12, MR-05 = 17. Corrección de formato: D-16 vuelve a la tabla de decisiones (una línea en blanco la separaba). Pendiente: enlace y resumen del CI. |
 | 11/11/2026 | 1.5 | Draft | F3: modelo de calidad v1.4 actualizado según §9.4 y D-11 (§4.5, V-02 en parte, parte de TA-049 de V-18; la parte de M6 sigue abierta). Comando de `collect-only` de la evidencia corregido (`-p no:warnings`). Pendiente: enlace y resumen del CI. |
+| 18/11/2026 | 1.6 | Implemented | CI cerrado con `Backend CI` run #17 de `newglass-backend` (PR #4, commit `8d3e558`, Success; general 3640, comparison-calculation 8, comparison-supervision 28, sequential-runner 26 y comparison-runner 14, todas con 0 fallidas, 0 errores y 0 omitidas). MR-01 a MR-04 = 100 %; filas "CI: pendiente" de CA-01 y CA-02 cerradas; CA-04 completo. Nuevo riesgo R-08 (TA-047 cambió la admisión después de la medición). |
