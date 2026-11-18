@@ -3,11 +3,11 @@
 | Campo | Valor |
 |---|---|
 | Tarea | EN-QA-001 (1 SP, Alta) |
-| SPEC | [SPEC-EN-QA-001](../../../specs/SPEC-EN-QA-001-modelo-calidad-iso25010.md) |
+| SPEC | [SPEC-EN-QA-001](../../../specs/SPEC-EN-QA-001-modelo-calidad-iso25010.md) (Verified) |
 | Entregable | [Modelo de calidad](../../../quality/ISO-25010-modelo-calidad.md) |
 | Rama | `enabler/S2-ENQA001-modelo-calidad-iso25010`, desde `integration-02` en `f46d96d` |
 | Responsable | Fabricio Danniel Aguilar Chavez (`fabrilar1`) |
-| Reviewer | Andro Joseph Quispe Cesias |
+| Reviewer | `FabricioMQ-sys`, en el PR de cierre (PR #114 integrado sin revisión) |
 | Fecha | 10/11/2026 |
 
 ## Qué se entregó
@@ -30,7 +30,7 @@ Solo documentación: sin cambios en `backend/`, `frontend/`, migraciones ni work
 | CA-01 | Matriz de las 9 características con definiciones | Revisión: §3 (resumen) y §4.1 a §4.9 del modelo, una definición parafraseada por característica. | Cumple |
 | CA-02 | Cada atributo se vincula a módulos y riesgos | Revisión: filas "Módulos" y "Riesgos" completas en §4.1 a §4.9, con los módulos reales (incluidos `results` y `dashboard`). | Cumple |
 | CA-03 | Se identifica cómo se evaluará cada atributo | Revisión: fila "Evaluación" (prueba, medición o revisión) y "Tarea QA" en §4.1 a §4.9; vacíos asignados en §5.2. | Cumple |
-| CA-04 | SPEC revisada por un integrante distinto del autor | Solicitud de revisión a Andro en el PR. | **Pendiente** |
+| CA-04 | SPEC revisada por un integrante distinto del autor | Aprobación del reviewer, distinto del autor, en el PR de cierre. | **Pendiente de la aprobación del reviewer en el PR de cierre** |
 
 Verificaciones adicionales:
 
@@ -40,9 +40,12 @@ Verificaciones adicionales:
 
 ## Estado de la revisión
 
-La revisión de Andro Joseph Quispe Cesias (CA-04) está **solicitada en el PR y pendiente**.
-No se atribuye aprobación antes de que conste en GitHub. Tras su aprobación y el merge,
-la SPEC pasa a **Verified** en un PR `docs/...` aparte.
+El PR #114 se integró en `integration-02` **sin revisión**. La revisión de CA-04 se hace en
+el PR de cierre (rama `docs/S2-QA-verify-enqa001-taqa006`), con `FabricioMQ-sys` como
+reviewer distinto del autor. Ese mismo PR pasa la SPEC a **Verified**.
+
+No se atribuye ninguna aprobación antes de que conste en GitHub: CA-04 sigue
+**pendiente de la aprobación del reviewer en el PR de cierre**, que se requiere antes del merge.
 
 ## Cómo reproducir la verificación
 

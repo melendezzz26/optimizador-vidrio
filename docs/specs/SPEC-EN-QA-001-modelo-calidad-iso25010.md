@@ -9,10 +9,10 @@
 | Tipo | Enabler (solo documentación, sin código) |
 | Sprint | Sprint 2 |
 | Prioridad / estimación | Alta / 1 SP |
-| Versión | 1.1 |
-| Estado | **Implemented**: modelo entregado en este PR; pasa a Verified después de la revisión de Andro (CA-04) y del merge |
+| Versión | 1.2 |
+| Estado | **Verified**: verificado en el PR de cierre (aprobación del reviewer requerida antes del merge). El PR #114 se integró sin revisión. |
 | Responsable | Fabricio Danniel Aguilar Chavez (`fabrilar1`) |
-| Reviewer | Andro Joseph Quispe Cesias (distinto del autor, CA-04) |
+| Reviewer | `FabricioMQ-sys`, en el PR de cierre (distinto del autor, CA-04) |
 | Rama | `enabler/S2-ENQA001-modelo-calidad-iso25010` |
 | Base | `integration-02` en `f46d96d` (después del PR #112) |
 | Fecha | 10/11/2026 |
@@ -136,7 +136,7 @@ Sin cambios en `backend/`, `frontend/`, migraciones ni workflows.
 | CA-01 | Matriz de las nueve características con definiciones. | Revisión: nueve filas, definición parafraseada en cada una. |
 | CA-02 | Cada atributo se vincula a módulos y riesgos. | Revisión: columnas de módulos y riesgos completas en las nueve filas. |
 | CA-03 | Se identifica cómo se evaluará cada atributo. | Revisión: tipo de evaluación y tarea QA responsable en las nueve filas. |
-| CA-04 | SPEC revisada por un integrante distinto del autor. | Solicitud y aprobación de Andro registradas en el PR. |
+| CA-04 | SPEC revisada por un integrante distinto del autor. | Aprobación del reviewer del PR de cierre, distinto del autor, registrada en ese PR (el PR #114 se integró sin revisión). |
 
 ## 8. Pruebas previstas
 
@@ -151,7 +151,7 @@ Verificaciones previstas:
 
 - El modelo de calidad y esta SPEC.
 - Salida de `git diff --check` y del estado de la rama antes del PR.
-- Revisión de Andro registrada en el PR (CA-04).
+- Revisión del reviewer registrada en el PR de cierre (CA-04).
 
 ## Historial de estado
 
@@ -159,3 +159,4 @@ Verificaciones previstas:
 |---|---|---|---|
 | 10/11/2026 | 1.0 | Draft | Creación con la auditoría F0, reglas, decisiones y criterios de aceptación. |
 | 10/11/2026 | 1.1 | Implemented | Modelo de calidad entregado (CA-01 a CA-03). Corrección de L-03 en SPEC-TA-037 (D-06). Evidencia agregada. Pendiente: revisión de Andro (CA-04) y merge para Verified. |
+| 10/11/2026 | 1.2 | Verified | PR #114 integrado en `integration-02` sin revisión. Verificado en el PR de cierre (aprobación del reviewer requerida antes del merge), con `FabricioMQ-sys` como reviewer distinto del autor (CA-04). |

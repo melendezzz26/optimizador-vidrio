@@ -4,10 +4,10 @@
 |---|---|
 | Tarea | TA-QA-006 (1 SP, Alta) |
 | Característica ISO/IEC 25010 | Seguridad; cubre el vacío V-01 del [modelo de calidad](../../../quality/ISO-25010-modelo-calidad.md) |
-| SPEC | [SPEC-TA-QA-006](../../../specs/SPEC-TA-QA-006-seguridad-permisos.md) (Implemented) |
+| SPEC | [SPEC-TA-QA-006](../../../specs/SPEC-TA-QA-006-seguridad-permisos.md) (Verified) |
 | Rama | `test/S2-TA-QA-006-seguridad-permisos`, desde `integration-02` en `137f2cc` |
 | Responsable | Fabricio Danniel Aguilar Chavez (`fabrilar1`) |
-| Reviewer | Andro Joseph Quispe Cesias |
+| Reviewer | `FabricioMQ-sys`, en el PR de cierre (PR #117 integrado sin revisión) |
 | Fecha | 10/11/2026 |
 
 ## Qué se entregó
@@ -74,8 +74,8 @@ de la norma.
 | ID | Métrica | Meta | Resultado | Estado |
 |---|---|---|---|---|
 | MSEG-01 | Cobertura de control de acceso en rutas protegidas | 100 % | 59/59 = **100 %**. La prueba RN-07 confirma que la aplicación tiene exactamente esas 59 rutas protegidas. | Cumple |
-| MSEG-02 | Tasa de rechazo de accesos no autorizados | 100 % | 109/109 = **100 %** (59 sin token + 44 por rol + 6 de token o cuenta). | Cumple (local). Los 4 rechazos con PostgreSQL se confirman en el CI. |
-| MSEG-03 | Escrituras no autorizadas ejecutadas | 0 | **0** en los 109 rechazos con espía. | Cumple (local). Los 4 casos con PostgreSQL se confirman en el CI. |
+| MSEG-02 | Tasa de rechazo de accesos no autorizados | 100 % | 109/109 = **100 %** (59 sin token + 44 por rol + 6 de token o cuenta), más 4/4 rechazos con PostgreSQL en el CI. | Cumple |
+| MSEG-03 | Escrituras no autorizadas ejecutadas | 0 | **0** en los 109 rechazos con espía y **0** en los 4 casos con PostgreSQL (CI). | Cumple |
 | MSEG-04 | Respuestas de error con información interna | 0 | **0** de 109 respuestas 401/403: todas con el mensaje fijo exacto, sin stack trace, SQL ni código de permiso. | Cumple |
 | MSEG-05 | Autenticidad del token en rutas de negocio | 100 % | 6/6 = **100 %**. | Cumple |
 | MSEG-06 | Conformidad de la matriz documentada | 100 % y 100 % | Antes: 10/11 filas = 90,9 % ("Configurar optimizador" no existe) y 7/13 permisos representados = 53,8 %. **Después: 14/14 filas = 100 % y 13/13 permisos = 100 %.** Además, la matriz de las pruebas coincide con `ASIGNACION_INICIAL` y con las rutas reales. | Cumple |
@@ -90,7 +90,7 @@ matriz. En la versión anterior faltaban `users.view`, `roles.view`, `roles.mana
 |---|---|---|---|
 | CA-01 | Matriz de pruebas por Administrador / Almacenero / Operario | `test_security_role_matrix.py`: 59 rutas × 3 roles más el permiso declarado, el 401 sin token y la verificación RN-07; tabla de resultados arriba. | Cumple |
 | CA-02 | Accesos denegados correctamente | 401 sin token (59), 403 por rol (44), 401 por token vencido, firma inválida o cuenta desactivada en los dos caminos (6), cuerpos exactos y sin información interna. | Cumple |
-| CA-03 | Sin confirmación ni consumo no autorizado | Espías sin uso en los 109 rechazos (local). Stock, movimientos y pedidos sin cambios con PostgreSQL, con control positivo. | Cumple en local; **la parte de PostgreSQL queda pendiente del CI** |
+| CA-03 | Sin confirmación ni consumo no autorizado | Espías sin uso en los 109 rechazos (local). Stock, movimientos y pedidos sin cambios con PostgreSQL, con control positivo ([CI del PR](#ci-del-pr)). | Cumple |
 | CA-04 | Resultados registrados | Esta evidencia, `matriz_permisos.md` actualizada, V-19 en el modelo de calidad y SPEC en Implemented. | Cumple |
 
 ## Salidas de comandos
@@ -133,11 +133,13 @@ lugar de omitirse** si falta el clúster (`backend/tests/integration/postgres_su
 Por eso, un job `backend` en verde demuestra que las 3 pruebas de
 `test_security_rejections_postgres.py` se ejecutaron y pasaron.
 
-```text
-Run de GitHub Actions: (pendiente: enlace al run del PR)
-Job backend:           (pendiente: resultado)
-Resumen de pytest:     (pendiente: línea final del paso "Run tests")
-```
+| Campo | Valor |
+|---|---|
+| Run de GitHub Actions | [42844873577](https://github.com/melendezzz26/optimizador-vidrio/actions/runs/42844873577) |
+| Job `backend` | success, con `NEWGLASS_REQUIRE_POSTGRES=1`: las 3 pruebas de PostgreSQL se ejecutaron y pasaron |
+
+Los otros jobs del run también terminaron en success, pero esta tarea no los
+necesita como evidencia.
 
 ## Hallazgos
 
